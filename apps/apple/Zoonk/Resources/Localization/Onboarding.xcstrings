@@ -178,67 +178,61 @@
         }
       }
     },
-    "%@ a day, %@ on weekends" : {
-      "comment" : "How long the learner studies each weekday, then on Saturdays and Sundays",
+    "%@ on weekends" : {
+      "comment" : "Under the plan's time a day when weekends have their own time",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ am Tag, %2$@ am Wochenende"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day, %2$@ on weekends"
+            "value" : "%@ am Wochenende"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ al día, %2$@ los fines de semana"
+            "value" : "%@ los fines de semana"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ par jour en semaine, %2$@ le week-end"
+            "value" : "%@ le week-end"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ al giorno, %2$@ nel fine settimana"
+            "value" : "%@ nel fine settimana"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "平日は1日%1$@、週末は1日%2$@"
+            "value" : "週末は%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "하루 %1$@, 주말에는 %2$@"
+            "value" : "주말에는 %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ dziennie, %2$@ w weekendy"
+            "value" : "%@ w weekendy"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ por dia, %2$@ nos fins de semana"
+            "value" : "%@ nos fins de semana"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hafta içi günde %1$@, hafta sonları %2$@"
+            "value" : "hafta sonları %@"
           }
         }
       }
@@ -3364,6 +3358,65 @@
         }
       }
     },
+    "a day" : {
+      "comment" : "Under the plan's time a day, as in \"15 min a day\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pro Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "al día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "par jour"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "al giorno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日あたり"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dziennie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "por dia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "günde"
+          }
+        }
+      }
+    },
     "A few quick questions about the %lld areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer." : {
       "comment" : "What placement is for an exam with several areas",
       "localizations" : {
@@ -5466,6 +5519,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İptal et"
+          }
+        }
+      }
+    },
+    "Challenge" : {
+      "comment" : "A plan day's challenge",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sfida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャレンジ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyzwanie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafio"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meydan okuma"
           }
         }
       }
@@ -9284,6 +9396,65 @@
         }
       }
     },
+    "estimated finish" : {
+      "comment" : "Under the month a plan without a date ends at this pace",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voraussichtlicher Abschluss"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fin estimado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fin estimée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fine prevista"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了の目安"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예상 완료일"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "przewidywany koniec"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "previsão de conclusão"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tahmini bitiş"
+          }
+        }
+      }
+    },
     "Exam" : {
       "comment" : "The kind of an example goal",
       "localizations" : {
@@ -12240,6 +12411,291 @@
         }
       }
     },
+    "lesson" : {
+      "comment" : "Under the plan's number of lessons when it's one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lekcja"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ders"
+          }
+        }
+      }
+    },
+    "lesson, %lld done" : {
+      "comment" : "Under the plan's number of lessons when it's one, once it's done",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Lektion, %lld abgeschlossen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Lektion, %lld abgeschlossen"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lección, completaste %lld"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lección, completaste %lld"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "leçon, %lld à ton actif"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "leçon, %lld à ton actif"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lezione, %lld già alle spalle"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lezione, %lld già alle spalle"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "レッスン（%lldレッスン完了）"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨, %lld개 완료"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lekcja, ukończono %lld"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lekcja, ukończono %lld"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "aula, %lld concluída"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "aula, %lld concluídas"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ders, %lld tanesi tamamlandı"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "lesson, %lld done"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "lesson, %lld done"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "lessons" : {
+      "comment" : "Under the plan's number of lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lecciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leçons"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lezioni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aulas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ders"
+          }
+        }
+      }
+    },
     "Lessons for playing %@ are coming" : {
       "comment" : "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'",
       "localizations" : {
@@ -12295,6 +12751,173 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ çalma dersleri yakında"
+          }
+        }
+      }
+    },
+    "lessons, %lld done" : {
+      "comment" : "Under the plan's number of lessons, once some are done; the argument is how many",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Lektionen, %lld abgeschlossen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Lektionen, %lld abgeschlossen"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lecciones, completaste %lld"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lecciones, completaste %lld"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "leçons, %lld à ton actif"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "leçons, %lld à ton actif"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lezioni, %lld già alle spalle"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lezioni, %lld già alle spalle"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "レッスン（%lldレッスン完了）"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨, %lld개 완료"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lekcji, ukończono %lld"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "lekcji, ukończono %lld"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "aulas, %lld concluída"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "aulas, %lld concluídas"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ders, %lld tanesi tamamlandı"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "lessons, %lld done"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "lessons, %lld done"
+                }
+              }
+            }
           }
         }
       }
@@ -12944,6 +13567,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gereken becerileri belirliyoruz"
+          }
+        }
+      }
+    },
+    "Mock exam" : {
+      "comment" : "A plan day's mock exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacro de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen blanc"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulazione d’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模試"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모의고사"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egzamin próbny"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deneme sınavı"
           }
         }
       }
@@ -17320,6 +18002,124 @@
         }
       }
     },
+    "Rest day" : {
+      "comment" : "A day of the plan with no lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausentag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día de descanso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour de repos"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giorno di riposo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休みの日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "쉬는 날"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień odpoczynku"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dia de descanso"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinlenme günü"
+          }
+        }
+      }
+    },
+    "Review" : {
+      "comment" : "A plan day's review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réviser"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripassa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powtórz materiał"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar yap"
+          }
+        }
+      }
+    },
     "Save" : {
       "comment" : "Saves a fix to an understood fact",
       "localizations" : {
@@ -18986,6 +19786,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz başla, hesap gerekmez."
+          }
+        }
+      }
+    },
+    "Start here" : {
+      "comment" : "Tags the plan's first lesson today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia da qui"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここからスタート"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여기서 시작"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zacznij tutaj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece aqui"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buradan başla"
           }
         }
       }
@@ -22789,6 +23648,65 @@
         }
       }
     },
+    "Today" : {
+      "comment" : "Header over the plan's lessons today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oggi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün"
+          }
+        }
+      }
+    },
     "Try again" : {
       "comment" : "Asks again what a time covers\nLoads the goal's onboarding again\nPlays a level test listening question's message again after it failed\nStarts a failed run again",
       "localizations" : {
@@ -23202,120 +24120,61 @@
         }
       }
     },
-    "Until about %@" : {
-      "comment" : "When a plan without a date ends at this pace; the argument is a date like 'May 5'",
+    "until the exam" : {
+      "comment" : "Under the days left before the exam on the plan's reveal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis etwa zum %@"
+            "value" : "bis zur Prüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hasta aproximadamente el %@"
+            "value" : "para el examen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’au %@ environ"
+            "value" : "avant l’examen"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fino al %@ circa"
+            "value" : "all’esame"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ごろまで"
+            "value" : "試験まで"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@쯤까지"
+            "value" : "시험까지"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mniej więcej do %@"
+            "value" : "do egzaminu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até por volta de %@"
+            "value" : "até a prova"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yaklaşık %@ tarihinde biter"
-          }
-        }
-      }
-    },
-    "Until sometime in %@" : {
-      "comment" : "When a plan without a date ends at this pace; the argument is a month like 'October 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voraussichtlich im %@ fertig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hasta algún momento de %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jusqu’en %@ environ"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fino a %@ circa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@中に完了"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 중 완료 예정"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przybliżony koniec: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Até algum momento de %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ayı içinde biter"
+            "value" : "sınava kadar"
           }
         }
       }
@@ -23434,6 +24293,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınava kadar en sık çıkan konulara öncelik verilir. Yetişmeyen konular sınavdan sonraya kalır."
+          }
+        }
+      }
+    },
+    "until your date" : {
+      "comment" : "Under the days left before the learner's date on the plan's reveal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis zu deinem Termin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "para la fecha que elegiste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "avant la date prévue"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "alla data che hai scelto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標の日まで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 날짜까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do wybranej daty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até a data escolhida"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hedef tarihine kadar"
+          }
+        }
+      }
+    },
+    "Up next" : {
+      "comment" : "Tags the plan's next lesson today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Nächstes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A continuación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À suivre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A seguire"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の学習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A seguir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki"
           }
         }
       }
@@ -29881,6 +30858,65 @@
         }
       }
     },
+    "Your first week" : {
+      "comment" : "Header over the plan's next seven days",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine erste Woche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primera semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta première semaine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prima settimana"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初の週"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 주"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój pierwszy tydzień"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua primeira semana"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk haftan"
+          }
+        }
+      }
+    },
     "Your level" : {
       "comment" : "Row with the learner's level in a subject",
       "localizations" : {
@@ -30290,65 +31326,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu materyali planında ve derslerinde kullanacağız."
-          }
-        }
-      }
-    },
-    "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then." : {
-      "comment" : "Under a plan without a date that holds the whole goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan deckt dein ganzes Ziel ab. Um früher fertig zu sein, plane täglich mehr Zeit ein oder wähl ein Datum. Dann plant er das Wichtigste so ein, dass du es bis dahin schaffst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan abarca todo tu objetivo. Para terminar antes, dedica más tiempo al día o elige una fecha y el plan se ajusta para cubrir lo más importante a tiempo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan couvre tous les aspects de ton objectif. Pour finir plus tôt, consacre-lui plus de temps chaque jour ou choisis une date pour qu’il se concentre sur l’essentiel d’ici là."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano copre ogni parte del tuo obiettivo. Per finire prima, dedica più tempo ogni giorno oppure scegli una data: il piano include ciò che conta di più nel tempo disponibile."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画には、目標に必要な内容がすべて含まれています。1日の学習時間を増やすと、より早く終えられます。目標日を決めると、重要な内容をその日までに学べるように計画を調整します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표에 필요한 모든 내용을 다루는 계획이에요. 더 빨리 끝내려면 하루 학습 시간을 늘리거나 날짜를 정해 보세요. 날짜를 정하면 그날까지 가장 중요한 내용을 배울 수 있게 계획을 맞춰요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan obejmuje cały materiał związany z celem. Aby skończyć wcześniej, zwiększ dzienny czas nauki albo wybierz termin, a plan uwzględni najważniejszy materiał, na który wystarczy czasu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano cobre todas as partes do seu objetivo. Para terminar antes, aumente o tempo diário ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planın hedefinin tamamını kapsar. Daha erken bitirmek için günlük çalışma süreni artır ya da bir tarih seç; planın en önemli kısımları o tarihe kadar bitirebileceğin şekilde düzenlenir."
           }
         }
       }
@@ -31588,65 +32565,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Metnin"
-          }
-        }
-      }
-    },
-    "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then." : {
-      "comment" : "Under a plan without a date that the time a day limits",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine tägliche Lernzeit bestimmt, wie viel dein Plan abdeckt. Um mehr zu schaffen oder früher fertig zu sein, plane täglich mehr Zeit ein oder wähl ein Datum. Dann plant er das Wichtigste so ein, dass du es bis dahin schaffst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu tiempo diario determina hasta dónde llega tu plan. Para avanzar más o terminar antes, dedica más tiempo al día o elige una fecha y el plan se ajusta para cubrir lo más importante a tiempo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le temps que tu consacres chaque jour à ton plan détermine ce qu’il couvre. Pour aller plus loin ou finir plus tôt, consacre-lui plus de temps chaque jour ou choisis une date pour qu’il se concentre sur l’essentiel d’ici là."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tempo di studio giornaliero determina fin dove arriva il tuo piano. Per andare oltre o finire prima, dedica più tempo ogni giorno oppure scegli una data: il piano include ciò che conta di più nel tempo disponibile."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日の学習時間によって、計画で学べる範囲が決まります。1日の学習時間を増やすと、より広く学んだり、早く終えたりできます。目標日を決めると、重要な内容をその日までに学べるように計画を調整します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 학습 시간에 따라 계획에서 다룰 수 있는 범위가 정해져요. 더 많이 배우거나 더 빨리 끝내려면 하루 학습 시간을 늘리거나 날짜를 정해 보세요. 날짜를 정하면 그날까지 가장 중요한 내용을 배울 수 있게 계획을 맞춰요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój dzienny czas nauki określa, ile materiału obejmuje plan. Aby przerobić więcej materiału lub skończyć wcześniej, zwiększ dzienny czas nauki albo wybierz termin, a plan uwzględni najważniejszy materiał, na który wystarczy czasu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O tempo diário define até onde seu plano vai. Para ir além ou terminar antes, aumente esse tempo ou escolha uma data para ele incluir o que mais importa dentro desse prazo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük çalışma süren, planınla ne kadar ilerleyebileceğini belirler. Daha çok ilerlemek veya daha erken bitirmek için günlük çalışma süreni artır ya da bir tarih seç; planın en önemli kısımları o tarihe kadar bitirebileceğin şekilde düzenlenir."
           }
         }
       }

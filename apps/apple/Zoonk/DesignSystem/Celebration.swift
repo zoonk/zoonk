@@ -51,18 +51,20 @@ extension TimeInterval {
 struct EarnedNumber: View {
   let value: Int
   var delay: TimeInterval = 0
+  /// Something earned reads "+18"; a count, such as a plan's lessons, reads as it is.
+  var isSigned = true
 
   @Environment(\.celebrates) private var celebrates
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var count: Double?
 
   var body: some View {
-    Text(value, format: .number.sign(strategy: .always()))
+    Text(value, format: .number.sign(strategy: isSigned ? .always() : .automatic))
       .monospacedDigit()
       .opacity(count == nil ? 1 : 0)
       .overlay(alignment: .leading) {
         if let count {
-          CountingNumber(count: count)
+          CountingNumber(count: count, isSigned: isSigned)
             .accessibilityHidden(true)
         }
       }
@@ -85,6 +87,7 @@ struct EarnedNumber: View {
 
 private struct CountingNumber: View, Animatable {
   var count: Double
+  let isSigned: Bool
 
   var animatableData: Double {
     get { count }
@@ -93,7 +96,8 @@ private struct CountingNumber: View, Animatable {
 
   var body: some View {
     if count > 0 {
-      Text(Int(count.rounded(.up)), format: .number.sign(strategy: .always()))
+      Text(
+        Int(count.rounded(.up)), format: .number.sign(strategy: isSigned ? .always() : .automatic))
         .monospacedDigit()
     }
   }

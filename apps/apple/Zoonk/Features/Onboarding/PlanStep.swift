@@ -519,12 +519,14 @@ private struct PlanReveal: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(OnboardingStore.self) private var onboarding
   @Environment(PlanStore.self) private var plans
   @Environment(TodayStore.self) private var today
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var sheet: PlanSheet?
   @State private var showsTopics = false
   @State private var openingToday: Task<Void, Never>?
+  @State private var startFailed = false
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
@@ -535,23 +537,30 @@ private struct PlanReveal: View {
       goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { sheet = $0 })
     let syllabus = plans.syllabus(goalId: goal.id)
     let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
+    let day = onboarding.revealToday(goalID: goal.id)
 
     PaneSplit {
       ZoonkList {
-        heroSections(goal: goal)
+        heroSections(goal: goal, day: day)
       }
+      .safeAreaBar(edge: .bottom) { actions(day: day.value) }
     } secondary: {
       ZoonkList {
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
     } single: {
       ZoonkList {
-        heroSections(goal: goal)
+        heroSections(goal: goal, day: day)
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
+      .safeAreaBar(edge: .bottom) { actions(day: day.value) }
       .onboardingColumn()
     }
-    .loads(syllabus, refreshable: false)
+    .loads(syllabus, day, refreshable: false)
+    // The moment plays once, the first time the reveal shows before the learner pressed its action;
+    // a revisit shows its end, still.
+    .celebratesOnce(id: "planReveal:\(goal.id)")
+    .environment(\.celebrates, !view.planRevealed)
     .onDisappear { openingToday?.cancel() }
     .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
@@ -567,32 +576,11 @@ private struct PlanReveal: View {
   }
 
   @ViewBuilder
-  private func heroSections(goal: LearnerGoal) -> some View {
+  private func heroSections(goal: LearnerGoal, day: Resource<StudyDay>) -> some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        Label {
-          Text(
-            "Plan created", tableName: "Onboarding",
-            comment: "Eyebrow over a goal whose plan was just built")
-        } icon: {
-          Image(systemName: "checkmark.circle.fill")
-        }
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(.successText)
-
-        Text(goal.title)
-          .typeStyle(.section)
-          .accessibilityAddTraits(.isHeader)
-
-        Text(facts.joinedFacts())
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-
-        if let pace = paceLine(goal: goal) {
-          Text(pace)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
+      VStack(alignment: .leading, spacing: 20) {
+        RevealHero(title: goal.title, buddy: learner.summary.value?.buddy ?? BuddyLook())
+        RevealReadouts(plan: plan, isExam: goal.kind == .exam)
       }
       .listRowBackground(Color.clear)
     }
@@ -602,47 +590,74 @@ private struct PlanReveal: View {
 
     RevealExamChoices(plan: plan) { adjusting = .choice($0) }
 
-    Section {
-      VStack(spacing: 12) {
-        BusyButton(isBusy: openingToday != nil, icon: .play, action: openToday) {
-          Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
-        }
-        .buttonStyle(.mainAction)
-        .buttonSizing(.flexible)
-        .keyboardShortcut(.defaultAction)
+    switch day.state {
+    case .loaded(let day):
+      RevealToday(day: day)
+    case .idle, .loading:
+      // Today's rows hold their place, so the week doesn't move as they come.
+      RevealTodayPlaceholder()
+    case .empty, .failed:
+      EmptyView()
+    }
 
+    RevealWeek(plan: plan)
+  }
+
+  /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
+  private func actions(day: StudyDay?) -> some View {
+    VStack(spacing: 10) {
+      if startFailed {
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved"))
+      }
+
+      HStack(spacing: 10) {
         Button {
           adjusting = .top
         } label: {
           Text(
-            "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it"
-          )
-          .frame(maxWidth: .infinity)
+            "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it")
         }
         .buttonStyle(.outline)
-      }
-      .controlSize(.large)
-      .keepsOffFold()
-      .listRowInsets(.vertical, 0)
-      .listRowBackground(Color.clear)
-    } footer: {
-      SectionFooter {
-        if learner.summary.value?.identity.isAnonymous == true {
-          VStack(alignment: .leading, spacing: 8) {
+        .fixedSize()
+
+        BusyButton(isBusy: openingToday != nil, icon: .play, action: openToday) {
+          if day?.blocks.contains(where: \.isFinished) == true {
             Text(
-              "Save your plan so it's here next time.", tableName: "Onboarding",
-              comment: "A guest's plan isn't saved to an account yet")
-            Button {
-              router.present(.signIn)
-            } label: {
-              Text(
-                "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"
-              )
-            }
+              "Continue", tableName: "Onboarding",
+              comment: "Opens Today once a lesson of the plan's first day is done")
+          } else {
+            Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
           }
         }
+        .buttonStyle(.mainAction)
+        .buttonSizing(.flexible)
+        .keyboardShortcut(.defaultAction)
+      }
+
+      if learner.summary.value?.identity.isAnonymous == true {
+        HStack(spacing: 8) {
+          Text(
+            "Save your plan so it's here next time.", tableName: "Onboarding",
+            comment: "A guest's plan isn't saved to an account yet")
+
+          Button {
+            router.present(.signIn)
+          } label: {
+            Text(
+              "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan")
+          }
+        }
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
       }
     }
+    .controlSize(.large)
+    .keepsOffFold()
+    .scenePadding(.horizontal)
+    .padding(.vertical, 10)
   }
 
   @ViewBuilder
@@ -690,15 +705,28 @@ private struct PlanReveal: View {
     }
   }
 
-  /// Today shows once it has read the new plan's day.
+  /// Today waits for the reveal to be seen: until it's saved, Today brings the learner back here,
+  /// so a failed save stays here to try again.
   private func openToday() {
     guard openingToday == nil else {
       return
     }
 
+    startFailed = false
+
     openingToday = Task {
-      await today.today.load()
-      openingToday = nil
+      defer { openingToday = nil }
+
+      do {
+        try await onboarding.markPlanRevealed(goalID: view.goal.id)
+      } catch is CancellationError {
+        return
+      } catch {
+        startFailed = true
+        return
+      }
+
+      await today.today.refresh()
 
       if !Task.isCancelled {
         router.showRoot(of: .today)
@@ -717,79 +745,6 @@ private struct PlanReveal: View {
       title: view.goal.title)
   }
 
-  /// A language ends at its level and an exam at its date; a learn goal without a date runs as long
-  /// as its subject takes, so the reveal says what sets that. Planning without a date stops at the
-  /// longest plan there can be, so only a plan holding every part says it does.
-  private func paceLine(goal: LearnerGoal) -> String? {
-    guard goal.kind == .learn, plan.schedule.targetDate == nil, plan.estimate.endDate != nil else {
-      return nil
-    }
-
-    return plan.feasibility?.fits == true
-      ? String(
-        localized:
-          "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
-        table: "Onboarding", comment: "Under a plan without a date that holds the whole goal")
-      : String(
-        localized:
-          "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
-        table: "Onboarding", comment: "Under a plan without a date that the time a day limits")
-  }
-
-  private var facts: [String] {
-    let schedule = plan.schedule
-    var facts: [String] = []
-
-    if let targetDate = schedule.targetDate, targetDate >= plan.today {
-      let days = PlanDate.days(from: plan.today, to: targetDate)
-      facts.append(
-        schedule.targetDateEstimated
-          ? String(
-            localized: "About \(days) days", table: "Onboarding",
-            comment: "How long until a goal's estimated date")
-          : String(
-            localized: "\(days) days", table: "Onboarding", comment: "How long until a goal's date")
-      )
-    } else if schedule.targetDate == nil, let endDate = plan.estimate.endDate {
-      // The month when it's far off; the day within a few weeks, so it never reads "October" in October.
-      let isNear = PlanDate.days(from: plan.week.startDate, to: endDate) <= 42
-      let end = PlanDate.text(endDate, today: plan.today, month: !isNear)
-      facts.append(
-        isNear
-          ? String(
-            localized: "Until about \(end)", table: "Onboarding",
-            comment:
-              "When a plan without a date ends at this pace; the argument is a date like 'May 5'")
-          : String(
-            localized: "Until sometime in \(end)", table: "Onboarding",
-            comment:
-              "When a plan without a date ends at this pace; the argument is a month like 'October 2027'"
-          ))
-    }
-
-    return facts + scheduleFacts
-  }
-
-  /// The time a day and, unless it's every day, which days: what the plan's settings say.
-  private var scheduleFacts: [String] {
-    let schedule = plan.schedule
-    let weekdays = planDurationText(minutes: Double(schedule.shape.weekdays))
-    let time =
-      if let weekend = schedule.shape.weekend {
-        String(
-          localized:
-            "\(weekdays) a day, \(planDurationText(minutes: Double(weekend))) on weekends",
-          table: "Onboarding",
-          comment: "How long the learner studies each weekday, then on Saturdays and Sundays")
-      } else {
-        String(
-          localized: "\(weekdays) a day", table: "Onboarding",
-          comment: "How long the learner studies each day")
-      }
-
-    let everyDay = schedule.weekdayMinutes.allSatisfy { $0 > 0 }
-    return everyDay ? [time] : [time, studyDaysText(schedule.weekdayMinutes)]
-  }
 }
 
 /// Lessons still being written ahead aren't chapters yet.

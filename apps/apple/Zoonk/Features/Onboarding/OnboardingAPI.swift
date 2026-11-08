@@ -517,6 +517,42 @@ struct OnboardingAPI: Sendable {
     }
   }
 
+  /// The goal's first day as Today will show it; nil while its plan isn't ready to show.
+  func revealToday(goalID: String, token: String) async throws -> StudyDay? {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getPlanRevealToday(
+        path: .init(goalId: goalID), query: .init(timeZone: TimeZone.current.identifier))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try StudyJSON.recode(try response.body.json, as: StudyDay.self)
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound, .conflict:
+      return nil
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  func markPlanRevealed(goalID: String, token: String) async throws {
+    let output = try await clients.perform(token: token) { client in
+      try await client.markPlanRevealed(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .noContent:
+      return
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
   func writeGoal(goalID: String, token: String) async throws -> String {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalGeneration(path: .init(goalId: goalID))

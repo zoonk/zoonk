@@ -191,7 +191,10 @@ struct ScheduleQuestion: View {
 
       StepButtons(
         canContinue: ScheduleTime.canContinue(
-          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked)
+          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked),
+        continueLabel: Text(
+          "See your plan", tableName: "Onboarding",
+          comment: "Answers the time question, the last one, and shows the plan")
       ) {
         submit(shown)
       }

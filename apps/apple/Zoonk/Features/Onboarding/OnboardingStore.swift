@@ -17,6 +17,7 @@ final class OnboardingStore {
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
+  @ObservationIgnored private var revealDays: [String: Resource<StudyDay>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
     let api = OnboardingAPI(clients: clients)
@@ -224,6 +225,35 @@ final class OnboardingStore {
 
     onboarding(goalID: updated.goal.id).update { _ in updated }
     return updated
+  }
+
+  /// The reveal's Today: the goal's first day as Today will show it. Reading it writes nothing.
+  func revealToday(goalID: String) -> Resource<StudyDay> {
+    if let resource = revealDays[goalID] {
+      return resource
+    }
+
+    let resource: Resource<StudyDay> = cache.resource(
+      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress]
+    ) { [api] session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.revealToday(goalID: goalID, token: session.bearerToken)
+    }
+
+    revealDays[goalID] = resource
+    return resource
+  }
+
+  /// The reveal's action: until it's saved, resume and Today bring the learner back to the plan.
+  func markPlanRevealed(goalID: String) async throws {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.markPlanRevealed(goalID: goalID, token: identity.bearerToken)
+    }
+
+    onboarding(goalID: goalID).invalidate()
   }
 
   func writeGoal(goalID: String) async throws -> String {
