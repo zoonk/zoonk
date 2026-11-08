@@ -3,7 +3,6 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { voiceAlphabetClips } from "../language/alphabet-lesson";
 import {
   publishAlphabetFixStep,
-  reviewAlphabetFixStep,
   reviewAlphabetLessonStep,
   writeAlphabetFixStep,
 } from "./steps/alphabet-review-steps";
@@ -49,7 +48,7 @@ export async function alphabetReviewWorkflow({
     return "replaced";
   }
 
-  const remaining = await reviewAlphabetFixStep({ ...context, lesson: fix.lesson });
+  const remaining = await reviewAlphabetLessonStep({ ...context, lesson: fix.lesson });
 
   if (!remaining) {
     return "replaced";
