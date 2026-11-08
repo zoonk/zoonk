@@ -52,11 +52,12 @@ async function writeLessons(lessonIds: string[]) {
   });
 }
 
-function noticeSubject(name: string, topic: string) {
+function noticeSubject(name: string, topic: string, shortName?: string) {
   return {
     citation: { passage: "Conteúdo programático", sourceId: "notice" },
     name,
     questions: 10,
+    shortName,
     topics: [topic],
     weight: null,
   };
@@ -80,7 +81,7 @@ async function examScheduledOutOfOrder() {
         mock: null,
         rules: [],
         subjects: [
-          noticeSubject("Língua Portuguesa", "Ortografia"),
+          noticeSubject("Língua Portuguesa", "Ortografia", "Português"),
           noticeSubject("Direito Constitucional", "Princípios"),
         ],
       },
@@ -231,7 +232,7 @@ describe("mind maps read from the saved plan", () => {
     ]);
   });
 
-  it("lists chapters as the syllabus numbers them, not as the plan schedules them", async () => {
+  it("lists chapters as the syllabus numbers them, grouped under their subject pages' names", async () => {
     const goal = await examScheduledOutOfOrder();
     const mindMaps = await readyMindMaps(goal.id);
 

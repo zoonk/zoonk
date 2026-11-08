@@ -82409,7 +82409,7 @@
               },
               "name": {
                 "type": "string",
-                "description": "Its short name"
+                "description": "Its name, as its subject page titles it"
               }
             },
             "required": [

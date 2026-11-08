@@ -61,7 +61,16 @@ export async function listGoalMindMaps(
     const view = toChapterMindMapView({ facts: chapter, now, position: number.position });
 
     return isListed(view)
-      ? [{ number, planPosition: chapter.position, view: { ...view, subject: number.subject } }]
+      ? [
+          {
+            number,
+            planPosition: chapter.position,
+            view: {
+              ...view,
+              subject: number.subject && { key: number.subject.key, name: number.subject.name },
+            },
+          },
+        ]
       : [];
   });
 

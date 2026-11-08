@@ -102,7 +102,7 @@ const goalMindMapSchema = chapterMindMapSchema
     subject: z
       .object({
         key: z.string().meta({ description: "The subject's key in the goal's syllabus" }),
-        name: z.string().meta({ description: "Its short name" }),
+        name: z.string().meta({ description: "Its name, as its subject page titles it" }),
       })
       .nullable()
       .meta({

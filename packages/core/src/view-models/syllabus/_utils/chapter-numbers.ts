@@ -7,7 +7,7 @@ import { readSyllabusInput } from "./read-syllabus-input";
 
 type ChapterNumber = {
   position: number;
-  subject: { key: string; name: string } | null;
+  subject: { key: string; name: string; shortName: string } | null;
   /**
    * Where the numbering that set `position` sits in the syllabus: a subject's place, as subject
    * pages are ordered, with the course after every subject; null when only the plan numbers it.
@@ -55,7 +55,7 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
               chapter.chapterId,
               {
                 position: chapter.position,
-                subject: { key: subject.key, name: subject.shortName },
+                subject: { key: subject.key, name: subject.name, shortName: subject.shortName },
                 syllabusOrder: subjectOrder,
               },
             ] as const,
