@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +25,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -214,14 +217,9 @@ internal fun PlayingLesson(
     val activation =
         Modifier
             .pointerInput(viewModel) {
-                awaitPointerEventScope {
-                    while (true) {
-                        awaitPointerEvent()
-                        viewModel.activate()
-                    }
-                }
+                detectTapGestures(onTap = { viewModel.activate() })
             }.onPreviewKeyEvent {
-                viewModel.activate()
+                if (it.type == KeyEventType.KeyDown) viewModel.activate()
                 false
             }
     Box(activation) {
