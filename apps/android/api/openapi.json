@@ -28301,6 +28301,16 @@
             "minimum": 5,
             "maximum": 1440
           },
+          "aim": {
+            "description": "Language goals only, ignored for others: the aim to answer for, as the plan change `setAim` would set it; the goal's own when absent. The time question asks once per aim in `languageAim.choices` to date each choice as picking it would",
+            "type": "string",
+            "enum": [
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
           "dailyMinutes": {
             "description": "The time a day asked about, as studyDays says; the goal's own when absent. With studyDays, the plan answers for this goal's share of it",
             "type": "integer",

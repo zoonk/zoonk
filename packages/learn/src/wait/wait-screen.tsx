@@ -3,20 +3,14 @@
 import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
-import { ArrowRightIcon } from "lucide-react";
+import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
+import { ArrowRightIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  type ReactNode,
-  type RefObject,
-  createContext,
-  use,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, type RefObject, createContext, use, useRef } from "react";
+import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import { type ReadyHoldControl } from "./use-ready-hold";
+import { type WaitView, useWaitView } from "./use-wait-view";
 import {
   WaitQuizCard,
   type WaitQuizRefs,
@@ -25,21 +19,15 @@ import {
   useWaitQuiz,
 } from "./wait-quiz";
 
-type WaitView = "progress" | "quiz";
-
-/** Marks the history entry the progress view pushed, so the browser's Back closes it. */
-const HISTORY_KEY = "zoonkWaitProgress";
-
 type WaitScreenValue = {
   /** The host shows the progress in its aside from 72rem, so there's nothing to switch there. */
   aside: boolean;
-  backToQuiz: () => void;
+  /** Every Back's action while the learner has the progress open; null otherwise. */
+  back: (() => void) | null;
   /** The column's content, whose first heading takes focus as the progress opens. */
   contentRef: RefObject<HTMLDivElement | null>;
   hold: ReadyHoldControl;
   nextRef: WaitQuizRefs["nextRef"];
-  /** The learner opened the progress from the quiz, so the way back is "Back to the quiz". */
-  opened: boolean;
   openProgress: () => void;
   playQuiz: () => void;
   questionRef: WaitQuizRefs["questionRef"];
@@ -67,131 +55,9 @@ export function useWaitScreen(): WaitScreenValue {
   return value;
 }
 
-function isOwnEntry(entryId: string): boolean {
-  const state: unknown = globalThis.history.state;
-
-  return (
-    typeof state === "object" &&
-    state !== null &&
-    HISTORY_KEY in state &&
-    state[HISTORY_KEY] === entryId
-  );
-}
-
-type FocusTarget = "progress" | "quiz";
-
-/** Opening the progress focuses its heading; going back focuses the strip, or the question where no strip is drawn. */
-function useViewFocus({ questionRef }: { questionRef: WaitQuizRefs["questionRef"] }) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const statusRef = useRef<HTMLButtonElement>(null);
-  const focusOn = useRef<FocusTarget | null>(null);
-
-  useEffect(() => {
-    const target = focusOn.current;
-    focusOn.current = null;
-
-    if (target === "progress") {
-      const content = contentRef.current;
-      (content?.querySelector<HTMLElement>("h1, h2") ?? content)?.focus();
-    } else if (target === "quiz") {
-      const status = statusRef.current;
-      (status?.checkVisibility() ? status : questionRef.current)?.focus();
-    }
-  });
-
-  /** Where focus goes once the next view is drawn. */
-  const focusNext = (target: FocusTarget) => {
-    focusOn.current = target;
-  };
-
-  return { contentRef, focusNext, statusRef };
-}
-
-/**
- * The quiz is the default view. A screen that first showed without a card stays on the progress when
- * one arrives, so the page never changes under the learner; its bar offers the quiz instead.
- */
-function useWaitView({
-  hasQuiz,
-  hold,
-  questionRef,
-}: {
-  hasQuiz: boolean;
-  hold: ReadyHoldControl;
-  questionRef: WaitQuizRefs["questionRef"];
-}) {
-  const entryId = useId();
-  const [chosen, setChosen] = useState<WaitView>(() => (hasQuiz ? "quiz" : "progress"));
-  const [opened, setOpened] = useState(false);
-  const [switched, setSwitched] = useState(false);
-  const { contentRef, focusNext, statusRef } = useViewFocus({ questionRef });
-  const view: WaitView = hasQuiz ? chosen : "progress";
-
-  const showQuiz = () => {
-    focusNext("quiz");
-    setChosen("quiz");
-    setSwitched(true);
-  };
-
-  useEffect(() => {
-    if (!opened || view !== "progress") {
-      return;
-    }
-
-    const close = () => {
-      if (!isOwnEntry(entryId)) {
-        focusNext("quiz");
-        setChosen("quiz");
-      }
-    };
-
-    globalThis.addEventListener("popstate", close);
-    return () => globalThis.removeEventListener("popstate", close);
-  }, [entryId, focusNext, opened, view]);
-
-  const openProgress = () => {
-    globalThis.history.pushState({ ...globalThis.history.state, [HISTORY_KEY]: entryId }, "");
-    focusNext("progress");
-    setChosen("progress");
-    setOpened(true);
-    setSwitched(true);
-    hold.engage();
-  };
-
-  const backToQuiz = () => {
-    if (isOwnEntry(entryId)) {
-      setSwitched(true);
-      globalThis.history.back();
-      return;
-    }
-
-    showQuiz();
-  };
-
-  const playQuiz = () => {
-    showQuiz();
-    hold.engage();
-  };
-
-  const release = () => {
-    if (isOwnEntry(entryId)) {
-      globalThis.history.back();
-    }
-
-    hold.release();
-  };
-
-  return {
-    backToQuiz,
-    contentRef,
-    openProgress,
-    opened,
-    playQuiz,
-    release,
-    statusRef,
-    switched,
-    view,
-  };
+/** While the learner has the progress open, every Back returns to the quiz; null outside a wait. */
+export function useWaitBack(): (() => void) | null {
+  return use(WaitScreenContext)?.back ?? null;
 }
 
 /**
@@ -225,7 +91,7 @@ export function WaitScreen({
     surface,
   });
 
-  const view = useWaitView({ hasQuiz: quiz !== null, hold, questionRef });
+  const view = useWaitView({ aside, hasQuiz: quiz !== null, hold, questionRef });
   const picked = typeof quiz?.pickedId === "string";
   const slotShown = Boolean(quiz) && (view.view === "progress" || picked);
 
@@ -235,9 +101,6 @@ export function WaitScreen({
     </WaitScreenContext>
   );
 }
-
-/** Wide hosts show the progress in their aside, so the strip that opens it isn't drawn there. */
-export const WAIT_NARROW_ONLY_CLASS = "min-[72rem]:hidden";
 
 /** The status strip and the quiz, or the progress, in the screen's column. */
 export function WaitContent({ progress, status }: { progress: ReactNode; status: ReactNode }) {
@@ -296,6 +159,16 @@ export function useWaitPlace(): WaitPlace {
 
 const SLOT_BUTTON_CLASS = "w-full lg:w-auto lg:min-w-40";
 
+function useBackToQuizText(): string {
+  const t = useExtracted();
+
+  return t({
+    description:
+      "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+    message: "Back to the quiz",
+  });
+}
+
 /**
  * The bar's one slot: what's ready when something is (`children`), otherwise the quiz's next card,
  * the way back to it, or the quiz once a card arrived.
@@ -309,7 +182,8 @@ export function WaitSlot({
   enterKey?: boolean;
 }) {
   const t = useExtracted();
-  const { backToQuiz, nextRef, opened, playQuiz, quiz, view } = useWaitScreen();
+  const backToQuiz = useBackToQuizText();
+  const { back, nextRef, playQuiz, quiz, view } = useWaitScreen();
   const answered = typeof quiz?.pickedId === "string";
   const hasNext = quiz ? quiz.hasNext : false;
   const nextShown = !children && view === "quiz" && answered && hasNext;
@@ -322,18 +196,9 @@ export function WaitSlot({
 
   if (view === "progress" && quiz) {
     return (
-      <Button
-        className={SLOT_BUTTON_CLASS}
-        onClick={opened ? backToQuiz : playQuiz}
-        size="lg"
-        variant="outline"
-      >
-        {opened
-          ? t({
-              description:
-                "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
-              message: "Back to the quiz",
-            })
+      <Button className={SLOT_BUTTON_CLASS} onClick={back ?? playQuiz} size="lg" variant="outline">
+        {back
+          ? backToQuiz
           : t({
               description:
                 "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
@@ -365,6 +230,31 @@ export function WaitSlot({
     >
       {t("Next guess")}
       <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
+    </Button>
+  );
+}
+
+/** A task's top bar: its way out (`children`), or, while the progress is open, the way back to the quiz. */
+export function WaitTopBarBack({ children }: { children: ReactNode }) {
+  const label = useBackToQuizText();
+  const back = useWaitBack();
+  const ref = useEscapeClick<HTMLButtonElement>({ enabled: back !== null });
+
+  if (!back) {
+    return children;
+  }
+
+  return (
+    <Button
+      aria-keyshortcuts="Escape"
+      aria-label={label}
+      className={cn("shrink-0", TASK_HEADER_ICON_CLASS.start)}
+      onClick={back}
+      ref={ref}
+      size="icon"
+      variant="ghost"
+    >
+      <ChevronLeftIcon aria-hidden="true" />
     </Button>
   );
 }

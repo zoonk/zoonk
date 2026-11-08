@@ -1,4 +1,5 @@
 import { dailyMinutesSchema } from "@zoonk/core/goals/contract";
+import { LANGUAGE_AIMS } from "@zoonk/core/language/aims";
 import { z } from "zod";
 
 /** Weekdays as plans count them: Sunday is 0, Saturday 6. */
@@ -27,6 +28,13 @@ export const planTimeToCoverInputSchema = z
 
 export const planTimeAdviceInputSchema = planTimeToCoverInputSchema
   .extend({
+    aim: z
+      .enum(LANGUAGE_AIMS)
+      .optional()
+      .meta({
+        description:
+          "Language goals only, ignored for others: the aim to answer for, as the plan change `setAim` would set it; the goal's own when absent. The time question asks once per aim in `languageAim.choices` to date each choice as picking it would",
+      }),
     dailyMinutes: dailyMinutesSchema
       .optional()
       .meta({

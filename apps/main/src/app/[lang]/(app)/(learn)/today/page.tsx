@@ -189,7 +189,7 @@ async function TodayContent() {
 
 async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
   // A goal left halfway through its questions has no plan coming until they're answered, and a
-  // plan is shown once before its first day.
+  // made plan is shown once before its first day.
   const left = await readOnboardingLeft(goal.id);
 
   if (left) {

@@ -3,9 +3,13 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { setUpPlanInSteps } from "./_test-utils/set-up-plan";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
+import { getGoalPlan } from "./get-goal-plan";
+import { getPlanTimeAdvice } from "./get-time-advice";
+import { previewPlanChange } from "./preview-plan-change";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 /** New language plans stop at their aim; plans laid out before that rule have no setting. */
@@ -39,6 +43,13 @@ async function setup(details: Record<string, unknown>, settings: Record<string, 
 
   const [trip, everyday, work, fluent] = library.graph.skills.map((skill) => skill.skillId);
   return { goal, plan, skills: { everyday, fluent, trip, work } };
+}
+
+const WEEK = { dailyMinutes: 20, studyDays: [1, 2, 3, 4, 5] };
+
+async function adviceEnd(goalId: string, aim?: "B1" | "C1"): Promise<string | null> {
+  const result = await getPlanTimeAdvice({ goalId, input: { ...WEEK, aim } });
+  return result.status === "ready" ? result.advice.endDate : null;
 }
 
 async function plannedSkills(planId: string): Promise<Set<string | null>> {
@@ -116,6 +127,43 @@ describe("a language goal's aim", () => {
     });
 
     await expect(plannedSkills(plan.id)).resolves.not.toContain(skills.fluent);
+  });
+
+  it("dates each aim on the time question as the time question dates it once that aim is picked", async () => {
+    const { goal } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
+    await setUpPlanInSteps(goal.id);
+    const [b1, c1] = await Promise.all([adviceEnd(goal.id, "B1"), adviceEnd(goal.id, "C1")]);
+
+    expect(b1).not.toBeNull();
+    expect(c1).not.toBe(b1);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ aim: "C1", kind: "setAim" }] },
+    });
+
+    await expect(adviceEnd(goal.id)).resolves.toBe(c1);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ aim: "B1", kind: "setAim" }] },
+    });
+
+    await expect(adviceEnd(goal.id)).resolves.toBe(b1);
+  });
+
+  it("previews each aim's end as the plan ends once that aim is applied", async () => {
+    const { goal } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
+    const input = { operations: [{ aim: "C1" as const, kind: "setAim" as const }] };
+    const preview = await previewPlanChange({ goalId: goal.id, input });
+    const end = preview.status === "ready" ? preview.preview.effect?.endDateAfter : undefined;
+
+    expect(end).toStrictEqual(expect.any(String));
+
+    await changeGoalPlan({ goalId: goal.id, input });
+    const plan = await getGoalPlan(goal.id);
+
+    expect(plan.status === "ready" ? plan.plan.estimate.endDate : null).toBe(end);
   });
 
   it("refuses an aim for a goal that isn't a language", async () => {

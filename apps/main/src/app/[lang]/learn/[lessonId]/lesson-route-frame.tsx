@@ -15,12 +15,31 @@ import {
   getTaskAsideRootProps,
 } from "@zoonk/learn/task-layout";
 import { useFormatDuration } from "@zoonk/learn/time-format";
+import { WaitTopBarBack } from "@zoonk/learn/wait";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 type LessonAbout = { description: string; estimatedMinutes?: number; title: string };
+
+function LessonExit({ href }: { href: string }) {
+  const t = useExtracted();
+
+  return (
+    <Link
+      className={cn(
+        buttonVariants({ size: "icon", variant: "ghost" }),
+        "shrink-0",
+        TASK_HEADER_ICON_CLASS.start,
+      )}
+      href={href}
+    >
+      <XIcon aria-hidden="true" />
+      <span className="sr-only">{t("Back")}</span>
+    </Link>
+  );
+}
 
 export function LessonRouteFrame({
   children,
@@ -48,17 +67,9 @@ export function LessonRouteFrame({
       <TaskHeader className="bg-background sticky top-0">
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
-            <Link
-              className={cn(
-                buttonVariants({ size: "icon", variant: "ghost" }),
-                "shrink-0",
-                TASK_HEADER_ICON_CLASS.start,
-              )}
-              href={exitHref}
-            >
-              <XIcon aria-hidden="true" />
-              <span className="sr-only">{t("Back")}</span>
-            </Link>
+            <WaitTopBarBack>
+              <LessonExit href={exitHref} />
+            </WaitTopBarBack>
           </TaskHeaderSide>
 
           <TaskHeaderTitle title={lesson.title} />
