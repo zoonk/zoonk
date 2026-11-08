@@ -323,33 +323,6 @@ describe(getTodayStudySession, () => {
     expect(result.session.week.days.find((day) => day.isToday)?.goalMinutes).toBe(180);
   });
 
-  it("fits the learner's daily limit", async () => {
-    const user = await userFixture();
-    const { goal } = await sessionGoalFixture({ userId: user.id });
-
-    await Promise.all([
-      learningProfileFixture({ dailyLimitMinutes: 10, userId: user.id }),
-      dailyProgressFixtureMany([
-        { date: SESSION_TODAY, timeSpentSeconds: 9 * 60, userId: user.id },
-      ]),
-    ]);
-
-    mockSession(user.id);
-    const result = await getTodayStudySession({ goalId: goal.id });
-
-    expect(result.status === "ready" && result.session.blocks).toStrictEqual([]);
-
-    expect(result.status === "ready" && result.session.dailyLimit).toMatchObject({
-      limitMinutes: 10,
-      remainingMinutes: 1,
-    });
-
-    expect(result.status === "ready" && result.session.extraTime).toMatchObject({
-      available: false,
-      reason: "dailyLimit",
-    });
-  });
-
   it("keeps reviews and fixes free once a free exam plan's first week is over", async () => {
     const user = await userFixture();
 

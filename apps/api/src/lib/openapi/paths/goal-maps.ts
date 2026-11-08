@@ -85,7 +85,7 @@ export const goalMapPaths = {
   "/goals/{goalId}/refresh-practice": {
     post: {
       description:
-        "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: about ten minutes, as many a day as the learner asks for, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
+        "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: about ten minutes, as many a day as the learner asks for, with capped Brain Power. Tapping again returns the same unfinished block.",
       operationId: "createRefreshPractice",
       requestBody: { content: { "application/json": { schema: studySessionTimeZoneInputSchema } } },
       requestParams: { path: goalPathParamsSchema },
@@ -97,7 +97,7 @@ export const goalMapPaths = {
         ...readErrors,
         "409": {
           ...conflictResponse,
-          description: `The goal is paused or finished (${studySessionErrorCodes.goalNotActive}), or no more bonus time today, including the daily time limit (${studySessionErrorCodes.extraTimeUnavailable}, details.reason says why).`,
+          description: `The goal is paused or finished (${studySessionErrorCodes.goalNotActive}), or no more bonus time today (${studySessionErrorCodes.extraTimeUnavailable}, details.reason says why).`,
         },
         "422": {
           ...unprocessableEntityResponse,

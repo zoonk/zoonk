@@ -35,11 +35,6 @@ export function ChapterMistakes() {
 
       <div className="empty:hidden in-data-[list=panel]:px-4 [&:has(>*)]:pb-3">
         <PracticeOutcomeMessage
-          dailyLimit={t({
-            description: "The daily time limit is a setting that stops study for the day.",
-            message:
-              "You've reached your daily time limit. Tomorrow's session picks this chapter up.",
-          })}
           nothingToPractice={t("Nothing to practice in this chapter yet.")}
           outcome={outcome}
         />

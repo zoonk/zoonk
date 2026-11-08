@@ -128,7 +128,6 @@ const CANONICAL_OPERATIONS = [
     path: "/steps/{stepId}/answer-explanations",
   },
   { method: "get", operationId: "getCurrentUserAllowance", path: "/me/allowance" },
-  { method: "get", operationId: "getCurrentUserDailyTimeLimit", path: "/me/daily-time-limit" },
   { method: "get", operationId: "getCurrentUserLearningProfile", path: "/me/learning-profile" },
   {
     method: "patch",

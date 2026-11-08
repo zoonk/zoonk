@@ -35,11 +35,6 @@ msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "正解"
 
-#: src/_components/change-limit-link.tsx
-msgctxt "oeCtXD"
-msgid "Change limit"
-msgstr "上限を変更する"
-
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/certificates/certificates-screen.tsx
@@ -531,17 +526,6 @@ msgstr "このステップを開けませんでした。もう一度お試しく
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "戻る"
-
-#: src/_components/study-time-used-up.tsx
-#: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "「今日」に戻る"
 
 #: src/_components/suggestion.tsx
 msgctxt "FgydNe"
@@ -1041,29 +1025,6 @@ msgstr "変更する"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "相棒を選ぶ"
-
-#: src/appearance/daily-limit-setting.tsx
-msgctxt "guPgnw"
-msgid "Stop for the day after this much study."
-msgstr "設定した時間に達したら、その日の学習を終えます。"
-
-#: src/appearance/daily-limit-setting.tsx
-msgctxt "JzvSPP"
-msgid "Daily time limit"
-msgstr "1日の学習時間の上限"
-
-#: src/appearance/daily-limit-setting.tsx
-msgctxt "PfW4AI"
-msgid "No limit"
-msgstr "制限なし"
-
-#: src/appearance/daily-limit-setting.tsx
-#: src/journey/pace-details.tsx
-#: src/onboarding/steps/reveal-body.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "aefUZL"
-msgid "{time} a day"
-msgstr "1日{time}"
 
 #: src/appearance/language-setting.tsx
 msgctxt "V1yMTL"
@@ -2293,6 +2254,16 @@ msgid "Your plan can't make room for this {duration} mock exam on {date}. It sta
 msgstr "この{duration}の模試は、{date}の学習計画に入りきりません。日程はそのままです。"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+#: src/session/session-header.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "「今日」に戻る"
+
+#: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
@@ -2353,36 +2324,6 @@ msgctxt "eNbJHf"
 msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, other {#個のトピック}}"
 
-#. The daily time limit is a setting that stops study for the day.
-#: src/challenge/challenge-used-up.tsx
-msgctxt "n_NkaB"
-msgid "You've reached your daily time limit. The challenge will be in your next session."
-msgstr "今日の学習時間の上限に達しました。次の学習でチャレンジに取り組めます。"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/challenge/challenge-used-up.tsx
-msgctxt "7KZiEr"
-msgid "You've reached your daily time limit. The challenge will be here tomorrow."
-msgstr "今日の学習時間の上限に達しました。チャレンジには明日取り組めます。"
-
-#. The daily time limit is a setting that stops study for the day. {day} is a weekday, like "Monday".
-#: src/challenge/challenge-used-up.tsx
-msgctxt "n9OwoN"
-msgid "You've reached your daily time limit. The challenge will be here on {day}."
-msgstr "今日の学習時間の上限に達しました。チャレンジには{day}に取り組めます。"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/challenge/challenge-used-up.tsx
-msgctxt "Cc_lvA"
-msgid "You've reached your daily time limit. Move the challenge to Monday to keep it."
-msgstr "今日の学習時間の上限に達しました。チャレンジを逃さないよう、月曜日に移してください。"
-
-#. The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week.
-#: src/challenge/challenge-used-up.tsx
-msgctxt "1WWfWS"
-msgid "You've reached your daily time limit. You'll miss this week's challenge."
-msgstr "今日の学習時間の上限に達しました。今週のチャレンジには参加できません。"
-
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/today/today-lessons-card.tsx
@@ -2420,12 +2361,6 @@ msgstr "学習計画"
 msgctxt "EwFu5D"
 msgid "Practice this chapter"
 msgstr "この章を練習する"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/chapter/chapter-mistakes.tsx
-msgctxt "bpvVQy"
-msgid "You've reached your daily time limit. Tomorrow's session picks this chapter up."
-msgstr "1日の学習時間の上限に達しました。明日の学習では、この章の続きから始めます。"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "AH7TuQ"
@@ -3296,12 +3231,6 @@ msgstr "いったん中断しますか？"
 msgctxt "8injUu"
 msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/essay/essay-status-line.tsx
-msgctxt "yDPN7m"
-msgid "You've reached your daily time limit. Your text stays here."
-msgstr "1日の学習時間の上限に達しました。書いた内容はここに残ります。"
 
 #: src/essay/essay-status-line.tsx
 msgctxt "Vl53xq"
@@ -4939,6 +4868,13 @@ msgid "Too tight"
 msgstr "詰め込みすぎ"
 
 #: src/journey/pace-details.tsx
+#: src/onboarding/steps/reveal-body.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "aefUZL"
+msgid "{time} a day"
+msgstr "1日{time}"
+
+#: src/journey/pace-details.tsx
 msgctxt "dPX7wH"
 msgid "On pace"
 msgstr "順調"
@@ -5447,12 +5383,6 @@ msgstr "ミュートする"
 msgctxt "3JVa6k"
 msgid "End"
 msgstr "終了"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/language/conversation/call-intro-footer.tsx
-msgctxt "HYCGBs"
-msgid "You've reached your daily time limit. You can make this call in your next session."
-msgstr "1日の学習時間の上限に達しました。この会話は次回の学習でできます。"
 
 #: src/language/conversation/call-intro-footer.tsx
 msgctxt "RMqmiK"
@@ -13774,33 +13704,6 @@ msgstr "準備ができると、ここに自動で表示されます。"
 msgctxt "OX1Nok"
 msgid "Adjust your plan to keep going."
 msgstr "学習を続けるには、計画を調整してください。"
-
-#: src/today/today-day-status.tsx
-msgctxt "qtZtWG"
-msgid "See you in your next session!"
-msgstr "また次の学習でお会いしましょう！"
-
-#: src/today/today-day-status.tsx
-msgctxt "gWPikA"
-msgid "See you tomorrow!"
-msgstr "また明日お会いしましょう！"
-
-#: src/today/today-day-status.tsx
-msgctxt "L6jXw1"
-msgid "See you {day}!"
-msgstr "また{day}にお会いしましょう！"
-
-#. The daily time limit is a setting that stops study for the day.
-#: src/today/today-day-status.tsx
-msgctxt "wuaEUY"
-msgid "You've reached your daily time limit of {time}."
-msgstr "1日の学習時間の上限（{time}）に達しました。"
-
-#. The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today.
-#: src/today/today-day-status.tsx
-msgctxt "Ta4Ml6"
-msgid "Today stops at your daily time limit of {time}."
-msgstr "今日の学習は、1日の学習時間の上限（{time}）で終了します。"
 
 #: src/today/today-day-status.tsx
 msgctxt "FyQP44"

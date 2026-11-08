@@ -515,27 +515,6 @@ describe("today's session the learner was shown", () => {
     },
   );
 
-  it("asks for no lessons past the learner's daily time limit", async () => {
-    const { goal } = await setupDayWithStandIn({ laterLessons: 0, outlineStatus: "completed" });
-    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
-    const planned = before.status === "ready" ? before.today.session.minutes.planned : 0;
-
-    expect(before.status === "ready" && before.today.session.lessonsToPrepare).toBe(true);
-
-    await prisma.userLearningProfile.update({
-      data: { dailyLimitMinutes: planned },
-      where: { userId: goal.userId },
-    });
-
-    const capped = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
-
-    expect(capped.status === "ready" && capped.today.session).toMatchObject({
-      lessonsComing: false,
-      lessonsToPrepare: false,
-      minutes: { planned },
-    });
-  });
-
   it("asks for a practice-only day's lessons nobody is outlining, and says they're coming once asked", async () => {
     const { goal } = await setupPlacedDay();
     const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });

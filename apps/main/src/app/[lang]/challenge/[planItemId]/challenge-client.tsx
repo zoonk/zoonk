@@ -106,7 +106,6 @@ export function ChallengeClient({
       // None of these is worth retrying: the intro, read again, says where it stands.
       if (
         started === "notToday" ||
-        started === "dailyLimitReached" ||
         (started && typeof started === "object" && "status" in started)
       ) {
         startRereading(() => router.refresh());

@@ -1,18 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
-import {
-  SESSION_NOW,
-  SESSION_TODAY,
-  daysAgo,
-  sessionGoalFixture,
-} from "./_test-utils/session-goal";
+import { SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-goal";
 import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { readBlockPayload } from "./block-payload";
 
@@ -195,30 +188,5 @@ describe(addAreaPracticeBlock, () => {
     await expect(
       addAreaPracticeBlock({ goalId: goal.id, input: { areaId: "not-an-area", timeZone: "UTC" } }),
     ).resolves.toStrictEqual({ status: "notFound" });
-  });
-
-  it("fits the learner's daily limit, and adds nothing once too little of it is left", async () => {
-    const { chapters, goal, user } = await setup();
-    const input = { areaId: chapters[0]?.id ?? "", timeZone: "UTC" };
-
-    await Promise.all([
-      learningProfileFixture({ dailyLimitMinutes: 10, userId: user.id }),
-      dailyProgressFixtureMany([
-        { date: SESSION_TODAY, timeSpentSeconds: 7 * 60, userId: user.id },
-      ]),
-    ]);
-
-    const fitted = await addAreaPracticeBlock({ goalId: goal.id, input });
-
-    expect(fitted).toMatchObject({ block: { estimatedMinutes: 3, questions: 2 }, status: "ready" });
-
-    await prisma.dailyProgress.updateMany({
-      data: { timeSpentSeconds: 9 * 60 },
-      where: { userId: user.id },
-    });
-
-    await expect(
-      addAreaPracticeBlock({ goalId: goal.id, input: { ...input, areaId: chapters[1]?.id ?? "" } }),
-    ).resolves.toStrictEqual({ reason: "dailyLimit", status: "unavailable" });
   });
 });

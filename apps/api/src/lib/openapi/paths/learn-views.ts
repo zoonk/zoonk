@@ -19,7 +19,7 @@ export const learnViewPaths = {
   "/goals/{goalId}/area-practice": {
     post: {
       description:
-        "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: about ten minutes, as many a day as the learner asks for, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
+        "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: about ten minutes, as many a day as the learner asks for, with capped Brain Power. Tapping again returns the unfinished block.",
       operationId: "createAreaPractice",
       requestBody: { content: { "application/json": { schema: areaPracticeInputSchema } } },
       requestParams: { path: goalPathParamsSchema },
@@ -33,7 +33,7 @@ export const learnViewPaths = {
         "404": { ...notFoundResponse, description: "The goal or the area doesn't exist" },
         "409": {
           ...conflictResponse,
-          description: `The goal is paused or finished (${studySessionErrorCodes.goalNotActive}), or no more bonus time today, including the daily time limit (${studySessionErrorCodes.extraTimeUnavailable}, details.reason says why).`,
+          description: `The goal is paused or finished (${studySessionErrorCodes.goalNotActive}), or no more bonus time today (${studySessionErrorCodes.extraTimeUnavailable}, details.reason says why).`,
         },
         "422": {
           ...unprocessableEntityResponse,

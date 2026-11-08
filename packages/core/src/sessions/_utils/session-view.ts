@@ -5,7 +5,6 @@ import { type CapsuleFormat } from "../capsules";
 import { type DayBlockScreen } from "../day-block";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
-import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission } from "../missions";
 import { toDayBlockView } from "./day-block-view";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
@@ -92,7 +91,6 @@ export type StudySessionView = {
   catchUp: CatchUpView | null;
   /** Includes an unfinished session from before midnight; earlier days cannot open more work. */
   current: boolean;
-  dailyLimit: DailyTimeLimitStatus | null;
   dayEndsAt: number;
   /** Null with blocks or no study time; lessonsComing fills automatically, lessonsToPrepare waits for the learner to ask for them, and nothingNew offers alternatives. */
   emptyDay: EmptyDay | null;

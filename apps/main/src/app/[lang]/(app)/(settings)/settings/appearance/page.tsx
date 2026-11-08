@@ -20,11 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t("Choose your buddy, sounds, a daily time limit and the app's language."),
+    description: t("Preferences"),
     robots: { follow: false, index: false },
     title: t({
       description:
-        "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+        "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",
       message: "Preferences",
     }),
   };
@@ -54,7 +54,6 @@ async function AppearanceContent() {
         availableGlasses: profile?.availableGlasses ?? [buddy.glasses],
         buddy,
         canPersonalize: profile !== null,
-        dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
         look: {
           beltColor: buddy.beltColor,
           energy: buddy.energy,
@@ -101,7 +100,7 @@ export default async function AppearancePage() {
         description={t("Your buddy, lessons and language, the way you like them.")}
         title={t({
           description:
-            "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+            "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",
           message: "Preferences",
         })}
       />

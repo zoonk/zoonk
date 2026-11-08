@@ -102,10 +102,7 @@ export async function readSavedDayView({
       ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
       : null,
     emptyDay: null,
-    extraTime: getExtraTime({
-      blocks: refill.blocks,
-      remainingLimitMinutes: view.dailyLimit?.remainingMinutes ?? null,
-    }),
+    extraTime: getExtraTime({ blocks: refill.blocks }),
     minutes: {
       ...view.minutes,
       planned: refill.blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),

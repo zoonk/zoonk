@@ -42,26 +42,14 @@ export const extraTimeSchema = z
       }),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["dailyLimit", "nothingToStudy", "plusRequired", "sessionNotFinished"])
+      .enum(["nothingToStudy", "plusRequired", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+          "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });
-
-const dailyLimitSchema = z
-  .object({
-    limitMinutes: z.number().int().min(0).nullable(),
-    reached: z.boolean(),
-    remainingMinutes: z.number().int().min(0).nullable(),
-    usedMinutes: z.number().int().min(0),
-  })
-  .meta({
-    description: "The learner's own daily time limit, when they set one",
-    id: "DailyTimeLimit",
-  });
 
 export const studySessionResponseSchema = z
   .object({
@@ -74,7 +62,6 @@ export const studySessionResponseSchema = z
         description:
           "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's",
       }),
-    dailyLimit: dailyLimitSchema.nullable(),
     dayEndsAt: z
       .number()
       .int()

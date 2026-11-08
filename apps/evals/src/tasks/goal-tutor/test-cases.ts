@@ -2214,12 +2214,7 @@ export const TEST_CASES: GoalTutorCase[] = [
         link: { kind: "page", page: "settings" },
         memory: { enabled: true, link: { kind: "page", page: "memory" } },
         plan: { link: { kind: "page", page: "subscription" }, tier: "free" },
-        preferences: {
-          buddyName: null,
-          dailyLimitMinutes: null,
-          link: { kind: "page", page: "appearance" },
-          sounds: true,
-        },
+        preferences: { buddyName: null, link: { kind: "page", page: "appearance" }, sounds: true },
         status: "found",
         what: "account",
       },

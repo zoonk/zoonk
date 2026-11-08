@@ -294,7 +294,6 @@ describe("the learner's data the buddy looks up", () => {
         activeGoalId: goal.id,
         buddyKind: "noodle",
         buddyName: "Pip",
-        dailyLimitMinutes: 45,
         memoryEnabled: false,
         soundsEnabled: false,
         userId: user.id,
@@ -315,12 +314,7 @@ describe("the learner's data the buddy looks up", () => {
       link: { kind: "page", page: "settings" },
       memory: { enabled: false, link: { kind: "page", page: "memory" } },
       plan: { link: { kind: "page", page: "subscription" }, tier: "plus" },
-      preferences: {
-        buddyName: "Pip",
-        dailyLimitMinutes: 45,
-        link: { kind: "page", page: "appearance" },
-        sounds: false,
-      },
+      preferences: { buddyName: "Pip", link: { kind: "page", page: "appearance" }, sounds: false },
       status: "found",
       what: "account",
     });
@@ -332,7 +326,7 @@ describe("the learner's data the buddy looks up", () => {
       link: { kind: "page", page: "settings" },
       memory: { enabled: true },
       plan: { link: { kind: "page", page: "subscription" }, tier: "free" },
-      preferences: { buddyName: null, dailyLimitMinutes: null, sounds: true },
+      preferences: { buddyName: null, sounds: true },
     });
   });
 

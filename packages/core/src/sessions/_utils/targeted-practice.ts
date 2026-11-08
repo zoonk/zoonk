@@ -5,7 +5,6 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readBlockPayload } from "../block-payload";
 import { ensureStudySession } from "../ensure-study-session";
 import { type ExtraTimeReason, getExtraTime } from "../extra-time";
-import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
 import {
   appendExtraBlocks,
   buildExtraLessons,
@@ -68,13 +67,11 @@ function findUnfinishedBlock({
 }
 
 async function addToLockedSession({
-  remainingLimitMinutes,
   session,
   target,
   transaction,
   userId,
 }: {
-  remainingLimitMinutes: number | null;
   session: StudySessionRow;
   target: PracticeTarget;
   transaction: TransactionClient;
@@ -92,7 +89,7 @@ async function addToLockedSession({
     };
   }
 
-  const extraTime = getExtraTime({ anytime: true, blocks: session.blocks, remainingLimitMinutes });
+  const extraTime = getExtraTime({ anytime: true, blocks: session.blocks });
 
   if (!extraTime.available) {
     return { reason: extraTime.reason, status: "unavailable" };
@@ -126,7 +123,7 @@ async function addToLockedSession({
   };
 }
 
-/** May precede session completion but obeys the daily limit and reward caps; concurrent taps reuse the same target block. */
+/** May precede session completion but obeys reward caps; concurrent taps reuse the same target block. */
 export async function addTargetedPracticeBlock({
   goal,
   target,
@@ -140,25 +137,16 @@ export async function addTargetedPracticeBlock({
 }): Promise<TargetedPracticeResult> {
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
 
-  const [session, limit] = await Promise.all([
-    ensureStudySession({
-      goal,
-      localDate: getDateInTimeZone({ date: new Date(), timeZone }),
-      timeZone,
-      userId,
-    }),
-    getDailyTimeLimitStatus(),
-  ]);
+  const session = await ensureStudySession({
+    goal,
+    localDate: getDateInTimeZone({ date: new Date(), timeZone }),
+    timeZone,
+    userId,
+  });
 
   return withSessionAppendLock({
     run: ({ session: locked, transaction }) =>
-      addToLockedSession({
-        remainingLimitMinutes: limit?.remainingMinutes ?? null,
-        session: locked,
-        target,
-        transaction,
-        userId,
-      }),
+      addToLockedSession({ session: locked, target, transaction, userId }),
     session,
   });
 }

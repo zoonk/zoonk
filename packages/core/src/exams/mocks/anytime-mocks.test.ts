@@ -1,8 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -765,24 +763,6 @@ describe("repeating mocks", () => {
     );
 
     await expect(readMock(second)).resolves.toMatchObject({ questions: 8, reusedQuestions: 8 });
-  });
-
-  it("takes one whenever the learner wants, past the day's study time and as many times as they like", async () => {
-    const { goal, user } = await anytimeSetup();
-
-    await Promise.all([
-      learningProfileFixture({ dailyLimitMinutes: 10, userId: user.id }),
-      dailyProgressFixtureMany([
-        { date: new Date("2026-09-30T00:00:00Z"), timeSpentSeconds: 1200, userId: user.id },
-      ]),
-      useEveryMockWriteToday(user.id),
-    ]);
-
-    await takeMath(goal.id);
-    await takeMath(goal.id);
-    const third = await startMath(goal.id);
-
-    await expect(readMock(third)).resolves.toMatchObject({ reusedQuestions: 8, status: "running" });
   });
 });
 

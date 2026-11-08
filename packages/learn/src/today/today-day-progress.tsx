@@ -82,7 +82,7 @@ export function DayTime({ className }: { className?: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { today } = useTodayScreen();
-  const { done, limitReached, waiting } = useSessionState();
+  const { done, waiting } = useSessionState();
   const studied = useStudiedToday();
   const left = getMinutesLeft(today.session.blocks);
 
@@ -90,7 +90,7 @@ export function DayTime({ className }: { className?: string }) {
     return null;
   }
 
-  if (done || limitReached) {
+  if (done) {
     return studied > 0 ? (
       <BigQuantity className={className}>
         {t("{time} studied", { time: formatDuration(studied) })}

@@ -36,11 +36,7 @@ async function setup(spent: number, open = true, startDate = "2020-09-28") {
     userId: user.id,
   });
 
-  await learningProfileFixture({
-    activeGoalId: goal.id,
-    dailyLimitMinutes: spent > 0 ? 30 : null,
-    userId: user.id,
-  });
+  await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
   if (spent > 0) {
     await prisma.dailyProgress.create({
@@ -116,7 +112,7 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
           after.blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),
         );
 
-        expect(after.plannedMinutes).toBeLessThanOrEqual(spent > 0 ? 30 - spent : 30);
+        expect(after.plannedMinutes).toBeLessThanOrEqual(30);
         expect(after.missions).toStrictEqual(original.missions);
 
         expect(after.blocks.map((block) => block.position)).toStrictEqual(

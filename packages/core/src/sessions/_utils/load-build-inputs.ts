@@ -312,7 +312,6 @@ export async function loadSessionBuildInput(
     }),
     produce,
     reinforcement: boss.reinforcement,
-    remainingLimitMinutes: plan.limit.remainingMinutes,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay?.key ?? null,
     topics: getPlanTopics(plan.graph),

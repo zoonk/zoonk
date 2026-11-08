@@ -66,7 +66,7 @@ export const examPaths = {
         ...commonErrors,
         "403": {
           ...forbiddenResponse,
-          description: `Today's time limit is reached (${studySessionErrorCodes.dailyLimitReached}), or a guest must create an account because the AI budget all guests share today is spent (${LESSON_PLAYER_ERROR_CODES.signUpRequired}).`,
+          description: `A guest must create an account because the AI budget all guests share today is spent (${LESSON_PLAYER_ERROR_CODES.signUpRequired}).`,
         },
         "409": {
           ...conflictResponse,

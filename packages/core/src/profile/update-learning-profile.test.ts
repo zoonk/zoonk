@@ -8,7 +8,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
-import { DAILY_TIME_CHOICES } from "../plans/daily-minutes";
 import { getLearningProfile } from "./get-learning-profile";
 import { updateLearningProfile } from "./update-learning-profile";
 
@@ -17,8 +16,6 @@ async function useLearner() {
   mockSession(user.id);
   return user;
 }
-
-const INVALID_DAILY_LIMIT = 32_768;
 
 async function planInputs(userId: string) {
   const plans = await prisma.plan.findMany({
@@ -66,7 +63,7 @@ async function waitForBlockedBy(holderPID: number) {
   });
 }
 
-async function saveDuringConcurrentLimitChange({
+async function saveDuringConcurrentSoundChange({
   input,
   userId,
 }: {
@@ -78,7 +75,7 @@ async function saveDuringConcurrentLimitChange({
 
   const first = prisma.$transaction(async (tx) => {
     await markLearnerChanged(tx, { userId });
-    await tx.userLearningProfile.update({ data: { dailyLimitMinutes: 60 }, where: { userId } });
+    await tx.userLearningProfile.update({ data: { soundsEnabled: true }, where: { userId } });
     const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
 
     locked.resolve(backend?.pid ?? 0);
@@ -129,7 +126,6 @@ describe(updateLearningProfile, () => {
         updateLearningProfile({
           activeGoalId: goal.id,
           buddy: { kind: "otto" },
-          dailyLimitMinutes: 30,
           soundsEnabled: false,
         }),
       ).resolves.toMatchObject({ status: "updated" });
@@ -144,14 +140,9 @@ describe(updateLearningProfile, () => {
 
   it("marks cosmetic changes without marking unchanged plan inputs, and rolls back repeated saves", async () => {
     const { user } = await plannedLearner();
-    await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
+    await learningProfileFixture({ userId: user.id });
 
-    const input = {
-      activeGoalId: null,
-      buddy: { kind: "otto" as const },
-      dailyLimitMinutes: 30,
-      soundsEnabled: false,
-    };
+    const input = { activeGoalId: null, buddy: { kind: "otto" as const }, soundsEnabled: false };
 
     await updateLearningProfile(input);
     await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
@@ -174,12 +165,7 @@ describe(updateLearningProfile, () => {
     const { user } = await plannedLearner();
 
     await expect(
-      updateLearningProfile({
-        activeGoalId: null,
-        buddy: null,
-        dailyLimitMinutes: null,
-        soundsEnabled: true,
-      }),
+      updateLearningProfile({ activeGoalId: null, buddy: null, soundsEnabled: true }),
     ).resolves.toMatchObject({ status: "updated" });
 
     await expect(
@@ -190,47 +176,14 @@ describe(updateLearningProfile, () => {
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
-  it("keeps clearing the active goal and daily limit out of plan inputs", async () => {
-    const { goals, user } = await plannedLearner();
-    const goal = goals[0];
-
-    if (!goal) {
-      throw new Error("Missing owned goal");
-    }
-
-    await learningProfileFixture({ activeGoalId: goal.id, dailyLimitMinutes: 30, userId: user.id });
-    await updateLearningProfile({ activeGoalId: null, dailyLimitMinutes: null });
-    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
-  });
-
-  it("rolls back the plan marks when PostgreSQL rejects the profile write", async () => {
-    const { user } = await plannedLearner();
-    await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
-
-    await expect(
-      updateLearningProfile({ dailyLimitMinutes: INVALID_DAILY_LIMIT }),
-    ).rejects.toThrow();
-
-    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
-
-    await expect(
-      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ dailyLimitMinutes: 30 });
-
-    expect(revalidateTag).not.toHaveBeenCalled();
-  });
-
-  it.each([
-    { dailyLimitMinutes: 30, expectedPlanVersion: 0 },
-    { dailyLimitMinutes: 60, expectedPlanVersion: 0 },
-  ])(
-    "rechecks profile inputs after admission: $dailyLimitMinutes",
-    async ({ dailyLimitMinutes, expectedPlanVersion }) => {
+  it.each([{ expectedPlanVersion: 0 }])(
+    "rechecks profile inputs after admission",
+    async ({ expectedPlanVersion }) => {
       const { user } = await plannedLearner();
-      await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
+      await learningProfileFixture({ userId: user.id });
 
-      await saveDuringConcurrentLimitChange({
-        input: { buddy: { kind: "otto" }, dailyLimitMinutes },
+      await saveDuringConcurrentSoundChange({
+        input: { buddy: { kind: "otto" }, soundsEnabled: true },
         userId: user.id,
       });
 
@@ -241,7 +194,7 @@ describe(updateLearningProfile, () => {
 
       await expect(
         prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-      ).resolves.toMatchObject({ buddyKind: "otto", dailyLimitMinutes });
+      ).resolves.toMatchObject({ buddyKind: "otto", soundsEnabled: true });
 
       expect(revalidateTag).toHaveBeenCalledOnce();
     },
@@ -249,9 +202,9 @@ describe(updateLearningProfile, () => {
 
   it("rolls back admission when a concurrent save already applied the requested change", async () => {
     const { user } = await plannedLearner();
-    await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
+    await learningProfileFixture({ userId: user.id });
 
-    await saveDuringConcurrentLimitChange({ input: { dailyLimitMinutes: 60 }, userId: user.id });
+    await saveDuringConcurrentSoundChange({ input: { soundsEnabled: true }, userId: user.id });
 
     await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
     expect(revalidateTag).not.toHaveBeenCalled();
@@ -259,11 +212,11 @@ describe(updateLearningProfile, () => {
 
   it("serializes concurrent identical profile saves without changing plans", async () => {
     const { user } = await plannedLearner();
-    await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
+    await learningProfileFixture({ soundsEnabled: false, userId: user.id });
 
     await Promise.all([
-      updateLearningProfile({ dailyLimitMinutes: 60 }),
-      updateLearningProfile({ dailyLimitMinutes: 60 }),
+      updateLearningProfile({ soundsEnabled: true }),
+      updateLearningProfile({ soundsEnabled: true }),
     ]);
 
     await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
@@ -277,8 +230,6 @@ describe(updateLearningProfile, () => {
       activeGoalId: null,
       availableGlasses: ["round"],
       buddy: { glasses: "round", kind: "zu", name: null, picked: false },
-      dailyLimitMinutes: null,
-      dailyTimes: DAILY_TIME_CHOICES,
       shareUsageData: null,
       soundsEnabled: true,
     });
@@ -353,8 +304,6 @@ describe(updateLearningProfile, () => {
         activeGoalId: goal.id,
         availableGlasses: ["round"],
         buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
-        dailyLimitMinutes: null,
-        dailyTimes: DAILY_TIME_CHOICES,
         shareUsageData: null,
         soundsEnabled: true,
       },

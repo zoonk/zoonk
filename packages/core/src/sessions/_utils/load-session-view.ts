@@ -8,13 +8,11 @@ import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readBlockPayload } from "../block-payload";
 import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
-import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
 import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
@@ -63,16 +61,13 @@ async function loadSessionBasics({
       ? initialDay
       : undefined;
 
-  const [answers, dailyLimit, viewer, plan] = await Promise.all([
+  const [answers, viewer, plan] = await Promise.all([
     fresh ? [] : loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
-    getRequestProgressDateContext().then(({ currentDate }) =>
-      readDailyTimeLimitStatus({ date: currentDate, userId }),
-    ),
     fresh ? { tier: fresh.plan.tier } : readEntitlementViewer(),
     loadViewPlan({ fresh, session }),
   ]);
 
-  return { answers, dailyLimit, plan, viewer };
+  return { answers, plan, viewer };
 }
 
 export async function loadStudySessionView({
@@ -120,7 +115,7 @@ export async function loadStudySessionView({
     withLessonDisplayMinutes({ blocks: storedSession.blocks }),
   ]);
 
-  const { answers, dailyLimit, plan, viewer } = basics;
+  const { answers, plan, viewer } = basics;
 
   const visibleBlocks = withoutLockedPhaseChallenges({
     blocks: storedSession.blocks,
@@ -180,7 +175,6 @@ export async function loadStudySessionView({
     blockSubjects,
     blockedTestOutChapters,
     current,
-    dailyLimit,
     dayEndsAt,
     dayMinutes,
     examAccess,
@@ -189,7 +183,6 @@ export async function loadStudySessionView({
       current &&
       hasLessonRoom({
         day: { dailyMinutes: dayMinutes, freshStart: session.freshStart },
-        limitMinutes: dailyLimit?.limitMinutes ?? null,
         plannedMinutes: session.plannedMinutes,
       }),
     missions,

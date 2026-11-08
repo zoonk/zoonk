@@ -39,7 +39,7 @@ function useSettingsPages({
       "appearance",
       t({
         description:
-          "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+          "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",
         message: "Preferences",
       }),
     ),

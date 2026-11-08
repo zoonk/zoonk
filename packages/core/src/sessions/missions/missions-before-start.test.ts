@@ -476,14 +476,13 @@ describe("an activity on a day that offers no missions", () => {
     vi.useRealTimers();
   });
 
-  it.each(["a rest day", "a used-up daily limit"] as const)(
+  it.each(["a rest day"] as const)(
     "saves nothing and never runs the planner on %s",
     async (day) => {
       const user = await userFixture();
       const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
 
-      const weekdayMinutes =
-        day === "a rest day" ? [45, 45, 45, 0, 45, 45, 45] : [45, 45, 45, 45, 45, 45, 45];
+      const weekdayMinutes = [45, 45, 45, 0, 45, 45, 45];
 
       await prisma.plan.update({
         data: {
@@ -502,15 +501,6 @@ describe("an activity on a day that offers no missions", () => {
         },
         where: { id: plan.id },
       });
-
-      if (day === "a used-up daily limit") {
-        await Promise.all([
-          learningProfileFixture({ dailyLimitMinutes: 15, userId: user.id }),
-          dailyProgressFixtureMany([
-            { date: SESSION_TODAY, timeSpentSeconds: 15 * 60, userId: user.id },
-          ]),
-        ]);
-      }
 
       const planner = vi.spyOn(planning, "computePlan");
       const activity = { goalId: goal.id, timeZone: TIME_ZONE, userId: user.id };
