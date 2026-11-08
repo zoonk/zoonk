@@ -191,7 +191,7 @@ export function RevealBody({
         </DetailHeroText>
 
         <div className="flex flex-col gap-2 md:max-w-xs">
-          <DetailActions>
+          <DetailActions className="md:justify-end">
             <StartButton href={todayHref} />
             <Button
               onClick={() => setEditor({ open: true, section: null })}
@@ -201,7 +201,7 @@ export function RevealBody({
               {t("Adjust")}
             </Button>
           </DetailActions>
-          {isGuest && <SavePlanNote signUpHref={signUpHref} />}
+          {isGuest && <SavePlanNote className="md:text-right" signUpHref={signUpHref} />}
         </div>
       </DetailHero>
 
