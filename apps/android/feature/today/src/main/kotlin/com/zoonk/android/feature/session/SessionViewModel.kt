@@ -154,9 +154,9 @@ class SessionViewModel(
                         if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
                         if ((status == LessonReadiness.Status.NOT_STARTED && !asked) || read.value.setAside) return
                         failedSince = if (status == LessonReadiness.Status.FAILED) failedSince ?: now() else null
-                        if (failedSince?.let { now() - it >= FAILED_LESSON_READ_MILLIS } == true) return
                     }
                 }
+                if (failedSince?.let { now() - it >= FAILED_LESSON_READ_MILLIS } == true) return
                 delay(LESSON_CHECK_MILLIS)
             }
         } finally {

@@ -26,6 +26,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import java.util.UUID
 import kotlin.time.Instant
 
@@ -130,8 +131,9 @@ class SessionViewModelTest {
         }
 
     @Test
-    fun aFailedLessonIsReadForTenMinutesThenLeftToTryAgain() =
+    fun aFailedLessonIsReadForTenMinutesThenLeftToTryAgainEvenWhileReadsFail() =
         runTest(dispatcher) {
+            var reads = 0
             val failed =
                 LessonReadiness(
                     alternative = null,
@@ -140,7 +142,7 @@ class SessionViewModelTest {
                     status = LessonReadiness.Status.FAILED,
                     warmUpId = null,
                 )
-            val viewModel = viewModel(FakeStudyApi()) { _, _ -> failed }
+            val viewModel = viewModel(FakeStudyApi()) { _, _ -> if (reads++ == 0) failed else throw IOException("Offline") }
 
             val following = backgroundScope.launch { viewModel.followLesson(LESSON, asked = false) {} }
             advanceTimeBy(FAILED_LESSON_READ_MILLIS - LESSON_CHECK_MILLIS)
