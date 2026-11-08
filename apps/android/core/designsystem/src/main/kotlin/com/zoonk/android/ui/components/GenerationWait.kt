@@ -290,7 +290,7 @@ private fun PhaseIndicator(status: PhaseStatus) {
                     painterResource(R.drawable.ic_check),
                     contentDescription = null,
                     modifier = Modifier.size(box * ICON_SHARE),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = MaterialTheme.colorScheme.tertiary,
                 )
             }
 

@@ -185,9 +185,35 @@ private struct TodayPreparing: View {
   var body: some View {
     let setup = onboarding.onboarding(goalID: goalID)
     let answersLeft = setup.value?.steps.contains { $0.rawValue != "plan" } == true
+    // A plan is shown once before its first day, so Today leads there instead of opening it.
+    let revealLeft = setup.value.map { !$0.planRevealed } == true
 
     Group {
-      if answersLeft {
+      if !answersLeft, revealLeft {
+        ContentUnavailableView {
+          Label {
+            Text(
+              "Your plan for \(title) is ready.", tableName: "Today",
+              comment: "A goal whose plan the learner hasn't looked at yet")
+          } icon: {
+            Image(systemName: "map")
+          }
+        } description: {
+          Text(
+            "Look it over before you start.", tableName: "Today",
+            comment: "Why Today waits for the learner to see their new plan")
+        } actions: {
+          Button {
+            router.open(.goalSetup(goalId: goalID))
+          } label: {
+            Text(
+              "See your plan", tableName: "Today",
+              comment: "Opens the goal's plan before its first day")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+        }
+      } else if answersLeft {
         ContentUnavailableView {
           Label {
             Text(

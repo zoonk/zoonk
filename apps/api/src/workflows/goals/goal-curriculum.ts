@@ -17,7 +17,7 @@ import { isBuiltBeforeResearch } from "./goal-content-inputs";
 import { findGoalCourses } from "./goal-courses";
 import { type BuiltGraph, buildGraph } from "./goal-graph";
 import { startOutlines } from "./goal-outlines";
-import { prepareGraphPlacement } from "./goal-placement-items";
+import { preparePlanPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
 import { setUpPlan } from "./plan-setup";
 import { setGoalPrimaryCourseStep } from "./steps/goal-course-steps";
@@ -156,10 +156,7 @@ async function createPlanAndOutlines({
   return { courseIdsByKey, idsByKey };
 }
 
-type SavingCurriculum = {
-  saved: Promise<SavedCurriculum>;
-  skillIds: Promise<Record<string, string>>;
-};
+type SavingCurriculum = { saved: Promise<SavedCurriculum> };
 
 function saveBuiltGraph({
   built,
@@ -183,10 +180,6 @@ function saveBuiltGraph({
     Promise.resolve(savedSkillIds),
   ];
 
-  const skillIds = Promise.all(slices).then((saved) =>
-    Object.fromEntries(saved.flatMap((slice) => Object.entries(slice))),
-  );
-
   const courseIds = startedCourse
     ? Promise.resolve(toStartedCourseIds({ course: startedCourse, graph }))
     : findGoalCourses({
@@ -199,18 +192,13 @@ function saveBuiltGraph({
         scope,
       });
 
-  return { saved: saveCurriculum({ courseIds, goalId: goal.id, graph, slices }), skillIds };
+  return { saved: saveCurriculum({ courseIds, goalId: goal.id, graph, slices }) };
 }
 
 type PreparedCurriculum = SavingCurriculum & { built: BuiltGraph; reused: boolean };
 
 function toReused(curriculum: BuiltCurriculum): PreparedCurriculum {
-  return {
-    built: curriculum,
-    reused: true,
-    saved: Promise.resolve(curriculum),
-    skillIds: Promise.resolve(curriculum.idsByKey),
-  };
+  return { built: curriculum, reused: true, saved: Promise.resolve(curriculum) };
 }
 
 async function prepareCurriculum({
@@ -280,7 +268,7 @@ export async function buildCurriculum({
 }): Promise<BuiltCurriculum> {
   const goalId = inputs.goal.id;
 
-  const { built, reused, saved, skillIds } = await prepareCurriculum({
+  const { built, reused, saved } = await prepareCurriculum({
     context,
     inputs,
     opening: opening ?? Promise.resolve(null),
@@ -305,14 +293,9 @@ export async function buildCurriculum({
 
   // Placement invalidates plan inputs, so it starts only after the initial plan commits.
   if (!rebuild) {
-    await prepareGraphPlacement({
+    await preparePlanPlacement({
       context,
-      everySkill: inputs.ownMaterialTest,
       goalId,
-      graph: built.graph,
-      knownAreas: inputs.knownSubjects,
-      ownLevel: inputs.graphPrompt.ownLevel ?? null,
-      skillIds,
       waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
     });
   }

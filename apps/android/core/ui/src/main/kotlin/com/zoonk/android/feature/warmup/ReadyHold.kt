@@ -37,6 +37,8 @@ data class ReadyHold internal constructor(
 
     fun moveOn() = state.moveOn()
 
+    fun isOverFor(ready: Boolean) = state.over(ready)
+
     internal fun touch() = state.touch()
 
     internal val key: Any get() = state

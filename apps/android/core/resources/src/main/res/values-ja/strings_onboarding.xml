@@ -6,6 +6,23 @@
   "onboarding_adding_material": "a35b237f82d469ddc9214f0fcadd5bd1a41466aae49289e2491ae4b2ee19288c",
   "onboarding_admission_placeholder": "a8ba7b01173de710cbba399752319fa8352a716f47968dcf4923d7952c071709",
   "onboarding_admission_title": "0bfdfaa40aaeea412e663b95454c72b0ddfc02bb93ce664a4ea23bd522b0cc6c",
+  "onboarding_aim_by_month": "d2ab1d5371bcdcbe606d8682c08d4e3ba0a88a6e88ea0c20e035baaad1387824",
+  "onboarding_aim_change": "8dea3e4c220c46dfe31f216635ab735a559bded91e4b5d1a1373e04345b15e53",
+  "onboarding_aim_changed": "4a253c7d1784d76bf83a847c48b9557633a4537b87c4e55f187b4b4c9920b11d",
+  "onboarding_aim_finish": "f5103ece4d5b5b295af8d5d79767f31856276640dc7969571cf1a6070d0f8a08",
+  "onboarding_aim_fluent": "905a1e4a8dde12006f4eb09ca0111da364dd8e9d704b6b6b04ef419cd4ced35f",
+  "onboarding_aim_from_advanced": "771322c7b1ed24d5acd4f7120f4d41b6983e17978759ec74ef8e27d970e2e29a",
+  "onboarding_aim_from_basic": "afd29f814922fe6085fd759e991f510ab2ae91d194cc3d90f04c230316ba9e4e",
+  "onboarding_aim_from_intermediate": "09cd5ae89dc646ccd241b8e814b0d25af311885d5b65aacfd7eaf12351d9ac4f",
+  "onboarding_aim_from_level": "13635d980559d3f050277347de1acad1acf0aeb89b30f766b72854474f14d4e1",
+  "onboarding_aim_from_none": "8ed5433e3e555448838e2be5623764797d759051b172010a3f640655322122fc",
+  "onboarding_aim_hours": "f087f11da21d733cc61a29dc4f5d1e8fe4e1499643496be77180c2a7c4159d17",
+  "onboarding_aim_hours_month": "d0d100d7ec10ff4c28d24704af3521b1524669c958042aac451655de13cd9ea3",
+  "onboarding_aim_hours_more": "d65995312202312caf6df4fd361f7f7bae6583844624316b6b204a124862abed",
+  "onboarding_aim_picker_title": "7da21b9e5b01588d89b3847704b830e4a134510c255dedf0e3f03beddfca1ebb",
+  "onboarding_aim_talk": "98e2757832d2283149713a2ce06c42f4d4697f38436c0d4aae4ed9e75e5ffeec",
+  "onboarding_aim_travel": "b855b5106d7b820268e0f17274aae12774c9c1aed0e6f160415519799067cc7f",
+  "onboarding_aim_work": "1f6f7819cfbf9cf6c0bef3e292be5a384869e429517829e3d0fb05e0f6c471dd",
   "onboarding_another_date": "d5eefd57942365ce30584d1101ae9bb984f288f6286dbb4695d4f5d4bc2d28d1",
   "onboarding_answers_saved": "cbe8f6ed526431737e94ecba7e78006c79381f90b104d8c52973ac1933ac73ed",
   "onboarding_ask": "70bc25ad5dd15a22397ecb08fb48065b9a42e2ab09d549112e126434d39992e3",
@@ -129,7 +146,7 @@
   "onboarding_level_test": "aeeb97be99b6f1e377febdbeee0c35b04445538ab2c74ea4ca164f09d9cd90fc",
   "onboarding_level_test_description": "df3fd3ea198c082f988d741e433d7e791c2371240ddce49bf9c264aeb526a688",
   "onboarding_level_title": "18f8afa27f7b1ed56da77f92b0d9612ec712807f34217858c39b53880b89cb45",
-  "onboarding_library_course_fits": "d30ab4b1a9d76e89b368e264fa33ee6716d73d50974f4224e2d2f87758fcbf58",
+  "onboarding_library_course_fits": "0ac1b31ced991a297312e4b54b3845e935e5f4de760d9482707c09749cd5418d",
   "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
@@ -198,7 +215,10 @@
   "onboarding_placement_wrong": "bad919077ee246f3495ea7ea0322d5ef3d1cbd2b976d60491e26887ec383c899",
   "onboarding_placement_your_answer": "c3a4799cff17b93ab5974d186dde00ef9c37196ebc78a4c375ff7d3c8175eef1",
   "onboarding_plan_answers_saved": "14c88c1667d57ba39ebc17118e8d54bc73f445f54feaa3856202809a45bca133",
+  "onboarding_plan_look_over": "d47ff63424fdb7ba594c5d6fe13d4ab7f8823f74119b245d1ad050df91ed7be6",
   "onboarding_plan_not_started": "88de981632f14526d266f5565952f8c057db3897624a3688435ff9314d37a799",
+  "onboarding_plan_ready": "c318662e3a74674344b80a2b03a860458202cb044431357901e624dbdf5ffd1d",
+  "onboarding_plan_ready_goal": "3c7b846f4ae18f7b291b3670975b7ef4a838ace9a65b8eb16d33a1ab772a7fa0",
   "onboarding_plan_so_far": "47d56d3b06b5eb573bb143aff2c5421dbdc55831f055a9037e522193d8297260",
   "onboarding_plan_stopped": "0d4bf8ba8790edd2b5dbab6b8bf2ed297183524b7c1366fb798a23ec5498131a",
   "onboarding_plus_more_goals": "0c5cd8b3de7f6f49dac3085af0dff6cf4a8855c9fabbfcc4bf469ffad873e4cf",
@@ -207,20 +227,20 @@
   "onboarding_position_label": "a2ac4f32049092bd5cf914d43b6afa68f6e8fda9390c207c216d46d51ed7d44f",
   "onboarding_position_title": "d90efc5c11709a576d63601ba657eae865c7dd367101aaec52acec40d11af826",
   "onboarding_purpose_career_change": "6acac8523734ecdd508dfcd517e58e43afb86bd3c033e2c15b95d9f8291bc124",
-  "onboarding_purpose_career_change_description": "41c1227c6cf47c8ed792d2aa2ed9a59091c0f2742e3e16910dbebb9d9d6fd766",
+  "onboarding_purpose_career_change_description": "61846bf3d1645a848651c59a3521308abe5a5a15051ca4f0fc11f6da8735857e",
   "onboarding_purpose_deep": "6b5d80f7ff3dbfa3979a259ef9e37043bfbd00f52ed1a62b462304c233f31f06",
-  "onboarding_purpose_deep_description": "d6da6e0c863ddd7e9700514b992bc8727e6af582bdc3ec55b67d7d78bbd31a37",
-  "onboarding_purpose_description": "a4b8a1876061f2cf4ffbd34c34b98ac406e978d03231265261a39d77ea07ca1f",
+  "onboarding_purpose_deep_description": "b07c29d3158045c2cad3de210beb895f8e90ab980279590155fb9e135d2070c3",
+  "onboarding_purpose_description": "6876d0971caba99456a65bf77dfb3fe9804b8ed54225f14f5b324fb367be51a0",
   "onboarding_purpose_label": "5b7b54f7f7610da309529925f6803cc9fab8330408768692ab0f4df6e73b4ed5",
   "onboarding_purpose_other": "a9f6eeecefcd5eca26cad4fa1031d81e6046cbfc3fb2174e6a64505e6a4905b6",
   "onboarding_purpose_other_description": "f2b64b8f459de622b8b51a8f397ba4181957c6c68ece2c5537f760eb2f4a0c4b",
   "onboarding_purpose_overview": "7c16f89b6fc55b58663fec08b8086b7b238ff4053ca652712709351d973455b7",
-  "onboarding_purpose_overview_description": "b365b84cf38f38be913b325501135205ca41ca0acfe64189cff18167acedf9d5",
+  "onboarding_purpose_overview_description": "f5109ee58cf690029d5a1eb209dc470e7b5efebc5b827b5fed1d508b11939e35",
   "onboarding_purpose_refresh": "cf99d887660154aaa8e6bb1ab6182d4534792917f1317c0a5ba4b42061fb4c34",
-  "onboarding_purpose_refresh_description": "611a3e6ae553c909d5021fc2750ef5af39fc65cec22f7643cdc8cc5d73366908",
+  "onboarding_purpose_refresh_description": "0b51593a5957b9e6180f3bce2d2a70096f58ee70914ee4908a72f3910658b279",
   "onboarding_purpose_title": "97fb47b64ebead19d3c30f8b909e46c8b02c0f2b4e4c0af484b89278c19e71e4",
   "onboarding_purpose_work": "b78b57bd3bcdf4c05d2df0e9b2e85516af7ee06d52e68c5e650e1a248dcc49d4",
-  "onboarding_purpose_work_description": "894a4ff981f7b7deb8892c6c4569e16480461243ecb02c2e7e89f4fd3908107b",
+  "onboarding_purpose_work_description": "c257328c47b3e126fee2cf4dd41a84452b76ad2fbe2cb318fe9a565d2bc2c1b4",
   "onboarding_question_failed": "250545d15513859569193944ad878c5f295e43ceea298f222cacca744536a399",
   "onboarding_question_limit_day": "bca2d1f7036d77f0862567323f28fb0712de390688517d5373c1203386094991",
   "onboarding_question_limit_month": "224199c7ed84491bdf4e092d2941b2534532fc98dbbdf078fcdfbcb6807a669e",
@@ -236,15 +256,30 @@
   "onboarding_read_limit_free_month": "18bdb75c585dd3eb806e85c4a9c592e2f75bec537ff833015c0b678c95266bc9",
   "onboarding_read_limit_guest": "64dc2246299762d474626f17293e0e5a0a317fc073b1dd815ec4bde6d81e36f9",
   "onboarding_read_limit_plus": "0465838f4ad8845d65a5857fbe44a510a6c6aafb7ebd91797bfcb51f07ce4fdb",
-  "onboarding_reason_description": "12a1858aebac076753a98cb2129ebccb938e03cb1c7f0102d45c55264baffafd",
-  "onboarding_reason_label": "4a6e6d3f75c2da85acc80fa01e04fbe5fcda551ecc6c934e01590be2195f32d7",
-  "onboarding_reason_placeholder": "ebf094f1d899f9a7b73c58e10a6f7fd0ec2505360476629e296cc94a70ca80ca",
+  "onboarding_reason_certificate": "9a4934e169220c3e6859d6fc95bad5d4ba0cc8639a9ab2c41a535f8ee8e6de2b",
+  "onboarding_reason_certificate_description": "608964eec14f4fb993d0c04b3284171421b6a9c0cb0c297d662a266067f9f330",
+  "onboarding_reason_description": "f0b19d33f630824cf10840511abd7c50150b3d61f2ea9a2afe609e66926b4e84",
+  "onboarding_reason_exam": "fae1bf60294575bf465d5744cb59808b84d217d352334e575465ae4282fc2b45",
+  "onboarding_reason_exam_plan": "abb402b8c3c957289b01a37cb08540962aed4c494306aaf74600d2cae919b0b2",
+  "onboarding_reason_fluent": "adb0e244c91575924faf9c00f2b116b0d1917db15e3190068803558a057213a4",
+  "onboarding_reason_fluent_description": "7bf14183610079cbdc7939c3109890acaed50381ace836b4e00a4d735059a6d5",
+  "onboarding_reason_hours_note": "6cbf7e97777659d3274e7595802b9a962ea7e182de879ca07c25f56a0f36fea8",
+  "onboarding_reason_other_description": "d69b66b20eeb6d058f77d9a0996608ef71485fbfa6772c550c33969755e08786",
+  "onboarding_reason_talk": "3d9b25e787d2df59c09bc3ebe8310d1ddecbf7a3253e2d12f3db6943a146c7f7",
+  "onboarding_reason_talk_description": "823ed04ba4575f7a771a68294da8b1bd10be9858fa8966c8a7cd85e9c972fa5a",
   "onboarding_reason_title": "0644df4bfd0648e072061903f5ef5041132bb68cdd2569added81b05d9d25b0a",
+  "onboarding_reason_travel": "9b865bd5613ed35b0435a59b9953580eb0808abb37029e34513f8341eba8bc07",
+  "onboarding_reason_travel_description": "aa2c46a0d7ea3a4b2580083b8d46a939d090d9ef67e9dcf77b9d10e23f449e82",
+  "onboarding_reason_which_exam": "221aae0fa2265d4ad2011f4958253551de70b5861a2dc1c90d20cb5c57ddce50",
+  "onboarding_reason_work": "7993b44804f454bdb5258cdf03a2032ded33ce3c35f4b82886a3cae2bd1206d7",
+  "onboarding_reason_work_description": "66ba144a07767552adce0ea1b48976498e5856fa8258866c2e521ccc855fda5f",
+  "onboarding_reason_your_words": "51a735b10ee9ea4e5bb50d78256b0992dc3653be30aa4d1d3f182f81c0c2251a",
   "onboarding_remove_material": "e9f51b2ad2f11020596ae2299c587cd2b690c36ab16cb966aace53377879f696",
-  "onboarding_reveal_about_days": "56374b0101e753a5403115c1fd79c100d98053b8dd7c0ac854c2ec1531cb1ba1",
+  "onboarding_reveal_a_day": "191ba1d2e93766cd73674a394edacee4b0361d73c6e32458bd5b8b2bb0f7c0e2",
   "onboarding_reveal_adjust": "2792f0aec650ed8116e491e29155285a99da56418d256ddb0b00e6a9e5f0f79c",
   "onboarding_reveal_building_description": "080b1928c36cfd6fc563687bab85592bdd1c47ff789c7169fb88a96e284e37af",
   "onboarding_reveal_building_title": "1ae3d8130e3de1fb9816c0409879ac3060ab37384571aaeab5ddc6077f70c71b",
+  "onboarding_reveal_challenge": "27e560c52fccef8485154392e7abb5979dc12f02a598ea510a659586bbf3480b",
   "onboarding_reveal_chapters": "ccaa8fca249f5431c775a989aadff0aeaba862e8eb2bcb0175dcc2e869d30ba8",
   "onboarding_reveal_covers_exam_after": "bbe5efefd5fba2a19fc4312c1d2c89d5e693699578a677386ed74dd4321849f5",
   "onboarding_reveal_covers_exam_deeper": "368f843e9a9c2ddce5c0c349298e41a4fb2020284d4b10eb90e4eac7aa12efe5",
@@ -254,9 +289,7 @@
   "onboarding_reveal_covers_goal_left_out": "12b2e2c8e232c7d79f8130579ed8f1d37c2f178333f3053503424aeb0feb5cb4",
   "onboarding_reveal_covers_nothing": "cc1873d5856189a8bb5c27d621c6aadcd0c6ea603f24d2bcc68710ce44f71b59",
   "onboarding_reveal_created": "12d6145f05c786ab6e2d93ce0e2ae99218faf66df120e58e9056a0e7309b4525",
-  "onboarding_reveal_daily": "140030d07876cabf3ea7fdc461a09b113e69ee09fd5c86fe5adf1a35a7640692",
-  "onboarding_reveal_daily_weekends": "b4b44f109109a39235545ed5df93ced70766972c3e6c06d15836cb248aa6f7f3",
-  "onboarding_reveal_days": "6418e9bb612d477786ffce32598c9903e74c646ce5f499a46218db1e5b43a417",
+  "onboarding_reveal_estimated_finish": "d2b6c0551d636d9e324709abc5e0bf3e4c1f7559bf930352b48e62b629a4c147",
   "onboarding_reveal_estimated_guide_area": "b2cbafc6ae405eda7cd3a03acca9b54d1a25566c2f61fb21a57be2a0bb1ea34c",
   "onboarding_reveal_estimated_guide_areas": "764d6f6aaf11e497e414de04847104192e3a31a1eecd0b00928a7f31de8fa235",
   "onboarding_reveal_estimated_material_area": "2549c387217f16970097205d5597e03466d38ecb9efd77900e1bf4c48fb70408",
@@ -264,6 +297,7 @@
   "onboarding_reveal_estimated_notice_area": "7b882653b22c6b6fcc41b777ecfd816a95ada0889bd98ce435a6dd6268171cf9",
   "onboarding_reveal_estimated_notice_areas": "722893e75ee51d1eafe1dc65a01ec917ccbc85ca2e9a3fb8df09475ee85b2ad9",
   "onboarding_reveal_estimated_percent": "30c0fb3c747a169f48f90035a97e5b9f694ec1d03ecb59168d2f05ceac8e05f3",
+  "onboarding_reveal_first_week": "2098c7417c943912e41dd10fd20c7d5bba444adac337987da95ee5b11af2030f",
   "onboarding_reveal_free_week_over_body": "ad73f47754396a1c50929fcb2cfd646952f2fdf06d19bd8d53a3ecf4dd386214",
   "onboarding_reveal_free_week_over_title": "a29c01ed4ce5c848738a176e465b240916782ed34e92a3fb0178e92e57b9860a",
   "onboarding_reveal_full_course": "5efc1a5345e213b870c7c8e9e9ebcb52ce0bf0e808864b57e48ae39f43f24f08",
@@ -271,9 +305,13 @@
   "onboarding_reveal_full_course_finish_month": "bbe615051f3f4ed81a8468ad60b6460a543e5809db7312a3f65c82d635a683cf",
   "onboarding_reveal_guide_parts": "76e25d21d5db906b1bada72b34f7dc1cfc25ec28af297e9ed65e7263d891116d",
   "onboarding_reveal_known_skills": "9205db11fc4d6b7728fedcfb7449e074fa93267308162ae67e96d6af93e0d773",
+  "onboarding_reveal_lessons": "5465dd9f39e45f82c145922ba55ee46e9533167458f4bd76eb2127dca9631f1a",
+  "onboarding_reveal_lessons_done": "b30485dddf4ca33738e0f8cdb932eec2d85dbc4211fea45d5ebfdcbea7bc5530",
   "onboarding_reveal_material_topics": "8455fd677391d4edfb8bd52eb7fef266620eee482e76ea5f4a2ad4bf858a636c",
+  "onboarding_reveal_mock": "b4facf0d66c9920a9aaac7d5376306da2cafe9ca0f07c6cf929b2694a6bb07b9",
   "onboarding_reveal_modules": "a476ceb7a34051675daa887cefb9978366cf3694538da34f1e7e858bb7cbe994",
   "onboarding_reveal_more_chapters": "2f3d0b662cc74df7bd6e2889886d44dd01d53c740b985e71456e3660da8c2b2e",
+  "onboarding_reveal_more_kinds": "176103af9cc5f8d5efab90dcba4d6442bbb21edcd1ca6cb32b9fcca3e9f3329d",
   "onboarding_reveal_more_lessons": "83da9ece431d3ffae8d51d7a7d4e9ebf842800da58420e8a985d924acd154a2c",
   "onboarding_reveal_most_questions": "bae045bbd776178ef81360f375b02e9dff1491bd949fd360ec5a95da80309056",
   "onboarding_reveal_no_sitting": "0efb569b3c7f1185c4489eb123787928b8bf4ebe952824b33893eb29d4ab977d",
@@ -309,16 +347,21 @@
   "onboarding_reveal_reading_notice": "71daed1faf3852708467ab99245c83ce7a0773a7b844b87265a247ac5ad730e0",
   "onboarding_reveal_reading_step": "d0d6e62168ebdf15a4518f80f13d75dd0700b8208970db2b5d5027f1cd1ec8c5",
   "onboarding_reveal_reading_title": "c1dd74c4e2592c58ea4290061347933a45661dc9f14d5b670a7206a1d22b9514",
+  "onboarding_reveal_rest_day": "985d4094ec706d3f472144e406510efc6c7d78a52cd634d726ad23da7a198489",
+  "onboarding_reveal_review": "d1722461cc7e2d8214429079bd6e18fe6b2a33a798e6790056ce7c1397d1f417",
   "onboarding_reveal_save_note": "845c258c416be977c3514b3bf5ce9e2832b3782cade59495736f31e294026259",
   "onboarding_reveal_start": "e7e8a7f949028c503ea130409e0685677090dc19b60c0ae24d64ad7b960be178",
+  "onboarding_reveal_start_here": "c1ed39e9fbe81df17928e18f5e5b1114ca70108208039386b200060b23e73a72",
   "onboarding_reveal_today": "8a30a577722b319bf0503b6d92173b83df0d6209c8a9c3861edbefa5e053cd87",
   "onboarding_reveal_topics": "81d06174c928abdf38fbdc6f733775473aeb4d1dcfdefb4edef729c683487a7e",
   "onboarding_reveal_topics_all_planned": "aa2dd96d8ea0fb7753982a875db58fad9c3ab9ffd14c57da3098a6818ca96d6a",
   "onboarding_reveal_topics_dont_fit": "094af439f7601fa8023533906ba0cd60f1c3ab83e7ce88936b1f3e830abfd382",
   "onboarding_reveal_topics_planned": "3e86363c59b7ba24193dda9b05c4d179466f0e8073db070cafb5e2ad304abb95",
-  "onboarding_reveal_until_about": "eaff98bd398d657f58d51062e1607eb61c75d5d99a95e1786cb14ca0832a0957",
-  "onboarding_reveal_until_about_month": "41c67f3788b421eab125e7c50703e312e79e6bbd9cd4a5d1466c34cc03066914",
+  "onboarding_reveal_until_date": "f679bf7c550bd90d6bf0997d7d60cbf3453fb3451f569e33938cf775e9b0fc72",
+  "onboarding_reveal_until_exam": "11b2865ef10800d5ec102c2a3587f3e7612ea443be3532336f0eb045aa31cb1a",
+  "onboarding_reveal_up_next": "fb196ec029c242ac4953d1a2cf12981eb900bdea40d345fb76c964da1bc0e454",
   "onboarding_reveal_usual_structure": "2dc03840894d995112a1e65cc047b79f861973740e36e11f2a5ec4b7b36cbe5d",
+  "onboarding_reveal_weekends": "297d1afb6092b5b6f22215805ace0e9dd792c2d474aa22649a0795a361d4ce53",
   "onboarding_reveal_weights": "e713a21ead579d071f69303764b4c201d2cab93940546f375a79418505f6395d",
   "onboarding_rewrite_hint": "8fdeb33651a05083a809ef878a084b612bcab8f3a852b4c46de21c2e37d31a95",
   "onboarding_role_career_description": "e4721d4bbee348946fa3c8d478bf1d235ac1fcd05e4e1828f67a8f1612d0b4a9",
@@ -372,6 +415,7 @@
   "onboarding_schedule_title": "78f46439681098daf9288049fbd786cd4d901cf42267ce1bd37e763f1184f3c8",
   "onboarding_score_placeholder": "a5d366dacbd42353e2c81e35fc6094974afbb93df232cb81cf4e15bdbeee08b8",
   "onboarding_score_title": "dc93538f21bc6779164b006c70ccdd6a55bf42932acefca66ea3a8979aa3aa00",
+  "onboarding_see_plan": "d290a6dd2a08b676d62245f7375d023170f1ff7ef9d8045f6e965b4bc0dc2894",
   "onboarding_see_plus": "44693717094a4f4b82f4ede11d34d41db0553b9b48ffeca8249ed7c4346b5cbd",
   "onboarding_skip": "f4bb9715c1139287c32c08cb89c03645356770a38e96707e40f44b49354eaa9d",
   "onboarding_source": "be0bb6fdb16c48a51b682135a0bc67570d5141dd763cad85862aeedcecbf40cd",
@@ -412,9 +456,12 @@
   "onboarding_weekend_time": "8653109d4f3428d5b744163f218dc65df2f267d2f8419ea4f5d3c74208320644",
   "onboarding_weekend_time_label": "3bfa58d7f3ac43a8ac09d5eef15d2cb8ea8c071aea4b0dee4171992c9b8acd6e",
   "onboarding_what_you_wrote": "127c9898fabd74953f59e504d37489d0d5675013410f01582e1281fc76018edd",
+  "onboarding_whats_next": "a2a79de5ba395f25786d23afb005bcb020477cf87068f623a256de1f1a5912c9",
   "onboarding_write_again": "fe7aaa75a7b0de67fa935c0ebf756841376df42b49b075740a9130673cb2d875",
   "onboarding_you_picked": "57fcfda79fe5ae2c5596d6ec482d45a896c9a0561bdf5519bc070484b84e13cc",
+  "onboarding_your_aim": "a9353856c5faea87bdf5e67dcd571dc0014e679243d730f07147330b28ed34f0",
   "onboarding_your_answer": "717baafb8067fe5aa708ebb45a178661251996b7ac05f2e2e0183e7be8a5be19",
+  "onboarding_your_plan_ready": "51f6b6a6a95b97c7935d5c6a410f0faf45f65e8fecd5b0ef8b8549b527295478",
   "onboarding_your_question": "bb5943a016abcf496657b734818630b41c15947bc4194287816bb04c50f01889",
   "onboarding_your_text": "b133c3241598d50f9be7fd8cbb580ca59b2f5958e1c83b8a70701c62ac86151c"
 }
@@ -707,7 +754,7 @@
     <string name="onboarding_reveal_building_title">学習計画を作成しています</string>
     <string name="onboarding_reveal_building_description">最初に学ぶ内容を選び、毎日の予定に組み込んでいます。新しい科目の場合は1〜2分かかることがあります。</string>
     <!-- Above a published course's title, offered while the learner's plan is built. -->
-    <string name="onboarding_library_course_fits">目標に合うコースがライブラリにあります</string>
+    <string name="onboarding_library_course_fits">目標に合うコースがライブラリにあります。今すぐ始められます</string>
     <string name="onboarding_reveal_reading_title">試験の公式資料を読み込んでいます</string>
     <string name="onboarding_reveal_reading_last_title">前回の試験の公式資料を読み込んでいます</string>
     <string name="onboarding_reveal_reading_notice">試験要項の科目・トピック・日程に沿って学習計画を作成しています。通常は数分かかります。</string>
@@ -716,20 +763,10 @@
     <string name="onboarding_reveal_reading_done_step">回答内容をもとにした学習計画</string>
     <string name="onboarding_reveal_reading_step">公式資料を読み込んでいます</string>
     <string name="onboarding_reveal_created">学習計画を作成しました</string>
-    <plurals name="onboarding_reveal_days">
-        <item quantity="other">%d日</item>
-    </plurals>
-    <plurals name="onboarding_reveal_about_days">
-        <item quantity="other">約%d日</item>
-    </plurals>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
-    <string name="onboarding_reveal_until_about">%1$sごろまで</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
-    <string name="onboarding_reveal_until_about_month">%1$sごろまで</string>
     <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_reveal_daily">1日%1$s</string>
     <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
-    <string name="onboarding_reveal_daily_weekends">1日%1$s、週末は%2$s</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
     <string name="onboarding_reveal_pace_covers">目標のすべての内容を含む学習計画です。1日の学習時間を増やすと早く終えられます。期日を決めると、それまでに特に大切な内容を学べる計画になります。</string>
     <!-- Under a plan without a date that stops before every part of a learn goal. -->
@@ -833,18 +870,18 @@
     <string name="onboarding_continue">続ける</string>
     <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_purpose_title">学習の目的は何ですか？</string>
-    <string name="onboarding_purpose_description">学びたい理由にいちばん近いものを選んでください。</string>
+    <string name="onboarding_purpose_description">学ぶ内容の深さと、それに応じた学習期間が決まります。</string>
     <string name="onboarding_purpose_label">学習の目的</string>
     <string name="onboarding_purpose_overview">全体像をつかむ</string>
-    <string name="onboarding_purpose_overview_description">数式を使わず、大切な考え方を学びます</string>
+    <string name="onboarding_purpose_overview_description">数式なしで、大事なポイントを学ぶ短いコース</string>
     <string name="onboarding_purpose_deep">深く理解する</string>
-    <string name="onboarding_purpose_deep_description">基礎から上級まで</string>
+    <string name="onboarding_purpose_deep_description">基礎から上級まで、ひと通り学ぶコース</string>
     <string name="onboarding_purpose_work">仕事に活かす</string>
-    <string name="onboarding_purpose_work_description">実際のプロジェクトに活かします</string>
+    <string name="onboarding_purpose_work_description">仕事で使うことだけを、必要な順に</string>
     <string name="onboarding_purpose_career_change">転職する</string>
-    <string name="onboarding_purpose_career_change_description">新しい仕事に向けて準備します</string>
+    <string name="onboarding_purpose_career_change_description">新しい仕事に必要なことを学び、ポートフォリオも作る</string>
     <string name="onboarding_purpose_refresh">以前学んだことを復習する</string>
-    <string name="onboarding_purpose_refresh_description">以前の学習内容を振り返ります</string>
+    <string name="onboarding_purpose_refresh_description">短いテストのあと、以前のレベルまで学び直す</string>
     <string name="onboarding_purpose_other">その他</string>
     <string name="onboarding_purpose_other_description">あとで自分の言葉で教えてください</string>
     <string name="onboarding_level_title">どのくらい知っていますか？</string>
@@ -898,9 +935,7 @@
     <string name="onboarding_position_description">要項に載っている試験は、職種ごとに異なる場合があります。</string>
     <string name="onboarding_position_label">職種</string>
     <string name="onboarding_reason_title">何のために学びますか？</string>
-    <string name="onboarding_reason_description">使いたい場面に合わせて、一つひとつのレッスンを作成します。</string>
-    <string name="onboarding_reason_label">学ぶ理由</string>
-    <string name="onboarding_reason_placeholder">例：就職面接、旅行</string>
+    <string name="onboarding_reason_description">回答によって、コースで目指すレベルが決まります。</string>
     <string name="onboarding_score_title">必要なスコアはいくつですか？</string>
     <string name="onboarding_score_placeholder">例：バンドスコア7、100点</string>
     <string name="onboarding_follow_ups_title">もう少し教えてください</string>
@@ -992,4 +1027,63 @@
     <string name="onboarding_reveal_reading_line_guide">公式ガイドに記載されたパートとトピックを調べています…</string>
     <string name="onboarding_reveal_reading_line_dates">試験の日程と形式を確認しています…</string>
     <string name="onboarding_reveal_reading_line_fit">学習計画に組み込んでいます…</string>
+    <string name="onboarding_see_plan">学習計画を見る</string>
+    <string name="onboarding_plan_ready">学習計画の準備完了</string>
+    <string name="onboarding_plan_ready_goal">「%1$s」の学習計画ができました。</string>
+    <string name="onboarding_plan_look_over">始める前に目を通してください。</string>
+    <string name="onboarding_reveal_start_here">ここからスタート</string>
+    <string name="onboarding_reveal_up_next">次のレッスン</string>
+    <string name="onboarding_reveal_first_week">最初の週</string>
+    <string name="onboarding_reveal_rest_day">休みの日</string>
+    <string name="onboarding_reveal_challenge">チャレンジ</string>
+    <string name="onboarding_reveal_review">復習</string>
+    <string name="onboarding_reveal_mock">模試</string>
+    <string name="onboarding_reveal_a_day">1日あたり</string>
+    <string name="onboarding_reveal_weekends">週末は%1$s</string>
+    <string name="onboarding_reveal_until_exam">試験まで</string>
+    <string name="onboarding_reveal_until_date">目標の日まで</string>
+    <string name="onboarding_reveal_estimated_finish">完了の目安</string>
+    <string name="onboarding_whats_next">次にすること</string>
+    <string name="onboarding_your_plan_ready">学習計画ができました</string>
+    <string name="onboarding_reveal_more_kinds">+%1$s</string>
+    <string name="onboarding_aim_travel">旅行に必要な会話をする</string>
+    <string name="onboarding_aim_talk">日常会話</string>
+    <string name="onboarding_aim_work">仕事や勉強で使う</string>
+    <string name="onboarding_aim_fluent">流暢に話す</string>
+    <string name="onboarding_your_aim">目標</string>
+    <string name="onboarding_aim_change">変更する</string>
+    <string name="onboarding_aim_picker_title">どのレベルを目指しますか？</string>
+    <string name="onboarding_aim_hours_more">あと約%1$s時間</string>
+    <string name="onboarding_aim_hours_month">あと約%1$s時間・%2$sごろ</string>
+    <string name="onboarding_aim_hours">%1$s時間</string>
+    <string name="onboarding_aim_by_month">%1$sまでに</string>
+    <string name="onboarding_aim_finish">1日%1$sのペースなら、%2$sには%3$sごろに到達します。</string>
+    <string name="onboarding_aim_changed">コースで目指すレベルが%1$sになりました。</string>
+    <string name="onboarding_reason_travel">旅行</string>
+    <string name="onboarding_reason_travel_description">旅行先で注文したり、道を尋ねたり、ちょっと話したりする</string>
+    <string name="onboarding_reason_talk">人と話す</string>
+    <string name="onboarding_reason_talk_description">国内でも海外でも、日常会話をする</string>
+    <string name="onboarding_reason_work">仕事や勉強で使う</string>
+    <string name="onboarding_reason_work_description">会議、面接、授業</string>
+    <string name="onboarding_reason_fluent">流暢に話す</string>
+    <string name="onboarding_reason_fluent_description">ほぼどんな話題でも、無理なく話す</string>
+    <string name="onboarding_reason_certificate">資格試験に合格する</string>
+    <string name="onboarding_reason_certificate_description">英検、TOEIC、IELTSなど</string>
+    <string name="onboarding_reason_other_description">自分の言葉で書けます。B1を目指します</string>
+    <string name="onboarding_reason_exam">試験</string>
+    <string name="onboarding_reason_which_exam">どの試験ですか？</string>
+    <string name="onboarding_reason_exam_plan">その試験の出題内容とスコアに合わせて学習計画を立てます。</string>
+    <string name="onboarding_reason_your_words">自分の言葉で</string>
+    <string name="onboarding_reason_hours_note">初めて学ぶ場合の学習時間で、練習も含みます。すでに知っていることがあれば、短くなります。</string>
+    <string name="onboarding_aim_from_none">ゼロから、1日%1$sずつ学びます。</string>
+    <string name="onboarding_aim_from_basic">基礎から、1日%1$sずつ学びます。</string>
+    <string name="onboarding_aim_from_intermediate">中級から、1日%1$sずつ学びます。</string>
+    <string name="onboarding_aim_from_advanced">上級から、1日%1$sずつ学びます。</string>
+    <string name="onboarding_aim_from_level">%1$sから、1日%2$sずつ学びます。</string>
+    <plurals name="onboarding_reveal_lessons">
+        <item quantity="other">レッスン</item>
+    </plurals>
+    <plurals name="onboarding_reveal_lessons_done">
+        <item quantity="other">レッスン、%1$s完了</item>
+    </plurals>
 </resources>

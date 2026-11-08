@@ -98,6 +98,39 @@ async function getSteps(goalId: string) {
 }
 
 describe("onboarding a new goal", () => {
+  it("owes new placement items when the exam level changes after preparation", async () => {
+    const user = await useLearner();
+    const goal = await goalFixture({ kind: "exam", planRevealedAt: null, userId: user.id });
+
+    await prisma.plan.create({ data: { goalId: goal.id, placementPreparedAt: new Date() } });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { knownSubjects: ["Math"], level: "basic", question: "level" },
+    });
+
+    await expect(listOwed(user.id)).resolves.toContainEqual({
+      input: { goalId: goal.id, waitsForNotice: true },
+      key: goal.id,
+      kind: "preparePlacementItems",
+    });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: null });
+
+    const owed = await prisma.followUp.findFirstOrThrow({ where: { userId: user.id } });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { knownSubjects: ["Math"], level: "basic", question: "level" },
+    });
+
+    await expect(
+      prisma.followUp.findUniqueOrThrow({ where: { id: owed.id } }),
+    ).resolves.toMatchObject({ revision: owed.revision });
+  });
+
   it("owes learning who the learner is and their first lessons once the schedule is answered", async () => {
     const user = await useLearner();
     mockWorkFact("Works as a data analyst");

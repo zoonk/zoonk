@@ -21,6 +21,7 @@ struct ScheduleQuestion: View {
   let onChangeDate: (Draft) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(PlanStore.self) private var plans
   @Environment(\.isPaneSplit) private var isBesidePlan
   @Environment(\.onboardingAside) private var aside
   @State private var found = PlanAsking<FindKey, TimeToCover, ContinuousClock>()
@@ -31,6 +32,7 @@ struct ScheduleQuestion: View {
   @State private var weekendOn: Bool
   /// The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
   @State private var weekendPicked: Int?
+  @State private var changesAim = false
   /// What the plan's wait heard from the run: its plan made, then the run ended.
   @State private var planMade = false
   @State private var runEnded = false
@@ -40,12 +42,15 @@ struct ScheduleQuestion: View {
   private struct FindKey: Hashable, Sendable {
     let week: ScheduleWeek
     let date: String?
+    /// A language goal's aim re-plans, so a new one asks again.
+    let aim: String?
   }
 
   private struct AdviceKey: Hashable, Sendable {
     let week: ScheduleWeek
     let minutes: Int
     let date: String?
+    let aim: String?
   }
 
   private struct Asked<Key: Hashable>: Hashable {
@@ -121,25 +126,24 @@ struct ScheduleQuestion: View {
           planMade = true
           return true
         },
-        onRunEnd: { runEnded = true }
-      ) {
-        if gate.failed {
-          GenerationFailureSection(failure: .connection, act: gate.restart)
-        }
-      }
+        onRunEnd: { runEnded = true },
+        reconnect: gate.failed ? gate.restart : nil)
     } notice: { holding in
       NoticeReadingView(
         document: examDocument, lastEdition: false, generationID: view.generationId,
-        next: .timeQuestion, holding: holding, reconnect: gate.failed ? gate.restart : nil)
+        goalID: view.goal.id, next: .timeQuestion, holding: holding,
+        reconnect: gate.failed ? gate.restart : nil)
     } ready: {
       question(shown)
+        .onboardingColumn()
+        .questionShown(.schedule, of: view)
     }
-    .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
+    .taskThroughPush(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {
         try await onboarding.timeToCover(goalID: view.goal.id, week: findKey.week)
       }
     }
-    .task(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
+    .taskThroughPush(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
       let key = shown.adviceKey
 
       await advised.ask(key, when: asksAdvice) {
@@ -157,6 +161,13 @@ struct ScheduleQuestion: View {
           "How much time can you study each day?", tableName: "Onboarding",
           comment: "Onboarding question"),
         description: isBesidePlan ? nil : aside?.planFacts.map { Text(PlanFact.chips($0)) })
+
+      if let languageAim = view.languageAimView, let aim = languageAim.aim,
+        !languageAim.choices.isEmpty
+      {
+        aimSection(aim: aim, languageAim: languageAim, shown: shown)
+          .locksWhileSaving()
+      }
 
       // The days decide the time, and what the time covers arrives last, so nothing above it moves.
       weekSection(shown)
@@ -192,7 +203,10 @@ struct ScheduleQuestion: View {
 
       StepButtons(
         canContinue: ScheduleTime.canContinue(
-          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked)
+          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked),
+        continueLabel: Text(
+          "See your plan", tableName: "Onboarding",
+          comment: "Answers the time question, the last one, and shows the plan")
       ) {
         submit(shown)
       }
@@ -228,7 +242,9 @@ struct ScheduleQuestion: View {
   private var weekend: Int? { studiesOnWeekends && weekendOn ? weekendPicked : nil }
 
   private var findKey: FindKey {
-    FindKey(week: ScheduleTime.findWeek(days: days, weekend: weekend), date: view.goal.targetDate)
+    FindKey(
+      week: ScheduleTime.findWeek(days: days, weekend: weekend), date: view.goal.targetDate,
+      aim: view.languageAimView?.aim)
   }
 
   private var timeChoices: [TimeChoice] { view.timeChoices.map(TimeChoice.init) }
@@ -248,7 +264,8 @@ struct ScheduleQuestion: View {
       week: ScheduleTime.studyWeek(
         days: days, minutes: minutes ?? view.recommendedMinutes, weekend: weekend,
         fullCourse: isExam && fullCourse),
-      minutes: minutes ?? view.recommendedMinutes, date: view.goal.targetDate)
+      minutes: minutes ?? view.recommendedMinutes, date: view.goal.targetDate,
+      aim: view.languageAimView?.aim)
 
     let advice = advised.answer(for: adviceKey)
 
@@ -343,6 +360,77 @@ struct ScheduleQuestion: View {
     .accessibilityValue(duration(minutes))
   }
 
+  /// Main's `ScheduleAim`: the aim sizes the course, so it sits by the time it's reached in, one tap
+  /// from changing.
+  private func aimSection(aim: String, languageAim: LanguageAimView, shown: Shown) -> some View {
+    Section {
+      HStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(
+            "Your aim", tableName: "Onboarding",
+            comment:
+              "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+
+          AimName(aim: aim)
+            .typeStyle(.rowTitle)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+
+        Button {
+          changesAim = true
+        } label: {
+          Text(
+            "Change", tableName: "Onboarding",
+            comment: "Opens the levels a language course can aim for")
+        }
+        .buttonStyle(.outline)
+        .controlSize(.small)
+      }
+    }
+    .sheet(isPresented: $changesAim) {
+      AimChoicesSheet(
+        languageAim: languageAim,
+        fromLine: shown.minutes.map { aimFromLine(level: levelDetail, minutes: $0) },
+        planEnd: finishDate(shown),
+        today: GoalDate.today(now: .now, timeZone: view.goal.timezone)
+      ) { picked in
+        await changeAim(picked)
+      }
+      .zoonkStyles()
+    }
+  }
+
+  private var levelDetail: String? {
+    struct Details: Decodable {
+      let level: String?
+    }
+
+    return (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.level
+  }
+
+  private func finishDate(_ shown: Shown) -> String? {
+    if case .finish(let endDate) = shown.answer.line {
+      return endDate
+    }
+
+    return nil
+  }
+
+  /// The change re-plans, so the question's answers are read again for the new aim.
+  private func changeAim(_ aim: String) async -> Bool {
+    switch await plans.change(goalId: view.goal.id, edits: [.aim(aim)]) {
+    case .done(.applied), .done(.unchanged), .done(.undone):
+      await onboarding.onboarding(goalID: view.goal.id).refresh()
+      return true
+    case .done(.invalid), .failed, .obsolete:
+      return false
+    }
+  }
+
   private func timeAnswer(_ shown: Shown) -> some View {
     let answer = shown.answer
 
@@ -356,7 +444,8 @@ struct ScheduleQuestion: View {
         ? nil
         : ScheduleTime.split(
           minutes: shown.minutes, choices: timeChoices, answers: Array(found.answers.values)),
-      updating: shown.updating
+      updating: shown.updating,
+      aim: view.languageAimView?.aimAhead
     ) {
       if found.status == .failed {
         found.restart()

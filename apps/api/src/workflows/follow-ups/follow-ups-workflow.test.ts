@@ -1,12 +1,14 @@
 import { PlanConflictError } from "@zoonk/core/plans/conflict";
 import { refreshOwedStudyDay } from "@zoonk/core/sessions/refresh-owed-day";
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { HookConflictError } from "workflow/errors";
 import { getStartMock } from "../_test-utils/start-mock";
+import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { followUpsWorkflow } from "./follow-ups-workflow";
 
 // Force a competing plan write after core's quick retry without timing real database writers.
@@ -22,6 +24,31 @@ const CAUSE = {
 };
 
 describe(followUpsWorkflow, () => {
+  it("starts fresh placement preparation for an answer saved after an earlier run began", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const owed = await prisma.followUp.create({
+      data: {
+        input: { goalId: goal.id, waitsForNotice: false },
+        key: goal.id,
+        kind: "preparePlacementItems",
+        revision: 2,
+        userId: user.id,
+      },
+    });
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
+      placementItemsWorkflow,
+      [{ analytics: { distinctId: user.id }, goalId: goal.id, waitsForNotice: false }],
+      { experimental_hook: { token: `placement-items:${goal.id}:${owed.id}:2` } },
+    );
+
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("waits out a refresh plan conflict and completes the pass's other owed work", async () => {
     const user = await userFixture();
     const mistake = await mistakeFixture({ cause: null, userId: user.id });

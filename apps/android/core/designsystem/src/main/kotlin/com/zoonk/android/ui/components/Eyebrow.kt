@@ -49,9 +49,10 @@ fun Eyebrow(
 fun SuccessEyebrow(
     text: String,
     modifier: Modifier = Modifier,
+    iconModifier: Modifier = Modifier,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        DoneMark()
+        DoneMark(iconModifier)
         Text(
             text = text,
             color = MaterialTheme.colorScheme.onTertiaryContainer,

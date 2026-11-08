@@ -7,10 +7,10 @@ import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimCourseWhenFree } from "../courses/claim-course-when-free";
-import { BUSY_WAIT, MAX_CLAIM_TRIES } from "../courses/course-outline-workflow";
-import { replanWaitingGoals } from "../courses/replan-waiting-goals";
-import { finishCourseOutlineStep } from "../courses/steps/course-outline-steps";
+import {
+  claimCourseOutlineStep,
+  finishCourseOutlineStep,
+} from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { readLessonStatusStep } from "../lessons/steps/read-lesson-status-step";
 import { findGoalCourses } from "./goal-courses";
@@ -18,6 +18,7 @@ import { type GoalRunContext } from "./goal-run-context";
 import { saveGoalSkillsStep } from "./steps/goal-curriculum-steps";
 import {
   type OpeningLesson,
+  type OpeningLessonRequest,
   type WrittenOpening,
   findOpeningLessonStep,
   readSavedGoalOpeningStep,
@@ -36,7 +37,7 @@ const LEARNER_TIER = chooseServiceTier({ wait: "learner" });
 
 export type GoalOpening = {
   /**
-   * The first skill the graph reads and starts with: this run's, or the one an earlier run saved.
+   * The first skill the graph reads after its chapter is saved: this run's or an earlier run's.
    * Null when there is none, as when writing it failed.
    */
   skill: Promise<GoalOpeningSkill | null>;
@@ -134,14 +135,9 @@ async function writeOpeningChapter({
   const courseId = opening.opening.course.id;
   const { workflowRunId } = context;
 
-  const claim = await claimCourseWhenFree({
-    courseId,
-    tries: MAX_CLAIM_TRIES,
-    wait: () => sleep(BUSY_WAIT),
-    workflowRunId,
-  });
+  const claim = await deliverCourseContent(claimCourseOutlineStep({ courseId, workflowRunId }));
 
-  if (!claim.claimed) {
+  if (claim !== "claimed") {
     return null;
   }
 
@@ -190,7 +186,7 @@ async function saveOpeningLesson({
     (await findOpeningLessonStep({ courseId: course.id, skillId: skill.id, userId })) ??
     (await writeOpeningChapter({ context, opening, scope, userId }));
 
-  return lessonId ? saveGoalOpeningStep({ goalId, lessonId }) : null;
+  return lessonId ? saveGoalOpeningStep({ goalId, lessonId, opening: opening.opening }) : null;
 }
 
 async function followLesson(lessonId: string): Promise<boolean> {
@@ -206,6 +202,8 @@ async function followLesson(lessonId: string): Promise<boolean> {
   return status === "ready";
 }
 
+type OpeningLessonWriting = { cache: OpeningLessonRequest["cache"]; ready: () => Promise<boolean> };
+
 /** The goal's run goes on into the lesson's, so no follow-up is owed for it. */
 async function writeOpeningLesson({
   context,
@@ -217,7 +215,7 @@ async function writeOpeningLesson({
   goalId: string;
   lesson: OpeningLesson;
   userId: string;
-}): Promise<() => Promise<boolean>> {
+}): Promise<OpeningLessonWriting> {
   await goalProgressStep({
     entityId: goalId,
     lessonId: lesson.id,
@@ -236,35 +234,33 @@ async function writeOpeningLesson({
     // A lesson run claims the lesson's token itself, as a plan's do, and a duplicate ends busy.
     const run = await start(lessonContentWorkflow, [request.input]);
 
-    return async () => {
-      const result = await run.returnValue;
-      return result.status === "busy" ? followLesson(lesson.id) : result.status === "ready";
+    return {
+      cache: request.cache,
+      ready: async () => {
+        const result = await run.returnValue;
+        return result.status === "busy" ? followLesson(lesson.id) : result.status === "ready";
+      },
     };
   }
 
   if (request.status === "generating") {
-    return () => followLesson(lesson.id);
+    return { cache: request.cache, ready: () => followLesson(lesson.id) };
   }
 
-  return async () => request.status === "ready";
+  return { cache: request.cache, ready: async () => request.status === "ready" };
 }
 
 async function reportReady({
+  cache,
   goalId,
   lessonId,
   ready,
-}: {
-  goalId: string;
-  lessonId: string;
-  ready: () => Promise<boolean>;
-}): Promise<void> {
+}: OpeningLessonWriting & { goalId: string; lessonId: string }): Promise<void> {
   if (await ready()) {
-    await goalProgressStep({
-      entityId: goalId,
-      lessonId,
-      status: "completed",
-      step: "firstLessonReady",
-    });
+    await goalProgressStep(
+      { entityId: goalId, lessonId, status: "completed", step: "firstLessonReady" },
+      { cache },
+    );
   }
 }
 
@@ -311,26 +307,14 @@ export function openGoal({
       : null,
   );
 
-  // A plan built before the chapter landed gets its lessons as an outline's would, once the
-  // lesson's run is on its way.
-  const replanned = Promise.all([written, writing]).then(([opening]) =>
-    opening
-      ? replanWaitingGoals({
-          context: { analytics: context.analytics, courseId: opening.opening.course.id },
-          goalIds: [goal.id],
-          skillIds: [opening.opening.skill.id],
-        })
-      : null,
-  );
-
-  const settled = Promise.all([lesson, writing, replanned]).then(([saved, ready]) =>
-    saved && ready ? reportReady({ goalId: goal.id, lessonId: saved.id, ready }) : null,
+  const settled = Promise.all([lesson, writing]).then(([saved, ready]) =>
+    saved && ready ? reportReady({ ...ready, goalId: goal.id, lessonId: saved.id }) : null,
   );
 
   return {
     settled: settled.catch(() => null),
-    skill: Promise.all([known, written]).then(
-      ([found, opening]) => opening?.opening ?? found?.skill ?? null,
+    skill: Promise.all([known, written, lesson]).then(([found, opening, saved]) =>
+      saved ? (opening?.opening ?? found?.skill ?? null) : null,
     ),
     started: writing.catch(() => null),
   };

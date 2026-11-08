@@ -132,6 +132,10 @@ class WarmUpScreenshots {
         var scheduleReady by mutableStateOf(false)
         var noticeRead by mutableStateOf(false)
 
+        kotlinx.coroutines.runBlocking {
+            warmUps.decks[WARM_UP_ID].prepare()
+            readingWarmUps.decks[WARM_UP_ID].prepare()
+        }
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface {

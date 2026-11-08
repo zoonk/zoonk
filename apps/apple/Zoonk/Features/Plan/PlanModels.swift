@@ -229,6 +229,10 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let feasibility: Feasibility?
   let fitOffer: FitOffer?
   let goalId: String
+  /// A language goal's level the course goes up to and the aims to change it to; nil for others.
+  let languageAim: LanguageAimView?
+  /// Today and the six days after it, whatever the weekday: the reveal's first week.
+  let nextDays: [RevealDay]
   let notice: Notice?
   /// Nil until the plan is computed.
   let numbers: Numbers?
@@ -409,6 +413,33 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
     let done = items.filter { $0.status == "done" || $0.status == "testedOut" }.count
     return Double(done) / Double(items.count)
   }
+}
+
+/// A day of the plan's first week, with the lessons laid out on it.
+struct RevealDay: Decodable, Equatable, Identifiable, Sendable {
+  struct Item: Decodable, Equatable, Sendable {
+    enum Kind: String, Decodable, Sendable {
+      case boss
+      case chapter
+      case checkpoint
+      case lesson
+      case mock
+      case review
+    }
+
+    let kind: Kind
+    let status: String
+    /// The lesson's; empty for a skill whose lessons are still being written.
+    let title: String
+
+    var isTeaching: Bool { kind == .lesson || kind == .chapter }
+  }
+
+  let date: String
+  let items: [Item]
+  let minutes: Double
+
+  var id: String { date }
 }
 
 enum BaseChoice: String, Codable, Sendable {

@@ -181,7 +181,14 @@ fun StartGoalScreen(
                     }
 
                     screen is StartScreen.Sending -> {
-                        UnderstandingWait(screen.goal, GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
+                        UnderstandingWait(
+                            screen.goal,
+                            GenerationRun(),
+                            onRetry = null,
+                            since = vm.flow.waitStartedAt,
+                            attemptId = vm.flow.attemptId,
+                            onboardingId = (vm.flow.screen as? StartScreen.Draft)?.id,
+                        )
                     }
 
                     screen is StartScreen.Draft -> {
@@ -287,7 +294,11 @@ private fun ColumnScope.UnderstandingWait(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     since: Long? = null,
+    attemptId: String? = null,
+    onboardingId: String? = null,
 ) {
+    com.zoonk.android.data
+        .TrackVisibleWait("understanding", "curriculum", onboardingId = onboardingId, attemptId = attemptId)
     goal?.let { TypedGoal(it) }
     GenerationWait(kind = GenerationKind.Understanding, run = run, onRetry = onRetry, since = since) {
         OnboardingHeading(
@@ -330,7 +341,14 @@ private fun ColumnScope.Draft(
         LoadState.Idle, LoadState.Loading -> {
             // Only a signed-in learner's own draft can be read; anyone else starts from their words.
             if (!hasSession) LaunchedEffect(id) { vm.backToEntry("") }
-            UnderstandingWait(goal = null, run = GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
+            UnderstandingWait(
+                goal = null,
+                run = GenerationRun(),
+                onRetry = null,
+                since = vm.flow.waitStartedAt,
+                attemptId = vm.flow.attemptId,
+                onboardingId = (vm.flow.screen as? StartScreen.Draft)?.id,
+            )
         }
     }
 }
@@ -367,13 +385,31 @@ private fun ColumnScope.DraftContent(
                 }
 
                 vm.readFailed -> {
-                    UnderstandingWait(draft.prompt, failedRun(GenerationFailure.Connection), onRetry = vm::reloadRead)
+                    UnderstandingWait(
+                        draft.prompt,
+                        failedRun(GenerationFailure.Connection),
+                        onRetry = vm::reloadRead,
+                        attemptId = vm.flow.attemptId,
+                        onboardingId = draft.id.toString(),
+                    )
                 }
 
                 draft.status == OnboardingDraft.Status.UNDERSTANDING && draft.generationId != null -> {
                     val run by vm.follower.run.collectAsStateWithLifecycle()
                     val canRetry = run.failure == GenerationFailure.Connection || vm.follower.canRestart
-                    UnderstandingWait(draft.prompt, run, onRetry = vm::retryRun.takeIf { canRetry }, since = vm.flow.waitStartedAt)
+                    UnderstandingWait(
+                        draft.prompt,
+                        run,
+                        onRetry =
+                            vm::retryRun.takeIf {
+                                canRetry
+                            },
+                        since = vm.flow.waitStartedAt,
+                        attemptId = vm.flow.attemptId,
+                        onboardingId =
+                            (vm.flow.screen as? StartScreen.Draft)
+                                ?.id,
+                    )
                 }
 
                 else -> {
@@ -386,9 +422,22 @@ private fun ColumnScope.DraftContent(
                             GenerationFailure.NotStarted
                         }
                     if (vm.isRetrying) {
-                        UnderstandingWait(draft.prompt, GenerationRun(), onRetry = null, since = vm.flow.waitStartedAt)
+                        UnderstandingWait(
+                            draft.prompt,
+                            GenerationRun(),
+                            onRetry = null,
+                            since = vm.flow.waitStartedAt,
+                            attemptId = vm.flow.attemptId,
+                            onboardingId = (vm.flow.screen as? StartScreen.Draft)?.id,
+                        )
                     } else {
-                        UnderstandingWait(draft.prompt, failedRun(failure), onRetry = vm::retryRead)
+                        UnderstandingWait(
+                            draft.prompt,
+                            failedRun(failure),
+                            onRetry = vm::retryRead,
+                            attemptId = vm.flow.attemptId,
+                            onboardingId = draft.id.toString(),
+                        )
                     }
                 }
             }

@@ -243,6 +243,10 @@ fun LessonPlayer(
         }
     val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
     val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
+    androidx.lifecycle.compose.LifecycleResumeEffect(viewModel, shownStep != null) {
+        if (shownStep != null) viewModel.firstSceneVisible()
+        onPauseOrDispose {}
+    }
     language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {

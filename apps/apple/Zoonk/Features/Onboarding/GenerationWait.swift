@@ -6,6 +6,8 @@ struct GenerationWait: Equatable, Sendable {
   enum Kind: Sendable {
     case understanding
     case curriculum
+    /// The goal's run while placement waits for its questions.
+    case placement
     case explanation
     case levelTestBank
     case lesson
@@ -48,23 +50,45 @@ struct GenerationWait: Equatable, Sendable {
     var endedAt: Date?
   }
 
+  /// A learn goal's first lesson, which its plan's run writes before the plan.
+  struct FirstLesson: Equatable, Sendable {
+    let id: String
+    let title: String
+    var isReady: Bool
+    /// The server's times, as each phase keeps them.
+    var startedAt: Date?
+    var endedAt: Date?
+  }
+
+  /// Main's `useAnimatedProgress`: between reports the share drifts toward the end of the running
+  /// phases, from where it was shown when the last report moved it.
+  private struct Drift: Equatable {
+    var base: Double
+    var movedAt: Date
+    var share: Double
+    var target: Double
+  }
+
   let kind: Kind
   private(set) var phases: [Phase]
   private(set) var isDone = false
+  private(set) var firstLesson: FirstLesson?
   /// This device's clock minus the server's: a replayed event arrives long after its time, so the
   /// smallest gap is the closest to the clocks' difference.
   private(set) var clockOffset: TimeInterval?
+  private var drift: Drift
 
-  init(kind: Kind) {
+  init(kind: Kind, since: Date = .now) {
     self.kind = kind
     phases = Self.phases(for: kind)
+    drift = Drift(base: 0, movedAt: since, share: 0, target: 0)
   }
 
   var started: GenerationWait {
     var wait = self
 
     if wait.phases.allSatisfy({ $0.state == .waiting }), !wait.phases.isEmpty {
-      wait.phases[0].state = .working
+      wait.moving(at: wait.drift.movedAt) { $0.phases[0].state = .working }
     }
 
     return wait
@@ -79,6 +103,22 @@ struct GenerationWait: Equatable, Sendable {
     }
 
     return wait
+  }
+
+  /// What the onboarding read says of lesson 1: the read is the truth after a reconnect, so a lesson
+  /// either side calls ready is ready.
+  func firstLesson(read: FirstLesson?) -> FirstLesson? {
+    guard let live = firstLesson else {
+      return read
+    }
+
+    guard let read, read.id == live.id, read.isReady else {
+      return live
+    }
+
+    var merged = live
+    merged.isReady = true
+    return merged
   }
 
   var visiblePhases: [Phase] {
@@ -101,17 +141,89 @@ struct GenerationWait: Equatable, Sendable {
     return (done / total, (done + running.reduce(0, +)) / total, running.max())
   }
 
+  /// How long a lesson usually takes to write, from its phases' usual durations.
+  static let lessonSeconds = phases(for: .lesson).reduce(0) { $0 + $1.seconds }
+
+  /// Estimates are never the finish line: only the end of the work fills the bar.
+  private static let driftCap = 0.97
+  private static let driftSeconds = 30.0
+
+  /// The share every bar and ring of this wait shows at `date`: never full before the work is, and
+  /// never back unless the run started over.
+  func shownShare(at date: Date) -> Double {
+    guard !isDone else {
+      return 1
+    }
+
+    let ceiling = min(drift.target, Self.driftCap)
+
+    guard drift.base < ceiling else {
+      return max(drift.base, drift.share)
+    }
+
+    let constant = (progress.runningSeconds ?? Self.driftSeconds) / 2
+    let elapsed = max(0, date.timeIntervalSince(drift.movedAt).rounded(.down))
+    let drifted = drift.base + (ceiling - drift.base) * (1 - exp(-elapsed / constant))
+    return max(drifted, drift.share)
+  }
+
+  /// A report that moves the progress drifts on from what was shown when it came.
+  private mutating func moving(at date: Date, _ change: (inout GenerationWait) -> Void) {
+    let shown = shownShare(at: date)
+    change(&self)
+    let progress = self.progress
+
+    guard progress.share != drift.share || progress.target != drift.target else {
+      return
+    }
+
+    drift = Drift(
+      base: progress.share < drift.share ? progress.share : max(shown, progress.share),
+      movedAt: date, share: progress.share, target: progress.target)
+  }
+
   mutating func apply(_ event: GenerationEvent, receivedAt: Date = .now) {
+    if let at = event.at {
+      let gap = receivedAt.timeIntervalSince(at)
+      clockOffset = min(clockOffset ?? gap, gap)
+    }
+
+    recordFirstLesson(event)
+
     guard let place = Self.place(of: event.step, kind: kind) else {
       return
     }
 
-    let at = event.at
+    moving(at: receivedAt) { $0.applyPlace(place, of: event) }
+  }
 
-    if let at {
-      let gap = receivedAt.timeIntervalSince(at)
-      clockOffset = min(clockOffset ?? gap, gap)
+  /// The run reports lesson 1 once as it's picked and once as it's ready, before or after the plan.
+  private mutating func recordFirstLesson(_ event: GenerationEvent) {
+    switch event.step {
+    case "writeFirstLesson":
+      guard let id = event.lessonID, let title = event.lessonTitle else {
+        return
+      }
+
+      let known = firstLesson?.id == id ? firstLesson : nil
+      firstLesson = FirstLesson(
+        id: id, title: title, isReady: known?.isReady ?? false,
+        startedAt: known?.startedAt ?? event.at, endedAt: known?.endedAt)
+    case "firstLessonReady":
+      guard var lesson = firstLesson, lesson.id == event.lessonID else {
+        return
+      }
+
+      lesson.isReady = true
+      lesson.endedAt = lesson.endedAt ?? event.at
+      firstLesson = lesson
+    default:
+      break
     }
+  }
+
+  private mutating func applyPlace(_ place: Place, of event: GenerationEvent) {
+    let at = event.at
 
     switch place {
     case .done:
@@ -221,6 +333,13 @@ struct GenerationWait: Equatable, Sendable {
     case (.curriculum, "goalReady"), (.curriculum, "outlineCourses"),
       (.curriculum, "prepareFirstLessons"):
       .done
+    case (.placement, "understandGoal"): .phase("goal")
+    case (.placement, "readExamNotice"): .phase("notice")
+    case (.placement, "buildSkillGraph"): .phase("skills")
+    case (.placement, "saveSkills"), (.placement, "createPlan"), (.placement, "preparePlacement"),
+      (.placement, "outlineCourses"), (.placement, "prepareFirstLessons"):
+      .phase("questions")
+    case (.placement, "goalReady"): .done
     case (.explanation, "classifyQuestion"): .phase("read")
     case (.explanation, "findExplanation"): .phase("find")
     case (.explanation, "writeExplanation"): .phase("write")
@@ -235,6 +354,55 @@ struct GenerationWait: Equatable, Sendable {
     default: nil
     }
   }
+
+  /// The goal's run reads the goal, maybe its material, then maps its skills, for every wait on it.
+  private static let goalPhases: [Phase] = [
+    Phase(
+      id: "goal",
+      label: LocalizedStringResource(
+        "Reading your goal", table: "Onboarding",
+        comment: "A step of the wait while a plan is built"),
+      isOptional: false, seconds: 8,
+      lines: [
+        LocalizedStringResource(
+          "Reading your answers…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+        LocalizedStringResource(
+          "Deciding how deep to go…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+      ]),
+    Phase(
+      id: "notice",
+      label: LocalizedStringResource(
+        "Reading your material", table: "Onboarding",
+        comment: "A step of the wait while a plan is built from the learner's own material"),
+      isOptional: true, seconds: 15,
+      lines: [
+        LocalizedStringResource(
+          "Finding the topics it covers…", table: "Onboarding",
+          comment: "What the wait is doing while it reads the learner's own material"),
+        LocalizedStringResource(
+          "Putting them in the order it teaches…", table: "Onboarding",
+          comment: "What the wait is doing while it reads the learner's own material"),
+      ]),
+    Phase(
+      id: "skills",
+      label: LocalizedStringResource(
+        "Mapping the skills it takes", table: "Onboarding",
+        comment: "A step of the wait while a plan is built"),
+      isOptional: false, seconds: 60,
+      lines: [
+        LocalizedStringResource(
+          "Listing what your goal asks for…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+        LocalizedStringResource(
+          "Putting the skills in order…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+        LocalizedStringResource(
+          "Checking nothing important is missing…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+      ]),
+  ]
 
   private static func phases(for kind: Kind) -> [Phase] {
     switch kind {
@@ -273,52 +441,7 @@ struct GenerationWait: Equatable, Sendable {
           ]),
       ]
     case .curriculum:
-      [
-        Phase(
-          id: "goal",
-          label: LocalizedStringResource(
-            "Reading your goal", table: "Onboarding",
-            comment: "A step of the wait while a plan is built"),
-          isOptional: false, seconds: 8,
-          lines: [
-            LocalizedStringResource(
-              "Reading your answers…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-            LocalizedStringResource(
-              "Deciding how deep to go…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-          ]),
-        Phase(
-          id: "notice",
-          label: LocalizedStringResource(
-            "Reading your material", table: "Onboarding",
-            comment: "A step of the wait while a plan is built from the learner's own material"),
-          isOptional: true, seconds: 15,
-          lines: [
-            LocalizedStringResource(
-              "Finding the topics it covers…", table: "Onboarding",
-              comment: "What the wait is doing while it reads the learner's own material"),
-            LocalizedStringResource(
-              "Putting them in the order it teaches…", table: "Onboarding",
-              comment: "What the wait is doing while it reads the learner's own material"),
-          ]),
-        Phase(
-          id: "skills",
-          label: LocalizedStringResource(
-            "Mapping the skills it takes", table: "Onboarding",
-            comment: "A step of the wait while a plan is built"),
-          isOptional: false, seconds: 60,
-          lines: [
-            LocalizedStringResource(
-              "Listing what your goal asks for…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-            LocalizedStringResource(
-              "Putting the skills in order…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-            LocalizedStringResource(
-              "Checking nothing important is missing…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-          ]),
+      goalPhases + [
         Phase(
           id: "plan",
           label: LocalizedStringResource(
@@ -335,7 +458,21 @@ struct GenerationWait: Equatable, Sendable {
             LocalizedStringResource(
               "Saving your plan…", table: "Onboarding",
               comment: "What the wait is doing while a plan is built"),
-          ]),
+          ])
+      ]
+    case .placement:
+      goalPhases + [
+        Phase(
+          id: "questions",
+          label: LocalizedStringResource(
+            "Writing your questions", table: "Onboarding",
+            comment: "A step of the wait while placement's questions are written"),
+          isOptional: false, seconds: 40,
+          lines: [
+            LocalizedStringResource(
+              "Picking the skills to ask about…", table: "Onboarding",
+              comment: "What the wait is doing while placement's questions are written")
+          ])
       ]
     case .explanation:
       [
@@ -523,12 +660,35 @@ enum GenerationFailure: Equatable, Sendable {
   case generation
 }
 
-/// It never gives up silently: no run, a lost stream or a stopped run each say so, with the way out.
-struct GenerationWaitView<Leading: View, Trailing: View>: View {
-  let title: LocalizedStringResource
-  let description: LocalizedStringResource
-  /// Replaces the description once the run failed or never started.
-  var stoppedDescription: LocalizedStringResource?
+/// A run as a wait shows it, and what it reported on the side.
+struct FollowedRun {
+  let wait: GenerationWait
+  let failure: GenerationFailure?
+  /// The goal's warm-up deck, once the run reported it.
+  let warmUpID: String?
+  let isRestarting: Bool
+  /// Nil when nothing can be done about the failure.
+  let retry: (() -> Void)?
+
+  /// Stopped or never started, not just a lost stream: the work needs starting again.
+  var isStopped: Bool {
+    failure == .generation || failure == .notStarted
+  }
+
+  /// The phase running now, said once it changes.
+  var workingLabel: String? {
+    guard failure == nil, let phase = wait.visiblePhases.first(where: { $0.state == .working })
+    else {
+      return nil
+    }
+
+    return String(localized: phase.label)
+  }
+}
+
+/// Follows a run for a wait. It never gives up silently: no run, a lost stream or a stopped run
+/// each say so, with the way out.
+struct GenerationFollower<Content: View>: View {
   let generationID: String?
   let kind: GenerationWait.Kind
   /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
@@ -541,12 +701,9 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
   /// For a caller that waits for the whole run too: the wait follows the run past `readResult` and
   /// calls this once it ends.
   var onRunEnd: (() -> Void)?
-  @ViewBuilder let leading: () -> Leading
-  @ViewBuilder let trailing: () -> Trailing
+  @ViewBuilder let content: (FollowedRun) -> Content
 
   @Environment(OnboardingStore.self) private var onboarding
-  /// Only a wait that follows the hold rule deals the goal's warm-up cards.
-  @Environment(WarmUpVisit.self) private var warmUpVisit: WarmUpVisit?
   @State private var wait: GenerationWait?
   /// Kept through reconnections, which read the run's events from the start again.
   @State private var warmUpID: String?
@@ -563,71 +720,31 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
   var body: some View {
     let runID = followedID ?? generationID
-    let deckID = self.deckID
+    let run = FollowedRun(
+      wait: wait ?? GenerationWait(kind: kind).started, failure: failure, warmUpID: warmUpID,
+      isRestarting: isRestarting,
+      retry: failure.flatMap { failure -> (() -> Void)? in
+        failure == .connection || restart != nil ? { retry(failure) } : nil
+      })
 
-    ZoonkList {
-      StepHeader(title: Text(title), description: Text(shownDescription))
+    content(run)
+      .announcesStatus(run.workingLabel)
+      .taskThroughPush(id: Following(id: runID, connection: connection)) {
+        failure = nil
 
-      leading()
+        if let runID {
+          let ending = await follow(runID)
 
-      Section {
-        GenerationTimeline(
-          wait: shown, failure: failure, isActing: isRestarting,
-          act: failure.flatMap { failure -> (() -> Void)? in
-            failure == .connection || restart != nil ? { retry(failure) } : nil
-          })
-      }
-      .listRowBackground(Color.clear)
-      .listRowSeparator(.hidden)
+          // A cancelled iteration ends like a finished stream: the wait went away or follows again.
+          guard !Task.isCancelled else {
+            return
+          }
 
-      trailing()
-
-      if let deckID {
-        WarmUpSection(deckID: deckID)
-      }
-    }
-    .warmUpDeck(deckID)
-    .announcesStatus(workingLabel)
-    .task(id: Following(id: runID, connection: connection)) {
-      failure = nil
-
-      if let runID {
-        let ending = await follow(runID)
-
-        // A cancelled iteration ends like a finished stream: the wait went away or follows again.
-        guard !Task.isCancelled else {
-          return
+          await finish(ending)
+        } else {
+          await readMissingID()
         }
-
-        await finish(ending)
-      } else {
-        await readMissingID()
       }
-    }
-  }
-
-  private var deckID: String? {
-    warmUpVisit == nil ? nil : warmUpID
-  }
-
-  private var shown: GenerationWait {
-    wait ?? GenerationWait(kind: kind).started
-  }
-
-  private var workingLabel: String? {
-    guard failure == nil, let phase = shown.visiblePhases.first(where: { $0.state == .working })
-    else {
-      return nil
-    }
-
-    return String(localized: phase.label)
-  }
-
-  private var shownDescription: LocalizedStringResource {
-    switch failure {
-    case .generation?, .notStarted?: stoppedDescription ?? description
-    case .connection?, nil: description
-    }
   }
 
   private enum Ending {
@@ -645,8 +762,9 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
 
     do {
       for try await event in onboarding.events(generationID: id) {
-        if let id = event.warmUpID {
-          warmUpID = id
+        if let deckID = event.warmUpID {
+          warmUpID = deckID
+          onboarding.found(deckID: deckID, generationID: id)
         }
 
         let wasDone = current.isDone
@@ -743,21 +861,53 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
   }
 }
 
+/// A wait on its own: its heading and the run's timeline, for the waits that deal no quiz.
+struct GenerationWaitView<Leading: View, Trailing: View>: View {
+  let title: LocalizedStringResource
+  let description: LocalizedStringResource
+  let generationID: String?
+  let kind: GenerationWait.Kind
+  var readGenerationID: (() async -> String?)?
+  var restart: (() async throws -> String?)?
+  let readResult: () async -> Bool
+  @ViewBuilder var leading: () -> Leading
+  @ViewBuilder var trailing: () -> Trailing
+
+  var body: some View {
+    GenerationFollower(
+      generationID: generationID, kind: kind, readGenerationID: readGenerationID,
+      restart: restart, readResult: readResult
+    ) { run in
+      ZoonkList {
+        StepHeader(title: Text(title), description: Text(description))
+
+        leading()
+
+        Section {
+          GenerationTimeline(
+            wait: run.wait, failure: run.failure, isActing: run.isRestarting, act: run.retry)
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+
+        trailing()
+      }
+    }
+  }
+}
+
 extension GenerationWaitView where Trailing == EmptyView {
   init(
     title: LocalizedStringResource,
     description: LocalizedStringResource,
     generationID: String?,
     kind: GenerationWait.Kind,
-    readGenerationID: (() async -> String?)? = nil,
-    restart: (() async throws -> String?)? = nil,
     readResult: @escaping () async -> Bool,
     @ViewBuilder leading: @escaping () -> Leading
   ) {
     self.init(
       title: title, description: description, generationID: generationID, kind: kind,
-      readGenerationID: readGenerationID, restart: restart, readResult: readResult,
-      leading: leading, trailing: { EmptyView() })
+      readResult: readResult, leading: leading, trailing: { EmptyView() })
   }
 }
 
@@ -767,34 +917,13 @@ extension GenerationWaitView where Leading == EmptyView {
     description: LocalizedStringResource,
     generationID: String?,
     kind: GenerationWait.Kind,
-    readGenerationID: (() async -> String?)? = nil,
     restart: (() async throws -> String?)? = nil,
     readResult: @escaping () async -> Bool,
     @ViewBuilder trailing: @escaping () -> Trailing
   ) {
     self.init(
       title: title, description: description, generationID: generationID, kind: kind,
-      readGenerationID: readGenerationID, restart: restart, readResult: readResult,
-      leading: { EmptyView() }, trailing: trailing)
-  }
-}
-
-extension GenerationWaitView where Leading == EmptyView, Trailing == EmptyView {
-  init(
-    title: LocalizedStringResource,
-    description: LocalizedStringResource,
-    stoppedDescription: LocalizedStringResource? = nil,
-    generationID: String?,
-    kind: GenerationWait.Kind,
-    readGenerationID: (() async -> String?)? = nil,
-    restart: (() async throws -> String?)? = nil,
-    readResult: @escaping () async -> Bool
-  ) {
-    self.init(
-      title: title, description: description, stoppedDescription: stoppedDescription,
-      generationID: generationID, kind: kind, readGenerationID: readGenerationID,
-      restart: restart, readResult: readResult, leading: { EmptyView() },
-      trailing: { EmptyView() })
+      restart: restart, readResult: readResult, leading: { EmptyView() }, trailing: trailing)
   }
 }
 
@@ -951,24 +1080,9 @@ private struct GenerationWaitBar: View {
 
   let wait: GenerationWait
 
-  @State private var drift = Drift(base: 0, movedAt: .now, share: 0, target: 0)
-
-  /// Estimates are never the finish line: only the end of the work fills the bar.
-  private static let cap = 0.97
-  private static let defaultSeconds = 30.0
-
-  private struct Drift: Equatable {
-    var base: Double
-    var movedAt: Date
-    var share: Double
-    var target: Double
-  }
-
   var body: some View {
-    let progress = wait.progress
-
     TimelineView(.animation(minimumInterval: 1, paused: wait.isDone)) { context in
-      let shown = shown(at: context.date, runningSeconds: progress.runningSeconds)
+      let shown = wait.shownShare(at: context.date)
 
       HStack(spacing: 12) {
         FilledParts(share: shown, weights: wait.visiblePhases.map(\.seconds))
@@ -980,44 +1094,26 @@ private struct GenerationWaitBar: View {
           .frame(minWidth: 32, alignment: .trailing)
       }
       .accessibilityElement(children: .ignore)
-      .accessibilityLabel(Text(Self.name(wait.kind)))
+      .accessibilityLabel(Text(wait.kind.name))
       .accessibilityValue(Text(shown, format: .percent.precision(.fractionLength(0))))
     }
-    .onChange(of: [progress.share, progress.target], initial: true) { _, new in
-      let now = Date.now
-      let shown = shown(at: now, runningSeconds: progress.runningSeconds)
-
-      drift = Drift(
-        base: new[0] < drift.share ? new[0] : max(shown, new[0]), movedAt: now, share: new[0],
-        target: new[1])
-    }
   }
+}
 
-  private func shown(at date: Date, runningSeconds: Double?) -> Double {
-    guard !wait.isDone else {
-      return 1
-    }
-
-    let ceiling = min(drift.target, Self.cap)
-
-    guard drift.base < ceiling else {
-      return max(drift.base, drift.share)
-    }
-
-    let constant = (runningSeconds ?? Self.defaultSeconds) / 2
-    let elapsed = max(0, date.timeIntervalSince(drift.movedAt).rounded(.down))
-    let drifted = drift.base + (ceiling - drift.base) * (1 - exp(-elapsed / constant))
-    return max(drifted, drift.share)
-  }
-
-  private static func name(_ kind: GenerationWait.Kind) -> LocalizedStringResource {
-    switch kind {
+extension GenerationWait.Kind {
+  /// What the wait is for, as its bar and strip say it.
+  var name: LocalizedStringResource {
+    switch self {
     case .understanding:
       LocalizedStringResource(
         "Reading your goal", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
     case .curriculum:
       LocalizedStringResource(
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
+    case .placement:
+      LocalizedStringResource(
+        "Getting your questions ready", table: "Onboarding",
+        comment: "Title while placement questions are written")
     case .explanation:
       LocalizedStringResource(
         "Writing your explanation", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
@@ -1131,20 +1227,13 @@ private struct GenerationPhaseRow: View {
   private var time: some View {
     if let startedAt = phase.startedAt {
       if status == .done, let endedAt = phase.endedAt {
-        Text(Self.clock(endedAt.timeIntervalSince(startedAt)))
+        Text(GenerationClock.text(endedAt.timeIntervalSince(startedAt)))
       } else if status == .working, isFollowing, let clockOffset {
         TimelineView(.periodic(from: .now, by: 1)) { context in
-          Text(Self.clock(context.date.timeIntervalSince(startedAt) - clockOffset))
+          Text(GenerationClock.text(context.date.timeIntervalSince(startedAt) - clockOffset))
         }
       }
     }
-  }
-
-  /// Main's `formatClock`: whole seconds rounded up, as "0:18" or "1:02:05".
-  private static func clock(_ seconds: TimeInterval) -> String {
-    let duration = Duration.seconds(max(0, seconds.rounded(.up)))
-    return duration.formatted(
-      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
   }
 
   private var statusText: Text {
@@ -1195,5 +1284,14 @@ private struct GenerationPhaseDetail: View {
         tick += 1
       }
     }
+  }
+}
+
+enum GenerationClock {
+  /// Main's `formatClock`: whole seconds rounded up, as "0:18" or "1:02:05".
+  static func text(_ seconds: TimeInterval) -> String {
+    let duration = Duration.seconds(max(0, seconds.rounded(.up)))
+    return duration.formatted(
+      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
   }
 }

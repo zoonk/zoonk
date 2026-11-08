@@ -41,9 +41,16 @@ data class GenerationRun(
     val skillName: String? = null,
     /** The goal's deck of guesses, once the run reports it ready; a restart writes the same goal, so it keeps it. */
     val warmUpId: String? = null,
+    val firstLesson: GenerationFirstLesson? = null,
 ) {
     enum class Status { Waiting, Following, Ready, Failed }
 }
+
+data class GenerationFirstLesson(
+    val id: String,
+    val title: String? = null,
+    val ready: Boolean = false,
+)
 
 interface GenerationSource {
     fun events(id: String): Flow<GenerationEvent>
@@ -93,7 +100,7 @@ class GenerationFollower(
                 val restart = restart ?: return
                 followed?.let(replaced::add)
                 followed = null
-                state.value = GenerationRun(warmUpId = state.value.warmUpId)
+                state.value = GenerationRun(warmUpId = state.value.warmUpId, firstLesson = state.value.firstLesson)
                 job?.cancel()
                 job =
                     scope.launch {
@@ -231,9 +238,33 @@ class GenerationFollower(
                 clockOffsetMillis = at?.let { offset(it, run.clockOffsetMillis) } ?: run.clockOffsetMillis,
                 skillName = event.skillName ?: run.skillName,
                 warmUpId = event.warmUpId ?: run.warmUpId,
+                firstLesson =
+                    when {
+                        event.step == "writeFirstLesson" && event.lessonId != null -> {
+                            GenerationFirstLesson(
+                                event.lessonId,
+                                event.lessonTitle ?: run.firstLesson?.title,
+                                ready = run.firstLesson?.takeIf { it.id == event.lessonId }?.ready == true,
+                            )
+                        }
+
+                        event.step == "firstLessonReady" && event.lessonId != null -> {
+                            GenerationFirstLesson(
+                                event.lessonId,
+                                run.firstLesson?.takeIf { it.id == event.lessonId }?.title,
+                                ready = true,
+                            )
+                        }
+
+                        else -> {
+                            run.firstLesson
+                        }
+                    },
             )
         }
-        return Ending.Ready.takeIf { kind.isDone(state.value.steps) }
+        if (!kind.isDone(state.value.steps)) return null
+        state.update { it.copy(status = GenerationRun.Status.Ready) }
+        return Ending.Ready.takeUnless { state.value.firstLesson?.ready == false }
     }
 
     /** A replayed event arrives long after its time, so the smallest gap is the closest to the clocks' difference. */

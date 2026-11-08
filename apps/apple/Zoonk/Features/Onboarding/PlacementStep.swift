@@ -17,6 +17,8 @@ struct PlacementStep: View {
   @State private var isStarting = false
   @State private var failed = false
   @State private var waitRound = 0
+  /// The goal's run while its questions are written, as the wait shows it.
+  @State private var run = GenerationWait(kind: .placement).started
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
   @State private var shown = (answered: 0, spent: 0.0)
 
@@ -106,7 +108,7 @@ struct PlacementStep: View {
     if phase == .unavailable {
       ready
     } else {
-      WarmUpHold(
+      WaitHold(
         surface: .placementWait, isReady: !phase.isWaiting, announcement: Self.questionsReady
       ) { stage in
         switch stage {
@@ -259,77 +261,80 @@ struct PlacementStep: View {
     "Your questions are ready", table: "Onboarding",
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
 
-  private func waiting(holding: WarmUpHolding?) -> some View {
-    ZoonkList {
-      if holding == nil {
-        StepHeader(
-          title: Text(
-            "Getting your questions ready", tableName: "Onboarding",
-            comment: "Title while placement questions are written"),
-          description: Text(
-            "They come from the skills your goal needs. It usually takes a minute or two.",
-            tableName: "Onboarding",
-            comment: "Why placement questions take a moment"))
-      } else {
-        StepHeader(
-          title: Text(Self.questionsReady),
-          description: Text(
-            "Start them whenever you're ready.", tableName: "Onboarding",
-            comment: "Under \"Your questions are ready\" on placement's wait"))
-      }
+  private func waiting(holding: WaitHolding?) -> some View {
+    let failure: GenerationFailure? =
+      if case .waiting(let failure) = phase, holding == nil { failure } else { nil }
+    let shown = holding == nil ? run : run.finished
+    let title =
+      holding == nil
+      ? Text(
+        "Getting your questions ready", tableName: "Onboarding",
+        comment: "Title while placement questions are written")
+      : Text(Self.questionsReady)
 
-      if case .waiting(let failure?) = phase {
-        GenerationFailureSection(failure: failure) {
+    return WaitScreen(
+      deckID: warmUpID ?? onboarding.deckID(generationID: view.generationId), goalID: view.goal.id,
+      progressTitle: title,
+      ready: holding.map { holding in
+        WaitReady(
+          label: Text(
+            "Continue", tableName: "Onboarding",
+            comment: "Leaves placement's wait, once its questions are ready, for the questions"),
+          action: holding.moveOn)
+      }
+    ) {
+      if let failure {
+        GenerationFailureNotice(failure: failure, isActing: isSaving || isStarting) {
           retry(failure)
         }
-        .disabled(isSaving || isStarting)
-      } else if holding == nil {
-        Section {
-          ProgressView()
-            .frame(maxWidth: .infinity)
-        }
+      } else {
+        WaitStatusStrip(label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
       }
+    } progress: {
+      WaitHeading(
+        title: title,
+        description: holding == nil
+          ? Text(
+            "They come from the skills your goal needs. It usually takes a minute or two.",
+            tableName: "Onboarding", comment: "Why placement questions take a moment")
+          : Text(
+            "Start them whenever you're ready.", tableName: "Onboarding",
+            comment: "Under \"Your questions are ready\" on placement's wait"))
 
-      if let warmUpID {
-        WarmUpSection(deckID: warmUpID)
-          .disabled(isSaving)
+      Section {
+        GenerationTimeline(wait: shown, failure: failure)
       }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
 
       saveFailure
-
-      if holding == nil {
-        Section {
-          BusyButton(isBusy: isSaving, icon: .skip) {
-            finish(fromScratch: false)
-          } label: {
-            Text(
-              "Skip for now", tableName: "Onboarding",
-              comment: "Skips placement while its questions are written")
-          }
-          .buttonStyle(.outline)
-          .controlSize(.large)
-          .buttonSizing(.flexible)
-          .disabled(isStarting)
-          .listRowInsets(.vertical, 0)
-          .listRowBackground(Color.clear)
-        } footer: {
-          SectionFooter {
-            Text(
-              "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-              comment: "Under Skip for now")
-          }
+    } extra: {
+      VStack(spacing: 6) {
+        BusyButton(isBusy: isSaving, icon: .skip) {
+          finish(fromScratch: false)
+        } label: {
+          Text(
+            "Skip for now", tableName: "Onboarding",
+            comment: "Skips placement while its questions are written")
         }
+        .buttonStyle(.outline)
+        .buttonSizing(.flexible)
+        .disabled(isStarting)
+
+        Text(
+          "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
+          comment: "Under Skip for now"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .multilineTextAlignment(.center)
       }
     }
-    .warmUpDeck(warmUpID)
-    .warmUpHoldBar(
-      holding,
-      label: Text(
-        "Continue", tableName: "Onboarding",
-        comment: "Leaves placement's wait, once its questions are ready, for the questions")
+    .measuresWait(
+      surface: "placementWait", contentKind: "curriculum", goalID: view.goal.id,
+      onboardingID: view.onboardingID
     )
-    .onboardingColumn()
-    .task(id: waitRound) { await waitForQuestions() }
+    .taskThroughPush(id: waitRound) { await waitForQuestions() }
   }
 
   private func outcome(title: Text, description: Text) -> some View {
@@ -417,7 +422,10 @@ struct PlacementStep: View {
         for try await event in onboarding.events(generationID: generationID) {
           if let id = event.warmUpID {
             warmUpID = id
+            onboarding.found(deckID: id, generationID: generationID)
           }
+
+          run.apply(event)
 
           await read()
 

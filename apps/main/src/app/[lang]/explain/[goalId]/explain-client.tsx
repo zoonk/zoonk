@@ -2,17 +2,17 @@
 
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useRouter } from "@/i18n/navigation";
-import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
 import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
-import { useAppLocale } from "@zoonk/learn/locale";
+import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { useExtracted } from "next-intl";
-import { type ComponentProps, startTransition, useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentProps, startTransition, useEffect, useMemo, useState } from "react";
 import { retryExplanationAction } from "./explain-actions";
 import { LazyLessonPlayer } from "./lazy-lesson-player";
 import { preloadLessonPlayer } from "./lesson-player-code";
@@ -97,26 +97,6 @@ function createExplainEnding({
   };
 }
 
-function useExplanationWait(isWritten: boolean) {
-  const locale = useAppLocale();
-  const startedAt = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!isWritten) {
-      startedAt.current ??= Date.now();
-      return;
-    }
-
-    if (startedAt.current === null) {
-      return;
-    }
-
-    const milliseconds = Date.now() - startedAt.current;
-    startedAt.current = null;
-    void recordGenerationWaitAction({ contentKind: "explanation", locale, milliseconds });
-  }, [isWritten, locale]);
-}
-
 /** An old prefetched copy that still shows the wait follows the run, which reads the page again once ready. */
 export function ExplainClient({
   explanation,
@@ -147,10 +127,16 @@ export function ExplainClient({
     explanation.lesson ? "playing" : "outline",
   );
 
-  useExplanationWait(Boolean(explanation.lesson));
-
   const { lesson } = explanation;
   const isWaiting = !lesson || phase === "outline";
+
+  useVisibleWait({
+    contentKind: "explanation",
+    enabled: isWaiting,
+    goalId: explanation.goalId,
+    surface: "explanation",
+    track: trackEvent,
+  });
 
   useEffect(() => {
     if (isWaiting) {

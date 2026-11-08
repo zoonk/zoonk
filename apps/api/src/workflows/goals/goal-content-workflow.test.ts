@@ -268,7 +268,7 @@ async function runPlacementInline(workflow: unknown, args: unknown[]) {
 async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promise<T> {
   const committed = new Set<string>();
   const createPlan = planSteps.createGoalPlanStep;
-  const preparePlacement = goalPlacement.prepareGraphPlacement;
+  const preparePlacement = goalPlacement.preparePlanPlacement;
 
   const creation = vi.spyOn(planSteps, "createGoalPlanStep").mockImplementation(async (input) => {
     const tasks = await createPlan(input);
@@ -277,7 +277,7 @@ async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promi
   });
 
   const placement = vi
-    .spyOn(goalPlacement, "prepareGraphPlacement")
+    .spyOn(goalPlacement, "preparePlanPlacement")
     .mockImplementation(async (input) => {
       expect(
         committed.has(input.goalId),
@@ -771,9 +771,11 @@ describe(goalContentWorkflow, () => {
       events.indexOf("createPlan:completed"),
     );
 
-    expect(start).toHaveBeenCalledWith(placementItemsWorkflow, [
-      expect.objectContaining({ goalId: goal.id, skillIds: expect.any(Array) }),
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      placementItemsWorkflow,
+      [expect.objectContaining({ goalId: goal.id })],
+      { experimental_hook: { token: `placement-items:${goal.id}` } },
+    );
 
     expect(plan.placementPreparedAt).toBeInstanceOf(Date);
     expect(plan.buildFailedAt).toBeNull();

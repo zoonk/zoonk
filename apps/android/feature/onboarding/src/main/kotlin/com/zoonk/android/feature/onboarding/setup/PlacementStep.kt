@@ -131,6 +131,8 @@ internal fun ColumnScope.PlacementStep(
         }
 
         is PlacementPhase.Intro -> {
+            com.zoonk.android.data
+                .TrackOnboardingQuestion(goalId, "placement")
             PlacementIntro(
                 subject = subject,
                 areaCount = areaCount,
@@ -298,29 +300,30 @@ private fun ColumnScope.PlacementWaiting(
         patient = true
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        GenerationWait(
-            kind = GenerationKind.Placement,
-            run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run,
-            onRetry = onRetry,
-        ) {
+    val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
+    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title)
+    SetupWait(
+        shown,
+        GenerationKind.Placement,
+        AnalyticsEvent.WarmUpSurface.PlacementWait,
+        title,
+        hold,
+        stringResource(R.string.onboarding_continue),
+        onRetry,
+    ) {
+        GenerationWait(GenerationKind.Placement, shown, onRetry) {
             OnboardingHeading(
-                stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title),
+                title,
                 stringResource(
                     when {
                         hold.holding -> R.string.warm_up_questions_ready_description
-
-                        // The learner's own material is read in the `readExamNotice` step.
                         READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
-
                         else -> R.string.onboarding_placement_waiting_skills
                     },
                 ),
             )
         }
-        SetupWarmUpCard(run.warmUpId, AnalyticsEvent.WarmUpSurface.PlacementWait, hold)
     }
-    PageHold(hold, stringResource(R.string.onboarding_continue))
 
     if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
         OnboardingActions {

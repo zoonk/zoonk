@@ -168,9 +168,6 @@ private fun TargetDateDialog(
     }
 }
 
-/** Plans reach at most this far ahead, as core's `getTargetDateBounds`. */
-private const val MAX_PLAN_DAYS = 3650L
-
 /** The date picker counts days as UTC midnights. */
 private val LocalDate.utcMillis: Long get() = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 

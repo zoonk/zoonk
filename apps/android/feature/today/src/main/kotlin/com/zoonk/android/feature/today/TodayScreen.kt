@@ -202,6 +202,7 @@ private fun TodayRead(
                 }
 
                 is TodayRead.Preparing -> {
+                    LaunchedEffect(read.goalId) { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }
                     Preparing(app, navigator, read, padding)
                 }
 
@@ -379,6 +380,22 @@ private fun Preparing(
     padding: PaddingValues,
 ) {
     val setup by app.onboarding.onboardings[read.goalId.toString()].collectShown()
+
+    if (setup.value?.planRevealed == false && setup.value?.planReadiness?.ready == true) {
+        TodayAtRest(
+            padding = padding,
+            date = null,
+            state = stringResource(R.string.onboarding_plan_ready),
+            icon = R.drawable.ic_check,
+            sentence = stringResource(R.string.onboarding_plan_ready_goal, read.title),
+            clause = stringResource(R.string.onboarding_plan_look_over),
+        ) {
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString(), revealMoment = true)) }) {
+                Text(stringResource(R.string.onboarding_see_plan))
+            }
+        }
+        return
+    }
 
     // A goal left halfway through its questions has no plan coming until they're answered.
     if (setup.value?.questionsLeft == true) {

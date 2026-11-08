@@ -37,6 +37,8 @@ struct UnderstoodRow: Identifiable, Equatable {
   var editValue: String?
   var suggestedDate: String?
   var choiceDates: [String] = []
+  /// A language goal's aim is edited by picking one of these levels, never as free text.
+  var aimChoices: [String] = []
 }
 
 struct UnderstoodSource: Equatable {
@@ -118,6 +120,20 @@ enum UnderstoodRows {
 
     rows += languageRows(facts: facts, locale: locale)
     rows += detailRows(facts: facts, cutoff: goal.cutoff?.value1)
+
+    // The card's aim row opens the aims it can change to, never free text that sizes nothing.
+    if let languageAim = goal.languageAim.flatMap({
+      try? PracticeJSON.recode($0, as: LanguageAimView.self)
+    }), let index = rows.firstIndex(where: { $0.id == "targetScore" }), !languageAim.choices.isEmpty
+    {
+      rows[index].aimChoices = languageAim.choices.map(\.aim)
+
+      if let aim = languageAim.aim, let label = aimLabel(aim) {
+        rows[index] = UnderstoodRow(
+          id: "targetScore", label: rows[index].label, value: "\(aim), \(label)",
+          field: .targetScore, editValue: aim, aimChoices: rows[index].aimChoices)
+      }
+    }
 
     if let levelNote = text(facts.details?.levelNote) {
       rows.append(
@@ -280,7 +296,7 @@ enum UnderstoodRows {
           id: "reason",
           label: LocalizedStringResource(
             "Reason", table: "Onboarding", comment: "Row with why the learner studies"),
-          value: reason, field: .reason, editValue: reason))
+          value: languageReasonLabel(reason) ?? reason, field: .reason, editValue: reason))
     }
 
     if let role = unsaid(details?.role) {

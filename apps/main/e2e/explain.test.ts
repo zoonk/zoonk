@@ -12,6 +12,7 @@ import {
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
@@ -63,6 +64,8 @@ test.describe("Quick explanations", () => {
     userWithoutProgress: page,
   }) => {
     const runId = `e2e-explain-${randomUUID()}`;
+    const analytics = await captureAnalytics(page);
+    const release = Promise.withResolvers<null>();
 
     const [goal, played] = await Promise.all([
       goalFixture({
@@ -96,6 +99,8 @@ test.describe("Quick explanations", () => {
     await page.route(
       `**/v1/generations/${runId}/events**`,
       async (route) => {
+        await release.promise;
+
         await Promise.all([
           prisma.plan.update({
             data: { graph: { skills: plannedSkills([skill]) } },
@@ -122,6 +127,42 @@ test.describe("Quick explanations", () => {
     );
 
     await page.goto(`/explain/${goal.id}`);
+    await expectHydrated(page.getByRole("heading", { name: "Why the sky is blue" }));
+
+    await page.evaluate(() => {
+      Object.defineProperty(document, "visibilityState", { configurable: true, value: "hidden" });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    try {
+      await expect
+        .poll(() => analytics.filter((event) => event.name === "Generation Waited"))
+        .toEqual([
+          {
+            data: expect.objectContaining({
+              content_kind: "explanation",
+              ended_at: expect.any(Number),
+              goal_id: goal.id,
+              milliseconds: expect.any(Number),
+              started_at: expect.any(Number),
+              surface: "explanation",
+            }),
+            name: "Generation Waited",
+          },
+        ]);
+
+      await page.evaluate(() => {
+        Object.defineProperty(document, "visibilityState", {
+          configurable: true,
+          value: "visible",
+        });
+
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+    } finally {
+      release.resolve(null);
+    }
+
     await saved.promise;
 
     await expect(page.getByRole("button", { name: "See explanation" })).toBeVisible({

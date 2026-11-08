@@ -1,4 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type OnboardingProgress } from "@zoonk/core/analytics/onboarding-progress";
 import { trackOnboardingProgress } from "@zoonk/core/analytics/track-onboarding-progress";
 import { type GoalContentStepName } from "@zoonk/core/library/generation/steps";
 import { type StepStreamMessage, type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -7,7 +8,7 @@ export type GoalStreamStep = GoalContentStepName | typeof WORKFLOW_ERROR_STEP;
 
 export async function goalProgressStep(
   message: StepStreamMessage<GoalStreamStep>,
-  { last = false }: { last?: boolean } = {},
+  { cache, last = false }: { cache?: OnboardingProgress["cache"]; last?: boolean } = {},
 ): Promise<void> {
   "use step";
 
@@ -18,6 +19,7 @@ export async function goalProgressStep(
   if (message.entityId) {
     trackOnboardingProgress({
       at,
+      cache,
       deck_id: message.warmUpId,
       goalId: message.entityId,
       lesson_id: message.lessonId,
