@@ -693,6 +693,37 @@ describe("language course certificates", () => {
     ]);
   });
 
+  it("uses the lesson transaction's subscription state when awarding a language certificate", async () => {
+    const fixture = await languageGoal([
+      { status: "done" },
+      { status: "todo" },
+      { kind: "boss", status: "todo" },
+    ]);
+
+    await applePlus(fixture.user.id);
+
+    await writeLearnerChange({ userId: fixture.user.id }, async (tx) => {
+      await tx.subscription.updateMany({
+        data: { status: "canceled" },
+        where: { referenceId: fixture.user.id },
+      });
+
+      await completePlanItem(tx, {
+        now: new Date(),
+        planItemId: fixture.plan.items[1]?.id ?? "",
+        userId: fixture.user.id,
+      });
+    });
+
+    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
+      { courseLevel: "intermediate", issuedAt: null },
+    ]);
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: fixture.plan.items[1]?.id } }),
+    ).resolves.toMatchObject({ status: "done" });
+  });
+
   it("has a Plus learner win the level's call first", async () => {
     const fixture = await languageGoal([
       { status: "done" },

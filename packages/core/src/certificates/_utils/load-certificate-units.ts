@@ -7,6 +7,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
@@ -266,7 +267,9 @@ export async function loadCertificateUnits(
 
   const phaseChallengesRequired = await arePhaseChallengesRequired({
     goalKind: goal.kind,
-    readSubscription,
+    readSubscription:
+      readSubscription ??
+      ((userId) => findActiveSubscriptionForUser({ client: db, now: new Date(), userId })),
     userId: goal.userId,
   });
 
