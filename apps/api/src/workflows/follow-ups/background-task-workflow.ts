@@ -23,6 +23,7 @@ export type BackgroundTask = Exclude<
       | "checkUploadVisibility"
       | "prepareGoalLessons"
       | "preparePlacementItems"
+      | "rebuildGoalCurriculum"
       | "prepareSession"
       | "refreshStudyDay"
       | "reviewAlphabetLesson"

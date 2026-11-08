@@ -8,6 +8,7 @@ import { hasOpening, openGoal } from "./goal-opening";
 import { type GoalRunContext } from "./goal-run-context";
 import { prepareWarmUp } from "./goal-warm-up";
 import { decideGoalScopeStep, keepMaterialPrivate } from "./steps/goal-curriculum-steps";
+import { readSavedGoalOpeningStep } from "./steps/goal-opening-steps";
 
 type BuiltPlan = {
   curriculum: BuiltCurriculum;
@@ -53,7 +54,9 @@ async function buildScopedPlan({
   const curriculum = await buildCurriculum({
     context,
     inputs,
-    opening: opening?.skill,
+    opening: rebuild
+      ? readSavedGoalOpeningStep(input.goalId).then((saved) => saved?.skill ?? null)
+      : opening?.skill,
     rebuild,
     researchId,
     scope,

@@ -83,6 +83,8 @@ model Goal {
   openingSkill          Json?                  @map("opening_skill")
   openingLessonId       String?                @map("opening_lesson_id") @db.Uuid
   openingLesson         Lesson?                @relation(fields: [openingLessonId], references: [id], onDelete: SetNull)
+  /// The running curriculum's gate records which answers it reads, so later edits owe a rebuild.
+  curriculumQuestions   String[]               @default([]) @map("curriculum_questions")
   /// When the learner first pressed the plan reveal's action. Until then, resume brings the reveal
   /// back. Learners can't write it, unlike `details`.
   planRevealedAt        DateTime?              @map("plan_revealed_at")
