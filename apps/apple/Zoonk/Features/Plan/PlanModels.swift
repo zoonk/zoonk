@@ -428,6 +428,7 @@ struct RevealDay: Decodable, Equatable, Identifiable, Sendable {
     }
 
     let kind: Kind
+    let lessonId: String?
     let status: String
     /// The lesson's; empty for a skill whose lessons are still being written.
     let title: String

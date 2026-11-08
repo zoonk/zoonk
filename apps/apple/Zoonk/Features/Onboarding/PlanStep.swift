@@ -535,8 +535,6 @@ private struct PlanReveal: View {
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
-
-  var body: some View {
   /// The moment plays the first time this device shows the reveal before its action is pressed;
   /// opened again, after a restart too, the reveal draws its end, still.
   @State private var playsMoment: Bool
@@ -551,6 +549,8 @@ private struct PlanReveal: View {
   private static func momentKey(_ view: GoalOnboarding) -> String {
     "planReveal.momentPlayed.\(view.goal.id)"
   }
+
+  var body: some View {
     let goal = learnerGoal
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { sheet = $0 })
@@ -618,14 +618,13 @@ private struct PlanReveal: View {
     switch day.state {
     case .loaded(let day):
       RevealToday(day: day)
+      RevealWeek(plan: plan, today: day)
     case .idle, .loading:
-      // Today's rows hold their place, so the week doesn't move as they come.
+      // Today's rows hold their place; the week waits for them, since it leaves out their lessons.
       RevealTodayPlaceholder()
     case .empty, .failed:
-      EmptyView()
+      RevealWeek(plan: plan, today: nil)
     }
-
-    RevealWeek(plan: plan)
   }
 
   /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
