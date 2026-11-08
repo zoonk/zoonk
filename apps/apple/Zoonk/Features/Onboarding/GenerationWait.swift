@@ -1086,7 +1086,7 @@ private struct GenerationWaitBar: View {
 
       HStack(spacing: 12) {
         FilledParts(share: shown, weights: wait.visiblePhases.map(\.seconds))
-          .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: shown)
+          .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: wait.progress.share)
 
         Text(shown, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)
@@ -1107,6 +1107,8 @@ extension GenerationWait.Kind {
     case .understanding:
       LocalizedStringResource(
         "Reading your goal", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
+        // A report eases the bar on; the drift between reports steps once a second, as the ring
+        // does, so a wait left open isn't redrawn every frame.
     case .curriculum:
       LocalizedStringResource(
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
