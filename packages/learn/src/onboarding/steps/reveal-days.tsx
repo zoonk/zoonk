@@ -76,11 +76,6 @@ function useChapterTitles(): ReadonlyMap<string, string> {
   );
 }
 
-/** The day's first unfinished item: where the learner starts, or goes on after their first lesson. */
-function findNextItem(items: readonly PlanItemView[]): PlanItemView | undefined {
-  return items.find((item) => !isFinished(item));
-}
-
 /** Lands on the moment's third beat, after the check and the lesson count. */
 function NextTag({ children }: { children: string }) {
   const celebrate = useCelebration();
@@ -151,7 +146,7 @@ export function RevealToday() {
     return null;
   }
 
-  const next = findNextItem(today.items);
+  const next = today.items.find((item) => !isFinished(item));
   const nextTag = today.items.some((item) => isFinished(item)) ? t("Up next") : t("Start here");
 
   return (
