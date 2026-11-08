@@ -250,6 +250,13 @@ final class TodayStore {
     }
   }
 
+  /// A written lesson opened from Today opens its day only when its run starts, so the session it
+  /// names is the one the session screen shows.
+  func lessonStarted(in sessionID: String) {
+    guard let owner = cache.session.authenticatedSession else { return }
+    opened = OpenedSession(owner: owner, day: day.map(OpenedSession.Day.init), sessionID: sessionID)
+  }
+
   /// A mission link from outside Today.
   func open(blockID: String) async -> MutationResult<StudyDestination> {
     await openStep(for: day.map(OpenedSession.Day.init)) { token in

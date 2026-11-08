@@ -22,6 +22,28 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertTrue(requests.isEmpty)
   }
 
+  func testAWrittenLessonThatOpensTheDayShowsItsSessionOnTheSessionScreen() async throws {
+    let json = blockJSON(
+      position: 0, kind: "learn", status: "pending", id: nil, lessonID: "l1", planItemID: nil,
+      checkpoint: nil
+    )
+    .replacingOccurrences(of: "\"opensInPlayer\":false", with: "\"opensInPlayer\":true")
+    let lesson: StudyBlock = try decode(json)
+    let view = try today(session: day(blocks: [lesson], nextPosition: 0))
+    let store = TodayStore(api: StudyAPIStub(today: .day(view)), cache: signedInCache())
+    await store.today.load()
+
+    let destination = await store.open(lesson, as: .next, in: view).destination
+    guard case .instantLesson(_, nil, _)? = destination else {
+      return XCTFail("opens the lesson before its day: \(String(describing: destination))")
+    }
+    XCTAssertNil(store.sessionID)
+
+    store.lessonStarted(in: "s1")
+
+    XCTAssertEqual(store.sessionID, "s1")
+  }
+
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))

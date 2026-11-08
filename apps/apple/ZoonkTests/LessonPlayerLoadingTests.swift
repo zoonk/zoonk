@@ -53,6 +53,20 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.state?.runId)
   }
 
+  func testAStartThatOpensTheDayNamesItsSession() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let lesson = try markedLesson()
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    var started: [String] = []
+    let store = player(
+      cache: cache, content: content, transport: OpeningStartTransport(holds: false),
+      opening: .block("block"), activated: true, sessionStarted: { started.append($0) })
+
+    await store.load()
+
+    XCTAssertEqual(started, ["canonical"])
+  }
+
   func testContinueMovesOnWhileTheRunStarts() async throws {
     let transport = OpeningStartTransport(holds: true)
     let store = try openingPlayer(markedLesson(), transport: transport)
@@ -487,7 +501,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
     defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = false,
-    onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in }
+    onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in },
+    sessionStarted: @escaping @MainActor (String) -> Void = { _ in }
   ) -> LessonPlayerStore {
     let preferences: Resource<LearningPreferences> = cache.resource(audience: .signedIn) { _ in nil
     }
@@ -497,7 +512,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
       api: LessonPlayerAPI(
         clients: APIClientFactory(
           baseURL: URL(string: "https://api.zoonk.test")!, transport: transport)),
-      cache: cache, preferences: preferences, lessonResource: content, defaults: defaults)
+      cache: cache, preferences: preferences, lessonResource: content, defaults: defaults,
+      sessionStarted: sessionStarted)
   }
 }
 

@@ -103,6 +103,8 @@ final class LessonPlayerStore {
   private let choices: LessonTodayChoices
   private let defaults: UserDefaults
   private let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
+  /// A start that opened a study block names its session, which the session screen shows.
+  private let sessionStarted: @MainActor (_ sessionID: String) -> Void
   private var identity: AuthenticatedSession?
   private(set) var openedAt = Date.now
   /// The lesson's example lines are written once, after the learner's first action.
@@ -129,7 +131,8 @@ final class LessonPlayerStore {
     lessonResource: Resource<LessonLoad>,
     choices: LessonTodayChoices = .standard,
     defaults: UserDefaults = .standard,
-    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void = { _, _ in }
+    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void = { _, _ in },
+    sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void = { _ in }
   ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
@@ -144,6 +147,7 @@ final class LessonPlayerStore {
     self.choices = choices
     self.defaults = defaults
     self.blockFinished = blockFinished
+    self.sessionStarted = sessionStarted
     cantTalkToday = choices.isChosenToday(.cantTalk)
   }
 
@@ -333,6 +337,7 @@ final class LessonPlayerStore {
     switch run {
     case .success(let run):
       self.studySessionId = run.sessionId
+      if opening != nil, let sessionId = run.sessionId { sessionStarted(sessionId) }
       self.state?.startRun(
         runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
         startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
