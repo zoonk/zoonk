@@ -89,8 +89,13 @@ export function ItemText({ className, text }: { className?: string; text: string
 export const QUESTION_TEXT_CLASS =
   "text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-balance";
 
+/** One element, so a flex parent such as an answer option wraps the line as text instead of stacking each styled word. */
 export function ItemLine({ text }: { text: string }) {
-  return <InlineMarkupView segments={parseItemLine(text)} />;
+  return (
+    <span>
+      <InlineMarkupView segments={parseItemLine(text)} />
+    </span>
+  );
 }
 
 export function ItemSupport({
