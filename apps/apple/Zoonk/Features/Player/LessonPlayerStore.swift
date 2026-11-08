@@ -263,6 +263,7 @@ final class LessonPlayerStore {
           lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
         leaveOutUnplayable(&state)
         self.state = state
+        works = [:]
         openedAt = .now
         // Written content can paint before admission; server actions await the run.
         screen = .playing
@@ -297,6 +298,21 @@ final class LessonPlayerStore {
     activate()
     await starting?.value
     return state?.runId != nil && !Task.isCancelled
+  }
+
+  func waitForSpokenRun(stepId: String) async -> Bool {
+    guard state?.currentStep?.id == stepId, state?.phase == .playing else { return false }
+    state?.startChecking()
+    guard await ensureRun() else {
+      failSpokenCheck(stepId: stepId)
+      return false
+    }
+    return state?.currentStep?.id == stepId && state?.phase == .checking
+  }
+
+  func failSpokenCheck(stepId: String) {
+    guard state?.currentStep?.id == stepId else { return }
+    state?.failChecking()
   }
 
   private func start(_ lesson: PlayableLesson, identity: AuthenticatedSession?) async {
@@ -368,7 +384,6 @@ final class LessonPlayerStore {
 
     self.lesson = lesson
     self.state = state
-    works = [:]
     openRecap = nil
     soundsEnabled = preferences.value?.soundsEnabled ?? true
     self.challengeTeam = challengeTeam

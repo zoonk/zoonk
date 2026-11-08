@@ -480,8 +480,9 @@ private struct SpokenAnswerStepView: View {
       input(
         SpokenAnswerContext(
           lessonId: context.lessonId, stepId: step.id, content: content,
-          isLocked: context.isLocked,
-          waitForRun: { await store.ensureRun() },
+          isLocked: context.isLocked, isChecking: store.state?.phase == .checking,
+          waitForRun: { await store.waitForSpokenRun(stepId: step.id) },
+          onCheckFailed: { store.failSpokenCheck(stepId: step.id) },
           studySessionId: { store.studySessionId },
           onGraded: context.resolveSpoken,
           onBlocked: {

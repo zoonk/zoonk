@@ -26,12 +26,14 @@ private struct SpokenStepRecorder: View {
   let context: SpokenAnswerContext
 
   var body: some View {
-    if !context.isLocked {
+    if !context.isLocked || context.isChecking {
       VoiceAnswerRecorder(
         grade: { voice, recording in
           guard await context.waitForRun() else { return .failed }
-          return await voice.gradeSpokenStep(
+          let outcome = await voice.gradeSpokenStep(
             stepId: context.stepId, studySessionId: context.studySessionId(), recording: recording)
+          if case .graded = outcome {} else { context.onCheckFailed() }
+          return outcome
         },
         onGraded: { grade in
           context.onGraded(

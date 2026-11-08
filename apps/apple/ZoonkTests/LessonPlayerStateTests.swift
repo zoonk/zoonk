@@ -273,6 +273,105 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
   }
 
+  func testASpokenTakeWithoutATranscriptKeepsItsScreenWhenTheRunResumes() throws {
+    let spoken = try step(
+      teaching(
+        "spoken", kind: "spokenAnswer",
+        content: #"{"language":"fr","prompt":"Say hello.","targetText":"Bonjour"}"#))
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(explanation), spoken, try step(summary)])
+    state.continueLesson()
+    state.startChecking()
+    XCTAssertTrue(state.answers.isEmpty)
+
+    state.startRun(
+      runId: "run", answers: [.init(stepId: "spoken", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "spoken")
+    XCTAssertEqual(state.phase, .checking)
+    state.resolve(
+      "spoken",
+      result: LessonStepResult(
+        isCorrect: true, answerText: "Bonjour", correctAnswer: nil, feedback: nil))
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.currentResult?.answerText, "Bonjour")
+  }
+
+  func testEveryUncheckedAnswerKindKeepsItsScreenWhenTheRunResumes() throws {
+    let answers: [LessonAnswer] = [
+      .typedAnswer(text: "Because"), .spokenAnswer(text: "Bonjour"),
+      .check(optionId: "right"), .hookGuess(optionId: "right"),
+      .multipleChoice(selectedOptionId: "right"), .translation(selectedOptionId: "right"),
+      .fillBlank(userAnswers: ["suis", ""]), .reading(arrangedWords: ["Je"]),
+      .listening(arrangedWords: ["Je"]),
+      .matchColumns(userPairs: [.init(left: "hola", right: "hello")], mistakes: 1),
+      .activity(.order(["second", "first"])), .activity(.assignment(["left": "right"])),
+      .activity(.numeric(2)), .activity(.choice(optionId: "right")),
+      .challenge(choiceIds: ["right"]),
+    ]
+    for answer in answers {
+      var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+      state.continueLesson()
+      state.continueLesson()
+      state.select(answer, for: "check")
+
+      state.startRun(
+        runId: "run", answers: [.init(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+      XCTAssertEqual(state.currentStep?.id, "check", "\(answer)")
+      XCTAssertEqual(state.currentAnswer, answer)
+      XCTAssertEqual(state.phase, .playing)
+    }
+  }
+
+  func testAQuickCheckWithoutAnAnswerKeepsItsScreenWhenTheRunResumes() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.knowThis()
+    let queue = state.queue
+
+    state.startRun(
+      runId: "run", answers: [.init(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.queue, queue)
+    XCTAssertNotNil(state.quickCheck)
+  }
+
+  func testASampleVerdictWithoutAnAnswerKeepsItsScreenWhenTheRunResumes() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(typedAnswer), try step(check(id: "check"))])
+    state.dontKnow("typed")
+    let result = state.currentResult
+
+    state.startRun(
+      runId: "run", answers: [.init(stepId: "typed", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "typed")
+    XCTAssertEqual(state.currentResult, result)
+    XCTAssertEqual(state.phase, .feedback)
+  }
+
+  func testCantWriteNowKeepsItsChoiceAndUndoWhenTheRunResumes() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(check(id: "check")), try step(typedAnswer), try step(explanation),
+        try step(summary),
+      ])
+    state.skipWriting(opening: true)
+
+    state.startRun(
+      runId: "run", answers: [.init(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "explanation")
+    XCTAssertEqual(state.notice, .writingSkipped)
+    XCTAssertEqual(state.skippedWritingStepIds, ["typed"])
+    state.restoreWriting()
+    XCTAssertEqual(state.currentStep?.id, "typed")
+    XCTAssertTrue(state.skippedWritingStepIds.isEmpty)
+  }
+
   func testResumedRunAfterFailedCheckKeepsTheSelectedAnswer() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
     state.continueLesson()

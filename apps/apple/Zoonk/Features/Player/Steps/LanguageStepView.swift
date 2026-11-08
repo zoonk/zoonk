@@ -878,6 +878,7 @@ private struct MatchColumnsView: View {
         GridRow {
           Button {
             pickedLeft = index
+            context.select(.matchColumns(userPairs: matched, mistakes: mistakes))
           } label: {
             Text(pairs[index].left)
               .frame(maxHeight: .infinity, alignment: .topLeading)
@@ -926,9 +927,7 @@ private struct MatchColumnsView: View {
     } else {
       mistakes += 1
       lastMiss = index
-      if !matched.isEmpty {
-        context.select(.matchColumns(userPairs: matched, mistakes: mistakes))
-      }
+      context.select(.matchColumns(userPairs: matched, mistakes: mistakes))
     }
   }
 }

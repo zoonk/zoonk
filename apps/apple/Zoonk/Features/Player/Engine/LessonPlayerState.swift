@@ -611,7 +611,7 @@ struct LessonPlayerState: Equatable, Sendable {
     hyperdrive: LessonHyperdriveStart = .none,
     optionalStepIds: [String] = []
   ) {
-    let isUntouched = answers.isEmpty && results.isEmpty && quickCheck == nil
+    let isUntouched = answers.isEmpty && results.isEmpty && quickCheck == nil && phase != .checking
 
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
@@ -622,7 +622,10 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
+    let restoresWriting = notice == .writingSkipped && writingRestore != nil
+    if restoresWriting { restoreWriting() }
     resume(from: (runAnswers + held).filter { steps[$0.stepId] != nil })
+    if restoresWriting { skipWriting(opening: true) }
   }
 
   mutating func retryRun() {
