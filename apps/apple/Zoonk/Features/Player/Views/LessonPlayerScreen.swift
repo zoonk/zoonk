@@ -6,16 +6,19 @@ final class LessonPlayerDependencies {
   let cache: AppCache
   let preferences: Resource<LearningPreferences>
   let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
+  let sessionStarted: @MainActor (_ sessionID: String) -> Void
   private var lessons: [String: Resource<LessonLoad>] = [:]
 
   init(
     api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>,
-    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void
+    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void,
+    sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void
   ) {
     self.api = api
     self.cache = cache
     self.preferences = preferences
     self.blockFinished = blockFinished
+    self.sessionStarted = sessionStarted
   }
 
   func lesson(id: String) -> Resource<LessonLoad> {
@@ -44,14 +47,27 @@ struct LessonPlayerScreen: View {
   let lessonId: String
   var sessionId: String?
   var fromCatalog = false
+  var opening: LessonOpening?
+  var activated = false
+  @Environment(AppRouter.self) private var router
 
   var body: some View {
     if let player {
       LessonPlayerContent(
         store: LessonPlayerStore(
-          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog,
+          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog, opening: opening,
+          activated: activated,
+          onOpened: { opening in
+            guard case .lesson(let id, _, _, _, _)? = router.tasks.last, id == lessonId else {
+              return
+            }
+            router.dismissTask()
+            let destination = StudyDestination(opening)
+            router.openStudy(destination == .changed ? .today : destination)
+          },
           api: player.api, cache: player.cache, preferences: player.preferences,
-          lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished)
+          lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished,
+          sessionStarted: player.sessionStarted)
       )
       .id(lessonId)
     }
@@ -117,6 +133,13 @@ private struct LessonPlayerContent: View {
       }
     }
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
+    .onDisappear { store.cancelStart() }
+    // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
+    .simultaneousGesture(TapGesture().onEnded { store.act() })
+    .onKeyPress(phases: .down) { _ in
+      store.act()
+      return .ignored
+    }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
         .zoonkStyles()

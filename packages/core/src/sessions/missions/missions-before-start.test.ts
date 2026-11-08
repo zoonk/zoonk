@@ -476,53 +476,40 @@ describe("an activity on a day that offers no missions", () => {
     vi.useRealTimers();
   });
 
-  it.each(["a rest day", "a used-up daily limit"] as const)(
-    "saves nothing and never runs the planner on %s",
-    async (day) => {
-      const user = await userFixture();
-      const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
+  it("saves nothing and never runs the planner on a rest day", async () => {
+    const user = await userFixture();
+    const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
 
-      const weekdayMinutes =
-        day === "a rest day" ? [45, 45, 45, 0, 45, 45, 45] : [45, 45, 45, 45, 45, 45, 45];
+    const weekdayMinutes = [45, 45, 45, 0, 45, 45, 45];
 
-      await prisma.plan.update({
-        data: {
-          graph: {
-            phases: [{ milestone: "Basics", name: "Basics" }],
-            skills: skills.map((skill) => ({
-              area: null,
-              lessons: 1,
-              name: skill.name,
-              phase: 0,
-              skillId: skill.id,
-              weight: null,
-            })),
-          },
-          settings: { startDate: "2026-09-29", weekdayMinutes },
+    await prisma.plan.update({
+      data: {
+        graph: {
+          phases: [{ milestone: "Basics", name: "Basics" }],
+          skills: skills.map((skill) => ({
+            area: null,
+            lessons: 1,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
+          })),
         },
-        where: { id: plan.id },
-      });
+        settings: { startDate: "2026-09-29", weekdayMinutes },
+      },
+      where: { id: plan.id },
+    });
 
-      if (day === "a used-up daily limit") {
-        await Promise.all([
-          learningProfileFixture({ dailyLimitMinutes: 15, userId: user.id }),
-          dailyProgressFixtureMany([
-            { date: SESSION_TODAY, timeSpentSeconds: 15 * 60, userId: user.id },
-          ]),
-        ]);
-      }
+    const planner = vi.spyOn(planning, "computePlan");
+    const activity = { goalId: goal.id, timeZone: TIME_ZONE, userId: user.id };
 
-      const planner = vi.spyOn(planning, "computePlan");
-      const activity = { goalId: goal.id, timeZone: TIME_ZONE, userId: user.id };
+    await saveDayBeforeActivity(activity);
+    await saveDayBeforeActivity(activity);
 
-      await saveDayBeforeActivity(activity);
-      await saveDayBeforeActivity(activity);
-
-      expect(planner).not.toHaveBeenCalled();
-      await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
-      planner.mockRestore();
-    },
-  );
+    expect(planner).not.toHaveBeenCalled();
+    await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
+    planner.mockRestore();
+  });
 });
 
 describe("a tap on one of Today's missions", () => {

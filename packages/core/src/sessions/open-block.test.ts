@@ -141,7 +141,7 @@ describe("the learner opens a study block", () => {
     await expect(readBlock(essay)).resolves.toMatchObject({ status: "active" });
   });
 
-  it("opens the session for a finished step and Today once the day's time is used up", async () => {
+  it("opens the session for a finished step and starts unfinished work", async () => {
     const { session, user } = await learnerSession();
 
     const [done, review] = await Promise.all([
@@ -153,7 +153,7 @@ describe("the learner opens a study block", () => {
         status: "completed",
       }),
       studySessionBlockFixture({ kind: "review", position: 1, sessionId: session.id }),
-      learningProfileFixture({ dailyLimitMinutes: 15, userId: user.id }),
+      learningProfileFixture({ userId: user.id }),
       prisma.dailyProgress.create({
         data: {
           date: toUTCMidnight(SESSION_NOW),
@@ -170,11 +170,11 @@ describe("the learner opens a study block", () => {
     });
 
     await expect(tap(review)).resolves.toStrictEqual({
-      opening: { kind: "today" },
+      opening: { blockId: review.id, kind: "session", sessionId: session.id },
       status: "ready",
     });
 
-    await expect(readBlock(review)).resolves.toMatchObject({ status: "pending" });
+    await expect(readBlock(review)).resolves.toMatchObject({ status: "active" });
   });
 
   it("opens a challenge on its own screen without starting it, and prepares the session", async () => {

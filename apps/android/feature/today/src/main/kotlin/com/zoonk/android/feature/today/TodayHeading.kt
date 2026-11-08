@@ -259,7 +259,7 @@ internal fun DayTime(
                 null
             }
 
-            model.state == StudySession.State.DONE || model.day.limitReached -> {
+            model.state == StudySession.State.DONE -> {
                 if (studied >
                     0
                 ) {

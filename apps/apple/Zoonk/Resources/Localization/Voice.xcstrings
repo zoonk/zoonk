@@ -13533,65 +13533,6 @@
         }
       }
     },
-    "You've reached your daily time limit. You can make this call in your next session." : {
-      "comment" : "The daily time limit is a setting that stops study for the day.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dein tägliches Zeitlimit erreicht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcanzaste tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ta limite de temps quotidienne. Tu pourras passer cet appel à ta prochaine séance."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di tempo giornaliero. Potrai fare questa conversazione nella prossima sessione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日の学習時間の上限に達しました。この会話は次回の学習でできます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 학습 시간 제한에 도달했어요. 다음 학습 때 이 대화를 할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój czas nauki na dziś się skończył. Możesz odbyć tę rozmowę, gdy następnym razem zaczniesz naukę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu seu limite diário de tempo. Você pode ter essa conversa na sua próxima sessão."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük süre sınırına ulaştın. Bu sohbeti bir sonraki çalışmanda yapabilirsin."
-          }
-        }
-      }
-    },
     "You've used the free help you can get without an account. Create a free account to keep going." : {
       "comment" : "A guest used all the help available without an account",
       "localizations" : {

@@ -3,6 +3,19 @@ import XCTest
 @testable import Zoonk
 
 final class LessonPlayerStateTests: XCTestCase {
+  func testALateRunsFirstMissSurvivesCheckingAPreservedCorrectDraft() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    state.select(.check(optionId: "right"), for: "check")
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)], keepsScreen: true)
+    XCTAssertEqual(state.answers["check"], .check(optionId: "right"))
+    XCTAssertNil(state.results["check"])
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.firstVerdicts["check"], false)
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+  }
+
   func testReadsAnswersAndEndsInOrder() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
@@ -278,6 +291,41 @@ final class LessonPlayerStateTests: XCTestCase {
 
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .ready)
+  }
+
+  func testRunStartedAfterAnAnswerKeepsTheLearnersScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+
+    state.startRun(
+      runId: "run", answers: [runAnswer("check", isCorrect: false)], keepsScreen: true)
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.firstVerdicts["check"], false)
+  }
+
+  func testRunStartedAfterTheLearnerActedShowsItsAnswersOnScreensTheyHaveNotTouched() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    let lessonQueue = state.queue
+
+    state.startRun(
+      runId: "run",
+      answers: [runAnswer("check", isCorrect: false), runAnswer("second", isCorrect: false)],
+      keepsScreen: true)
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+    XCTAssertEqual(state.answers["second"], .check(optionId: "wrong"))
+    XCTAssertEqual(state.results["second"]?.isCorrect, false)
+    XCTAssertEqual(state.firstVerdicts, ["check": false, "second": false])
+    XCTAssertEqual(
+      state.queue, lessonQueue + ["second"], "a check missed once comes back at the end")
   }
 
   func testOptionalScreensAreLeftOut() throws {

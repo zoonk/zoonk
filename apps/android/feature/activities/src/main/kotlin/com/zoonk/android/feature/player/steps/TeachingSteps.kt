@@ -631,7 +631,7 @@ internal fun SpokenAnswerView(
                     )
                 }
 
-                !locked -> {
+                !locked || state.phase == LessonPhase.Checking -> {
                     VoiceAnswerRecorder(
                         grade = { recording -> actions.gradeSpoken(step.id, recording) },
                         onGraded = {},

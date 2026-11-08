@@ -33154,65 +33154,6 @@
         }
       }
     },
-    "You've reached your daily time limit. Tomorrow's session picks this chapter up." : {
-      "comment" : "Says the learner's daily time limit, a setting that stops study for the day, is reached",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dein tägliches Zeitlimit erreicht. In deiner morgigen Lerneinheit geht es mit diesem Kapitel weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcanzaste tu límite de tiempo diario. En la sesión de mañana continuarás con este capítulo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ta limite de temps quotidienne. Tu reprendras ce chapitre à la séance de demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di tempo giornaliero. Riprenderai questo capitolo nella sessione di domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日の学習時間の上限に達しました。明日の学習でこの章の続きを進めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 학습 시간 제한에 도달했어요. 이 챕터는 내일 학습에서 이어서 공부해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój czas nauki na dziś się skończył. Jutro wrócisz do tego rozdziału."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu seu limite diário de tempo. Na sessão de amanhã, você continua este capítulo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük süre sınırına ulaştın. Yarınki çalışmanda bu üniteye kaldığın yerden devam edeceksin."
-          }
-        }
-      }
-    },
     "Your %@ deadline comes off your plan. You can set one again anytime." : {
       "comment" : "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'",
       "localizations" : {

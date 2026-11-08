@@ -3,7 +3,6 @@
   "brainPower": 0,
   "catchUp": null,
   "current": false,
-  "dailyLimit": null,
   "dayEndsAt": 0,
   "emptyDay": null,
   "examAccess": { "includesMockExams": false, "trialEnded": false },

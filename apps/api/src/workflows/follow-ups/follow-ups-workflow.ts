@@ -2,6 +2,7 @@ import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
 import { createHook } from "workflow";
 import { start } from "workflow/api";
+import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
@@ -17,6 +18,7 @@ import {
   listFollowUpsStep,
   requestLessonWritingStep,
 } from "./steps/follow-up-steps";
+import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
 
 const MAX_PASSES = 20;
 
@@ -31,6 +33,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
   const { userId } = followUp;
 
   switch (followUp.kind) {
+    case "refreshStudyDay":
+      await retryPlanConflicts(refreshStudyDayStep, { ...followUp.input, userId });
+      return;
     case "prepareSession":
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;

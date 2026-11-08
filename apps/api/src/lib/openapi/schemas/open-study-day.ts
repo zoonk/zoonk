@@ -1,3 +1,4 @@
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contract";
 import {
   dayTargetStatusSchema,
@@ -5,7 +6,7 @@ import {
 } from "@zoonk/core/sessions/open-day-contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { logicalDateSchema, studyBlockSchema, studySessionResponseSchema } from "./study-sessions";
+import { logicalDateSchema, studySessionResponseSchema } from "./study-sessions";
 
 export const openStudyDayBodySchema = openStudyDayInputSchema.omit({ goalId: true });
 

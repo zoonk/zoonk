@@ -35,12 +35,7 @@ export function useChallengeStart(actions: ChallengeActions): ChallengeStartStat
 
     // "started" keeps the button busy while the host opens the block. The host reads a changed day
     // itself, so it isn't a failure.
-    if (
-      outcome === "writing" ||
-      outcome === "notToday" ||
-      outcome === "dailyLimitReached" ||
-      typeof outcome === "object"
-    ) {
+    if (outcome === "writing" || outcome === "notToday" || typeof outcome === "object") {
       setBusy(false);
     } else if (outcome !== "started") {
       setBusy(false);

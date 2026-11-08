@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "e18340c4a72d2724acffe528fa7f4ad0e698434267b0499996294c068b301f0d",
   "conversation_answers_first": "2bb8b61ffe760fed3fef53e119fd9ae5d3b877ea2d2270477ed08a3d67c0ef18",
   "conversation_at_level": "d65291a4a0e3ffff25432b7bcf712f94061c09c5ed39c527ee9fd6fb4fd6ded3",
-  "conversation_back_to_today": "aeda5231acb006e2bdb973924981b4a5db94bc8d2fb550435c4f8c3ac0e566bb",
   "conversation_band": "27afec34fcf645c5a53721aa0445bbebdf2ea433bafc1e01ec21411121667437",
   "conversation_band_points": "098a0835dbff7782c9fdb23bbe6f0de416f47f10d55e45976c09daee45a25b3e",
   "conversation_below_level": "80066301b9556ca6a22a93e9cd0890b405a14306f673e4b38e01039ba567bf4a",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "7c74e9cc415cda303c82f679260370e4b14dced8b42189ec786a789a6c05f41b",
   "conversation_still_closing": "135b2915c09f7957aa9133cab8ba5f20ea41992e8b38a7d8268dc4298326891d",
   "conversation_still_to_get_across": "5b5d2a057856102c77210047dad4eefd94767a921b15904522fa0a1c0ed2f627",
-  "conversation_study_time_used_up": "9850c2edc35fa49343e694b8043e06a7402823e67ce96ca47da0453dd57c3248",
   "conversation_take_over": "b9500ebdb0bbbf4467f931e7fa95d8e5e05d4498bf3f3999257e7383fc4861ed",
   "conversation_take_your_time": "ef4d27273f9ebfde44351e91ef00e9d9d27a2a372529c4158d8d11171d5cb4db",
   "conversation_taken_over": "5a13ba92e3666c2402d3b76b5a9a870ef91cd3c8429e73fa3c96df102155a800",
@@ -313,9 +311,6 @@
     <string name="conversation_call_length">Duração da conversa</string>
     <string name="conversation_longer_calls_plus">O Plus inclui conversas mais longas.</string>
     <string name="conversation_opens_when_ready">Sua conversa abre assim que estiver pronta.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">Você atingiu seu limite diário de tempo. Você pode ter essa conversa na sua próxima sessão.</string>
-    <string name="conversation_back_to_today">Voltar para Hoje</string>
     <string name="conversation_get_ready">Preparar a conversa</string>
     <string name="conversation_get_ready_description">Este desafio é uma conversa curta sobre a unidade. Primeiro, a conversa é criada para o seu nível de conversação, o que leva até meio minuto.</string>
     <string name="conversation_getting_ready">Preparando sua conversa</string>

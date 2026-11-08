@@ -25,6 +25,22 @@ function prepareGoal(lessonsAskedAt: number | null): FollowUp {
 }
 
 describe(oweFollowUps, () => {
+  it("stores a day refresh with its database label and reads its runtime kind", async () => {
+    const user = await userFixture();
+
+    await oweFollowUps({
+      followUps: [{ input: { sessionId: LESSON_ID, timeZone: "UTC" }, kind: "refreshStudyDay" }],
+      userId: user.id,
+    });
+
+    const rows = await prisma.$queryRaw<{ kind: string }[]>`
+      SELECT kind::text FROM follow_ups WHERE user_id = ${user.id}::uuid
+    `;
+
+    expect(rows).toStrictEqual([{ kind: "refresh_study_day" }]);
+    await expect(listFollowUps(user.id)).resolves.toMatchObject([{ kind: "refreshStudyDay" }]);
+  });
+
   it("asks again for work still owed instead of owing it twice", async () => {
     const user = await userFixture();
 

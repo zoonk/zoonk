@@ -56,11 +56,11 @@ export async function mergeLearningProfile({ guestUserId, transaction, userId }:
     )
     INSERT INTO user_learning_profiles (
       id, user_id, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, share_usage_data,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
       created_at, updated_at
     )
     SELECT id, ${userId}::uuid, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, share_usage_data,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
       created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET

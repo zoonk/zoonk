@@ -74,8 +74,6 @@ export type SessionBuildInput = {
   reviewPlanItemKey?: string | null;
   /** Reviews weak studied topics when nothing is due and no other work remains. */
   weakestReview?: boolean;
-  /** Minutes left under the learner's daily limit, or null without one. */
-  remainingLimitMinutes: number | null;
   /** Today's minutes for lessons someone is still writing: practice and review leave them free so those lessons fit once written. */
   writingMinutes?: number;
   /** Each practice topic's name and area as the plan shows them (`getPlanTopics`). */
@@ -93,9 +91,7 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
 
 /** Full reviews stay whole on returns so the exam-eve session still reaches every topic. */
 function getSessionBudget(input: SessionBuildInput): number {
-  const minutes = Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
-
-  return Math.min(minutes, input.remainingLimitMinutes ?? minutes);
+  return Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
 }
 
 export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
@@ -116,14 +112,12 @@ export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): Pl
   };
 }
 
-/** The first lesson may overflow the soft budget, but never the learner's daily limit. */
+/** The first lesson may overflow the soft budget. */
 function takeLessons({
   budget,
-  canOverflow,
   lessons,
 }: {
   budget: number;
-  canOverflow: boolean;
   lessons: readonly PlannedLesson[];
 }): PlannedLesson[] {
   const fitting = lessons.filter(
@@ -132,7 +126,7 @@ function takeLessons({
   );
 
   const first = lessons[0];
-  const offerNext = fitting.length === 0 && first && canOverflow && budget >= MIN_BLOCK_MINUTES;
+  const offerNext = fitting.length === 0 && first && budget >= MIN_BLOCK_MINUTES;
 
   return offerNext ? [first] : fitting;
 }
@@ -169,7 +163,7 @@ function buildReviewBlock({
   };
 }
 
-/** Review-only days use remaining time rather than a fixed share, still honoring daily caps; weakest-topic reviews stay brief. */
+/** Review-only days use remaining time rather than a fixed share; weakest-topic reviews stay brief. */
 function fillReview({
   blocks,
   budget,
@@ -235,7 +229,7 @@ function getPracticeMinutes({
   return Math.min(target, (practice.length + drilled) * PRACTICE_MINUTES_PER_QUESTION);
 }
 
-/** Builds within daily limits; full reviews cover every skill and welcome-back days otherwise stay lighter. */
+/** Full reviews cover every skill and welcome-back days otherwise stay lighter. */
 export function buildSessionBlocks(input: SessionBuildInput): {
   blocks: PlannedBlock[];
   plannedMinutes: number;
@@ -270,7 +264,6 @@ export function buildSessionBlocks(input: SessionBuildInput): {
 
   const open = Math.max(0, budget - base - (produce?.estimatedMinutes ?? 0));
 
-  // Full topic coverage may exceed the soft budget, but never the learner's daily limit.
   const fullReviewMinutes =
     countFullReviewQuestions({
       drilled: countDrilled(input.drills),
@@ -279,18 +272,14 @@ export function buildSessionBlocks(input: SessionBuildInput): {
       reviewedSkillIds: review?.payload.skillIds ?? [],
     }) * PRACTICE_MINUTES_PER_QUESTION;
 
-  const remaining = input.remainingLimitMinutes === null ? Math.max(open, fullReviewMinutes) : open;
+  const remaining = Math.max(open, fullReviewMinutes);
 
   const reinforcement = input.examTrialEnded ? [] : input.reinforcement;
 
   const learnBudget =
     remaining - getPracticeMinutes({ budget, input, remaining }) - getLessonMinutes(reinforcement);
 
-  const lessons = takeLessons({
-    budget: learnBudget,
-    canOverflow: input.remainingLimitMinutes === null,
-    lessons: getNewLessons(input),
-  });
+  const lessons = takeLessons({ budget: learnBudget, lessons: getNewLessons(input) });
 
   const learnMinutes = getLessonMinutes([...reinforcement, ...lessons]);
   const { after, before } = splitAtDuel(lessons);

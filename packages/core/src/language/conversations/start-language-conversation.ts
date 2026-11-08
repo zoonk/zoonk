@@ -3,8 +3,6 @@ import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session"
 import { prisma } from "@zoonk/db";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
-import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { getStoredBlockWait } from "../../sessions/block-wait";
 import { saveDayBeforeActivity } from "../../sessions/ensure-study-session";
 import { getSession } from "../../users/get-session";
@@ -21,10 +19,7 @@ import { findUnitScenario, toScenarioUnit } from "./_utils/conversation-scenario
 import { createConversation } from "./_utils/create-conversation";
 import { findSpeakingMockSetup, findWaitingSpeakingMock } from "./_utils/speaking-mock";
 import { type PreparingCall } from "./call-writing-contract";
-import {
-  type LanguageCheckpointCall,
-  type LanguageConversationIntro,
-} from "./checkpoint-call-contract";
+import { type LanguageCheckpointCall } from "./checkpoint-call-contract";
 import { type LanguageConversationStartInput } from "./conversation-contract";
 import { getCheckpointMinutes } from "./conversation-rules";
 
@@ -95,24 +90,6 @@ async function startPractice({
   return { conversationId: conversation.id, status: "ready" };
 }
 
-async function introWithDailyLimit({
-  intro,
-  pending,
-  userId,
-}: {
-  intro: LanguageConversationIntro;
-  pending: boolean;
-  userId: string;
-}): Promise<Extract<OpenLanguageCheckpointCallResult, { status: "notStarted" }>> {
-  if (!pending) {
-    return { dailyLimitReached: false, intro, status: "notStarted" };
-  }
-
-  const { currentDate } = await getRequestProgressDateContext();
-  const dailyLimitReached = await readDailyTimeLimitReached({ date: currentDate, userId });
-  return { dailyLimitReached, intro, status: "notStarted" };
-}
-
 async function readCheckpointCall({
   blockId,
   userId,
@@ -149,7 +126,7 @@ async function readCheckpointCall({
     return { status: "preparing", unitTitle: unit.title };
   }
 
-  return introWithDailyLimit({
+  return {
     intro: {
       character: scenario.character,
       exam: null,
@@ -162,9 +139,8 @@ async function readCheckpointCall({
       targetLanguage,
       title: scenario.title,
     },
-    pending: block.status === "pending",
-    userId,
-  });
+    status: "notStarted",
+  };
 }
 
 async function startSpeakingMock({

@@ -4,26 +4,19 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
-import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
-import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
-import { readBlockPayload } from "../block-payload";
 import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
-import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
-import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
 import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
-import { withLessonDisplayMinutes } from "./lesson-display-minutes";
+import { loadSessionBlockViews } from "./load-session-block-views";
 import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
-import { loadSessionAnswers } from "./session-answers";
 import { type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -52,27 +45,21 @@ function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: St
 async function loadSessionBasics({
   initialDay,
   session,
-  userId,
 }: {
   initialDay?: PlannedStudyDay;
   session: StudySessionRow;
-  userId: string;
 }) {
   const fresh =
     session.startedAt === null && session.blocks.every((block) => block.status === "pending")
       ? initialDay
       : undefined;
 
-  const [answers, dailyLimit, viewer, plan] = await Promise.all([
-    fresh ? [] : loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
-    getRequestProgressDateContext().then(({ currentDate }) =>
-      readDailyTimeLimitStatus({ date: currentDate, userId }),
-    ),
+  const [viewer, plan] = await Promise.all([
     fresh ? { tier: fresh.plan.tier } : readEntitlementViewer(),
     loadViewPlan({ fresh, session }),
   ]);
 
-  return { answers, dailyLimit, plan, viewer };
+  return { plan, viewer };
 }
 
 export async function loadStudySessionView({
@@ -91,36 +78,22 @@ export async function loadStudySessionView({
   weekDate?: Date;
   initialDay?: PlannedStudyDay;
 }): Promise<StudySessionView> {
-  const [
-    basics,
-    week,
-    oftenTestedSkillIds,
-    blockSubjects,
-    blockedTestOutChapters,
-    blocksWithLessonMinutes,
-  ] = await Promise.all([
-    loadSessionBasics({ initialDay, session: storedSession, userId }),
+  const [basics, week, blockViews] = await Promise.all([
+    loadSessionBasics({ initialDay, session: storedSession }),
     loadStudyWeek({ localDate: weekDate, userId }),
-    loadOftenTestedSkillIds(storedSession.goal),
-    loadBlockSubjects({ blocks: storedSession.blocks, blueprint, goal: storedSession.goal }),
-    storedSession.goalId
-      ? loadBlockedTestOutChapters({
-          chapterIds: [
-            ...new Set(
-              storedSession.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? []),
-            ),
-          ],
-          goalId: storedSession.goalId,
-          known: { source: readSavedPlan(userId, storedSession.goalId) },
-          now: new Date(),
-          timeZone,
-          userId,
-        })
-      : new Set<string>(),
-    withLessonDisplayMinutes({ blocks: storedSession.blocks }),
+    loadSessionBlockViews({
+      blueprint,
+      session: storedSession,
+      timeZone,
+      userId,
+      ...(initialDay &&
+        storedSession.startedAt === null &&
+        storedSession.blocks.every((block) => block.status === "pending") && { answers: [] }),
+    }),
   ]);
 
-  const { answers, dailyLimit, plan, viewer } = basics;
+  const { plan, viewer } = basics;
+  const { answers } = blockViews;
 
   const visibleBlocks = withoutLockedPhaseChallenges({
     blocks: storedSession.blocks,
@@ -145,7 +118,7 @@ export async function loadStudySessionView({
     : 0;
 
   const visibleBlockIds = new Set(session.blocks.map((block) => block.id));
-  const displayBlocks = blocksWithLessonMinutes.filter((block) => visibleBlockIds.has(block.id));
+  const displayBlocks = blockViews.displayBlocks.filter((block) => visibleBlockIds.has(block.id));
 
   const now = new Date();
   const current = isCurrentSession({ now, session, timeZone });
@@ -177,10 +150,8 @@ export async function loadStudySessionView({
 
   const view = toStudySessionView({
     answers,
-    blockSubjects,
-    blockedTestOutChapters,
+    blockViews: blockViews.blocks.filter((block) => visibleBlockIds.has(block.id)),
     current,
-    dailyLimit,
     dayEndsAt,
     dayMinutes,
     examAccess,
@@ -189,11 +160,9 @@ export async function loadStudySessionView({
       current &&
       hasLessonRoom({
         day: { dailyMinutes: dayMinutes, freshStart: session.freshStart },
-        limitMinutes: dailyLimit?.limitMinutes ?? null,
         plannedMinutes: session.plannedMinutes,
       }),
     missions,
-    oftenTestedSkillIds,
     outlines,
     plusLessons,
     session,
@@ -213,15 +182,5 @@ export async function loadStudySessionView({
     }),
   ]);
 
-  const displayMinutes = new Map(displayBlocks.map((block) => [block.id, block.estimatedMinutes]));
-
-  return {
-    ...view,
-    blocks: view.blocks.map((block) => ({
-      ...block,
-      estimatedMinutes: displayMinutes.get(block.id) ?? block.estimatedMinutes,
-    })),
-    catchUp,
-    extraTime,
-  };
+  return { ...view, catchUp, extraTime };
 }

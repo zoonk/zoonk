@@ -18,5 +18,10 @@
   "sessionCompleted": false,
   "testOutOffer": null,
   "topHyperdrive": 0,
-  "total": 3
+  "total": 3,
+  "blocks": [],
+  "sessionId": "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02",
+  "goalId": null,
+  "finishedChapterId": null,
+  "next": null
 }

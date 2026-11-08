@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "a31011ebca9298a5cfda96d52d429d9114f36a08825d64100fb48bf0aabd697d",
   "conversation_answers_first": "b9bb8fc201bf0ad4b86894410dcc86fb57dc18a4cf75a857b6a6fbc5d24793b7",
   "conversation_at_level": "f6aa1cb6fe53c43f75efd5df5fbca7ec0b62a7b0047bd4a1fdfe1ad94a81c822",
-  "conversation_back_to_today": "b3a71f69f87bbebbc75987e52ea6cffa5e93643923e587f725713a630945114f",
   "conversation_band": "a9412a0b8c9e844fbf4b242556aa636c222171b55f8c9da85767072e0785a0b3",
   "conversation_band_points": "bd949156b88308349dc43a26838b22b4470371ef949f460e501d8c04b11b7a33",
   "conversation_below_level": "d06d21f9bc778f9850a9ebca84f1aa701bd3544940bb7a50ce44062d011ffe9e",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "8c34b819d3486590feeef3eb821d9b8050f313e474d909b4f55872bcb2495ac2",
   "conversation_still_closing": "aae06e3c768780e11be8d9c27518e1d59325b9ae58a1bad697bd13cc26432019",
   "conversation_still_to_get_across": "4d34b97991deafc3612d40188aed7051e979736ff34d91e33e821e4cf3ab3320",
-  "conversation_study_time_used_up": "cb255da9085ff3a1c99e4e9b5a3cb54080819b1f0429f2b368955a280c1375b7",
   "conversation_take_over": "ba0f665542e6c1865d9a256b9efe2c9dc44486fa07cd9bb28d12ccc788500562",
   "conversation_take_your_time": "5adc53a3d92030a23f8cc5f9ca21b959b23eeef85c4d39be78abb5d578981a29",
   "conversation_taken_over": "e695e3277e6f5f5393a5204250423c3d22f4b2fdfbb54371488e70609723d64e",
@@ -313,9 +311,6 @@
     <string name="conversation_call_length">Durata della conversazione</string>
     <string name="conversation_longer_calls_plus">Con Plus puoi fare conversazioni più lunghe.</string>
     <string name="conversation_opens_when_ready">La tua conversazione si apre appena è pronta.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">Hai raggiunto il limite di tempo giornaliero. Potrai fare questa conversazione nella prossima sessione.</string>
-    <string name="conversation_back_to_today">Torna a Oggi</string>
     <string name="conversation_get_ready">Prepara la conversazione</string>
     <string name="conversation_get_ready_description">Questa sfida è una breve conversazione sull’unità. Prima la prepariamo in base al tuo livello di espressione orale: ci vuole fino a mezzo minuto.</string>
     <string name="conversation_getting_ready">Stiamo preparando la tua conversazione</string>

@@ -5,7 +5,6 @@ import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
 import { getSessionMinutesDone } from "../daily-goal";
 import { getExtraTime } from "../extra-time";
-import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
 import { type DayBlockInput } from "./day-block-view";
@@ -20,7 +19,6 @@ import { type StudySessionView } from "./session-view";
 export type DayViewFieldsInput = {
   answers: readonly SessionAnswer[];
   current: boolean;
-  dailyLimit: DailyTimeLimitStatus | null;
   dayEndsAt?: number;
   dayMinutes: number;
   examAccess: ExamPrepAccess;
@@ -58,7 +56,6 @@ function getNextPosition(
 export function toDayViewFields({
   answers,
   current,
-  dailyLimit,
   dayEndsAt,
   dayMinutes,
   examAccess,
@@ -92,17 +89,13 @@ export function toDayViewFields({
     brainPower: blocksPower + (session.fullMealAt === null ? 0 : BRAIN_POWER_BONUS.fullMeal),
     catchUp: null,
     current,
-    dailyLimit,
     dayEndsAt:
       dayEndsAt ??
       getStartOfLocalDay({ localDate: addDays(session.localDate, 1), timeZone }).getTime(),
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({
-      blocks: session.blocks,
-      remainingLimitMinutes: dailyLimit?.remainingMinutes ?? null,
-    }),
+    extraTime: getExtraTime({ blocks: session.blocks }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),

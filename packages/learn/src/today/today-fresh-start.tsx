@@ -13,9 +13,9 @@ import { useFreshStartText, useSessionState } from "./use-today-copy";
 export function TodayFreshStart({ className }: { className?: string }) {
   const text = useFreshStartText();
   const { today } = useTodayScreen();
-  const { ahead, limitReached, rest } = useSessionState();
+  const { ahead, rest } = useSessionState();
 
-  if (!text || !showsFreshStart(today) || ahead || limitReached || rest) {
+  if (!text || !showsFreshStart(today) || ahead || rest) {
     return null;
   }
 

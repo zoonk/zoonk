@@ -53,7 +53,6 @@ function challengeView(lang: Lang, won: boolean) {
     blockId: "block",
     call: null,
     canMove: false,
-    dailyLimitReached: false,
     date: "2026-11-03",
     estimatedMinutes: 12,
     examName: story[lang].exam.name,

@@ -73,7 +73,6 @@ struct GoalChapter: Decodable, Equatable, Sendable {
 }
 
 enum AreaPracticeOutcome: Equatable, Sendable {
-  case dailyLimit
   case nothingToPractice
   case opened(AppRoute)
 }
@@ -188,7 +187,6 @@ struct GoalContentAPI: Sendable {
         }
 
         return .opened(.questionBlock(sessionId: added.sessionId, blockId: added.block.id))
-      case .conflict: return .dailyLimit
       case .unprocessableContent: return .nothingToPractice
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound

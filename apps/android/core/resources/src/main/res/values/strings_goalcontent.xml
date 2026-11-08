@@ -190,8 +190,6 @@
     <string name="goalcontent_progress">Progress</string>
     <string name="goalcontent_practice">Practice</string>
     <string name="goalcontent_practice_chapter">Practice this chapter</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="goalcontent_practice_daily_limit">You\'ve reached your daily time limit. Tomorrow\'s session picks this chapter up.</string>
     <string name="goalcontent_practice_nothing">Nothing to practice in this chapter yet.</string>
     <string name="goalcontent_practice_failed">That didn\'t work. Try again in a moment.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->

@@ -13,15 +13,7 @@ export type StartChallengeResult =
   | { destination: ChallengeDestination; status: "ready" }
   | Extract<StartStudyBlockResult, { status: "earlierFirst" }>
   | { status: "notToday" }
-  | {
-      status:
-        | "blockFinished"
-        | "dailyLimitReached"
-        | "notFound"
-        | "plusRequired"
-        | "questionsNeeded"
-        | "unauthorized";
-    };
+  | { status: "blockFinished" | "notFound" | "plusRequired" | "questionsNeeded" | "unauthorized" };
 
 type StartedBlock = { id: string; isMock: boolean; sessionId: string };
 

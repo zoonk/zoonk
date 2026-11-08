@@ -5,6 +5,11 @@ import { activityAnswerSchema } from "../library/activities/activity-answer-sche
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
 import { studyBlockCompletionSchema } from "../sessions/completion-contract";
+import {
+  openStudyBlockInputSchema,
+  studyBlockOpeningSchema,
+} from "../sessions/open-block-contract";
+import { openStudyDayInputSchema } from "../sessions/open-day-contract";
 import { progressCelebrationShape } from "../sessions/progress-celebration";
 import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
@@ -60,6 +65,7 @@ export type LessonStepCheckInput = z.infer<typeof lessonStepCheckInputSchema>;
 
 export const libraryLessonStartInputSchema = z
   .object({
+    opening: z.union([openStudyBlockInputSchema, openStudyDayInputSchema]).optional(),
     runId: lessonRunIdSchema
       .optional()
       .describe("Refresh this open run, including after a long pause"),
@@ -212,9 +218,20 @@ export const libraryLessonRunSchema = z
           "True when the learner already finished this lesson: its end offers no next lesson",
       }),
     runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
+    sessionId: uuidSchema()
+      .nullable()
+      .meta({ description: "The run's canonical study session, or null for standalone work" }),
     startedAt: z.iso.datetime(),
   })
   .meta({ id: "LibraryLessonRun" });
+
+export const libraryLessonRetryableSchema = z
+  .object({ status: z.literal("retryable") })
+  .meta({ id: "LibraryLessonRetryable" });
+
+export const libraryLessonOpenedSchema = z
+  .object({ opening: studyBlockOpeningSchema, status: z.literal("opened") })
+  .meta({ id: "LibraryLessonOpened" });
 
 export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
 

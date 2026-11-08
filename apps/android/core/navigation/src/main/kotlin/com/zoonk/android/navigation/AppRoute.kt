@@ -204,6 +204,7 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
         val firstAnswer: String? = null,
         val fromCatalog: Boolean = false,
+        val opening: String? = null,
     ) : AppRoute
 
     @Serializable

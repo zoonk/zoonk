@@ -10,7 +10,6 @@
 
 ## Glossary
 
-- “daily time limit” (the learner's setting): “limite diário de tempo”
 - “lesson”: “aula”, not “lição”
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”

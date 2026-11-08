@@ -73,7 +73,6 @@ fun day(
         state = StudySession.State.UNDERWAY,
         missions = emptyList(),
         fullMeal = StudySessionFullMeal(bonus = 0, earned = false, ready = false),
-        dailyLimit = null,
         emptyDay = null,
         minutes = StudySessionMinutes(dailyGoal = dailyGoal, done = 0, planned = dailyGoal.toLong()),
         freshStart = null,

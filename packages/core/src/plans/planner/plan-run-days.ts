@@ -103,7 +103,7 @@ function getHorizonDays({ input, start }: { input: BuildPlanInput; start: Date }
   return targetDate ? Math.min(MAX_PLAN_DAYS, daysBetween(start, targetDate)) : MAX_PLAN_DAYS;
 }
 
-export function describeRunDays({
+function describeRunDays({
   days,
   settings,
 }: {

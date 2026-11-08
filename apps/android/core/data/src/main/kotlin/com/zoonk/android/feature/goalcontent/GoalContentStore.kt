@@ -58,8 +58,6 @@ sealed interface PracticeOutcome {
         val route: AppRoute,
     ) : PracticeOutcome
 
-    data object DailyLimit : PracticeOutcome
-
     data object NothingToPractice : PracticeOutcome
 
     data object Failed : PracticeOutcome
@@ -109,7 +107,6 @@ class GoalContentStore(
 
             is MutationResult.Failed -> {
                 when (result.code) {
-                    EXTRA_TIME_UNAVAILABLE -> PracticeOutcome.DailyLimit
                     NOTHING_TO_PRACTICE -> PracticeOutcome.NothingToPractice
                     else -> PracticeOutcome.Failed
                 }
@@ -121,7 +118,6 @@ class GoalContentStore(
         }
 
     private companion object {
-        const val EXTRA_TIME_UNAVAILABLE = "EXTRA_TIME_UNAVAILABLE"
         const val NOTHING_TO_PRACTICE = "NOTHING_TO_PRACTICE"
         const val READ_ATTEMPTS = 3
     }

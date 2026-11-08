@@ -1,5 +1,6 @@
 import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
@@ -8,6 +9,7 @@ import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
+import { type StudyBlockOpening } from "../sessions/open-block-contract";
 import { startLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import { trackLessonStarted } from "./_utils/lesson-events";
@@ -26,6 +28,7 @@ import {
   loadProgressAnswers,
   loadProgressSince,
 } from "./_utils/lesson-runs";
+import { resolveLessonStudyOpening } from "./_utils/lesson-study-opening";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { restoreRunAnswers } from "./_utils/restore-run-answers";
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
@@ -38,9 +41,12 @@ export type LibraryLessonStartOutcome =
   | Exclude<UsageDecision, { status: "allowed" }>
   | { run: LibraryLessonRun; status: "started" }
   | { status: "notFound" }
-  | { status: "plusRequired" };
+  | { status: "plusRequired" }
+  | { opening: StudyBlockOpening; status: "opened" }
+  | { status: "retryable" };
 
 type RunSource = {
+  bindSession: boolean;
   lesson: { homeChapterId: string | null; id: string; title: string };
   now: Date;
   studySessionId: string | null;
@@ -48,13 +54,20 @@ type RunSource = {
   userId: string;
 };
 
-async function openLessonRun({ lesson, now, studySessionId, timeZone, userId }: RunSource) {
+async function openLessonRun({
+  bindSession,
+  lesson,
+  now,
+  studySessionId,
+  timeZone,
+  userId,
+}: RunSource) {
   const [goalId, existing] = await Promise.all([
     findActiveGoalId(userId),
     findResumableRun(prisma, { lessonId: lesson.id, now, userId }),
   ]);
 
-  if (existing) {
+  if (existing && (!bindSession || getRunStudySessionId(existing) === studySessionId)) {
     return { isNew: false, run: existing };
   }
 
@@ -62,6 +75,20 @@ async function openLessonRun({ lesson, now, studySessionId, timeZone, userId }: 
     const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
 
     if (resumable) {
+      if (bindSession && studySessionId && getRunStudySessionId(resumable) !== studySessionId) {
+        const run = await tx.learningEvent.update({
+          data: {
+            contentIds: {
+              ...(isJsonObject(resumable.contentIds) ? resumable.contentIds : {}),
+              studySessionId,
+            },
+          },
+          where: { id: resumable.id },
+        });
+
+        return { isNew: false, run };
+      }
+
       return unchanged({ isNew: false, run: resumable });
     }
 
@@ -136,7 +163,14 @@ async function readRun({
   ]);
 
   return progress
-    ? { ...progress, hyperdrive, replay, runId: run.id, startedAt: run.startedAt.toISOString() }
+    ? {
+        ...progress,
+        hyperdrive,
+        replay,
+        runId: run.id,
+        sessionId: getRunStudySessionId(run),
+        startedAt: run.startedAt.toISOString(),
+      }
     : null;
 }
 
@@ -160,15 +194,25 @@ export async function startLibraryLesson({
 
   const userId = session.user.id;
 
+  // Continuing an admitted run does not repeat new-start admission when limits or the local day change.
   if (input.runId) {
-    const requested = await findLessonRun({ lessonId, runId: input.runId, userId });
+    return resumeLessonRun({ lessonId, runId: input.runId, userId });
+  }
 
-    const run =
-      requested && requested.endedAt === null
-        ? await readRun({ lessonId, run: requested, userId })
-        : null;
+  const now = new Date();
+  // An explicit study opening must resolve to its admitted work before this lesson consumes allowance. Changed or unavailable study work never falls back to a standalone run.
+  const opening = input.opening
+    ? await resolveLessonStudyOpening({
+        lessonId,
+        now,
+        opening: input.opening,
+        timeZone: input.timeZone,
+        userId,
+      })
+    : null;
 
-    return run ? { run, status: "started" } : { status: "notFound" };
+  if (opening && opening.status !== "admitted") {
+    return opening;
   }
 
   const lesson = await findStartableLesson({ lessonId, userId });
@@ -178,9 +222,9 @@ export async function startLibraryLesson({
   }
 
   // A standalone lesson settles the block of the day it began in, so the day saved here and the run's start share one instant.
-  const now = new Date();
-
-  await saveDayBeforeActivity({ now, timeZone: input.timeZone, userId });
+  if (!input.opening) {
+    await saveDayBeforeActivity({ now, timeZone: input.timeZone, userId });
+  }
 
   // Quick explanations already claimed their own allowance and must not consume a lesson allowance too.
   if (!isOwnExplanation(lesson)) {
@@ -195,13 +239,16 @@ export async function startLibraryLesson({
     }
   }
 
-  const studySessionId = await findLessonStudySessionId({
-    lessonId: lesson.id,
-    studySessionId: input.studySessionId,
-    userId,
-  });
+  const studySessionId = opening
+    ? opening.sessionId
+    : await findLessonStudySessionId({
+        lessonId: lesson.id,
+        studySessionId: input.studySessionId,
+        userId,
+      });
 
   const { isNew, run } = await openLessonRun({
+    bindSession: opening !== null,
     lesson,
     now,
     studySessionId,
@@ -220,4 +267,23 @@ export async function startLibraryLesson({
 
   const started = await readRun({ lessonId: lesson.id, run, userId });
   return started ? { run: started, status: "started" } : { status: "notFound" };
+}
+
+async function resumeLessonRun({
+  lessonId,
+  runId,
+  userId,
+}: {
+  lessonId: string;
+  runId: string;
+  userId: string;
+}): Promise<LibraryLessonStartOutcome> {
+  const requested = await findLessonRun({ lessonId, runId, userId });
+
+  const run =
+    requested && requested.endedAt === null
+      ? await readRun({ lessonId, run: requested, userId })
+      : null;
+
+  return run ? { run, status: "started" } : { status: "notFound" };
 }

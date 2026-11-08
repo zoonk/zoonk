@@ -133,8 +133,8 @@ export function useStepGrading({
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
         keepGrade({
-          request: ensureRun().then(() =>
-            gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }),
+          request: ensureRun().then((run) =>
+            run ? gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }) : null,
           ),
           stepId,
         }),

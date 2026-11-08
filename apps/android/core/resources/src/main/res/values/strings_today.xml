@@ -97,16 +97,6 @@
         <item quantity="other">Your date came with %d lessons left.</item>
     </plurals>
     <string name="today_past_date_detail">Adjust your plan to keep going.</string>
-    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_stops">Today stops at your daily time limit of %1$s.</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_reached">You\'ve reached your daily time limit of %1$s.</string>
-    <!-- A link to the setting for the daily time limit. -->
-    <string name="today_change_limit">Change limit</string>
-    <string name="today_see_you_next_session">See you in your next session!</string>
-    <string name="today_see_you_tomorrow">See you tomorrow!</string>
-    <!-- %1$s is a weekday, such as "Monday". -->
-    <string name="today_see_you_day">See you %1$s!</string>
     <string name="today_nothing_to_review">Nothing to review today.</string>
     <string name="today_nothing_new">Nothing new for today.</string>
     <string name="today_nothing_new_detail">You\'ve done every lesson in your plan, or already know it.</string>

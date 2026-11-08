@@ -20,7 +20,6 @@ import {
 } from "../schemas/language";
 import {
   conflictResponse,
-  forbiddenResponse,
   jsonResponse,
   notFoundResponse,
   paymentRequiredResponse,
@@ -70,10 +69,6 @@ export const languageConversationPaths = {
           ...paymentRequiredResponse,
           description:
             "A language phase/final checkpoint call or an exam speaking task requires Plus. Error code: PLUS_REQUIRED. Practice calls keep their existing plan allowances.",
-        },
-        "403": {
-          ...forbiddenResponse,
-          description: `Today's study time limit is reached. Error code: ${studySessionErrorCodes.dailyLimitReached}.`,
         },
         "409": {
           ...conflictResponse,
@@ -141,10 +136,6 @@ export const languageConversationPaths = {
           ...paymentRequiredResponse,
           description:
             "The checkpoint call, exam speaking task or practice length past the free plan's requires Plus, including after lapse. Error code: PLUS_REQUIRED. No reservation or provider session is created.",
-        },
-        "403": {
-          ...forbiddenResponse,
-          description: `Today's study time limit is reached before the checkpoint block starts. Error code: ${studySessionErrorCodes.dailyLimitReached}.`,
         },
         "409": {
           ...conflictResponse,

@@ -22,21 +22,17 @@ function toEmptyDay({
   return outlines === "idle" ? "lessonsToPrepare" : "nothingNew";
 }
 
-/** Room as the session builder fills it: its day's minutes, capped by the learner's daily time limit. */
+/** Room as the session builder fills the day's minutes. */
 export function hasLessonRoom({
   day,
-  limitMinutes,
   plannedMinutes,
 }: {
   day: Parameters<typeof getSessionDayMinutes>[0];
-  limitMinutes: number | null;
   plannedMinutes: number;
 }): boolean {
   const dayMinutes = getSessionDayMinutes(day);
 
-  return (
-    Math.min(dayMinutes, limitMinutes ?? dayMinutes) - plannedMinutes >= DEFAULT_LESSON_MINUTES
-  );
+  return dayMinutes - plannedMinutes >= DEFAULT_LESSON_MINUTES;
 }
 
 /**

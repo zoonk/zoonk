@@ -8,7 +8,11 @@ import {
   runAnswer,
   startedRun,
 } from "../_test-utils/render-lesson-player";
-import { type LessonPlayerAdapters, type SpokenAnswerOutcome } from "../lesson/lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonStartOutcome,
+  type SpokenAnswerOutcome,
+} from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
@@ -56,6 +60,23 @@ async function sayIt() {
 describe("spoken answers", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("never sends a spoken grade when the pending start is refused", async () => {
+    allowMicrophone();
+    const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
+    const admission = Promise.withResolvers<LessonStartOutcome>();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { gradeSpokenAnswer, startLesson: () => admission.promise }),
+      lesson,
+    });
+
+    await sayIt();
+    admission.resolve({ reason: "plusRequired" });
+    await expect.element(page.getByRole("link", { name: /Plus/u })).toBeVisible();
+    expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
 
   it("plays a spoken screen as listening when the learner can't talk now, for the day", async () => {

@@ -14,7 +14,7 @@ import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
-import { type StudyMomentView, type StudySession } from "./session-types";
+import { type StudyMomentView } from "./session-types";
 import { StudyMoment } from "./study-moment";
 import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
@@ -33,15 +33,13 @@ type LessonMomentCompletion = {
 
 type OutsideSessionResult = NonNullable<LessonMomentCompletion["result"]>;
 
-type LessonMomentSession = Pick<StudySession, "blocks">;
-
 function SavedMoment({
   buddy,
   moment,
   onContinue,
   onStartTestOut,
   onStop,
-  session,
+  continueHref,
   testedOut,
 }: {
   buddy?: LearnBuddy | null;
@@ -49,20 +47,19 @@ function SavedMoment({
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
-  session: LessonMomentSession;
+  continueHref?: string | null;
   testedOut: boolean;
 }) {
   return (
     <StudyMoment
-      blocks={session.blocks}
+      blocks={moment.blocks}
+      continueHref={continueHref}
       buddy={buddy}
-      finishedChapterId={
-        session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
-      }
+      finishedChapterId={moment.finishedChapterId}
       inLessonPlayer
       kind="learn"
       moment={moment}
-      next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
+      next={moment.next?.block ?? null}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
@@ -159,7 +156,7 @@ export function LessonMoment({
   onRetry,
   onStartTestOut,
   onStop,
-  session,
+  continueHref,
 }: {
   buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
@@ -167,7 +164,7 @@ export function LessonMoment({
   onRetry: () => void;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
-  session: LessonMomentSession;
+  continueHref?: string | null;
 }) {
   const t = useExtracted();
   const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
@@ -199,7 +196,7 @@ export function LessonMoment({
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
-      session={session}
+      continueHref={continueHref}
       testedOut={completion.testedOut}
     />
   );

@@ -73,7 +73,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
         <CheckpointCallPreviewClient
           blockId={blockId}
           buddy={buddy}
-          dailyLimitReached={call.dailyLimitReached}
           intro={call.intro}
           userId={session.user.id}
         />

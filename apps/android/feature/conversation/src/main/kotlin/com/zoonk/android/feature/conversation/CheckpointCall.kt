@@ -220,28 +220,6 @@ private fun CheckpointIntro(
             CheckpointCallModel.Start.PlusRequired -> CallIntroStart.PlusRequired
         }
 
-    if (call.dailyLimitReached) {
-        CallIntro(
-            conversation = call.intro,
-            start = start,
-            launcher = null,
-            onSeePlus = { exits.open(AppRoute.Subscription) },
-            onClose = exits::close,
-            actions = {
-                Text(
-                    stringResource(R.string.conversation_study_time_used_up),
-                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                OutlinedButton(onClick = onToday, modifier = Modifier.barAction()) {
-                    Text(stringResource(R.string.conversation_back_to_today))
-                }
-            },
-        )
-        return
-    }
-
     CallIntro(
         conversation = call.intro,
         start = start,

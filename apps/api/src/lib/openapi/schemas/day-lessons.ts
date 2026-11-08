@@ -35,5 +35,5 @@ export const dayStateSchema = z
   .default("underway")
   .meta({
     description:
-      "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `limit` (the daily time limit stopped it with blocks left), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+      "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
   });

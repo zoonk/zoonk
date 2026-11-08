@@ -29,7 +29,6 @@
 - “essay” (graded writing practice): “에세이”; an exam's written part: “서술형”
 - “pause” (a goal): “일시 중지”; paused: “일시 중지됨”
 - “progress” (how far the learner is in the plan): “진도”
-- “daily time limit” (the cap in Settings): “하루 학습 시간 제한”, not “오늘 학습 시간”, which is the plan's time for today
 - “cancel” a subscription: “해지”
 - “real-world problem”: “실무 문제”
 - “goal” (the learner's goal): “목표”

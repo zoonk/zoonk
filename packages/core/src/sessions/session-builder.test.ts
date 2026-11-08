@@ -77,7 +77,6 @@ const baseInput: SessionBuildInput = {
   practiceShare: 0.2,
   produce: null,
   reinforcement: [],
-  remainingLimitMinutes: null,
   reviewPlanItemId: null,
   topics: new Map([
     ["s0", { area: "Math", name: "Functions" }],
@@ -319,16 +318,6 @@ describe(buildSessionBlocks, () => {
 
       expect(review?.fullReview).toBe(true);
     });
-
-    it("stays within the learner's daily limit", () => {
-      const { plannedMinutes } = buildSessionBlocks({
-        ...fullReviewDay,
-        dailyMinutes: 10,
-        remainingLimitMinutes: 10,
-      });
-
-      expect(plannedMinutes).toBeLessThanOrEqual(10);
-    });
   });
 
   it("scores mixed practice net for exams where a wrong answer cancels a right one", () => {
@@ -357,16 +346,6 @@ describe(buildSessionBlocks, () => {
     expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
     expect(blocks[1]?.payload.itemIds).toStrictEqual([]);
     expect(blocks[1]?.payload.drills).toHaveLength(1);
-  });
-
-  it("fits the learner's daily limit and builds nothing once it's reached", () => {
-    const limited = buildSessionBlocks({ ...baseInput, remainingLimitMinutes: 12 });
-    expect(limited.plannedMinutes).toBeLessThanOrEqual(12);
-
-    expect(buildSessionBlocks({ ...baseInput, remainingLimitMinutes: 2 })).toStrictEqual({
-      blocks: [],
-      plannedMinutes: 0,
-    });
   });
 
   it("still offers the next lesson when it's longer than the day's room", () => {
@@ -573,7 +552,7 @@ describe(buildSessionBlocks, () => {
     };
 
     const getAsked = (minutes: number) =>
-      buildSessionBlocks({ ...withSet, remainingLimitMinutes: minutes }).blocks.find(
+      buildSessionBlocks({ ...withSet, dailyMinutes: minutes }).blocks.find(
         (block) => block.kind === "practice",
       )?.payload.itemIds;
 
@@ -593,12 +572,11 @@ describe("a long day's practice in three-question sets", () => {
   ).flat();
 
   it.each([
-    { dailyMinutes: 60, most: 60, remainingLimitMinutes: null },
-    { dailyMinutes: 120, most: 120, remainingLimitMinutes: null },
-    { dailyMinutes: 120, most: 60, remainingLimitMinutes: 60 },
+    { dailyMinutes: 60, most: 60 },
+    { dailyMinutes: 120, most: 120 },
   ])(
     "plans no more than $most minutes for a $dailyMinutes-minute day, keeping each set whole",
-    ({ dailyMinutes, most, remainingLimitMinutes }) => {
+    ({ dailyMinutes, most }) => {
       const { blocks, plannedMinutes } = buildSessionBlocks({
         ...baseInput,
         capsules: [],
@@ -607,7 +585,6 @@ describe("a long day's practice in three-question sets", () => {
         lessons: [],
         practice: sets,
         practiceShare: 0.6,
-        remainingLimitMinutes,
       });
 
       const setsByBlock = blocks.map(

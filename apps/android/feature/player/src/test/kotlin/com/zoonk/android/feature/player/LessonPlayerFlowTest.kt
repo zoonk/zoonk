@@ -228,20 +228,20 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("tengo hambre").assertExists()
     }
 
-    /** "Try again" after a failed start keeps the lesson's wait until the run starts, so nothing done meanwhile is lost. */
+    /** "Try again" after a failed start shows the lesson at once, and what the learner types meanwhile stays once the run starts. */
     @Test
-    fun aRetriedStartShowsTheLessonOnlyOnceTheRunStarts() {
+    fun aRetriedStartKeepsWhatTheLearnerTypedMeanwhile() {
         play(listOf(typedAnswerStep("write"), summaryStep("end"))) { startFailures = 1 }
         harness.cache.invalidate(setOf(DataDomain.Goals))
         api.lessonGate = CompletableDeferred()
 
         tap("Try again")
-        rule.waitForIdle()
-        rule.onNode(hasSetTextAction()).assertDoesNotExist()
+        rule.onNode(hasSetTextAction()).performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("Mine")
 
         api.lessonGate?.complete(Unit)
         rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
-        rule.onNode(hasSetTextAction()).assertExists()
+        rule.onNode(hasSetTextAction()).assert(hasText("Mine"))
     }
 
     /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
@@ -451,7 +451,7 @@ class LessonPlayerFlowTest {
         rule.waitForIdle()
 
         val reopened = openAgain()
-        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null }
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
 
         assertTrue(reopened.state.value?.run is LessonRun.Started)
         assertTrue(reopened.hasUnsent)
@@ -591,7 +591,7 @@ class LessonPlayerFlowTest {
         val reopened = openAgain()
         rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
 
-        assertTrue(!reopened.hasUnsent)
+        rule.waitUntil { !reopened.hasUnsent }
         assertEquals(listOf(quiz, idea, next, quiz), reopened.state.value?.queue)
     }
 

@@ -1,11 +1,12 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { type ContentView } from "@zoonk/core/view-models/content/get";
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { GoalKind, MasteryState } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { goalPreparationResponseSchema } from "./preparation";
-import { logicalDateSchema, studyBlockSchema } from "./study-sessions";
+import { logicalDateSchema } from "./study-sessions";
 
 const masteryStateSchema = z.enum(MasteryState);
 

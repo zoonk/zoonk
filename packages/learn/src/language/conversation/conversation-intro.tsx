@@ -26,12 +26,10 @@ type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired"
 
 export function CheckpointCallIntro({
   conversation,
-  dailyLimitReached,
   onStart,
   rereading,
 }: {
   conversation: LanguageConversationIntro;
-  dailyLimitReached: boolean;
   onStart: (audio: TappedCallAudio) => Promise<CheckpointStartResult>;
   rereading: boolean;
 }) {
@@ -72,7 +70,7 @@ export function CheckpointCallIntro({
         <CallIntroFooter
           conversation={conversation}
           onStart={(audio) => void run(audio)}
-          start={toFooterState({ dailyLimitReached, rereading, start })}
+          start={toFooterState({ rereading, start })}
         />
       }
     />
@@ -80,11 +78,9 @@ export function CheckpointCallIntro({
 }
 
 function toFooterState({
-  dailyLimitReached,
   rereading,
   start,
 }: {
-  dailyLimitReached: boolean;
   rereading: boolean;
   start: CheckpointStart;
 }): CallIntroFooterState {
@@ -92,7 +88,7 @@ function toFooterState({
     return "starting";
   }
 
-  return dailyLimitReached ? "dailyLimitReached" : start;
+  return start;
 }
 
 export function ConversationIntro({

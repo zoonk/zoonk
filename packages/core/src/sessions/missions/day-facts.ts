@@ -17,7 +17,6 @@ import {
   loadPracticeMistakes,
 } from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
-import { loadDailyTimeLimitStatus } from "../_utils/daily-time-limit";
 import { getGoalDayMinutes } from "../_utils/day-minutes";
 import { type loadDayPlan } from "../_utils/day-plan";
 import { loadExamStructure } from "../_utils/exam-structure";
@@ -150,11 +149,10 @@ function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
 async function loadMissionContext(input: MissionContext) {
   const { dayPlan, goal, localDate, now, readSubscription, readUsage, selection, userId } = input;
 
-  const [plan, goalPlan, tier, limit, recent, usage] = await Promise.all([
+  const [plan, goalPlan, tier, recent, usage] = await Promise.all([
     readMissionPlan(input),
     dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
     dayPlan?.tier ?? getLearnerTier(userId, readSubscription),
-    dayPlan?.limit ?? loadDailyTimeLimitStatus({ date: localDate, userId }),
     prisma.studySession.findMany({
       orderBy: [{ localDate: "desc" }, { id: "desc" }],
       take: RECENT_SESSIONS,
@@ -163,7 +161,7 @@ async function loadMissionContext(input: MissionContext) {
     readUsage ? readUsage() : loadUsageTotals({ client: prisma, now, userId }),
   ]);
 
-  return { goalPlan, limit, plan, recent, tier, usage };
+  return { goalPlan, plan, recent, tier, usage };
 }
 
 /** Internal build-time read. It never starts generation or claims any usage. */
@@ -201,7 +199,7 @@ export async function loadDayMissionFacts({
   timeZone: string;
   userId: string;
 }): Promise<DayMissionFacts> {
-  const { plan, goalPlan, tier, limit, recent, usage } = await loadMissionContext({
+  const { plan, goalPlan, tier, recent, usage } = await loadMissionContext({
     dayPlan,
     goal,
     localDate,
@@ -213,12 +211,11 @@ export async function loadDayMissionFacts({
   });
 
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
-  const dailyMinutes = Math.min(dayMinutes, limit.remainingMinutes ?? dayMinutes);
+  const dailyMinutes = dayMinutes;
 
   const available =
     goal.status !== "paused" &&
     goal.status !== "archived" &&
-    !limit.reached &&
     blocks.length > 0 &&
     plannedMinutes > 0 &&
     dailyMinutes > 0;

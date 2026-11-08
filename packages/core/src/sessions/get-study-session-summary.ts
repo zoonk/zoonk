@@ -32,7 +32,6 @@ import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-sess
 import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type ExtraTime } from "./extra-time";
-import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 import { type Mission } from "./missions";
 import { getDayMissions, hasDayMissionBonus } from "./missions/get-day-missions";
 
@@ -138,24 +137,22 @@ export async function getStudySessionSummary({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
   const snapshot = readSessionSnapshot(session.startSnapshot);
 
-  const [answers, after, missions, mistakesSaved, dailyLimit, seconds, fullMealEarned] =
-    await Promise.all([
-      loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
-      measureSummaryState({ session, timeZone, userId }),
-      getDayMissions({
-        session,
-        timeZone,
-        ...(isCurrentSession({ now: new Date(), session, timeZone }) && { through: new Date() }),
-      }),
-      prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
-      getDailyTimeLimitStatus(),
-      sumSessionSeconds(prisma, { sessionId, userId }),
-      hasDayMissionBonus({
-        session,
-        timeZone,
-        ...(isCurrentSession({ now: new Date(), session, timeZone }) && { now: new Date() }),
-      }),
-    ]);
+  const [answers, after, missions, mistakesSaved, seconds, fullMealEarned] = await Promise.all([
+    loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
+    measureSummaryState({ session, timeZone, userId }),
+    getDayMissions({
+      session,
+      timeZone,
+      ...(isCurrentSession({ now: new Date(), session, timeZone }) && { through: new Date() }),
+    }),
+    prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
+    sumSessionSeconds(prisma, { sessionId, userId }),
+    hasDayMissionBonus({
+      session,
+      timeZone,
+      ...(isCurrentSession({ now: new Date(), session, timeZone }) && { now: new Date() }),
+    }),
+  ]);
 
   const moves = snapshot ? getMovedSkills({ current: after.skillStates, snapshot }) : [];
   const newSkillIds = moves.filter((move) => move.from === "new").map((move) => move.skillId);
@@ -165,7 +162,6 @@ export async function getStudySessionSummary({
   const view = toStudySessionView({
     answers,
     current: isCurrentSession({ now: new Date(), session, timeZone }),
-    dailyLimit,
     dayMinutes: session.plannedMinutes,
     examAccess: { includesMockExams: true, trialEnded: false },
     fullMealEarned,

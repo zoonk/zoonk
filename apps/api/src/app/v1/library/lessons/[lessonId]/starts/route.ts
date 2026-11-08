@@ -24,6 +24,14 @@ async function createLibraryLessonStart(
     return NextResponse.json(outcome.run, { status: CREATED });
   }
 
+  if (outcome.status === "opened") {
+    return NextResponse.json(outcome);
+  }
+
+  if (outcome.status === "retryable") {
+    return NextResponse.json(outcome, { status: 503 });
+  }
+
   if (outcome.status === "notFound") {
     return errors.notFound();
   }

@@ -8,10 +8,10 @@ import XCTest
 final class APIRequestMiddlewareTests: XCTestCase {
   func testExplicitNullAnnouncesTheLengthItSends() async throws {
     let sent = try await send(
-      through: ExplicitNullMiddleware(keys: ["dailyLimitMinutes"]), body: Data("{}".utf8))
+      through: ExplicitNullMiddleware(keys: ["targetDate"]), body: Data("{}".utf8))
 
     XCTAssertEqual(sent.length, String(sent.body.count))
-    XCTAssertEqual(String(decoding: sent.body, as: UTF8.self), #"{"dailyLimitMinutes":null}"#)
+    XCTAssertEqual(String(decoding: sent.body, as: UTF8.self), #"{"targetDate":null}"#)
   }
 
   func testJSONBodyAnnouncesTheLengthItSends() async throws {

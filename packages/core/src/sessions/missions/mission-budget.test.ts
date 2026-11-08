@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -21,12 +20,7 @@ import { settleMissions } from "./settle-missions";
 const localDate = new Date("2026-10-13T00:00:00Z");
 const now = new Date("2026-10-13T12:00:00Z");
 
-async function day(
-  dailyMinutes: number,
-  durations: number[],
-  extra = false,
-  limitMinutes?: number,
-) {
+async function day(dailyMinutes: number, durations: number[], extra = false) {
   const [user, skill, lesson] = await Promise.all([
     userFixture(),
     skillFixture(),
@@ -34,10 +28,6 @@ async function day(
   ]);
 
   const goal = await goalFixture({ dailyMinutes, userId: user.id });
-
-  if (limitMinutes !== undefined) {
-    await learningProfileFixture({ dailyLimitMinutes: limitMinutes, userId: user.id });
-  }
 
   const plan = await planFixture({ goalId: goal.id });
   const item = await planItemFixture({ lessonId: lesson.id, planId: plan.id, skillId: skill.id });
@@ -141,13 +131,6 @@ describe("daily missions fit the learner's planned time", () => {
     await expect(
       settleMissions({ sessionId: session.id, timeZone: "UTC", userId: session.userId }),
     ).resolves.toMatchObject({ fullMealPaid: false });
-  });
-
-  it("fits the learner's remaining daily cap when it is shorter than the goal's day", async () => {
-    const { missions, plannedMinutes } = await day(30, [8, 8], false, 18);
-    const fixes = missions.find((mission) => mission.kind === "fixMistake");
-    expect(fixes).toMatchObject({ minutes: 2, total: 1 });
-    expect(plannedMinutes + (fixes?.minutes ?? 0)).toBe(18);
   });
 
   it("sizes fixes to the four minutes left on a 30-minute day", async () => {

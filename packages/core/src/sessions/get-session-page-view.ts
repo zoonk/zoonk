@@ -97,7 +97,7 @@ export async function getSessionPageView(
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
 
   const day = saved
-    ? { session: await readSavedDayView({ session: saved, timeZone, userId }) }
+    ? { selection: null, session: await readSavedDayView({ session: saved, timeZone, userId }) }
     : await readStudyDay({ goal, now: new Date(), timeZone, userId });
 
   const goalView = { id: goal.id, kind: goal.kind };
@@ -121,7 +121,7 @@ export async function getSessionPageView(
     userId,
   };
 
-  const screened = withLessonScreens(session, lessons);
+  const screened = withLessonScreens(session, lessons, { saved: day.selection === null });
 
   return screened.status === "unstarted"
     ? { ...fields, day: screened, status: "unstarted" }

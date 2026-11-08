@@ -7,6 +7,457 @@ import XCTest
 
 @MainActor
 final class LessonPlayerLoadingTests: XCTestCase {
+  func testALateRunPreservesCanvasWorkWithNoAnswerAfterGoingBack() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"], code: ["one"]),
+      transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.continueLesson()
+    store.act()
+    let work = store.work(for: "one", round: 0)
+    work.set([0: "print(1)"], for: "edits")
+    store.select(nil)
+    store.goBack()
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.rounds["one", default: 0], 0)
+    XCTAssertTrue(
+      store.work(for: "one", round: store.state?.rounds["one", default: 0] ?? 0) === work)
+    XCTAssertNil(store.state?.results["one"])
+  }
+
+  func testALateRunPreservesCanvasSelectionWithoutARootTap() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"], code: ["one"]),
+      transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.continueLesson()
+    let work = store.work(for: "one", round: 0)
+    work.set([0: "print(1)"], for: "edits")
+    store.select(nil)
+    store.goBack()
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.rounds["one", default: 0], 0)
+    XCTAssertTrue(
+      store.work(for: "one", round: store.state?.rounds["one", default: 0] ?? 0) === work)
+    XCTAssertNil(store.state?.results["one"])
+  }
+
+  func testExplainFirstKeepsItsQuestionBlankWhenTheRunArrives() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["one", "intro", "two"], explanations: ["intro"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.act()
+    store.explainFirst()
+    XCTAssertEqual(store.state?.currentStep?.id, "intro")
+    await transport.release()
+    await loading.value
+    store.continueLesson()
+
+    XCTAssertEqual(store.state?.currentStep?.id, "one")
+    XCTAssertNil(store.state?.results["one"])
+    XCTAssertNil(store.state?.answers["one"])
+  }
+
+  func testNavigationDoesNotKeepAnAnsweredQuestionBlank() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.continueLesson()
+    store.act()
+    store.goBack()
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.results["one"]?.isCorrect, true)
+  }
+
+  func testWrittenContentPaintsWhileStartCarriesItsOpening() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try markedLesson())
+    }
+    let store = player(
+      cache: cache, content: content, transport: transport,
+      opening: .block("block"), activated: true)
+    let loading = Task { await store.load() }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count == 0, Date.now < deadline { await Task.yield() }
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertEqual(store.state?.currentStep?.id, "first")
+    XCTAssertNil(store.state?.runId)
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.studySessionId, "canonical")
+    let inputs = await transport.inputs
+    XCTAssertTrue(inputs[0].contains("block"))
+  }
+
+  func testRestoredOpeningWaitsForActionAndFollowsOpenedOnce() async throws {
+    let transport = OpeningStartTransport(holds: false, opensElsewhere: true)
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try markedLesson())
+    }
+    var destinations: [StudyBlockOpening] = []
+    let store = player(
+      cache: cache, content: content, transport: transport,
+      opening: .block("block"), onOpened: { destinations.append($0) })
+    await store.load()
+    let before = await transport.count
+    XCTAssertEqual(before, 0)
+    store.activate()
+    let deadline = Date.now.addingTimeInterval(5)
+    while destinations.isEmpty, Date.now < deadline { await Task.yield() }
+    store.activate()
+    let after = await transport.count
+    XCTAssertEqual(after, 2, "one retry for 503")
+    XCTAssertEqual(destinations.count, 1)
+    XCTAssertEqual(destinations.first, .today(.init(kind: .today)))
+    XCTAssertNil(store.state?.runId)
+  }
+
+  func testAStartThatOpensTheDayNamesItsSession() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let lesson = try markedLesson()
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    var started: [String] = []
+    let store = player(
+      cache: cache, content: content, transport: OpeningStartTransport(holds: false),
+      opening: .block("block"), activated: true, sessionStarted: { started.append($0) })
+
+    await store.load()
+
+    XCTAssertEqual(started, ["canonical"])
+  }
+
+  func testContinueMovesOnWhileTheRunStarts() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.continueLesson()
+
+    XCTAssertEqual(store.state?.currentStep?.id, "second")
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.currentStep?.id, "second")
+  }
+
+  func testADeviceGradedCheckShowsItsVerdictWhileTheRunStartsAndIsSavedInIt() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.select(.check(optionId: "right"))
+    let checking = Task { await store.check() }
+
+    await waitUntil { store.state?.phase == .feedback }
+    XCTAssertEqual(store.state?.results["one"]?.isCorrect, true)
+    await transport.release()
+    await loading.value
+    await checking.value
+    await waitUntil { store.held.isEmpty }
+    let checks = await transport.checks
+    XCTAssertEqual(checks, ["one in run"])
+  }
+
+  func testRetryingStartKeepsAndSavesLocallyCheckedAnswersOnce() async throws {
+    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    for step in ["one", "two"] {
+      store.select(.check(optionId: "right"))
+      await store.check()
+      XCTAssertEqual(store.state?.results[step]?.isCorrect, true)
+      store.continueLesson()
+    }
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    await waitUntil { store.state?.currentStep?.id == "three" }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+    XCTAssertEqual(store.state?.results["one"]?.isCorrect, true)
+    XCTAssertEqual(store.state?.results["two"]?.isCorrect, true)
+    await transport.release()
+    await retrying.value
+    await waitUntil { store.held.isEmpty }
+    let checks = await transport.checks
+    XCTAssertEqual(checks.sorted(), ["one in run", "two in run"])
+    XCTAssertEqual(store.state?.runId, "run")
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  func testALessonFinishedWhileTheStartFailsCanRetryCompletion() async throws {
+    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    for _ in ["one", "two"] {
+      store.select(.check(optionId: "right"))
+      await store.check()
+      store.continueLesson()
+    }
+    XCTAssertEqual(store.state?.phase, .completed)
+    XCTAssertEqual(store.state?.completion?.status, .saving)
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    await transport.release()
+    await retrying.value
+    await waitUntil { store.held.isEmpty }
+    XCTAssertEqual(store.state?.runId, "run")
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertEqual(store.state?.phase, .completed)
+    await waitUntil { store.state?.completion?.status != .saving }
+    XCTAssertNotEqual(
+      store.state?.completion?.status, .saving,
+      "LessonCompletionView shows only a spinner and a disabled Continue while saving")
+  }
+
+  func testRetryingStartShowsProgressAndHidesRetry() async throws {
+    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    var deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    let retried = await transport.count
+    XCTAssertEqual(retried, 2)
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertNotEqual(
+      store.state?.run, .refused(.failed), "the retried start still shows the failed screen")
+
+    // The refusal view is the only place that offers a start retry.
+    let secondTap: Task<Void, Never>?
+    if case .refused = store.state?.run {
+      secondTap = Task { await store.load() }
+    } else {
+      secondTap = nil
+    }
+    deadline = Date.now.addingTimeInterval(1)
+    while await transport.count < 3, Date.now < deadline { await Task.yield() }
+    let tappedTwice = await transport.count
+    XCTAssertEqual(tappedTwice, 2, "a second tap cancelled the running start and sent another")
+    await transport.release()
+    await retrying.value
+    await secondTap?.value
+  }
+
+  func testAServerCheckShowsItIsCheckingWhileTheRunStarts() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let store = try openingPlayer(
+      checkLesson(["spoken"], spoken: ["spoken"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.select(.spokenAnswer(text: "Bonjour"))
+    let checking = Task { await store.check() }
+
+    await waitUntil { store.state?.phase == .checking }
+    let before = await transport.checks
+    XCTAssertEqual(before, [])
+    await transport.release()
+    await loading.value
+    await checking.value
+    XCTAssertEqual(store.state?.phase, .feedback)
+    let after = await transport.checks
+    XCTAssertEqual(after, ["spoken in run"])
+  }
+
+  func testALearnerWhoDidNothingIsResumedToTheirFurthestScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  /// A canvas or field answering on its own, with no touch or key from the learner, isn't the learner acting.
+  func testAnAnswerSetWithoutTheLearnerDoesNotKeepTheScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.select(.check(optionId: "wrong"))
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  /// A first miss on a match board or a take still recording changes no answer; the tap that
+  /// started it is the learner acting.
+  func testATapThatChangesNoAnswerKeepsItsScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.act()
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "one")
+    XCTAssertEqual(store.state?.runId, "run")
+  }
+
+  func testACanvasWritingItsOwnStateDoesNotKeepTheScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.work(for: "intro", round: 0).set(30, for: "revealed")
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+  }
+
+  func testAnswerInputKeepsItsScreenWhenTheRunLands() async throws {
+    let inputs: [LessonAnswer] = [
+      .typedAnswer(text: "Par"),
+      .check(optionId: "wrong"),
+      .matchColumns(userPairs: [.init(left: "chat", right: "cat")], mistakes: 1),
+    ]
+
+    for input in inputs {
+      let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+      let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+      let loading = Task { await store.load() }
+      await startRequested(transport)
+
+      store.act()
+      store.select(input)
+      await transport.release()
+      await loading.value
+
+      XCTAssertEqual(store.state?.currentStep?.id, "one", "\(input)")
+      XCTAssertEqual(store.state?.currentAnswer, input)
+      XCTAssertEqual(store.state?.runId, "run")
+    }
+  }
+
+  func testAPendingCheckKeepsItsScreenWhenTheRunLands() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["spoken"]))
+    let store = try openingPlayer(
+      checkLesson(["spoken", "next"], spoken: ["spoken"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.act()
+    store.select(.spokenAnswer(text: "Bonjour"))
+    let checking = Task { await store.check() }
+    await waitUntil { store.state?.phase == .checking }
+    await transport.release()
+    await loading.value
+    await checking.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "spoken")
+    XCTAssertEqual(store.state?.phase, .feedback)
+  }
+
+  func testAnAnswerGivenBeforeAFailedStartKeepsItsScreenAfterTryAgain() async throws {
+    let transport = OpeningStartTransport(
+      holds: true, failsFirstStart: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.select(.check(optionId: "right"))
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    await transport.release()
+    await retrying.value
+
+    XCTAssertEqual(store.state?.runId, "run")
+    XCTAssertEqual(store.state?.currentStep?.id, "one")
+    XCTAssertEqual(store.state?.currentAnswer, .check(optionId: "right"))
+  }
+
+  /// As the recorder does with a take: it waits for the run, then the grade lands on its screen.
+  func testASpokenTakeKeepsItsScreenWhenTheRunLands() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["spoken"]))
+    let store = try openingPlayer(
+      checkLesson(["spoken", "next"], spoken: ["spoken"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.act()
+    let take = Task {
+      guard await store.ensureRun() else { return }
+      store.resolveSpoken(
+        SpokenAnswerVerdict(
+          isCorrect: true, score: 1, transcript: "Bonjour", feedback: nil,
+          heard: SpokenHeard(words: [], wordsToPractice: [])), stepId: "spoken")
+    }
+    await transport.release()
+    await loading.value
+    await take.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "spoken")
+    XCTAssertEqual(store.state?.phase, .feedback)
+    XCTAssertEqual(store.state?.currentResult?.answerText, "Bonjour")
+  }
+
+  func testCanvasWorkMadeBeforeTheRunSurvivesItStarting() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    let work = store.work(for: "one", round: 0)
+    work.set(["left": "right"], for: "pairs")
+
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(
+      store.work(for: "one", round: 0).value("pairs") as [String: String]?, ["left": "right"])
+  }
+
   func testReopeningALessonReusesItsFreshContent() async {
     let cache = AppCache(session: SessionStore.preview(account: nil))
     var reads = 0
@@ -108,7 +559,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
       .ready(try pictureLesson(isDrawn: true))
     }
-    let store = player(cache: cache, content: content, transport: OfflineLessonTransport())
+    let store = player(
+      cache: cache, content: content, transport: OpeningStartTransport(holds: false))
     await store.load()
     store.work(for: "check", round: try XCTUnwrap(store.state).rounds["check"] ?? 0)
       .set(["left": "right"], for: "pairs")
@@ -341,6 +793,35 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(requests.last, "check held")
   }
 
+  /// Opened from Today with the learner's tap: the start goes out as the lesson opens.
+  private func openingPlayer(_ lesson: PlayableLesson, transport: OpeningStartTransport)
+    -> LessonPlayerStore
+  {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    return player(
+      cache: cache, content: content, transport: transport, opening: .block("block"),
+      activated: true)
+  }
+
+  /// Right answers from an earlier sitting.
+  private func runAnswers(_ stepIds: [String]) -> String {
+    "["
+      + stepIds.map {
+        #"""
+        {"stepId":"\#($0)","isCorrect":true,"answeredAt":"2026-11-07T08:00:00.000Z","answer":null,
+         "result":{"answerText":null,"checked":true,"correctAnswer":null,"corrections":[],
+         "expected":null,"feedback":null,"isCorrect":true,"keyPoints":null,"nextReviewAt":null,
+         "savedMistake":false,"score":null,"spelling":null}}
+        """#
+      }.joined(separator: ",") + "]"
+  }
+
+  private func startRequested(_ transport: OpeningStartTransport) async {
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count == 0, Date.now < deadline { await Task.yield() }
+  }
+
   private func waitUntil(_ condition: () -> Bool) async {
     for _ in 0..<10_000 where !condition() {
       await Task.yield()
@@ -378,20 +859,26 @@ final class LessonPlayerLoadingTests: XCTestCase {
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
-    defaults: UserDefaults = .standard
+    defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = false,
+    onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in },
+    sessionStarted: @escaping @MainActor (String) -> Void = { _ in }
   ) -> LessonPlayerStore {
     let preferences: Resource<LearningPreferences> = cache.resource(audience: .signedIn) { _ in nil
     }
     return LessonPlayerStore(
-      lessonId: "lesson", studySessionId: nil,
+      lessonId: "lesson", studySessionId: nil, opening: opening, activated: activated,
+      onOpened: onOpened,
       api: LessonPlayerAPI(
         clients: APIClientFactory(
           baseURL: URL(string: "https://api.zoonk.test")!, transport: transport)),
-      cache: cache, preferences: preferences, lessonResource: content, defaults: defaults)
+      cache: cache, preferences: preferences, lessonResource: content, defaults: defaults,
+      sessionStarted: sessionStarted)
   }
 }
 
-private func checkLesson(_ ids: [String], spoken: Set<String> = []) throws -> PlayableLesson {
+private func checkLesson(
+  _ ids: [String], spoken: Set<String> = [], explanations: Set<String> = [], code: Set<String> = []
+) throws -> PlayableLesson {
   let check = """
     "kind": "check", "content": {"question": "Capital of France?", "basis": null, "options": [
       {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
@@ -401,13 +888,19 @@ private func checkLesson(_ ids: [String], spoken: Set<String> = []) throws -> Pl
     "kind": "spokenAnswer", "content": {"language": "fr", "prompt": "Say hello.",
       "targetText": "Bonjour", "romanization": null, "translation": null}
     """
+  let explanation = """
+    "kind": "explanation", "content": {"title": null, "text": "Paris is the capital."}
+    """
+  let codeStep = #"""
+    "kind":"activity","content":{"template":"codeRunner","prompt":"Fix it","check":{"kind":"interaction","explanation":"Why"},"fields":{"editableLines":[1],"expectedOutput":"1","language":"python","mistakes":[],"solution":"print(1)","starterCode":"print(0)"}}
+    """#
   let steps = try ids.enumerated().map { index, id in
     try JSONDecoder().decode(
       LessonStep.self,
       from: Data(
         """
         {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0,
-         \(spoken.contains(id) ? speak : check)}
+         \(code.contains(id) ? codeStep : spoken.contains(id) ? speak : explanations.contains(id) ? explanation : check)}
         """.utf8))
   }
 
@@ -552,7 +1045,7 @@ private actor HeldAnswersTransport: ClientTransport {
       return (
         HTTPResponse(status: .created, headerFields: headerFields),
         HTTPBody(
-          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
+          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "sessionId":null, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
         )
       )
     case "createStepCheck":
@@ -628,7 +1121,7 @@ private let sessionLessonCompletion = #"""
    "studyBlock": {
      "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
      "ceremony": null, "certificates": [], "checkpoint": null, "comesBackOn": null,
-     "completedMissions": ["somethingNew"],
+     "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"next":null,"completedMissions": ["somethingNew"],
      "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,
@@ -636,3 +1129,82 @@ private let sessionLessonCompletion = #"""
      "sessionBar": {"completed": 1, "total": 3}, "sessionCompleted": false, "testOutOffer": null,
      "topHyperdrive": 0, "total": 1}}
   """#
+
+private actor OpeningStartTransport: ClientTransport {
+  let holds: Bool
+  let opensElsewhere: Bool
+  let failsFirstStart: Bool
+  let runAnswers: String
+  private var gate: CheckedContinuation<Void, Never>?
+  private(set) var count = 0
+  private(set) var inputs: [String] = []
+  /// Each check as "step in run".
+  private(set) var checks: [String] = []
+
+  init(
+    holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false,
+    runAnswers: String = "[]"
+  ) {
+    self.holds = holds
+    self.opensElsewhere = opensElsewhere
+    self.failsFirstStart = failsFirstStart
+    self.runAnswers = runAnswers
+  }
+
+  func release() {
+    gate?.resume()
+    gate = nil
+  }
+
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
+    async throws -> (HTTPResponse, HTTPBody?)
+  {
+    if operationID == "createStepCheck" {
+      return try await check(request, body: body)
+    }
+
+    guard operationID == "createLibraryLessonStart" else { throw APIError.network }
+    inputs.append(
+      String(
+        decoding: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20), as: UTF8.self))
+    count += 1
+    if holds { await withCheckedContinuation { gate = $0 } }
+    var headers = HTTPFields()
+    headers[.contentType] = "application/json"
+    if failsFirstStart, count == 1 {
+      throw APIError.network
+    }
+    if opensElsewhere {
+      return (
+        HTTPResponse(status: count == 1 ? .serviceUnavailable : .ok, headerFields: headers),
+        HTTPBody(
+          count == 1
+            ? #"{"status":"retryable"}"# : #"{"status":"opened","opening":{"kind":"today"}}"#)
+      )
+    }
+    return (
+      HTTPResponse(status: .created, headerFields: headers),
+      HTTPBody(
+        #"{"answers":\#(runAnswers),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
+      )
+    )
+  }
+
+  private func check(_ request: HTTPRequest, body: HTTPBody?) async throws -> (
+    HTTPResponse, HTTPBody?
+  ) {
+    struct Input: Decodable { let runId: String }
+    let input = try JSONDecoder().decode(
+      Input.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
+    let stepId = try XCTUnwrap(request.path?.split(separator: "/").dropLast().last)
+    checks.append("\(stepId) in \(input.runId)")
+    var headers = HTTPFields()
+    headers[.contentType] = "application/json"
+    return (
+      HTTPResponse(status: .ok, headerFields: headers),
+      HTTPBody(
+        #"{"checked": true, "correctAnswer": null, "corrections": [], "expected": null, "feedback": null, "isCorrect": true, "keyPoints": null, "nextReviewAt": null, "savedMistake": false, "score": null, "spelling": null}"#
+      )
+    )
+  }
+}

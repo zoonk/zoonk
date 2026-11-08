@@ -15,7 +15,6 @@ import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
-import { getNextStudyDay, readDailyLimitReachedToday } from "./_utils/challenge-daily-limit";
 import { canMoveToMonday, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
@@ -262,29 +261,25 @@ export async function getChallenge({
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
 
-  const [size, canMoveIt, lastResult, counts, recordings, topics, call, limitReached, moved] =
-    await Promise.all([
-      loadChallengeSize({ block: previewBlock, challenge }),
-      status !== "plusRequired" && canMove({ challenge, todayBlock }),
-      kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
-      loadMilestoneCounts(userId),
-      loadRecordings({ block: previewBlock, challenge }),
-      loadChallengeTopics({ block: previewBlock, challenge }),
-      loadChallengeCall({ blockId, challenge }),
-      status === "ready" && !waitReason && readDailyLimitReachedToday(userId),
-      movedBy ? loadMoveEffect({ changeId: movedBy, planId: item.planId }) : null,
-    ]);
+  const [size, canMoveIt, lastResult, counts, recordings, topics, call, moved] = await Promise.all([
+    loadChallengeSize({ block: previewBlock, challenge }),
+    status !== "plusRequired" && canMove({ challenge, todayBlock }),
+    kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
+    loadMilestoneCounts(userId),
+    loadRecordings({ block: previewBlock, challenge }),
+    loadChallengeTopics({ block: previewBlock, challenge }),
+    loadChallengeCall({ blockId, challenge }),
+    movedBy ? loadMoveEffect({ changeId: movedBy, planId: item.planId }) : null,
+  ]);
 
   const reinforcement = await loadResultReinforcement({ result: lastResult, userId });
   const shown = getAvailableChallengeStatus({ block: previewBlock, call, isMock, size, status });
-  const dailyLimitReached = shown === "ready" && limitReached;
 
   return {
     challenge: {
       blockId,
       call,
       canMove: canMoveIt,
-      dailyLimitReached,
       date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
       estimatedMinutes: size.estimatedMinutes,
       examName: isMock ? getExamName({ blueprint: goal.examBlueprint, goal }) : null,
@@ -296,7 +291,6 @@ export async function getChallenge({
       minutes: size.minutes,
       mock: isMock,
       netScored: size.netScored,
-      nextStudyDate: getNextStudyDay({ challenge, dailyLimitReached, kind }),
       number: size.number,
       passMark: getChallengePassMark({ block: previewBlock, call, kind, size }),
       phase: findPhase(challenge),
