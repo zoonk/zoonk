@@ -29,13 +29,15 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
- * Shared plans: on 24 plans (8 Nov 2026), Terra scored 8.76 (EN 9.05, PT 8.79) at $22.77/1k against
- * Sol's 8.52 at $57.57/1k, with one plan failing the shape checks against Sol's four; Sol drew
- * setups better on some visual lessons, not enough for 2.5 times the cost. Opus, the other
- * provider, last ran an older prompt. A learner's own lesson is planned with its scope's models.
+ * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
+ * needs. On 24 plans (8 Nov 2026), Terra scored a bit higher than Sol (8.76 against 8.52) at 40%
+ * of the cost, but it left out visuals the screens depended on, such as the diagram for a final
+ * "which lobe" question and the setups for lever checks, which the eval doesn't yet measure. Opus,
+ * the other provider, last ran an older prompt. A learner's own lesson is planned with its scope's
+ * models.
  */
-const defaultModel = "openai/gpt-6.1-terra";
-const defaultFallbackModels = ["openai/gpt-6.1-sol", "anthropic/claude-opus-5.5"] as const;
+const defaultModel = "openai/gpt-6.1-sol";
+const defaultFallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 const skillSchema = z.object({
   description: z.string(),
