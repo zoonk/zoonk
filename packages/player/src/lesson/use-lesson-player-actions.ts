@@ -150,12 +150,12 @@ export function useLessonPlayerActions({
       return;
     }
 
-    if (isServerGradedAnswer({ answer, step })) {
-      void gradeOnServer({ answer, step });
+    const graded = gradeStepAnswer({ answer, language: lesson.language, step });
+
+    if (isServerGradedAnswer({ answer, isCorrect: graded?.isCorrect, step })) {
+      void gradeOnServer({ answer, answerText: graded?.answerText, step });
       return;
     }
-
-    const graded = gradeStepAnswer({ answer, language: lesson.language, step });
 
     if (!graded) {
       return;
@@ -226,6 +226,7 @@ export function useLessonPlayerActions({
         setChosenToday(CANT_WRITE_TODAY, true);
         dispatch({ type: "skipWriting" });
       },
+      startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
     [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],

@@ -2,10 +2,7 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import {
-  buildAcceptedArrangeWordSequences,
-  getAcceptedArrangeWordLengths,
-} from "@zoonk/core/player/contracts/arrange-words-answers";
+import { segmentArrangeWords } from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
@@ -72,6 +69,7 @@ export function ArrangeWordsInteraction({
   answer,
   answerKind,
   children,
+  isLocked: isStepLocked,
   onSelectAnswer,
   result,
   selectedAnswer,
@@ -80,20 +78,16 @@ export function ArrangeWordsInteraction({
   answer: string;
   answerKind: "reading" | "listening";
   children: React.ReactNode;
+  isLocked: boolean;
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
+  const isLocked = isStepLocked || result !== undefined;
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences({
-    kind: answerKind,
-    text: answer,
-  });
-
-  const correctWords = acceptedWordSequences[0] ?? [];
-  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
+  const correctWords = segmentArrangeWords({ kind: answerKind, text: answer });
 
   const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
@@ -114,12 +108,10 @@ export function ArrangeWordsInteraction({
 
   const { play } = useWordAudio({ preloadUrls: wordBankOptions.map((option) => option.audioUrl) });
 
-  const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
-
   const syncSelectedAnswer = (next: PlacedWordWithBankIndex[]) => {
     const arrangedWords = next.map((placedWord) => placedWord.word);
 
-    if (acceptedWordLengths.includes(next.length)) {
+    if (next.length === correctWords.length) {
       onSelectAnswer({ arrangedWords, kind: answerKind });
       return;
     }
@@ -130,7 +122,7 @@ export function ArrangeWordsInteraction({
   };
 
   const handlePlace = (tile: WordBankTile) => {
-    if (result || placedWords.length >= maxAnswerLength) {
+    if (isLocked || placedWords.length >= correctWords.length) {
       return;
     }
 
@@ -181,13 +173,14 @@ export function ArrangeWordsInteraction({
         correctWords={correctWords}
         onDragEnd={handleDragEnd}
         onDragStart={() => void trigger("selection")}
+        isLocked={isLocked}
         onRemove={handleRemove}
         placedWords={placedWords}
         result={result}
       />
 
       <WordBank
-        disabled={result !== undefined}
+        disabled={isLocked}
         onPlace={handlePlace}
         tiles={getWordBankTiles({ placedWords, words: wordBankOptions })}
       />

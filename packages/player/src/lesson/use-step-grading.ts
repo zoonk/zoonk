@@ -64,11 +64,15 @@ export function useStepGrading({
   );
 
   const gradeOnServer = useCallback(
-    async ({ answer, step }: CheckContext) => {
+    async ({
+      answer,
+      answerText: localAnswerText,
+      step,
+    }: CheckContext & { answerText?: string | null }) => {
       const durationMs = getAnswerDurationMs(state.stepStartedAt);
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
-      const answerText = "text" in answer ? answer.text : "";
+      const answerText = localAnswerText ?? ("text" in answer ? answer.text : "");
       const pending = pendingRef.current.get(step.id);
 
       // Asked again after its reply was lost, the server replays the saved verdict for the same id.

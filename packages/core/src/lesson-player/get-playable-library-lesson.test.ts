@@ -20,6 +20,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
+import { MAX_SENTENCE_ORDERS_ATTEMPTS } from "../library/language/sentence-orders-constants";
 import { readSavedLessonMap } from "../library/lessons/lesson-map";
 import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
@@ -379,7 +380,15 @@ describe(getPlayableLibraryLesson, () => {
   });
 
   it("serves language screens with the pair's translation, note, sound tip and word banks", async () => {
-    const { lesson, word } = await languageLessonFixture();
+    const { lesson, sentence, word } = await languageLessonFixture();
+
+    await prisma.lessonSentence.update({
+      data: {
+        otherSentenceOrders: ["The rent is how much?"],
+        otherTranslationOrders: ["O aluguel é quanto?"],
+      },
+      where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+    });
 
     const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
     const steps = result?.status === "ready" ? result.lesson.steps : [];
@@ -412,7 +421,12 @@ describe(getPlayableLibraryLesson, () => {
 
     expect(steps[2]).toMatchObject({
       exercise: {
-        sentence: { sentence: "How much is the rent?", translation: "Quanto é o aluguel?" },
+        sentence: {
+          otherSentenceOrders: [["The", "rent", "is", "how", "much?"]],
+          otherTranslationOrders: [["O", "aluguel", "é", "quanto?"]],
+          sentence: "How much is the rent?",
+          translation: "Quanto é o aluguel?",
+        },
       },
       wordHints: null,
     });
@@ -421,10 +435,53 @@ describe(getPlayableLibraryLesson, () => {
       kind: "spokenAnswer",
       listening: {
         kind: "listening",
-        sentence: { sentence: "How much is the rent?", translation: "Quanto é o aluguel?" },
+        sentence: {
+          otherSentenceOrders: [["The", "rent", "is", "how", "much?"]],
+          otherTranslationOrders: [["O", "aluguel", "é", "quanto?"]],
+          sentence: "How much is the rent?",
+          translation: "Quanto é o aluguel?",
+        },
       },
     });
   });
+
+  it.each([
+    { attempts: 0, expected: false, ordersOwedAt: null },
+    { attempts: 0, expected: true, ordersOwedAt: new Date() },
+    { attempts: MAX_SENTENCE_ORDERS_ATTEMPTS - 1, expected: true, ordersOwedAt: new Date() },
+    { attempts: MAX_SENTENCE_ORDERS_ATTEMPTS, expected: false, ordersOwedAt: new Date() },
+    { attempts: MAX_SENTENCE_ORDERS_ATTEMPTS + 1, expected: false, ordersOwedAt: new Date() },
+  ])(
+    "serves pending orders only while attempts remain (%s)",
+    async ({ attempts, expected, ordersOwedAt }) => {
+      const { lesson, sentence } = await languageLessonFixture();
+
+      await prisma.lessonSentence.update({
+        data: { ordersOwedAt },
+        where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+      });
+
+      await prisma.lesson.update({
+        data: { sentenceOrdersAttempts: attempts },
+        where: { id: lesson.id },
+      });
+
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+      const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+      expect(steps.find((step) => step.kind === "reading")).toMatchObject({
+        exercise: { sentence: { ordersPending: expected } },
+      });
+
+      expect(steps.find((step) => step.kind === "listening")).toMatchObject({
+        exercise: { sentence: { ordersPending: expected } },
+      });
+
+      expect(steps.find((step) => step.kind === "spokenAnswer")).toMatchObject({
+        listening: { sentence: { ordersPending: expected } },
+      });
+    },
+  );
 
   it("plays a sentence word that only another lesson saved and voiced", async () => {
     const word = randomUUID();

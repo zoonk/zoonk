@@ -3334,6 +3334,12 @@ msgctxt "Jj2ROA"
 msgid "What we heard"
 msgstr "Cosa abbiamo sentito"
 
+#. After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too.
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "yDk4bj"
+msgid "Also correct:"
+msgstr "Anche questa è corretta:"
+
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "57Nd7h"
 msgid "Each question is checked a few times a day. Compare your answer with this one:"
@@ -3523,6 +3529,16 @@ msgctxt "I67vt5"
 msgid "No more writing today."
 msgstr "Per oggi niente più scrittura."
 
+#: src/lesson/lesson-stage.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "Questa volta non abbiamo potuto controllare la tua risposta. Riprova."
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "Stiamo ancora controllando. Ci stiamo mettendo più del solito."
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"
@@ -3640,18 +3656,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "È solo un’ipotesi, non fa punteggio"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "Questa volta non abbiamo potuto controllare la tua risposta. Riprova."
-
-#: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Stiamo ancora controllando. Ci stiamo mettendo più del solito."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
 msgid "Press Enter to check, Shift+Enter for a new line."
 msgstr "Premi Invio per controllare, Maiusc+Invio per andare a capo."
@@ -3662,14 +3666,14 @@ msgid "Write your answer"
 msgstr "Scrivi la tua risposta"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "Tocca e dillo ad alta voce"
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Registra"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "Tljb7W"
+msgid "Tap and say it out loud"
+msgstr "Tocca e dillo ad alta voce"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx

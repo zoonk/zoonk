@@ -15,6 +15,7 @@
   "player_activity_your_answer": "ed08a1151a171117690bcb19b316e2ca00b4f7be83c0aa63878ab8cb2570a5e8",
   "player_ai_note": "dc7150bd60c7b94ef3b18c2d66de66bd56a554a1c7f55f241aebe46f699a8c34",
   "player_already_knew": "6be34cb2030e9c01a7aaa37eb6f8f3e60c12ea0194476f0f4631e361007c6e50",
+  "player_also_correct_label": "324a336c160c877c6df95944528598464882cce6c8c484dd981541acd4a8c09e",
   "player_answer_feedback": "cb202d07eeb5214201c73d09d3b9a3d46f9aabcfe674487612df35d79508d024",
   "player_answer_options": "0c52d033ad6a93023678019468b1f30ec8e240ebd3d2e9daa60348b6efd733b4",
   "player_ask_something_else": "47ef76d0d6cc3e57c8a3f0e3cdd66cb9bf9bd28c2ca273dd41ecaf064b42daf3",
@@ -244,6 +245,8 @@
     <string name="player_answer_feedback">답안 피드백</string>
     <string name="player_spelled">철자:</string>
     <string name="player_correct_answer_label">정답:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">이 문장도 맞아요:</string>
     <string name="player_explain_answer">내 답 설명하기</string>
     <string name="player_explain_answer_failed">지금은 설명할 수 없어요. 잠시 후 다시 시도해 보세요.</string>
     <string name="player_explain_answer_title">이 답이 맞지 않는 이유</string>

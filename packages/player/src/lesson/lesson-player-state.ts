@@ -119,6 +119,7 @@ export type LessonPlayerAction =
   | { type: "engaged" }
   | { type: "explainFirst" }
   | { type: "knowThis" }
+  | { type: "recordingStarted" }
   | { type: "runStarting" }
   | { type: "saveFailed" }
   | { type: "writingRestored" };

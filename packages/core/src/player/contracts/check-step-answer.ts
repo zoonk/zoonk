@@ -14,7 +14,13 @@ import { type ExerciseKind } from "./exercise-content";
 export type CheckableStep = {
   content: unknown;
   kind: ExerciseKind;
-  sentence?: { explanation?: string | null; sentence: string; translation: string } | null;
+  sentence?: {
+    explanation?: string | null;
+    otherSentenceOrders: string[][];
+    otherTranslationOrders: string[][];
+    sentence: string;
+    translation: string;
+  } | null;
   word?: { id: string; word?: string } | null;
 };
 
@@ -64,6 +70,7 @@ function checkReadingStep(step: CheckableStep, answer: SelectedAnswer): AnswerRe
 
   const acceptedWords = buildAcceptedArrangeWordSequences({
     kind: "reading",
+    otherOrders: step.sentence.otherSentenceOrders,
     text: step.sentence.sentence,
   });
 
@@ -83,6 +90,7 @@ function checkListeningStep(step: CheckableStep, answer: SelectedAnswer): Answer
 
   const acceptedWords = buildAcceptedArrangeWordSequences({
     kind: "listening",
+    otherOrders: step.sentence.otherTranslationOrders,
     text: step.sentence.translation,
   });
 

@@ -173,7 +173,9 @@ describe(writeLanguageLessonContent, () => {
       where: { id: lesson.id },
     });
 
-    expect(saved.contentStatus).toBe("completed");
+    expect(saved).toMatchObject({ contentStatus: "completed" });
+    expect(saved.sentences).toHaveLength(3);
+    expect(saved.sentences.every((row) => row.ordersOwedAt !== null)).toBe(true);
 
     expect(saved.summary).toStrictEqual({
       ideas: [

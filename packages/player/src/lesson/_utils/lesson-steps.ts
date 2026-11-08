@@ -61,13 +61,23 @@ export function isQuestionStep(step: PlayableLibraryStep): boolean {
 
 export function isServerGradedAnswer({
   answer,
+  isCorrect,
   step,
 }: {
   answer: LessonPlayerAnswer;
+  isCorrect: boolean | undefined;
   step: PlayableLibraryStep;
 }): boolean {
+  const ordersPending =
+    (isLanguageStep(step) && step.exercise.sentence?.ordersPending) ||
+    (step.kind === "spokenAnswer" && step.listening?.sentence?.ordersPending);
+
   return (
-    step.kind === "typedAnswer" || (step.kind === "spokenAnswer" && answer.kind === "spokenAnswer")
+    step.kind === "typedAnswer" ||
+    (step.kind === "spokenAnswer" && answer.kind === "spokenAnswer") ||
+    (isCorrect === false &&
+      (answer.kind === "reading" || answer.kind === "listening") &&
+      ordersPending === true)
   );
 }
 

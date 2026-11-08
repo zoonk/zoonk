@@ -248,25 +248,58 @@ describe(checkArrangeWordsAnswer, () => {
   it("returns correct for matching sequence", () => {
     expect(
       checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish"]),
-    ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: true });
+    ).toStrictEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCanonicalOrder: true,
+      isCorrect: true,
+    });
   });
 
   it("returns incorrect for wrong sequence", () => {
     expect(
       checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["Spanish", "I", "speak"]),
-    ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: false });
+    ).toStrictEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCanonicalOrder: false,
+      isCorrect: false,
+    });
   });
 
   it("returns incorrect when user provides extra words", () => {
     expect(
       checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish", "well"]),
-    ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: false });
+    ).toStrictEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCanonicalOrder: false,
+      isCorrect: false,
+    });
   });
 
   it("matches case and punctuation insensitively", () => {
     expect(checkArrangeWordsAnswer([["Hello,", "Lara!"]], ["hello", "lara"])).toStrictEqual({
       correctAnswer: null,
       feedback: null,
+      isCanonicalOrder: true,
+      isCorrect: true,
+    });
+  });
+
+  it("distinguishes a correct other order from the canonical order", () => {
+    expect(
+      checkArrangeWordsAnswer(
+        [
+          ["Yesterday", "it", "rained."],
+          ["It", "rained", "yesterday."],
+        ],
+        ["It", "rained", "yesterday."],
+      ),
+    ).toStrictEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCanonicalOrder: false,
       isCorrect: true,
     });
   });

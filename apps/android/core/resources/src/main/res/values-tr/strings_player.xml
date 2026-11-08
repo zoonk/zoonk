@@ -15,6 +15,7 @@
   "player_activity_your_answer": "2696ccf189b48bbe04ac5be78ef10d27a6eacfdddefedd87a9abb7a338bbba3f",
   "player_ai_note": "cd01ff87751678570bc62ad6bc4a493b08863c63bd74a399a9b53129f150ccc7",
   "player_already_knew": "13b16b7ca1c0e932323b68af29575037d01907cbfdcbdd4568bc02bce9aef8a1",
+  "player_also_correct_label": "9c65f3791bb98adc1228590db01310e6b66e75ef06e652aa2dbdc58ea5c75264",
   "player_answer_feedback": "ba76899e60461334de1626f9d8467f163d7948f725f08a44a11317e4d59a7b5e",
   "player_answer_options": "c4a43467dd7bf64a092970d9e9b1c13588b39bb5434d2a7d6e1750c1e6cc7530",
   "player_ask_something_else": "81b9250d4c8cec4d7c1715d0e5324538b38da3d55aa6c7b18b3bdeff056188f0",
@@ -244,6 +245,8 @@
     <string name="player_answer_feedback">Cevap değerlendirmesi</string>
     <string name="player_spelled">Yazılışı:</string>
     <string name="player_correct_answer_label">Cevap:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Bu da doğru:</string>
     <string name="player_explain_answer">Cevabımı açıkla</string>
     <string name="player_explain_answer_failed">Şu anda açıklayamadık. Biraz sonra tekrar dene.</string>
     <string name="player_explain_answer_title">Bu cevap neden doğru değil</string>
