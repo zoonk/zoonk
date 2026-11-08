@@ -2,6 +2,7 @@ import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { after } from "next/server";
 import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
+import { awardLanguageLevelCertificates } from "../../certificates/_utils/award-language-certificates";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
 import { readPlanSummary, reduceCompletedSummary } from "../../plans/_utils/plan-summary";
 import { skipSettledLessonBlocks } from "./skip-tested-out-blocks";
@@ -58,6 +59,7 @@ export async function completePlanItem(
   });
 
   await reduceCompletedPlans(tx, { checked, userId });
+  await awardLanguageLevelCertificates(tx, { finished: checked });
   await awardCourseCertificates(tx, { finished: checked });
 }
 
@@ -109,6 +111,7 @@ export async function completeLessonPlanItems(
   }
 
   await reduceCompletedPlans(tx, { checked, userId });
+  await awardLanguageLevelCertificates(tx, { finished: checked });
   await awardCourseCertificates(tx, { finished: checked });
 
   return tx.goal.findMany({

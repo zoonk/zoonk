@@ -42,7 +42,7 @@ export const languageProgressViewSchema = z
       .nullable()
       .meta({
         description:
-          'The level across skills ("A2+"): their average, rounded to the nearest half step, as the level test places the plan; null before any',
+          'The plan\'s level ("A2+"): the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with "+" once half of that level\'s lessons are finished; null while the plan has no lessons',
       }),
     levels: z.array(languageSkillLevelSchema),
     speaking: speakingPaperViewSchema
@@ -191,7 +191,7 @@ export const languageTodayViewSchema = z
   .object({
     level: z
       .object({
-        label: z.string().meta({ description: 'The level across skills, "A2+"' }),
+        label: z.string().meta({ description: 'The plan\'s level, "A2+"' }),
         target: z
           .string()
           .nullable()
@@ -200,7 +200,7 @@ export const languageTodayViewSchema = z
       .nullable()
       .meta({
         description:
-          "The level across skills (their average, rounded to the nearest half step), shown instead of preparation",
+          "The plan's level, shown instead of preparation: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
       }),
     pronunciation: duePronunciationSchema
       .nullable()

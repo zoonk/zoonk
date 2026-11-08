@@ -269,6 +269,7 @@ export async function loadCertificateUnits(
 
   const units = listCertificateUnits({
     goal,
+    graphSkills: parsePlanGraph(plan.graph).skills,
     heldKeys,
     items,
     levelChapters:

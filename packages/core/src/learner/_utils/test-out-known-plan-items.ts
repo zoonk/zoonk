@@ -2,6 +2,7 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
+import { awardLanguageLevelCertificates } from "../../certificates/_utils/award-language-certificates";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
 
 export type LeftOutSkill = Pick<GoalPlan["skills"][number], "id" | "phase">;
@@ -137,6 +138,7 @@ export async function testOutKnownPlanItems(
       ? await insertTestedOutStandIns(tx, { goalId, skills: leftOut, testedOutAt, timeZone })
       : [];
 
+  await awardLanguageLevelCertificates(tx, { finished: updated });
   await awardCourseCertificates(tx, { finished: updated });
 
   const changed = new Set(updated.map((item) => item.id));

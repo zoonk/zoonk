@@ -18,6 +18,18 @@ const A2 = 1;
 const B1 = 2;
 const DAYS_AGO_2 = 2 * MS_PER_DAY;
 
+/** Arriving's lessons teach A1 and renting's A2. */
+async function tagSkills({ skills }: { skills: { id: string }[] }) {
+  await Promise.all(
+    skills.map((skill, index) =>
+      prisma.skill.update({
+        data: { cefrLevel: index < 2 ? "A1" : "A2", level: "beginner" },
+        where: { id: skill.id },
+      }),
+    ),
+  );
+}
+
 async function finishArriving({ items }: { items: { id: string }[] }) {
   const completedAt = new Date(Date.now() - DAYS_AGO_2);
 
@@ -28,11 +40,11 @@ async function finishArriving({ items }: { items: { id: string }[] }) {
 }
 
 describe("language view models", () => {
-  it("shows levels since the level test and can-dos", async () => {
+  it("shows the plan's level, skill estimates since the level test and can-dos", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);
-    await finishArriving(setup);
+    await Promise.all([tagSkills(setup), finishArriving(setup)]);
 
     await prisma.languageSkillLevel.create({
       data: { language: "en", score: B1, skill: "listening", startScore: A2, userId: user.id },
@@ -58,7 +70,7 @@ describe("language view models", () => {
     });
 
     expect(progress.target).toStrictEqual({ label: "B1+", score: 2.5 });
-    expect(progress.level).toBe("A2+");
+    expect(progress.level).toBe("A2");
 
     expect(progress.canDo).toStrictEqual([
       { done: true, text: "Consigo fazer a parte 1", unitTitle: "Chegando" },
@@ -370,12 +382,13 @@ describe("language view models", () => {
     ]);
   });
 
-  it("adds the level across skills to Today, leaves the noticed pattern to Today's own read, and offers no exam's speaking to a goal that names none", async () => {
+  it("adds the plan's level to Today, leaves the noticed pattern to Today's own read, and offers no exam's speaking to a goal that names none", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);
 
     await Promise.all([
+      tagSkills(setup),
       prisma.mistakePattern.create({
         data: {
           content: { contrast: [], drill: [], examples: [], rule: "Use for com durações." },
@@ -398,7 +411,7 @@ describe("language view models", () => {
 
     expect(result).toStrictEqual({
       status: "ready",
-      today: { level: { label: "A2+", target: "B1+" }, pronunciation: null, speaking: null },
+      today: { level: { label: "A1", target: "B1+" }, pronunciation: null, speaking: null },
     });
   });
 });

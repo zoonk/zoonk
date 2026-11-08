@@ -50,6 +50,8 @@ export const languageLevelCertificateDetailsSchema = z.object({
 
 export type CourseCertificateDetails = z.infer<typeof courseCertificateDetailsSchema>;
 
+export type LanguageLevelCertificateDetails = z.infer<typeof languageLevelCertificateDetailsSchema>;
+
 /** A plain shape, so the API can add its links without an `allOf` strict clients can't decode. */
 export const certificateFactsShape = {
   canDo: z

@@ -1,13 +1,10 @@
 import "server-only";
 import { readGoalDetails } from "../../language/_utils/language-goal";
 import { loadSpeakingPaperEntry } from "../../language/exam-speaking/_utils/exam-speaking-setup";
-import {
-  getTargetLevel,
-  loadLanguageSkillLevels,
-} from "../../language/levels/language-skill-levels";
-import { getOverallLevel } from "../../language/levels/skill-level-rules";
+import { getTargetLevel } from "../../language/levels/language-skill-levels";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { loadLanguageGoalContext } from "./_utils/language-goal-context";
+import { readPlanLevel } from "./_utils/plan-level";
 import { type LanguageTodayView } from "./language-view-contract";
 
 export type LanguageTodayViewResult =
@@ -29,13 +26,11 @@ export async function getLanguageTodayView(
   const { goal, userId } = loaded.context;
   const details = readGoalDetails(goal);
 
-  const [levels, pronunciation, speaking] = await Promise.all([
-    loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
+  const [label, pronunciation, speaking] = await Promise.all([
+    readPlanLevel({ goalId: goal.id, userId }),
     readDuePronunciation(userId, goal.targetLanguage),
     loadSpeakingPaperEntry({ goal }),
   ]);
-
-  const label = getOverallLevel(levels.map((level) => level.score));
 
   return {
     status: "ready",

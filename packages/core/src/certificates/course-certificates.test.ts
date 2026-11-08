@@ -24,6 +24,7 @@ import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { celebrateProgress } from "../milestones/celebrate-progress";
+import { parsePlanGraph } from "../plans/planner/plan-state";
 import { completePlanItem } from "../sessions/_utils/plan-items";
 import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-subscription";
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
@@ -137,6 +138,19 @@ async function courseGoal({
 }
 
 type CourseGoal = Awaited<ReturnType<typeof courseGoal>>;
+
+async function addGraphSkill(
+  { plan }: CourseGoal,
+  skill: { id: string; lessons: number; name: string },
+) {
+  const { graph } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  const stored = parsePlanGraph(graph);
+
+  await prisma.plan.update({
+    data: { graph: { ...stored, skills: [...stored.skills, ...plannedSkills([skill])] } },
+    where: { id: plan.id },
+  });
+}
 
 function lastTodo({ plan }: CourseGoal) {
   const item = plan.items.findLast((entry) => entry.status === "todo");
@@ -343,7 +357,9 @@ describe("course certificates", () => {
 
   it("counts the stand-ins a finishing test-out adds as passed by test", async () => {
     const [fixture, placed] = await Promise.all([
-      courseGoal(),
+      courseGoal({
+        items: [{ status: "done" }, { status: "done" }, { status: "todo" }, WON_CHALLENGE],
+      }),
       skillFixture({ level: "beginner" }),
     ]);
 
@@ -362,7 +378,32 @@ describe("course certificates", () => {
 
     const [certificate] = await listCertificates(fixture.user.id);
 
-    expect(certificate?.details).toMatchObject({ lessonsStudied: 1, lessonsTestedOut: 2 });
+    expect(certificate?.details).toMatchObject({ lessonsStudied: 2, lessonsTestedOut: 2 });
+  });
+
+  it("measures half studied against a test-out stand-in's skill, which has no size of its own", async () => {
+    const [fixture, placed] = await Promise.all([
+      courseGoal({
+        items: [{ status: "done" }, { status: "done" }, { status: "todo" }, WON_CHALLENGE],
+      }),
+      skillFixture({ level: "beginner" }),
+    ]);
+
+    await addGraphSkill(fixture, { ...placed, lessons: 5 });
+    const todo = lastTodo(fixture);
+
+    await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
+      testOutKnownPlanItems(tx, {
+        goalId: fixture.goal.id,
+        items: [{ ...todo, skillIds: [todo.skillId ?? ""] }],
+        knownSkillIds: new Set([todo.skillId ?? "", placed.id]),
+        placedSkills: [{ id: placed.id, phase: 0 }],
+        testedOutAt: new Date(),
+        timeZone: TIME_ZONE,
+      }),
+    );
+
+    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
   });
 
   it("never awards a language goal's plan a course certificate", async () => {

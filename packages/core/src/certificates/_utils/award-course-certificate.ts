@@ -10,7 +10,7 @@ import { PHASE_WORK_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { type CourseCertificateDetails } from "../certificate-contract";
 import { createCertificateCode } from "./certificate-code";
-import { type CertifiableItem, type CertificateUnit } from "./certificate-units";
+import { type CertificateUnit } from "./certificate-units";
 import {
   UNIT_PLAN_SELECT,
   type UnitGoal,
@@ -31,7 +31,7 @@ const GOAL_SELECT = {
 } as const;
 
 /** Unknown when any studied lesson has no estimate (legacy items), rather than undercounted. */
-function sumStudiedMinutes(studied: readonly CertifiableItem[]): number | null {
+export function sumStudiedMinutes(studied: readonly Pick<PlanItem, "minutes">[]): number | null {
   const minutes = studied.map((item) => item.minutes);
 
   if (minutes.includes(null)) {
@@ -42,7 +42,9 @@ function sumStudiedMinutes(studied: readonly CertifiableItem[]): number | null {
 }
 
 /** The unit's last finished work dates it, so a later claim keeps that day. */
-function getLastFinishedAt(items: readonly CertifiableItem[]): Date {
+export function getLastFinishedAt(
+  items: readonly Pick<PlanItem, "completedAt" | "status">[],
+): Date {
   const times = items.flatMap((item) =>
     isWorkFinished(item.status) && item.completedAt ? item.completedAt.getTime() : [],
   );

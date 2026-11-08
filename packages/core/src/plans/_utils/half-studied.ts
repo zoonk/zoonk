@@ -1,0 +1,40 @@
+import { type PlanItem } from "@zoonk/db";
+import { type PlanGraphSkill } from "../planner/plan-state";
+import { countLessons } from "./stand-in-lessons";
+
+type SizedSkill = Pick<PlanGraphSkill, "lessons" | "plannedLessons" | "skillId">;
+
+type StudiedItem = Pick<
+  PlanItem,
+  "chapterId" | "kind" | "lessonId" | "lessons" | "skillId" | "status"
+>;
+
+/** A skill's full size, even where a dated plan trims it or leaves it out; 0 when it's out by choice. */
+function getSkillSize(skill: Pick<SizedSkill, "lessons" | "plannedLessons">): number {
+  return skill.plannedLessons ?? skill.lessons;
+}
+
+/**
+ * The size is the graph's, not what's left in the plan, so a plan trimmed to fit a date can't earn
+ * a certificate by finishing what it kept. A skill the graph doesn't hold counts its own items.
+ */
+export function measureStudied({
+  graphSkills,
+  items,
+}: {
+  graphSkills: readonly SizedSkill[];
+  items: readonly StudiedItem[];
+}): { size: number; studied: number } {
+  const sized = new Set(graphSkills.map((skill) => skill.skillId));
+  const unsized = items.filter((item) => !item.skillId || !sized.has(item.skillId));
+
+  return {
+    size: graphSkills.reduce((sum, skill) => sum + getSkillSize(skill), 0) + countLessons(unsized),
+    studied: countLessons(items.filter((item) => item.status === "done")),
+  };
+}
+
+/** A certificate needs at least half of what it certifies studied on Zoonk. */
+export function isHalfStudied({ size, studied }: { size: number; studied: number }): boolean {
+  return studied > 0 && studied * 2 >= size;
+}

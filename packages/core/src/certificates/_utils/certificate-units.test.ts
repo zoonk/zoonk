@@ -59,6 +59,7 @@ const TWO_LEVELS = {
 function units({
   chapters = TWO_LEVELS.chapters,
   goal = GOAL,
+  graphSkills = [],
   heldKeys = [],
   items = TWO_LEVELS.items,
   levelCourseId = COURSE,
@@ -67,6 +68,7 @@ function units({
 }: {
   chapters?: LevelChapter[];
   goal?: Parameters<typeof listCertificateUnits>[0]["goal"];
+  graphSkills?: Parameters<typeof listCertificateUnits>[0]["graphSkills"];
   heldKeys?: string[];
   items?: CertifiableItem[];
   levelCourseId?: string | null;
@@ -75,6 +77,7 @@ function units({
 } = {}) {
   return listCertificateUnits({
     goal,
+    graphSkills,
     heldKeys: new Set(heldKeys),
     items,
     levelChapters: chapters,
@@ -134,6 +137,20 @@ describe(listCertificateUnits, () => {
     );
 
     expect(finished(units({ items: allTestedOut }))).toStrictEqual([]);
+  });
+
+  it("needs half of its skills' full size studied, not half of what the plan kept", () => {
+    const items = TWO_LEVELS.items.map((entry) =>
+      entry.phase === 1 && entry.kind === "lesson" ? { ...entry, skillId: "waves" } : entry,
+    );
+
+    expect(
+      finished(units({ graphSkills: [{ lessons: 5, skillId: "waves" }], items })),
+    ).toStrictEqual(["course:overview", "goal"]);
+
+    expect(
+      finished(units({ graphSkills: [{ lessons: 4, skillId: "waves" }], items })),
+    ).toStrictEqual(["course:overview", "course:beginner"]);
   });
 
   it("certifies a level started past its first chapter with the plan, and the next level whole", () => {

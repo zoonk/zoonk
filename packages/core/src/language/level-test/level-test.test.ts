@@ -31,7 +31,6 @@ import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { getLanguageTodayView } from "../../view-models/language/get-language-today-view";
 import { readGoalDetails } from "../_utils/language-goal";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
 import { placeLevelTestResult } from "./_utils/level-test-placement";
@@ -691,7 +690,7 @@ describe("language level test", () => {
     expect(level?.score).toBeGreaterThan(1);
   });
 
-  it("shows on Today the level the plan was placed at", async () => {
+  it("places the plan at the level the test measured across skills", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
@@ -720,10 +719,6 @@ describe("language level test", () => {
 
     const placed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(readGoalDetails(placed).level).toBe("B1");
-
-    await expect(getLanguageTodayView({ goalId: goal.id })).resolves.toMatchObject({
-      today: { level: { label: "B1" } },
-    });
   });
 
   it("asks a guest who used today's help to sign up before checking the sentence", async () => {
