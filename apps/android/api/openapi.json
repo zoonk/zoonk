@@ -72585,7 +72585,7 @@
           },
           "correctAnswer": {
             "nullable": true,
-            "description": "The right answer when missed",
+            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
             "type": "string"
           },
           "corrections": {
