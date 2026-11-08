@@ -136,6 +136,12 @@ export async function readWarmUpState(warmUpId: string | null): Promise<GoalWarm
   return { id: deck.id, status: deck.status };
 }
 
+/** The one rule for which deck a learner is handed: only a ready one has its checked cards. */
+export async function readReadyWarmUpId(warmUpId: string | null): Promise<string | null> {
+  const deck = await readWarmUpState(warmUpId);
+  return deck?.status === "ready" ? deck.id : null;
+}
+
 export async function readWarmUpStatus({
   goalId,
   id,

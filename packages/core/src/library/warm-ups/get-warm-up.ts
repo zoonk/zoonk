@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../../users/get-session";
+import { readReadyWarmUpId } from "./claim-warm-up";
 import { type WarmUpDeck, warmUpDeckSchema } from "./warm-up-contract";
 
 export type WarmUpResult =
@@ -9,16 +10,16 @@ export type WarmUpResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** A ready deck never changes; a broken one is deleted, and the next goal writes a new one. */
-async function readReadyWarmUp(warmUpId: string): Promise<WarmUpDeck | null> {
+/** Only a ready deck's id reaches this, and a ready deck never changes. */
+async function readWarmUpCards(warmUpId: string): Promise<WarmUpDeck> {
   "use cache";
 
-  const deck = await prisma.warmUp.findFirst({
+  const deck = await prisma.warmUp.findUniqueOrThrow({
     select: { cards: true, id: true, language: true },
-    where: { id: warmUpId, status: "ready" },
+    where: { id: warmUpId },
   });
 
-  return deck ? warmUpDeckSchema.parse(deck) : null;
+  return warmUpDeckSchema.parse(deck);
 }
 
 /** Shared content for any learner or guest; a deck still being written or failed isn't served. */
@@ -33,6 +34,11 @@ export async function getWarmUp(warmUpId: string): Promise<WarmUpResult> {
     return { status: "notFound" };
   }
 
-  const deck = await readReadyWarmUp(warmUpId.toLowerCase());
-  return deck ? { deck, status: "ready" } : { status: "notFound" };
+  const readyId = await readReadyWarmUpId(warmUpId.toLowerCase());
+
+  if (!readyId) {
+    return { status: "notFound" };
+  }
+
+  return { deck: await readWarmUpCards(readyId), status: "ready" };
 }
