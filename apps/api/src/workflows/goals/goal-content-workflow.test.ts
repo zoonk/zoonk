@@ -606,9 +606,11 @@ describe(goalContentWorkflow, () => {
       }
 
       const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
       const events = getStreamedEvents().filter(
         ({ step }) => step === "warmUpReady" || step === "warmUpFailed",
       );
+
       expect(close).toHaveBeenCalledOnce();
 
       await expect(readWarmUpState(stored.warmUpId)).resolves.toStrictEqual(
