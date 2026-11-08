@@ -140,8 +140,8 @@ class MindMapStore(
         cache.keyed(Audience.SignedIn, DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
 
     /**
-     * Null when the session changed meanwhile. A map on its way shows so in the reads kept of it, so
-     * a screen opened again follows it; one already drawn, or locked for Plus, is read again.
+     * Null when the session changed meanwhile. A map on its way, or locked for Plus, shows so in the
+     * reads kept of it, so a screen opened again follows it; one already drawn is read again.
      */
     suspend fun create(key: ChapterKey): MindMapCreated? =
         when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
@@ -170,7 +170,7 @@ class MindMapStore(
         key: ChapterKey,
     ): MindMapCreated {
         if (result.code == PLUS_REQUIRED) {
-            readAgain(key)
+            showAs(key, GoalMindMap.Status.PLUS_REQUIRED, ChapterMindMap.Status.PLUS_REQUIRED)
             return MindMapCreated.PlusRequired
         }
         val limit = Limit.of(result)
@@ -224,11 +224,22 @@ class MindMapStore(
         shown: MindMapShown,
     ) {
         val writing = shown == MindMapShown.WritingLessons
-        val listed = if (writing) GoalMindMap.Status.WRITING_LESSONS else GoalMindMap.Status.DRAWING
+        showAs(
+            key,
+            if (writing) GoalMindMap.Status.WRITING_LESSONS else GoalMindMap.Status.DRAWING,
+            if (writing) ChapterMindMap.Status.WRITING_LESSONS else ChapterMindMap.Status.DRAWING,
+        )
+    }
+
+    private fun showAs(
+        key: ChapterKey,
+        listed: GoalMindMap.Status,
+        read: ChapterMindMap.Status,
+    ) {
         list[key.goalId].update { maps ->
             maps.copy(chapters = maps.chapters.map { if (it.chapterId == key.chapterId) it.copy(status = listed) else it })
         }
-        chapter[key].update { it.copy(status = if (writing) ChapterMindMap.Status.WRITING_LESSONS else ChapterMindMap.Status.DRAWING) }
+        chapter[key].update { it.copy(status = read) }
     }
 
     suspend fun picture(
@@ -244,7 +255,8 @@ class MindMapStore(
         }
 
     private companion object {
-        val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress)
+        // Buying Plus unlocks the chapters past the free week.
+        val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSubscription)
         const val UNPROCESSABLE = 422
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
     }

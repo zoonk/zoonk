@@ -47,7 +47,8 @@ class MindMapViewModel(
             val created = store.create(key)
             val local =
                 when (created) {
-                    null -> {
+                    // The lock lives in the store's reads, so a later read (after buying Plus) replaces it.
+                    null, MindMapCreated.PlusRequired -> {
                         MindMapLocal()
                     }
 
@@ -61,10 +62,6 @@ class MindMapViewModel(
 
                     MindMapCreated.Unavailable -> {
                         MindMapLocal(shown = MindMapShown.Unavailable)
-                    }
-
-                    MindMapCreated.PlusRequired -> {
-                        MindMapLocal(shown = MindMapShown.PlusRequired)
                     }
 
                     MindMapCreated.Failed -> {
@@ -91,8 +88,9 @@ class MindMapViewModel(
 
     /**
      * Runs while the screen shows the map on its way ([shown]), until the screen's reads show how it
-     * ended; a status or a read that fails counts as a miss. A stuck poll keeps what it waited on,
-     * so Try again follows it at the same pace.
+     * ended, and then leaves the row to them, so a later read (after buying Plus) wins. A status or a
+     * read that fails counts as a miss; a stuck poll keeps what it waited on, so Try again follows it
+     * at the same pace.
      */
     suspend fun follow(
         chapterId: UUID,
@@ -119,7 +117,10 @@ class MindMapViewModel(
 
                 else -> {
                     locals.update { it + (chapterId to MindMapLocal(shown = status)) }
-                    if (store.reread(key, status)) return
+                    if (store.reread(key, status)) {
+                        locals.update { it - chapterId }
+                        return
+                    }
                     misses++
                 }
             }

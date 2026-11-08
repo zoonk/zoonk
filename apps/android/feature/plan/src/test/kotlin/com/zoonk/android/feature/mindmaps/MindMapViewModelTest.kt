@@ -4,13 +4,14 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
-import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
@@ -128,9 +129,9 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun aPlusOnlyChapterShowsItsLockAndIsReadAgain() =
+    fun aPlusOnlyChapterShowsItsLockUntilBuyingPlusReadsItAgain() =
         runTest(dispatcher) {
-            val (maps, store) = setUp()
+            val (maps, store, cache) = setUp()
             val shown = launch { store.chapter[key].shown.collect {} }
             advanceUntilIdle()
             api.create = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", 402) }
@@ -138,8 +139,32 @@ class MindMapViewModelTest {
             maps.create(chapterId)
             advanceUntilIdle()
 
-            assertEquals(MindMapShown.PlusRequired, maps.requests.value[chapterId]?.shown)
-            assertEquals(2, api.chapters)
+            assertEquals(MindMapShown.PlusRequired, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
+
+            api.chapter = { chapterMindMap("available") }
+            cache.invalidate(setOf(DataDomain.UserSubscription))
+            advanceUntilIdle()
+
+            assertEquals(MindMapShown.Available, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
+            shown.cancel()
+        }
+
+    @Test
+    fun aPollThatEndsLockedLeavesTheRowToTheReads() =
+        runTest(dispatcher) {
+            val (maps, store, cache) = setUp()
+            val shown = launch { store.chapter[key].shown.collect {} }
+            advanceUntilIdle()
+            api.chapter = { chapterMindMap("plusRequired") }
+            api.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
+
+            maps.follow(chapterId, MindMapShown.Drawing)
+            advanceUntilIdle()
+            api.chapter = { chapterMindMap("available") }
+            cache.invalidate(setOf(DataDomain.UserSubscription))
+            advanceUntilIdle()
+
+            assertEquals(MindMapShown.Available, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
             shown.cancel()
         }
 
@@ -180,7 +205,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(2, api.asked)
-            assertEquals(MindMapShown.Ready, maps.requests.value[chapterId]?.shown)
+            assertNull(maps.requests.value[chapterId])
             assertEquals(2, api.lists)
             shown.cancel()
         }
@@ -210,7 +235,8 @@ class MindMapViewModelTest {
 
             maps.follow(chapterId, MindMapShown.Drawing)
 
-            assertEquals(MindMapShown.Failed, maps.requests.value[chapterId]?.shown)
+            assertEquals(4, api.asked)
+            assertNull(maps.requests.value[chapterId])
         }
 
     @Test
@@ -228,7 +254,7 @@ class MindMapViewModelTest {
             maps.follow(chapterId, MindMapShown.WritingLessons)
 
             assertEquals(34_000L, currentTime)
-            assertEquals(MindMapShown.Failed, maps.requests.value[chapterId]?.shown)
+            assertNull(maps.requests.value[chapterId])
         }
 
     @Test
@@ -347,11 +373,16 @@ class MindMapViewModelTest {
             assertEquals(PictureSave.Failed, maps.save.value)
         }
 
-    private fun TestScope.setUp(): Pair<MindMapViewModel, MindMapStore> {
+    private fun TestScope.setUp(): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return MindMapViewModel(store, ana, goalId, { current }, io = dispatcher) to store
+        return Triple(MindMapViewModel(store, ana, goalId, { current }, io = dispatcher), store, cache)
     }
+
+    private fun MindMapStore.chapterShown() =
+        chapter[key]
+            .state.value.value!!
+            .status.shown
 
     private fun refusal(
         tier: String,
