@@ -215,6 +215,11 @@ function hasExamplesKeyword(value: unknown, parentKey?: string): boolean {
 }
 
 describe("OpenAPI document", () => {
+  it("does not expose a reminder phone deletion operation", () => {
+    expect(openAPIDocument.paths).not.toHaveProperty("/me/study-reminder/phone/{token}");
+    expect(JSON.stringify(openAPIDocument)).not.toContain("removeCurrentUserStudyReminderPhone");
+  });
+
   it("keeps the public contract on OpenAPI 3.1", () => {
     expect(openAPIDocument.openapi).toBe("3.1.0");
   });

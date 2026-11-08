@@ -94,7 +94,11 @@ const linkGuestAfterTokenSignIn = createAuthMiddleware(async (context) => {
     return;
   }
 
-  await linkGuestAccount({ account: newSession.user, guestUserId: guest.id });
+  await linkGuestAccount({
+    account: newSession.user,
+    guestUserId: guest.id,
+    sessionId: newSession.session.id,
+  });
 });
 
 export function accessGuardsPlugin() {

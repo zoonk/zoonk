@@ -5,6 +5,7 @@ import { getStudyReminderCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { isQuarterHour } from "./_utils/quarter-hour";
+import { getReminderPhone } from "./_utils/reminder-phone";
 import { findDefaultReminderTime, findStudyReminderView } from "./_utils/study-reminder-view";
 import { type StudyReminderUpdateInput, type StudyReminderView } from "./study-reminder-contract";
 
@@ -67,9 +68,12 @@ export async function updateStudyReminder(
   const now = new Date();
 
   const outcome = await writeLearnerChange({ userId }, async (tx) => {
-    const current = await tx.studyReminder.findUnique({ where: { userId } });
+    const current = await tx.studyReminder.findUnique({
+      include: { pushSession: { select: { expiresAt: true } } },
+      where: { userId },
+    });
 
-    if (input.pushOn && !current?.pushToken) {
+    if (input.pushOn && !getReminderPhone({ now, reminder: current })) {
       return unchanged("phoneRequired" as const);
     }
 

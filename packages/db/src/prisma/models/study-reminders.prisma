@@ -5,25 +5,27 @@ enum PushPlatform {
 
 /// Created when the offer is claimed or settings are saved, never by a read.
 model StudyReminder {
-  id           String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId       String        @unique @map("user_id") @db.Uuid
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId        String        @unique @map("user_id") @db.Uuid
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   /// Local time, such as "19:00", in the learner's zone (the active goal's).
-  time         String        @db.VarChar(5)
-  locale       String        @db.VarChar(10)
-  emailOn      Boolean       @default(false) @map("email_on")
-  pushOn       Boolean       @default(false) @map("push_on")
+  time          String        @db.VarChar(5)
+  locale        String        @db.VarChar(10)
+  emailOn       Boolean       @default(false) @map("email_on")
+  pushOn        Boolean       @default(false) @map("push_on")
   /// The one phone push goes to; a device token belongs to one learner at a time.
-  pushToken    String?       @unique @map("push_token")
-  pushPlatform PushPlatform? @map("push_platform")
-  pushLabel    String?       @map("push_label")
-  offeredAt    DateTime?     @map("offered_at")
+  pushToken     String?       @unique @map("push_token")
+  pushPlatform  PushPlatform? @map("push_platform")
+  pushLabel     String?       @map("push_label")
+  pushSessionId String?       @map("push_session_id") @db.Uuid
+  pushSession   Session?      @relation(fields: [pushSessionId], references: [id], onDelete: SetNull)
+  offeredAt     DateTime?     @map("offered_at")
   /// The last time a channel was turned on; quiet after 7 days counts from it or the last study day.
-  enabledAt    DateTime?     @map("enabled_at")
+  enabledAt     DateTime?     @map("enabled_at")
   /// The learner-local date the sweep last sent or skipped, so a day is considered once.
-  processedOn  DateTime?     @map("processed_on") @db.Date
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @updatedAt @map("updated_at")
+  processedOn   DateTime?     @map("processed_on") @db.Date
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
 
   @@map("study_reminders")
 }

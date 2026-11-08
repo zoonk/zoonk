@@ -33,6 +33,12 @@ async function learnerWithReminder({
 }: { dailyMinutes?: number; pushToken?: string; time?: string; timezone?: string } = {}) {
   const user = await userFixture();
 
+  const pushSession = pushToken
+    ? await prisma.session.create({
+        data: { expiresAt: new Date("2099-01-01"), token: randomUUID(), userId: user.id },
+      })
+    : null;
+
   const goal = await goalFixture({
     createdAt: GOAL_CREATED_AT,
     dailyMinutes,
@@ -53,6 +59,7 @@ async function learnerWithReminder({
           pushLabel: "Phone",
           pushOn: true,
           pushPlatform: "android" as const,
+          pushSessionId: pushSession?.id,
           pushToken,
         }),
         time,
@@ -61,7 +68,7 @@ async function learnerWithReminder({
     }),
   ]);
 
-  return { goal, user };
+  return { goal, pushSession, user };
 }
 
 describe("claiming a study reminder", () => {
@@ -173,6 +180,65 @@ describe("finding due study reminders", () => {
 });
 
 describe("reading a study reminder's delivery", () => {
+  it.each(["deleted", "expired", "unbound"] as const)(
+    "never lists, claims or delivers push with a %s session",
+    async (state) => {
+      const { pushSession, user } = await learnerWithReminder({ pushToken: `fid-${randomUUID()}` });
+      await prisma.studyReminder.update({ data: { emailOn: false }, where: { userId: user.id } });
+      expect(pushSession).not.toBeNull();
+
+      await expect(
+        readStudyReminderDelivery({
+          channel: "push",
+          claim: CLAIM,
+          now: AT_SEVEN_TEN,
+          userId: user.id,
+        }),
+      ).resolves.toMatchObject({ channel: "push" });
+
+      if (state === "deleted") {
+        await prisma.session.delete({ where: { id: pushSession!.id } });
+      } else if (state === "expired") {
+        await prisma.session.update({
+          data: { expiresAt: AT_SEVEN_TEN },
+          where: { id: pushSession!.id },
+        });
+      } else {
+        await prisma.studyReminder.update({
+          data: { pushSessionId: null },
+          where: { userId: user.id },
+        });
+      }
+
+      await expect(listDueStudyReminders(AT_SEVEN_TEN)).resolves.not.toContain(user.id);
+
+      await expect(
+        claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id }),
+      ).resolves.toStrictEqual({ status: "notDue" });
+
+      await expect(
+        readStudyReminderDelivery({
+          channel: "push",
+          claim: CLAIM,
+          now: AT_SEVEN_TEN,
+          userId: user.id,
+        }),
+      ).resolves.toBeNull();
+
+      await prisma.studyReminder.update({ data: { emailOn: true }, where: { userId: user.id } });
+      await expect(listDueStudyReminders(AT_SEVEN_TEN)).resolves.toContain(user.id);
+
+      await expect(
+        readStudyReminderDelivery({
+          channel: "email",
+          claim: CLAIM,
+          now: AT_SEVEN_TEN,
+          userId: user.id,
+        }),
+      ).resolves.toMatchObject({ channel: "email" });
+    },
+  );
+
   it("names the goal with work left, minutes left and the window's end, with a working unsubscribe token", async () => {
     const { goal, user } = await learnerWithReminder();
 

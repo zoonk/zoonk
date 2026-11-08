@@ -36,6 +36,10 @@ async function dueLearner() {
   const user = await userFixture();
   const fid = `fid-${randomUUID()}`;
 
+  const pushSession = await prisma.session.create({
+    data: { expiresAt: new Date("2099-01-01"), token: randomUUID(), userId: user.id },
+  });
+
   const goal = await goalFixture({
     createdAt: new Date("2026-10-01T12:00:00Z"),
     dailyMinutes: 25,
@@ -55,6 +59,7 @@ async function dueLearner() {
         pushLabel: "Pixel",
         pushOn: true,
         pushPlatform: "android",
+        pushSessionId: pushSession.id,
         pushToken: fid,
         time: "19:00",
         userId: user.id,
@@ -62,7 +67,7 @@ async function dueLearner() {
     }),
   ]);
 
-  return { fid, goal, user };
+  return { fid, goal, pushSession, user };
 }
 
 /** A delivery step's input, as the workflow persists it from today's claim. */
@@ -177,6 +182,27 @@ describe(studyReminderWorkflow, () => {
       prisma.studyReminder.findUniqueOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ emailOn: true, pushOn: false, pushToken: null });
   });
+
+  it.each(["deleted", "expired"] as const)(
+    "does not contact push providers after the registered session is %s",
+    async (state) => {
+      const { pushSession, user } = await dueLearner();
+      const pending = await claimToday(user.id);
+      const fetch = fakeProviders(() => Response.json({ name: "projects/zoonk-test/messages/1" }));
+
+      if (state === "deleted") {
+        await prisma.session.delete({ where: { id: pushSession.id } });
+      } else {
+        await prisma.session.update({
+          data: { expiresAt: AT_SEVEN_TEN },
+          where: { id: pushSession.id },
+        });
+      }
+
+      await expect(sendStudyReminderPushStep(pending)).resolves.toBe("notNeeded");
+      expect(fetch).not.toHaveBeenCalled();
+    },
+  );
 
   it("retries a push FCM asked to send later, after the wait it named", async () => {
     const { user } = await dueLearner();

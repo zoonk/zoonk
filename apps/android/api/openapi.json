@@ -22483,7 +22483,7 @@
     },
     "/me/study-reminder/phone": {
       "put": {
-        "description": "Makes this phone the one push goes to (Use this phone), or refreshes its token when it changes. Push stays as it was; turn it on with PATCH. Another account that had this device token loses it.",
+        "description": "Makes this phone the one push goes to (Use this phone), or refreshes its token when it changes. The phone is bound to the calling session: signing out or session expiry disconnects it. Push stays as it was; turn it on with PATCH. Another account that had this device token loses it.",
         "operationId": "selectCurrentUserStudyReminderPhone",
         "security": [
           {
@@ -22507,79 +22507,6 @@
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Every reminder setting as saved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StudyReminderResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/me/study-reminder/phone/{token}": {
-      "delete": {
-        "description": "Removes the phone and turns push off, only while `token` is still the selected one, so a phone selected since stays.",
-        "operationId": "removeCurrentUserStudyReminderPhone",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Remove the phone from study reminders",
-        "tags": [
-          "Account"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "token",
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "description": "The selected phone's push token, URL-encoded"
-            },
-            "required": true,
-            "description": "The selected phone's push token, URL-encoded"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Every reminder setting as saved",
@@ -29383,7 +29310,7 @@
             "description": "The app language reminders are written in: send the app's current one"
           },
           "pushOn": {
-            "description": "Turning it on needs a selected phone (PUT /me/study-reminder/phone first): 422 PHONE_REQUIRED otherwise",
+            "description": "Turning it on needs a selected phone with a live registering session (PUT /me/study-reminder/phone first): 422 PHONE_REQUIRED otherwise",
             "type": "boolean"
           },
           "time": {
@@ -89054,7 +88981,7 @@
               },
               "phone": {
                 "nullable": true,
-                "description": "The one phone push goes to, or null when none is selected",
+                "description": "The one phone push goes to, or null when none is selected or its registering session is gone or expired",
                 "type": "object",
                 "properties": {
                   "label": {

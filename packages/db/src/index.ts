@@ -21,6 +21,7 @@ if (process.env.NODE_ENV !== "production") {
 
 /** @public */
 export type {
+  Session,
   AnswerExplanation,
   Attempt,
   Certificate,

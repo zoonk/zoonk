@@ -91,10 +91,12 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
 async function moveGuestData({
   attempt = 1,
   guestUserId,
+  sessionId,
   userId,
 }: {
   attempt?: number;
   guestUserId: string;
+  sessionId?: string;
   userId: string;
 }): Promise<void> {
   const result = await safeAsync(() =>
@@ -129,7 +131,7 @@ async function moveGuestData({
       await mergeUserProgress(context);
       await mergeDailyProgress(context);
       await mergeLearningProfile(context);
-      await mergeStudyReminder(context);
+      await mergeStudyReminder({ ...context, sessionId });
 
       // Removed here, not in Better Auth's post-link cleanup, so no course is created for the guest in between.
       await transaction.user.delete({ where: { id: guestUserId } });
@@ -141,7 +143,7 @@ async function moveGuestData({
   }
 
   if (attempt < TRANSFER_ATTEMPTS && isRetryableTransferError(result.error)) {
-    return moveGuestData({ attempt: attempt + 1, guestUserId, userId });
+    return moveGuestData({ attempt: attempt + 1, guestUserId, sessionId, userId });
   }
 
   throw result.error;
@@ -150,13 +152,15 @@ async function moveGuestData({
 export async function linkGuestAccount({
   account,
   guestUserId,
+  sessionId,
 }: {
   account: { id: string };
   guestUserId: string;
+  sessionId?: string;
 }) {
   if (guestUserId === account.id) {
     return;
   }
 
-  await moveGuestData({ guestUserId, userId: account.id });
+  await moveGuestData({ guestUserId, sessionId, userId: account.id });
 }

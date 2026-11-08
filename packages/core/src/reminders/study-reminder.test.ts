@@ -5,16 +5,31 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mockAccountSession, mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
 import { claimStudyReminderOffer } from "./claim-study-reminder-offer";
 import { signStudyReminderUnsubscribeToken, turnOffStudyReminderEmail } from "./email-unsubscribe";
 import { getStudyReminder } from "./get-study-reminder";
-import { removeStudyReminderPhone, selectStudyReminderPhone } from "./study-reminder-phone";
+import { selectStudyReminderPhone } from "./study-reminder-phone";
 import { updateStudyReminder } from "./update-study-reminder";
+
+async function signIn({
+  isAnonymous = false,
+  user,
+}: {
+  isAnonymous?: boolean;
+  user: Awaited<ReturnType<typeof userFixture>>;
+}) {
+  const session = await prisma.session.create({
+    data: { expiresAt: new Date("2099-01-01"), token: randomUUID(), userId: user.id },
+  });
+
+  mockAccountSession({ isAnonymous, sessionId: session.id, user });
+  return session;
+}
 
 async function accountLearner() {
   const user = await userFixture();
-  mockAccountSession({ user });
+  await signIn({ user });
   return user;
 }
 
@@ -109,7 +124,7 @@ describe("study reminder settings", () => {
 
   it("needs an account for email and a selected phone for push", async () => {
     const guest = await userFixture();
-    mockGuestSession(guest.id);
+    await signIn({ isAnonymous: true, user: guest });
 
     await expect(updateStudyReminder({ emailOn: true, locale: "en" })).resolves.toStrictEqual({
       status: "accountRequired",
@@ -184,11 +199,11 @@ describe("study reminder phone", () => {
     const [previous, current] = await Promise.all([userFixture(), userFixture()]);
     const device = phone();
 
-    mockAccountSession({ user: previous });
+    await signIn({ user: previous });
     await selectStudyReminderPhone(device);
     await updateStudyReminder({ locale: "en", pushOn: true });
 
-    mockAccountSession({ user: current });
+    await signIn({ user: current });
 
     await expect(
       selectStudyReminderPhone({ ...device, label: "Shared iPad" }),
@@ -201,23 +216,44 @@ describe("study reminder phone", () => {
     ).resolves.toMatchObject({ pushLabel: null, pushOn: false, pushToken: null });
   });
 
-  it("removes the phone only while it's the one it names", async () => {
-    await accountLearner();
-    const old = phone("Old phone");
-    const replacement = phone("New phone");
+  it.each(["deleted", "expired"] as const)(
+    "hides a phone with a %s session until a new session selects it",
+    async (state) => {
+      const user = await userFixture();
+      const session = await signIn({ user });
+      const device = phone();
+      await selectStudyReminderPhone(device);
+      await updateStudyReminder({ locale: "en", pushOn: true });
 
-    await selectStudyReminderPhone(old);
-    await selectStudyReminderPhone(replacement);
-    await updateStudyReminder({ locale: "en", pushOn: true });
+      if (state === "deleted") {
+        await prisma.session.delete({ where: { id: session.id } });
+      } else {
+        await prisma.session.update({
+          data: { expiresAt: new Date(0) },
+          where: { id: session.id },
+        });
+      }
 
-    await expect(removeStudyReminderPhone(old.token)).resolves.toMatchObject({
-      reminder: { push: { on: true, phone: { token: replacement.token } } },
-    });
+      await expect(
+        prisma.studyReminder.findUniqueOrThrow({ where: { userId: user.id } }),
+      ).resolves.toMatchObject({ pushSessionId: state === "deleted" ? null : session.id });
 
-    await expect(removeStudyReminderPhone(replacement.token)).resolves.toMatchObject({
-      reminder: { push: { on: false, phone: null } },
-    });
-  });
+      const nextSession = await signIn({ user });
+      await expect(getStudyReminder()).resolves.toMatchObject({ push: { on: false, phone: null } });
+
+      await expect(updateStudyReminder({ locale: "en", pushOn: true })).resolves.toStrictEqual({
+        status: "phoneRequired",
+      });
+
+      await expect(selectStudyReminderPhone(device)).resolves.toMatchObject({
+        reminder: { push: { on: true, phone: { token: device.token } } },
+      });
+
+      await expect(
+        prisma.studyReminder.findUniqueOrThrow({ where: { userId: user.id } }),
+      ).resolves.toMatchObject({ pushSessionId: nextSession.id });
+    },
+  );
 });
 
 describe("study reminder email unsubscribe", () => {

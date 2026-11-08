@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,7 +42,7 @@ async function finishFirstLesson() {
     userId: user.id,
   });
 
-  return { finish: () => finishStudyBlock(request) };
+  return { finish: () => finishStudyBlock(request), user };
 }
 
 describe("reminder offer after a plan lesson", () => {
@@ -70,5 +72,25 @@ describe("reminder offer after a plan lesson", () => {
     await updateStudyReminder({ emailOn: true, locale: "en" });
 
     await expect(lesson.finish()).resolves.toMatchObject({ completion: { reminderOffer: null } });
+  });
+
+  it("treats push without a registering session as off when offering reminders", async () => {
+    const lesson = await finishFirstLesson();
+
+    await prisma.studyReminder.create({
+      data: {
+        locale: "en",
+        pushLabel: "Phone",
+        pushOn: true,
+        pushPlatform: "ios",
+        pushToken: randomUUID(),
+        time: "19:00",
+        userId: lesson.user.id,
+      },
+    });
+
+    await expect(lesson.finish()).resolves.toMatchObject({
+      completion: { reminderOffer: { time: "19:00", timeZone: "UTC" } },
+    });
   });
 });

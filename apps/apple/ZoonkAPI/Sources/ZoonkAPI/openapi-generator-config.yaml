@@ -207,7 +207,6 @@ filter:
     - previewPlanChange
     - recordMockPlay
     - redeemLanguageConversationSdp
-    - removeCurrentUserStudyReminderPhone
     - reportExamResult
     - requestCurrentUserStepExampleLine
     - requestSpeechClip

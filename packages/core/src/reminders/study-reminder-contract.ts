@@ -51,7 +51,10 @@ const studyReminderSchema = z
             }),
         })
         .nullable()
-        .meta({ description: "The one phone push goes to, or null when none is selected" }),
+        .meta({
+          description:
+            "The one phone push goes to, or null when none is selected or its registering session is gone or expired",
+        }),
     }),
     quiet: z
       .boolean()
@@ -87,7 +90,7 @@ export const studyReminderUpdateSchema = z
       .optional()
       .meta({
         description:
-          "Turning it on needs a selected phone (PUT /me/study-reminder/phone first): 422 PHONE_REQUIRED otherwise",
+          "Turning it on needs a selected phone with a live registering session (PUT /me/study-reminder/phone first): 422 PHONE_REQUIRED otherwise",
       }),
     time: reminderTimeSchema
       .optional()

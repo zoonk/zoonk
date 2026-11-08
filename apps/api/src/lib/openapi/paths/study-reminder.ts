@@ -7,7 +7,6 @@ import {
 } from "@zoonk/core/reminders/contract";
 import { z } from "zod";
 import { accessErrorCodes } from "../../access-error-codes";
-import { studyReminderPhonePathParamsSchema } from "../schemas/paths";
 import {
   badRequestResponse,
   unauthorizedResponse,
@@ -87,7 +86,7 @@ export const studyReminderPaths = {
   "/me/study-reminder/phone": {
     put: {
       description:
-        "Makes this phone the one push goes to (Use this phone), or refreshes its token when it changes. Push stays as it was; turn it on with PATCH. Another account that had this device token loses it.",
+        "Makes this phone the one push goes to (Use this phone), or refreshes its token when it changes. The phone is bound to the calling session: signing out or session expiry disconnects it. Push stays as it was; turn it on with PATCH. Another account that had this device token loses it.",
       operationId: "selectCurrentUserStudyReminderPhone",
       requestBody: {
         content: { "application/json": { schema: studyReminderPhoneSchema } },
@@ -100,22 +99,6 @@ export const studyReminderPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Select the phone for study reminders",
-      tags: ["Account"],
-    },
-  },
-  "/me/study-reminder/phone/{token}": {
-    delete: {
-      description:
-        "Removes the phone and turns push off, only while `token` is still the selected one, so a phone selected since stays.",
-      operationId: "removeCurrentUserStudyReminderPhone",
-      requestParams: { path: studyReminderPhonePathParamsSchema },
-      responses: {
-        "200": reminderResponse,
-        "400": validationErrorResponse,
-        "401": unauthorizedResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Remove the phone from study reminders",
       tags: ["Account"],
     },
   },

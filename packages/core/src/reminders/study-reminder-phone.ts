@@ -4,7 +4,7 @@ import { getStudyReminderCacheTag } from "../cache/tags";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { findDefaultReminderTime, findStudyReminderView } from "./_utils/study-reminder-view";
-import { NO_PHONE, clearStudyReminderPhone } from "./clear-study-reminder-phone";
+import { NO_PHONE } from "./clear-study-reminder-phone";
 import { type StudyReminderPhoneInput, type StudyReminderView } from "./study-reminder-contract";
 
 type PhoneResult = { reminder: StudyReminderView; status: "ready" } | { status: "unauthorized" };
@@ -23,7 +23,13 @@ export async function selectStudyReminderPhone(
   }
 
   const userId = session.user.id;
-  const phone = { pushLabel: input.label, pushPlatform: input.platform, pushToken: input.token };
+
+  const phone = {
+    pushLabel: input.label,
+    pushPlatform: input.platform,
+    pushSessionId: session.session.id,
+    pushToken: input.token,
+  };
 
   const previousOwners = await writeLearnerChange({ userId }, async (tx) => {
     const owners = await tx.studyReminder.updateManyAndReturn({
@@ -47,22 +53,6 @@ export async function selectStudyReminderPhone(
   });
 
   revalidateCacheTags([userId, ...previousOwners].map((id) => getStudyReminderCacheTag(id)));
-
-  return {
-    reminder: await findStudyReminderView({ now: new Date(), user: session.user }),
-    status: "ready",
-  };
-}
-
-/** Removes the phone only while it's still `token`, so a phone selected since stays. */
-export async function removeStudyReminderPhone(token: string): Promise<PhoneResult> {
-  const session = await getSession();
-
-  if (!session) {
-    return { status: "unauthorized" };
-  }
-
-  await clearStudyReminderPhone({ token, userId: session.user.id });
 
   return {
     reminder: await findStudyReminderView({ now: new Date(), user: session.user }),

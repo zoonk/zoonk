@@ -399,6 +399,7 @@ describe(signInWithNativeApple, () => {
 
     expect(mocks.linkGuest).toHaveBeenCalledExactlyOnceWith({
       headers: nativeSignInRequest.headers,
+      sessionToken: sessionResponse.token,
       userId: user.id,
     });
 

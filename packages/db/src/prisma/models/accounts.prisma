@@ -78,18 +78,19 @@ model User {
 }
 
 model Session {
-  id                   String      @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  expiresAt            DateTime    @map("expires_at")
+  id                   String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  expiresAt            DateTime        @map("expires_at")
   token                String
-  createdAt            DateTime    @default(now()) @map("created_at")
-  updatedAt            DateTime    @updatedAt @map("updated_at")
-  ipAddress            String?     @map("ip_address")
-  userAgent            String?     @map("user_agent")
-  userId               String      @map("user_id") @db.Uuid
-  user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy       String?     @map("impersonated_by") @db.Uuid
-  activeOrganizationId String?     @map("active_organization_id") @db.Uuid
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+  ipAddress            String?         @map("ip_address")
+  userAgent            String?         @map("user_agent")
+  userId               String          @map("user_id") @db.Uuid
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy       String?         @map("impersonated_by") @db.Uuid
+  activeOrganizationId String?         @map("active_organization_id") @db.Uuid
   restoreKey           RestoreKey?
+  studyReminders       StudyReminder[]
 
   @@unique([token])
   @@index([userId])

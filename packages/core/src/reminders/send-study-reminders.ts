@@ -4,6 +4,7 @@ import { type PushPlatform } from "@zoonk/db/enums";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { findGoalsWithWork, hasStudiedRecently } from "./_utils/reminder-goals";
+import { getReminderPhone } from "./_utils/reminder-phone";
 import { isReminderQuiet } from "./_utils/reminder-quiet";
 import { getReminderWindow } from "./_utils/reminder-window";
 import { findLastStudyDate } from "./_utils/study-reminder-view";
@@ -52,7 +53,13 @@ export async function listDueStudyReminders(now: Date): Promise<string[]> {
     CROSS JOIN LATERAL (
       SELECT ${now.toISOString()}::timestamptz AT TIME ZONE COALESCE(zone.name, 'UTC') AS local_now
     ) AS clock
-    WHERE (reminder.email_on OR reminder.push_on)
+    WHERE (reminder.email_on OR (reminder.push_on
+      AND reminder.push_token IS NOT NULL
+      AND EXISTS (
+        SELECT 1 FROM sessions AS push_session
+        WHERE push_session.id = reminder.push_session_id
+          AND push_session.expires_at > ${now}
+      )))
       AND (reminder.processed_on IS NULL OR reminder.processed_on < clock.local_now::date)
       AND clock.local_now >= clock.local_now::date + reminder.time::time
       AND clock.local_now < clock.local_now::date + reminder.time::time + interval '60 minutes'
@@ -98,9 +105,15 @@ export async function claimStudyReminder({
   userId: string;
 }): Promise<ClaimOutcome> {
   return writeLearnerChange<ClaimOutcome>({ userId }, async (tx) => {
-    const reminder = await tx.studyReminder.findUnique({ where: { userId } });
+    const reminder = await tx.studyReminder.findUnique({
+      include: { pushSession: { select: { expiresAt: true } } },
+      where: { userId },
+    });
 
-    if (!reminder || !(reminder.emailOn || reminder.pushOn)) {
+    if (
+      !reminder ||
+      !(reminder.emailOn || (reminder.pushOn && getReminderPhone({ now, reminder })))
+    ) {
       return unchanged({ status: "notDue" as const });
     }
 
@@ -127,13 +140,18 @@ export async function claimStudyReminder({
 
 async function findDestination({
   channel,
+  now,
   userId,
 }: {
   channel: ReminderChannel;
+  now: Date;
   userId: string;
 }): Promise<{ destination: Destination; locale: string } | null> {
   const reminder = await prisma.studyReminder.findUnique({
-    include: { user: { select: { email: true, isAnonymous: true } } },
+    include: {
+      pushSession: { select: { expiresAt: true } },
+      user: { select: { email: true, isAnonymous: true } },
+    },
     where: { userId },
   });
 
@@ -156,11 +174,10 @@ async function findDestination({
       : null;
   }
 
-  return reminder.pushOn && reminder.pushToken && reminder.pushPlatform
-    ? {
-        destination: { channel, platform: reminder.pushPlatform, token: reminder.pushToken },
-        locale,
-      }
+  const phone = getReminderPhone({ now, reminder });
+
+  return reminder.pushOn && phone
+    ? { destination: { channel, platform: phone.platform, token: phone.token }, locale }
     : null;
 }
 
@@ -184,7 +201,7 @@ export async function readStudyReminderDelivery({
   }
 
   const [found, goals] = await Promise.all([
-    findDestination({ channel, userId }),
+    findDestination({ channel, now, userId }),
     findGoalsWithWork({ now, userId }),
   ]);
 

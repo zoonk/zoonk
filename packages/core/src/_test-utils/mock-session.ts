@@ -22,16 +22,18 @@ export function mockSessionFailure(error: Error): void {
 export function mockAccountSession({
   expiresAt = new Date("2099-01-01T00:00:00.000Z"),
   isAnonymous = false,
+  sessionId,
   signedInAt = new Date("2026-01-01T00:00:00.000Z"),
   user,
 }: {
   expiresAt?: Date;
   isAnonymous?: boolean;
+  sessionId?: string;
   signedInAt?: Date;
   user: { email: string; id: string; name: string };
 }): void {
   const session = {
-    session: { createdAt: signedInAt, expiresAt },
+    session: { createdAt: signedInAt, expiresAt, id: sessionId },
     user: { email: user.email, id: user.id, image: null, isAnonymous, name: user.name },
   };
 
