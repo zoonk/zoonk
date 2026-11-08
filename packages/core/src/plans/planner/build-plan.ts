@@ -22,6 +22,7 @@ import {
   findLanding,
   getLandingSkillMinutes,
   listLandedUnits,
+  withoutRepeatedLandings,
 } from "./landed-lessons";
 import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
@@ -231,7 +232,7 @@ function planGoal({
     input,
     kept: keepsRest ? listKeptTime({ frozen, units: unitsByKey }) : null,
     keptParts,
-    landed: landedUnits,
+    landed: withoutRepeatedLandings({ kept: [...finished, ...frozen], landed: landedUnits }),
     start,
     units: [...carriedSchedule.units, ...restSchedule.units],
   });

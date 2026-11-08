@@ -1,8 +1,10 @@
 import { type BuildPlanInput } from "./build-plan";
 import { withBaseChoices } from "./chosen-bases";
 import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
+import { type ExistingPlanItem } from "./plan-items";
 import { buildPlanQueue } from "./plan-queue";
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
+import { withoutRepeatedTitles } from "./repeated-titles";
 import { type DroppedUnit } from "./schedule-units";
 import { type SkillMinutes, getSkillMinutes } from "./skill-minutes";
 
@@ -152,6 +154,21 @@ export function listLandedUnits({
   );
 
   return new Map([...own].filter(([, units]) => units.some((unit) => unit.lessonId !== null)));
+}
+
+export function withoutRepeatedLandings({
+  kept,
+  landed,
+}: {
+  kept: readonly ExistingPlanItem[];
+  landed: LandedUnits | null;
+}): LandedUnits | null {
+  return (
+    landed &&
+    new Map(
+      [...landed].map(([skillId, units]) => [skillId, withoutRepeatedTitles({ kept, units })]),
+    )
+  );
 }
 
 export function getLandingSkillMinutes({
