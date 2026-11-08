@@ -182,17 +182,18 @@ describe(savePlanItems, () => {
     ]);
   });
 
-  it("keeps the size a learner tested out of while it resizes the stand-ins still to do", async () => {
+  it("keeps the size a learner tested out of while it resizes the stand-ins the run still has to do", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
 
-    const [plan, known, left] = await Promise.all([
+    const [plan, known, left, reopened] = await Promise.all([
       planFixture({ goalId: goal.id }),
+      skillFixture(),
       skillFixture(),
       skillFixture(),
     ]);
 
-    const [knownItem, leftItem] = await Promise.all([
+    const [knownItem, leftItem, reopenedItem] = await Promise.all([
       planItemFixture({
         lessons: 9,
         planId: plan.id,
@@ -201,6 +202,13 @@ describe(savePlanItems, () => {
         status: "testedOut",
       }),
       planItemFixture({ lessons: 4, planId: plan.id, position: 1, skillId: left.id }),
+      planItemFixture({
+        lessons: 9,
+        planId: plan.id,
+        position: 2,
+        skillId: reopened.id,
+        status: "testedOut",
+      }),
     ]);
 
     const readVersion = async () => {
@@ -214,12 +222,13 @@ describe(savePlanItems, () => {
 
     await prisma.$transaction((tx) =>
       savePlanItems({
-        existing: [knownItem, leftItem],
-        items: [knownItem, leftItem],
+        existing: [knownItem, leftItem, reopenedItem],
+        items: [knownItem, leftItem, { ...reopenedItem, status: "todo" }],
         planId: plan.id,
         standInLessons: new Map([
           [known.id, 1],
           [left.id, 2],
+          [reopened.id, 7],
         ]),
         tx,
       }),
@@ -230,7 +239,7 @@ describe(savePlanItems, () => {
       where: { planId: plan.id },
     });
 
-    expect(saved.map((item) => item.lessons)).toStrictEqual([9, 2]);
+    expect(saved.map((item) => item.lessons)).toStrictEqual([9, 2, 7]);
     await expect(readVersion()).resolves.toBe(before);
   });
 

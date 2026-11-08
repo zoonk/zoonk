@@ -4,6 +4,7 @@ import { toIsoDate } from "../planner/plan-calendar";
 import { isStandIn } from "../planner/plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
 import { readSelectedItemFacts } from "./selected-item-contract";
+import { isWorkFinished } from "./work-progress";
 
 export type SavedPlanItem = Omit<PlannedItem, "key" | "minutes"> & {
   facts?: PlanItem["facts"];
@@ -38,8 +39,8 @@ async function findLessonFinishes({
 }
 
 /**
- * Kept items keep their status, so a lesson finished while the plan was computed stays finished,
- * and a finished stand-in keeps its size: it records what the learner studied or tested out of. A
+ * Kept items keep their status, so a lesson finished while the plan was computed stays finished.
+ * A stand-in the run keeps finished keeps its size: it records what the learner tested out of. A
  * moving row goes past both its old and new positions first: Postgres checks the plan's unique
  * positions row by row.
  */
@@ -97,7 +98,7 @@ export async function savePlanItems({
         scheduled_for = v.scheduled_for,
         chapter_id = v.chapter_id,
         skill_id = v.skill_id,
-        lessons = CASE WHEN p.status IN ('done', 'tested_out') THEN p.lessons ELSE v.lessons END,
+        lessons = CASE WHEN v.finished THEN p.lessons ELSE v.lessons END,
         minutes = v.minutes,
         facts = v.facts::jsonb,
         title_snapshot = v.title_snapshot,
@@ -119,13 +120,14 @@ export async function savePlanItems({
         ${kept.map(({ item }) => item.status === "skipped")}::boolean[],
         ${kept.map(({ item }) => item.status === "todo")}::boolean[],
         ${kept.map(({ item }) => item.minutes ?? null)}::double precision[],
-        ${kept.map(({ item }) => (factsOf(item) ? JSON.stringify(factsOf(item)) : null))}::text[]
-      ) AS v(id, position, phase, scheduled_for, chapter_id, skill_id, lessons, title_snapshot, set_aside, to_do, minutes, facts)
+        ${kept.map(({ item }) => (factsOf(item) ? JSON.stringify(factsOf(item)) : null))}::text[],
+        ${kept.map(({ item }) => isWorkFinished(item.status))}::boolean[]
+      ) AS v(id, position, phase, scheduled_for, chapter_id, skill_id, lessons, title_snapshot, set_aside, to_do, minutes, facts, finished)
       WHERE p.id = v.id AND p.plan_id = ${planId}::uuid
         AND (
           (p.position, p.phase, p.scheduled_for, p.chapter_id, p.skill_id, p.lessons, p.minutes, p.facts, p.title_snapshot)
             IS DISTINCT FROM
-          (v.position, v.phase::smallint, v.scheduled_for, v.chapter_id, v.skill_id, CASE WHEN p.status IN ('done', 'tested_out') THEN p.lessons ELSE v.lessons END, v.minutes, v.facts::jsonb, v.title_snapshot)
+          (v.position, v.phase::smallint, v.scheduled_for, v.chapter_id, v.skill_id, CASE WHEN v.finished THEN p.lessons ELSE v.lessons END, v.minutes, v.facts::jsonb, v.title_snapshot)
           OR (v.set_aside AND p.status = 'todo')
           OR (v.to_do AND p.status = 'skipped')
         )`;
