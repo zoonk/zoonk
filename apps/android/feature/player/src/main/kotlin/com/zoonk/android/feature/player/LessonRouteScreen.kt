@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.player
 
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -214,15 +216,7 @@ internal fun PlayingLesson(
             null
         }
 
-    val activation =
-        Modifier
-            .pointerInput(viewModel) {
-                detectTapGestures(onTap = { viewModel.activate() })
-            }.onPreviewKeyEvent {
-                if (it.type == KeyEventType.KeyDown) viewModel.activate()
-                false
-            }
-    Box(activation) {
+    Box(Modifier.lessonActivation(viewModel::activate)) {
         CompositionLocalProvider(
             LocalLessonSpeech provides app.speech,
             LocalCodeSandbox provides app.codeSandbox,
@@ -247,6 +241,18 @@ internal fun PlayingLesson(
         }
     }
 }
+
+internal fun Modifier.lessonActivation(activate: () -> Unit): Modifier =
+    pointerInput(activate) {
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            val up = waitForUpOrCancellation()
+            if (up != null && (up.position - down.position).getDistance() <= viewConfiguration.touchSlop) activate()
+        }
+    }.onPreviewKeyEvent {
+        if (it.type == KeyEventType.KeyDown) activate()
+        false
+    }
 
 /** A task's frame for what shows before the lesson's screens: its title, and leaving. */
 @Composable
