@@ -71,7 +71,10 @@ export async function pauseOtherStudyBlocks({
     blocks.map((block) =>
       tx.studySessionBlock.update({
         data: {
-          payload: { ...readBlockPayload(block), timing: pausedBlockTiming({ block, now }) },
+          payload: {
+            ...readBlockPayload(block),
+            timing: { ...pausedBlockTiming({ block, now }), clock: null },
+          },
         },
         where: { id: block.id },
       }),

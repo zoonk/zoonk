@@ -90,6 +90,10 @@ const blockPayloadSchema = z.object({
   timing: z
     .object({
       activeAt: z.iso.datetime().nullable(),
+      clock: z
+        .object({ id: uuidSchema(), runId: uuidSchema(), sequence: z.int().nonnegative() })
+        .nullable()
+        .optional(),
       elapsedMs: z.number().nonnegative(),
       /** Focus already credited by a lesson run before its block's separate settlement. */
       recordedMs: z.number().nonnegative().optional(),

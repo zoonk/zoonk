@@ -123,6 +123,11 @@ const CANONICAL_OPERATIONS = [
     operationId: "createLibraryLessonCompletion",
     path: "/library/lessons/{lessonId}/completions",
   },
+  {
+    method: "post",
+    operationId: "updateLibraryLessonClock",
+    path: "/library/lessons/{lessonId}/clock",
+  },
   { method: "post", operationId: "createStepCheck", path: "/steps/{stepId}/checks" },
   {
     method: "post",

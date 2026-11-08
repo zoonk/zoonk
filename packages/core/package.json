@@ -225,6 +225,8 @@
     "./lesson-player/pictures": "./src/lesson-player/get-lesson-pictures.ts",
     "./lesson-player/progress": "./src/lesson-player/get-lesson-progress.ts",
     "./lesson-player/run": "./src/lesson-player/lesson-run.ts",
+    "./lesson-player/clock": "./src/lesson-player/update-lesson-clock.ts",
+    "./lesson-player/clock-contract": "./src/lesson-player/lesson-clock-contract.ts",
     "./lesson-player/start": "./src/lesson-player/start-library-lesson.ts",
     "./lesson-questions/answer-lifecycle": "./src/lesson-questions/answer-lifecycle.ts",
     "./lesson-questions/app-links": "./src/lesson-questions/tutor-app-links.ts",

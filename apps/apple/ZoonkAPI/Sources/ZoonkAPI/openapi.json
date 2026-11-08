@@ -8131,6 +8131,100 @@
         }
       }
     },
+    "/library/lessons/{lessonId}/clock": {
+      "post": {
+        "description": "Pauses focused lesson time on hide, background or exit, and resumes it on return. Initial activation is part of Start. Use the runId and clockId returned by this player's latest lesson start, with a strictly increasing sequence starting at 1 for each visibility change. Retries reuse the same sequence. Replayed or out-of-order transitions, completed runs and clocks replaced by a later start or another block are ignored. No client timestamps or durations are accepted. A lesson outside an active study block has no clockId. Completion while paused counts only time already accrued.",
+        "operationId": "updateLibraryLessonClock",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Pause or resume a lesson clock",
+        "tags": [
+          "Library lessons"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lessonId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Lesson ID"
+            },
+            "required": true,
+            "description": "Lesson ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonClockInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "updated: applied to this interval; ignored: replayed, stale or no longer active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonClockResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/library/lessons/{lessonId}/completions": {
       "post": {
         "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. In a language lesson of a language the learner has a plan for, it accepts any screens their plan could have served, since the app's copy may predate a plan change: a kind of practice (words, listening, writing or speaking) they didn't finish isn't needed, unless only the summary would be left; an answered screen of it still counts. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the same result without counting twice.",
@@ -25230,6 +25324,43 @@
         },
         "required": [
           "kind"
+        ],
+        "additionalProperties": false
+      },
+      "LessonClockInput": {
+        "type": "object",
+        "properties": {
+          "clockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The clockId returned by this player's latest lesson start"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Increase for every visibility transition in this clock, beginning at 1; retry with the same number"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "paused",
+              "running"
+            ]
+          }
+        },
+        "required": [
+          "clockId",
+          "runId",
+          "sequence",
+          "state"
         ],
         "additionalProperties": false
       },
@@ -72036,6 +72167,22 @@
         ],
         "additionalProperties": false
       },
+      "LessonClockResult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "updated",
+              "ignored"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "additionalProperties": false
+      },
       "LibraryLessonCompletion": {
         "type": "object",
         "properties": {
@@ -73545,6 +73692,13 @@
               "additionalProperties": false
             },
             "description": "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`"
+          },
+          "clockId": {
+            "description": "This player's lesson clock interval. Send visibility transitions to POST /library/lessons/{lessonId}/clock with an increasing sequence. A new start replaces it; null outside an active study block.",
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "hyperdrive": {
             "type": "object",
