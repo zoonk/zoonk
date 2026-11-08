@@ -5,7 +5,6 @@ function joinContext(context: string | undefined, question: string): string {
   return context ? `${context}\n\n${question}` : question;
 }
 
-/** Screens built from the lesson's word or sentence show it as the prompt instead of storing one in their content. */
 function getExerciseQuestion({ content, kind, sentence, word }: SerializedStep): string | null {
   switch (kind) {
     case "listening":
