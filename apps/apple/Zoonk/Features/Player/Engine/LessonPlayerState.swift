@@ -625,6 +625,10 @@ struct LessonPlayerState: Equatable, Sendable {
     resume(from: (runAnswers + held).filter { steps[$0.stepId] != nil })
   }
 
+  mutating func retryRun() {
+    run = .idle
+  }
+
   mutating func refuseRun(_ refusal: LessonRunRefusal) {
     run = .refused(refusal)
   }

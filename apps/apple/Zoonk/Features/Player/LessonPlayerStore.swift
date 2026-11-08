@@ -216,6 +216,7 @@ final class LessonPlayerStore {
     starting?.cancel()
     starting = nil
     if identity == self.identity, case .refused = state?.run, !refresh {
+      state?.retryRun()
       beginStart()
       await starting?.value
       return

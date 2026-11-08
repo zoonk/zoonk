@@ -164,6 +164,40 @@ final class LessonPlayerLoadingTests: XCTestCase {
       "LessonCompletionView shows only a spinner and a disabled Continue while saving")
   }
 
+  func testRetryingStartShowsProgressAndHidesRetry() async throws {
+    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    var deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    let retried = await transport.count
+    XCTAssertEqual(retried, 2)
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertNotEqual(
+      store.state?.run, .refused(.failed), "the retried start still shows the failed screen")
+
+    // The refusal view is the only place that offers a start retry.
+    let secondTap: Task<Void, Never>?
+    if case .refused = store.state?.run {
+      secondTap = Task { await store.load() }
+    } else {
+      secondTap = nil
+    }
+    deadline = Date.now.addingTimeInterval(1)
+    while await transport.count < 3, Date.now < deadline { await Task.yield() }
+    let tappedTwice = await transport.count
+    XCTAssertEqual(tappedTwice, 2, "a second tap cancelled the running start and sent another")
+    await transport.release()
+    await retrying.value
+    await secondTap?.value
+  }
+
   func testAServerCheckShowsItIsCheckingWhileTheRunStarts() async throws {
     let transport = OpeningStartTransport(holds: true)
     let store = try openingPlayer(
