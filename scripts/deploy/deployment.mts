@@ -7,10 +7,6 @@ import { PROJECTS, requiredEnv } from "./config.mts";
 type Target = "preview" | "staging" | "production";
 type Project = (typeof PROJECTS)[number];
 
-/** RFC 1035: Vercel shortens a longer generated label in a way its docs don't spell out. */
-const MAX_DNS_LABEL = 63;
-
-type AppUrls = { api: string | null; main: string | null };
 type CourseCacheAccess = { bypass: string | null; secret: string };
 
 function getProject(app: Project["app"]): Project {
@@ -24,68 +20,52 @@ function getProject(app: Project["app"]): Project {
 }
 
 /**
- * Previews use the branch URL Vercel gives every project, `<project>-git-<branch>-<team>.vercel.app`,
- * which always serves the branch's latest deployment. Null when Vercel would shorten the label.
+ * A preview's apps reach one another at aliases this deploy assigns, `<project>-pr-<number>-<team>.vercel.app`,
+ * so every app knows the others' addresses before any of them builds. Vercel's own branch URL can't
+ * be known ahead for a long branch name, which Vercel shortens in a way its docs don't spell out. The
+ * apps trust preview origins by the team suffix.
  */
 export function getAppUrl({
   app,
-  branch,
   target,
   teamSlug,
 }: {
   app: Project["app"];
-  branch: string;
   target: Target;
   teamSlug: string;
-}): string | null {
+}): string {
+  if (target === "preview") {
+    return `https://${getPreviewAlias({ app, teamSlug })}`;
+  }
+
   const project = getProject(app);
-
-  if (target !== "preview") {
-    return `https://${target === "production" ? project.productionDomain : project.stagingDomain}`;
-  }
-
-  const branchSlug = branch
-    .toLowerCase()
-    .replaceAll(/[^a-z0-9]+/gu, "-")
-    .replaceAll(/^-+|-+$/gu, "");
-
-  const label = `${project.name}-git-${branchSlug}-${teamSlug}`;
-
-  return label.length > MAX_DNS_LABEL ? null : `https://${label}.vercel.app`;
+  return `https://${target === "production" ? project.productionDomain : project.stagingDomain}`;
 }
 
-async function getTeamSlug(): Promise<string | null> {
-  try {
-    const team = z
-      .object({ slug: z.string() })
-      .parse(await vercel({ path: `/v2/teams/${requiredEnv("VERCEL_ORG_ID")}` }));
-
-    return team.slug;
-  } catch {
-    return null;
-  }
+function getPreviewAlias({ app, teamSlug }: { app: Project["app"]; teamSlug: string }): string {
+  return `${getProject(app).name}-pr-${requiredEnv("PR_NUMBER")}-${teamSlug}.vercel.app`;
 }
 
-async function resolveAppUrls(target: Target): Promise<AppUrls> {
-  const teamSlug = target === "preview" ? await getTeamSlug() : "";
+async function getTeamSlug(): Promise<string> {
+  const team = z
+    .object({ slug: z.string() })
+    .parse(await vercel({ path: `/v2/teams/${requiredEnv("VERCEL_ORG_ID")}` }));
 
-  if (teamSlug === null) {
-    process.stdout.write("Unknown Vercel team slug: preview addresses can't be predicted\n");
-    return { api: null, main: null };
-  }
+  return team.slug;
+}
 
-  const branch = requiredEnv("DEPLOY_REF");
+/** Vercel never deletes a preview deployment that keeps a custom alias, so a closed PR drops its own. */
+export async function removePreviewAliases(): Promise<void> {
+  const teamSlug = await getTeamSlug();
 
-  const urls = {
-    api: getAppUrl({ app: "api", branch, target, teamSlug }),
-    main: getAppUrl({ app: "main", branch, target, teamSlug }),
-  };
-
-  if (!urls.api || !urls.main) {
-    process.stdout.write("Branch name too long for predictable preview addresses\n");
-  }
-
-  return urls;
+  await Promise.all(
+    PROJECTS.map((project) =>
+      vercel({
+        method: "DELETE",
+        path: `/v2/aliases/${getPreviewAlias({ app: project.app, teamSlug })}`,
+      }),
+    ),
+  );
 }
 
 const protectionBypassSchema = z.object({
@@ -206,12 +186,14 @@ async function deployApp({
   apiUrl,
   cache,
   mainAppUrl,
+  teamSlug,
 }: {
   project: Project;
   target: Target;
   apiUrl: string;
   cache: CourseCacheAccess | null;
-  mainAppUrl: string | null;
+  mainAppUrl: string;
+  teamSlug: string;
 }): Promise<string> {
   if (target === "preview") {
     await assertPullRequestOpen();
@@ -224,7 +206,7 @@ async function deployApp({
     DATABASE_URL_UNPOOLED: requiredEnv("DATABASE_URL_UNPOOLED"),
     NEXT_PUBLIC_API_URL: target === "preview" && project.app === "api" ? "" : apiUrl,
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,
-    ...(project.app === "api" && mainAppUrl ? { MAIN_APP_URL: mainAppUrl } : {}),
+    ...(project.app === "api" ? { MAIN_APP_URL: mainAppUrl } : {}),
     ...(cache && project.app !== "admin" ? { APP_CACHE_SECRET: cache.secret } : {}),
     ...(cache?.bypass && project.app === "api" ? { MAIN_CACHE_BYPASS_SECRET: cache.bypass } : {}),
   };
@@ -255,7 +237,17 @@ async function deployApp({
   });
 
   const deployment = z.object({ id: z.string() }).parse(response);
-  return waitForDeployment({ app: project.app, id: deployment.id, target });
+  const url = await waitForDeployment({ app: project.app, id: deployment.id, target });
+
+  if (target === "preview") {
+    await vercel({
+      body: { alias: getPreviewAlias({ app: project.app, teamSlug }) },
+      method: "POST",
+      path: `/v2/deployments/${deployment.id}/aliases`,
+    });
+  }
+
+  return url;
 }
 
 export async function waitForDeployment({
@@ -301,27 +293,16 @@ export async function waitForDeployment({
 }
 
 export async function deploy(target: Target): Promise<void> {
-  const [urls, cache] = await Promise.all([
-    resolveAppUrls(target),
+  const [teamSlug, cache] = await Promise.all([
+    target === "preview" ? getTeamSlug() : "",
     target === "preview" ? getPreviewCacheAccess() : null,
   ]);
 
-  const shared = { cache, mainAppUrl: urls.main, target };
-
-  // Without the API's predictable address, the consumers wait for its actual deployment URL.
-  if (!urls.api) {
-    const [api, ...clients] = PROJECTS;
-    const apiUrl = await deployApp({ ...shared, apiUrl: "", project: api });
-
-    await Promise.all(clients.map((project) => deployApp({ ...shared, apiUrl, project })));
-
-    return;
-  }
-
-  const apiUrl = urls.api;
+  const apiUrl = getAppUrl({ app: "api", target, teamSlug });
+  const mainAppUrl = getAppUrl({ app: "main", target, teamSlug });
 
   const results = await Promise.allSettled(
-    PROJECTS.map((project) => deployApp({ ...shared, apiUrl, project })),
+    PROJECTS.map((project) => deployApp({ apiUrl, cache, mainAppUrl, project, target, teamSlug })),
   );
 
   const failures = results.filter((result) => result.status === "rejected");
