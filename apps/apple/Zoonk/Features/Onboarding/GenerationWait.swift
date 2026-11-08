@@ -63,12 +63,15 @@ struct GenerationWait: Equatable, Sendable {
   }
 
   /// Main's `useAnimatedProgress`: between reports the share drifts toward the end of the running
-  /// phases, from where it was shown when the last report moved it.
+  /// phases, from when their stage started or from where it was shown when the last report moved it.
   private struct Drift: Equatable {
     var base: Double
     var movedAt: Date
     var share: Double
     var target: Double
+    /// The running stage's start, as the run reported it: it's put on this device's clock as it's
+    /// drawn, since the clocks' difference is known better as live steps come.
+    var stageStart: Date?
   }
 
   let kind: Kind
@@ -120,10 +123,10 @@ struct GenerationWait: Equatable, Sendable {
 
     var merged = live
     merged.isReady = true
+    merged.isDone = read.isDone
     return merged
   }
 
-    merged.isDone = read.isDone
   var visiblePhases: [Phase] {
     phases.filter { !$0.isOptional || $0.isReported }
   }
@@ -154,23 +157,31 @@ struct GenerationWait: Equatable, Sendable {
   /// The share every bar and ring of this wait shows at `date`: never full before the work is, and
   /// never back unless the run started over.
   func shownShare(at date: Date) -> Double {
-    guard !isDone else {
-      return 1
-    }
+    isDone ? 1 : shownShare(drift, at: date)
+  }
 
+  private func shownShare(_ drift: Drift, at date: Date) -> Double {
     let ceiling = min(drift.target, Self.driftCap)
 
     guard drift.base < ceiling else {
       return max(drift.base, drift.share)
     }
 
+    let since =
+      drift.stageStart.map { min($0 + (clockOffset ?? 0), drift.movedAt) } ?? drift.movedAt
     let constant = (progress.runningSeconds ?? Self.driftSeconds) / 2
-    let elapsed = max(0, date.timeIntervalSince(drift.movedAt).rounded(.down))
+    let elapsed = max(0, date.timeIntervalSince(since).rounded(.down))
     let drifted = drift.base + (ceiling - drift.base) * (1 - exp(-elapsed / constant))
     return max(drifted, drift.share)
   }
 
-  /// A report that moves the progress drifts on from what was shown when it came.
+  /// When the running stage's first phase started, as the run reported it.
+  private var runningSince: Date? {
+    phases.filter { $0.state == .working }.compactMap(\.startedAt).min()
+  }
+
+  /// A report that moves the progress drifts from when its stage started, so a wait opened partway
+  /// through goes on from there, or on from what was shown when it came if that's further along.
   private mutating func moving(at date: Date, _ change: (inout GenerationWait) -> Void) {
     let shown = shownShare(at: date)
     change(&self)
@@ -180,9 +191,17 @@ struct GenerationWait: Equatable, Sendable {
       return
     }
 
-    drift = Drift(
-      base: progress.share < drift.share ? progress.share : max(shown, progress.share),
-      movedAt: date, share: progress.share, target: progress.target)
+    let restarted = progress.share < drift.share
+    let fromStart = Drift(
+      base: progress.share, movedAt: date, share: progress.share, target: progress.target,
+      stageStart: runningSince)
+
+    drift =
+      restarted || shownShare(fromStart, at: date) >= shown
+      ? fromStart
+      : Drift(
+        base: max(shown, progress.share), movedAt: date, share: progress.share,
+        target: progress.target)
   }
 
   mutating func apply(_ event: GenerationEvent, receivedAt: Date = .now) {
@@ -1088,6 +1107,8 @@ private struct GenerationWaitBar: View {
       let shown = wait.shownShare(at: context.date)
 
       HStack(spacing: 12) {
+        // A report eases the bar on; the drift between reports steps once a second, as the ring
+        // does, so a wait left open isn't redrawn every frame.
         FilledParts(share: shown, weights: wait.visiblePhases.map(\.seconds))
           .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: wait.progress.share)
 
@@ -1110,8 +1131,6 @@ extension GenerationWait.Kind {
     case .understanding:
       LocalizedStringResource(
         "Reading your goal", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
-        // A report eases the bar on; the drift between reports steps once a second, as the ring
-        // does, so a wait left open isn't redrawn every frame.
     case .curriculum:
       LocalizedStringResource(
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")

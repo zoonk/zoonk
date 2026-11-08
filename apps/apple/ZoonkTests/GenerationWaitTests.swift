@@ -169,6 +169,27 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertEqual(wait.firstLesson(read: done)?.isDone, true)
   }
 
+  /// A wait opened two minutes into its stage goes on from there: its steps come replayed at once,
+  /// then a live one tells the two clocks apart.
+  func testAWaitOpenedPartwayDriftsFromWhenItsStageStarted() {
+    let opened = Date()
+    var wait = GenerationWait(kind: .curriculum, since: opened).started
+
+    for event in [
+      GenerationEvent(
+        at: opened.addingTimeInterval(-130), status: "completed", step: "understandGoal"),
+      GenerationEvent(
+        at: opened.addingTimeInterval(-120), status: "started", step: "buildSkillGraph"),
+      GenerationEvent(
+        at: opened, skillName: "Telling songs from calls", status: "started",
+        step: "buildSkillGraph"),
+    ] {
+      wait.apply(event, receivedAt: opened)
+    }
+
+    XCTAssertGreaterThan(wait.shownShare(at: opened), wait.progress.share + 0.1)
+  }
+
   func testIgnoresStepsItDoesntKnow() {
     let fresh = GenerationWait(kind: .curriculum)
     var wait = fresh
