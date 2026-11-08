@@ -377,6 +377,7 @@ class LessonPlayerViewModel(
     fun act() {
         mutableState.value
             ?.currentStep
+            ?.takeIf { it.content is StepContent.Activity }
             ?.id
             ?.let { workedHere += it }
         acted = true
@@ -391,7 +392,10 @@ class LessonPlayerViewModel(
 
             else -> Unit
         }
-        if (action is LessonAction.SelectAnswer) answeredHere += action.stepId
+        if (action is LessonAction.SelectAnswer) {
+            answeredHere += action.stepId
+            workedHere += action.stepId
+        }
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
         if (action == LessonAction.Continue) resendAnswers()
         val before = mutableState.value
@@ -770,7 +774,7 @@ class LessonPlayerViewModel(
         // run has no answer for, under the round it was saved in, when Android closed the app in the background; what they
         // entered on this visit stays. A screen the run answered moves past its saved round, so its canvas draws that
         // answer instead of the work saved there.
-        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
+        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty().filterKeys { it !in workedHere }
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
             saved

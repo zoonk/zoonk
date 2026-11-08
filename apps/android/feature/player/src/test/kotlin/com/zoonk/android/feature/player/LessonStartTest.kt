@@ -158,6 +158,109 @@ class LessonStartTest {
             )
         }
 
+    @Test fun aLateRunKeepsCanvasSelectionWithoutARootTap() =
+        runTest(dispatcher) {
+            lesson =
+                playable(
+                    listOf(
+                        explanationStep(FIRST),
+                        com.zoonk.android.feature.activities.ActivityFixtures
+                            .step("codeRunner", id = ONE),
+                        checkStep(TWO),
+                    ),
+                )
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.act()
+            vm.dispatch(LessonAction.Continue)
+            vm.select(null)
+            vm.dispatch(LessonAction.GoBack)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(
+                0,
+                (
+                    vm.state.value
+                        ?.rounds
+                        ?.get(ONE) ?: 0
+                ),
+            )
+            assertEquals(
+                null,
+                vm.state.value
+                    ?.results
+                    ?.get(ONE),
+            )
+        }
+
+    @Test fun thisVisitsCanvasRoundWinsOverTheSavedRound() =
+        runTest(dispatcher) {
+            lesson =
+                playable(
+                    listOf(
+                        explanationStep(FIRST),
+                        com.zoonk.android.feature.activities.ActivityFixtures
+                            .step("codeRunner", id = ONE),
+                        checkStep(TWO),
+                    ),
+                )
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true, saved = SavedStateHandle(mapOf("rounds" to hashMapOf(ONE to 1))))
+            vm.open(lesson)
+            runCurrent()
+            vm.act()
+            vm.dispatch(LessonAction.Continue)
+            vm.act()
+            vm.select(null)
+            vm.dispatch(LessonAction.GoBack)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(
+                0,
+                (
+                    vm.state.value
+                        ?.rounds
+                        ?.get(ONE) ?: 0
+                ),
+            )
+            assertEquals(
+                null,
+                vm.state.value
+                    ?.results
+                    ?.get(ONE),
+            )
+        }
+
+    @Test fun navigationDoesNotKeepAnAnsweredQuestionBlank() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(explanationStep(FIRST), checkStep(ONE), checkStep(TWO)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.act()
+            vm.dispatch(LessonAction.Continue)
+            vm.act()
+            vm.dispatch(LessonAction.GoBack)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(
+                true,
+                vm.state.value
+                    ?.results
+                    ?.get(ONE)
+                    ?.isCorrect,
+            )
+        }
+
     @Test fun aPendingServerCheckKeepsItsScreenWhenTheRunResumesElsewhere() =
         runTest(dispatcher) {
             val first = "00000000-0000-4000-8000-000000000101"
