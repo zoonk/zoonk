@@ -87,6 +87,15 @@ final class GenerationEventsTests: XCTestCase {
     XCTAssertEqual(statusChecks, 1)
   }
 
+  func testARunThatStoppedBeforeItWasFollowedEndsAtOnce() async throws {
+    let transport = OpenStreamTransport(status: "cancelled")
+    let events = try clients(transport).generationEvents(id: "run-1", token: "learner-token")
+
+    let outcome = await outcome(of: events, within: .seconds(2))
+
+    XCTAssertEqual(outcome, .stopped, "not after the two-minute check")
+  }
+
   func testARunStillWorkingKeepsItsStreamOpen() async throws {
     let checkedAgain = expectation(description: "Status checked after a running answer")
     let transport = OpenStreamTransport(status: "running") { statusChecks in
@@ -119,7 +128,7 @@ final class GenerationEventsTests: XCTestCase {
     let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
 
     XCTAssertEqual(events.map(\.step), ["writeLevelTestBank", "levelTestBankReady"])
-    let requests = await transport.requests
+    let requests = await transport.streamRequests
     XCTAssertEqual(
       requests,
       [
@@ -144,12 +153,11 @@ final class GenerationEventsTests: XCTestCase {
       clients(transport).generationEvents(id: "run-1", token: "t", backoff: .milliseconds(1)))
 
     XCTAssertEqual(events.map(\.step), ["writeTestOutQuestions", "testOutQuestionsReady"])
-    let requests = await transport.requests
+    let requests = await transport.streamRequests
     XCTAssertEqual(
       requests,
       [
         "/v1/generations/run-1/events?startIndex=0",
-        "/v1/generations/run-1",
         "/v1/generations/run-1/events?startIndex=1",
       ])
   }
@@ -169,12 +177,11 @@ final class GenerationEventsTests: XCTestCase {
     let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
 
     XCTAssertEqual(events.map(\.step), ["writeMockQuestions", "mockQuestionsReady"])
-    let requests = await transport.requests
+    let requests = await transport.streamRequests
     XCTAssertEqual(
       requests,
       [
         "/v1/generations/run-1/events?startIndex=0",
-        "/v1/generations/run-1",
         "/v1/generations/run-1/events?startIndex=1",
       ])
   }
@@ -196,12 +203,11 @@ final class GenerationEventsTests: XCTestCase {
     let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
 
     XCTAssertEqual(events.map(\.step), ["focusTestQuestionsReady"])
-    let requests = await transport.requests
+    let requests = await transport.streamRequests
     XCTAssertEqual(
       requests,
       [
         "/v1/generations/run-1/events?startIndex=0",
-        "/v1/generations/run-1",
         "/v1/generations/run-1/events?startIndex=0",
         "/v1/generations/run-2/events?startIndex=0",
       ])
@@ -377,6 +383,9 @@ private actor RunsTransport: ClientTransport {
   private var statuses: [String: [String]]
   private(set) var requests: [String] = []
 
+  /// Without the status reads, which a follower also makes at its own pace.
+  var streamRequests: [String] { requests.filter { $0.contains("/events") } }
+
   init(events: [String: [String]], statuses: [String: [String]] = [:]) {
     self.events = events
     self.statuses = statuses
@@ -430,15 +439,23 @@ private actor LessonWritingTransport: ClientTransport {
     baseURL: URL,
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
-    requests.append(baseURL.path() + (request.path ?? ""))
     var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+
+    if operationID == "getGeneration" {
+      return (
+        HTTPResponse(status: .ok, headerFields: headerFields),
+        HTTPBody(#"{"id":"run-1","status":"running"}"#)
+      )
+    }
+
+    requests.append(baseURL.path() + (request.path ?? ""))
 
     if operationID == "streamGenerationEvents" {
       headerFields[.contentType] = "text/event-stream"
       return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(events))
     }
 
-    headerFields[.contentType] = "application/json"
     let body = HTTPBody(readiness.removeFirst())
     return (HTTPResponse(status: .ok, headerFields: headerFields), body)
   }
@@ -464,9 +481,18 @@ private actor GenerationEventsTransport: ClientTransport {
     baseURL: URL,
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+
+    if operationID == "getGeneration" {
+      headerFields[.contentType] = "application/json"
+      return (
+        HTTPResponse(status: .ok, headerFields: headerFields),
+        HTTPBody(#"{"id":"run-1","status":"running"}"#)
+      )
+    }
+
     XCTAssertEqual(operationID, "streamGenerationEvents")
     requests.append(baseURL.path() + (request.path ?? ""))
-    var headerFields = HTTPFields()
     headerFields[.contentType] = "text/event-stream"
 
     switch responses.removeFirst() {
