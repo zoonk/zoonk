@@ -144,11 +144,31 @@ final class GenerationWaitTests: XCTestCase {
       ])
   }
 
-  func testIgnoresStepsItDoesntKnow() {
+  func testLessonOneIsReadyOnceTheRunOrTheReadSaysSo() {
     var wait = GenerationWait(kind: .curriculum)
+    let writing = GenerationEvent(
+      lessonID: "lesson", lessonTitle: "Why birds sing at dawn", status: "started",
+      step: "writeFirstLesson")
+
+    wait.apply(writing)
+    XCTAssertEqual(wait.firstLesson?.isReady, false)
+
+    let ready = GenerationWait.FirstLesson(
+      id: "lesson", title: "Why birds sing at dawn", isReady: true)
+    XCTAssertEqual(wait.firstLesson(read: ready)?.isReady, true)
+
+    wait.apply(GenerationEvent(lessonID: "lesson", status: "completed", step: "firstLessonReady"))
+    // A reconnection replays the lesson being picked after it was ready.
+    wait.apply(writing)
+    XCTAssertEqual(wait.firstLesson?.isReady, true)
+  }
+
+  func testIgnoresStepsItDoesntKnow() {
+    let fresh = GenerationWait(kind: .curriculum)
+    var wait = fresh
 
     wait.apply(GenerationEvent(status: "started", step: "somethingNew"))
 
-    XCTAssertEqual(wait, GenerationWait(kind: .curriculum))
+    XCTAssertEqual(wait, fresh)
   }
 }

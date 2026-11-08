@@ -244,7 +244,7 @@ private struct GoalSteps: View {
         comment: "What starting over does")
     }
     .onDisappear { startingOver?.cancel() }
-    .task(id: view.generationId) { await preloadDeck() }
+    .taskThroughPush(id: view.generationId) { await preloadDeck() }
   }
 
   /// While the learner answers, so the quiz is there as soon as a wait opens.

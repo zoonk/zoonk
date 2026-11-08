@@ -24,6 +24,8 @@ private struct VisibleWait: ViewModifier {
   let onboardingID: String?
 
   @Environment(\.scenePhase) private var scenePhase
+  /// The wait's progress pushed over it is still the wait on screen.
+  @Environment(WaitVisit.self) private var visit: WaitVisit?
   @State private var startedAt: Date?
   @State private var isShown = false
 
@@ -39,10 +41,12 @@ private struct VisibleWait: ViewModifier {
       }
       .onChange(of: scenePhase) { update() }
       .onChange(of: isActive) { update() }
+      .onChange(of: visit?.showsProgress) { update() }
   }
 
   private func update() {
-    let counts = isShown && isActive && scenePhase == .active
+    let isOnScreen = isShown || visit?.showsProgress == true
+    let counts = isOnScreen && isActive && scenePhase == .active
 
     if counts {
       startedAt = startedAt ?? .now
