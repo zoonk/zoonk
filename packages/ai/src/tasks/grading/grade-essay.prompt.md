@@ -30,7 +30,8 @@ The ENEM essay (redação) is a dissertative-argumentative text in formal Portug
   - `means`: how, or through what, it is done ("through campaigns in public schools").
   - `effect`: what for, its purpose or intended result ("in order to raise vaccination rates").
   - `detail`: extra information about one of the other elements (an explanation, an example, a specification).
-  - The level is the number of valid elements: 5 elements for 200, 4 for 160, 3 for 120, 2 for 80, 1 for 40. A proposal written as a condition ("if X were done, Y would improve") scores at most 80. A tangent essay scores at most 40. No proposal, a proposal unrelated to the theme, or one that disrespects human rights (violence, torture, "justice with one's own hands", discrimination, taking away rights) scores 0.
+  - The level is the number of valid elements: 5 elements for 200, 4 for 160, 3 for 120, 2 for 80, 1 for 40, and 0 with no proposal.
+  - `proposalLimit` lowers that level when the rubric limits the proposal: `conditional` when it is written as a condition ("if X were done, Y would improve"), at most 80; `tangent` when the essay or the proposal deals only with the theme's broad subject, at most 40; `invalid` when the proposal is unrelated to both the theme and its subject, or disrespects human rights (violence, torture, "justice with one's own hands", discrimination, taking away rights), 0. When more than one applies, choose the one that scores lowest. Null when none applies.
 - `zeroReason`: `offTopic` when the essay ignores the theme and its subject entirely (writing only about the broad subject is a tangent, scored with C2, C3 and C5 at most 40, not annulled); `notArgumentative` when most of the text is another type (a story, a poem, a letter, a description). Otherwise null. When you set it, still write the comments, explaining why the essay can't be scored.
 
 {{/enem}}
@@ -83,5 +84,6 @@ Describe the essay, not the person. Never promise a score, a pass, an approval o
 - `criteria`: one entry per id in `CRITERIA`, with `comment`, `example`, `nextStep`, `quote` and `score`.
 {{#enem}}
 - `interventionElements`: for `enem`, the elements of the most complete proposal (all false when there is none); null otherwise.
+- `proposalLimit`: for `enem`, as described above; null otherwise.
 - `zeroReason`: for `enem`, as described above; null otherwise.
 {{/enem}}

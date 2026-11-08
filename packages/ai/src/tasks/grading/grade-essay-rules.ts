@@ -15,7 +15,8 @@ import { findEssayQuote } from "./grade-essay-quote";
  * https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf
  *
  * ENEM C5: the level is the number of valid elements in the most complete proposal, so 200 needs
- * all 5. Conditional proposals stop at 80, tangent essays at 40.
+ * all 5. Conditional proposals stop at 80, and tangent essays or proposals that touch only the
+ * theme's broad subject at 40. A proposal unrelated to the subject or against human rights scores 0.
  * https://download.inep.gov.br/educacao_basica/enem/downloads/2020/Competencia_5.pdf
  *
  * AP: each scoring guideline row awards whole points on its own criteria.
@@ -55,6 +56,12 @@ const NO_ELEMENTS: EnemInterventionElements = {
   detail: false,
   effect: false,
   means: false,
+};
+
+const PROPOSAL_LIMIT_MAX: Record<NonNullable<EssayModelOutput["proposalLimit"]>, number> = {
+  conditional: 80,
+  invalid: 0,
+  tangent: 40,
 };
 
 const ENEM_CRITERIA = [
@@ -195,10 +202,6 @@ function snapScore({
   return kind === "ap" ? Math.round(clamped) : toHundredths(clamped);
 }
 
-function countElements(elements: EnemInterventionElements): number {
-  return Object.values(elements).filter(Boolean).length;
-}
-
 function toOptionalText(value: string | null | undefined): string | null {
   return value?.trim() || null;
 }
@@ -207,21 +210,13 @@ function toCriterionGrade({
   definition,
   essay,
   output,
-  scoreCap,
-  rubric,
+  score,
 }: {
   definition: EssayCriterionDefinition;
   essay: string;
   output: EssayCriterionOutput | undefined;
-  scoreCap: number;
-  rubric: EssayRubric;
+  score: number;
 }): EssayCriterionGrade {
-  const score = snapScore({
-    kind: rubric.kind,
-    max: Math.min(definition.maxScore, scoreCap),
-    score: output?.score ?? 0,
-  });
-
   return {
     comment: output?.comment.trim() ?? "",
     example: score < definition.maxScore ? toOptionalText(output?.example) : null,
@@ -234,16 +229,20 @@ function toCriterionGrade({
 }
 
 /**
- * Competency 5 can't score above 40 per valid proposal element; annulled
- * essays score nothing anywhere.
+ * Annulled essays score nothing anywhere. ENEM sets C5 by counting the proposal's valid elements,
+ * so the model's own C5 number is ignored.
  */
-function getScoreCap({
+function getCriterionScore({
   definition,
   elements,
+  output,
+  rubric,
   zeroReason,
 }: {
   definition: EssayCriterionDefinition;
   elements: EnemInterventionElements | null;
+  output: EssayModelOutput;
+  rubric: EssayRubric;
   zeroReason: EssayGrade["zeroReason"];
 }): number {
   if (zeroReason) {
@@ -251,10 +250,16 @@ function getScoreCap({
   }
 
   if (elements && definition.id === "c5") {
-    return ENEM_STEP * countElements(elements);
+    const level = ENEM_STEP * Object.values(elements).filter(Boolean).length;
+    const limit = output.proposalLimit;
+    return limit ? Math.min(level, PROPOSAL_LIMIT_MAX[limit]) : level;
   }
 
-  return definition.maxScore;
+  return snapScore({
+    kind: rubric.kind,
+    max: definition.maxScore,
+    score: output.criteria[definition.id]?.score ?? 0,
+  });
 }
 
 function getRange({
@@ -345,8 +350,7 @@ function assembleEssayGrade({
       definition,
       essay,
       output: output.criteria[definition.id],
-      rubric,
-      scoreCap: getScoreCap({ definition, elements, zeroReason }),
+      score: getCriterionScore({ definition, elements, output, rubric, zeroReason }),
     }),
   );
 

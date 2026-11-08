@@ -16,6 +16,8 @@ Portanto, o Ministério da Saúde deve combater a desinformação vacinal, a fim
 
 const ALL_ELEMENTS = { action: true, agent: true, detail: true, effect: true, means: true };
 
+const NO_ELEMENTS = { action: false, agent: false, detail: false, effect: false, means: false };
+
 function criterion(score: number, overrides: Partial<EssayModelOutput["criteria"][string]> = {}) {
   return {
     comment: `Comment for ${score}.`,
@@ -34,6 +36,7 @@ function enemOutput(
   return {
     criteria: Object.fromEntries(scores.map((score, index) => [`c${index + 1}`, criterion(score)])),
     interventionElements: ALL_ELEMENTS,
+    proposalLimit: null,
     zeroReason: null,
     ...overrides,
   };
@@ -96,41 +99,47 @@ describe(buildEssayGrade, () => {
   it("snaps ENEM scores to steps of 40 inside 0 to 200 and sums the total in code", () => {
     const grade = buildEssayGrade({
       essay: ESSAY,
-      output: enemOutput([150, 130, 230, -10, Number.NaN]),
+      output: enemOutput([150, 230, -10, Number.NaN, 200]),
       rubric: ENEM,
     });
 
-    expect(grade.criteria.map((item) => item.score)).toStrictEqual([160, 120, 200, 0, 0]);
-    expect(grade.total).toStrictEqual({ maxScore: 1000, score: 480 });
+    expect(grade.criteria.map((item) => item.score)).toStrictEqual([160, 200, 0, 0, 200]);
+    expect(grade.total).toStrictEqual({ maxScore: 1000, score: 560 });
   });
 
-  it("caps competency 5 at 40 per proposal element", () => {
+  it.each([200, 80])(
+    "scores competency 5 at 40 per valid element when the model says %i",
+    (modelScore) => {
+      const elements = { ...ALL_ELEMENTS, detail: false, means: false };
+
+      const grade = buildEssayGrade({
+        essay: ESSAY,
+        output: enemOutput([160, 160, 160, 160, modelScore], { interventionElements: elements }),
+        rubric: ENEM,
+      });
+
+      expect(grade.criteria[4]?.score).toBe(120);
+      expect(grade.total.score).toBe(760);
+      expect(grade.enemInterventionElements).toStrictEqual(elements);
+    },
+  );
+
+  it.each([
+    { elements: ALL_ELEMENTS, limit: "conditional", score: 80 },
+    { elements: ALL_ELEMENTS, limit: "tangent", score: 40 },
+    { elements: ALL_ELEMENTS, limit: "invalid", score: 0 },
+    { elements: { ...NO_ELEMENTS, action: true }, limit: "conditional", score: 40 },
+  ] as const)("limits a proposal marked $limit to $score", ({ elements, limit, score }) => {
     const grade = buildEssayGrade({
       essay: ESSAY,
       output: enemOutput([160, 160, 160, 160, 200], {
-        interventionElements: { ...ALL_ELEMENTS, detail: false, means: false },
+        interventionElements: elements,
+        proposalLimit: limit,
       }),
       rubric: ENEM,
     });
 
-    expect(grade.criteria[4]?.score).toBe(120);
-    expect(grade.total.score).toBe(760);
-
-    expect(grade.enemInterventionElements).toStrictEqual({
-      ...ALL_ELEMENTS,
-      detail: false,
-      means: false,
-    });
-  });
-
-  it("keeps a lower competency 5 score than the elements allow", () => {
-    const grade = buildEssayGrade({
-      essay: ESSAY,
-      output: enemOutput([160, 160, 160, 160, 80]),
-      rubric: ENEM,
-    });
-
-    expect(grade.criteria[4]?.score).toBe(80);
+    expect(grade.criteria[4]?.score).toBe(score);
   });
 
   it("scores competency 5 as 0 when the model reports no elements", () => {
@@ -142,13 +151,7 @@ describe(buildEssayGrade, () => {
 
     expect(grade.criteria[4]?.score).toBe(0);
 
-    expect(grade.enemInterventionElements).toStrictEqual({
-      action: false,
-      agent: false,
-      detail: false,
-      effect: false,
-      means: false,
-    });
+    expect(grade.enemInterventionElements).toStrictEqual(NO_ELEMENTS);
   });
 
   it("estimates an ENEM range of 40 points around the total, inside 0 to 1000", () => {
@@ -161,14 +164,14 @@ describe(buildEssayGrade, () => {
     const middle = buildEssayGrade({
       essay: ESSAY,
       output: enemOutput([160, 160, 160, 160, 120], {
-        interventionElements: { ...ALL_ELEMENTS, means: false },
+        interventionElements: { ...ALL_ELEMENTS, detail: false, means: false },
       }),
       rubric: ENEM,
     });
 
     const low = buildEssayGrade({
       essay: ESSAY,
-      output: enemOutput([40, 0, 0, 0, 0]),
+      output: enemOutput([40, 0, 0, 0, 0], { interventionElements: NO_ELEMENTS }),
       rubric: ENEM,
     });
 
@@ -195,7 +198,7 @@ describe(buildEssayGrade, () => {
     const grade = buildEssayGrade({
       essay: ESSAY,
       output: enemOutput([160, 160, 120, 160, 80], {
-        interventionElements: { ...ALL_ELEMENTS, detail: false, means: false },
+        interventionElements: { ...NO_ELEMENTS, action: true, agent: true },
       }),
       rubric: ENEM,
     });
