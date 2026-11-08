@@ -128,7 +128,7 @@ describe("an unstarted day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("rebuilds an unstarted day to hold lesson-writing time after a future rest day is added", async () => {
+  it("keeps an unstarted day and its writing reservation when a future rest day is added", async () => {
     const { before, goal, plan, timeZone } = await openPlannedSunday();
 
     const { changed, proposal } = await applyFutureRestDay({
@@ -148,16 +148,11 @@ describe("an unstarted day after a plan change", () => {
       ...before,
       blocks: after.blocks,
       planVersion: savedPlan.version,
-      plannedMinutes: 25,
+      plannedMinutes: before.plannedMinutes,
     });
 
-    expect(after.blocks).toMatchObject([
-      { estimatedMinutes: 5, kind: "learn", lessonId: before.blocks[0]?.lessonId },
-      { estimatedMinutes: 5, kind: "practice" },
-      { estimatedMinutes: 15, kind: "checkpoint", payload: before.blocks[2]?.payload },
-    ]);
-
-    expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "updated" });
+    expect(after.blocks).toStrictEqual(before.blocks);
+    expect(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
 
     const context = await loadPlanContext({ goal, now: NOW, timeZone });
 
@@ -242,12 +237,12 @@ describe("a started day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("keeps started work and rebuilds the rest to hold lesson-writing time without later lessons", async () => {
+  it("keeps started work and the day's time when a future rest day is added", async () => {
     const { before, goal, plan, timeZone } = await openPlannedDay();
     const first = before.blocks[0];
 
     expect(before.blocks.length).toBeGreaterThan(1);
-    expect(before.plannedMinutes).toBeLessThan(goal.dailyMinutes);
+    expect(before.plannedMinutes).toBe(goal.dailyMinutes);
 
     await startStudyBlock({ blockId: first?.id ?? "", input: { timeZone }, sessionId: before.id });
 
@@ -269,15 +264,10 @@ describe("a started day after a plan change", () => {
       ...started,
       blocks: after.blocks,
       planVersion: savedPlan.version,
-      plannedMinutes: 9,
+      plannedMinutes: started.plannedMinutes,
     });
 
-    expect(after.blocks).toMatchObject([
-      started.blocks[0],
-      { estimatedMinutes: 5, kind: "learn", lessonId: started.blocks[1]?.lessonId },
-      { estimatedMinutes: 3, kind: "practice" },
-    ]);
-
-    expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "updated" });
+    expect(after.blocks).toStrictEqual(started.blocks);
+    expect(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
   });
 });

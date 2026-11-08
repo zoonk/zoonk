@@ -10,7 +10,7 @@ function day(overrides: Partial<Day> = {}): Day {
       { position: 1, status: "pending" },
     ],
     emptyDay: null,
-    minutes: { dailyGoal: 45, done: 5, planned: 45 },
+    minutes: { dailyGoal: 45, done: 5, left: 0, planned: 45 },
     nextPosition: 1,
     ...overrides,
   };
@@ -70,7 +70,11 @@ describe(withDayState, () => {
   });
 
   it("rests on a day the plan gives no time, the same before and after it's opened", () => {
-    const rest = { blocks: [], minutes: { dailyGoal: 0, done: 0, planned: 0 }, nextPosition: null };
+    const rest = {
+      blocks: [],
+      minutes: { dailyGoal: 0, done: 0, left: 0, planned: 0 },
+      nextPosition: null,
+    };
 
     expect(dayState(day({ ...rest, emptyDay: "lessonsComing" }))).toBe("rest");
     expect(dayState(day({ ...rest, emptyDay: null }))).toBe("rest");
@@ -79,7 +83,11 @@ describe(withDayState, () => {
   it("rests on a day the plan gives no time", () => {
     expect(
       dayState(
-        day({ blocks: [], minutes: { dailyGoal: 0, done: 0, planned: 0 }, nextPosition: null }),
+        day({
+          blocks: [],
+          minutes: { dailyGoal: 0, done: 0, left: 0, planned: 0 },
+          nextPosition: null,
+        }),
       ),
     ).toBe("rest");
   });

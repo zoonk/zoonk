@@ -7,7 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { readSavedPlan } from "../learner/facts/saved-plan";
 import { MAX_DAILY_MINUTES } from "../plans/daily-minutes";
-import { getLearningShare } from "../plans/planner/plan-phases";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
@@ -168,7 +167,7 @@ describe("a long study day", () => {
     expect(read.rows).toBeLessThanOrEqual(30);
   });
 
-  it("gives lessons the learn share of a whole day the learner gives, as the week counts the day", async () => {
+  it("fills the whole day with lessons when practice has nothing to ask", async () => {
     const user = await userFixture();
 
     const { goal, plan } = await sessionGoalFixture({
@@ -200,9 +199,7 @@ describe("a long study day", () => {
       .reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
     const today = result.session.week.days.find((day) => day.isToday);
-    const share = getLearningShare({ phaseKind: "learn", practiceBias: "balanced" });
-
-    expect(lessonMinutes).toBe(MAX_DAILY_MINUTES * share);
+    expect(lessonMinutes).toBe(MAX_DAILY_MINUTES);
     expect(today?.goalMinutes).toBe(MAX_DAILY_MINUTES);
   });
 });

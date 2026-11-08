@@ -63,7 +63,7 @@ async function setup() {
   const osmosis = library.lessons[2];
 
   const { goal, plan } = await unplannedGoalFixture({
-    dailyMinutes: 20,
+    dailyMinutes: 10,
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
     kind: "exam",

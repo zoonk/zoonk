@@ -166,6 +166,7 @@ export function scheduleRunEvents({
     goal: input.goal,
     mockMinutes: input.mockMinutes,
     phase: windows.length,
+    planStart,
     resolution,
     saved: unmatched,
     settings: input.settings,

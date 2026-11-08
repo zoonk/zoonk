@@ -428,7 +428,7 @@ describe("ending a session", () => {
     expect(view.status === "ready" && view.session.extraTime).toStrictEqual(nothingLeft);
   });
 
-  it("names a lesson block's minutes as the lesson says them, as the player does", async () => {
+  it("keeps a lesson block's persisted minutes after its library estimate changes", async () => {
     const { goal, lessons, session } = await setup();
     const [first] = session.blocks;
 
@@ -440,7 +440,7 @@ describe("ending a session", () => {
     const today = await getTodayStudySession({ goalId: goal.id });
 
     expect(today.status === "ready" && today.session.blocks[0]).toMatchObject({
-      estimatedMinutes: 7,
+      estimatedMinutes: 4,
       lessonId: lessons[0]?.id,
     });
   });
