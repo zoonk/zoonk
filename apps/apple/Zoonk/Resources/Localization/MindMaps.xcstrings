@@ -174,6 +174,525 @@
         }
       }
     },
+    "%lld lessons get written first and count toward your free lessons." : {
+      "comment" : "A free learner's map of a chapter whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektion, die auf deine kostenlosen Lektionen angerechnet wird."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektionen, die auf deine kostenlosen Lektionen angerechnet werden."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson gets written first and counts toward your free lessons."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons get written first and count toward your free lessons."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se prepara %lld lección y se descuenta de tus lecciones gratis."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se preparan %lld lecciones y se descuentan de tus lecciones gratis."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon est d’abord préparée et décomptée de ton quota de leçons gratuites."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons sont d’abord préparées et décomptées de ton quota de leçons gratuites."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezione, che viene conteggiata tra le tue lezioni gratuite."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezioni, che vengono conteggiate tra le tue lezioni gratuite."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "まず%lldレッスンを作成します。無料レッスンの利用数に含まれます。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨 %lld개를 먼저 만들고, 이 레슨도 무료 레슨 한도에 포함돼요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcje, które wliczą się do limitu bezpłatnych lekcji."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcję, która wliczy się do limitu bezpłatnych lekcji."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcji, które wliczą się do limitu bezpłatnych lekcji."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula é criada primeiro e conta para o seu limite de aulas grátis."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas são criadas primeiro e contam para o seu limite de aulas grátis."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Önce %lld ders hazırlanır ve ücretsiz ders hakkından düşer."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons get written first, so it takes a few minutes." : {
+      "comment" : "A Plus learner's map of a chapter whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektion. Deshalb dauert es ein paar Minuten."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektionen. Deshalb dauert es ein paar Minuten."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson gets written first, so it takes a few minutes."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons get written first, so it takes a few minutes."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se prepara %lld lección, así que tarda unos minutos."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se preparan %lld lecciones, así que tarda unos minutos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon est d’abord préparée, ce qui prend quelques minutes."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons sont d’abord préparées, ce qui prend quelques minutes."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezione, quindi ci vogliono alcuni minuti."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezioni, quindi ci vogliono alcuni minuti."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "まず%lldレッスンを作成するため、数分かかります。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨 %lld개를 먼저 만들어야 해서 몇 분 걸려요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcje, więc zajmie to kilka minut."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcję, więc zajmie to kilka minut."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcji, więc zajmie to kilka minut."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula é criada primeiro, por isso demora alguns minutos."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas são criadas primeiro, por isso demora alguns minutos."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Önce %lld ders hazırlanır, bu yüzden birkaç dakika sürer."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons to write" : {
+      "comment" : "A chapter on the mind maps page whose lessons a map would write first",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektion zu erstellen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektionen zu erstellen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson to write"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons to write"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección por preparar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones por preparar"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon à préparer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons à préparer"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezione da preparare"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezioni da preparare"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lldレッスンの作成が必要"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "만들 레슨 %lld개"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcje do przygotowania"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcja do przygotowania"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcji do przygotowania"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula para criar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas para criar"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hazırlanacak %lld ders"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld maps" : {
       "comment" : "How many chapters' mind maps are ready",
       "localizations" : {
@@ -1055,124 +1574,6 @@
         }
       }
     },
-    "Its lessons get written first and count toward your free lessons." : {
-      "comment" : "A free learner's map of a chapter whose lessons aren't written yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen zuerst die Lektionen des Kapitels und rechnen sie auf deine kostenlosen Lektionen an."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primero se preparan sus lecciones y cuentan para tu límite de lecciones gratis."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ses leçons sont d’abord préparées et comptent dans ton quota de leçons gratuites."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prima prepariamo le lezioni del capitolo, che vengono conteggiate tra le tue lezioni gratuite."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "先にこの章のレッスンを作成します。作成した分は無料レッスンの利用数に含まれます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챕터의 레슨을 먼저 만들고, 만든 레슨은 무료 레슨 한도에 포함돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najpierw przygotowujemy lekcje z tego rozdziału, które wliczają się do twojego limitu bezpłatnych lekcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas do capítulo são criadas primeiro e contam para o seu limite de aulas grátis."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önce ünitenin dersleri hazırlanır ve ücretsiz ders hakkından düşülür."
-          }
-        }
-      }
-    },
-    "Its lessons get written first, so it takes a few minutes." : {
-      "comment" : "A Plus learner's map of a chapter whose lessons aren't written yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen zuerst die Lektionen des Kapitels, deshalb dauert es ein paar Minuten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primero se preparan sus lecciones, así que tarda unos minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ses leçons sont d’abord préparées, ce qui prend quelques minutes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prima prepariamo le lezioni del capitolo, quindi ci vuole qualche minuto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "先にこの章のレッスンを作成するため、数分かかります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챕터의 레슨을 먼저 만들어야 해서 몇 분 정도 걸려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najpierw przygotowujemy lekcje z tego rozdziału, więc potrwa to kilka minut."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas do capítulo são criadas primeiro, então leva alguns minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önce ünitenin dersleri hazırlanır, bu yüzden birkaç dakika sürer."
-          }
-        }
-      }
-    },
     "Its main ideas in one picture" : {
       "comment" : "What a chapter's mind map is",
       "localizations" : {
@@ -1287,65 +1688,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
-          }
-        }
-      }
-    },
-    "Lessons not written yet" : {
-      "comment" : "A chapter on the mind maps page whose lessons a map would write first",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch nicht erstellte Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lecciones aún sin preparar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leçons pas encore préparées"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lezioni ancora da preparare"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未作成のレッスン"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 만들지 않은 레슨"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lekcje jeszcze nieprzygotowane"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aulas ainda não criadas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henüz hazırlanmamış dersler"
           }
         }
       }

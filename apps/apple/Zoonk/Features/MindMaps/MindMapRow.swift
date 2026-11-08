@@ -32,8 +32,8 @@ struct MindMapRow: View {
         Button(action: open) {
           row.disclosureChevron()
         }
-      } else if place == .library, shown == .plusRequired {
-        // The page's notice has the one See Plus; the row leads to the same place.
+      } else if shown == .plusRequired {
+        // Like the screen's other locked items: the Plus mark, and the whole row leads to Plus.
         Button {
           router.present(.subscription)
         } label: {
@@ -109,15 +109,9 @@ struct MindMapRow: View {
 
   private var words: some View {
     VStack(alignment: .leading, spacing: 2) {
-      HStack(alignment: .firstTextBaseline, spacing: 8) {
-        title
-          .typeStyle(.rowTitle)
-          .foregroundStyle(Color(.foreground))
-
-        if shown == .plusRequired, place != .library {
-          PlusMark()
-        }
-      }
+      title
+        .typeStyle(.rowTitle)
+        .foregroundStyle(Color(.foreground))
 
       ForEach(lines, id: \.self) { line in
         Text(line)
@@ -163,7 +157,7 @@ struct MindMapRow: View {
         switch shown {
         case .create where map.lessonsToWrite > 0:
           String(
-            localized: "Lessons not written yet", table: "MindMaps",
+            localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
         case .ready where map.image == nil:
           String(
@@ -197,10 +191,12 @@ struct MindMapRow: View {
 
       return learner.summary.value?.tier == .plus
         ? String(
-          localized: "Its lessons get written first, so it takes a few minutes.", table: "MindMaps",
+          localized: "\(map.lessonsToWrite) lessons get written first, so it takes a few minutes.",
+          table: "MindMaps",
           comment: "A Plus learner's map of a chapter whose lessons aren't written yet")
         : String(
-          localized: "Its lessons get written first and count toward your free lessons.",
+          localized:
+            "\(map.lessonsToWrite) lessons get written first and count toward your free lessons.",
           table: "MindMaps",
           comment: "A free learner's map of a chapter whose lessons aren't written yet")
     case .ready:
@@ -280,9 +276,7 @@ struct MindMapRow: View {
       .buttonStyle(.outline)
       .controlSize(.small)
     case .plusRequired where place != .library:
-      SeePlusButton()
-        .buttonStyle(.outline)
-        .controlSize(.small)
+      PlusMark()
     case .ready, .plusRequired, .writingLessons, .drawing:
       EmptyView()
     }
