@@ -7,9 +7,10 @@ import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { claimCourseWhenFree } from "../courses/claim-course-when-free";
-import { BUSY_WAIT, MAX_CLAIM_TRIES } from "../courses/course-outline-workflow";
-import { finishCourseOutlineStep } from "../courses/steps/course-outline-steps";
+import {
+  claimCourseOutlineStep,
+  finishCourseOutlineStep,
+} from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { readLessonStatusStep } from "../lessons/steps/read-lesson-status-step";
 import { findGoalCourses } from "./goal-courses";
@@ -134,14 +135,9 @@ async function writeOpeningChapter({
   const courseId = opening.opening.course.id;
   const { workflowRunId } = context;
 
-  const claim = await claimCourseWhenFree({
-    courseId,
-    tries: MAX_CLAIM_TRIES,
-    wait: () => sleep(BUSY_WAIT),
-    workflowRunId,
-  });
+  const claim = await deliverCourseContent(claimCourseOutlineStep({ courseId, workflowRunId }));
 
-  if (!claim.claimed) {
+  if (claim !== "claimed") {
     return null;
   }
 

@@ -373,7 +373,7 @@ describe("a learn goal's opening", () => {
     ).resolves.toMatchObject({ buildFailedAt: null });
   });
 
-  it("waits for a course another run is outlining before writing the first chapter into it", async () => {
+  it("leaves a busy course to the plan without waiting on the opening", async () => {
     const { goal } = await newGoal();
     const claim = outlineSteps.claimCourseOutlineStep;
 
@@ -383,12 +383,14 @@ describe("a learn goal's opening", () => {
 
     await goalContentWorkflow({ goalId: goal.id });
 
-    expect(sleep).toHaveBeenCalledWith("15s");
-    expect(openingLessonStarts()).toHaveLength(1);
+    expect(sleep).not.toHaveBeenCalledWith("15s");
+    expect(openingLessonStarts()).toHaveLength(0);
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      openingLessonId: expect.any(String),
+      openingLessonId: null,
     });
+
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toBeNull();
   });
 
   it("leaves the first lesson to the plan when the course stays busy", async () => {
