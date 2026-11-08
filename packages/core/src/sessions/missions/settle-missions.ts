@@ -276,6 +276,7 @@ export async function settleMissions({
       const settled = {
         blockResult: await keepBlockMissionResult(tx, {
           blockId,
+          blocks: session.blocks,
           fullMealPaid: fullMealDue,
           newlyDone,
         }),
