@@ -16,7 +16,11 @@ import { type SessionSnapshot, readFullMealReward } from "../_utils/session-snap
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "../_utils/study-session-access";
 import { BRAIN_POWER_BONUS } from "../brain-power";
 import { type Mission, isFullMeal } from "../missions";
-import { type BlockMissionResult, keepBlockMissionResult } from "./block-mission-result";
+import {
+  type BlockMissionResult,
+  keepBlockMissionResult,
+  readBlockMissionResult,
+} from "./block-mission-result";
 import {
   type MissionDocument,
   type MissionKind,
@@ -24,7 +28,7 @@ import {
   readMissionDocument,
 } from "./catalog";
 import { getDayMissions, hasDayMissionBonus } from "./get-day-missions";
-import { isLinkedBlockMission, isLinkedCallMission } from "./linked-call-mission";
+import { findSourceLink, isLinkedSourceMission } from "./linked-call-mission";
 
 export type MissionCompletionSource = NonNullable<SessionSnapshot["fullMealSource"]>;
 
@@ -181,7 +185,10 @@ export async function settleMissions({
   userId,
   source,
 }: {
-  /** The block whose finish this settles: it keeps what it did, so another finish says the same. */
+  /**
+   * The block whose finish this settles. Its first settlement settles the day and keeps what it did;
+   * later ones (a retry, its owed follow-up) replay that, so they can't take a later finish's moment.
+   */
   blockId?: string;
   revalidation?: "now" | "skip";
   sessionId: string;
@@ -207,6 +214,20 @@ export async function settleMissions({
         timeZone,
       });
 
+      const kept = readBlockMissionResult({ blockId, blocks: session.blocks });
+
+      if (kept) {
+        throw new MissionsUnchangedError({
+          blockResult: kept,
+          fullMealPaid: false,
+          fullMealReward: readFullMealReward(session.startSnapshot),
+          missions,
+          newlyClaimed: [],
+          newlyDone: [],
+          session,
+        });
+      }
+
       const document = readMissionDocument(session.missions);
 
       const completingSource = await getCompletingSource({
@@ -217,25 +238,7 @@ export async function settleMissions({
         tx,
       });
 
-      const linkedCall =
-        source?.kind === "conversation"
-          ? await tx.languageConversation.findFirst({
-              select: { endedAt: true, studyBlockId: true },
-              where: { id: source.id, status: "completed", userId },
-            })
-          : null;
-
-      // Only the session block a mock actually completed may credit its mission.
-      const linkedMock =
-        source?.kind === "mockExam"
-          ? await tx.mockExam.findFirst({
-              select: { blockId: true },
-              where: { id: source.id, userId },
-            })
-          : null;
-
-      const mockBlockId = linkedMock?.blockId ?? null;
-
+      const link = await findSourceLink(tx, { source, userId });
       const newlyDone = getNewlyDone({ document, missions });
 
       // Settling another activity can mark a mission done without owning this activity's credit.
@@ -245,9 +248,7 @@ export async function settleMissions({
             completingSource !== undefined &&
             !pick.completedBy &&
             (isCompletedBy({ kind: pick.kind, source: completingSource }) ||
-              isLinkedCallMission({ blocks: session.blocks, call: linkedCall, pick }) ||
-              (mockBlockId !== null &&
-                isLinkedBlockMission({ blockId: mockBlockId, blocks: session.blocks, pick }))) &&
+              isLinkedSourceMission({ blocks: session.blocks, link, pick })) &&
             ((pick.done ?? 0) >= pick.total || newlyDone.includes(pick)),
         ) ?? [];
 
@@ -292,7 +293,7 @@ export async function settleMissions({
           fullMealReward: readFullMealReward(session.startSnapshot),
         };
 
-        if (newlyDone.length === 0 && claimed.length === 0) {
+        if (!blockId && newlyDone.length === 0 && claimed.length === 0) {
           throw new MissionsUnchangedError(result);
         }
 
