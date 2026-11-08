@@ -4,8 +4,6 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { formatCast } from "../_utils/cast";
-import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import taskPrompt from "./generate-items.prompt.md";
@@ -17,6 +15,7 @@ import {
   type NumericEntry,
   type OptionSelect,
 } from "./item-schemas";
+import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
 
 /**
@@ -57,6 +56,8 @@ export type GenerateItemsParams = {
   format: ItemFormat;
   level: CourseLevel;
   language: string;
+  /** A language exam's questions practice it. */
+  targetLanguage?: string | null;
   count?: number;
   /** Null for general items. */
   field?: string | null;
@@ -91,8 +92,7 @@ function buildUserPrompt(params: GenerateItemsParams): string {
     COUNT: ${count}${optionCount}${select}${entryLine}
     LEVEL: ${params.level}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatLocalContext(params.language)}
-    ${formatCast({ language: params.language, seed: `${skill.name}:${format}` })}
+${formatItemSetting({ language: params.language, seed: `${skill.name}:${format}`, targetLanguage: params.targetLanguage })}
     SKILL: ${skill.name}
     SKILL_DESCRIPTION: ${skill.description}
     SKILL_EXAMPLE: ${skill.example ?? "none"}${fieldLine}
@@ -114,11 +114,10 @@ export async function generateItems(params: GenerateItemsParams) {
 
   const userPrompt = buildUserPrompt(params);
 
-  // No caller writes a language goal's questions with this task: placement-items writes those.
   const systemPrompt = withItemRules(taskPrompt, {
     field: Boolean(params.field),
     formats: [format],
-    languageGoal: false,
+    languageGoal: Boolean(params.targetLanguage),
     numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
     severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
   });

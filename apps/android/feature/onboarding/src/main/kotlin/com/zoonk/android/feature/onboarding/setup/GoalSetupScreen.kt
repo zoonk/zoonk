@@ -54,6 +54,7 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WaitQuizState
@@ -454,11 +455,10 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLACEMENT -> {
-            val placed = {
-                vm.answer(
-                    OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT)),
-                    from = OnboardingStep.PLACEMENT,
-                )
+            val placementAnswer =
+                OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT))
+            val placed: suspend () -> WriteOutcome<*> = {
+                vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
             }
             val targetLanguage = view.goal.targetLanguage
             if (view.goal.kind == Goal.Kind.LANGUAGE && targetLanguage != null) {

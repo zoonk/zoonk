@@ -4,7 +4,7 @@ import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { DayMoment, StepWithDayMoment } from "@zoonk/learn/session/day-moment";
-import { MomentSaving } from "@zoonk/learn/session/moment-header";
+import { MomentSavingTitle } from "@zoonk/learn/session/moment-header";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import {
   StepCard,
@@ -139,10 +139,9 @@ export function TaskEndSpecimen() {
         </div>
         <div className="flex flex-col gap-3">
           <Variant>While it saves</Variant>
-          <div className="max-w-column flex flex-col items-start gap-6">
-            <p className="text-title">Lesson complete</p>
-            <MomentSaving />
-          </div>
+          <p className="text-title max-w-column">
+            <MomentSavingTitle />
+          </p>
         </div>
       </div>
     </LearnProvider>

@@ -17,7 +17,7 @@ struct FocusTestScreen: View {
   @State private var writeFailure: (any Error)?
   @State private var questions: [PracticeQuestion] = []
   @State private var isSubmitting = false
-  @State private var submitFailed = false
+  @State private var submitFailures = 0
   @State private var result: Components.Schemas.FocusTestResult?
   @State private var undone = false
   @State private var undoFailed = false
@@ -52,7 +52,7 @@ struct FocusTestScreen: View {
                   ? nil : test.areas.count * test.questionsPerArea,
                 upcomingEnded: writingEnded,
                 upcomingLimit: (writeFailure as? PracticeAPIError)?.helpLimit,
-                isPending: isSubmitting, failed: submitFailed
+                isPending: isSubmitting, failures: submitFailures
               ) { answers in Task { await submit(answers) } }
             } else {
               intro(test)
@@ -262,7 +262,6 @@ struct FocusTestScreen: View {
 
   private func submit(_ answers: [PracticeChoiceAnswer]) async {
     isSubmitting = true
-    submitFailed = false
     defer { isSubmitting = false }
 
     let goalId = goalId
@@ -275,10 +274,11 @@ struct FocusTestScreen: View {
       })
     {
     case .done(let graded):
+      submitFailures = 0
       PracticeAnswerDraft.clear(key: draftKey)
       result = graded
     case .refused, .failed:
-      submitFailed = true
+      submitFailures += 1
     case .obsolete:
       break
     }

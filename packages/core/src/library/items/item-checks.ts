@@ -220,6 +220,7 @@ export function checkItem({
   item,
   language,
   optionCount = null,
+  optionLanguage,
   select = 1,
 }: {
   entry?: NumericEntry;
@@ -227,6 +228,8 @@ export function checkItem({
   item: GeneratedItem;
   language: string;
   optionCount?: number | null;
+  /** When the options are in another language than the setup, as in a language goal. */
+  optionLanguage?: string | null;
   select?: OptionSelect;
 }): string[] {
   return [
@@ -234,7 +237,7 @@ export function checkItem({
       item.format !== expectedFormat &&
       `Is ${item.format} instead of ${expectedFormat}.`,
     isBlank(getQuestion(item)) && "The question is empty.",
-    ...checkFormat({ entry, item, language, optionCount, select }),
+    ...checkFormat({ entry, item, language: optionLanguage ?? language, optionCount, select }),
     ...checkWriting(item),
     ...checkVisuals(item, language),
   ].filter((problem) => typeof problem === "string");

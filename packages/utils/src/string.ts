@@ -221,7 +221,7 @@ export function segmentLearnerWords(text: string): string[] {
     .flatMap((piece) => splitJapanesePhrases(piece));
 }
 
-const NO_SPACE_SCRIPT =
+export const NO_SPACE_SCRIPT =
   /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
 
 /** Text in a script without spaces (Japanese, Chinese, Thai) counts the words a dictionary finds. */

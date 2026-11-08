@@ -200,7 +200,7 @@ class WarmUpScreenshots {
                                             mocks,
                                             rememberAppNavigator(),
                                             onProgress = {},
-                                            onDone = {},
+                                            onDone = { WriteOutcome.Done(Unit) },
                                         )
                                     }
                                 }

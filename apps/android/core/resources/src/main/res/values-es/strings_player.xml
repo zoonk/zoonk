@@ -15,6 +15,7 @@
   "player_activity_your_answer": "fb618931ac5d7f01d9dbdf8036cdce48cefda2cae61b13fb43864806fe433a72",
   "player_ai_note": "efcda00e03b6fc0dbca0214704ce6f47c9be2cc11e2fad15d4fe11fcc8e12370",
   "player_already_knew": "f142c6d391c6fc096fa88dafe3ed474c61f832f6ec34623804a3a8023e9ae987",
+  "player_also_correct_label": "fc13078c5e6ead28941343708090f3c6acae65ee473fff66543d13bd13126a2c",
   "player_answer_feedback": "e1d70dc905cd03cd88edffd650467056cccb479e6f0ba5f992dfbae705c60961",
   "player_answer_options": "850a65a3a2725ba3c9549dba9cb45167b93e3040c7c94aff173dbb838f3599ee",
   "player_ask_something_else": "8629cec6c0d8403d209ee9803ef94a8318ab6fc7c28c9d8d7f95de516b084425",
@@ -95,6 +96,7 @@
   "player_lesson_complete": "4b10cdcd36bcdac8adc3c1768f57b2988580986c75d56e4f8b71b011b6cf5c35",
   "player_lesson_map": "c6a52ad0d2855c486b4c118ee57b372398ba8c938286f7e397d3866b326a5180",
   "player_lesson_map_nested": "68aa00c9aae7eecd4009d87cff29772d9541e4598abfb6dda2e447f025d71b81",
+  "player_lesson_not_saved": "4df6c7eac3dc9a6abd6bf9da447fbcdd6b2a3cdd7313db5207c167e89516e927",
   "player_lesson_of": "11ec22b4b2f97a81333d67a2357f416b7f98020bf3861ef216da20eb084b6794",
   "player_listen": "344ce00cfaa6d2bfcd3c5585266a33583e4fa5b133f9b7ba8223cdb06e9e0de5",
   "player_microphone_blocked": "1ecd110fae0b3ec5c773354777c5d58a5238d765d6990ce5e449038bb8185106",
@@ -244,6 +246,8 @@
     <string name="player_answer_feedback">Comentarios sobre la respuesta</string>
     <string name="player_spelled">Se escribe:</string>
     <string name="player_correct_answer_label">Respuesta:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">También es correcto:</string>
     <string name="player_explain_answer">Explicar mi respuesta</string>
     <string name="player_explain_answer_failed">No pudimos explicarlo ahora. Inténtalo de nuevo en un momento.</string>
     <string name="player_explain_answer_title">Por qué esa respuesta no es correcta</string>
@@ -411,6 +415,7 @@
     <string name="player_already_knew">Esto ya lo sabías</string>
     <string name="player_saving_progress">Guardando tu progreso…</string>
     <string name="player_save_failed">No se pudo guardar. Conservamos tus respuestas.</string>
+    <string name="player_lesson_not_saved">Tu lección aún no se guardó</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Repaso el %1$s</string>
     <string name="player_next_lesson">Siguiente lección</string>

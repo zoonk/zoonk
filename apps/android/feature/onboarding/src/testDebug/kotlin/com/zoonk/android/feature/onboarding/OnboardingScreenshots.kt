@@ -661,7 +661,7 @@ class OnboardingScreenshots {
                     rememberMocks(mocks),
                     rememberAppNavigator(),
                     onProgress = {},
-                    onDone = {},
+                    onDone = { WriteOutcome.Done(Unit) },
                 )
             }
         }

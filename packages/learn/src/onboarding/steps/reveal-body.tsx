@@ -123,7 +123,7 @@ function RevealActions({
         </Button>
       </div>
 
-      {isGuest && <SavePlanNote signUpHref={signUpHref} />}
+      {isGuest && <SavePlanNote className="lg:text-right" signUpHref={signUpHref} />}
     </div>
   );
 }

@@ -303,7 +303,7 @@ const REGISTRY: Record<string, Registration[]> = {
   ],
   "library/language/_utils/save-language-lesson.ts": [
     {
-      fields: ["contentStatus", "summary"],
+      fields: ["contentStatus", "sentenceOrdersAttempts", "summary"],
       readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
       verdict: "excluded",
       why: "publication (its content marker stays)",
@@ -315,6 +315,20 @@ const REGISTRY: Record<string, Registration[]> = {
       verdict: "marks",
       why: "a published or fixed version can rename the lesson",
       writes: ["lesson.update", "lesson.updateMany"],
+    },
+  ],
+  "library/language/write-owed-sentence-orders.ts": [
+    {
+      fields: ["updatedAt"],
+      verdict: "excluded",
+      why: "cache freshness after a lesson's word orders are saved",
+      writes: ["lesson.updateMany"],
+    },
+    {
+      fields: ["sentenceOrdersAttempts"],
+      verdict: "excluded",
+      why: "word-order attempt claims",
+      writes: ["raw:library_lessons"],
     },
   ],
   "library/lessons/_utils/save-lesson-content.ts": [

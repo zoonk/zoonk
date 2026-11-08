@@ -8,6 +8,7 @@ import {
   COMPOUND_INTEREST_CHAPTER,
   ENEM_MOCK,
   EXPONENTS_CHAPTER,
+  MOBILITY_GUESS_SCREEN,
   RAW_SCORED_MOCK,
   REVIEWS_LESSON,
   SUBJECT_HEAD_SCREEN,
@@ -326,6 +327,26 @@ ${SHARED_EXPECTATIONS}
       contextSnapshot: SUBJECT_HEAD_SCREEN,
       priorTurns: [],
       question: "o núcleo aqui é o envio, correto?",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- The active step is a guess that doesn't count, and the learner argues with its revealed answer ("permanece igual") by dividing the shares that reach the top (production, 8 Nov 2026). lessonSteps also has the screens that teach after it.
+- Confirm their division in a sentence (50 ÷ 10 = 5 in A, 75 ÷ 25 = 3 in B, so by that ratio the advantage falls), then explain the measure the lesson's next screens use: odds, those who reach the top against those who don't, with the lesson's numbers (high origin 50/50 = 1 and low 10/90 = 1/9 in A, so 9; 75/25 = 3 and 25/75 = 1/3 in B, so 9 again).
+- Say why the ratio of shares shrinks: when more people of every origin reach the top, both shares rise toward 100% and their ratio closes even though origin weighs the same. It may point to the next screens.
+- Stopping at "you're right, the question is ambiguous", or calling the screen wrong without explaining the odds: 5.0 or lower. Calling the learner's division wrong: 4.0 or lower. Any wrong number counts as an unsupported specific.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-guess-other-measure",
+    userInput: {
+      contextSnapshot: MOBILITY_GUESS_SCREEN,
+      priorTurns: [],
+      question:
+        "Por que permanece igual se no primeiro era uma relação de 5 por 1 e depois diminuiu a relação para 3 por 1?",
     },
   },
   {

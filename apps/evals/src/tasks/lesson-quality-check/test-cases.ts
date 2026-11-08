@@ -7,6 +7,7 @@ import {
 import { ALPHABET_LESSONS, ALPHABET_SLIPS, type AlphabetCheckInput } from "./alphabet-lessons";
 import { BASE_LESSONS } from "./base-lessons";
 import { EXAM_PREP_BASE_LESSON } from "./exam-prep-lessons";
+import { MOBILITY_BASE_LESSON } from "./mobility-lesson";
 import { SOURCED_BASE_LESSONS } from "./sourced-lessons";
 
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
@@ -117,6 +118,41 @@ export const TEST_CASES: TestCase<
       question: "Como você avalia a proposta de Raimundo?",
       visual: null,
     }),
+  },
+  {
+    expected: { kinds: ["incorrect"], screen: 3, verdict: "fail" },
+    id: "pt-mobilidade-guess-unresolved",
+    userInput: MOBILITY_BASE_LESSON,
+  },
+  {
+    expected: { verdict: "pass" },
+    id: "pt-mobilidade-guess-resolved",
+    userInput: plant(
+      plant(MOBILITY_BASE_LESSON, 3, {
+        image: null,
+        kind: "hookGuess",
+        options: [
+          { isCorrect: false, text: "Diminui" },
+          { isCorrect: true, text: "Permanece igual" },
+        ],
+        question:
+          "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?",
+        reveal:
+          "Pela medida que as próximas telas usam, a vantagem da origem alta permanece igual nos dois períodos.",
+        visual: null,
+      }),
+      8,
+      {
+        exampleLineIdea:
+          "uma notícia sobre mais jovens de famílias pobres entrando na universidade ou no serviço público",
+        explore: null,
+        image: null,
+        kind: "explanation",
+        text: "De A para B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25. Dividir as fatias que chegam ao topo daria 5 e depois 3, mas essa queda só mostra que mais gente de toda origem subiu. Nas odds, a vantagem seguiu em nove vezes. Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem.",
+        title: "Mais subidas, mesma vantagem",
+        visual: null,
+      },
+    ),
   },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
   {

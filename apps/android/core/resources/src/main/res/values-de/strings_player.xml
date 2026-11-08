@@ -15,6 +15,7 @@
   "player_activity_your_answer": "c149fa7640916ffa8c7c5777a593c246f11f98b4ea0d617227b0ead2be835263",
   "player_ai_note": "b0004c73467bd55c155dd64826e31248d0309bc4282ab5665575a078ff94ce85",
   "player_already_knew": "9a4b9df1bea7a234d07c51f0b6441694f1bd10e9070adfb6d0aba07266ea04df",
+  "player_also_correct_label": "b668333b4e0b32cab88dd6c699d5d06725580669c631dafe709fce3093152e26",
   "player_answer_feedback": "01d8fe06002ec55304ca3833c1a5caf49e281df362c4751d9e2bd33cfefb04b9",
   "player_answer_options": "9b4a48b2b7c5acebc46d88fcc4faddaa2169a082db98abd1fb0e6325c4d6ef6e",
   "player_ask_something_else": "9dbf3c265653656e8d2d3dc53ecda4b649c6c03464539a56cec631b2c5990e8c",
@@ -95,6 +96,7 @@
   "player_lesson_complete": "b3841051b33296d31928204cce9254bdb8e022d81f591591b759378f7e07cd27",
   "player_lesson_map": "30dad99ca1fdbc0fe9330310d8bf063cadf00f610ed3548763dcf7ea6b336b8a",
   "player_lesson_map_nested": "3e789594c52802639bc04affd6bcf494d4db65a6184a9229ff76d6de8099b591",
+  "player_lesson_not_saved": "f21dc1a4c4c71bc082ed16f72edc4ff79b9f9ba1eb709c0ea011bfc16a01681d",
   "player_lesson_of": "fe70475c2e119fa632dc56cad8fb9c65b09af2e3a5b969e9ac08dc41916015af",
   "player_listen": "7a797408f10f7db925cf55836a89b1844f9663758f6a04d19378c20112163cb1",
   "player_microphone_blocked": "1d4b5eefec38d47cde390b32a9a0df73973b11f0f8a3968c9feaefe502e2cafe",
@@ -244,6 +246,8 @@
     <string name="player_answer_feedback">Feedback zur Antwort</string>
     <string name="player_spelled">Geschrieben:</string>
     <string name="player_correct_answer_label">Antwort:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Auch richtig:</string>
     <string name="player_explain_answer">Meine Antwort erklären</string>
     <string name="player_explain_answer_failed">Wir konnten es gerade nicht erklären. Versuch es gleich noch einmal.</string>
     <string name="player_explain_answer_title">Warum diese Antwort nicht zutrifft</string>
@@ -407,6 +411,7 @@
     <string name="player_already_knew">Das wusstest du schon</string>
     <string name="player_saving_progress">Wir speichern deinen Fortschritt…</string>
     <string name="player_save_failed">Das hat nicht geklappt. Deine Antworten bleiben erhalten.</string>
+    <string name="player_lesson_not_saved">Deine Lektion ist noch nicht gespeichert</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Wiederholung am %1$s</string>
     <string name="player_next_lesson">Nächste Lektion</string>

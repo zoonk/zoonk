@@ -469,6 +469,11 @@ msgid "That didn't work. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/_components/save-error.tsx
+msgctxt "71Gfs0"
+msgid "Still not going through. You can come back later."
+msgstr "이번에도 전송하지 못했어요. 나중에 다시 와도 돼요."
+
+#: src/_components/save-error.tsx
 msgctxt "7i_b3c"
 msgid "That didn't go through. Your answers are kept."
 msgstr "전송하지 못했어요. 답은 그대로 남아 있어요."
@@ -12773,6 +12778,11 @@ msgstr "벡터 {base}"
 msgctxt "a8JHBW"
 msgid "Study {minutes} more minutes"
 msgstr "{minutes}분 더 공부하기"
+
+#: src/session/failed-moment.tsx
+msgctxt "kapQxt"
+msgid "Your lesson isn't saved yet"
+msgstr "레슨이 아직 저장되지 않았어요"
 
 #: src/session/lesson-moment.tsx
 #: src/session/study-moment.tsx

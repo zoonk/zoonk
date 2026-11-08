@@ -23,14 +23,25 @@ function getNearestAvailable(buttons: HTMLButtonElement[], pressed: HTMLButtonEl
   );
 }
 
-export function placeKeepingFocus(event: Press, place: () => void) {
+export function placeKeepingFocus({
+  event,
+  fillsAnswer,
+  place,
+}: {
+  event: Press;
+  fillsAnswer: boolean;
+  place: () => void;
+}) {
   const tile = event.currentTarget;
   const tiles = getButtons(tile.closest(BANK_SELECTOR));
 
   updateKeepingFocus(
     event,
     place,
-    () => getReadyLessonPrimary() ?? getNearestAvailable(tiles, tile),
+    () =>
+      (fillsAnswer ? getReadyLessonPrimary() : null) ??
+      getNearestAvailable(tiles, tile) ??
+      getReadyLessonPrimary(),
   );
 }
 

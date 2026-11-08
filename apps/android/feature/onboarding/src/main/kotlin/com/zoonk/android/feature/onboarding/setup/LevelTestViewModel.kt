@@ -51,7 +51,7 @@ internal class LevelTestViewModel(
     var isSaving by mutableStateOf(false)
         private set
 
-    var answerFailed by mutableStateOf(false)
+    var saveFailures by mutableStateOf(0)
         private set
 
     var finishFailed by mutableStateOf(false)
@@ -65,6 +65,7 @@ internal class LevelTestViewModel(
     /** Reads first, so ready questions open at once instead of flashing the wait for questions still to write. */
     fun begin() {
         if (isStarting) return
+        finishFailed = false
         isStarting = true
         bank = BankWait()
         viewModelScope.launch {
@@ -112,69 +113,87 @@ internal class LevelTestViewModel(
         skipped: Boolean = false,
     ) {
         if (isSaving) return
-        sent = SentTestAnswer(questionId, answerIndex, durationMs, skipped)
-        send()
-    }
-
-    /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
-    fun retryAnswer() {
-        val answer = sent ?: return
-        if (isSaving) return
+        finishFailed = false
+        val previous = sent
+        val duration =
+            previous
+                ?.takeIf {
+                    it.questionId == questionId && it.answerIndex == answerIndex && it.skipped == skipped
+                }?.durationMs ?: durationMs
+        val answer = SentTestAnswer(questionId, answerIndex, duration, skipped)
         isSaving = true
         viewModelScope.launch {
-            test.refresh()
-            val current = (phase(test.state.value) as? LevelTestPhase.Question)?.question?.id
-            isSaving = false
-            if (current == answer.questionId) {
-                send()
-            } else {
-                sent = null
-                answerFailed = false
+            if (previous != null) {
+                if (!test.refreshed()) {
+                    saveFailures++
+                    isSaving = false
+                    return@launch
+                }
+                val current = (phase(test.state.value) as? LevelTestPhase.Question)?.question?.id
+                if (current != questionId) {
+                    sent = null
+                    saveFailures = 0
+                    finishFailed = false
+                    isSaving = false
+                    return@launch
+                }
             }
+            sent = answer
+            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
+                is WriteOutcome.Done -> {
+                    sent = null
+                    saveFailures = 0
+                    finishFailed = false
+                }
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    saveFailures++
+                }
+            }
+            isSaving = false
         }
     }
 
     /** The learner leaves the questions for the levels they have so far, saved so reopening the test shows them too. */
     fun stop() {
         if (isSaving) return
-        stopped = true
-        finish {}
+        finish(fromQuestion = true) {
+            stopped = true
+            WriteOutcome.Done(Unit)
+        }
     }
 
-    fun finish(onDone: () -> Unit) {
+    fun skipSpeaking() {
+        if (isSaving) return
+        stopped = true
+        finish { WriteOutcome.Done(Unit) }
+    }
+
+    fun finish(
+        fromQuestion: Boolean = false,
+        onDone: suspend () -> WriteOutcome<*>,
+    ) {
         if (isSaving) return
         isSaving = true
         finishFailed = false
         viewModelScope.launch {
-            when (store.finishLevelTest(goalId)) {
+            val outcome = store.finishLevelTest(goalId)
+            val completed = if (outcome is WriteOutcome.Done) onDone() else outcome
+            when (completed) {
                 is WriteOutcome.Done -> {
-                    onDone()
+                    if (fromQuestion) saveFailures = 0
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    finishFailed = true
-                }
-            }
-            isSaving = false
-        }
-    }
-
-    private fun send() {
-        val answer = sent ?: return
-        isSaving = true
-        answerFailed = false
-        viewModelScope.launch {
-            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
-                is WriteOutcome.Done -> {
-                    sent = null
-                }
-
-                WriteOutcome.Obsolete -> {}
-
-                else -> {
-                    answerFailed = true
+                    if (fromQuestion) {
+                        saveFailures++
+                    } else {
+                        finishFailed = true
+                    }
                 }
             }
             isSaving = false

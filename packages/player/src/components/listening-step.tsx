@@ -32,11 +32,13 @@ function TextPrompt({ sentence }: { sentence: string }) {
 }
 
 export function ListeningStep({
+  isLocked,
   onSelectAnswer,
   result,
   selectedAnswer,
   step,
 }: {
+  isLocked: boolean;
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
@@ -51,6 +53,7 @@ export function ListeningStep({
   return (
     <ArrangeWordsInteraction
       answer={step.sentence.translation}
+      isLocked={isLocked}
       answerKind="listening"
       onSelectAnswer={onSelectAnswer}
       result={result}

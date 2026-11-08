@@ -8,6 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { publishLessonVersion } from "../_test-utils/publish-lesson-version";
 import { claimUsage } from "../entitlements/claim-usage";
 import {
   setupPlayableLesson,
@@ -73,6 +74,11 @@ async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { a
   const question = await ask(asked);
   await answerWith({ answer, questionId: question.id });
   return question;
+}
+
+async function storedSnapshot(questionId: string) {
+  const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: questionId } });
+  return parseLessonQuestionContextSnapshot(stored.contextSnapshot);
 }
 
 async function claimedHistory(questionId: string) {
@@ -227,6 +233,122 @@ describe("questions about a Library lesson", () => {
 
     expect(parseLessonQuestionContextSnapshot(stored.contextSnapshot)).toMatchObject({
       answer: { isCorrect: false, selectedAnswer: "It spins around" },
+    });
+  });
+
+  it("gives a screen's question the lesson's teaching screens, without another question's or guess's answer", async () => {
+    const { lesson, steps } = await setupPlayableLesson({
+      steps: [
+        { content: { text: "Why doesn't the electron fall in?", variant: "text" }, kind: "hook" },
+        "explanation",
+        "hook",
+        "workedExample",
+        "check",
+        "summary",
+      ],
+    });
+
+    const guess = steps[2];
+    const check = stepOfKind(steps, "check");
+
+    if (!guess) {
+      throw new Error("Expected the guess");
+    }
+
+    const onCheck = await askAnswered({
+      answer: "Think about what the cloud maps.",
+      context: { kind: "step", stepId: check.id, stepNumber: 9 },
+      lessonId: lesson.id,
+    });
+
+    const onGuess = await askAnswered({
+      answer: "What would you expect?",
+      context: { kind: "step", stepId: guess.id, stepNumber: 3 },
+      lessonId: lesson.id,
+    });
+
+    const answered = await ask({
+      context: {
+        answer: { kind: "check", optionId: "size" },
+        kind: "answer",
+        stepId: check.id,
+        stepNumber: 9,
+      },
+      lessonId: lesson.id,
+    });
+
+    const [checkSnapshot, guessSnapshot, answerSnapshot] = await Promise.all([
+      storedSnapshot(onCheck.id),
+      storedSnapshot(onGuess.id),
+      storedSnapshot(answered.id),
+    ]);
+
+    const listed = (snapshot: typeof checkSnapshot) =>
+      "lessonSteps" in snapshot
+        ? snapshot.lessonSteps.map((step) => [step.kind, step.stepNumber])
+        : null;
+
+    const aroundCheck = [
+      ["hook", 1],
+      ["explanation", 2],
+      ["workedExample", 4],
+      ["check", 5],
+      ["summary", 6],
+    ];
+
+    expect(listed(checkSnapshot)).toStrictEqual(aroundCheck);
+    expect(listed(answerSnapshot)).toStrictEqual(aroundCheck);
+
+    expect(listed(guessSnapshot)).toStrictEqual([
+      ["hook", 1],
+      ["explanation", 2],
+      ["hook", 3],
+      ["workedExample", 4],
+      ["summary", 6],
+    ]);
+
+    expect(checkSnapshot).toMatchObject({ step: { kind: "check", stepNumber: 5 } });
+    expect(answerSnapshot).toMatchObject({ answer: { isCorrect: false }, step: { kind: "check" } });
+
+    expect(guessSnapshot).toMatchObject({
+      step: { content: { variant: "guess" }, kind: "hook", stepNumber: 3 },
+    });
+  });
+
+  it("reads a screen's teaching screens from the version the learner opened", async () => {
+    const { lesson, steps } = await setupPlayableLesson({ steps: ["explanation", "check"] });
+    const check = stepOfKind(steps, "check");
+
+    await publishLessonVersion({
+      language: lesson.language,
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: steps.map((step) => ({
+        content:
+          step.kind === "explanation"
+            ? { text: "A rewritten explanation.", title: "Rewritten" }
+            : (step.content as object),
+        kind: step.kind,
+        mathItem: null,
+        provenance: {
+          generatedAt: new Date(),
+          model: "fix",
+          promptVersion: "fix",
+          runId: "fix",
+          sources: [],
+        },
+        skillId: step.skillId,
+      })),
+      summary: { ideas: [{ text: "A fixed idea." }], shape: "hub" },
+    });
+
+    const question = await ask({
+      context: { kind: "step", stepId: check.id, stepNumber: 2 },
+      lessonId: lesson.id,
+    });
+
+    await expect(storedSnapshot(question.id)).resolves.toMatchObject({
+      lessonSteps: [{ content: stepOfKind(steps, "explanation").content }, { kind: "check" }],
     });
   });
 

@@ -18,6 +18,7 @@ final class EssayWriter {
   let essay: Resource<EssayView>
   var writing: Bool?
   private(set) var status = Status.idle
+  private(set) var saveFailures = 0
   private(set) var slow = false
   private var typed: String?
   private var startedAt: Date?
@@ -98,6 +99,7 @@ final class EssayWriter {
     switch result {
     case .done(.graded(let grade)):
       let isChangedSince = self.text != text
+      saveFailures = 0
       status = .idle
       ungraded = nil
       writing = isChangedSince
@@ -119,6 +121,7 @@ final class EssayWriter {
     case .done(.signUpRequired):
       status = .signUpRequired
     case .done(.blockNotActive):
+      saveFailures += 1
       status = .failed
       // The block was finished or skipped elsewhere; a fresh read, not one already on its way,
       // shows it closed.
@@ -127,6 +130,7 @@ final class EssayWriter {
     case .obsolete:
       status = .idle
     case .failed, nil:
+      saveFailures += 1
       status = .failed
     }
   }

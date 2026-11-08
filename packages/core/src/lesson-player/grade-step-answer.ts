@@ -17,7 +17,7 @@ import {
 
 export type GradedStepAnswer = {
   answerText: string | null;
-  /** The right answer as text when the learner missed it. */
+  /** The lesson's answer on a miss or a correct word-bank answer in another order; null for its own order. */
   correctAnswer: string | null;
   /** An activity's correct end state, drawn next to the learner's answer; null for other screens. */
   expected: ActivityExpected | null;
@@ -202,7 +202,8 @@ function gradeExercise({
 
   return {
     answerText: describeExerciseAnswer({ answer, exercise: step.exercise }),
-    correctAnswer: result.isCorrect ? null : result.correctAnswer,
+    correctAnswer:
+      result.isCorrect && result.isCanonicalOrder !== false ? null : result.correctAnswer,
     expected: null,
     feedback: result.feedback,
     isCorrect: result.isCorrect,

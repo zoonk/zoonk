@@ -19,6 +19,7 @@ import {
 import { useLessonRun } from "./use-lesson-run";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
+import { useWhenBack } from "./use-when-back";
 
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
@@ -59,24 +60,14 @@ function revealWithoutGuess({
   return true;
 }
 
-export function useLessonPlayerActions({
+function useCompletionSave({
   adapters,
   dispatch,
-  lesson,
+  ensureRun,
+  flushChecks,
   state,
-  track,
-  writeExampleLines,
-}: ActionsInput) {
-  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
-  const { ensureRun, flushChecks, resendHeld } = lessonRun;
-
-  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
-    ...lessonRun,
-    adapters,
-    dispatch,
-    state,
-  });
-
+}: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
+  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushChecks">) {
   const saveCompletion = useEffectEvent(async () => {
     const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
 
@@ -128,6 +119,33 @@ export function useLessonPlayerActions({
     }
   }, [isSaving]);
 
+  useWhenBack(() => {
+    if (state.phase === "completed" && state.completion?.status === "failed") {
+      dispatch({ type: "completionRetried" });
+    }
+  });
+}
+
+export function useLessonPlayerActions({
+  adapters,
+  dispatch,
+  lesson,
+  state,
+  track,
+  writeExampleLines,
+}: ActionsInput) {
+  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
+  const { ensureRun, resendHeld } = lessonRun;
+
+  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
+    ...lessonRun,
+    adapters,
+    dispatch,
+    state,
+  });
+
+  useCompletionSave({ ...lessonRun, adapters, dispatch, state });
+
   const check = useCallback(() => {
     const step = getCurrentStep(state);
     const answer = step ? state.answers[step.id] : undefined;
@@ -150,12 +168,12 @@ export function useLessonPlayerActions({
       return;
     }
 
-    if (isServerGradedAnswer({ answer, step })) {
-      void gradeOnServer({ answer, step });
+    const graded = gradeStepAnswer({ answer, language: lesson.language, step });
+
+    if (isServerGradedAnswer({ answer, isCorrect: graded?.isCorrect, step })) {
+      void gradeOnServer({ answer, answerText: graded?.answerText, step });
       return;
     }
-
-    const graded = gradeStepAnswer({ answer, language: lesson.language, step });
 
     if (!graded) {
       return;
@@ -226,6 +244,7 @@ export function useLessonPlayerActions({
         setChosenToday(CANT_WRITE_TODAY, true);
         dispatch({ type: "skipWriting" });
       },
+      startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
     [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],

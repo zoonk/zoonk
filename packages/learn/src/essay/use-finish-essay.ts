@@ -6,14 +6,14 @@ import { useEssayScreen } from "./essay-context";
 export function useFinishEssay() {
   const { actions } = useEssayScreen();
   const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failures, setFailures] = useState(0);
 
   async function finish() {
     setPending(true);
     const finished = await actions.finish().catch(() => false);
     setPending(false);
-    setFailed(!finished);
+    setFailures((count) => (finished ? 0 : count + 1));
   }
 
-  return { failed, finish, pending };
+  return { failures, finish, pending };
 }

@@ -302,7 +302,7 @@ private fun BlockActions(
         }
 
         RunPhase.FinishFailed -> {
-            SaveErrorText()
+            SaveErrorText(run.saveFailures)
             TaskActions { width ->
                 Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
             }

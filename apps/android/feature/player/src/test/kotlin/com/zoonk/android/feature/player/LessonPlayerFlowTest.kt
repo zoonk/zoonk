@@ -30,6 +30,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
@@ -357,6 +358,29 @@ class LessonPlayerFlowTest {
         val attempts = api.checks.map { it.second.attemptId }
         assertEquals(2, attempts.size)
         assertEquals(1, attempts.distinct().size)
+        assertEquals(listOf(RUN_ID), api.completions)
+    }
+
+    @Test
+    fun aFinishThatFailedTriesAgainWhenTheLessonComesBack() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { completeFailures = 1 }
+
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        tap("Continue")
+        tap("Continue")
+        val status = {
+            viewModel.state.value
+                ?.completion
+                ?.status
+        }
+        rule.waitUntil { status() == CompletionStatus.Failed }
+        assertEquals(emptyList<String>(), api.completions)
+
+        rule.runOnIdle { viewModel.retryFailedFinish() }
+
+        rule.waitUntil { status() == CompletionStatus.Saved }
         assertEquals(listOf(RUN_ID), api.completions)
     }
 

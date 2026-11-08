@@ -8,6 +8,7 @@ import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 export type AnswerResult = {
   correctAnswer: string | null;
   isCorrect: boolean;
+  isCanonicalOrder?: boolean;
   feedback: string | null;
 };
 
@@ -107,5 +108,6 @@ export function checkArrangeWordsAnswer(
   userWords: string[],
 ): AnswerResult {
   const isCorrect = matchesAcceptedArrangeWords(correctWords, userWords);
-  return { correctAnswer: null, feedback: null, isCorrect };
+  const isCanonicalOrder = matchesAcceptedArrangeWords(correctWords.slice(0, 1), userWords);
+  return { correctAnswer: null, feedback: null, isCanonicalOrder, isCorrect };
 }

@@ -86,6 +86,16 @@ function useShownBuddy(buddy: LearnBuddy | null) {
   };
 }
 
+function StepSaveError({ current, failed }: { current: OnboardingStep; failed: Failed | null }) {
+  return (
+    failed?.step === current && (
+      <ChangeSaveError>
+        {failed.dayTooShort && <DayTooShortWords {...failed.dayTooShort} />}
+      </ChangeSaveError>
+    )
+  );
+}
+
 type StepsFlowProps = {
   actions: OnboardingActions;
   buddy: LearnBuddy | null;
@@ -130,48 +140,55 @@ export function StepsFlow({
   // waits for the refresh, so the next one answers at once.
   const [sending, setSending] = useState<{ open: boolean; step: OnboardingStep } | null>(null);
 
-  const answer = (input: OnboardingAnswerInput) => {
-    if (saving.current) {
-      return;
-    }
-
-    saving.current = true;
-    const step = state.current;
-    setSending({ open: true, step });
-
-    setFailed(null);
-
-    startTransition(async () => {
-      // A save that fails, even by throwing, keeps the learner here with what they picked.
-      const { data: outcome } = await safeAsync(() =>
-        actions.answer({ goalId: state.view.goal.id, input }),
-      );
-
-      saving.current = false;
-      setSending({ open: false, step });
-
-      if (!outcome || outcome.status !== "saved") {
-        setFailed({
-          dayTooShort:
-            outcome?.status === "dayTooShort"
-              ? { goals: outcome.goals, minutes: outcome.minutes }
-              : null,
-          step,
-        });
-
+  /** Resolves whether the answer saved; `quiet` leaves saying a failure to the caller. */
+  const answer = (input: OnboardingAnswerInput, { quiet = false } = {}) =>
+    new Promise<boolean>((resolve) => {
+      if (saving.current) {
+        resolve(false);
         return;
       }
 
-      shownBuddy.remember(input);
+      saving.current = true;
+      const step = state.current;
+      setSending({ open: true, step });
 
-      // "Pass an exam" moved a language goal to an exam goal: the steps go on at the new goal's page.
-      if (outcome.onboarding.goal.id !== state.view.goal.id) {
-        navigation.replaceSteps(outcome.onboarding.goal.id);
-      }
+      setFailed(null);
 
-      setState((previous) => applyAnswer({ state: previous, step, view: outcome.onboarding }));
+      startTransition(async () => {
+        // A save that fails, even by throwing, keeps the learner here with what they picked.
+        const { data: outcome } = await safeAsync(() =>
+          actions.answer({ goalId: state.view.goal.id, input }),
+        );
+
+        saving.current = false;
+        setSending({ open: false, step });
+
+        if (!outcome || outcome.status !== "saved") {
+          if (!quiet) {
+            setFailed({
+              dayTooShort:
+                outcome?.status === "dayTooShort"
+                  ? { goals: outcome.goals, minutes: outcome.minutes }
+                  : null,
+              step,
+            });
+          }
+
+          resolve(false);
+          return;
+        }
+
+        shownBuddy.remember(input);
+
+        // "Pass an exam" moved a language goal to an exam goal: the steps go on at the new goal's page.
+        if (outcome.onboarding.goal.id !== state.view.goal.id) {
+          navigation.replaceSteps(outcome.onboarding.goal.id);
+        }
+
+        setState((previous) => applyAnswer({ state: previous, step, view: outcome.onboarding }));
+        resolve(true);
+      });
     });
-  };
 
   const back = () => {
     // What the time screen kept for a date change is stale once the learner leaves it by Back.
@@ -235,13 +252,7 @@ export function StepsFlow({
               // Answers change in "Adjust" now, not by going back through the questions.
               onBack: state.history.length > 0 && !isPlan ? back : undefined,
             }}
-            notice={
-              failed?.step === state.current && (
-                <ChangeSaveError>
-                  {failed.dayTooShort && <DayTooShortWords {...failed.dayTooShort} />}
-                </ChangeSaveError>
-              )
-            }
+            notice={<StepSaveError current={state.current} failed={failed} />}
           >
             {/* Placement follows the run itself, so only the questions say it stopped. */}
             <PlanStartNoticeProvider
@@ -252,7 +263,7 @@ export function StepsFlow({
                 buddy={shownBuddy.buddy}
                 isGuest={isGuest}
                 onAnswer={answer}
-                onPlacementDone={() => answer({ question: "placement" })}
+                onPlacementDone={() => answer({ question: "placement" }, { quiet: true })}
                 onPlacementFinishFailed={(finishFailed) =>
                   setFailed(finishFailed ? { dayTooShort: null, step: "placement" } : null)
                 }

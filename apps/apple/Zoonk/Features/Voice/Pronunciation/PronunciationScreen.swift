@@ -150,7 +150,7 @@ private struct PronunciationRoundView: View {
           wordStatus(state)
         } actions: {
           VStack(spacing: 12) {
-            if round.finishFailed {
+            if round.finishFailures > 0, !round.isPending {
               finishError(round)
             }
 
@@ -266,6 +266,9 @@ private struct PronunciationRoundView: View {
         localized: "We couldn't hear the word. Try again a little closer.", table: "Voice",
         comment: "A recording had no word in it")
     case .failed:
+      if (round?.answerFailures ?? 0) > 1 {
+        return String(localized: PracticeSaveError.repeatedMessage)
+      }
       return String(
         localized: "That didn't go through. Try again.", table: "Voice",
         comment: "Grading a word failed")
@@ -337,9 +340,11 @@ private struct PronunciationRoundView: View {
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
       FailureLine(
-        message: LocalizedStringResource(
-          "We couldn't save your answers.", table: "Voice",
-          comment: "Finishing the round failed")
+        message: round.finishFailures > 1
+          ? PracticeSaveError.repeatedMessage
+          : LocalizedStringResource(
+            "We couldn't save your answers.", table: "Voice",
+            comment: "Finishing the round failed")
       )
       .typeStyle(.body)
 

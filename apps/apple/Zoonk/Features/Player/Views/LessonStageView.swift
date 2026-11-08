@@ -155,7 +155,7 @@ struct LessonStageView: View {
               if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
                 VStack(alignment: .leading, spacing: 24) {
                   LessonVerdictView(
-                    step: step, result: result, store: store,
+                    step: step, answer: state.currentAnswer, result: result, store: store,
                     willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
                       ?? false,
                     hyperdriveStreak: state.hyperdriveStreak(for: step.id)

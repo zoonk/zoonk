@@ -38,6 +38,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     var status: Status
+    var saveFailures = 0
     var summary: LessonCompletionSummary?
     /// "I already know this" passed every check and skipped the rest.
     var testedOut = false
@@ -623,7 +624,8 @@ struct LessonPlayerState: Equatable, Sendable {
 
     if result.isCorrect != verdict.isCorrect {
       result.isCorrect = verdict.isCorrect
-      result.correctAnswer = verdict.isCorrect ? nil : verdict.correctAnswer ?? result.correctAnswer
+      result.correctAnswer =
+        verdict.isCorrect ? verdict.correctAnswer : verdict.correctAnswer ?? result.correctAnswer
       result.feedback = verdict.feedback ?? result.feedback
     }
 
@@ -718,7 +720,7 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     guard let first = missing.first, let position = recovered.queue.firstIndex(of: first) else {
-      completion?.status = .failed
+      completionFailed()
       return
     }
 
@@ -789,6 +791,7 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   mutating func completionFailed() {
+    completion?.saveFailures += 1
     completion?.status = .failed
   }
 

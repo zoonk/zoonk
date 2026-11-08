@@ -46,6 +46,7 @@ import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task"
 import { imageSceneTask } from "./image-scene/task";
 import { languageAudioTask } from "./language-audio/task";
 import { languageLessonTask } from "./language-lesson/task";
+import { languageSentenceOrdersTask } from "./language-sentence-orders/task";
 import { lessonFixTask } from "./lesson-fix/task";
 import { lessonImageTask } from "./lesson-image/task";
 import { lessonMarksTask } from "./lesson-marks/task";
@@ -175,6 +176,7 @@ export const TASKS: readonly RegisteredTask[] = [
   memoryInsightTask,
   memorySessionPatternsTask,
   languageLessonTask,
+  languageSentenceOrdersTask,
   explainSpokenAnswerTask,
   transcribeSpeechTask,
   assessPronunciationTask,

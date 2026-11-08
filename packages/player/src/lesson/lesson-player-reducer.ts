@@ -110,7 +110,10 @@ function completionSaved(
   action: ActionOf<"completionSaved">,
 ): LessonPlayerState {
   return state.completion
-    ? { ...state, completion: { ...state.completion, result: action.result, status: "saved" } }
+    ? {
+        ...state,
+        completion: { ...state.completion, failures: 0, result: action.result, status: "saved" },
+      }
     : state;
 }
 
@@ -221,6 +224,8 @@ function reduceLearnerAction(
       return startQuickCheck(state);
     case "checkStarted":
       return startChecking(state);
+    case "recordingStarted":
+      return state.checkFailed ? { ...state, checkFailed: false, checkIssue: null } : state;
     case "checkResolved":
       return recordVerdict(state, action);
     case "checkFailed":

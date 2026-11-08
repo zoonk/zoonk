@@ -10,6 +10,17 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Evals
 
+## Choosing a model
+
+An eval's job is to find the cheapest model that matches a higher tier's quality on what the task needs.
+
+- Never test one model alone. Run the task on models from different families (at least OpenAI, Anthropic and Google), picked from the AI Gateway's current catalog.
+- Work from the bottom up. Start with each family's cheapest model and move one tier up only when the one below isn't good enough. For OpenAI, that's Luna, then Terra, then Sol, then Astra.
+- First say what matters most for this task: quality when it needs the best output, cost when keeping spend down comes first, or latency when speed is critical. Then pick the best balance.
+- When a cheaper model reaches the same or very similar quality, use it. It's usually faster too.
+- Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected.
+- A model's labels tend to favor its own family. When hand labels decide between models, label blind with two families, then read the outputs where the leading models differ.
+
 ## Regression cases
 
 - Every AI failure found while testing (persona walks, manual checks, eval runs, bug reports) becomes a test case on the task that produced it, in that task's `test-cases.ts`, added with the fix. The case uses the input that triggered the failure and states the expectation it broke.

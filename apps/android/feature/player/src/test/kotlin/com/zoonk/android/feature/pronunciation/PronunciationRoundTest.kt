@@ -123,10 +123,10 @@ class PronunciationRoundTest {
 
             round.record(round.attempt, RECORDING)
             round.next()
-            assertTrue(round.finishFailed)
+            assertEquals(1, round.finishFailures)
 
             round.finish()
-            assertFalse(round.finishFailed)
+            assertEquals(0, round.finishFailures)
             assertEquals(RoundStep.Result(RESULT), round.step)
         }
 

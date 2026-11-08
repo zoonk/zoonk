@@ -89,13 +89,13 @@ export function ExerciseStepView({
     case "fillBlank":
       return <FillBlankStep {...shared} result={stepResult} />;
     case "listening":
-      return <ListeningStep {...shared} result={stepResult} />;
+      return <ListeningStep {...shared} isLocked={isLocked} result={stepResult} />;
     case "matchColumns":
       return <MatchColumnsStep {...shared} />;
     case "multipleChoice":
       return <MultipleChoiceStep {...shared} result={stepResult} />;
     case "reading":
-      return <ReadingStep {...shared} result={stepResult} />;
+      return <ReadingStep {...shared} isLocked={isLocked} result={stepResult} />;
     case "translation":
       return <TranslationStep {...shared} definesWords={definesWords} result={stepResult} />;
     default:
