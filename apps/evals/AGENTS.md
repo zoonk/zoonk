@@ -31,3 +31,4 @@ An eval's job is to find the cheapest model that matches a higher tier's quality
 - A real input the task fails is the case to keep. Never swap it for an easier input to make an eval pass: a failing case is the eval doing its job. Fix the task or the pipeline and keep the case.
 - When code can verify the flaw, the task's scorer reuses the validator the generation pipeline runs before saving (for example `@zoonk/utils/text-flaws` or `findSkillGraphProblems`), so evals and production judge output the same way. Otherwise, write the expectation so the judge can check it.
 - Cases hold Library content, public documents and test learners' inputs, never a real learner's data.
+- After changing a scorer or a case's expectations, rescore every saved model's results on the cases it affects, not only the models you're comparing: the leaderboard reads saved scores as they are, so a model left out keeps credit the new check would take away.
