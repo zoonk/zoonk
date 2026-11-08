@@ -15,7 +15,8 @@ struct PlacementStep: View {
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
-  @State private var saveFailures = 0
+  @State private var questionFailures = 0
+  @State private var finishFailed = false
   @State private var failedAnswer: SentAnswer?
   @State private var waitRound = 0
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
@@ -130,7 +131,7 @@ struct PlacementStep: View {
     case .question(let question, let labels):
       PlacementQuestionScreen(
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
-        labels: labels, isSaving: isSaving, failures: saveFailures,
+        labels: labels, isSaving: isSaving, failures: questionFailures,
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
@@ -198,7 +199,7 @@ struct PlacementStep: View {
   }
 
   @ViewBuilder private var saveFailure: some View {
-    if saveFailures > 0, !isSaving {
+    if finishFailed, !isSaving {
       Section {
         FailureLine(
           message: LocalizedStringResource(
@@ -465,6 +466,7 @@ struct PlacementStep: View {
     }
 
     isSaving = true
+    finishFailed = false
     let sent = SentAnswer(
       answer: answer, sender: answer.isDontKnow ? .notSure : .check,
       measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
@@ -476,14 +478,14 @@ struct PlacementStep: View {
         let result = try await onboarding.answerPlacement(
           goalID: view.goal.id, itemID: question.itemId, answer: answer,
           duration: .milliseconds(sent.durationMs))
-        saveFailures = 0
+        questionFailures = 0
         failedAnswer = nil
         shown.answered += 1
         show(result.placement)
       } catch is CancellationError {
       } catch {
         failedAnswer = sent
-        saveFailures += 1
+        questionFailures += 1
       }
     }
   }
@@ -494,6 +496,7 @@ struct PlacementStep: View {
     }
 
     isSaving = true
+    finishFailed = false
 
     Task {
       defer { isSaving = false }
@@ -509,16 +512,15 @@ struct PlacementStep: View {
         switch stopped {
         case .done:
           try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: false)
-          saveFailures = 0
           try await onDone()
         case .failed:
-          saveFailures += 1
+          finishFailed = true
         case .obsolete:
           break
         }
       } catch is CancellationError {
       } catch {
-        saveFailures += 1
+        finishFailed = true
       }
     }
   }
@@ -528,18 +530,26 @@ struct PlacementStep: View {
       return
     }
 
+    let fromQuestion = if case .question = phase { true } else { false }
     isSaving = true
+    finishFailed = false
 
     Task {
       defer { isSaving = false }
 
       do {
         try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-        saveFailures = 0
         try await onDone()
+        if fromQuestion {
+          questionFailures = 0
+        }
       } catch is CancellationError {
       } catch {
-        saveFailures += 1
+        if fromQuestion {
+          questionFailures += 1
+        } else {
+          finishFailed = true
+        }
       }
     }
   }
@@ -627,8 +637,8 @@ struct PlacementQuestionScreen<Media: View>: View {
   }
 
   private var asked: PracticeQuestionView {
-    PracticeQuestionView(question: question, labels: labels, isLocked: isSaving, draft: $draft) {
-      answer in
+    PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+      guard !isSaving else { return }
       submission = .confirm
       onAnswer(answer)
     }
