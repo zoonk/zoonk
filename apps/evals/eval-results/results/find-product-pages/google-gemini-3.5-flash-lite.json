@@ -71,59 +71,6 @@
       "testCase": {
         "expected": {
           "brandUrl": [
-            "apple.com"
-          ],
-          "docsUrl": [
-            "support.apple.com"
-          ],
-          "productUrl": [
-            "apple.com/iphone"
-          ],
-          "releaseUrl": [
-            "support.apple.com",
-            "apple.com"
-          ],
-          "releasesUrl": [
-            "support.apple.com",
-            "apple.com"
-          ]
-        },
-        "id": "iphone-13-1",
-        "language": "en",
-        "userInput": {
-          "hints": {
-            "brand": "Apple",
-            "name": "iPhone",
-            "release": "iPhone 13"
-          },
-          "officialDomains": [
-            "apple.com",
-            "support.apple.com"
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "brandUrl": [
             "linear.app"
           ],
           "docsUrl": [
@@ -366,6 +313,59 @@
             "release": null
           },
           "officialDomains": []
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Wrong: releasesUrl",
+          "kind": "majorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Wrong: releasesUrl",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Wrong: releasesUrl",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "brandUrl": [
+            "apple.com"
+          ],
+          "docsUrl": [
+            "support.apple.com"
+          ],
+          "productUrl": [
+            "apple.com/iphone"
+          ],
+          "releaseUrl": [
+            "support.apple.com",
+            "apple.com"
+          ],
+          "releasesUrl": [
+            "support.apple.com/en-us/108044",
+            "support.apple.com/108044"
+          ]
+        },
+        "id": "iphone-13-1",
+        "language": "en",
+        "userInput": {
+          "hints": {
+            "brand": "Apple",
+            "name": "iPhone",
+            "release": "iPhone 13"
+          },
+          "officialDomains": [
+            "apple.com",
+            "support.apple.com"
+          ]
         }
       }
     }
