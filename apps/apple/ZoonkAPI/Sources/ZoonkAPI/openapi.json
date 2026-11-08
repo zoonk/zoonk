@@ -87474,10 +87474,11 @@
               "status": {
                 "type": "string",
                 "enum": [
+                  "done",
                   "ready",
                   "writing"
                 ],
-                "description": "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it"
+                "description": "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again"
               },
               "title": {
                 "type": "string"

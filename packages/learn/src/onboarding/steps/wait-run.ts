@@ -38,7 +38,8 @@ export type WaitStop = { failure: GenerationFailure; retry?: () => void };
 
 /**
  * The run says what changed since the page read the goal, and the read is what a reconnect starts
- * from, so a lesson either calls ready is ready.
+ * from, so a lesson either calls ready is ready, and one the read calls done stays done when the
+ * stream replays its `firstLessonReady`.
  */
 export function getFirstLesson({
   read,
@@ -53,7 +54,7 @@ export function getFirstLesson({
     return read;
   }
 
-  return read?.id === live.id && read.status === "ready" ? read : live;
+  return read?.id === live.id && read.status !== "writing" ? read : live;
 }
 
 /**

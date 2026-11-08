@@ -225,7 +225,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     findOnboardingGoalIds(goal),
     findExamNotice({ details, goal, goalDate, today }),
     readPlanReadiness(goal.id),
-    readGoalOpening(goal.openingLessonId),
+    readGoalOpening({ lessonId: goal.openingLessonId, userId }),
   ]);
 
   const [earlierGoals, [view]] = await Promise.all([

@@ -1,4 +1,5 @@
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -47,5 +48,26 @@ describe(getOnboarding, () => {
         null,
       ],
     );
+  });
+
+  it("reports the goal's first lesson as done once this learner finished it", async () => {
+    const [learner, other, lesson] = await Promise.all([
+      userFixture(),
+      userFixture(),
+      libraryLessonFixture({ contentStatus: "completed" }),
+    ]);
+
+    const goal = await goalFixture({
+      details: { answered: [] },
+      openingLessonId: lesson.id,
+      userId: learner.id,
+    });
+
+    await learningEventFixture({ contentIds: { lessonId: lesson.id }, userId: other.id });
+    mockSession(learner.id);
+    await expect(readFirstLesson(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    await learningEventFixture({ contentIds: { lessonId: lesson.id }, userId: learner.id });
+    await expect(readFirstLesson(goal.id)).resolves.toMatchObject({ status: "done" });
   });
 });

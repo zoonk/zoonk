@@ -94,7 +94,7 @@ export function FirstLessonRow({
 }) {
   const t = useExtracted();
   const titleId = useId();
-  const ready = lesson.status === "ready";
+  const ready = lesson.status !== "writing";
 
   return (
     <section
@@ -109,7 +109,9 @@ export function FirstLessonRow({
         <span className="col-start-2 text-sm leading-5 font-medium">{lesson.title}</span>
         <LessonTime ready={ready} run={run} />
         <span className="text-muted-foreground col-start-2 text-xs">
-          {ready ? t("Ready to start") : t("Writing about 5 short screens")}
+          {lesson.status === "done" && t("Done")}
+          {lesson.status === "ready" && t("Ready to start")}
+          {lesson.status === "writing" && t("Writing about 5 short screens")}
         </span>
       </div>
     </section>
