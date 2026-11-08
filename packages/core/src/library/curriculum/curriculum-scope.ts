@@ -1,4 +1,4 @@
-import { type CallReuse, type Reasoning } from "@zoonk/ai/provider-options";
+import { type CallReuse } from "@zoonk/ai/provider-options";
 import { type SearchTermsParams } from "@zoonk/ai/tasks/identity/search-terms";
 import { type CourseLevel } from "@zoonk/db";
 import { type CandidateExam } from "../exams/candidate-exams";
@@ -19,17 +19,18 @@ export type CurriculumScope = {
  */
 const PRIVATE_CONTENT_MODEL = "openai/gpt-6-luna";
 
-type ScopeModels = { fallbackModels: readonly string[]; model: string; reasoning: Reasoning };
+type ScopeModels = { fallbackModels: readonly string[]; model: string };
 
 /**
- * On 24 plans (8 Nov 2026), Luna at high reasoning scored 8.23 (EN 8.75, PT 8.09) at $9.84/1k; on
- * the private case it scored 8.65 against 6.00 at its default reasoning (Terra 9.12 at $22.77/1k).
- * Haiku 5.5 at high reasoning scored 8.11, its EN at the 8.00 floor.
+ * On 5 plans built from a learner's own job, notes or goal (8 Nov 2026), Terra scored 8.96 (EN
+ * 8.63, PT 9.21) at $17.56/1k in 28 s median, and Luna at high reasoning 7.86 (PT 7.69, under the
+ * floor) at $9.27/1k in 144 s. Read blind, Terra won 4 and tied 1: Luna split one-lesson topics in
+ * two and filled the new hook and application with placeholders. Opus is an outage route with no
+ * run on these cases.
  */
 const PRIVATE_LESSON_SPEC_MODELS: ScopeModels = {
-  fallbackModels: ["anthropic/claude-haiku-5.5"],
-  model: "openai/gpt-6-luna",
-  reasoning: "high",
+  fallbackModels: ["anthropic/claude-opus-5.5"],
+  model: "openai/gpt-6.1-terra",
 };
 
 export function getScopeModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {

@@ -723,9 +723,8 @@ describe(lessonContentWorkflow, () => {
     ]);
 
     expect(vi.mocked(generateLessonSpec).mock.calls[0]?.[0]).toMatchObject({
-      fallbackModels: ["anthropic/claude-haiku-5.5"],
-      model: "openai/gpt-6-luna",
-      reasoning: "high",
+      fallbackModels: ["anthropic/claude-opus-5.5"],
+      model: "openai/gpt-6.1-terra",
     });
 
     expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].model).toBe("openai/gpt-6.1-terra");
