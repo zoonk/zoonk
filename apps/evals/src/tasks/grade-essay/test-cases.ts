@@ -14,6 +14,8 @@ export type GradeEssayExpected = {
   zeroReason: EssayGrade["zeroReason"];
   feedbackLanguage: "en" | "pt";
   interventionElements?: Partial<EnemInterventionElements>;
+  /** Set when C5 isn't 40 per element the grade marks: a limited, vague or missing proposal. */
+  c5Score?: number;
   /** Words the feedback must use, such as the word minimum an essay falls short of. */
   feedbackMentions?: string[];
 };
@@ -256,6 +258,88 @@ export const TEST_CASES: TestCase<GradeEssayExpected, GradeEssayInput>[] = [
       essay: ENEM_ESSAYS.midFoodWaste,
       language: "en",
       prompt: FOOD_WASTE_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 80,
+      feedbackLanguage: "pt",
+      interventionElements: { action: true, agent: true, effect: true, means: true },
+      nextStepCriteria: ["c5"],
+      totalBand: { max: 880, min: 640 },
+      zeroReason: null,
+    },
+    id: "enem-conditional-proposal-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.conditionalReading,
+      language: "pt",
+      prompt: READING_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 40,
+      feedbackLanguage: "pt",
+      interventionElements: { action: true, agent: true, effect: true, means: true },
+      nextStepCriteria: ["c2", "c3", "c5"],
+      totalBand: { max: 520, min: 320 },
+      zeroReason: null,
+    },
+    id: "enem-tangent-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.tangentVaccineAccess,
+      language: "pt",
+      prompt: VACCINE_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 0,
+      feedbackLanguage: "pt",
+      nextStepCriteria: ["c5"],
+      totalBand: { max: 720, min: 440 },
+      zeroReason: null,
+    },
+    id: "enem-human-rights-proposal-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.humanRightsMobility,
+      language: "pt",
+      prompt: MOBILITY_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 0,
+      feedbackLanguage: "pt",
+      nextStepCriteria: ["c5"],
+      totalBand: { max: 720, min: 440 },
+      zeroReason: null,
+    },
+    id: "enem-no-proposal-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.noProposalFoodWaste,
+      language: "pt",
+      prompt: FOOD_WASTE_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 40,
+      feedbackLanguage: "pt",
+      nextStepCriteria: ["c5"],
+      totalBand: { max: 760, min: 480 },
+      zeroReason: null,
+    },
+    id: "enem-vague-proposal-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.vagueProposalMobility,
+      language: "pt",
+      prompt: MOBILITY_PROMPT,
       rubric: { kind: "enem" },
     },
   },

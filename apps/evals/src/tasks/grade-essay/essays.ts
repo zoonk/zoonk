@@ -1,4 +1,20 @@
 export const ENEM_ESSAYS = {
+  conditionalReading: `Em seu ensaio "O direito à literatura", o crítico Antonio Candido defende que o contato com a ficção é uma necessidade humana e, por isso, deveria ser garantido a todos. No Brasil, porém, esse direito ainda está longe de ser realidade para grande parte dos jovens, que leem pouco e raramente por vontade própria. Esse quadro se explica, sobretudo, pela falta de acesso aos livros e pela forma como a leitura é apresentada nas escolas.
+
+Em primeiro lugar, o acesso aos livros é desigual. Muitos municípios não têm biblioteca pública em funcionamento regular, e o preço de um livro novo pesa no orçamento das famílias de baixa renda. Assim, o jovem da periferia cresce sem ver livros em casa e sem um espaço público onde possa escolhê-los, o que dificulta a formação do hábito.
+
+Além disso, a escola costuma tratar a leitura como obrigação. Em vez de despertar o interesse dos estudantes, muitas aulas se limitam a cobrar resumos de obras escolhidas sem considerar a idade e os gostos da turma. Desse modo, o livro passa a ser associado à prova e ao cansaço, e não ao prazer, o que afasta os jovens da leitura depois que deixam a escola.
+
+Portanto, se o Ministério da Educação criasse clubes de leitura nas escolas públicas, por meio de encontros semanais mediados por professores e com obras escolhidas pelos próprios alunos, os jovens passariam a enxergar a leitura como uma atividade prazerosa. Dessa forma, o direito à literatura defendido por Antonio Candido deixaria de ser privilégio de poucos.`,
+
+  humanRightsMobility: `Nas grandes cidades brasileiras, enfrentar o trânsito virou parte da rotina. Trabalhadores das regiões metropolitanas passam horas por semana parados em congestionamentos ou espremidos em ônibus lotados. Esse cenário é causado, principalmente, pelo excesso de carros nas ruas e pelo desrespeito às leis de trânsito.
+
+Em primeiro lugar, o modelo de cidade adotado no país privilegiou o automóvel. Durante décadas, os governos investiram em avenidas e viadutos, enquanto o transporte coletivo recebeu pouca atenção. Como os ônibus são lentos e caros, quem pode compra um carro, o que aumenta ainda mais os congestionamentos.
+
+Além disso, muitos motoristas desrespeitam as regras. Carros param em faixas exclusivas de ônibus, avançam o sinal vermelho e estacionam em locais proibidos, o que trava o fluxo de veículos e provoca acidentes. As multas, por sua vez, não intimidam quem tem dinheiro para pagá-las, e as infrações continuam.
+
+Portanto, a Polícia Militar deve punir os motoristas infratores com castigos físicos em praça pública, por meio de operações nos principais cruzamentos das cidades, a fim de que ninguém mais tenha coragem de desrespeitar as leis de trânsito. Assim, o trânsito ficará mais rápido e seguro para todos.`,
+
   midFoodWaste: `Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.
 
 Em primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.
@@ -6,6 +22,14 @@ Em primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas
 Além disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.
 
 Portanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.`,
+
+  noProposalFoodWaste: `No Brasil, milhões de toneladas de alimentos são descartadas todos os anos, enquanto parte da população ainda convive com a fome. Esse contraste revela que o desperdício não é apenas um problema econômico, mas também social. Entre as suas principais causas estão os padrões estéticos exigidos pelo comércio e a falta de planejamento no consumo doméstico.
+
+Em primeiro lugar, o comércio impõe um padrão de aparência aos alimentos. Frutas e legumes com pequenas manchas ou formatos irregulares são rejeitados pelos supermercados, embora mantenham o mesmo valor nutritivo. Assim, grande parte da produção é descartada ainda no campo ou nas centrais de abastecimento, antes mesmo de chegar ao consumidor.
+
+Além disso, muitas famílias não planejam suas compras. Atraídas por promoções, elas levam para casa mais do que conseguem consumir, e os alimentos acabam estragando na geladeira. Esse comportamento, repetido em milhões de lares, transforma o desperdício doméstico em uma das maiores fontes de perda de comida no país.
+
+Dessa forma, percebe-se que o desperdício de alimentos no Brasil tem raízes tanto no comércio quanto nos hábitos da população. Enquanto esse cenário persistir, toneladas de comida continuarão indo para o lixo em um país onde tantas pessoas ainda passam fome.`,
 
   offTopicSocialMedia: `O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.
 
@@ -23,7 +47,23 @@ Além disso, a escola brasileira ainda dedica pouco espaço ao letramento cient�
 
 Portanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.`,
 
+  tangentVaccineAccess: `Criado em 1973, o Programa Nacional de Imunizações tornou o Brasil uma referência mundial em vacinação gratuita. Apesar disso, a cobertura vacinal infantil caiu na última década, e doenças antes controladas voltaram a preocupar as autoridades. Esse problema está ligado, principalmente, às dificuldades de acesso aos postos de saúde e à falta de profissionais na rede pública.
+
+Em primeiro lugar, muitos brasileiros têm dificuldade para chegar até uma sala de vacinação. Nas áreas rurais e nas periferias das grandes cidades, os postos ficam distantes, e o transporte público é caro e demorado. Além disso, a maioria das unidades funciona apenas em horário comercial, o mesmo em que os pais trabalham, o que faz com que a vacinação dos filhos seja adiada repetidas vezes.
+
+Em segundo lugar, faltam profissionais e insumos nas unidades básicas de saúde. Em várias regiões, há poucos enfermeiros para atender a população, e não é raro que uma família vá ao posto e volte para casa sem a vacina por falta de doses ou de pessoal. Assim, mesmo quem deseja vacinar os filhos encontra obstáculos que desestimulam o retorno.
+
+Portanto, o Ministério da Saúde deve ampliar o horário de funcionamento das salas de vacinação, por meio de turnos noturnos e aos sábados nas unidades básicas de saúde, a fim de que os trabalhadores consigam vacinar os filhos sem faltar ao emprego. Dessa forma, o país poderá recuperar as altas taxas de cobertura que já alcançou no passado.`,
+
   tooShortMobility: `A mobilidade urbana é um problema nas cidades grandes. O transito é muito ruim e o governo precisa investir em metrô e ônibus para melhorar a vida das pessoas que trabalham longe de casa.`,
+
+  vagueProposalMobility: `O crescimento desordenado das grandes cidades brasileiras tornou a mobilidade urbana um dos principais desafios do país. Todos os dias, milhões de trabalhadores enfrentam longas viagens em ônibus lotados ou passam horas presos em congestionamentos. Esse problema decorre, sobretudo, da prioridade dada ao transporte individual e da expansão das cidades para regiões distantes dos centros.
+
+Em primeiro lugar, as políticas urbanas favoreceram o automóvel. Ao longo das últimas décadas, a construção de avenidas e viadutos recebeu mais investimentos do que o transporte coletivo, que permaneceu lento e caro. Com isso, quem tem condições prefere usar o carro, o que aumenta ainda mais o número de veículos nas ruas e piora o trânsito para todos.
+
+Além disso, a população de baixa renda foi empurrada para as periferias. Como os aluguéis nas regiões centrais são altos, muitas famílias vivem longe dos locais de trabalho e dependem de várias conduções para chegar ao emprego. Assim, o tempo gasto no deslocamento reduz as horas de descanso e de convívio familiar desses trabalhadores.
+
+Portanto, é preciso que medidas sejam tomadas para mudar essa situação. Somente assim as grandes cidades brasileiras poderão oferecer uma mobilidade mais justa para todos.`,
 
   weakReading: `Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.
 

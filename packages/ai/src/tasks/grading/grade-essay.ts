@@ -108,6 +108,7 @@ function buildCriteriaSchema(criteria: EssayCriterionDefinition[]) {
 
 const enemOutputSchema = z.object({
   interventionElements: interventionElementsSchema.nullable(),
+  proposalLimit: z.enum(["conditional", "tangent", "invalid"]).nullable(),
   zeroReason: z.enum(["offTopic", "notArgumentative"]).nullable(),
 });
 
