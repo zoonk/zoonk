@@ -1,5 +1,5 @@
 import "server-only";
-import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import {
@@ -73,7 +73,7 @@ async function reviewLesson({
   screens: readonly ConvertedScreen[];
   serviceTier?: ServiceTier;
   writerModel: string;
-}): Promise<Pick<LessonGateResult, "blocking" | "minor">> {
+}): Promise<LessonGateProblem[]> {
   const { data } = await checkLessonQuality({
     ...context,
     analytics,
@@ -82,15 +82,11 @@ async function reviewLesson({
     writerModel,
   });
 
-  type Issue = (typeof data.issues)[number];
-
-  const toProblem = (issue: Issue): LessonGateProblem => ({
+  return data.issues.map((issue) => ({
     problem: `${issue.problem} Fix: ${issue.fix}`,
     screen: issue.screen,
     source: "review",
-  });
-
-  return { blocking: data.issues.map(toProblem), minor: [] };
+  }));
 }
 
 export async function runLessonQualityGate({
@@ -106,7 +102,6 @@ export async function runLessonQualityGate({
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
-  reuse: CallReuse;
   review: boolean;
   serviceTier?: ServiceTier;
   writerModel: string;
@@ -123,7 +118,7 @@ export async function runLessonQualityGate({
     spec: context.spec,
   });
 
-  const [programProblems, reviewed] = await Promise.all([
+  const [programProblems, reviewProblems] = await Promise.all([
     checkLessonPrograms(checked.screens),
     review
       ? reviewLesson({
@@ -134,7 +129,7 @@ export async function runLessonQualityGate({
           serviceTier,
           writerModel,
         })
-      : { blocking: [], minor: [] },
+      : [],
   ]);
 
   const codeProblems = [...checked.problems, ...programProblems].map((problem) => ({
@@ -145,12 +140,9 @@ export async function runLessonQualityGate({
   return {
     blocking: [
       ...codeProblems.filter((entry) => !entry.isMinor).map((entry) => entry.problem),
-      ...reviewed.blocking,
+      ...reviewProblems,
     ],
-    minor: [
-      ...codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
-      ...reviewed.minor,
-    ],
+    minor: codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
     screens: checked.screens,
   };
 }

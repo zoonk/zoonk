@@ -66,7 +66,7 @@ async function publishedLesson() {
   });
 
   await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
-  const written = await writeLessonContent({ forExam: true, lessonId: lesson.id, workflowRunId });
+  const written = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
   if (written.status !== "published") {
     throw new Error(`The test lesson wasn't published: ${written.status}`);

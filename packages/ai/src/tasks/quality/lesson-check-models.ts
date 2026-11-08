@@ -1,18 +1,19 @@
 import { pickReviewers } from "../../_utils/model-family";
 
-// On 26 real lessons (8 Nov 2026), Astra caught 6/6 confirmed errors without false flags at
-// $0.037/review on flex; Sol caught 4, Opus 2. Argon caught none and 2/4 flags broke a correct
-// citation; Flash passed 24/25 in production. No other-provider fallback for Opus-written
-// lessons: the evaluated alternatives made things worse.
-// The six real-case rerun caught all six errors with Astra ($0.5183/6); Sol missed the
-// summary error and the ordering activity ($0.1009/6), while both kept the correct citation.
+/**
+ * On the 26 shared lessons Opus wrote on 8 Nov 2026, two blind judges confirmed 6 errors. Astra
+ * found all 6 with no false flag at $0.037 a review on flex, Sol 4 and Opus 2. Gemini 4 Argon found
+ * none and flagged a correct legal citation as wrong because the lesson plan had it wrong, and
+ * Gemini 3.8 Flash, the reviewer before, passed 24 of those lessons. So an Opus-written lesson has
+ * no fallback outside OpenAI: no other evaluated reviewer helped.
+ */
 const WRITTEN_REVIEWERS = [
   "openai/gpt-6-astra",
   "openai/gpt-6.1-sol",
   "anthropic/claude-opus-5.5",
 ] as const;
 
-// Alphabet lessons retain the evaluated chain: Sonnet caught all 20 planted errors (9 Oct 2026).
+/** Luna writes alphabet lessons; Sonnet 5.5 blocked all 20 planted mistakes in the review eval (9 Oct 2026). */
 const ALPHABET_REVIEWERS = [
   "anthropic/claude-sonnet-5.5",
   "google/gemini-3.8-flash",

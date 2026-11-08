@@ -11,6 +11,7 @@ import {
   type WrittenVersion,
   checkFixedLesson,
   citeScreens,
+  citeScreensIfPossible,
   fixVersionDraft,
   readLessonSources,
   toScreensToSave,
@@ -57,10 +58,18 @@ async function stageFixedVersion({
   inputs: LessonWritingInputs;
   replaces: number;
 }): Promise<PublishedLessonOutcome> {
-  const previous = await loadVersionSteps({ lessonId: context.lessonId, version: replaces });
+  const [citations, previous] = await Promise.all([
+    citeScreensIfPossible({
+      analytics: await toTaskAnalytics(context),
+      inputs,
+      lesson: checked.version.lesson,
+      serviceTier: BACKGROUND_TIER,
+    }),
+    loadVersionSteps({ lessonId: context.lessonId, version: replaces }),
+  ]);
 
   const screens = toScreensToSave({
-    citations: [],
+    citations,
     inputs,
     screens: checked.screens,
     version: checked.version,
@@ -125,9 +134,9 @@ export async function checkPublishedLesson({
   const previous = await loadVersionSteps({ lessonId: context.lessonId, version: plan.version });
 
   return {
+    first,
     state: {
       context,
-      first,
       gate,
       inputs,
       replaces: plan.version,
@@ -145,13 +154,12 @@ export type PublishedDraftState = {
   inputs: LessonWritingInputs;
   gate: LessonGate;
   version: WrittenVersion;
-  first: GateResult | null;
   replaces: number;
 };
 
 export type PublishedDraftOutcome =
   | PublishedLessonOutcome
-  | { status: "needsFix"; state: PublishedDraftState }
+  | { first: GateResult; status: "needsFix"; state: PublishedDraftState }
   | { status: "drafted"; state: PublishedDraftState }
   | {
       status: "checked";
@@ -160,17 +168,15 @@ export type PublishedDraftOutcome =
     };
 
 export async function fixPublishedDraft({
+  first,
   state,
 }: {
+  first: GateResult;
   state: PublishedDraftState;
 }): Promise<PublishedDraftState> {
-  if (!state.first) {
-    throw new Error("Missing findings for lesson fix");
-  }
-
   return {
     ...state,
-    version: await fixVersionDraft({ draft: state.version, first: state.first, gate: state.gate }),
+    version: await fixVersionDraft({ draft: state.version, first, gate: state.gate }),
   };
 }
 
@@ -181,13 +187,7 @@ export async function checkPublishedDraft({
   state: PublishedDraftState;
   fixed?: boolean;
 }): Promise<PublishedDraftOutcome> {
-  const loaded = await loadCheck({
-    context: state.context,
-    version: state.replaces,
-    writerModel: state.gate.writerModel,
-  });
-
-  if (!loaded) {
+  if ((await readCurrentLessonVersion(state.context.lessonId)) !== state.replaces) {
     return { status: "replaced" };
   }
 
@@ -204,7 +204,7 @@ export async function checkPublishedDraft({
   }
 
   if (!fixed) {
-    return { state: { ...state, first: checked }, status: "needsFix" };
+    return { first: checked, state, status: "needsFix" };
   }
 
   return {
@@ -278,7 +278,6 @@ export async function redraftPublishedLesson({
   return {
     state: {
       context,
-      first: null,
       gate: loaded.gate,
       inputs: loaded.inputs,
       replaces: version,

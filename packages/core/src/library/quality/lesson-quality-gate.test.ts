@@ -20,7 +20,6 @@ function gate(text: string) {
         index === 4 && screen.kind === "explanation" ? { ...screen, text } : screen,
       ),
     },
-    reuse: "bounded",
     review: false,
     writerModel: "anthropic/claude-opus-5.5",
   });

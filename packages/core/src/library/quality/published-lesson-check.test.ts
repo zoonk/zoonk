@@ -189,7 +189,7 @@ describe(checkPublishedLesson, () => {
 
     mockFix({ changedScreens: [], lesson: writtenWrong() });
     const { fixPublishedDraft, checkPublishedDraft } = await import("./published-lesson-check");
-    const fixed = await fixPublishedDraft({ state: reviewed.state });
+    const fixed = await fixPublishedDraft({ first: reviewed.first, state: reviewed.state });
 
     expect(fixLessonDraft).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ model: draft.model }),
@@ -203,6 +203,60 @@ describe(checkPublishedLesson, () => {
     });
 
     expect(checkLessonQuality).toHaveBeenCalledTimes(2);
+  });
+
+  it("stages a fix of a lesson written from official sources with the pages its screens teach from", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const [plan, guidance] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      sourceFixture({
+        extractedText: [
+          "Agency history and contact details.",
+          "A forecast rise adds to the temperature, even below zero.",
+        ].join(PAGE_BREAK),
+        mimeType: PDF_CONTENT_TYPE,
+        publisher: "National Weather Service",
+        title: "Reading temperature forecasts",
+      }),
+    ]);
+
+    const { lesson, plan: check } = await publishLesson({
+      lesson: writtenWrong(),
+      prepare: (lessonId) =>
+        Promise.all([
+          planItemFixture({ lessonId, phase: 0, planId: plan.id, position: 0 }),
+          learnerSourceFixture({
+            goalId: goal.id,
+            origin: "research",
+            sourceId: guidance.id,
+            userId: user.id,
+          }),
+        ]),
+    });
+
+    mockReview([wrongRise]);
+    mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview();
+
+    vi.mocked(citeMaterial).mockResolvedValueOnce({
+      data: { citations: [{ ref: "S1:2", screen: 5 }] },
+      provenance: provenance("openai/gpt-6-luna"),
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan: check, workflowRunId: randomUUID() }),
+    ).resolves.toMatchObject({ status: "republished", version: 2 });
+
+    const fixedScreen = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, position: 4, staged: true, version: 2 },
+    });
+
+    expect([fixedScreen.sourceId, fixedScreen.sourcePage]).toStrictEqual([guidance.id, 2]);
   });
 
   it("leaves a version the reviewer passes as it is, reviewing it at flex", async () => {

@@ -63,7 +63,6 @@ export async function writeLessonContent({
   workflowRunId,
 }: {
   analytics?: LessonAnalytics;
-  forExam?: boolean;
   lessonId: string;
   reuse?: CallReuse;
   serviceTier?: ServiceTier;
@@ -102,7 +101,7 @@ export async function writeLessonContent({
   return {
     draft: {
       cite,
-      gate: { analytics: taskAnalytics, context, reuse, serviceTier, sources, writerModel },
+      gate: { analytics: taskAnalytics, context, serviceTier, sources, writerModel },
       inputs,
       previous: null,
       remainingFixes: 1,

@@ -1,9 +1,10 @@
 import "server-only";
-import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CitedDocuments, citeMaterial } from "@zoonk/ai/tasks/material/cite";
+import { safeAsync } from "@zoonk/utils/error";
 import { type LessonWritingContext, runLessonQualityGate } from "../../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../../quality/lesson-repairs";
 import { type SourceVersion, toSourceVersions } from "../../sources/content-review-flags";
@@ -24,7 +25,6 @@ export type GateResult = Awaited<ReturnType<typeof runLessonQualityGate>>;
 export type LessonGate = {
   analytics?: LessonAnalytics;
   context: LessonWritingContext;
-  reuse: CallReuse;
   serviceTier?: ServiceTier;
   sources: SourceVersion[];
   writerModel: string;
@@ -104,7 +104,7 @@ type CiteScreensInput = {
   serviceTier?: ServiceTier;
 };
 
-/** Model failures throw so the citation step can retry. */
+/** Model failures throw so the citation step can retry; use `citeScreensIfPossible` when citations are optional. */
 export async function citeScreens({
   analytics,
   inputs,
@@ -130,6 +130,14 @@ export async function citeScreens({
     pages,
     screenCount: lesson.screens.length,
   });
+}
+
+/** Citation failures are omitted; use `citeScreens` when the caller must retry them. */
+export async function citeScreensIfPossible(
+  input: CiteScreensInput,
+): Promise<(ScreenCitation | null)[]> {
+  const { data } = await safeAsync(() => citeScreens(input));
+  return data ?? [];
 }
 
 export async function checkFixedLesson({

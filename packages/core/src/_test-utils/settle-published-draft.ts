@@ -14,7 +14,7 @@ export async function settlePublishedDraft(
   }
 
   if (outcome.status === "needsFix") {
-    const state = await fixPublishedDraft({ state: outcome.state });
+    const state = await fixPublishedDraft({ first: outcome.first, state: outcome.state });
     return settlePublishedDraft(await checkPublishedDraft({ fixed: true, state }));
   }
 

@@ -25,11 +25,6 @@ import {
   writtenLessonSchema,
 } from "./written-lesson-schema";
 
-// The writer fixes its own lesson: a weaker fixer changed the correct § 2º to § 1º
-// after trusting a weaker reviewer over the lesson. On two real cases (8 Nov 2026), Luna
-// broke that citation ($0.0043), Terra kept it and fixed the repeated term claim ($0.0272),
-// and Opus kept it but unnecessarily changed another screen ($0.2119); all fixed the term claim.
-
 /**
  * Each fixed screen comes back as `LESSON` shows it, its number among its fields: with the screen
  * nested under `content` instead, Sonnet 5.5 answered flat in 3 of 7 tries (3 Nov 2026).
@@ -86,7 +81,12 @@ function applyLessonFixes({
   };
 }
 
-/** Returns the indexes of the screens it changed, so callers can record which run wrote each. */
+/**
+ * The lesson's own writer fixes it: Luna, trusting a reviewer over the lesson, turned a correct
+ * "art. 4º, § 2º" into "§ 1º". On those two real cases (8 Nov 2026), Luna broke the citation again,
+ * while Terra and Opus kept it, and all three fixed a claim the lesson repeated on three screens.
+ * Returns the indexes of the screens it changed, so callers can record which run wrote each.
+ */
 export async function fixLessonDraft(params: FixLessonDraftParams) {
   const { analytics, lesson, model, reasoning, serviceTier, useFallback = true } = params;
 

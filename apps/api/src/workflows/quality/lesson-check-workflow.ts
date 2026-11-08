@@ -44,24 +44,12 @@ async function finishDraft(outcome: PublishedDraftOutcome): Promise<PublishedLes
   }
 
   if (outcome.status === "needsFix") {
-    const state = await fixPublishedDraftStep({ state: outcome.state });
+    const state = await fixPublishedDraftStep({ first: outcome.first, state: outcome.state });
     return finishDraft(await checkPublishedDraftStep({ fixed: true, state }));
   }
 
   if (outcome.status === "checked") {
-    const staged = await stagePublishedDraftStep(outcome);
-
-    if (
-      staged.status === "republished" &&
-      outcome.state.inputs.material.length + outcome.state.inputs.sources.length > 0
-    ) {
-      await citePublishedLessonStep({
-        ...outcome.state.context,
-        plan: { lesson: outcome.state.version.lesson, version: staged.version },
-      }).catch(() => 0);
-    }
-
-    return staged;
+    return stagePublishedDraftStep(outcome);
   }
 
   return outcome;

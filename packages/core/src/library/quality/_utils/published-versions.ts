@@ -16,7 +16,6 @@ import {
   type LessonScreenToSave,
   type ScreenProvenance,
 } from "../../lessons/_utils/save-lesson-content";
-import { loadLessonReuse } from "../../lessons/lesson-reuse";
 import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { getPictureKey } from "../../media/_utils/step-image-request";
 
@@ -55,9 +54,8 @@ export async function loadCheck({
   version: number;
   writerModel: string;
 }): Promise<{ gate: LessonGate; inputs: LessonWritingInputs } | null> {
-  const [inputs, reuse, current, analytics] = await Promise.all([
+  const [inputs, current, analytics] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
-    loadLessonReuse({ forExam: context.forExam, lessonId: context.lessonId }),
     readCurrentLessonVersion(context.lessonId),
     toTaskAnalytics(context),
   ]);
@@ -70,7 +68,6 @@ export async function loadCheck({
     gate: {
       analytics,
       context: toWritingContext(inputs),
-      reuse,
       serviceTier: BACKGROUND_TIER,
       sources: readLessonSources(inputs),
       writerModel,
