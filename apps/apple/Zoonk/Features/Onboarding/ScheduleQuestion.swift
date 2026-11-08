@@ -121,18 +121,17 @@ struct ScheduleQuestion: View {
           planMade = true
           return true
         },
-        onRunEnd: { runEnded = true }
-      ) {
-        if gate.failed {
-          GenerationFailureSection(failure: .connection, act: gate.restart)
-        }
-      }
+        onRunEnd: { runEnded = true },
+        reconnect: gate.failed ? gate.restart : nil)
     } notice: { holding in
       NoticeReadingView(
         document: examDocument, lastEdition: false, generationID: view.generationId,
-        next: .timeQuestion, holding: holding, reconnect: gate.failed ? gate.restart : nil)
+        goalID: view.goal.id, next: .timeQuestion, holding: holding,
+        reconnect: gate.failed ? gate.restart : nil)
     } ready: {
       question(shown)
+        .onboardingColumn()
+        .questionShown(.schedule, of: view)
     }
     .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {

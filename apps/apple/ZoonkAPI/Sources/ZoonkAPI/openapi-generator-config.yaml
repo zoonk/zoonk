@@ -196,6 +196,7 @@ filter:
     - listPronunciationReviews
     - listSourceChangeNotices
     - markCertificateShown
+    - markPlanRevealed
     - moveChallenge
     - moveWeeklyChallenge
     - openStudyBlock

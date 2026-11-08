@@ -550,22 +550,44 @@ struct LessonWaitingView: View {
   let progress: GenerationWait
   var alternative: Components.Schemas.ReadyAlternative?
   var warmUpID: String?
-  var holding: WarmUpHolding?
+  var holding: WaitHolding?
   let write: () -> Void
 
+  @Environment(LearnerSummaryStore.self) private var learner
   @State private var isLate = false
 
   var body: some View {
     Group {
       if let warmUpID {
-        ZoonkList {
+        let title =
+          holding == nil
+          ? Text(
+            "Writing your lesson", tableName: "Player",
+            comment: "The lesson's status over the quiz while it's written")
+          : Text(
+            "Your lesson is ready", tableName: "Player",
+            comment: "The lesson's status over the quiz once it's written")
+        let shown = holding == nil && writing == .writing ? progress : progress.finished
+
+        WaitScreen(
+          deckID: warmUpID, progressTitle: title,
+          ready: holding.map { holding in
+            WaitReady(
+              label: Text(
+                "Start this lesson", tableName: "Player",
+                comment: "Opens a goal's first lesson, written while the learner played on its wait"
+              ),
+              icon: .play, action: holding.moveOn)
+          }
+        ) {
+          WaitStatusStrip(
+            label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
+        } progress: {
           Section {
             page
           }
           .listRowBackground(Color.clear)
           .listRowSeparator(.hidden)
-
-          WarmUpSection(deckID: warmUpID)
 
           if let shownAlternative {
             Section {
@@ -575,12 +597,6 @@ struct LessonWaitingView: View {
             .listRowSeparator(.hidden)
           }
         }
-        .warmUpDeck(warmUpID)
-        .warmUpHoldBar(
-          holding,
-          label: Text(
-            "Start this lesson", tableName: "Player",
-            comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
       } else {
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
@@ -611,6 +627,9 @@ struct LessonWaitingView: View {
       }
     }
     .announcesStatus(notWrittenLine)
+    .measuresWait(
+      surface: "lessonWait", contentKind: "lesson", isActive: writing == .writing || holding != nil,
+      goalID: learner.summary.value?.activeGoalID)
     .task(id: writing) {
       isLate = false
 

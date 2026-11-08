@@ -1,38 +1,82 @@
 import SwiftUI
 
-/// The wait's list loads the deck with `warmUpDeck(_:)`, since this section has no rows until it
-/// arrives.
-struct WarmUpSection: View {
-  fileprivate static let lastRow = "warmUpLastRow"
+/// The card being played, kept by the visit so the strip's other view and the bar act on the same one.
+struct DealtCard: Equatable {
+  let deck: WarmUpDeck
+  let position: Int
+  let picked: String?
 
-  let deckID: String
+  var card: WarmUpCard { deck.cards[position] }
+  var hasNext: Bool { position + 1 < deck.cards.count }
+}
+
+extension WaitVisit {
+  /// Nil while there's no card: no deck yet, or every card was guessed this app session.
+  func dealtCard(deck: WarmUpDeck?, firstUnguessed: Int) -> DealtCard? {
+    guard let deck else {
+      return nil
+    }
+
+    let dealt = dealt?.deckID == deck.id ? dealt : nil
+    let position = dealt?.card ?? firstUnguessed
+
+    guard deck.cards.indices.contains(position) else {
+      return nil
+    }
+
+    return DealtCard(deck: deck, position: position, picked: dealt?.picked)
+  }
+}
+
+/// Main's `WaitQuizCard`: a guess while the learner waits, a side game apart from their course,
+/// built like a lesson's question. Once what they wait for is ready they can still answer this card
+/// and read its reveal, but no new card is dealt.
+struct WaitQuiz: View {
+  static let revealRow = "waitQuizReveal"
+
+  let dealt: DealtCard
+  var goalID: String?
 
   @Environment(WarmUpStore.self) private var warmUps
-  @Environment(WarmUpVisit.self) private var visit
+  @Environment(WaitVisit.self) private var visit
   @AccessibilityFocusState private var focusesQuestion: Bool
 
   var body: some View {
-    let dealt = visit.dealt?.deckID == deckID ? visit.dealt : nil
-    let position = dealt?.card ?? warmUps.firstUnguessed(deckID: deckID)
-    let picked = dealt?.picked
+    let card = dealt.card
 
-    if let deck = warmUps.deck(id: deckID).value, deck.cards.indices.contains(position) {
-      let card = deck.cards[position]
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(
+          "Quiz while you wait", tableName: "Onboarding",
+          comment:
+            "Eyebrow over a question shown while the learner waits for their course. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
+        )
+        .typeStyle(.eyebrow)
+        .foregroundStyle(.faint)
 
-      Section {
         Text(card.question)
-          .typeStyle(.body.weight(.semibold))
+          .typeStyle(.question)
           .accessibilityAddTraits(.isHeader)
           .accessibilityFocused($focusesQuestion)
-          .sensoryFeedback(trigger: picked) { _, picked in picked == nil ? nil : .selection }
+          .sensoryFeedback(trigger: dealt.picked) { _, picked in picked == nil ? nil : .selection }
+      }
+      .listRowBackground(Color.clear)
 
+      VStack(spacing: 10) {
         ForEach(Array(card.options.enumerated()), id: \.element.id) { index, option in
-          self.option(option, index: index, of: card, at: position, picked: picked)
+          AnswerOption(
+            marker: index + 1, isPicked: option.id == dealt.picked, result: result(option),
+            isGuessed: true, isLocked: dealt.picked != nil, text: RichInline(text: AttributedString(option.text))
+          ) {
+            guess(option)
+          }
         }
+      }
+      .listRowBackground(Color.clear)
 
-        if let picked {
-          let verdict = LessonVerdict.guess(isRight: isRight(picked, in: card))
-          let isLastCard = position == deck.cards.count - 1
+      Group {
+        if let picked = dealt.picked {
+          let verdict = LessonVerdict.guess(isRight: isRight(picked))
 
           VStack(alignment: .leading, spacing: 4) {
             FeedbackVerdict(Text(verdict.title), tone: verdict.tone, symbol: verdict.symbol)
@@ -40,136 +84,52 @@ struct WarmUpSection: View {
             Text(card.reveal)
           }
           .accessibilityElement(children: .combine)
-          .id(visit.isHolding && !isLastCard ? Self.lastRow : nil)
-
-          if isLastCard {
-            Text(
-              "That's all for now.", tableName: "Onboarding",
-              comment: "Under a warm-up's last answer: there are no more guesses"
-            )
-            .foregroundStyle(.mutedForeground)
-            .id(Self.lastRow)
-          } else if !visit.isHolding {
-            Button {
-              visit.deal(warmUps.firstUnguessed(deckID: deckID), deckID: deckID)
-              focusesQuestion = true
-            } label: {
-              Text(
-                "Next guess", tableName: "Onboarding",
-                comment: "Shows the next warm-up question while the plan or lesson is written")
-            }
-            .buttonStyle(.outline)
-            .keyboardShortcut(.defaultAction)
-            .id(Self.lastRow)
-          }
-        }
-      } header: {
-        Label {
+        } else {
           Text(
-            "Guess while you wait", tableName: "Onboarding",
-            comment: "Above quick questions about the goal's subject while it's being prepared")
-        } icon: {
-          Image(systemName: "sparkles")
-            .accessibilityHidden(true)
-        }
-        .sectionTitleStyle()
-      } footer: {
-        SectionFooter {
-          if picked == nil {
-            Text(
-              "Getting it wrong now helps you remember later.", tableName: "Onboarding",
-              comment: "Under a warm-up question: a guess never counts")
-          }
+            "Just for fun. Your answers don't count.", tableName: "Onboarding",
+            comment:
+              "Under a quiz question shown while the learner waits for their course: a guess never counts. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
-      .task(id: deck.id) { visit.show(deck, card: position) }
+      .id(Self.revealRow)
+      .listRowBackground(Color.clear)
     }
+    .listRowSeparator(.hidden)
+    .task(id: dealt.deck.id) { visit.show(dealt.deck, card: dealt.position, goalID: goalID) }
+    .onChange(of: dealt.position) { focusesQuestion = true }
   }
 
-  private func option(
-    _ option: WarmUpCard.OptionsPayloadPayload, index: Int, of card: WarmUpCard, at position: Int,
-    picked: String?
-  ) -> some View {
-    let isPicked = option.id == picked
-    let tag: Text? =
-      switch (picked != nil, isPicked, option.correct) {
-      case (true, true, _):
-        Text(
-          "Your guess", tableName: "Onboarding",
-          comment: "Beside the answer the learner picked for a warm-up question")
-      case (true, false, true):
-        Text(
-          "Correct", tableName: "Onboarding", comment: "Beside a warm-up question's right answer")
-      default:
-        nil
-      }
+  private func guess(_ option: WarmUpCard.OptionsPayloadPayload) {
+    let card = dealt.card
+    let picked = WaitVisit.Dealt(deckID: dealt.deck.id, card: dealt.position, picked: option.id)
 
-    return Button {
-      let dealt = WarmUpVisit.Dealt(deckID: deckID, card: position, picked: option.id)
-
-      guard visit.guess(dealt, cardID: card.id, correct: option.correct) else {
-        return
-      }
-
-      warmUps.guessed(card: position, deckID: deckID)
-
-      let verdict = LessonVerdict.guess(isRight: option.correct)
-      announcePolitely([String(localized: verdict.title), card.reveal].joinedSentences())
-    } label: {
-      LabeledContent {
-        if let tag {
-          HStack(spacing: 6) {
-            tag
-
-            if picked != nil, option.correct {
-              Image(systemName: "checkmark")
-                .fontWeight(.semibold)
-                .foregroundStyle(.success)
-                .accessibilityHidden(true)
-            }
-          }
-        }
-      } label: {
-        Text(option.text)
-          .foregroundStyle(.primary)
-      }
+    guard visit.guess(picked, cardID: card.id, correct: option.correct) else {
+      return
     }
-    .disabled(picked != nil)
-    .modifier(NumberShortcut(index: index))
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
+
+    warmUps.guessed(card: dealt.position, deckID: dealt.deck.id)
+
+    let verdict = LessonVerdict.guess(isRight: option.correct)
+    announcePolitely([String(localized: verdict.title), card.reveal].joinedSentences())
   }
 
-  private func isRight(_ optionID: String, in card: WarmUpCard) -> Bool {
-    card.options.contains { $0.id == optionID && $0.correct }
-  }
-}
-
-extension View {
-  /// On a wait's list: loads its deck, and keeps the learner's card in view. A guess scrolls just
-  /// enough to show its answer, and holding scrolls back to it, since the shorter screen would
-  /// otherwise send the list back to its top.
-  func warmUpDeck(_ deckID: String?) -> some View {
-    modifier(WarmUpDeckList(deckID: deckID))
-  }
-}
-
-private struct WarmUpDeckList: ViewModifier {
-  let deckID: String?
-
-  @Environment(WarmUpStore.self) private var warmUps
-  @Environment(WarmUpVisit.self) private var visit: WarmUpVisit?
-
-  func body(content: Content) -> some View {
-    ScrollViewReader { proxy in
-      content
-        .loads(deckID.map { [warmUps.deck(id: $0)] } ?? [], refreshable: false)
-        .onChange(of: visit?.guesses) { proxy.scrollTo(WarmUpSection.lastRow) }
-        // The held wait's bar lands a moment after it holds.
-        .onScrollGeometryChange(for: CGFloat.self, of: \.contentInsets.bottom) { _, _ in
-          if visit?.isHolding == true {
-            proxy.scrollTo(WarmUpSection.lastRow)
-          }
-        }
+  /// Main's `getResult`: the right answer once answered, and a wrong pick as the learner's guess.
+  private func result(_ option: WarmUpCard.OptionsPayloadPayload) -> AnswerOptionResult? {
+    guard dealt.picked != nil else {
+      return nil
     }
+
+    if option.correct {
+      return .right
+    }
+
+    return option.id == dealt.picked ? .guess : nil
+  }
+
+  private func isRight(_ optionID: String) -> Bool {
+    dealt.card.options.contains { $0.id == optionID && $0.correct }
   }
 }

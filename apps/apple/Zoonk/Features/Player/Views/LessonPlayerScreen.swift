@@ -174,6 +174,19 @@ private struct LessonPlayerContent: View {
       _, isAnonymous in
       store.isGuest = isAnonymous == true
     }
+    .onChange(of: learnerSummary?.summary.value?.activeGoalID, initial: true) { _, goalID in
+      store.goalID = goalID
+
+      if scenePhase == .active {
+        store.reportFirstScene()
+      }
+    }
+    .onChange(of: FirstScene(shown: store.state?.currentStep != nil, phase: scenePhase), initial: true) {
+      _, scene in
+      if scene.shown, scene.phase == .active {
+        store.reportFirstScene()
+      }
+    }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
     // From here rather than the stage, which is made anew as a lesson comes back from its end.
@@ -204,7 +217,7 @@ private struct LessonPlayerContent: View {
   @ViewBuilder
   private var content: some View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
-      WarmUpHold(
+      WaitHold(
         surface: .lessonWait, isReady: writing == .written,
         announcement: LessonWaitingView.lessonReady
       ) { stage in
@@ -488,4 +501,9 @@ private struct VerticalToolbarReader<Content: View>: View {
   var body: some View {
     content(isToolbarVertical)
   }
+}
+
+private struct FirstScene: Equatable {
+  let shown: Bool
+  let phase: ScenePhase
 }

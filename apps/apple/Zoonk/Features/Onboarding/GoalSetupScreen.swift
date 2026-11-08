@@ -114,6 +114,7 @@ private struct GoalSteps: View {
   private let planFacts: [PlanFact]
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(WarmUpStore.self) private var warmUps
   @State private var history: [Components.Schemas.OnboardingStep]
   /// A step the learner went Back to, or opened from a later one; nil follows the next step the
   /// server says.
@@ -243,6 +244,22 @@ private struct GoalSteps: View {
         comment: "What starting over does")
     }
     .onDisappear { startingOver?.cancel() }
+    .task(id: view.generationId) { await preloadDeck() }
+  }
+
+  /// While the learner answers, so the quiz is there as soon as a wait opens.
+  private func preloadDeck() async {
+    guard let generationID = view.generationId,
+      let deckID = await onboarding.warmUpID(generationID: generationID)
+    else {
+      return
+    }
+
+    UsageAnalytics.track(
+      .onboardingProgressed(
+        .deckReceived(goalID: view.goal.id, onboardingID: view.onboardingID, deckID: deckID),
+        at: .now))
+    await warmUps.deck(id: deckID).load()
   }
 
   /// One answer saves at a time; a save that fails keeps the learner on this screen with what they picked.
@@ -368,13 +385,16 @@ private struct StepScreen: View {
   var body: some View {
     switch step {
     case .placement:
-      if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
-        LevelTestStep(
-          goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
-          testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
-      } else {
-        PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
+      Group {
+        if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
+          LevelTestStep(
+            goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
+            testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
+        } else {
+          PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
+        }
       }
+      .questionShown(step, of: view)
     case .plan:
       PlanStep(view: view)
     case .schedule:
@@ -382,13 +402,13 @@ private struct StepScreen: View {
         view: view, draft: scheduleDraft, isSaving: isSaving, failed: failed, refusal: refusal,
         onAnswer: onAnswer, onChangeDate: onChangeDate
       )
-      .onboardingColumn()
     default:
       QuestionStep(
         step: step, view: view, subject: subject, isSaving: isSaving, failed: failed,
         onAnswer: onAnswer
       )
       .onboardingColumn()
+      .questionShown(step, of: view)
     }
   }
 
@@ -400,5 +420,18 @@ private struct StepScreen: View {
     let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject
     return subject?.trimmingCharacters(in: .whitespaces).isEmpty == false
       ? subject ?? view.goal.title : view.goal.title
+  }
+}
+
+extension View {
+  /// Main's `OnboardingQuestionShown`: a question the learner sees, each time it comes on screen.
+  func questionShown(_ step: Components.Schemas.OnboardingStep, of view: GoalOnboarding) -> some View {
+    onAppear {
+      UsageAnalytics.track(
+        .onboardingProgressed(
+          .questionShown(
+            goalID: view.goal.id, onboardingID: view.onboardingID, question: step.rawValue),
+          at: .now))
+    }
   }
 }

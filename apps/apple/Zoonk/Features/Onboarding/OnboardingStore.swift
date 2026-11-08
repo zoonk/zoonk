@@ -7,6 +7,9 @@ import Observation
 final class OnboardingStore {
   private(set) var sentGoal: SentGoal?
   let resume: Resource<OnboardingResume>
+  /// Each goal run's warm-up deck, once anything following the run heard it, so a wait that opens
+  /// after the questions has its quiz at once.
+  private var decks: [String: String] = [:]
 
   @ObservationIgnored private let api: OnboardingAPI
   @ObservationIgnored private let cache: AppCache
@@ -98,12 +101,23 @@ final class OnboardingStore {
     clients.generationEvents(id: generationID, token: session.authenticatedSession?.bearerToken)
   }
 
+  func found(deckID: String, generationID: String) {
+    if decks[generationID] != deckID {
+      decks[generationID] = deckID
+    }
+  }
+
+  func deckID(generationID: String?) -> String? {
+    generationID.flatMap { decks[$0] }
+  }
+
   /// The warm-up deck a goal's run reported, read from its first event. Nil when it reported none
   /// or its stream broke: the deck is optional.
   func warmUpID(generationID: String) async -> String? {
     do {
       for try await event in events(generationID: generationID) {
         if let id = event.warmUpID {
+          found(deckID: id, generationID: generationID)
           return id
         }
       }

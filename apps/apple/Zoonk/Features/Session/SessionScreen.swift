@@ -168,7 +168,7 @@ private struct NextStopView: View {
   var body: some View {
     // The session never opens the lesson on its own: moving on only takes the card away. It says
     // the lesson is ready itself.
-    WarmUpHold(surface: .lessonWait, isReady: !isLessonWorkRunning, announcement: nil) { stage in
+    WaitHold(surface: .lessonWait, isReady: !isLessonWorkRunning, announcement: nil) { stage in
       stop(stage)
     } onMoveOn: {
       if isWrittenWhileWaiting {
@@ -194,11 +194,11 @@ private struct NextStopView: View {
     }
   }
 
-  private func stop(_ stage: WarmUpStage) -> some View {
-    let held: WarmUpHolding? =
+  private func stop(_ stage: WaitStage) -> some View {
+    let held: WaitHolding? =
       switch stage {
       case .waiting(let holding?) where isWrittenWhileWaiting:
-        WarmUpHolding {
+        WaitHolding {
           holding.moveOn()
 
           if let next {
@@ -212,38 +212,16 @@ private struct NextStopView: View {
       case .waiting: warmUpDeckID
       case .ready: nil
       }
-    let startLabel = Text(
-      "Start this lesson", tableName: "Player",
-      comment: "Opens a goal's first lesson, written while the learner guessed on its wait")
 
-    return PaneSplit {
-      ZoonkList {
-        daySoFar
-      }
-    } secondary: {
-      ZoonkList {
-        upNext
-        warmUpCard(deckID)
-        actions(isHeld: held != nil)
-      }
-      .warmUpDeck(deckID)
-      .warmUpHoldBar(held, label: startLabel)
-    } single: {
-      ZoonkList {
-        daySoFar
-        upNext
-        warmUpCard(deckID)
-        actions(isHeld: held != nil)
-      }
-      .warmUpDeck(deckID)
-      .warmUpHoldBar(held, label: startLabel)
-    }
-  }
-
-  @ViewBuilder
-  private func warmUpCard(_ deckID: String?) -> some View {
-    if let deckID {
-      WarmUpSection(deckID: deckID)
+    return NextStopWait(
+      deckID: deckID, goalID: day.goalId, held: held, isWritten: lessonStatus == "ready",
+      isWaiting: isLessonWorkRunning || held != nil
+    ) {
+      daySoFar
+    } upNext: {
+      upNext
+    } actions: {
+      actions(isHeld: held != nil)
     }
   }
 
@@ -574,6 +552,105 @@ private struct NextStopView: View {
         return
       }
     }
+  }
+}
+
+/// The next stop's lesson being written as a wait: its strip over the quiz while the goal's deck
+/// deals, the lesson's writing one tap away.
+private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
+  let deckID: String?
+  let goalID: String?
+  let held: WaitHolding?
+  let isWritten: Bool
+  /// The lesson is written, or written and held for a learner who played.
+  let isWaiting: Bool
+  @ViewBuilder let daySoFar: () -> DaySoFar
+  @ViewBuilder let upNext: () -> UpNext
+  @ViewBuilder let actions: () -> Actions
+
+  @Environment(WaitVisit.self) private var visit
+  @Environment(WarmUpStore.self) private var warmUps
+  @State private var since = Date.now
+
+  var body: some View {
+    let deal = WaitDeal(deckID: deckID, visit: visit, warmUps: warmUps)
+    let ready = held.map { held in
+      WaitReady(
+        label: Text(
+          "Start this lesson", tableName: "Player",
+          comment: "Opens a goal's first lesson, written while the learner played on its wait"),
+        icon: .play, action: held.moveOn)
+    }
+
+    PaneSplit {
+      ZoonkList {
+        daySoFar()
+      }
+    } secondary: {
+      ZoonkList {
+        upNext()
+        wait(deal)
+        actions()
+      }
+      .waitBar(bar(.page, deal, ready: ready))
+    } single: {
+      ZoonkList {
+        daySoFar()
+        upNext()
+        wait(deal)
+        actions()
+      }
+      .waitBar(bar(.page, deal, ready: ready))
+    }
+    .waitProgress(deal, title: title, progress: { progress }, bar: bar(.pushed, deal, ready: ready))
+    .measuresWait(surface: "nextStop", contentKind: "lesson", isActive: isWaiting, goalID: goalID)
+  }
+
+  @ViewBuilder
+  private func wait(_ deal: WaitDeal) -> some View {
+    if deckID != nil {
+      WaitSections(deal: deal, goalID: goalID) {
+        WaitStatusStrip(label: title, isDone: isWritten, share: share(at:))
+      } progress: {
+        EmptyView()
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var progress: some View {
+    WaitHeading(
+      title: title,
+      description: isWritten
+        ? Text(LessonWaitingView.lessonReady)
+        : Text(
+          "This lesson is being written for you. It's usually ready in a few minutes.",
+          tableName: "Session", comment: "A lesson being written"))
+
+    upNext()
+  }
+
+  private var title: Text {
+    isWritten
+      ? Text(
+        "Your lesson is ready", tableName: "Player",
+        comment: "The lesson's status over the quiz once it's written")
+      : Text(
+        "Writing your lesson", tableName: "Player",
+        comment: "The lesson's status over the quiz while it's written")
+  }
+
+  /// The session doesn't hear the writing's steps, so the ring drifts over a lesson's usual time.
+  private func share(at date: Date) -> Double {
+    0.95 * (1 - exp(-max(0, date.timeIntervalSince(since)) / (GenerationWait.lessonSeconds / 2)))
+  }
+
+  private func bar(_ place: WaitBarPlace, _ deal: WaitDeal, ready: WaitReady?) -> WaitBar<
+    EmptyView
+  > {
+    WaitBar(
+      place: place, page: deal.page(visit), dealt: deal.dealt, ready: ready, library: nil,
+      extra: { EmptyView() })
   }
 }
 

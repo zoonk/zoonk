@@ -3,6 +3,17 @@ import OpenAPIRuntime
 
 typealias OnboardingDraft = Components.Schemas.OnboardingDraft
 typealias GoalOnboarding = Components.Schemas.Onboarding
+
+extension GoalOnboarding {
+  /// The draft the goal came from, which joins the attempt's events to the goal's.
+  var onboardingID: String? {
+    struct Details: Decodable {
+      let onboardingId: String?
+    }
+
+    return (try? PracticeJSON.recode(goal.details, as: Details.self))?.onboardingId
+  }
+}
 typealias OnboardingAnswer = Components.Schemas.OnboardingAnswerInput
 typealias GoalPlacement = Components.Schemas.Placement
 

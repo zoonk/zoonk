@@ -21,22 +21,14 @@ struct PlanStep: View {
       case (.idle, false), (.loading, false):
         StepLoading()
       default:
-        PlanBuilding(view: view, holding: holding, readResult: { await readUntilReady(plan) }) {
-          if let course = view.libraryCourse {
-            LibraryCourseOffer(
-              courseID: course.courseId, title: course.title, chapters: course.chapterCount)
-          }
-        }
-        .onboardingColumn()
-        .onAppear { isWaiting = true }
+        PlanBuilding(view: view, holding: holding, readResult: { await readUntilReady(plan) })
+          .onAppear { isWaiting = true }
       }
     } notice: { holding in
       if let read {
         NoticeReadingView(
           document: read.examDocument, lastEdition: read.schedule.targetDateEstimated,
-          generationID: view.generationId, next: .reveal, holding: holding
-        )
-        .onboardingColumn()
+          generationID: view.generationId, goalID: view.goal.id, next: .reveal, holding: holding)
       }
     } ready: {
       if let read {
@@ -89,16 +81,15 @@ struct PlanStep: View {
   }
 }
 
-/// The plan's two waits: its build, then, for an exam, its notice being read. Each counts only the
-/// guesses made on it, so a guess while the plan is built never says it's ready right before the
-/// reading starts.
+/// The plan's two waits: its build, then, for an exam, its notice being read. Each holds on its own:
+/// playing on the build's doesn't hold the notice's after it.
 struct PlanWaits<Building: View, Notice: View, Ready: View>: View {
   let wait: ScheduleTime.Wait?
-  @ViewBuilder let building: (WarmUpHolding?) -> Building
-  @ViewBuilder let notice: (WarmUpHolding?) -> Notice
+  @ViewBuilder let building: (WaitHolding?) -> Building
+  @ViewBuilder let notice: (WaitHolding?) -> Notice
   @ViewBuilder let ready: () -> Ready
 
-  /// The notice's wait stays once the reading ends, for a learner still guessing on it.
+  /// The notice's wait stays once the reading ends, for a learner still playing on it.
   @State private var readsNotice = false
 
   var body: some View {
@@ -117,8 +108,8 @@ struct PlanWaits<Building: View, Notice: View, Ready: View>: View {
     }
   }
 
-  private func hold<Wait: View>(_ wait: @escaping (WarmUpHolding?) -> Wait) -> some View {
-    WarmUpHold(surface: .planWait, isReady: self.wait == nil, announcement: .planReady) { stage in
+  private func hold<Wait: View>(_ wait: @escaping (WaitHolding?) -> Wait) -> some View {
+    WaitHold(surface: .planWait, isReady: self.wait == nil, announcement: .planReady) { stage in
       switch stage {
       case .waiting(let holding): wait(holding)
       case .ready: ready()
@@ -132,7 +123,7 @@ enum PlanNext {
   case reveal
   case timeQuestion
 
-  /// Under "Your plan is ready" while a learner still guessing stays.
+  /// Under "Your plan is ready" while a learner who played stays.
   var readyDescription: LocalizedStringResource {
     switch self {
     case .reveal:
@@ -146,42 +137,42 @@ enum PlanNext {
     }
   }
 
-  var holdLabel: Text {
+  /// The bar's action once the plan is ready, for a learner who stayed.
+  func ready(_ holding: WaitHolding) -> WaitReady {
     switch self {
     case .reveal:
-      Text(
-        "See your plan", tableName: "Onboarding",
-        comment: "Leaves the plan's wait, once the plan is ready, for the plan")
+      WaitReady(
+        label: Text(
+          "See your plan", tableName: "Onboarding",
+          comment: "Leaves the plan's wait, once the plan is ready, for the plan"),
+        action: holding.moveOn)
     case .timeQuestion:
-      Text(
-        "Continue", tableName: "Onboarding",
-        comment: "Leaves the plan's wait, once the plan is ready, for the time question")
+      WaitReady(
+        note: readyDescription, noteOnQuizOnly: true,
+        label: Text(
+          "Continue", tableName: "Onboarding",
+          comment: "Leaves the plan's wait, once the plan is ready, for the time question"),
+        action: holding.moveOn)
     }
   }
 }
 
-/// Main's `PlanBuilding`: the goal's run while its plan is built, which both the reveal and the time
-/// question wait for.
-struct PlanBuilding<Trailing: View>: View {
+/// Main's plan wait while the plan is built, which both the reveal and the time question wait for:
+/// the build as a strip over the quiz, lesson 1 written alongside it.
+struct PlanBuilding: View {
   let view: GoalOnboarding
   var next = PlanNext.reveal
-  var holding: WarmUpHolding?
+  var holding: WaitHolding?
   let readResult: () async -> Bool
   var onRunEnd: (() -> Void)?
-  @ViewBuilder let trailing: () -> Trailing
+  /// Set once asking the plan failed: shows that, with the way to ask again.
+  var reconnect: (() -> Void)?
 
+  @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
 
   var body: some View {
-    GenerationWaitView(
-      title: holding == nil
-        ? LocalizedStringResource(
-          "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built")
-        : .planReady,
-      description: description,
-      stoppedDescription: LocalizedStringResource(
-        "Your answers are saved.", table: "Onboarding",
-        comment: "Shown when a goal's plan stopped building, over the way to try again"),
+    GenerationFollower(
       generationID: view.generationId,
       kind: .curriculum,
       readGenerationID: {
@@ -191,21 +182,100 @@ struct PlanBuilding<Trailing: View>: View {
       },
       restart: { try await onboarding.writeGoal(goalID: view.goal.id) },
       readResult: readResult,
-      onRunEnd: onRunEnd,
-      leading: { EmptyView() },
-      trailing: trailing
-    )
-    .warmUpHoldBar(holding, label: next.holdLabel)
+      onRunEnd: onRunEnd
+    ) { run in
+      let firstLesson = run.wait.firstLesson(read: view.firstLesson.map(GenerationWait.FirstLesson.init))
+      let wait = holding == nil ? run.wait : run.wait.finished
+      let failure = holding == nil ? run.failure : nil
+      let ready = ready(firstLesson)
+
+      WaitScreen(
+        deckID: run.warmUpID ?? onboarding.deckID(generationID: view.generationId),
+        goalID: view.goal.id,
+        progressTitle: Text(title),
+        ready: ready,
+        library: ready == nil ? view.libraryCourse.map {
+          WaitLibraryCourse(courseID: $0.courseId, title: $0.title)
+        } : nil
+      ) {
+        if let failure {
+          GenerationFailureNotice(failure: failure, isActing: run.isRestarting, act: run.retry)
+        } else if let reconnect {
+          GenerationFailureNotice(failure: .connection, act: reconnect)
+        } else {
+          WaitStatusStrip(
+            label: Text(title), isDone: holding != nil, share: { wait.shownShare(at: $0) },
+            firstLesson: firstLesson)
+        }
+      } progress: {
+        WaitHeading(
+          title: Text(title),
+          description: Text(
+            holding != nil
+              ? next.readyDescription
+              : run.isStopped
+                ? LocalizedStringResource(
+                  "Your answers are saved.", table: "Onboarding",
+                  comment: "Shown when a goal's plan stopped building, over the way to try again")
+                : LocalizedStringResource(
+                  "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+                  table: "Onboarding", comment: "Shown while a goal's plan is built")))
+
+        Section {
+          GenerationTimeline(
+            wait: wait, failure: failure, isActing: run.isRestarting, act: run.retry)
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+
+        if let reconnect {
+          GenerationFailureSection(failure: .connection, act: reconnect)
+        }
+
+        if let firstLesson {
+          FirstLessonSection(lesson: firstLesson, clockOffset: run.wait.clockOffset)
+        }
+      }
+    }
+    .measuresWait(
+      surface: "planWait", contentKind: "curriculum", goalID: view.goal.id,
+      onboardingID: view.onboardingID)
   }
 
-  private var description: LocalizedStringResource {
-    guard holding == nil else {
-      return next.readyDescription
+  private var title: LocalizedStringResource {
+    holding == nil
+      ? LocalizedStringResource(
+        "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built")
+      : .planReady
+  }
+
+  /// Plan first when both are ready; lesson 1 first offers itself while the plan is still built.
+  private func ready(_ firstLesson: GenerationWait.FirstLesson?) -> WaitReady? {
+    if let holding {
+      return next.ready(holding)
     }
 
-    return LocalizedStringResource(
-      "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
-      table: "Onboarding", comment: "Shown while a goal's plan is built")
+    guard let firstLesson, firstLesson.isReady else {
+      return nil
+    }
+
+    return WaitReady(
+      note: LocalizedStringResource(
+        "Your plan will be waiting when you finish.", table: "Onboarding",
+        comment: "Over Start lesson 1, while the plan is still built"),
+      label: Text(
+        "Start lesson 1", tableName: "Onboarding",
+        comment: "Opens the goal's first lesson, written before its plan"),
+      icon: .play
+    ) {
+      router.open(.lesson(lessonId: firstLesson.id))
+    }
+  }
+}
+
+extension GenerationWait.FirstLesson {
+  init(_ read: Components.Schemas.Onboarding.FirstLessonPayload) {
+    self.init(id: read.id, title: read.title, isReady: read.status == .ready)
   }
 }
 
@@ -213,50 +283,7 @@ extension LocalizedStringResource {
   static var planReady: LocalizedStringResource {
     LocalizedStringResource(
       "Your plan is ready", table: "Onboarding",
-      comment: "Title of the plan's wait once the plan is ready, for a learner still guessing")
-  }
-}
-
-/// Main's `LibraryCourseOffer`: a published course that teaches the goal, open while the plan is
-/// built.
-private struct LibraryCourseOffer: View {
-  @Environment(AppRouter.self) private var router
-
-  let courseID: String
-  let title: String
-  let chapters: Int
-
-  var body: some View {
-    Section {
-      Button {
-        router.open(.course(courseId: courseID, title: title))
-      } label: {
-        Label {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(
-              "A course in the Library fits your goal", tableName: "Onboarding",
-              comment: "Above a Library course that teaches the learner's goal"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-
-            Text(title)
-
-            if chapters > 0 {
-              Text(
-                "\(chapters) chapters", tableName: "Courses",
-                comment: "How many chapters a course or an exam area has"
-              )
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-            }
-          }
-        } icon: {
-          Image(systemName: "book")
-        }
-      }
-      .tint(.primary)
-    }
+      comment: "Title of the plan's wait once the plan is ready, for a learner still playing")
   }
 }
 
@@ -370,17 +397,33 @@ struct NoticeReadingView: View {
   let lastEdition: Bool
   /// The goal's run, which reports its warm-up deck.
   let generationID: String?
+  let goalID: String
   let next: PlanNext
-  let holding: WarmUpHolding?
+  let holding: WaitHolding?
   /// Set once asking the plan failed: shows that, with the way to ask again.
   var reconnect: (() -> Void)?
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var warmUpID: String?
+  @State private var since = Date.now
+
+  /// Reading a notice and fitting it into the plan usually takes about four minutes, after the plan
+  /// built from the learner's answers.
+  private static let readingSeconds = 240.0
+  private static let planBuilt = 0.4
 
   var body: some View {
-    ZoonkList {
-      StepHeader(title: title, description: description)
+    WaitScreen(
+      deckID: warmUpID ?? onboarding.deckID(generationID: generationID), goalID: goalID,
+      progressTitle: title, ready: holding.map(next.ready)
+    ) {
+      if let reconnect {
+        GenerationFailureNotice(failure: .connection, act: reconnect)
+      } else {
+        WaitStatusStrip(label: title, isDone: holding != nil, share: share(at:))
+      }
+    } progress: {
+      WaitHeading(title: title, description: description)
 
       Section {
         LabeledContent {
@@ -407,18 +450,21 @@ struct NoticeReadingView: View {
       if let reconnect {
         GenerationFailureSection(failure: .connection, act: reconnect)
       }
-
-      if let warmUpID {
-        WarmUpSection(deckID: warmUpID)
-      }
     }
-    .warmUpDeck(warmUpID)
-    .warmUpHoldBar(holding, label: next.holdLabel)
+    .measuresWait(surface: "examNotice", contentKind: "curriculum", goalID: goalID)
     .task(id: generationID) {
-      if let generationID, let id = await onboarding.warmUpID(generationID: generationID) {
+      if let generationID, onboarding.deckID(generationID: generationID) == nil,
+        let id = await onboarding.warmUpID(generationID: generationID)
+      {
         warmUpID = id
       }
     }
+  }
+
+  /// Main's `useNoticeProgress`: from the plan built toward the end over the reading's usual time.
+  private func share(at date: Date) -> Double {
+    let elapsed = max(0, date.timeIntervalSince(since))
+    return Self.planBuilt + (0.97 - Self.planBuilt) * (1 - exp(-elapsed / (Self.readingSeconds / 2)))
   }
 
   private var done: some View {

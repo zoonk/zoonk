@@ -18,11 +18,18 @@ extension EnvironmentValues {
 extension View {
   /// Main's onboarding column, 40rem, with the aside beside it where two panes fit.
   func onboardingColumn() -> some View {
-    modifier(OnboardingColumn())
+    modifier(OnboardingColumn { EmptyView() })
+  }
+
+  /// `lead` is the aside's first block, above the plan so far: a wait's progress.
+  func onboardingColumn<Lead: View>(@ViewBuilder lead: @escaping () -> Lead) -> some View {
+    modifier(OnboardingColumn(lead: lead))
   }
 }
 
-private struct OnboardingColumn: ViewModifier {
+private struct OnboardingColumn<Lead: View>: ViewModifier {
+  @ViewBuilder let lead: () -> Lead
+
   @Environment(\.onboardingAside) private var aside
 
   func body(content: Content) -> some View {
@@ -31,7 +38,7 @@ private struct OnboardingColumn: ViewModifier {
       case .howItWorks?:
         HowItWorks()
       case .planSoFar(let facts)?:
-        PlanSoFar(facts: facts)
+        PlanSoFar(facts: facts, lead: lead)
       case nil:
         EmptyView()
       }

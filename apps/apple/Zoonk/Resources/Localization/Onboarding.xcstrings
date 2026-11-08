@@ -3364,65 +3364,6 @@
         }
       }
     },
-    "A course in the Library fits your goal" : {
-      "comment" : "Above a Library course that teaches the learner's goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Kurs in der Bibliothek passt zu deinem Ziel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un curso de la Biblioteca se ajusta a tu objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un cours de la Bibliothèque correspond à ton objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nella Biblioteca c’è un corso per il tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標に合うコースがライブラリにあります"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "라이브러리에 목표에 맞는 코스가 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W Bibliotece jest kurs, który pasuje do twojego celu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um curso da Biblioteca combina com seu objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kütüphanede hedefine uygun bir kurs var"
-          }
-        }
-      }
-    },
     "A few quick questions about the %lld areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer." : {
       "comment" : "What placement is for an exam with several areas",
       "localizations" : {
@@ -3651,6 +3592,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın zaten bildiklerini atlayabilsin diye birkaç kısa soru soracağız. Puanlama yok, “Henüz bilmiyorum” da gayet iyi bir cevap."
+          }
+        }
+      }
+    },
+    "A Library course fits your goal. Start it now" : {
+      "comment" : "Under a Library course offered while the learner's plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Kurs aus der Bibliothek passt zu deinem Ziel. Leg jetzt los"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un curso de la Biblioteca encaja con tu objetivo. Empiézalo ahora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un cours de la Bibliothèque correspond à ton objectif. Commence-le maintenant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un corso della Biblioteca è adatto al tuo obiettivo. Inizialo ora"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標に合うライブラリのコースです。今すぐ始められます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표에 맞는 라이브러리 코스예요. 지금 시작해 보세요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs z Biblioteki pasuje do twojego celu. Zacznij go teraz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um curso da Biblioteca combina com seu objetivo. Comece agora"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kütüphanedeki bir kurs hedefine uygun. Hemen başla"
           }
         }
       }
@@ -4951,6 +4951,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri dön"
+          }
+        }
+      }
+    },
+    "Back to the quiz" : {
+      "comment" : "Leaves the build's progress for the quiz under it. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum Quiz zurückkehren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a la trivia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revenir au quiz"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torna al quiz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クイズに戻る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "퀴즈로 돌아가기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wróć do quizu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltar ao jogo de perguntas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilgi yarışmasına dön"
           }
         }
       }
@@ -6695,65 +6754,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Devam et"
-          }
-        }
-      }
-    },
-    "Correct" : {
-      "comment" : "Beside a warm-up question's right answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Richtig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Correcto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Correct"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Corretto"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "정답"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprawnie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Correto"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doğru"
           }
         }
       }
@@ -10470,65 +10470,6 @@
         }
       }
     },
-    "Getting it wrong now helps you remember later." : {
-      "comment" : "Under a warm-up question: a guess never counts",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auch wenn du jetzt falsch liegst, hilft dir das, dich später zu erinnern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Equivocarte ahora te ayuda a recordar después."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te tromper maintenant t’aide à retenir la réponse plus tard."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sbagliare ora ti aiuta a ricordare più avanti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここで間違えると、あとで覚えやすくなります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 틀려 보면 나중에 더 잘 기억할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jeśli teraz się pomylisz, łatwiej zapamiętasz odpowiedź na później."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Errar agora ajuda você a lembrar depois."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır."
-          }
-        }
-      }
-    },
     "Getting the message ready. The first time can take a few seconds." : {
       "comment" : "While a listening question's message loads",
       "localizations" : {
@@ -10879,65 +10820,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedef"
-          }
-        }
-      }
-    },
-    "Guess while you wait" : {
-      "comment" : "Above quick questions about the goal's subject while it's being prepared",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Raten beim Warten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haz una suposición mientras esperas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Devine en attendant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indovina mentre aspetti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待っている間に予想してみましょう"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기다리는 동안 예상해 보세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zgaduj w międzyczasie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dê um palpite enquanto espera"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beklerken tahmin et"
           }
         }
       }
@@ -12059,6 +11941,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bekleme listesine katıl"
+          }
+        }
+      }
+    },
+    "Just for fun. Your answers don't count." : {
+      "comment" : "Under a quiz question shown while the learner waits for their course: a guess never counts. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur zum Spaß. Deine Antworten werden nicht gewertet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo por diversión. Tus respuestas no cuentan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste pour le plaisir. Tes réponses ne comptent pas."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo per divertirti. Le tue risposte non contano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "気軽に楽しめるクイズです。回答は評価に影響しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "재미로 풀어 보세요. 답은 점수에 반영되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tylko dla zabawy. Twoje odpowiedzi się nie liczą."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "É só para se divertir. Suas respostas não contam."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sadece eğlenmek için. Cevapların hesaba katılmaz."
           }
         }
       }
@@ -15609,6 +15550,65 @@
         }
       }
     },
+    "Picking the skills to ask about…" : {
+      "comment" : "What the wait is doing while placement's questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir wählen aus, welche Fähigkeiten wir abfragen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligiendo qué habilidades evaluar…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choix des compétences à évaluer…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scegliendo le abilità su cui farti domande…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出題するスキルを選んでいます…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제로 확인할 스킬을 고르고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybieramy umiejętności do sprawdzenia…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhendo as habilidades para as perguntas…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soru soracağımız becerileri seçiyoruz…"
+          }
+        }
+      }
+    },
     "Plan created" : {
       "comment" : "Eyebrow over a goal whose plan was just built",
       "localizations" : {
@@ -15664,6 +15664,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plan oluşturuldu"
+          }
+        }
+      }
+    },
+    "Play a quiz while you wait" : {
+      "comment" : "Shows a quiz once one arrived while the learner watches the build's progress. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz spielen, während du wartest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jugar una trivia mientras esperas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faire un quiz pour patienter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai un quiz mentre aspetti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待ち時間にクイズをする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기다리는 동안 퀴즈 풀기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozwiąż quiz w czasie oczekiwania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jogar um jogo de perguntas enquanto você espera"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beklerken bilgi yarışması oyna"
           }
         }
       }
@@ -16254,6 +16313,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa açıklama · %@"
+          }
+        }
+      }
+    },
+    "Quiz while you wait" : {
+      "comment" : "Eyebrow over a question shown while the learner waits for their course. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz für die Wartezeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trivia mientras esperas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz pour patienter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un quiz mentre aspetti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待ち時間にクイズ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기다리며 푸는 퀴즈"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz na czas oczekiwania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jogo de perguntas enquanto você espera"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beklerken bilgi yarışması"
           }
         }
       }
@@ -16962,6 +17080,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sorunu okuyoruz…"
+          }
+        }
+      }
+    },
+    "Ready to start" : {
+      "comment" : "Under the goal's first lesson once it's written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startbereit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo para empezar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prêt à démarrer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto per iniziare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始できます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작 준비 완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Możesz już zacząć"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto para começar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlamaya hazır"
           }
         }
       }
@@ -18809,6 +18986,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz başla, hesap gerekmez."
+          }
+        }
+      }
+    },
+    "Start lesson 1" : {
+      "comment" : "Opens the goal's first lesson, written before its plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion 1 starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar la lección 1"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer la leçon 1"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia la lezione 1"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン1を始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨 1 시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zacznij lekcję 1"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar a aula 1"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. derse başla"
           }
         }
       }
@@ -27279,6 +27515,124 @@
         }
       }
     },
+    "Writing your first lesson: %@" : {
+      "comment" : "Under the plan's status while it's built: the goal's first lesson is being written. The argument is the lesson's title.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen deine erste Lektion: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu primera lección: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ta première leçon : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la tua prima lezione: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初のレッスンを作成しています：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 레슨을 만들고 있어요: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy twoją pierwszą lekcję: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando sua primeira aula: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk dersini hazırlıyoruz: %@"
+          }
+        }
+      }
+    },
+    "Writing your questions" : {
+      "comment" : "A step of the wait while placement's questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen deine Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tus preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de tes questions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando le tue domande"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題を作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제를 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy dla ciebie pytania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando suas perguntas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorularını hazırlıyoruz"
+          }
+        }
+      }
+    },
     "You can change all of this later." : {
       "comment" : "Under an understood goal",
       "localizations" : {
@@ -29291,6 +29645,124 @@
         }
       }
     },
+    "Your first lesson" : {
+      "comment" : "Header over the goal's first lesson in the plan's progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine erste Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primera lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta première leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prima lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初のレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja pierwsza lekcja"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua primeira aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk dersin"
+          }
+        }
+      }
+    },
+    "Your first lesson is ready" : {
+      "comment" : "Under the plan's status while it's built: the goal's first lesson can start",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine erste Lektion steht bereit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primera lección está lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta première leçon est prête"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prima lezione è pronta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初のレッスンの準備ができました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 레슨이 준비됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja pierwsza lekcja jest gotowa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua primeira aula está pronta"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk dersin hazır"
+          }
+        }
+      }
+    },
     "Your first sessions ask a few more to fine-tune your plan." : {
       "comment" : "Under placement ended for the day",
       "localizations" : {
@@ -29405,65 +29877,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bunun yerine bu sorulardan birkaçını ilk çalışmalarında soracağız."
-          }
-        }
-      }
-    },
-    "Your guess" : {
-      "comment" : "Beside the answer the learner picked for a warm-up question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Schätzung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suposición"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton estimation"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua stima"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "予想"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 예상"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój strzał"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu palpite"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tahminin"
           }
         }
       }
@@ -30585,6 +30998,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu durumda planın sınavda en çok sorulan konularla başlar ve sınav kapsamının yaklaşık %@ kadarını derinlemesine çalışmanı sağlar. En az sorulan konular sığmayabilir."
+          }
+        }
+      }
+    },
+    "Your plan will be waiting when you finish." : {
+      "comment" : "Over Start lesson 1, while the plan is still built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan wartet auf dich, wenn du fertig bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan te estará esperando cuando termines."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan t’attendra quand tu auras fini."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano ti aspetterà quando avrai finito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンが終わるころには学習計画もできています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨을 마치면 계획이 준비돼 있을 거예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gdy skończysz, twój plan będzie czekać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano vai estar te esperando quando você terminar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersi bitirdiğinde planın seni bekliyor olacak."
           }
         }
       }
