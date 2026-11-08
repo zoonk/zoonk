@@ -1,4 +1,5 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { findSkillLevelBatchesStep, tagSkillLevelsStep } from "./steps/skill-levels-steps";
 
@@ -17,10 +18,11 @@ export async function skillLevelsWorkflow({
 }: SkillLevelsInput): Promise<number> {
   "use workflow";
 
+  const { workflowRunId } = getWorkflowMetadata();
   const batches = await findSkillLevelBatchesStep(skillIds);
 
   const tagged = await Promise.allSettled(
-    batches.map((batch) => tagSkillLevelsStep({ analytics, batch, wait })),
+    batches.map((batch) => tagSkillLevelsStep({ analytics, batch, wait, workflowRunId })),
   );
 
   return tagged.reduce((sum, batch) => sum + (batch.status === "fulfilled" ? batch.value : 0), 0);

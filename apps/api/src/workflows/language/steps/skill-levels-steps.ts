@@ -16,12 +16,19 @@ export async function tagSkillLevelsStep({
   analytics,
   batch,
   wait,
+  workflowRunId,
 }: {
   analytics?: ContentAnalytics;
   batch: SkillLevelBatch;
   wait: CallWait;
+  workflowRunId: string;
 }): Promise<number> {
   "use step";
 
-  return tagSkillLevels({ analytics, batch, serviceTier: chooseServiceTier({ wait }) });
+  return tagSkillLevels({
+    analytics,
+    batch,
+    serviceTier: chooseServiceTier({ wait }),
+    workflowRunId,
+  });
 }

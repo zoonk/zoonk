@@ -1,4 +1,5 @@
 import { type SkillLevelsParams, classifySkillLevels } from "@zoonk/ai/tasks/language/skill-levels";
+import { tagSkillLevels } from "@zoonk/core/library/skills/tag-levels";
 import { prisma } from "@zoonk/db";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -7,6 +8,7 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { skillLevelsWorkflow } from "./skill-levels-workflow";
 
 const MAX_ATTEMPTS = 8;
+const STALE_CLAIM_MS = 10 * 60 * 1000;
 
 /** Places every skill at its band's upper level, except the ones the model skips. */
 function mockLevels({ skipped = [] }: { skipped?: string[] } = {}) {
@@ -114,5 +116,66 @@ describe(skillLevelsWorkflow, () => {
     await expect(readSkills([failing.id])).resolves.toMatchObject([
       { cefrAttempts: 1, cefrLevel: null },
     ]);
+  });
+
+  it("leaves a skill another run is tagging to that run", async () => {
+    const skill = await skillFixture({ level: "beginner", targetLanguage: "en" });
+    const batch = { skillIds: [skill.id], targetLanguage: "en" };
+    const gate = Promise.withResolvers<null>();
+
+    vi.mocked(classifySkillLevels)
+      .mockImplementationOnce(async () => {
+        await gate.promise;
+        return taskResult({ levels: [{ id: skill.id, level: "A1" as const }] });
+      })
+      .mockResolvedValue(taskResult({ levels: [{ id: skill.id, level: "A2" as const }] }));
+
+    const curriculum = tagSkillLevels({ batch, workflowRunId: "curriculum-run" });
+    await vi.waitFor(() => expect(classifySkillLevels).toHaveBeenCalledOnce());
+
+    const sweep = await tagSkillLevels({ batch, workflowRunId: "sweep-run" }).finally(() =>
+      gate.resolve(null),
+    );
+
+    expect(classifySkillLevels).toHaveBeenCalledOnce();
+    expect(sweep).toBe(0);
+    await expect(curriculum).resolves.toBe(1);
+
+    await expect(readSkills([skill.id])).resolves.toMatchObject([
+      { cefrAttempts: 1, cefrLevel: "A1" },
+    ]);
+  });
+
+  it("lets the run holding a skill retry it, and another run take a claim left for over ten minutes", async () => {
+    const [held, abandoned] = await Promise.all([
+      skillFixture({ level: "beginner", targetLanguage: "en" }),
+      skillFixture({
+        cefrAttempts: 1,
+        cefrClaimedAt: new Date(Date.now() - STALE_CLAIM_MS - 1000),
+        cefrRunId: "stopped-run",
+        level: "beginner",
+        targetLanguage: "en",
+      }),
+    ]);
+
+    const batch = { skillIds: [held.id], targetLanguage: "en" };
+
+    vi.mocked(classifySkillLevels).mockRejectedValueOnce(new Error("Provider unavailable"));
+
+    await expect(tagSkillLevels({ batch, workflowRunId: "first-run" })).rejects.toThrow();
+
+    mockLevels();
+
+    await expect(tagSkillLevels({ batch, workflowRunId: "other-run" })).resolves.toBe(0);
+    await expect(tagSkillLevels({ batch, workflowRunId: "first-run" })).resolves.toBe(1);
+
+    await expect(
+      tagSkillLevels({
+        batch: { skillIds: [abandoned.id], targetLanguage: "en" },
+        workflowRunId: "other-run",
+      }),
+    ).resolves.toBe(1);
+
+    expect(sentSkillIds()).toStrictEqual([[held.id], [held.id], [abandoned.id]]);
   });
 });

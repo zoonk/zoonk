@@ -52,15 +52,34 @@ export async function findSkillLevelBatches(
   );
 }
 
-/** Raw, so a try leaves `updatedAt` alone until a level is written. Keeps the batch's order. */
+/**
+ * Skips skills another run is tagging; the run holding one claims it again on a retry, and a claim
+ * older than any call belongs to a run that stopped. Raw, so a try leaves `updatedAt` alone until a
+ * level is written. Keeps the batch's order.
+ */
 async function claimAttempt({
-  skillIds,
-  targetLanguage,
-}: SkillLevelBatch): Promise<ClaimedSkill[]> {
+  batch: { skillIds, targetLanguage },
+  workflowRunId,
+}: {
+  batch: SkillLevelBatch;
+  workflowRunId: string;
+}): Promise<ClaimedSkill[]> {
+  const now = new Date();
+
   const claimed = await prisma.$queryRaw<ClaimedSkill[]>`
     UPDATE skills
-    SET cefr_attempts = cefr_attempts + 1
-    WHERE id = ANY(${skillIds}::uuid[]) AND target_language = ${targetLanguage} AND ${owesLevel}
+    SET
+      cefr_attempts = cefr_attempts + 1,
+      cefr_run_id = ${workflowRunId},
+      cefr_claimed_at = ${now}::timestamp
+    WHERE id = ANY(${skillIds}::uuid[])
+      AND target_language = ${targetLanguage}
+      AND ${owesLevel}
+      AND (
+        cefr_claimed_at IS NULL
+        OR cefr_run_id = ${workflowRunId}
+        OR cefr_claimed_at < ${now}::timestamp - INTERVAL '10 minutes'
+      )
     RETURNING id, name, description, level::text AS level
   `;
 
@@ -75,12 +94,14 @@ export async function tagSkillLevels({
   analytics,
   batch,
   serviceTier,
+  workflowRunId,
 }: {
   analytics?: Analytics;
   batch: SkillLevelBatch;
   serviceTier?: ServiceTier;
+  workflowRunId: string;
 }): Promise<number> {
-  const claimed = await claimAttempt(batch);
+  const claimed = await claimAttempt({ batch, workflowRunId });
 
   if (claimed.length === 0) {
     return 0;
