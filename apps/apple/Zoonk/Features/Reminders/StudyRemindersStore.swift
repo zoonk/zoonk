@@ -37,8 +37,9 @@ final class StudyRemindersStore {
     self.push = push
     self.defaults = defaults
 
+    // The zone and default time follow the active goal, and studying ends the quiet state.
     let reminder: Resource<StudyReminder> = cache.resource(
-      audience: .signedIn, domains: [.studyReminder]
+      audience: .signedIn, domains: [.studyReminder, .goals, .learningProfile, .userProgress]
     ) { session in
       guard let session else {
         return nil
