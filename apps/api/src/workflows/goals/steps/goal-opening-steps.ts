@@ -114,6 +114,7 @@ export async function saveOpeningChapterStep({
 export async function saveGoalOpeningStep(input: {
   goalId: string;
   lessonId: string;
+  opening: GoalOpeningSkill;
 }): Promise<OpeningLesson | null> {
   "use step";
 

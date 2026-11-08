@@ -189,7 +189,7 @@ async function saveOpeningLesson({
     (await findOpeningLessonStep({ courseId: course.id, skillId: skill.id, userId })) ??
     (await writeOpeningChapter({ context, opening, scope, userId }));
 
-  return lessonId ? saveGoalOpeningStep({ goalId, lessonId }) : null;
+  return lessonId ? saveGoalOpeningStep({ goalId, lessonId, opening: opening.opening }) : null;
 }
 
 async function followLesson(lessonId: string): Promise<boolean> {

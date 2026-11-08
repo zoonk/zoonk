@@ -282,7 +282,22 @@ describe("a learn goal's opening", () => {
     ]);
 
     // An earlier run saved the opening and stopped before its lesson's run started.
-    await prisma.goal.update({ data: { openingLessonId: picked.id }, where: { id: goal.id } });
+    await openingSteps.saveGoalOpeningStep({
+      goalId: goal.id,
+      lessonId: picked.id,
+      opening: {
+        course: { id: course.id, key: "immunology", title: course.title },
+        skill: {
+          area: "Immunology",
+          description: skill.description,
+          estimatedLessons: 1,
+          id: skill.id,
+          key: "identify-pathogens",
+          level: "overview",
+          name: skill.name,
+        },
+      },
+    });
 
     await goalContentWorkflow({ goalId: goal.id });
 
