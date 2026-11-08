@@ -497,8 +497,10 @@ async function asCourseGoal({ goal, plan }: ItalianPlan) {
   ]);
 }
 
-/** Six written lessons of an outlined A1 skill, a share of them studied, then an A2 lesson. */
-async function outlinedSkillPlan({ estimate, studied }: { estimate: number; studied: number }) {
+type SixLessonSkill = { estimate: number; outlined?: boolean; studied: number };
+
+/** Six written lessons of an A1 skill, a share of them studied and the rest tested out, then an A2 lesson. */
+async function sixLessonSkillPlan({ estimate, outlined = true, studied }: SixLessonSkill) {
   const fixture = await italianPlan({
     items: [
       ...Array.from({ length: 6 }, (_, index) => ({
@@ -513,7 +515,10 @@ async function outlinedSkillPlan({ estimate, studied }: { estimate: number; stud
     ],
   });
 
-  await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+  if (outlined) {
+    await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+  }
+
   await markTestedOut(fixture, 0);
   return fixture;
 }
@@ -527,7 +532,7 @@ describe("a skill's full size", () => {
   it.each(OUTLINED_CASES)(
     "measures an outlined skill by its six written lessons, not its estimate of $estimate ($studied studied, re-planned: $replanned)",
     async ({ earned, estimate, replanned, studied }) => {
-      const fixture = await outlinedSkillPlan({ estimate, studied });
+      const fixture = await sixLessonSkillPlan({ estimate, studied });
 
       if (replanned) {
         await refreshGoalPlan({ goalId: fixture.goal.id });
@@ -544,7 +549,7 @@ describe("a skill's full size", () => {
   it.each(OUTLINED_CASES)(
     "measures a course's outlined skill by its six written lessons, not its estimate of $estimate ($studied studied, re-planned: $replanned)",
     async ({ earned, estimate, replanned, studied }) => {
-      const fixture = await outlinedSkillPlan({ estimate, studied });
+      const fixture = await sixLessonSkillPlan({ estimate, studied });
       await asCourseGoal(fixture);
 
       if (replanned) {
@@ -559,6 +564,14 @@ describe("a skill's full size", () => {
       });
     },
   );
+
+  it("measures a skill not outlined by its written lessons once more are written than estimated", async () => {
+    const fixture = await sixLessonSkillPlan({ estimate: 2, outlined: false, studied: 2 });
+
+    await finishLesson(fixture, 6);
+
+    await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A2" }]);
+  });
 
   it("keeps a skill a dated plan trimmed to its core at its full size when the core is tested out", async () => {
     const fixture = await italianPlan({

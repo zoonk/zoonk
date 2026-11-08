@@ -22,14 +22,15 @@ function getSize({
     return 0;
   }
 
-  return skill.outlined ? (taught.get(skill.skillId) ?? 0) : skill.lessons;
+  const written = taught.get(skill.skillId) ?? 0;
+  return skill.outlined ? written : Math.max(skill.lessons, written);
 }
 
 /**
  * The plan's graph skills, merged ones under their survivor as a re-plan merges them, each at its
- * full size: the written lessons the planner gives it once it's outlined, its estimate until then,
- * and nothing in an area the learner removed. A dated plan's cuts, a test-out and a re-plan leave
- * it as it is.
+ * full size: the written lessons the planner gives it once it's outlined, until then its estimate
+ * or its written lessons when more were written, and nothing in an area the learner removed. A
+ * dated plan's cuts, a test-out and a re-plan leave it as it is.
  */
 export async function loadSkillSizes({
   goal,
@@ -42,9 +43,11 @@ export async function loadSkillSizes({
   const removed = getSkippedSkillIds({ graph, settings: plan.settings });
   const kept = graph.skills.filter((skill) => !removed.has(skill.skillId));
 
-  const lessons = kept.some((skill) => skill.outlined)
-    ? await loadGoalPlannerLessons({ goal, graph: { ...graph, skills: kept }, userId: goal.userId })
-    : [];
+  const lessons = await loadGoalPlannerLessons({
+    goal,
+    graph: { ...graph, skills: kept },
+    userId: goal.userId,
+  });
 
   const taught = countTaughtLessons({ lessons, skills: kept });
 
