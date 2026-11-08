@@ -3,6 +3,8 @@ import {
   type PlacementSkillItems,
   generatePlacementItems,
 } from "@zoonk/ai/tasks/items/placement-items";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { type KeyCheckedItem } from "@zoonk/core/library/items/check-keys";
 import { createItems } from "@zoonk/core/library/items/create";
 import { type PlacementChoice } from "@zoonk/core/lookahead/item-exam";
 import {
@@ -28,28 +30,43 @@ type PlacementProvenance = Awaited<ReturnType<typeof generatePlacementItems>>["p
 
 type PlacementAnalytics = ReturnType<typeof toContentAnalytics>;
 
-async function storeSkillItems({
-  analytics,
-  format,
-  items,
-  provenance,
+export type CheckedSkillItems = { quick: KeyCheckedItem[]; typed: GeneratedItem[] };
+
+type SkillItems =
+  | { format: PlacementQuickFormat; items: KeyCheckedItem[] }
+  | { format: Extract<PlacementItemFormat, "typed">; items: GeneratedItem[] };
+
+export function getQuickOptionCount({
+  quickFormat,
   skill,
 }: {
+  quickFormat: PlacementQuickFormat;
+  skill: PlacementItemPick;
+}): number | null {
+  return quickFormat === "multipleChoice" ? (skill.exam?.optionCount ?? null) : null;
+}
+
+async function storeSkillItems({
+  analytics,
+  provenance,
+  skill,
+  ...written
+}: SkillItems & {
   analytics: PlacementAnalytics;
-  format: PlacementItemFormat;
-  items: PlacementSkillItems["quick"];
   provenance: PlacementProvenance;
   skill: PlacementItemPick;
 }): Promise<number> {
   const { exam } = skill;
 
   const { created, unchecked } = await createItems({
+    ...written,
     analytics,
     examBlueprintId: exam?.blueprintId ?? null,
-    format,
-    items,
     language: skill.language,
-    optionCount: format === "multipleChoice" ? (exam?.optionCount ?? null) : null,
+    optionCount:
+      written.format === "typed"
+        ? null
+        : getQuickOptionCount({ quickFormat: written.format, skill }),
     optionLanguage: skill.targetLanguage,
     provenance,
     skillId: skill.id,
@@ -68,7 +85,7 @@ async function storePlacementItems({
   skill,
 }: {
   analytics: PlacementAnalytics;
-  items: PlacementSkillItems;
+  items: CheckedSkillItems;
   provenance: PlacementProvenance;
   quickFormat: PlacementQuickFormat;
   skill: PlacementItemPick;
@@ -124,6 +141,15 @@ export async function pickPlacementBatchesStep({
   return { batches: toPlacementItemBatches({ quickCount, skills }), confirmingCount, quickFormat };
 }
 
+export type PlacementBatch = WriteContext & {
+  confirmingCount?: number;
+  quickCount: number;
+  quickFormat: PlacementQuickFormat;
+  skills: PlacementItemPick[];
+  wait?: CallWait;
+};
+
+/** Null for a batch without skills; otherwise each skill's questions in the batch's order. */
 export async function writePlacementBatchStep({
   analytics,
   confirmingCount = 0,
@@ -132,22 +158,17 @@ export async function writePlacementBatchStep({
   skills,
   wait = "soon",
   workflowRunId,
-}: WriteContext & {
-  confirmingCount?: number;
-  quickCount: number;
-  quickFormat: PlacementQuickFormat;
-  skills: PlacementItemPick[];
-  wait?: CallWait;
-}): Promise<number> {
+}: PlacementBatch): Promise<{
+  items: PlacementSkillItems[];
+  provenance: PlacementProvenance;
+} | null> {
   "use step";
 
   const [first] = skills;
 
   if (!first) {
-    return 0;
+    return null;
   }
-
-  const serviceTier = chooseServiceTier({ wait });
 
   const { data, provenance } = await generatePlacementItems({
     analytics: toContentAnalytics({ analytics, scope: first, workflowRunId }),
@@ -155,7 +176,7 @@ export async function writePlacementBatchStep({
     language: first.language,
     quickCount: quickCount + confirmingCount,
     quickFormat,
-    serviceTier,
+    serviceTier: chooseServiceTier({ wait }),
     skills: skills.map((skill) => ({
       description: skill.description,
       level: skill.level ?? "beginner",
@@ -166,11 +187,30 @@ export async function writePlacementBatchStep({
     typedCount: first.needsTyped ? PLACEMENT_ITEMS_PER_SKILL.typed : 0,
   });
 
+  return { items: data.skills, provenance };
+}
+
+/** Counts the skills that got a quick question stored. */
+export async function storePlacementBatchStep({
+  analytics,
+  items,
+  provenance,
+  quickFormat,
+  skills,
+  workflowRunId,
+}: WriteContext & {
+  items: CheckedSkillItems[];
+  provenance: PlacementProvenance;
+  quickFormat: PlacementQuickFormat;
+  skills: PlacementItemPick[];
+}): Promise<number> {
+  "use step";
+
   const stored = await Promise.allSettled(
     skills.map((skill, index) =>
       storePlacementItems({
         analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
-        items: data.skills[index] ?? { quick: [], typed: [] },
+        items: items[index] ?? { quick: [], typed: [] },
         provenance,
         quickFormat,
         skill,

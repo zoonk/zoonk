@@ -22,6 +22,7 @@ import {
 } from "../../exams/statutes/statute-drill-targets";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { completeLessonContent } from "../generation/lesson-generation-state";
+import { keyChecked } from "../items/_test-utils/generated-items";
 import {
   publishStagedLessonVersion,
   stageLessonVersion,
@@ -178,7 +179,7 @@ async function lawGoal() {
 }
 
 function drill(days: string) {
-  return {
+  return keyChecked({
     context: null,
     difficulty: "medium" as const,
     format: "trueFalse" as const,
@@ -189,7 +190,7 @@ function drill(days: string) {
     reference: "Art. 13",
     statement: `A posse ocorrerá no prazo de ${days} dias contados da publicação do ato.`,
     visual: null,
-  };
+  });
 }
 
 async function writeDrill({ days, goalId }: { days: string; goalId: string }) {

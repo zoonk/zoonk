@@ -34,3 +34,16 @@ export function isStatuteSource({ title, url }: { title: string; url: string | n
 export function toStatuteShortName(title: string): string {
   return title.split(",")[0]?.trim() || title.trim();
 }
+
+export function formatStatuteSource({
+  articles,
+  law,
+}: {
+  articles: readonly StatuteArticleText[];
+  law: { shortName: string; title: string };
+}): string {
+  return [
+    `${law.title} (${law.shortName})`,
+    ...articles.map(({ reference, text }) => `${reference}: ${text}`),
+  ].join("\n\n");
+}
