@@ -64,6 +64,7 @@ function useStudyWeek({ draft, goal }: { draft: ScheduleDraft | null; goal: Goal
 }
 
 function useFoundTime({
+  aim,
   ask,
   dated,
   days,
@@ -71,6 +72,7 @@ function useFoundTime({
   planMade,
   weekend,
 }: {
+  aim: string | null;
   ask: ScheduleActions["findTimeToCover"];
   dated: boolean;
   days: number[];
@@ -83,7 +85,7 @@ function useFoundTime({
   const covering = usePlanAnswer({
     ask: () => ask(week),
     enabled: dated && days.length > 0,
-    key: JSON.stringify(week),
+    key: JSON.stringify({ aim, week }),
     paused,
     planMade,
   });
@@ -103,6 +105,7 @@ function useFoundTime({
 
 export function useSchedule({
   actions,
+  aim,
   dated: datedGuess,
   draft,
   exam,
@@ -113,6 +116,8 @@ export function useSchedule({
   together,
 }: {
   actions: ScheduleActions;
+  /** A language goal's aim: changing it re-plans, so the answers are asked again. */
+  aim: string | null;
   dated: boolean;
   draft: ScheduleDraft | null;
   exam: boolean;
@@ -128,6 +133,7 @@ export function useSchedule({
   const hasDays = week.days.length > 0;
 
   const found = useFoundTime({
+    aim,
     ask: actions.findTimeToCover,
     dated: datedGuess,
     days: week.days,
@@ -159,7 +165,7 @@ export function useSchedule({
     enabled:
       hasDays &&
       asksAboutTime({ dated, found: found.found, fullCourse: studiesEverything, minutes }),
-    key: JSON.stringify({ ...asked, dailyMinutes: minutes }),
+    key: JSON.stringify({ ...asked, aim, dailyMinutes: minutes }),
     paused,
     planMade,
   });

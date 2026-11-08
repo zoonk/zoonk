@@ -20,6 +20,7 @@ import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
+import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
 import { PlanDate } from "./plan-date";
 import { PlanEditRequest } from "./plan-edit-request";
@@ -44,6 +45,7 @@ function EditorSections() {
       <div className={SECTION_CLASS} id={getEditorSectionId("date")}>
         <PlanDate />
       </div>
+      <PlanAim />
       <PlanSchedule />
       <div className={SECTION_CLASS} id={getEditorSectionId("choices")}>
         <PlanExamChoices />

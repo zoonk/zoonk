@@ -1,6 +1,7 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
+import { languageAimViewSchema } from "@zoonk/core/language/aims/schemas";
 import { ownLevelSchema } from "@zoonk/core/learner/placement/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planCourseSchema } from "@zoonk/core/plans/course-contract";
@@ -141,6 +142,7 @@ export const planResponseSchema = z
         "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
       ),
     goalId: uuidSchema(),
+    languageAim: languageAimViewSchema.nullable(),
     nextDays: z
       .array(planDaySchema)
       .meta({

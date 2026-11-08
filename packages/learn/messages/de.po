@@ -590,6 +590,11 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {Dein Zieldatum ({date}) liegt in der Vergangenheit.} other {Dein Zieldatum ({date}) liegt in der Vergangenheit.}}"
 
 #: src/_components/time-answer-lines.tsx
+msgctxt "qQDZCf"
+msgid "At {time} a day, you reach {level} around <date>{month}</date>."
+msgstr "Mit {time} am Tag erreichst du {level} etwa im <date>{month}</date>."
+
+#: src/_components/time-answer-lines.tsx
 msgctxt "lzWfsi"
 msgid "You finish around <date>{month}</date>."
 msgstr "Du bist ungefähr im <date>{month}</date> fertig."
@@ -1012,6 +1017,7 @@ msgstr "Speichern"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
+#: src/onboarding/steps/schedule-aim.tsx
 #: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
@@ -3698,8 +3704,10 @@ msgctxt "XffT_n"
 msgid "How the score works"
 msgstr "So funktioniert der Score"
 
+#. Beside a language goal's reason: a certificate's plan follows its exam.
 #: src/exam/exam-screen.tsx
 #: src/onboarding/entry/goal-examples.tsx
+#: src/onboarding/steps/reason-step.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Prüfung"
@@ -5250,6 +5258,108 @@ msgstr "Tag {day, number} von {days, number}"
 msgctxt "oZPvpX"
 msgid "phase {number, number} of {total, number}"
 msgstr "Phase {number, number} von {total, number}"
+
+#: src/language-aim/aim-picker.tsx
+msgctxt "OIMmZ8"
+msgid "How far do you want to go?"
+msgstr "Wie weit möchtest du kommen?"
+
+#: src/language-aim/use-aim-words.ts
+msgctxt "DV8li2"
+msgid "Get by on trips"
+msgstr "Auf Reisen zurechtkommen"
+
+#: src/language-aim/use-aim-words.ts
+msgctxt "RE5TLy"
+msgid "Everyday conversations"
+msgstr "Gespräche im Alltag"
+
+#: src/language-aim/use-aim-words.ts
+#: src/language-aim/use-reason-copy.ts
+msgctxt "QcdeJ8"
+msgid "Work or study in it"
+msgstr "Im Beruf oder Studium nutzen"
+
+#: src/language-aim/use-aim-words.ts
+#: src/language-aim/use-reason-copy.ts
+msgctxt "uLO8Ma"
+msgid "Speak it fluently"
+msgstr "Fließend sprechen"
+
+#. Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".
+#: src/language-aim/use-aim-words.ts
+msgctxt "nxt5u1"
+msgid "About {hours} h more · around {month}"
+msgstr "Etwa {hours} Std. mehr · voraussichtlich {month}"
+
+#. Under a language level to aim for: the hours of study still needed to reach it.
+#: src/language-aim/use-aim-words.ts
+msgctxt "PSVY23"
+msgid "About {hours} h more"
+msgstr "Etwa {hours} Std. mehr"
+
+#: src/language-aim/use-aim-words.ts
+msgctxt "2B8IBO"
+msgid "About {hours} h of study"
+msgstr "Etwa {hours} h Lernzeit"
+
+#. The language level a course goes up to, like B1. Not the learner's goal: say it as the level they aim for.
+#: src/language-aim/use-aim-words.ts
+msgctxt "mI_0zG"
+msgid "Your aim"
+msgstr "Dein angestrebtes Level"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "IZU_K4"
+msgid "Get by on trips: order, ask the way, small talk"
+msgstr "Auf Reisen zurechtkommen: bestellen, nach dem Weg fragen, sich unterhalten"
+
+#. A reason to learn a language: to travel.
+#: src/language-aim/use-reason-copy.ts
+msgctxt "z1QN2q"
+msgid "Travel"
+msgstr "Reisen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "GcOu5Q"
+msgid "Everyday conversations, at home or abroad"
+msgstr "Gespräche im Alltag, zu Hause oder im Ausland"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "pY3V77"
+msgid "Talk with people"
+msgstr "Mit anderen sprechen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "bd1s9H"
+msgid "Meetings, interviews and classes"
+msgstr "Besprechungen, Vorstellungsgespräche und Unterricht"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "fI9mky"
+msgid "Talk about almost anything with ease"
+msgstr "Mühelos über fast alles sprechen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "3RtBi8"
+msgid "IELTS, DELE, CELI and others"
+msgstr "IELTS, DELE, CELI und andere"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "sY1qPu"
+msgid "Pass a certificate"
+msgstr "Zertifikatsprüfung bestehen"
+
+#: src/language-aim/use-reason-copy.ts
+msgctxt "RW_ehZ"
+msgid "In your own words. Aims for {level}"
+msgstr "In deinen eigenen Worten. Ziel: {level}"
+
+#: src/language-aim/use-reason-copy.ts
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "qm_eL5"
+msgid "Something else"
+msgstr "Etwas anderes"
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -10002,9 +10112,9 @@ msgid "Start lesson 1"
 msgstr "Lektion 1 starten"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "xwLmmU"
-msgid "The big ideas, no formulas"
-msgstr "Die wichtigsten Ideen, ohne Formeln"
+msgctxt "LCLlDB"
+msgid "A short course: the big ideas, no formulas"
+msgstr "Ein kurzer Kurs: die Grundideen, ohne Formeln"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "2ne17k"
@@ -10012,9 +10122,9 @@ msgid "Get an overview"
 msgstr "Einen Überblick bekommen"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "Sx2SoK"
-msgid "From the basics to advanced"
-msgstr "Von den Grundlagen bis zu fortgeschrittenen Themen"
+msgctxt "kYQaaW"
+msgid "The full path, from the basics to advanced"
+msgstr "Der ganze Weg, von den Grundlagen bis zu fortgeschrittenen Inhalten"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "NTnhyB"
@@ -10022,9 +10132,9 @@ msgid "Understand it in depth"
 msgstr "Das Thema gründlich verstehen"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "sPxI2l"
-msgid "Apply it to real projects"
-msgstr "In echten Projekten anwenden"
+msgctxt "yI7Bsd"
+msgid "Only what your work uses, in the order it needs"
+msgstr "Nur was du im Beruf brauchst, in der passenden Reihenfolge"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
@@ -10032,9 +10142,9 @@ msgid "Use it at work"
 msgstr "Bei der Arbeit nutzen"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "i81GBB"
-msgid "Get ready for a new role"
-msgstr "Auf eine neue Stelle vorbereiten"
+msgctxt "pHQ_Su"
+msgid "What the new role needs, portfolio included"
+msgstr "Was du für den neuen Job brauchst, inklusive Portfolio"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "D05Dha"
@@ -10042,9 +10152,9 @@ msgid "Change careers"
 msgstr "Den Beruf wechseln"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "2IeKuz"
-msgid "Pick up what you left behind"
-msgstr "Dort weitermachen, wo du aufgehört hast"
+msgctxt "ibbNWU"
+msgid "Back to the level you had, after a quick test"
+msgstr "Nach einem kurzen Test zurück zu deinem früheren Level"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -10057,14 +10167,9 @@ msgid "Tell us later, in your own words"
 msgstr "Erzähl es uns später in deinen eigenen Worten"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "qm_eL5"
-msgid "Something else"
-msgstr "Etwas anderes"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "dLth3B"
-msgid "Pick what motivates you most."
-msgstr "Wähl aus, was dich am meisten motiviert."
+msgctxt "3ixkTn"
+msgid "It sets how deep your course goes, and so how long it is."
+msgstr "Das bestimmt, wie tief dein Kurs ins Thema geht, und damit seine Dauer."
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -10124,26 +10229,6 @@ msgctxt "y2y8ZK"
 msgid "Which position are you applying for?"
 msgstr "Für welche Stelle bewirbst du dich?"
 
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "MTbmPR"
-msgid "The situations you care about shape every lesson."
-msgstr "Die Situationen, die dir wichtig sind, prägen jede Lektion."
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "iEhh6m"
-msgid "Why"
-msgstr "Warum"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "AnUEpz"
-msgid "E.g., a job interview, travel"
-msgstr "Z. B. ein Vorstellungsgespräch, Reisen"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "j4_o5O"
-msgid "Why are you learning it?"
-msgstr "Warum lernst du das?"
-
 #. An example score: a band is an IELTS-style score.
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "t2MBS1"
@@ -10159,6 +10244,47 @@ msgstr "Welchen Score brauchst du?"
 msgctxt "1UCLOd"
 msgid "A couple of details make your plan fit better."
 msgstr "Ein paar Details helfen, deinen Plan besser auf dich abzustimmen."
+
+#. Hours of study, as a short figure like "190 h".
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "VW5079"
+msgid "{hours} h"
+msgstr "{hours} h"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "PtLljQ"
+msgid "Which one?"
+msgstr "Welche?"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "1o8k0C"
+msgid "Your plan follows that exam's papers and score."
+msgstr "Dein Plan richtet sich nach den Prüfungsteilen und dem Score dieser Prüfung."
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "lZZnLn"
+msgid "In your own words"
+msgstr "In deinen eigenen Worten"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "EXH9dO"
+msgid "Your answer sets how far your course goes."
+msgstr "Deine Antwort bestimmt, bis zu welchem Level dein Kurs geht."
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "j4_o5O"
+msgid "Why are you learning it?"
+msgstr "Warum lernst du das?"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "GJAhWB"
+msgid "Why you're learning it"
+msgstr "Warum du die Sprache lernst"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "eAXPtf"
+msgid "Hours of study from scratch, practice included. Less if you already know some."
+msgstr "Stunden zum Lernen und Üben ohne Vorkenntnisse. Weniger, wenn du schon etwas kannst."
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "v9nycX"
@@ -10258,6 +10384,12 @@ msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Etwa # Tag} other {Etwa # Tage}}"
 
+#. Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "XvWNP2"
+msgid "by {month}"
+msgstr "bis {month}"
+
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "x0b1HZ"
 msgid "estimated finish"
@@ -10326,6 +10458,12 @@ msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Z. B. Berichte, A/B-Tests"
 
+#. Under "How far do you want to go?": where the learner starts and their daily time. {level} is their level when it is a CEFR label, like "B1+".
+#: src/onboarding/steps/schedule-aim.tsx
+msgctxt "YYDGLc"
+msgid "{level, select, none {From scratch, at {time} a day.} basic {From the basics, at {time} a day.} intermediate {From an intermediate level, at {time} a day.} advanced {From an advanced level, at {time} a day.} other {From {level}, at {time} a day.}}"
+msgstr "{level, select, none {Ohne Vorkenntnisse, mit {time} am Tag.} basic {Von den Grundlagen aus, mit {time} am Tag.} intermediate {Ab einem mittleren Level, mit {time} am Tag.} advanced {Ab einem fortgeschrittenen Level, mit {time} am Tag.} other {Ab {level}, mit {time} am Tag.}}"
+
 #. A link under the daily study time that opens the question about the goal's date, to change it.
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "pttbjJ"
@@ -10386,6 +10524,12 @@ msgstr "Welche Fächer kennst du schon gut?"
 msgctxt "65ILOx"
 msgid "Subjects you know well"
 msgstr "Fächer, die du schon gut kennst"
+
+#: src/onboarding/understood/understood-aim-picker.tsx
+#: src/onboarding/understood/understood-row.tsx
+msgctxt "C9D4Tz"
+msgid "Edit {field}"
+msgstr "{field} bearbeiten"
 
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-properties.tsx
@@ -10450,11 +10594,6 @@ msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Quelle: {source}"
 
-#: src/onboarding/understood/understood-row.tsx
-msgctxt "C9D4Tz"
-msgid "Edit {field}"
-msgstr "{field} bearbeiten"
-
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
 msgid "Here's what I understood"
@@ -10506,6 +10645,16 @@ msgid "You speak"
 msgstr "Du sprichst"
 
 #: src/onboarding/understood/use-understood-rows.ts
+msgctxt "O6G1Qp"
+msgid "Level you're aiming for"
+msgstr "Angestrebtes Level"
+
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "GQ5B1n"
+msgid "Target score"
+msgstr "Angestrebter Score"
+
+#: src/onboarding/understood/use-understood-rows.ts
 msgctxt "onDfe_"
 msgid "Course"
 msgstr "Kurs"
@@ -10519,16 +10668,6 @@ msgstr "Wo: {institution}"
 msgctxt "ujaB7H"
 msgid "Where"
 msgstr "Wo"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "O6G1Qp"
-msgid "Level you're aiming for"
-msgstr "Angestrebtes Level"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "GQ5B1n"
-msgid "Target score"
-msgstr "Angestrebter Score"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "AkCxS_"
@@ -10738,6 +10877,11 @@ msgstr "Neue Wörter"
 msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "Was du übst"
+
+#: src/plan/plan-aim.tsx
+msgctxt "yEgtb-"
+msgid "How far your course goes, which sets how long your plan is."
+msgstr "Dein Kursziel bestimmt, wie lange dein Plan dauert."
 
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/use-time-to-cover.ts
@@ -11764,6 +11908,11 @@ msgstr "Du lernst alles: Was vor der Prüfung nicht mehr reinpasst, kommt danach
 msgctxt "iLZyQ_"
 msgid "Your plan ends at the exam again."
 msgstr "Dein Plan endet wieder mit der Prüfung."
+
+#: src/plan/use-choice-sentence.ts
+msgctxt "AhM22J"
+msgid "Your course now goes up to {level}."
+msgstr "Dein Kurs reicht jetzt bis {level}."
 
 #: src/plan/use-coverage-sentence.ts
 msgctxt "PTMqby"

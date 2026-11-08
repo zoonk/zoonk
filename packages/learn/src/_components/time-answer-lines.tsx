@@ -99,16 +99,33 @@ function DatedWords({
   }
 }
 
-function FinishWords({ line }: { line: FinishLine }) {
+/** A language plan ends where its aim is, so its finish says when the learner reaches it. */
+function FinishWords({
+  aim,
+  line,
+  minutes,
+}: {
+  aim: string | null;
+  line: FinishLine;
+  minutes: number | null;
+}) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const formatDuration = useFormatDuration();
 
   switch (line.kind) {
     case "finish":
-      return t.rich("You finish around <date>{month}</date>.", {
-        date: FinishMonth,
-        month: formatDate(line.endDate, "month"),
-      });
+      return aim && minutes !== null
+        ? t.rich("At {time} a day, you reach {level} around <date>{month}</date>.", {
+            date: FinishMonth,
+            level: aim,
+            month: formatDate(line.endDate, "month"),
+            time: formatDuration(minutes),
+          })
+        : t.rich("You finish around <date>{month}</date>.", {
+            date: FinishMonth,
+            month: formatDate(line.endDate, "month"),
+          });
     case "noFinish":
       return t(
         "We can't estimate a finish date for this schedule. Try more time or more study days.",
@@ -152,11 +169,13 @@ function StatusWords({
 }
 
 export function LineWords({
+  aim = null,
   date,
   exam,
   line,
   minutes,
 }: {
+  aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
@@ -170,7 +189,7 @@ export function LineWords({
   }
 
   if (isFinishLine(line)) {
-    return <FinishWords line={line} />;
+    return <FinishWords aim={aim} line={line} minutes={minutes} />;
   }
 
   return <StatusWords dated={date !== null} line={line} minutes={minutes} />;

@@ -1,4 +1,5 @@
 import { CourseLevel } from "@zoonk/db/enums";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
@@ -161,7 +162,12 @@ export type PlanToolChoice = z.infer<typeof toolChoiceSchema>;
 export type StoredBaseChoice = z.infer<typeof baseChoiceSchema>;
 
 export const planStateSchema = z.object({
-  goal: z.object({ dailyMinutes: z.int(), targetDate: isoDateSchema.nullable() }),
+  goal: z.object({
+    /** A language goal's aim (its `targetScore`); absent from snapshots saved before it was kept. */
+    aim: z.enum(CEFR_LEVELS).nullable().optional(),
+    dailyMinutes: z.int(),
+    targetDate: isoDateSchema.nullable(),
+  }),
   graph: planGraphSchema,
   settings: planSettingsSchema,
 });

@@ -28,6 +28,7 @@ import {
   PurposeStep,
   TextStep,
 } from "./steps/question-steps";
+import { ReasonStep } from "./steps/reason-step";
 import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
@@ -98,7 +99,7 @@ function QuestionStepScreen({
         />
       );
     case "reason":
-      return <TextStep {...props} key={step} question={step} subject={subject} />;
+      return <ReasonStep {...props} reasons={view.languageAim?.reasons ?? []} subject={subject} />;
     case "target":
       return (
         <TextStep
@@ -151,6 +152,7 @@ export function OnboardingStepScreen({
   onAnswer,
   onPlacementDone,
   onPlacementFinishFailed,
+  onViewChange,
   pending,
   plan,
   routes,
@@ -166,6 +168,8 @@ export function OnboardingStepScreen({
   onAnswer: (input: OnboardingAnswerInput) => void;
   onPlacementDone: () => void;
   onPlacementFinishFailed: (failed: boolean) => void;
+  /** A change made on a screen without answering it, such as the aim, read back. */
+  onViewChange: (view: OnboardingView) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
   routes: OnboardingRoutes;
@@ -207,6 +211,16 @@ export function OnboardingStepScreen({
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
+          languageAim={view.languageAim}
+          onChangeAim={async (aim) => {
+            const changed = await actions.changeAim({ aim, goalId: view.goal.id });
+
+            if (changed) {
+              onViewChange(changed);
+            }
+
+            return changed !== null;
+          }}
           onChangeDate={schedule.onChangeDate}
           planReadiness={view.planReadiness}
           readWarmUp={actions.readWarmUp}

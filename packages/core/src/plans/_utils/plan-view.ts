@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { readChallengeReadiness } from "../../checkpoints/_utils/challenge-readiness";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -7,6 +8,7 @@ import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { loadNoticeDates } from "../../exams/_utils/notice-day";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
+import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
@@ -273,6 +275,10 @@ export async function buildPlanView({
       canApply: fresh !== null,
     },
     goalId: goal.id,
+    languageAim:
+      goal.kind === "language" && isJsonObject(goal.details)
+        ? toLanguageAimView(goal.details)
+        : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     numbers: summary ? buildSavedPlanNumbersView(context) : null,
     ownLevel: getOwnLevel({ goal }),
