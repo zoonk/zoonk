@@ -110,6 +110,8 @@ final class LessonPlayerStore {
   /// Device-graded answers the server hasn't taken yet, oldest first: the lesson can't finish
   /// without them.
   private(set) var held: [HeldAnswer] = []
+  /// Device-graded answers given before the run started, held with its id once it does.
+  private var heldForRun: [(_ runId: String) -> HeldAnswer] = []
   private var heldOnDevice: HeldLessonAnswers?
   private var sendFailed = false
   /// Each screen's held answers being sent now, so finishing waits for them.
@@ -246,6 +248,7 @@ final class LessonPlayerStore {
           return
         }
         self.lesson = lesson
+        heldForRun = []
         var state = LessonPlayerState(
           lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
         leaveOutUnplayable(&state)
@@ -333,6 +336,9 @@ final class LessonPlayerStore {
       self.state?.startRun(
         runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
         startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
+      heldForRun.forEach { hold($0(run.runId)) }
+      heldForRun = []
+      sendHeldAnswers()
     case .failure(let refusal): self.state?.refuseRun(refusal)
     case .opened(let opening):
       onOpened(opening)
@@ -554,16 +560,9 @@ final class LessonPlayerStore {
 
   func continueLesson() {
     activate()
-    guard state?.runId != nil else {
-      let stepId = state?.currentStep?.id
-      Task {
-        if await ensureRun(), self.state?.currentStep?.id == stepId { self.continueLesson() }
-      }
-      return
-    }
     writeExampleLinesOnce()
     sendHeldAnswers()
-    self.state?.continueLesson()
+    state?.continueLesson()
     finishIfCompleted()
   }
 
@@ -573,28 +572,14 @@ final class LessonPlayerStore {
 
   func explainFirst() {
     activate()
-    guard state?.runId != nil else {
-      let stepId = state?.currentStep?.id
-      Task {
-        if await ensureRun(), self.state?.currentStep?.id == stepId { self.explainFirst() }
-      }
-      return
-    }
     writeExampleLinesOnce()
-    self.state?.explainFirst()
+    state?.explainFirst()
   }
 
   func knowThis() {
     activate()
-    guard state?.runId != nil else {
-      let stepId = state?.currentStep?.id
-      Task {
-        if await ensureRun(), self.state?.currentStep?.id == stepId { self.knowThis() }
-      }
-      return
-    }
     writeExampleLinesOnce()
-    self.state?.knowThis()
+    state?.knowThis()
   }
 
   func dontKnow() {
@@ -604,15 +589,8 @@ final class LessonPlayerStore {
 
   func skipWriting() {
     activate()
-    guard state?.runId != nil else {
-      let stepId = state?.currentStep?.id
-      Task {
-        if await ensureRun(), self.state?.currentStep?.id == stepId { self.skipWriting() }
-      }
-      return
-    }
     choices.setChosenToday(.cantWrite, true)
-    self.state?.skipWriting()
+    state?.skipWriting()
     finishIfCompleted()
   }
 
@@ -641,8 +619,7 @@ final class LessonPlayerStore {
       return
     }
 
-    guard await ensureRun() else { return }
-    self.state?.select(answer, for: step.id)
+    activate()
     writeExampleLinesOnce()
     let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
@@ -658,12 +635,21 @@ final class LessonPlayerStore {
 
       // Held before anything moves on, so finishing waits for it: match columns finishes a lesson
       // on its own check.
-      if answer.isRecorded, let runId = self.state?.runId {
-        hold(
+      if answer.isRecorded {
+        let usedHelp = state.helped.contains(step.id)
+        let answeredAt = Date.now
+        let held = { runId in
           HeldAnswer(
             stepId: step.id, answer: answer, attemptId: attemptId, runId: runId,
-            durationMs: durationMs, usedHelp: state.helped.contains(step.id),
-            isCorrect: grade.isCorrect, answeredAt: .now))
+            durationMs: durationMs, usedHelp: usedHelp, isCorrect: grade.isCorrect,
+            answeredAt: answeredAt)
+        }
+
+        if let runId = self.state?.runId {
+          hold(held(runId))
+        } else {
+          heldForRun.append(held)
+        }
       }
 
       self.state?.resolve(
@@ -675,10 +661,12 @@ final class LessonPlayerStore {
 
     self.state?.startChecking()
 
-    guard let runId = self.state?.runId else {
+    guard await ensureRun(), let runId = self.state?.runId else {
       self.state?.failChecking()
       return
     }
+
+    guard self.state?.phase == .checking, self.state?.currentStep?.id == step.id else { return }
 
     let api = api
     let usedHelp = state.helped.contains(step.id)
