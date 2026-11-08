@@ -75,16 +75,13 @@ export function composeRevealDays({
 
   const minutes = blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
   const studyDays = listedDays.filter((day) => day.items.length > 0);
-  const todayCounts = blocks.length > 0 && planToday;
 
   return {
     minutes,
     nextDays: listedDays,
     week: {
-      days: studyDays.length + (todayCounts ? 1 : 0),
-      minutes:
-        studyDays.reduce((total, day) => total + day.minutes, 0) +
-        (todayCounts ? planToday.minutes : 0),
+      days: studyDays.length + (blocks.length > 0 ? 1 : 0),
+      minutes: studyDays.reduce((total, day) => total + day.minutes, minutes),
     },
   };
 }
