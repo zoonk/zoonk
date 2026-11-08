@@ -1,2 +1,2 @@
 -- AlterEnum
-ALTER TYPE "FollowUpKind" ADD VALUE 'refreshStudyDay';
+ALTER TYPE "FollowUpKind" ADD VALUE 'refresh_study_day';
