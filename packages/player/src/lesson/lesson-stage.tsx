@@ -120,8 +120,12 @@ function LessonNotice() {
   }
 }
 
+/** On a phone the word bank waits at the bottom of the screen, so the note takes the room above it rather than pushing it up. */
+const ABOVE_WORD_BANK_CLASS =
+  "supports-[anchor-name:--word-bank]:max-lg:absolute supports-[anchor-name:--word-bank]:max-lg:inset-x-0 supports-[anchor-name:--word-bank]:max-lg:bottom-[anchor(--word-bank_top)]";
+
 /** A check that names its own problem (no words heard, a limit) says it where the learner records. */
-function LessonCheckNote() {
+function LessonCheckNote({ step }: { step: PlayableLibraryStep }) {
   const t = useExtracted();
   const { state } = useLessonPlayer();
   const isFailed = state.checkFailed && !state.checkIssue;
@@ -136,7 +140,12 @@ function LessonCheckNote() {
   }
 
   return (
-    <PlayerContentFrame className="pb-6">
+    <PlayerContentFrame
+      className={cn(
+        "pb-6",
+        (step.kind === "reading" || step.kind === "listening") && ABOVE_WORD_BANK_CLASS,
+      )}
+    >
       <p
         className={cn("text-sm", isFailed ? "text-destructive-text" : "text-muted-foreground")}
         role="status"
@@ -204,7 +213,13 @@ export function LessonStage({
   };
 
   return (
-    <div className={cn("flex w-full flex-col", FILL_FOR_WORD_BANK_CLASS)} data-slot="lesson-stage">
+    <div
+      className={cn(
+        "relative flex w-full flex-col **:data-[slot=word-bank]:[anchor-name:--word-bank]",
+        FILL_FOR_WORD_BANK_CLASS,
+      )}
+      data-slot="lesson-stage"
+    >
       <OrientationStrip step={step} />
       {isShown && <LessonNotice />}
 
@@ -218,7 +233,6 @@ export function LessonStage({
         />
       </LessonScreenFrame>
 
-      {isShown && <LessonCheckNote />}
       {isShown && !isLanguageStep(step) && <LessonCitation citation={step.citation} />}
 
       {isShown && state.phase === "feedback" && result && next && (
@@ -240,6 +254,7 @@ export function LessonStage({
 
       {isShown && <LessonRecapRow />}
       {isShown && <UpcomingPictures steps={getUpcomingSteps(state)} />}
+      {isShown && <LessonCheckNote step={step} />}
     </div>
   );
 }
