@@ -230,5 +230,6 @@ filter:
     - updateCurrentUserLearningProfile
     - updateCurrentUserMemorySettings
     - updateGoal
+    - updateLibraryLessonClock
     - updateMemoryFact
     - updateOwnLevel

@@ -7,6 +7,80 @@ import XCTest
 
 @MainActor
 final class LessonPlayerLoadingTests: XCTestCase {
+  func testVisibilityPausesAndResumesTheClockWithoutStartingAgain() async throws {
+    let clockId = UUID().uuidString
+    let transport = OpeningStartTransport(holds: false, clockIds: [clockId])
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+
+    XCTAssertNil(store.setVisible(true))
+    await store.setVisible(false)?.value
+    XCTAssertNil(store.setVisible(false))
+    await store.setVisible(true)?.value
+    await store.setVisible(false)?.value
+
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.clockId), [clockId, clockId, clockId])
+    XCTAssertEqual(clocks.map(\.runId), ["run", "run", "run"])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 3])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused"])
+    let starts = await transport.count
+    XCTAssertEqual(starts, 1)
+  }
+
+  func testANewStartResetsTheClockAndStandaloneLessonsSkipUpdates() async throws {
+    let first = UUID().uuidString
+    let second = UUID().uuidString
+    let transport = OpeningStartTransport(holds: false, clockIds: [first, nil, second])
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    await store.setVisible(false)?.value
+    await store.setVisible(true)?.value
+
+    await store.load()
+    XCTAssertNil(store.setVisible(false))
+    XCTAssertNil(store.setVisible(true))
+
+    await store.load()
+    await store.setVisible(false)?.value
+
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.clockId), [first, first, second])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 1])
+  }
+
+  func testAStartThatArrivesWhileHiddenIsPaused() async throws {
+    let transport = OpeningStartTransport(holds: true, clockIds: [UUID().uuidString])
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    XCTAssertNil(store.setVisible(false))
+    await transport.release()
+    await loading.value
+    await store.setVisible(true)?.value
+
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.sequence).sorted(), [1, 2])
+    XCTAssertEqual(clocks.first(where: { $0.sequence == 1 })?.state, "paused")
+    XCTAssertEqual(clocks.first(where: { $0.sequence == 2 })?.state, "running")
+  }
+
+  func testFailedAndIgnoredClockUpdatesStaySilentAndAreNotRetried() async throws {
+    let transport = OpeningStartTransport(
+      holds: false, clockIds: [UUID().uuidString], failsFirstClock: true)
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    await store.setVisible(false)?.value
+    await store.setVisible(true)?.value
+    XCTAssertNil(store.setVisible(true))
+
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running"])
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertEqual(store.state?.runId, "run")
+  }
+
   func testALateRunPreservesCanvasWorkWithNoAnswerAfterGoingBack() async throws {
     let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
     let store = try openingPlayer(
@@ -1156,24 +1230,36 @@ private let sessionLessonCompletion = #"""
   """#
 
 private actor OpeningStartTransport: ClientTransport {
+  struct ClockInput: Decodable {
+    let clockId: String
+    let runId: String
+    let sequence: Int
+    let state: String
+  }
+
   let holds: Bool
   let opensElsewhere: Bool
   let failsFirstStart: Bool
   let runAnswers: String
+  let clockIds: [String?]
+  let failsFirstClock: Bool
   private var gate: CheckedContinuation<Void, Never>?
   private(set) var count = 0
   private(set) var inputs: [String] = []
+  private(set) var clocks: [ClockInput] = []
   /// Each check as "step in run".
   private(set) var checks: [String] = []
 
   init(
     holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false,
-    runAnswers: String = "[]"
+    runAnswers: String = "[]", clockIds: [String?] = [nil], failsFirstClock: Bool = false
   ) {
     self.holds = holds
     self.opensElsewhere = opensElsewhere
     self.failsFirstStart = failsFirstStart
     self.runAnswers = runAnswers
+    self.clockIds = clockIds
+    self.failsFirstClock = failsFirstClock
   }
 
   func release() {
@@ -1186,6 +1272,17 @@ private actor OpeningStartTransport: ClientTransport {
   {
     if operationID == "createStepCheck" {
       return try await check(request, body: body)
+    }
+
+    if operationID == "updateLibraryLessonClock" {
+      let input = try JSONDecoder().decode(
+        ClockInput.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
+      clocks.append(input)
+      if failsFirstClock, clocks.count == 1 { throw APIError.network }
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(#"{"status":"ignored"}"#)
+      )
     }
 
     guard operationID == "createLibraryLessonStart" else { throw APIError.network }
@@ -1210,7 +1307,7 @@ private actor OpeningStartTransport: ClientTransport {
     return (
       HTTPResponse(status: .created, headerFields: headers),
       HTTPBody(
-        #"{"answers":\#(runAnswers),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
+        #"{"answers":\#(runAnswers),"clockId":\#(clockIds[min(count - 1, clockIds.count - 1)].map { "\"\($0)\"" } ?? "null"),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
       )
     )
   }

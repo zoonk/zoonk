@@ -132,8 +132,6 @@ private struct LessonPlayerContent: View {
           }
       }
     }
-    // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
-    .onDisappear { store.cancelStart() }
     // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
     .simultaneousGesture(TapGesture().onEnded { store.act() })
     .onKeyPress(phases: .down) { _ in
@@ -185,7 +183,9 @@ private struct LessonPlayerContent: View {
           comment: "Names the lesson's header icon shown while some answers haven't reached Zoonk")
         : nil
     )
+    .onAppear { store.setVisible(scenePhase == .active) }
     .onChange(of: scenePhase) { _, phase in
+      store.setVisible(phase == .active)
       switch phase {
       case .active:
         store.sendHeldAnswers()
@@ -195,6 +195,8 @@ private struct LessonPlayerContent: View {
       }
     }
     .onDisappear {
+      store.setVisible(false)
+      store.cancelStart()
       store.reportAbandonment()
     }
   }
