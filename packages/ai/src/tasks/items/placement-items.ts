@@ -102,6 +102,9 @@ function buildSystemPrompt(params: PlacementItemsParams): string {
 function buildUserPrompt(params: PlacementItemsParams): string {
   const { examFormat, language, quickFormat, targetLanguage, typedCount } = params;
 
+  // A language goal's situations happen where its language is spoken, but the setup still addresses
+  // the learner in `language`, so another language's register stays out.
+  const settingLanguage = targetLanguage ?? language;
   const typedLine = typedCount > 0 ? `\n    TYPED_COUNT: ${typedCount}` : "";
 
   const optionCount =
@@ -117,8 +120,8 @@ function buildUserPrompt(params: PlacementItemsParams): string {
     QUICK_FORMAT: ${quickFormat}
     QUICK_COUNT: ${params.quickCount}${typedLine}${optionCount}
     LANGUAGE: ${getPromptLanguageName({ language })}${targetLanguageLine}
-${formatLocalContext(language)}
-    ${formatCast({ language, seed: params.skills.map((skill) => skill.name).join(":") })}
+${formatLocalContext(settingLanguage, { register: settingLanguage === language })}
+    ${formatCast({ language: settingLanguage, seed: params.skills.map((skill) => skill.name).join(":") })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}
     SKILLS:
