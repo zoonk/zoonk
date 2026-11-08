@@ -96,7 +96,8 @@ export function LanguageLevelTestStep({
   actions: LanguageLevelTestActions;
   goal: { language: string; targetLanguage: string };
   goalId: string;
-  onDone: () => void;
+  /** Saves the step and resolves whether it went through; a failure is this step's to say. */
+  onDone: () => Promise<boolean>;
   /** Says a finish that never reached the server, until the learner's next try. */
   onFinishFailed: (failed: boolean) => void;
 }) {
@@ -197,13 +198,8 @@ export function LanguageLevelTestStep({
 
       // Starting from scratch before the test was written finishes nothing (false) and moves on.
       const { error } = await safeAsync(actions.finish);
-
-      if (error) {
-        onFinishFailed(true);
-        return;
-      }
-
-      onDone();
+      const saved = !error && (await onDone().catch(() => false));
+      onFinishFailed(!saved);
     });
 
   // Saving the finish ends the test, so a reload or another device shows this result too.
