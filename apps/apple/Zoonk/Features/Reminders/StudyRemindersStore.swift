@@ -75,15 +75,12 @@ final class StudyRemindersStore {
 
   /// Permission, then this phone, then push on (at `time` when given). Done only once both saved.
   func turnOnPush(at time: String? = nil) async -> PushSetup {
-    await selectThisPhone { [api] identity, _ in
-      try await api.updateReminder(
-        token: identity.bearerToken, StudyReminderChange(time: time, pushOn: true))
-    }
+    await selectThisPhone(then: StudyReminderChange(time: time, pushOn: true))
   }
 
   /// Push goes to this phone from now on, on or off as it was.
   func useThisPhone() async -> PushSetup {
-    await selectThisPhone { _, saved in saved }
+    await selectThisPhone(then: nil)
   }
 
   func turnOnEmail(at time: String) async -> Bool {
@@ -157,13 +154,11 @@ final class StudyRemindersStore {
     return await turnOnPush()
   }
 
-  /// The permission prompt and the system's registration take a while: a learner who signs out
-  /// meanwhile never gets push turned on for whoever signs in next.
-  private func selectThisPhone(
-    then save:
-      @escaping @Sendable (AuthenticatedSession, StudyReminder) async throws ->
-      StudyReminder
-  ) async -> PushSetup {
+  /// The permission prompt, the system's registration and the phone's selection take a while: a
+  /// learner who signs out meanwhile never gets push turned on, for them or whoever signs in next.
+  /// Each write runs only while its learner is still signed in, and the token is kept once the
+  /// phone is theirs.
+  private func selectThisPhone(then enable: StudyReminderChange?) async -> PushSetup {
     let owner = cache.session.authenticatedSession
 
     guard await push.requestAuthorization() else {
@@ -174,14 +169,25 @@ final class StudyRemindersStore {
       return .failed
     }
 
-    savedToken = token
-
-    let result = await cache.mutate(invalidating: [.studyReminder]) { [api] identity in
-      let selected = try await api.selectPhone(token: identity.bearerToken, pushToken: token)
-      return try await save(identity, selected)
+    let selected = await cache.mutate(invalidating: [.studyReminder]) { [api] identity in
+      try await api.selectPhone(token: identity.bearerToken, pushToken: token)
     }
 
-    return show(result) ? .on : .failed
+    guard case .done = selected else {
+      return show(selected) ? .on : .failed
+    }
+
+    savedToken = token
+
+    guard let enable else {
+      return show(selected) ? .on : .failed
+    }
+
+    let enabled = await cache.mutate(invalidating: [.studyReminder]) { [api] identity in
+      try await api.updateReminder(token: identity.bearerToken, enable)
+    }
+
+    return show(enabled) ? .on : .failed
   }
 
   /// A failure may come after the phone saved, so what's shown is read again.

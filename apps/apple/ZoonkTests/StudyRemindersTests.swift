@@ -91,6 +91,45 @@ final class StudyRemindersTests: XCTestCase {
     XCTAssertEqual(phone, "new-token", "A still selected this installation and needs its new token")
   }
 
+  func testSelectionResponseAfterSessionChangesCannotEnablePreviousLearnersPush() async throws {
+    let context = try await context(token: "a")
+    let selection = RegistrationGate()
+    let api = RemindersAPIStub(selectionGate: selection)
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session), push: PushStub(token: "phone"),
+      defaults: context.defaults)
+    let setup = Task { await store.turnOnPush(at: "20:30") }
+    await selection.waitUntilStarted()
+
+    try context.credentials.save("b")
+    await context.session.reconcileSynchronizedCredential()
+    XCTAssertEqual(context.session.authenticatedSession?.bearerToken, "b")
+    selection.finish()
+    _ = await setup.value
+
+    let calls = await api.calls
+    XCTAssertEqual(
+      calls, ["select a phone"], "A's setup must stop before enabling push after B signs in")
+  }
+
+  func testFailedSelectionForBDoesNotLoseTheTokenRefreshOwedToA() async throws {
+    let context = try await context(token: "b")
+    context.defaults.set("old-token", forKey: "studyReminderPushToken")
+    let api = RemindersAPIStub(phones: ["a": "old-token"], selectionErrorToken: "b")
+    let store = StudyRemindersStore(
+      api: api, cache: AppCache(session: context.session), push: PushStub(token: "new-token"),
+      defaults: context.defaults)
+    let result = await store.useThisPhone()
+    XCTAssertEqual(result, .failed)
+
+    try context.credentials.save("a")
+    await context.session.reconcileSynchronizedCredential()
+    await store.refreshPhoneToken()
+
+    let phone = await api.phone(for: "a")
+    XCTAssertEqual(phone, "new-token", "B's failed selection must leave A's token refresh possible")
+  }
+
   func testSignOutWaitsUntilThePhoneIsRemoved() async throws {
     let context = try await context(token: "a")
     context.defaults.set("phone", forKey: "studyReminderPushToken")
@@ -114,7 +153,7 @@ final class StudyRemindersTests: XCTestCase {
     XCTAssertEqual(ReminderTime.rounded("20:07"), "20:00")
     XCTAssertEqual(ReminderTime.rounded("20:08"), "20:15")
     XCTAssertEqual(ReminderTime.rounded("07:52"), "07:45")
-    XCTAssertEqual(ReminderTime.rounded("23:53"), "00:00")
+    XCTAssertEqual(ReminderTime.rounded("23:53"), "23:45", "never past the day's last quarter")
   }
 
   func testATappedReminderMakesItsGoalActiveThenOpensToday() async throws {
@@ -214,11 +253,18 @@ private actor RemindersAPIStub: StudyRemindersAPIClient {
   private var phones: [String: String]
   private let removalFails: Bool
   private let updateFails: Bool
+  private let selectionGate: RegistrationGate?
+  private let selectionErrorToken: String?
 
-  init(phones: [String: String] = [:], removalFails: Bool = false, updateFails: Bool = false) {
+  init(
+    phones: [String: String] = [:], removalFails: Bool = false, updateFails: Bool = false,
+    selectionGate: RegistrationGate? = nil, selectionErrorToken: String? = nil
+  ) {
     self.phones = phones
     self.removalFails = removalFails
     self.updateFails = updateFails
+    self.selectionGate = selectionGate
+    self.selectionErrorToken = selectionErrorToken
   }
 
   func phone(for token: String) -> String? { phones[token] }
@@ -243,7 +289,13 @@ private actor RemindersAPIStub: StudyRemindersAPIClient {
 
   func selectPhone(token: String, pushToken: String) async throws -> StudyReminder {
     calls.append("select \(token) \(pushToken)")
+
+    if token == selectionErrorToken {
+      throw APIError.network
+    }
+
     phones[token] = pushToken
+    await selectionGate?.wait()
     return reminder(token)
   }
 

@@ -43,7 +43,8 @@ struct StudyReminderChange: Equatable, Sendable {
 
 /// Reminder times are wall-clock times in the learner's zone, so they're read and written in GMT,
 /// where every minute of every day exists, and shown in GMT too. Reminders go out every 15 minutes,
-/// so a picked time rounds to the nearest quarter hour, the one it arrives at.
+/// so a picked time rounds to the nearest quarter hour, the one it arrives at, and never past
+/// 23:45, which would move it to the next day.
 enum ReminderTime {
   private static var calendar: Calendar {
     var calendar = Calendar(identifier: .gregorian)
@@ -61,7 +62,7 @@ enum ReminderTime {
   static func string(_ date: Date) -> String {
     let components = calendar.dateComponents([.hour, .minute], from: date)
     let quarters = ((components.hour ?? 19) * 60 + (components.minute ?? 0) + 7) / 15
-    let minutes = quarters * 15 % (24 * 60)
+    let minutes = min(quarters * 15, 23 * 60 + 45)
     return String(format: "%02d:%02d", minutes / 60, minutes % 60)
   }
 
