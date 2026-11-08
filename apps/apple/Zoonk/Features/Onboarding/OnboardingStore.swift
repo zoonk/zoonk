@@ -17,7 +17,7 @@ final class OnboardingStore {
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
-  @ObservationIgnored private var revealDays: [String: Resource<StudyDay>] = [:]
+  @ObservationIgnored private var revealDays: [String: Resource<PlanRevealRead>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
     let api = OnboardingAPI(clients: clients)
@@ -249,12 +249,12 @@ final class OnboardingStore {
   }
 
   /// The reveal's Today: the goal's first day as Today will show it. Reading it writes nothing.
-  func revealToday(goalID: String) -> Resource<StudyDay> {
+  func revealToday(goalID: String) -> Resource<PlanRevealRead> {
     if let resource = revealDays[goalID] {
       return resource
     }
 
-    let resource: Resource<StudyDay> = cache.resource(
+    let resource: Resource<PlanRevealRead> = cache.resource(
       audience: .signedIn, domains: [.goals, .learnerModel, .userProgress]
     ) { [api] session in
       guard let session else {

@@ -566,7 +566,7 @@ private struct PlanReveal: View {
       ZoonkList {
         heroSections(goal: goal, day: day)
       }
-      .safeAreaBar(edge: .bottom) { actions(day: day.value) }
+      .safeAreaBar(edge: .bottom) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
     } secondary: {
@@ -578,7 +578,7 @@ private struct PlanReveal: View {
         heroSections(goal: goal, day: day)
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
-      .safeAreaBar(edge: .bottom) { actions(day: day.value) }
+      .safeAreaBar(edge: .bottom) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
       .onboardingColumn()
@@ -605,7 +605,7 @@ private struct PlanReveal: View {
   }
 
   @ViewBuilder
-  private func heroSections(goal: LearnerGoal, day: Resource<StudyDay>) -> some View {
+  private func heroSections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 20) {
         RevealHero(title: goal.title, buddy: learner.summary.value?.buddy ?? BuddyLook())
@@ -620,14 +620,14 @@ private struct PlanReveal: View {
     RevealExamChoices(plan: plan) { adjusting = .choice($0) }
 
     switch day.state {
-    case .loaded(let day):
-      RevealToday(day: day)
-      RevealWeek(plan: plan, today: day)
+    case .loaded(let reveal):
+      RevealToday(day: reveal.today, minutes: reveal.minutes)
+      RevealWeek(days: reveal.nextDays, week: reveal.week)
     case .idle, .loading:
-      // Today's rows hold their place; the week waits for them, since it leaves out their lessons.
+      // Today's rows hold their place, so the week doesn't move as they come.
       RevealTodayPlaceholder()
     case .empty, .failed:
-      RevealWeek(plan: plan, today: nil)
+      EmptyView()
     }
   }
 
