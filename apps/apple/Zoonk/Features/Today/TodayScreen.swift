@@ -185,8 +185,8 @@ private struct TodayPreparing: View {
   var body: some View {
     let setup = onboarding.onboarding(goalID: goalID)
     let answersLeft = setup.value?.steps.contains { $0.rawValue != "plan" } == true
-    // A plan is shown once before its first day, so Today leads there instead of opening it.
-    let revealLeft = setup.value.map { !$0.planRevealed } == true
+    // A made plan is shown once before its first day, so Today leads there instead of opening it.
+    let revealLeft = setup.value.map { $0.planReadiness.ready && !$0.planRevealed } == true
 
     Group {
       if !answersLeft, revealLeft {
@@ -271,7 +271,8 @@ private struct TodayPreparing: View {
   }
 
   /// Follows the plan's build. Once the plan is saved, each further step of the build reads Today
-  /// again until the first day shows, which leaves this screen and ends the task.
+  /// and the goal's setup again until the first day or the plan's reveal shows, which leaves this
+  /// state and ends the task.
   private func waitForPlan() async {
     guard let token = plans.cache.session.authenticatedSession?.bearerToken else {
       return
@@ -285,7 +286,7 @@ private struct TodayPreparing: View {
           run.record(event)
 
           if run.isPlanSaved {
-            await store.today.refresh()
+            await refresh()
           }
         }
       } catch {}
@@ -295,7 +296,13 @@ private struct TodayPreparing: View {
       return
     }
 
-    await store.today.refresh()
+    await refresh()
+  }
+
+  private func refresh() async {
+    async let today: Void = store.today.refresh()
+    async let setup: Void = onboarding.onboarding(goalID: goalID).refresh()
+    _ = await (today, setup)
   }
 }
 
