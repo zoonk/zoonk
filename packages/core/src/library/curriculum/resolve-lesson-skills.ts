@@ -1,4 +1,5 @@
 import "server-only";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type CourseLevel } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type LibraryProvenance } from "../_utils/library-rows";
@@ -25,6 +26,8 @@ type ScopeContext = {
   analytics?: CurriculumAnalytics;
   provenance: LibraryProvenance;
   scope: CurriculumScope;
+  /** For identity calls a learner waits on. */
+  serviceTier?: ServiceTier;
 };
 
 type ScopeLesson = NewLessonDetails & {
@@ -94,6 +97,7 @@ async function resolveScopeSkillRows({
   analytics,
   provenance,
   scope,
+  serviceTier,
   skills,
 }: ScopeSkillsInput): Promise<ResolvedSkillRow[]> {
   const unique = uniqueByName(skills);
@@ -110,6 +114,7 @@ async function resolveScopeSkillRows({
       ownerId: scope.ownerId,
       targetLanguage: scope.targetLanguage,
     })),
+    serviceTier,
   });
 
   const rows = await Promise.all(
@@ -205,6 +210,7 @@ async function writeLessonSearchTerms({
 
   return writeSearchTerms({
     analytics: context.analytics,
+    serviceTier: context.serviceTier,
     subjects: lessons.map((lesson) =>
       toLessonIdentitySubject({ ...toLessonBase({ context, lesson }), skills: lesson.skills }),
     ),
@@ -281,6 +287,7 @@ export async function resolveScopeLessons({
       skills,
     })),
     searchTerms: searchTerms && requested.map((entry) => searchTerms[entry.index] ?? []),
+    serviceTier: context.serviceTier,
   });
 
   const resolved = withResolutions(requested, resolutions);

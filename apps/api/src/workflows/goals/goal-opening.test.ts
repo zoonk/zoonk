@@ -13,15 +13,24 @@ import { generatePlacementItems } from "@zoonk/ai/tasks/items/placement-items";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  chapterSkillFixture,
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
+import * as outlineSteps from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 
@@ -150,6 +159,16 @@ describe("a learn goal's opening", () => {
   it("writes the first lesson through the learner's own start, fast, and plans from it", async () => {
     const { goal, user } = await newGoal();
 
+    // The graph is the slower call, so the first lesson is saved by the time it's written.
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async () => {
+      await vi.waitFor(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        expect(saved.openingLessonId).not.toBeNull();
+      });
+
+      return { ...taskResult(graph), repaired: [] };
+    });
+
     await goalContentWorkflow({ goalId: goal.id });
 
     const { openingLessonId } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
@@ -178,8 +197,20 @@ describe("a learn goal's opening", () => {
 
     expect(first?.lessonId).toBe(lesson.id);
 
-    // The graph's own copy of the first skill was dropped, so the skill is planned once.
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toStrictEqual({
+      course: { key: opening.graph.courses[0]?.key, title: opening.graph.courses[0]?.title },
+      description: opening.skill.description,
+      key: opening.skill.key,
+      level: opening.skill.level,
+      name: opening.skill.name,
+    });
+
+    // The graph writes the first skill again under its key, and the plan keeps the saved one.
     await expect(prisma.skill.count({ where: { name: opening.skill.name } })).resolves.toBe(1);
+
+    await expect(
+      prisma.course.findFirstOrThrow({ where: { title: opening.graph.courses[0]?.title } }),
+    ).resolves.toMatchObject({ outlineStatus: "completed" });
 
     const firstLessonEvents = getStreamedEvents().filter(
       ({ step }) => step === "writeFirstLesson" || step === "firstLessonReady",
@@ -197,9 +228,25 @@ describe("a learn goal's opening", () => {
     ]);
   });
 
-  it("opens the lesson an earlier run picked, without writing another opening", async () => {
+  it("opens the lesson an earlier run picked and writes the graph from its skill again", async () => {
     const { goal } = await newGoal();
-    const picked = await libraryLessonFixture({ title: `Picked ${crypto.randomUUID()}` });
+    const token = crypto.randomUUID().slice(0, 8);
+
+    const [course, chapter, skill] = await Promise.all([
+      courseFixture({ title: `Immunology ${token}` }),
+      libraryChapterFixture({ outlineStatus: "completed" }),
+      skillFixture({ level: "overview", name: `Identify pathogens ${token}` }),
+    ]);
+
+    const picked = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      title: `Picked ${token}`,
+    });
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "overview" }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+    ]);
 
     // An earlier run saved the opening and stopped before its lesson's run started.
     await prisma.goal.update({ data: { openingLessonId: picked.id }, where: { id: goal.id } });
@@ -208,6 +255,12 @@ describe("a learn goal's opening", () => {
 
     expect(generateGoalOpening).not.toHaveBeenCalled();
     expect(openingLessonStarts().map((input) => input.lessonId)).toStrictEqual([picked.id]);
+
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toMatchObject({
+      course: { title: course.title },
+      level: "overview",
+      name: skill.name,
+    });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       openingLessonId: picked.id,
@@ -237,6 +290,46 @@ describe("a learn goal's opening", () => {
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ buildFailedAt: null });
+  });
+
+  it("waits for a course another run is outlining before writing the first chapter into it", async () => {
+    const { goal } = await newGoal();
+    const claim = outlineSteps.claimCourseOutlineStep;
+
+    vi.spyOn(outlineSteps, "claimCourseOutlineStep")
+      .mockResolvedValueOnce({ tags: [], value: "running" })
+      .mockImplementation(claim);
+
+    await goalContentWorkflow({ goalId: goal.id });
+
+    expect(sleep).toHaveBeenCalledWith("15s");
+    expect(openingLessonStarts()).toHaveLength(1);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      openingLessonId: expect.any(String),
+    });
+  });
+
+  it("leaves the first lesson to the plan when the course stays busy", async () => {
+    const { goal } = await newGoal();
+
+    vi.spyOn(outlineSteps, "claimCourseOutlineStep").mockResolvedValue({
+      tags: [],
+      value: "running",
+    });
+
+    await goalContentWorkflow({ goalId: goal.id });
+
+    expect(openingLessonStarts()).toStrictEqual([]);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      openingLessonId: null,
+    });
+
+    // The graph still starts from the saved first skill.
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toMatchObject({
+      name: opening.skill.name,
+    });
   });
 
   it("leaves exam and language goals to their own start", async () => {

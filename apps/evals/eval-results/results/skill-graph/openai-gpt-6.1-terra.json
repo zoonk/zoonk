@@ -3306,6 +3306,208 @@
           "language": "pt"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Provides a strong black-hole overview covering gravity, formation, mass ranges, growth, spin, surroundings, observational evidence, and open theoretical questions. No required topic pillar is missing.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The displayed sequence is sensible, the first skill is preserved, and the single phase has an appropriate stage title and attainable milestone. However, gravity-spacetime remains an independent starting node, and multiple dependent skills omit the explicitly required direct prerequisite on explain-black-holes. These several prerequisite errors trigger the cap of 7.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 18 skills, one phase, and estimated 4.4 hours match the requested compact overview. Skills describe focused conceptual abilities rather than whole courses or excessively narrow trivia.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Every skill contributes substantive black-hole knowledge. There are no orientation, motivation, or recap skills, and no second skill reteaches the definition of a black hole or event horizon. Related skills distinguish physical mechanisms from their observational uses.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "Uses US English and one canonical Astronomy course at overview level. The content is conceptual, suitable for a curious beginner, and contains no formula or coding requirements. Descriptions appropriately distinguish theoretical predictions from observations.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Emphasizes explanation, evidence, interpretation, and scientific uncertainty rather than rote procedures. Interpreting images, inferring unseen objects from orbits, and distinguishing predicted Hawking radiation from observation support durable judgment. An AI-tool skill is not required for this overview goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5220,
+          "outputTokens": 1037,
+          "reasoningTokens": 419
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The graph does not fully enforce the required first-skill prerequisite structure. Although explain-black-holes appears first and preserves the supplied content, gravity-spacetime has no prerequisites and is therefore another starting node. Several skills that build on the first skill, including tidal-forces, accretion-disks, and black-hole-growth, also omit its explicitly required prerequisite entry, relying instead on indirect connections.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A curious adult wants the big picture of black holes: one overview course in plain words, about 10 to 25 skills and one phase\n      - The learner's first lesson already teaches FIRST_SKILL: the graph starts with it exactly as given (key, name, description, level, course), with no prerequisites, and every other skill comes after it\n      - No other skill teaches what FIRST_SKILL teaches under another name (such as a second skill on what an event horizon is); skills that build on it list it as a prerequisite\n    ",
+        "id": "en-black-holes-first-skill-1",
+        "userInput": {
+          "firstSkill": {
+            "course": {
+              "key": "astronomy",
+              "title": "Astronomy"
+            },
+            "description": "Describe a black hole as a region where gravity is so strong that nothing, not even light, can escape once inside its event horizon.",
+            "key": "explain-black-holes",
+            "level": "overview",
+            "name": "Explain black holes and event horizons"
+          },
+          "goal": "Understand black holes",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "overview"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The graph covers the major areas needed for general accounting work: bookkeeping, supporting documents, reconciliation, accrual adjustments, inventories, fixed assets, borrowing, provisions, payroll accounting, financial statements, Brazilian taxation, ancillary obligations, costing, systems, spreadsheets, data protection, analysis, communication, and AI. No clearly required whole area or named pillar is absent. The generic tax descriptions limit visibility into detailed coverage, but do not establish that those topics are missing.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "FIRST_SKILL appears first with the correct fields and no prerequisites, and most dependencies point to earlier skills. However, double-entry bookkeeping omits the explicitly required direct edge to FIRST_SKILL; two other skills remain independent roots; and routine bookkeeping omits accrual accounting as a prerequisite. These constitute several dependency errors, triggering the maximum of 7. “Primeiros registros” also triggers the phase-title cap of 9; the lower cap governs. The overall sequence remains broadly followable.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills have action-oriented names and nominal allocations of 8–15 lessons, but their hours imply very short lessons. Broad operational-tax calculation, tax-regime comparison, and digital compliance each receive only about 1.2–1.5 hours, insufficient for their distinctions and practical cases. Preparing explanatory notes and equity movements also combines separate deliverables into one skill. Several mis-sized areas trigger the maximum of 7; the concern is their practical depth, not the total duration alone.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills are relevant to accounting work, with no motivational, historical, orientation, or general career filler. The patrimonial-equation skill is not duplicated. Account classification, chart-of-accounts use, transaction recording, reconciliation, and later reporting have distinguishable purposes. Conceptual accrual accounting and subsequent adjustment entries are also legitimate separate capabilities.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses Brazilian Portuguese and targets practical accounting responsibilities at beginner and intermediate levels. Brazilian taxation, accounting standards, payroll entries, digital obligations, systems, and workplace communication fit the stated context. The courses are recognizable subjects rather than personalized learner titles, and there is no clear role or level mismatch.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The explicit AI skill includes task definition, calculation checking, source verification, response review, and protection of sensitive data. Across the rest of the graph, reconciliation, investigation of discrepancies, evaluation of provisions, checking formulas, interpreting limitations, and communicating risks emphasize judgment rather than rote execution. Concrete AI examples would improve instructional specificity, but the required AI capabilities are present and no cap is triggered.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8746,
+          "outputTokens": 1860,
+          "reasoningTokens": 898
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required FIRST_SKILL is reproduced correctly, but its dependency requirement is not: registrar-partidas-dobradas does not list it directly as a prerequisite. Document checking and data protection also have no prerequisites, so the graph does not ensure that every other skill follows FIRST_SKILL. Several broad workplace capabilities are substantially compressed: the estimates imply roughly six minutes per lesson, leaving only 1.5 hours for operational tax calculation and 1.4 hours for preparing digital declarations and bookkeeping obligations.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "“Primeiros registros” names the activity taught rather than a distinct stage of the path. “Preparar notas e movimentações patrimoniais” bundles preparing explanatory disclosures with presenting changes in equity, which are separate reporting capabilities. Routine bookkeeping also lacks an explicit prerequisite on accrual accounting, despite requiring decisions about recognition timing.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the Brazilian workplace applications more concrete by identifying representative tax regimes, fiscal-document checks, and digital obligations within the existing skills. Give the AI skill concrete accounting exercises, such as checking a proposed reconciliation against source documents and detecting unsupported tax guidance.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Someone who works in accounting, at a basic level, wants to get better at it for their job: the skills Brazilian accounting work uses, in the order the job needs them, taken from canonical courses, including using AI tools well for that work\n      - The learner's first lesson already teaches FIRST_SKILL: the graph starts with it exactly as given (key, name, description, level, course), with no prerequisites, and every other skill comes after it\n      - No other skill teaches what FIRST_SKILL teaches under another name (such as a second skill on the patrimonial equation); skills that build on it, such as recording entries by partidas dobradas, list it as a prerequisite\n    ",
+        "id": "pt-accounting-work-first-skill-1",
+        "userInput": {
+          "firstSkill": {
+            "course": {
+              "key": "contabilidade",
+              "title": "Contabilidade"
+            },
+            "description": "Identificar como cada transação altera ativos, passivos e patrimônio líquido, mantendo a equação patrimonial equilibrada.",
+            "key": "analisar-transacoes-equacao-patrimonial",
+            "level": "beginner",
+            "name": "Analisar transações pela equação patrimonial"
+          },
+          "goal": "Contabilidade",
+          "goalKind": "learn",
+          "language": "pt",
+          "ownLevel": "basic",
+          "purpose": "work"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

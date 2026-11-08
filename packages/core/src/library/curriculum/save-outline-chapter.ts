@@ -1,5 +1,6 @@
 import "server-only";
 import { createHash } from "node:crypto";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type generateCourseOutline } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
@@ -41,6 +42,8 @@ type ChapterContext = {
   level: CourseLevel;
   provenance: LibraryProvenance;
   scope: CurriculumScope;
+  /** For identity calls a learner waits on. */
+  serviceTier?: ServiceTier;
   workflowRunId: string;
 };
 
@@ -55,7 +58,7 @@ async function resolveChapter({
   chapter: OutlineChapter;
   context: OutlineContext;
 }): Promise<string> {
-  const { analytics, course, keys, level, provenance, scope } = context;
+  const { analytics, course, keys, level, provenance, scope, serviceTier } = context;
 
   const resolution = keys
     ? { identityKey: keys.chapter, kind: "generate" as const }
@@ -73,6 +76,7 @@ async function resolveChapter({
           targetLanguage: scope.targetLanguage,
           title: chapter.title,
         },
+        serviceTier,
       });
 
   if (resolution.kind === "existing") {

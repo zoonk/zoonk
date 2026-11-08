@@ -7,15 +7,15 @@ const MAX_SUBJECTS_PER_CALL = 8;
 
 export async function writeSearchTerms({
   analytics,
+  serviceTier,
   subjects,
-}: {
-  analytics?: SearchTermsParams["analytics"];
+}: Pick<SearchTermsParams, "analytics" | "serviceTier"> & {
   subjects: readonly LibraryIdentitySubject[];
 }): Promise<string[][]> {
   const chunks = splitEvenly({ items: subjects, size: MAX_SUBJECTS_PER_CALL });
 
   const written = await Promise.all(
-    chunks.map((chunk) => generateSearchTerms({ analytics, subjects: chunk })),
+    chunks.map((chunk) => generateSearchTerms({ analytics, serviceTier, subjects: chunk })),
   );
 
   return written.flatMap(({ data }) => data.subjects.map((subject) => subject.terms));

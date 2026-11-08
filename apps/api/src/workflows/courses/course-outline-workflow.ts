@@ -46,8 +46,8 @@ export type CourseOutlineResult =
 
 /** Each turn waits for a whole run, so a request still missing bands after this many is stuck, not busy. */
 const MAX_OUTLINE_TURNS = 10;
-const BUSY_WAIT = "15s";
-const MAX_CLAIM_TRIES = 20;
+export const BUSY_WAIT = "15s";
+export const MAX_CLAIM_TRIES = 20;
 
 type RunContext = Omit<CourseOutlineInput, "attempt" | "bands"> & { workflowRunId: string };
 

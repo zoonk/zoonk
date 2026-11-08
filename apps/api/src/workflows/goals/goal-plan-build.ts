@@ -53,7 +53,7 @@ async function buildScopedPlan({
   const curriculum = await buildCurriculum({
     context,
     inputs,
-    opening: opening?.pin,
+    opening: opening?.skill,
     rebuild,
     researchId,
     scope,

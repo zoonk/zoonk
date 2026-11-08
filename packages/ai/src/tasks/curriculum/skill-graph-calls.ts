@@ -100,6 +100,14 @@ export type SkillGraphParams = {
   lessonBudget?: number | null;
   /** The branded product the goal is about, and the exact title of the course that teaches it. */
   product?: { brand: string; courseTitle: string; name: string } | null;
+  /** A learn goal's first skill, already written and shared: the graph starts with it as given. */
+  firstSkill?: {
+    course: { key: string; title: string };
+    description: string;
+    key: string;
+    level: (typeof COURSE_LEVELS)[number];
+    name: string;
+  } | null;
   librarySkills?: boolean;
   model?: string;
   serviceTier?: ServiceTier;
@@ -202,8 +210,19 @@ function formatGoalInputs(params: SkillGraphParams): string {
 }
 
 function buildUserPrompt({ params, part }: { params: SkillGraphParams; part: GraphPart }): string {
+  const { firstSkill } = params;
+
   const learnerInput = formatUntrustedInput({
     CONTEXT: params.context?.trim() || "none",
+    ...(firstSkill && {
+      FIRST_SKILL: JSON.stringify({
+        course: firstSkill.course,
+        description: firstSkill.description,
+        key: firstSkill.key,
+        level: firstSkill.level,
+        name: firstSkill.name,
+      }),
+    }),
     GOAL: params.goal,
   });
 

@@ -1,11 +1,16 @@
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import { type GoalOpeningPin } from "@zoonk/core/library/curriculum/opening-graph";
+import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
+import { claimCourseWhenFree } from "../courses/claim-course-when-free";
+import { BUSY_WAIT, MAX_CLAIM_TRIES } from "../courses/course-outline-workflow";
+import { replanWaitingGoals } from "../courses/replan-waiting-goals";
+import { finishCourseOutlineStep } from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { readLessonStatusStep } from "../lessons/steps/read-lesson-status-step";
 import { findGoalCourses } from "./goal-courses";
@@ -14,7 +19,8 @@ import { saveGoalSkillsStep } from "./steps/goal-curriculum-steps";
 import {
   type OpeningLesson,
   type WrittenOpening,
-  readGoalOpeningStep,
+  findOpeningLessonStep,
+  readSavedGoalOpeningStep,
   requestOpeningLessonStep,
   saveGoalOpeningStep,
   saveOpeningChapterStep,
@@ -25,12 +31,15 @@ import { goalProgressStep } from "./steps/goal-progress-step";
 const FOLLOW_WAIT = "5s";
 const MAX_FOLLOWS = 36;
 
+/** Every model call before the first lesson's run starts is one the learner waits on. */
+const LEARNER_TIER = chooseServiceTier({ wait: "learner" });
+
 export type GoalOpening = {
   /**
-   * The saved first skill and course, once its chapter is saved too. Null when the graph builds
-   * without an opening: an earlier run picked it, or writing it failed.
+   * The first skill the graph reads and starts with: this run's, or the one an earlier run saved.
+   * Null when there is none, as when writing it failed.
    */
-  pin: Promise<GoalOpeningPin | null>;
+  skill: Promise<GoalOpeningSkill | null>;
   /** Settles once the first lesson's run started, or nothing will start one. */
   started: Promise<unknown>;
   /** Settles once the first lesson is ready, or once its run ended without it. */
@@ -48,7 +57,7 @@ export function hasOpening({
   return !rebuild && inputs.goal.kind === "learn" && !inputs.startedCourse;
 }
 
-type Written = { pin: GoalOpeningPin; written: WrittenOpening };
+type Written = { opening: GoalOpeningSkill; written: WrittenOpening };
 
 async function writeOpening({
   context,
@@ -60,7 +69,7 @@ async function writeOpening({
   scope: CurriculumScope;
 }): Promise<Written> {
   const written = await writeGoalOpeningStep({ ...context, inputs, scope });
-  const { graph, provenance } = written;
+  const { graph, provenance, skill } = written;
   const [course] = graph.courses;
 
   if (!course) {
@@ -68,7 +77,13 @@ async function writeOpening({
   }
 
   const [skillIds, courseIds] = await Promise.all([
-    saveGoalSkillsStep({ ...context, provenance, scope, skills: graph.skills }),
+    saveGoalSkillsStep({
+      ...context,
+      provenance,
+      scope,
+      serviceTier: LEARNER_TIER,
+      skills: graph.skills,
+    }),
     findGoalCourses({
       ...context,
       courses: [course],
@@ -76,10 +91,11 @@ async function writeOpening({
       product: inputs.product,
       provenance,
       scope,
+      serviceTier: LEARNER_TIER,
     }),
   ]);
 
-  const skillId = skillIds[written.skill.key];
+  const skillId = skillIds[skill.key];
   const courseId = courseIds[course.key];
 
   if (!skillId || !courseId) {
@@ -87,9 +103,73 @@ async function writeOpening({
   }
 
   return {
-    pin: { course: { ...course, id: courseId }, skill: { ...written.skill, libraryId: skillId } },
+    opening: {
+      course: { id: courseId, key: course.key, title: course.title },
+      skill: {
+        area: skill.area,
+        description: skill.description,
+        estimatedLessons: skill.estimatedLessons,
+        id: skillId,
+        key: skill.key,
+        level: skill.level,
+        name: skill.name,
+      },
+    },
     written,
   };
+}
+
+/** Under the course's outline claim, as an outline writes its chapters, so two never write one band at once. */
+async function writeOpeningChapter({
+  context,
+  opening,
+  scope,
+  userId,
+}: {
+  context: GoalRunContext;
+  opening: Written;
+  scope: CurriculumScope;
+  userId: string;
+}): Promise<string | null> {
+  const courseId = opening.opening.course.id;
+  const { workflowRunId } = context;
+
+  const claim = await claimCourseWhenFree({
+    courseId,
+    tries: MAX_CLAIM_TRIES,
+    wait: () => sleep(BUSY_WAIT),
+    workflowRunId,
+  });
+
+  if (!claim.claimed) {
+    return null;
+  }
+
+  try {
+    const lessonId = await deliverCourseContent(
+      saveOpeningChapterStep({
+        ...context,
+        chapter: opening.written.chapter,
+        opening: opening.opening,
+        provenance: opening.written.provenance,
+        scope,
+        serviceTier: LEARNER_TIER,
+        userId,
+      }),
+    );
+
+    await deliverCourseContent(
+      finishCourseOutlineStep({ courseId, status: "completed", workflowRunId }),
+    );
+
+    return lessonId;
+  } catch (error) {
+    await deliverCourseContent(
+      finishCourseOutlineStep({ courseId, status: "failed", workflowRunId }),
+    );
+
+    throw error;
+  }
 }
 
 async function saveOpeningLesson({
@@ -103,21 +183,14 @@ async function saveOpeningLesson({
   opening: Written;
   scope: CurriculumScope;
 }): Promise<OpeningLesson | null> {
-  const { pin, written } = opening;
+  const { course, skill } = opening.opening;
+  const { id: goalId, userId } = inputs.goal;
 
-  const lessonId = await deliverCourseContent(
-    saveOpeningChapterStep({
-      ...context,
-      chapter: written.chapter,
-      courseId: pin.course.id,
-      provenance: written.provenance,
-      scope,
-      skill: { ...written.skill, id: pin.skill.libraryId },
-      userId: inputs.goal.userId,
-    }),
-  );
+  const lessonId =
+    (await findOpeningLessonStep({ courseId: course.id, skillId: skill.id, userId })) ??
+    (await writeOpeningChapter({ context, opening, scope, userId }));
 
-  return lessonId ? saveGoalOpeningStep({ goalId: inputs.goal.id, lessonId }) : null;
+  return lessonId ? saveGoalOpeningStep({ goalId, lessonId }) : null;
 }
 
 async function followLesson(lessonId: string): Promise<boolean> {
@@ -196,9 +269,9 @@ async function reportReady({
 }
 
 /**
- * Picks and saves the learner's first lesson and starts writing it while the skill graph is
- * written, pinned to it. An opening that fails leaves the graph to pick the first lesson, as
- * before.
+ * Picks and saves the learner's first skill, course and lesson, and starts writing the lesson,
+ * while the skill graph is written from that first skill. An opening that fails leaves the graph
+ * to pick the first lesson, as before.
  */
 export function openGoal({
   context,
@@ -210,7 +283,7 @@ export function openGoal({
   scope: CurriculumScope;
 }): GoalOpening {
   const { goal } = inputs;
-  const known = readGoalOpeningStep(goal.id);
+  const known = readSavedGoalOpeningStep(goal.id);
 
   const failed = async () => {
     await trackGenerationFailedStep({
@@ -228,7 +301,7 @@ export function openGoal({
 
   const lesson = Promise.all([known, written])
     .then(([found, opening]) =>
-      opening ? saveOpeningLesson({ context, inputs, opening, scope }) : found,
+      opening ? saveOpeningLesson({ context, inputs, opening, scope }) : (found?.lesson ?? null),
     )
     .catch(failed);
 
@@ -238,14 +311,27 @@ export function openGoal({
       : null,
   );
 
-  const settled = Promise.all([lesson, writing]).then(([saved, ready]) =>
+  // A plan built before the chapter landed gets its lessons as an outline's would, once the
+  // lesson's run is on its way.
+  const replanned = Promise.all([written, writing]).then(([opening]) =>
+    opening
+      ? replanWaitingGoals({
+          context: { analytics: context.analytics, courseId: opening.opening.course.id },
+          goalIds: [goal.id],
+          skillIds: [opening.opening.skill.id],
+        })
+      : null,
+  );
+
+  const settled = Promise.all([lesson, writing, replanned]).then(([saved, ready]) =>
     saved && ready ? reportReady({ goalId: goal.id, lessonId: saved.id, ready }) : null,
   );
 
   return {
-    // Once its chapter is saved too, so the plan built from the pinned graph finds its lessons.
-    pin: Promise.all([written, lesson]).then(([opening]) => opening?.pin ?? null),
     settled: settled.catch(() => null),
+    skill: Promise.all([known, written]).then(
+      ([found, opening]) => opening?.opening ?? found?.skill ?? null,
+    ),
     started: writing.catch(() => null),
   };
 }

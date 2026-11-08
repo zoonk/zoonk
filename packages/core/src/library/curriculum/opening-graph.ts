@@ -1,91 +1,75 @@
-import { toSkillNameKey } from "@zoonk/ai/tasks/curriculum/skill-graph-checks";
-import { normalizeString } from "@zoonk/utils/string";
+import { type CourseLevel } from "@zoonk/db";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type GraphSkill = GoalSkillGraph["skills"][number];
-type GraphCourse = GoalSkillGraph["courses"][number];
 
-/** A goal's saved opening: its first skill and the course that teaches it, as Library rows. */
-export type GoalOpeningPin = {
-  course: GraphCourse & { id: string };
-  skill: GraphSkill & { libraryId: string };
+/** A goal's first skill and the course that teaches it, saved before its graph is written. */
+export type GoalOpeningSkill = {
+  course: { id: string; key: string; title: string };
+  skill: {
+    area: string;
+    description: string;
+    estimatedLessons: number;
+    id: string;
+    key: string;
+    level: CourseLevel;
+    name: string;
+  };
 };
 
-function toFreeKey({ key, taken }: { key: string; taken: ReadonlySet<string> }): string {
-  return taken.has(key) ? `${key}-opening` : key;
-}
-
-function pinCourse({ graph, pin }: { graph: GoalSkillGraph; pin: GoalOpeningPin }) {
-  const title = normalizeString(pin.course.title);
-  const same = graph.courses.find((course) => normalizeString(course.title) === title);
-  const levels = [...new Set([...(same?.levels ?? []), ...pin.course.levels])];
-
-  const key =
-    same?.key ??
-    toFreeKey({ key: pin.course.key, taken: new Set(graph.courses.map((course) => course.key)) });
-
-  const others = graph.courses.filter((course) => course.key !== key);
-
-  return { courses: [{ key, levels, title: same?.title ?? pin.course.title }, ...others], key };
-}
-
-/** The graph pinned to the opening, with the Library ids the opening already saved. */
-export type PinnedGraph = {
+/** The graph with the opening as its start, and the Library ids the opening already saved. */
+export type OpeningGraph = {
   courseIdsByKey: Record<string, string>;
   graph: GoalSkillGraph;
   idsByKey: Record<string, string>;
 };
 
 /**
- * The graph keeps the learner's first skill, as saved, as its start: the graph's own copy of it
- * (the same skill by name) is dropped and its edges point at the opening instead, and the course
- * that teaches it comes first, so the plan's first lesson is the opening's.
+ * The graph was told to start with the opening as given; this holds it to that by its key, so a
+ * reworded, moved or missing first skill can't keep the plan from starting at the learner's first
+ * lesson.
  */
-export function pinGraphToOpening({
+export function keepOpeningFirst({
   graph,
-  pin,
+  opening,
 }: {
   graph: GoalSkillGraph;
-  pin: GoalOpeningPin | null;
-}): PinnedGraph {
-  if (!pin) {
+  opening: GoalOpeningSkill | null;
+}): OpeningGraph {
+  if (!opening) {
     return { courseIdsByKey: {}, graph, idsByKey: {} };
   }
 
-  const name = toSkillNameKey(pin.skill.name);
+  const { course, skill } = opening;
+  const written = graph.skills.find((item) => item.key === skill.key);
 
-  const copies = new Set(
-    graph.skills.filter((skill) => toSkillNameKey(skill.name) === name).map((skill) => skill.key),
-  );
-
-  const rest = graph.skills.filter((skill) => !copies.has(skill.key));
-  const key = toFreeKey({ key: pin.skill.key, taken: new Set(rest.map((skill) => skill.key)) });
-  const course = pinCourse({ graph, pin });
-
-  const skills = rest.map((skill) => ({
-    ...skill,
-    prerequisites: [
-      ...new Set(
-        skill.prerequisites.map((prerequisite) => (copies.has(prerequisite) ? key : prerequisite)),
-      ),
-    ],
-  }));
-
-  // In the module the graph starts the course with, so a near copy of it is its twin.
-  const area = skills.find((skill) => skill.course === course.key)?.area ?? pin.skill.area;
-
-  const opening: GraphSkill = {
-    ...pin.skill,
-    area,
+  const first: GraphSkill = {
+    area: written?.area ?? skill.area,
     course: course.key,
-    key,
+    description: skill.description,
+    estimatedLessons: written?.estimatedLessons ?? skill.estimatedLessons,
+    examWeight: null,
+    key: skill.key,
+    level: skill.level,
+    libraryId: skill.id,
+    name: skill.name,
+    outcome: false,
     phase: 1,
     prerequisites: [],
+    topics: [],
   };
 
+  const courses = graph.courses.some((item) => item.key === course.key)
+    ? graph.courses
+    : [{ key: course.key, levels: [skill.level], title: course.title }, ...graph.courses];
+
   return {
-    courseIdsByKey: { [course.key]: pin.course.id },
-    graph: { ...graph, courses: course.courses, skills: [opening, ...skills] },
-    idsByKey: { [key]: pin.skill.libraryId },
+    courseIdsByKey: { [course.key]: course.id },
+    graph: {
+      ...graph,
+      courses,
+      skills: [first, ...graph.skills.filter((item) => item.key !== skill.key)],
+    },
+    idsByKey: { [skill.key]: skill.id },
   };
 }
