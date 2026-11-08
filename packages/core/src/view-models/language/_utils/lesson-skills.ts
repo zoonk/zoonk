@@ -45,6 +45,8 @@ export async function readLessonSkills(
 
     const skillIds = [...new Set(rows.map((row) => row.skillId))].filter((id) => kept.has(id));
 
-    return item.lessonId && skillIds.length > 0 ? { lessonId: item.lessonId, skillIds } : [];
+    return item.lessonId && skillIds.length > 0
+      ? { chapterId: item.chapterId, lessonId: item.lessonId, skillIds }
+      : [];
   });
 }

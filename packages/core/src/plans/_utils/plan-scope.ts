@@ -9,7 +9,7 @@ import { getWorkProgress } from "./work-progress";
 
 type ScopeGoal = Pick<Goal, "details" | "examBlueprintId" | "kind" | "primaryCourseId" | "userId">;
 
-type ScopeItem = Pick<PlanItem, "kind" | "lessonId" | "skillId" | "status">;
+type ScopeItem = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "skillId" | "status">;
 
 /** A lesson the plan holds that the planner doesn't load, such as a quick lesson, at its item's skill. */
 function listHeldLessons({
@@ -27,7 +27,13 @@ function listHeldLessons({
     !loaded.has(item.lessonId) &&
     getWorkProgress(item.status) !== "setAside" &&
     !removed.has(item.skillId ?? "")
-      ? [{ lessonId: item.lessonId, skillIds: item.skillId ? [item.skillId] : [] }]
+      ? [
+          {
+            chapterId: item.chapterId,
+            lessonId: item.lessonId,
+            skillIds: item.skillId ? [item.skillId] : [],
+          },
+        ]
       : [],
   );
 
@@ -101,7 +107,7 @@ export async function loadPlanScope({
   });
 
   const lessons = [
-    ...loaded.map(({ lessonId, skillIds }) => ({ lessonId, skillIds })),
+    ...loaded.map(({ chapterId, lessonId, skillIds }) => ({ chapterId, lessonId, skillIds })),
     ...listHeldLessons({
       items: plan.items,
       loaded: new Set(loaded.map((lesson) => lesson.lessonId)),

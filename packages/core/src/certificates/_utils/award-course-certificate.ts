@@ -172,8 +172,8 @@ export function loadCertificatePlan(
 }
 
 /**
- * A unit can only finish with the phase of the work that just finished, so a phase with lessons or
- * a challenge left skips its plan before the plan is read.
+ * A unit finishes with its own phase's last work, or with a lesson that counts toward it from
+ * another phase once its own closed, so a plan where neither can happen is skipped before it's read.
  */
 export async function awardCourseCertificates(
   tx: TransactionClient,
@@ -185,19 +185,29 @@ export async function awardCourseCertificates(
     return;
   }
 
-  const open = await tx.planItem.groupBy({
-    by: ["planId", "phase"],
+  const progress = await tx.planItem.groupBy({
+    by: ["planId", "phase", "status"],
     where: {
-      OR: work.map(({ phase, planId }) => ({ phase, planId })),
       kind: { in: [...PHASE_WORK_KINDS] },
-      status: "todo",
+      planId: { in: [...new Set(work.map((item) => item.planId))] },
     },
   });
 
-  const left = new Set(open.map((row) => `${row.planId}:${row.phase}`));
+  const left = new Set(
+    progress.flatMap((row) => (row.status === "todo" ? `${row.planId}:${row.phase}` : [])),
+  );
+
+  const closedPlans = new Set(
+    progress.flatMap((row) => (left.has(`${row.planId}:${row.phase}`) ? [] : row.planId)),
+  );
 
   const planIds = new Set(
-    work.flatMap((item) => (left.has(`${item.planId}:${item.phase}`) ? [] : item.planId)),
+    work.flatMap((item) =>
+      !left.has(`${item.planId}:${item.phase}`) ||
+      (item.kind === "lesson" && closedPlans.has(item.planId))
+        ? item.planId
+        : [],
+    ),
   );
 
   for (const id of planIds) {

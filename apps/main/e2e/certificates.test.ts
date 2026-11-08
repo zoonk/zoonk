@@ -23,7 +23,7 @@ async function createLastLessonGoal(userId: string) {
   const [course, chapter, skill, { lesson }] = await Promise.all([
     courseFixture({ isPublished: true, title: COURSE_TITLE }),
     libraryChapterFixture({ title: "Inside the atom" }),
-    skillFixture({ level: "beginner", name: "Atoms" }),
+    skillFixture({ name: "Atoms" }),
     playableLessonFixture({ lesson: { title: "An almost empty atom" }, steps: ["explanation"] }),
   ]);
 

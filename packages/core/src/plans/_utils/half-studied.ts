@@ -2,8 +2,12 @@ import { type PlanItem } from "@zoonk/db";
 import { isStandIn } from "../planner/plan-item-rules";
 import { countLessons } from "./stand-in-lessons";
 
-/** A written lesson the plan counts, with the plan's graph skills it teaches. */
-export type CountedLesson = { lessonId: string; skillIds: readonly string[] };
+/** A written lesson the plan counts, the chapter it's placed in, and the plan's graph skills it teaches. */
+export type CountedLesson = {
+  chapterId: string | null;
+  lessonId: string;
+  skillIds: readonly string[];
+};
 
 /** A graph skill's lessons nobody has written yet: none once it's outlined. */
 export type UnwrittenLessons = { lessons: number; skillId: string };

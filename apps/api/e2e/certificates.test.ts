@@ -9,10 +9,8 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
-  lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { formatCertificateCode } from "@zoonk/utils/certificate-links";
 import {
@@ -100,17 +98,15 @@ test.describe("Certificates API", () => {
       prefix: "certificate-claim",
     });
 
-    const [course, chapter, lesson, skill] = await Promise.all([
+    const [course, chapter, lesson] = await Promise.all([
       courseFixture({ isPublished: true, title: "Robotics", visibility: "public" }),
       libraryChapterFixture({ title: "Sensors" }),
       libraryLessonFixture(),
-      skillFixture({ level: "beginner", name: "Sensors" }),
     ]);
 
     await Promise.all([
       courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "beginner" }),
       chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
-      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
     ]);
 
     const [goal, unfinished] = await Promise.all([

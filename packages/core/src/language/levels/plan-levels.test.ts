@@ -42,7 +42,11 @@ function standIn(skillId: string, size: number, status: PlanItem["status"] = "to
 
 /** Written lessons the plan doesn't hold, each teaching these skills. */
 function written(skillIds: string[], count: number): CountedLesson[] {
-  return Array.from({ length: count }, () => ({ lessonId: randomUUID(), skillIds }));
+  return Array.from({ length: count }, () => ({
+    chapterId: null,
+    lessonId: randomUUID(),
+    skillIds,
+  }));
 }
 
 function unwritten(skillId: string, count: number): UnwrittenLessons {
@@ -65,7 +69,13 @@ function levels({
 
   const held = items.flatMap((item) =>
     item.kind === "lesson" && item.lessonId && !taughtIds.has(item.lessonId)
-      ? [{ lessonId: item.lessonId, skillIds: item.skillId ? [item.skillId] : [] }]
+      ? [
+          {
+            chapterId: item.chapterId,
+            lessonId: item.lessonId,
+            skillIds: item.skillId ? [item.skillId] : [],
+          },
+        ]
       : [],
   );
 
@@ -128,6 +138,7 @@ describe(listPlanLevels, () => {
     const list = levels({
       items: [...filedA1, ...filedA2],
       taught: [...filedA1, ...filedA2].map((item) => ({
+        chapterId: item.chapterId,
         lessonId: item.lessonId ?? "",
         skillIds: ["A1", "A2"],
       })),
@@ -142,7 +153,10 @@ describe(listPlanLevels, () => {
     const item = lesson("A2");
 
     const level = (skillIds: string[]) =>
-      levels({ items: [item], taught: [{ lessonId: item.lessonId ?? "", skillIds }] });
+      levels({
+        items: [item],
+        taught: [{ chapterId: item.chapterId, lessonId: item.lessonId ?? "", skillIds }],
+      });
 
     expect(earned(level(["A2", "B-untagged"]))).toStrictEqual(["A2"]);
     expect(earned(level(["A2", "A-untagged"]))).toStrictEqual([]);

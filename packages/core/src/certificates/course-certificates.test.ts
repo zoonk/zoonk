@@ -24,15 +24,16 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
+import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
 import { updateGoal } from "../goals/update-goal";
-import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { testOutKnownPlanItems } from "../learner/_utils/test-out-known-plan-items";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { celebrateProgress } from "../milestones/celebrate-progress";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { completePlanItem } from "../sessions/_utils/plan-items";
+import { refreshGoalPlan } from "../plans/refresh-goal-plan";
+import { completeLessonPlanItems, completePlanItem } from "../sessions/_utils/plan-items";
 import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-subscription";
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
 import { claimCourseCertificate } from "./claim-course-certificate";
@@ -95,8 +96,6 @@ async function courseGoal({
     Promise.all(items.map(() => playableLessonFixture({ steps: ["explanation"] }))),
   ]);
 
-  const chapterOf = (item: ItemSpec, index: number) => item.chapter ?? index % chapters.length;
-
   await Promise.all([
     courseCategoryFixture({ category: "science", courseId: course.id }),
     ...chapters.map((chapter, position) =>
@@ -107,17 +106,6 @@ async function courseGoal({
         position,
       }),
     ),
-    ...items.map(async (item, index) => {
-      if (item.kind === "boss") {
-        return;
-      }
-
-      const skill = await skillFixture({
-        level: specs[chapterOf(item, index)]?.level ?? "beginner",
-      });
-
-      await lessonSkillFixture({ lessonId: lessons[index]?.lesson.id ?? "", skillId: skill.id });
-    }),
   ]);
 
   const goal = await goalFixture({
@@ -135,7 +123,7 @@ async function courseGoal({
     goalId: goal.id,
     items: items.map((item, index) => {
       const isChallenge = item.kind === "boss";
-      const chapter = chapters[chapterOf(item, index)];
+      const chapter = chapters[item.chapter ?? index % chapters.length];
 
       return {
         chapterId: isChallenge ? null : (chapter?.id ?? null),
@@ -427,7 +415,7 @@ describe("course certificates", () => {
     await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
   });
 
-  it("keeps tested-out skills at their size through a re-plan that rewrites their stand-in smaller", async () => {
+  it("keeps a tested-out skill at its full size whatever its stand-in was rewritten to", async () => {
     const [fixture, skill, written] = await Promise.all([
       courseGoal({
         items: [{ status: "done" }, { status: "todo" }, { status: "todo" }, WON_CHALLENGE],
@@ -436,34 +424,27 @@ describe("course certificates", () => {
       libraryLessonFixture(),
     ]);
 
+    const [, known] = fixture.plan.items;
+
+    // A re-plan sizes a known skill's stand-in down to one lesson.
     await Promise.all([
       setGraphSkill(fixture, { ...skill, lessons: 4 }),
       chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: written.id }),
       lessonSkillFixture({ lessonId: written.id, skillId: skill.id }),
+      planItemFixture({
+        completedAt: new Date(),
+        lessons: 1,
+        minutes: 4,
+        planId: fixture.plan.id,
+        position: 10,
+        skillId: skill.id,
+        status: "testedOut",
+      }),
+      prisma.planItem.update({
+        data: { completedAt: new Date(), status: "testedOut" },
+        where: { id: known?.id ?? "" },
+      }),
     ]);
-
-    const standIn = await planItemFixture({
-      lessons: 4,
-      minutes: 16,
-      planId: fixture.plan.id,
-      skillId: skill.id,
-    });
-
-    const [, known] = fixture.plan.items;
-
-    await markPlanItemsTestedOut({
-      goalId: fixture.goal.id,
-      items: [known, standIn].flatMap((item) =>
-        item ? [{ ...item, skillIds: [item.skillId ?? ""] }] : [],
-      ),
-      knownSkillIds: new Set([known?.skillId ?? "", skill.id]),
-      testedOutAt: new Date(),
-      timeZone: TIME_ZONE,
-    });
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: standIn.id } }),
-    ).resolves.toMatchObject({ lessons: 1, status: "testedOut" });
 
     await finishLesson(fixture);
 
@@ -942,5 +923,220 @@ describe("a certificate as anyone sees it", () => {
       courseId: null,
       title: "Quantum physics",
     });
+  });
+});
+
+function listCourseKeys(userId: string) {
+  return prisma.certificate
+    .findMany({ orderBy: { key: "asc" }, where: { kind: "course", userId } })
+    .then((rows) => rows.map((row) => row.key));
+}
+
+async function finishWithItem(userId: string, item: Pick<PlanItem, "id" | "lessonId">) {
+  await writeLearnerChange({ userId }, (tx) =>
+    item.lessonId
+      ? completeLessonPlanItems(tx, { lessonId: item.lessonId, now: new Date(), userId }).then(
+          () => null,
+        )
+      : completePlanItem(tx, { now: new Date(), planItemId: item.id, userId }),
+  );
+}
+
+/** A public core course of one beginner chapter whose lessons teach these skills, started for real. */
+async function startBeginnerCourse(skillLevels: (CourseLevel | null)[], lessonSkills: number[]) {
+  const [user, course, chapter, skills] = await Promise.all([
+    userFixture(),
+    courseFixture({ format: "core", isPublished: true, visibility: "public" }),
+    libraryChapterFixture({ level: "beginner" }),
+    Promise.all(skillLevels.map((level) => skillFixture({ level }))),
+  ]);
+
+  await courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "beginner" });
+
+  await Promise.all(
+    lessonSkills.map(async (skill, position) => {
+      const lesson = await libraryLessonFixture({ estimatedMinutes: 4, homeChapterId: chapter.id });
+
+      await Promise.all([
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: skills[skill]?.id ?? "" }),
+      ]);
+    }),
+  );
+
+  mockSession(user.id);
+
+  const started = await startCourseWithPlan({
+    courseId: course.id,
+    input: { chapterId: chapter.id },
+  });
+
+  if (started.status !== "created") {
+    throw new Error(`Expected a started course, not ${started.status}`);
+  }
+
+  return { course, goal: started.goal, user };
+}
+
+async function finishPlan({ goal, user }: { goal: Pick<Goal, "id">; user: { id: string } }) {
+  const items = await prisma.planItem.findMany({
+    orderBy: { position: "asc" },
+    where: { plan: { goalId: goal.id }, status: "todo" },
+  });
+
+  for (const item of items) {
+    // oxlint-disable-next-line no-await-in-loop -- A learner finishes one item at a time.
+    await finishWithItem(user.id, item);
+  }
+}
+
+/** The second beginner lesson tested out, the rest of the first four studied. */
+function getSharedStatus(index: number): PlanItem["status"] {
+  if (index === 1) {
+    return "testedOut";
+  }
+
+  return index < 4 ? "done" : "todo";
+}
+
+/**
+ * Two beginner lessons (one studied, one tested out) and six intermediate ones, two studied, that
+ * also teach the beginner skill; the beginner challenge is won and the intermediate one isn't.
+ */
+async function sharedLevelsPlan() {
+  const [user, course, beginner, intermediate, basics, advanced] = await Promise.all([
+    userFixture(),
+    courseFixture({ format: "core", isPublished: true, visibility: "public" }),
+    libraryChapterFixture({ level: "beginner" }),
+    libraryChapterFixture({ level: "intermediate" }),
+    skillFixture({ level: "beginner" }),
+    skillFixture({ level: "intermediate" }),
+  ]);
+
+  await Promise.all([
+    courseChapterFixture({ chapterId: beginner.id, courseId: course.id, level: "beginner" }),
+    courseChapterFixture({
+      chapterId: intermediate.id,
+      courseId: course.id,
+      level: "intermediate",
+    }),
+  ]);
+
+  const lessons = await Promise.all(
+    Array.from({ length: 8 }, async (_, index) => {
+      const chapterId = index < 2 ? beginner.id : intermediate.id;
+      const lesson = await libraryLessonFixture({ homeChapterId: chapterId });
+
+      await Promise.all([
+        chapterLessonFixture({ chapterId, lessonId: lesson.id, position: index }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: basics.id }),
+        ...(index < 2 ? [] : [lessonSkillFixture({ lessonId: lesson.id, skillId: advanced.id })]),
+      ]);
+
+      return lesson;
+    }),
+  );
+
+  const goal = await goalFixture({ primaryCourseId: course.id, userId: user.id });
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      skills: plannedSkills([
+        { ...basics, lessons: 8 },
+        { ...advanced, lessons: 6, phase: 1 },
+      ]).map((skill) => ({ ...skill, courseIds: [course.id], outlined: true })),
+    },
+    items: [
+      ...lessons.map((lesson, index) => ({
+        chapterId: index < 2 ? beginner.id : intermediate.id,
+        completedAt: index < 4 ? new Date() : null,
+        lessonId: lesson.id,
+        minutes: 4,
+        phase: index < 2 ? 0 : 1,
+        skillId: index < 2 ? basics.id : advanced.id,
+        status: getSharedStatus(index),
+      })),
+      { completedAt: new Date(), kind: "boss" as const, phase: 0, status: "done" as const },
+      { kind: "boss" as const, phase: 1, status: "todo" as const },
+    ],
+    phases: [{ name: "Beginner" }, { name: "Intermediate" }],
+  });
+
+  mockSession(user.id);
+  return { course, goal, lessons, plan, user };
+}
+
+describe("a course level, its skills where its course teaches them", () => {
+  it.each(["overview", null, "beginner"] as const)(
+    "certifies the whole beginner level of a course whose skill another course made at %s",
+    async (level) => {
+      const started = await startBeginnerCourse([level], [0]);
+      await finishPlan(started);
+
+      await expect(listCourseKeys(started.user.id)).resolves.toContain(
+        `${started.course.id}:beginner`,
+      );
+    },
+  );
+
+  it("keeps a reused skill another course made at intermediate in a dated beginner level's size", async () => {
+    const started = await startBeginnerCourse(
+      ["beginner", "intermediate"],
+      [0, ...Array.from({ length: 10 }, () => 1)],
+    );
+
+    await prisma.planItem.deleteMany({ where: { plan: { goalId: started.goal.id } } });
+
+    await prisma.goal.update({
+      data: { dailyMinutes: 5, targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+      where: { id: started.goal.id },
+    });
+
+    await refreshGoalPlan({ goalId: started.goal.id });
+
+    await expect(
+      prisma.planItem.count({ where: { kind: "lesson", plan: { goalId: started.goal.id } } }),
+    ).resolves.toBe(1);
+
+    await finishPlan(started);
+
+    await expect(listCourseKeys(started.user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("awards a finished level when a later level's shared lesson takes it to half", async () => {
+    const { course, lessons, user } = await sharedLevelsPlan();
+
+    await finishWithItem(user.id, { id: "", lessonId: lessons[4]?.id ?? null });
+
+    await expect(listCourseKeys(user.id)).resolves.toStrictEqual([`${course.id}:beginner`]);
+  });
+
+  it("still waits for a level's own lesson and challenge whatever a later level credits it", async () => {
+    const { course, lessons, plan, user } = await sharedLevelsPlan();
+
+    const own = plan.items.filter(
+      (item) => item.phase === 0 && (item.status === "testedOut" || item.kind === "boss"),
+    );
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: null, status: "todo" },
+      where: { id: { in: own.map((item) => item.id) } },
+    });
+
+    await finishWithItem(user.id, { id: "", lessonId: lessons[4]?.id ?? null });
+    await expect(listCourseKeys(user.id)).resolves.toStrictEqual([]);
+
+    const [lesson, challenge] = own;
+
+    await prisma.planItem.update({
+      data: { completedAt: new Date(), status: "testedOut" },
+      where: { id: lesson?.id ?? "" },
+    });
+
+    await expect(listCourseKeys(user.id)).resolves.toStrictEqual([]);
+
+    await finishWithItem(user.id, { id: challenge?.id ?? "", lessonId: null });
+    await expect(listCourseKeys(user.id)).resolves.toStrictEqual([`${course.id}:beginner`]);
   });
 });

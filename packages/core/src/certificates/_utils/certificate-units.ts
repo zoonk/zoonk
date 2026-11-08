@@ -160,8 +160,8 @@ export function listCertificateUnits({
   phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
   planCreatedAt: Date;
   scope: PlanScope;
-  /** The level of each graph skill the plan's primary course teaches. */
-  skillLevels: ReadonlyMap<string, CourseLevel>;
+  /** The levels at which the plan's primary course teaches each graph skill. */
+  skillLevels: ReadonlyMap<string, readonly CourseLevel[]>;
   studiesPastTarget: boolean;
 }): CertificateUnit[] {
   if (!COURSE_GOALS.has(goal.kind)) {
@@ -193,8 +193,8 @@ export function listCertificateUnits({
               learn,
               scope,
               skillIds: new Set(
-                [...skillLevels].flatMap(([skillId, skillLevel]) =>
-                  skillLevel === level ? skillId : [],
+                [...skillLevels].flatMap(([skillId, taught]) =>
+                  taught.includes(level) ? skillId : [],
                 ),
               ),
             }),

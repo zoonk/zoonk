@@ -87,7 +87,13 @@ function units({
 
   const held = items.flatMap((entry) =>
     entry.lessonId && !taughtIds.has(entry.lessonId)
-      ? [{ lessonId: entry.lessonId, skillIds: entry.skillId ? [entry.skillId] : [] }]
+      ? [
+          {
+            chapterId: entry.chapterId,
+            lessonId: entry.lessonId,
+            skillIds: entry.skillId ? [entry.skillId] : [],
+          },
+        ]
       : [],
   );
 
@@ -96,7 +102,7 @@ function units({
 
   const skillLevels = new Map(
     graphSkills.flatMap((entry) =>
-      entry.skillId && entry.level ? [[entry.skillId, entry.level] as const] : [],
+      entry.skillId && entry.level ? [[entry.skillId, [entry.level]] as const] : [],
     ),
   );
 
@@ -176,6 +182,7 @@ describe(listCertificateUnits, () => {
     );
 
     const taught = Array.from({ length: 3 }, () => ({
+      chapterId: null,
       lessonId: randomUUID(),
       skillIds: ["waves"],
     }));
@@ -210,7 +217,13 @@ describe(listCertificateUnits, () => {
 
     const taught = items.flatMap((entry) =>
       entry.level === "beginner" && entry.lessonId && entry.skillId
-        ? [{ lessonId: entry.lessonId, skillIds: [entry.skillId, "o1-skill"] }]
+        ? [
+            {
+              chapterId: entry.chapterId,
+              lessonId: entry.lessonId,
+              skillIds: [entry.skillId, "o1-skill"],
+            },
+          ]
         : [],
     );
 
