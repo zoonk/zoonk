@@ -334,6 +334,23 @@ describe(completeLibraryLesson, () => {
     });
   });
 
+  it('accepts "I know this" in a later sitting after three misses on a check', async () => {
+    const setup = await setupPlayableLesson({ steps: [...LESSON] });
+    const stepId = stepOfKind(setup.steps, "check").id;
+    const first = await lessonRunFixture({ lessonId: setup.lesson.id, userId: setup.user.id });
+
+    await answer({ runId: first.id, stepId, value: { kind: "check", optionId: "size" } });
+    await answer({ runId: first.id, stepId, value: { kind: "check", optionId: "path" } });
+    await answer({ runId: first.id, stepId, value: { kind: "check", optionId: "size" } });
+
+    const second = await lessonRunFixture({ lessonId: setup.lesson.id, userId: setup.user.id });
+    await answer({ runId: second.id, stepId, value: { kind: "check", optionId: "likely" } });
+
+    await expect(complete({ lessonId: setup.lesson.id, runId: second.id })).resolves.toMatchObject({
+      status: "completed",
+    });
+  });
+
   it("returns the same result when the completion is repeated, counting it once", async () => {
     const { lesson, runId, user } = await playLesson();
 

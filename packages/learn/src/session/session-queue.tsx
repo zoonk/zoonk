@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -34,13 +35,15 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
           <ListRowLeading className="w-3 justify-center">
             <BlockMark block={block} done={state === "done"} />
           </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle className={cn(state === "done" && "text-muted-foreground")}>
-              {blockTitle(block)}
-              {state === "done" && <span className="sr-only">{t(", done")}</span>}
-            </ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing>{formatDuration(block.estimatedMinutes)}</ListRowTrailing>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle className={cn(state === "done" && "text-muted-foreground")}>
+                {blockTitle(block)}
+                {state === "done" && <span className="sr-only">{t(", done")}</span>}
+              </ListRowTitle>
+            </ListRowContent>
+            <ListRowTrailing>{formatDuration(block.estimatedMinutes)}</ListRowTrailing>
+          </ListRowBody>
         </ListRow>
       ))}
     </ListGroup>

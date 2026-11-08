@@ -411,6 +411,16 @@ enum SpokenAnswerMode: Equatable {
       self = .speak
     }
   }
+
+  /// An answered screen shows the way it was answered, whatever the learner picks today. A
+  /// recording keeps no answer.
+  init(answered answer: LessonAnswer?) {
+    switch answer {
+    case .spokenAnswer: self = .type
+    case .listening: self = .listen
+    default: self = .speak
+    }
+  }
 }
 
 extension LessonPlayerStore {
@@ -437,7 +447,9 @@ private struct SpokenAnswerStepView: View {
   }
 
   private var mode: SpokenAnswerMode {
-    store.spokenAnswerMode(canListen: listening != nil, canSpeak: recording.input != nil)
+    context.isLocked
+      ? SpokenAnswerMode(answered: context.answer)
+      : store.spokenAnswerMode(canListen: listening != nil, canSpeak: recording.input != nil)
   }
 
   var body: some View {

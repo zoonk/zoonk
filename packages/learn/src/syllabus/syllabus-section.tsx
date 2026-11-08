@@ -85,7 +85,7 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
   );
 }
 
-const SHARE_CLASS = "w-10 justify-end";
+const SHARE_CLASS = "w-10 shrink-0 justify-end";
 
 function SubjectRow({
   href,

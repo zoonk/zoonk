@@ -113,6 +113,7 @@
     "./roadmap-styles": "./src/journey/roadmap-styles.tsx",
     "./provider": "./src/learn-provider.tsx",
     "./reminders": "./src/reminders/reminders-screen.tsx",
+    "./title-row": "./src/_components/title-row.tsx",
     "./trickster-art": "./src/checkpoints/trickster-art.tsx",
     "./save-error": "./src/_components/save-error.tsx",
     "./session/block": "./src/session/question-block/question-block.tsx",

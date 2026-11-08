@@ -26,6 +26,7 @@ import {
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListGroup,
+  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -128,7 +129,7 @@ function NotebookHero({
 }
 
 const TAB_CLASS =
-  "focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[0.8125rem] font-medium outline-none transition-colors focus-visible:ring-[3px] aria-[current=page]:bg-muted aria-[current=page]:text-foreground text-muted-foreground hover:text-foreground hover:bg-muted/70";
+  "focus-visible:ring-ring/50 hit-area relative flex min-h-8 items-center gap-1.5 rounded-md px-2.5 py-1 text-[0.8125rem] font-medium outline-none transition-colors focus-visible:ring-[3px] aria-[current=page]:bg-muted aria-[current=page]:text-foreground text-muted-foreground hover:text-foreground hover:bg-muted/70";
 
 function NotebookTabs({
   counts,
@@ -148,7 +149,7 @@ function NotebookTabs({
 
   return (
     <nav aria-label={t("Mistakes")} data-slot="mistakes-tabs">
-      <ul className="flex items-center gap-1">
+      <ul className="flex flex-wrap items-center gap-1">
         {tabs.map((tab) => (
           <li key={tab.status}>
             <LearnLink
@@ -212,10 +213,12 @@ function MistakesInbox({
               type="button"
             >
               <ListRowLeading>{group[0]?.status === "fixed" && <DoneMark />}</ListRowLeading>
-              <ListRowContent>
-                <ListRowTitle>{name}</ListRowTitle>
-              </ListRowContent>
-              <ListRowTrailing>{group.length}</ListRowTrailing>
+              <ListRowBody>
+                <ListRowContent>
+                  <ListRowTitle>{name}</ListRowTitle>
+                </ListRowContent>
+                <ListRowTrailing>{group.length}</ListRowTrailing>
+              </ListRowBody>
               <ChevronDownIcon
                 aria-hidden="true"
                 className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"

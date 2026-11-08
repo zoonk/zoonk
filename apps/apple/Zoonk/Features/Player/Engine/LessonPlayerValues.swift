@@ -70,11 +70,15 @@ struct LessonHyperdriveStart: Hashable, Sendable {
   static let none = LessonHyperdriveStart(knownStepIds: [], streak: 0)
 }
 
-/// Oldest first.
+/// Oldest first. `answer` is nil for a recording, whose words are the result's `answerText`, and
+/// for an answer that no longer fits its screen.
 struct LessonRunAnswer: Hashable, Sendable {
   let stepId: String
-  let isCorrect: Bool
   let answeredAt: Date
+  let answer: LessonAnswer?
+  let result: LessonStepResult
+
+  var isCorrect: Bool { result.isCorrect }
 }
 
 enum LessonRunRefusal: Hashable, Sendable, Error {

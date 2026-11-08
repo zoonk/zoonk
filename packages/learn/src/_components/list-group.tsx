@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink, type LearnPrefetch } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
+import { TITLE_ROW_CLASS } from "./title-row";
 
 /** Rows are direct children, or the items of one `ol`/`ul` directly inside. */
 export const LIST_GROUP_CLASS = "divided-rows flex flex-col";
@@ -145,6 +146,22 @@ export function ListRowIcon({ className, ...props }: React.ComponentProps<"span"
   );
 }
 
+/** A row's `ListRowContent` and its `ListRowTrailing`, which goes in here so it can move under the content. */
+export function ListRowBody({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn(
+        TITLE_ROW_CLASS,
+        "min-h-11 min-w-0 flex-1 gap-y-0.5 py-2.75",
+        "*:data-[slot=list-row-content]:min-h-0 *:data-[slot=list-row-content]:py-0",
+        className,
+      )}
+      data-slot="list-row-body"
+      {...props}
+    />
+  );
+}
+
 export function ListRowContent({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -161,7 +178,7 @@ export function ListRowContent({ className, ...props }: React.ComponentProps<"sp
 export function ListRowTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-sm leading-snug font-medium text-pretty", className)}
+      className={cn("text-sm leading-snug font-medium text-pretty wrap-break-word", className)}
       data-slot="list-row-title"
       {...props}
     />
@@ -203,7 +220,7 @@ export function ListRowTrailing({ className, ...props }: React.ComponentProps<"s
   return (
     <span
       className={cn(
-        "text-muted-foreground flex shrink-0 items-center gap-2 self-center font-mono text-xs tabular-nums",
+        "text-muted-foreground flex min-w-0 items-center gap-2 font-mono text-xs tabular-nums",
         className,
       )}
       data-slot="list-row-trailing"

@@ -65,6 +65,9 @@ fun SpokenWords(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelLarge,
         )
+        if (heard.words.isEmpty()) {
+            Text(heard.transcript, style = MaterialTheme.typography.titleMedium.copy(localeList = LocaleList(language)))
+        }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             heard.words.forEach { item ->
                 val index = practice.indexOfFirst { it.text == item.text }

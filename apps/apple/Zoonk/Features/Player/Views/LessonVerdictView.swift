@@ -47,8 +47,18 @@ struct LessonVerdictView: View {
           text: content.sampleAnswer)
       }
 
-      if let heard = result.heard, case .spokenAnswer(let content, _) = step.content {
-        LessonSpokenWordsView(heard: heard, language: content.language)
+      if case .spokenAnswer(let content, _) = step.content {
+        if let heard = result.heard {
+          LessonSpokenWordsView(heard: heard, language: content.language)
+        } else if store.state?.answers[step.id] == nil, let transcript = result.answerText {
+          // A recording restored from an earlier sitting keeps only its words.
+          LabeledText(
+            label: Text(
+              "What we heard", tableName: "Player",
+              comment: "Above a spoken answer's words as heard"
+            ),
+            text: transcript)
+        }
       }
 
       ForEach(result.corrections, id: \.self) { correction in

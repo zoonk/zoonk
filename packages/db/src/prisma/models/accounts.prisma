@@ -17,9 +17,6 @@ model User {
   /// Inactive for 30 days, a guest is deleted; signing up moves their progress to the account.
   isAnonymous           Boolean                   @default(false) @map("is_anonymous")
   username              String?
-  /// Unused. Production migrates before the new apps go live, so the column is dropped only in a
-  /// release after the one that stopped reading it.
-  displayUsername       String?                   @map("display_username") @ignore
   liveCallConnections   LiveCallConnection[]
   sessions              Session[]
   accounts              Account[]

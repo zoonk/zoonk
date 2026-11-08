@@ -29,6 +29,7 @@ import {
   getItemVisualState,
   getKeyboardItems,
   isItemMatched,
+  restoreMatches,
 } from "./_utils/match-columns";
 import { MatchBoard } from "./match-board";
 import { QuestionText } from "./question-text";
@@ -97,7 +98,13 @@ export function MatchColumnsStep({
   );
 
   const [selected, setSelected] = useState<MatchSelection | null>(null);
-  const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>([]);
+
+  const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>(() =>
+    selectedAnswer?.kind === "matchColumns"
+      ? restoreMatches({ leftItems, pairs: selectedAnswer.userPairs, rightItems })
+      : [],
+  );
+
   const [flashingMatch, setFlashingMatch] = useState<MatchAttempt | null>(null);
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -19,6 +19,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -29,9 +30,11 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.language.reading
+import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.api.ApiJson
@@ -154,6 +157,91 @@ class LessonPlayerFlowTest {
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNode(hasSetTextAction()).assert(hasText("Because the droplets are small"))
+    }
+
+    /** An answer the server saved though its reply was lost comes back with its verdict, not an edit the learner never checked. */
+    @Test
+    fun aSavedAnswerComesBackOverAnUncheckedEditAfterAndroidClosesTheApp() {
+        val write = "00000000-0000-4000-8000-000000000111"
+        play(listOf(typedAnswerStep(write), explanationStep("idea"), checkStep("next"))) { checkFailures = 1 }
+        val field = rule.onNode(hasSetTextAction())
+        field.performTextInput("The saved answer")
+        tap("Check")
+        rule.waitUntil { api.checks.size == 1 && viewModel.state.value?.phase == LessonPhase.Playing }
+        field.performTextReplacement("An unchecked edit")
+        rule.waitForIdle()
+
+        api.runAnswers =
+            "[${runAnswerJson(write, isCorrect = true, answer = """{"kind":"typedAnswer","text":"The saved answer"}""")}]"
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
+
+        val state = checkNotNull(reopened.state.value)
+        assertEquals(LessonAnswer.Typed("The saved answer") to true, state.answers[write] to state.results[write]?.isCorrect)
+    }
+
+    /** A retry the server saved comes back drawn from its answer, not from the cards the learner had sorted when Android closed the app. */
+    @Test
+    fun aSavedRetryComesBackOverItsHalfSortedCanvasAfterAndroidClosesTheApp() {
+        val quiz = "00000000-0000-4000-8000-000000000131"
+        val sort = "00000000-0000-4000-8000-000000000132"
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(checkStep(quiz), ActivityFixtures.step("categorize", id = sort), lessonMapStep()), restoration = restoration) {
+            grade = { id, _ -> checkResult(isCorrect = id == quiz) }
+        }
+        tap("Right")
+        tap("Check")
+        tap("Continue")
+        rule.onRoot().performKeyInput { repeat(3) { pressKey(Key.Two) } }
+        tap("Check")
+        tap("Continue")
+        rule.onRoot().performKeyInput { pressKey(Key.One) }
+        rule.onNodeWithText("1 of 3 sorted").assertExists()
+
+        val sorted = """{"kind":"activity","answer":{"kind":"assignment","pairs":{"i1":"chemical","i2":"physical","i3":"chemical"}}}"""
+        api.runAnswers =
+            listOf(
+                runAnswerJson(quiz, isCorrect = true),
+                runAnswerJson(sort, isCorrect = false),
+                runAnswerJson(sort, isCorrect = true, answer = sorted),
+            ).joinToString(prefix = "[", postfix = "]")
+        harness.viewModel = openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        val state = checkNotNull(viewModel.state.value)
+        assertEquals(true, state.results[sort]?.isCorrect)
+        rule.onNodeWithText("Rusting iron").assertExists()
+    }
+
+    /** A spoken screen answered by typing shows what was typed on review, even on a day the learner can talk. */
+    @Test
+    fun aSpokenAnswerTypedInAnEarlierSittingShowsWhatWasTyped() {
+        val say = "00000000-0000-4000-8000-000000000121"
+        play(listOf(spokenStep(say), explanationStep("idea"), checkStep("next"))) {
+            runAnswers = "[${runAnswerJson(say, isCorrect = true, answer = """{"kind":"spokenAnswer","text":"tengo hambre"}""")}]"
+        }
+
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        rule.onNodeWithText("tengo hambre").assertExists()
+    }
+
+    /** "Try again" after a failed start keeps the lesson's wait until the run starts, so nothing done meanwhile is lost. */
+    @Test
+    fun aRetriedStartShowsTheLessonOnlyOnceTheRunStarts() {
+        play(listOf(typedAnswerStep("write"), summaryStep("end"))) { startFailures = 1 }
+        harness.cache.invalidate(setOf(DataDomain.Goals))
+        api.lessonGate = CompletableDeferred()
+
+        tap("Try again")
+        rule.waitForIdle()
+        rule.onNode(hasSetTextAction()).assertDoesNotExist()
+
+        api.lessonGate?.complete(Unit)
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
+        rule.onNode(hasSetTextAction()).assertExists()
     }
 
     /** Android closing the app in the background keeps a pick the learner hasn't checked, ready to check. */
@@ -308,6 +396,51 @@ class LessonPlayerFlowTest {
         assertTrue(!reopened.hasUnsent)
     }
 
+    /** An answer the server doesn't have yet shows as the device graded it when the lesson opens again. */
+    @Test
+    fun aHeldAnswerShowsAnsweredWhenTheLessonOpensAgain() {
+        play(listOf(checkStep("quiz"), explanationStep("idea"), checkStep("next"))) { checkFailures = 2 }
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        rule.waitForIdle()
+
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
+
+        val state = checkNotNull(reopened.state.value)
+        assertEquals("idea", state.currentStep?.id)
+        assertEquals(LessonAnswer.Check("right"), state.answers["quiz"])
+        assertEquals(true, state.results["quiz"]?.isCorrect)
+        assertEquals(
+            api.checks
+                .first()
+                .second.attemptId
+                .toString(),
+            state.results["quiz"]?.attemptId,
+        )
+    }
+
+    /** A typed answer whose reply was lost goes again as the same attempt, so the server replays its verdict. */
+    @Test
+    fun aTypedAnswerCheckedAgainKeepsItsAttemptUntilItChanges() {
+        play(listOf(typedAnswerStep("write"), summaryStep("end"))) { checkFailures = 2 }
+        val field = rule.onNode(hasSetTextAction())
+        field.performTextInput("Because the droplets are small")
+
+        repeat(2) { tries ->
+            tap("Check")
+            rule.waitUntil { api.checks.size == tries + 1 && viewModel.state.value?.phase == LessonPhase.Playing }
+        }
+        field.performTextInput(" and light")
+        tap("Check")
+        rule.waitUntil { viewModel.state.value?.phase == LessonPhase.Feedback }
+
+        val attempts = api.checks.map { it.second.attemptId }
+        assertEquals(listOf(attempts.first(), attempts.first()), attempts.take(2))
+        assertTrue(attempts.last() != attempts.first())
+    }
+
     @Test
     fun aRunStartsAfterAHeldAnswerEvenWhenItsResendFails() {
         play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 2 }
@@ -318,7 +451,7 @@ class LessonPlayerFlowTest {
         rule.waitForIdle()
 
         val reopened = openAgain()
-        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null && reopened.state.value?.run !is LessonRun.Starting }
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null }
 
         assertTrue(reopened.state.value?.run is LessonRun.Started)
         assertTrue(reopened.hasUnsent)
@@ -454,7 +587,7 @@ class LessonPlayerFlowTest {
         tap("Check")
         rule.waitForIdle()
 
-        api.runAnswers = """[{"answeredAt":"2026-10-28T10:01:00Z","isCorrect":false,"stepId":"$quiz"}]"""
+        api.runAnswers = "[${runAnswerJson(quiz, isCorrect = false)}]"
         val reopened = openAgain()
         rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
 

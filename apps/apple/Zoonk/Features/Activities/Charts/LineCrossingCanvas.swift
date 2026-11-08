@@ -7,8 +7,15 @@ struct LineCrossingCanvas: View {
   let fields: LineCrossingFields
 
   /// How far the one moved line is, by its id; right or up is positive.
-  @ActivityState("offsets") private var offsets: [String: Double] = [:]
+  @ActivityState private var offsets: [String: Double]
   @State private var dragOrigin: Double?
+
+  init(context: ActivityCanvasContext, fields: LineCrossingFields) {
+    self.context = context
+    self.fields = fields
+    _offsets = ActivityState(
+      wrappedValue: LineCrossingModel.restoredOffsets(fields, answer: context.answer), "offsets")
+  }
 
   private var axis: LineCrossingModel.Axis { LineCrossingModel.axis(of: fields.shift.direction) }
 
@@ -18,8 +25,7 @@ struct LineCrossingCanvas: View {
   }
 
   private var realOffset: Double {
-    fields.shift.direction == .right || fields.shift.direction == .up
-      ? fields.shift.amount : -fields.shift.amount
+    LineCrossingModel.offset(fields.shift.amount, toward: fields.shift.direction)
   }
 
   private func line(_ field: LineCrossingFields.Line, _ offsets: [String: Double])

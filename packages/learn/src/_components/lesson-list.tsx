@@ -7,6 +7,7 @@ import { useFormatDuration } from "../_utils/time-format";
 import {
   CURRENT_ROW_CLASS,
   LIST_GROUP_CLASS,
+  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowLink,
@@ -63,20 +64,22 @@ function LessonRow({
       <ListRowLeading>
         <LessonMark isNext={isNext} lesson={lesson} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowNumberedTitle
-          number={position}
-          textClassName={cn(lesson.state === "done" && "text-muted-foreground")}
-        >
-          {lesson.title}
-        </ListRowNumberedTitle>
-      </ListRowContent>
-      {(lesson.plusRequired || lesson.minutes > 0) && (
-        <ListRowTrailing>
-          {lesson.plusRequired && <PlusMark className="font-sans" />}
-          {lesson.minutes > 0 && formatDuration(lesson.minutes)}
-        </ListRowTrailing>
-      )}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowNumberedTitle
+            number={position}
+            textClassName={cn(lesson.state === "done" && "text-muted-foreground")}
+          >
+            {lesson.title}
+          </ListRowNumberedTitle>
+        </ListRowContent>
+        {(lesson.plusRequired || lesson.minutes > 0) && (
+          <ListRowTrailing>
+            {lesson.plusRequired && <PlusMark className="font-sans" />}
+            {lesson.minutes > 0 && formatDuration(lesson.minutes)}
+          </ListRowTrailing>
+        )}
+      </ListRowBody>
     </ListRowLink>
   );
 }

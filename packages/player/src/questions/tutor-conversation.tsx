@@ -5,10 +5,12 @@ import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { OpenPageHere } from "@zoonk/ui/components/open-page-here";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { QuestionComposer } from "./lesson-question-composer";
@@ -34,6 +36,7 @@ import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 import { useTurnSignals } from "./use-turn-signals";
+import { WaitForFirstShow } from "./wait-for-first-show";
 
 type TutorConversationProps = TutorCards & {
   composerLabel: string;
@@ -90,7 +93,10 @@ function SignUpPrompt() {
   );
 }
 
-/** Follows a turn added at the end; a saved question taking its sent turn's place stays put. */
+/**
+ * Follows a turn added at the end; a saved question taking its sent turn's place stays put. A
+ * server-rendered page already opened at its latest turn, so hydrating it doesn't scroll.
+ */
 function useFollowLatest({
   count,
   latestId,
@@ -101,10 +107,23 @@ function useFollowLatest({
   ready: boolean;
 }) {
   const reducedMotion = useReducedMotion();
+  const mounted = useIsMounted();
   const turns = useRef(new Map<string, HTMLElement>());
-  const shown = useRef<{ count: number; id: string | null } | null>(null);
 
-  useEffect(() => {
+  const shown = useRef<{ count: number; id: string | null } | null>(
+    mounted ? null : { count, id: latestId },
+  );
+
+  // Next.js keeps a page the learner left mounted but hidden, and scrolls to the top when they come
+  // back, so a hidden conversation forgets what it showed and opens at its latest turn again.
+  useLayoutEffect(
+    () => () => {
+      shown.current = null;
+    },
+    [],
+  );
+
+  useLayoutEffect(() => {
     if (!ready) {
       return;
     }
@@ -117,11 +136,11 @@ function useFollowLatest({
     }
 
     const turn = latestId ? turns.current.get(latestId) : null;
+    const behavior = previous === null || reducedMotion ? "instant" : "smooth";
 
-    turn?.scrollIntoView({
-      behavior: previous === null || reducedMotion ? "instant" : "smooth",
-      block: "start",
-    });
+    // Before the browser paints, but after Next.js scrolls a page it navigated to, which happens in
+    // a parent's layout effect later in this same commit.
+    queueMicrotask(() => turn?.scrollIntoView({ behavior, block: "start" }));
   }, [count, latestId, ready, reducedMotion]);
 
   return (id: string) => (element: HTMLElement | null) => {
@@ -173,6 +192,7 @@ function ConversationTurns({
             question={question}
             toolOffer={question.toolOffer && renderToolOffer(question.toolOffer)}
           />
+          {question.id === latestId && <OpenPageHere />}
         </div>
       ))}
 
@@ -244,11 +264,13 @@ function ConversationBody({
         {state.error === "load" && <LoadError />}
 
         {ready && (
-          <ConversationTurns
-            identity={identity}
-            renderPlanChange={renderPlanChange}
-            renderToolOffer={renderToolOffer}
-          />
+          <WaitForFirstShow questions={state.questions}>
+            <ConversationTurns
+              identity={identity}
+              renderPlanChange={renderPlanChange}
+              renderToolOffer={renderToolOffer}
+            />
+          </WaitForFirstShow>
         )}
 
         <ConversationMissionMoment buddyName={identity.name} moment={missionMoment} />

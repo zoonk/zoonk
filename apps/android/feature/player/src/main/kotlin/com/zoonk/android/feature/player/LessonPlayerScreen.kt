@@ -96,6 +96,7 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
+import com.zoonk.android.feature.player.engine.asAnswered
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
@@ -540,7 +541,7 @@ private fun Segments(
     state: LessonPlayerState,
 ) {
     val label = stringResource(R.string.player_progress)
-    val done = if (state.phase == LessonPhase.Completed) segments.size else state.position
+    val done = segments.count { it != TaskSegment.Ahead && it != TaskSegment.Current }
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
@@ -810,7 +811,7 @@ private fun Result(
             LessonResultNotes(next, screen.hyperdriveStreak)
         } else {
             val explanations by viewModel.explanations.collectAsStateWithLifecycle()
-            LessonStepResultView(step, result, next, screen.hyperdriveStreak) {
+            LessonStepResultView(step.asAnswered(state.answers[step.id]), result, next, screen.hyperdriveStreak) {
                 ExplainAnswer(
                     explanation = explanations[step.id],
                     onExplain = viewModel::explainAnswer,
