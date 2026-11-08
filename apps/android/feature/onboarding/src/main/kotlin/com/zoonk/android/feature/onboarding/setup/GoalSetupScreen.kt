@@ -395,11 +395,8 @@ private fun ColumnScope.QuestionStep(
         OnboardingStep.PLACEMENT -> {
             val placementAnswer =
                 OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT))
-            val placed: () -> Unit = {
-                vm.answer(
-                    placementAnswer,
-                    from = OnboardingStep.PLACEMENT,
-                )
+            val placed: suspend () -> WriteOutcome<*> = {
+                vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
             }
             val targetLanguage = view.goal.targetLanguage
             if (view.goal.kind == Goal.Kind.LANGUAGE && targetLanguage != null) {
@@ -427,10 +424,7 @@ private fun ColumnScope.QuestionStep(
                     mocks = mocks,
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },
-                    onDone = { question ->
-                        vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = !question)?.await()
-                            ?: WriteOutcome.Obsolete
-                    },
+                    onDone = placed,
                 )
             }
         }

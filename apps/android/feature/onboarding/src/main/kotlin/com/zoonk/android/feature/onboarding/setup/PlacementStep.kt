@@ -108,7 +108,7 @@ internal fun ColumnScope.PlacementStep(
     mocks: MockStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
-    onDone: suspend (fromQuestion: Boolean) -> WriteOutcome<*>,
+    onDone: suspend () -> WriteOutcome<*>,
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
@@ -119,7 +119,7 @@ internal fun ColumnScope.PlacementStep(
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
     val shown = if (hold.over) phase else PlacementPhase.Waiting
-    val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = { onDone(false) }) }
+    val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
     val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
@@ -176,7 +176,7 @@ internal fun ColumnScope.PlacementStep(
                     pending = vm.isSaving,
                     saveFailures = vm.saveFailures,
                     onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                    onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = { onDone(true) }) },
+                    onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = onDone) },
                 )
             }
         }
@@ -186,7 +186,7 @@ internal fun ColumnScope.PlacementStep(
                 pending = vm.isSaving,
                 failed = vm.finishFailed,
                 onContinue = { navigator.open(AppRoute.Mock(shown.mockId)) },
-                onStop = { vm.finish(fromScratch = false, stopMockId = shown.mockId, onDone = { onDone(false) }) },
+                onStop = { vm.finish(fromScratch = false, stopMockId = shown.mockId, onDone = onDone) },
             )
         }
 

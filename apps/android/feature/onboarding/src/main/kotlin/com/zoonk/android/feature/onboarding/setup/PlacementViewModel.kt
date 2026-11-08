@@ -67,6 +67,7 @@ internal class PlacementViewModel(
     /** Reads first, so ready questions open at once instead of flashing their wait. */
     fun start() {
         if (isStarting) return
+        finishFailed = false
         isStarting = true
         viewModelScope.launch {
             awaitingRead = !check()
@@ -89,6 +90,7 @@ internal class PlacementViewModel(
         durationMs: Long,
     ) {
         if (isSaving) return
+        finishFailed = false
         val previous = sent
         val duration = previous?.takeIf { it.question.item.itemId == question.item.itemId && it.answer == answer }?.durationMs ?: durationMs
         sent = SentAnswer(question, answer, duration)
@@ -119,7 +121,7 @@ internal class PlacementViewModel(
                 else -> {
                     if (fromQuestion) {
                         saveFailures++
-                    } else if (outcome !is WriteOutcome.Done) {
+                    } else {
                         finishFailed = true
                     }
                 }

@@ -65,6 +65,7 @@ internal class LevelTestViewModel(
     /** Reads first, so ready questions open at once instead of flashing the wait for questions still to write. */
     fun begin() {
         if (isStarting) return
+        finishFailed = false
         isStarting = true
         bank = BankWait()
         viewModelScope.launch {
@@ -112,6 +113,7 @@ internal class LevelTestViewModel(
         skipped: Boolean = false,
     ) {
         if (isSaving) return
+        finishFailed = false
         val previous = sent
         val duration =
             previous
@@ -157,31 +159,41 @@ internal class LevelTestViewModel(
     /** The learner leaves the questions for the levels they have so far, saved so reopening the test shows them too. */
     fun stop() {
         if (isSaving) return
-        finish { stopped = true }
+        finish(fromQuestion = true) {
+            stopped = true
+            WriteOutcome.Done(Unit)
+        }
     }
 
     fun skipSpeaking() {
         if (isSaving) return
         stopped = true
-        finish {}
+        finish { WriteOutcome.Done(Unit) }
     }
 
-    fun finish(onDone: () -> Unit) {
+    fun finish(
+        fromQuestion: Boolean = false,
+        onDone: suspend () -> WriteOutcome<*>,
+    ) {
         if (isSaving) return
         isSaving = true
         finishFailed = false
         viewModelScope.launch {
-            when (store.finishLevelTest(goalId)) {
+            val outcome = store.finishLevelTest(goalId)
+            val completed = if (outcome is WriteOutcome.Done) onDone() else outcome
+            when (completed) {
                 is WriteOutcome.Done -> {
-                    saveFailures = 0
-                    onDone()
+                    if (fromQuestion) saveFailures = 0
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    finishFailed = true
-                    saveFailures++
+                    if (fromQuestion) {
+                        saveFailures++
+                    } else {
+                        finishFailed = true
+                    }
                 }
             }
             isSaving = false

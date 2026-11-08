@@ -264,6 +264,7 @@ class PlacementStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
     }
 
     @Test
@@ -289,6 +290,7 @@ class PlacementStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
     }
 
     private companion object {
