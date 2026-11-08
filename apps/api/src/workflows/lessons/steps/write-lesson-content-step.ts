@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type CallWait, type ServedSpeed, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
 import { writeChallengeLessonContent } from "@zoonk/core/library/challenges/write";
 import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
@@ -40,6 +40,7 @@ export type WriteInput = {
   forExam?: boolean;
   forceReview?: boolean;
   lessonId: string;
+  speed?: ServedSpeed;
   wait?: CallWait;
   workflowRunId: string;
 };

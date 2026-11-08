@@ -192,9 +192,9 @@ async function buildGoal({
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
-  const { curriculum, inputs, researchId, scope } = built;
+  const { curriculum, firstLesson, inputs, researchId, scope } = built;
   const prepared = prepareAheadOfLearner({ context, inputs, rebuild });
-  const closed = Promise.allSettled([prepared, warmUp]).then(() => closeStepStream());
+  const closed = Promise.allSettled([prepared, warmUp, firstLesson]).then(() => closeStepStream());
 
   try {
     const [speculativeLessonIds] = await Promise.all([

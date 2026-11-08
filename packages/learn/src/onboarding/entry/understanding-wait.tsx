@@ -6,6 +6,8 @@ import { useState } from "react";
 import { FollowedRun } from "../../generation/generation-follower";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
+import { useVisibleWait } from "../../generation/use-visible-wait";
+import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingColumn,
@@ -18,15 +20,28 @@ import { GoalErrorAlert, TypedGoal } from "./goal-outcomes";
 const WAITING_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
 function UnderstandingWaitScreen({
+  attemptId,
+  onboardingId,
   goal,
   run,
   since,
 }: {
   goal: string;
+  attemptId?: string;
+  onboardingId?: string;
   run: GenerationRun;
   since?: number;
 }) {
   const t = useExtracted();
+  const { track } = useLearnAnalytics();
+
+  useVisibleWait({
+    attemptId,
+    contentKind: "curriculum",
+    onboardingId,
+    surface: "understanding",
+    track,
+  });
 
   return (
     <OnboardingColumn>
@@ -66,8 +81,18 @@ function UnderstandingLimit({
   );
 }
 
-export function SendingGoal({ goal, since }: { goal: string; since: number }) {
-  return <UnderstandingWaitScreen goal={goal} run={WAITING_RUN} since={since} />;
+export function SendingGoal({
+  attemptId,
+  goal,
+  since,
+}: {
+  attemptId?: string;
+  goal: string;
+  since: number;
+}) {
+  return (
+    <UnderstandingWaitScreen attemptId={attemptId} goal={goal} run={WAITING_RUN} since={since} />
+  );
 }
 
 /**
@@ -113,12 +138,20 @@ export function UnderstandingWait({
   }
 
   if (isRetrying) {
-    return <UnderstandingWaitScreen goal={draft.prompt} run={WAITING_RUN} since={since} />;
+    return (
+      <UnderstandingWaitScreen
+        onboardingId={draft.id}
+        goal={draft.prompt}
+        run={WAITING_RUN}
+        since={since}
+      />
+    );
   }
 
   if (readFailed) {
     return (
       <UnderstandingWaitScreen
+        onboardingId={draft.id}
         goal={draft.prompt}
         run={{ failure: "connection", retry: onReady, status: "failed", steps: {} }}
       />
@@ -134,13 +167,21 @@ export function UnderstandingWait({
         onReady={onReady}
         restart={restart}
       >
-        {(run) => <UnderstandingWaitScreen goal={draft.prompt} run={run} since={since} />}
+        {(run) => (
+          <UnderstandingWaitScreen
+            onboardingId={draft.id}
+            goal={draft.prompt}
+            run={run}
+            since={since}
+          />
+        )}
       </FollowedRun>
     );
   }
 
   return (
     <UnderstandingWaitScreen
+      onboardingId={draft.id}
       goal={draft.prompt}
       run={{
         failure: draft.status === "failed" ? "generation" : "notStarted",

@@ -37,7 +37,6 @@ export function PlanReveal({
   initialPlan,
   isGuest,
   libraryCourse,
-  onPlanReadyChange,
   planActions,
   planLinkHref,
   planRevealed,
@@ -53,7 +52,6 @@ export function PlanReveal({
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   libraryCourse: LibraryCourseLink | null;
-  onPlanReadyChange: (isReady: boolean) => void;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
   planRevealed: boolean;
@@ -79,7 +77,6 @@ export function PlanReveal({
 
   const readingNotice = plan?.notice === "reading";
   const wait = getRevealWait(plan);
-  const shown = wait === null;
 
   // The page read the plan before placement's answers changed it, so the reveal reads it once more.
   const readAgain = useEffectEvent(() => {
@@ -101,12 +98,6 @@ export function PlanReveal({
   });
 
   const isLoading = !read && poll.status === "polling";
-
-  useEffect(() => {
-    if (!isLoading) {
-      onPlanReadyChange(shown);
-    }
-  }, [isLoading, onPlanReadyChange, shown]);
 
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 

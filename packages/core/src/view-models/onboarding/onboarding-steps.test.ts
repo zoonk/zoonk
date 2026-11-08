@@ -26,8 +26,8 @@ describe(getOnboardingSteps, () => {
 
     expect(steps).toStrictEqual([
       "purpose",
-      "targetDate",
       "level",
+      "targetDate",
       "buddy",
       "placement",
       "schedule",
@@ -69,7 +69,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps.slice(0, 2)).toStrictEqual(["role", "targetDate"]);
+    expect(steps.slice(0, 2)).toStrictEqual(["level", "role"]);
   });
 
   it("asks a career change for the role they want, even when the words gave their current one", () => {
@@ -93,7 +93,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(asks[0]).toBe("role");
+    expect(asks.slice(0, 2)).toStrictEqual(["level", "role"]);
     expect(knows).not.toContain("role");
   });
 
@@ -238,7 +238,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toContain("followUps");
+    expect(steps.slice(0, 4)).toStrictEqual(["purpose", "level", "followUps", "targetDate"]);
   });
 
   it("skips placement for someone starting from nothing", () => {
@@ -301,7 +301,7 @@ describe(getOnboardingSteps, () => {
       profile: NEW_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["targetDate", "level", "buddy", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["level", "targetDate", "buddy", "placement", "schedule", "plan"]);
   });
 
   it("gives a language course its level test, without asking why they learn it", () => {
@@ -315,7 +315,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["targetDate", "level", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["level", "targetDate", "placement", "schedule", "plan"]);
   });
 
   it.each(["exam", "learn", "language"] as const)(

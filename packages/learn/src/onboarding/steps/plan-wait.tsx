@@ -6,6 +6,7 @@ import { useState } from "react";
 import { type GenerationRun } from "../../generation/generation-run";
 import { useReadyHold } from "../../warm-up/use-ready-hold";
 import { type OnboardingActions } from "../onboarding-actions";
+import { useOnboardingWait } from "../onboarding-clock";
 import { OnboardingColumn } from "../onboarding-frame";
 import { HeldFooter } from "./held-wait";
 import { NoticeReading } from "./notice-reading";
@@ -47,6 +48,7 @@ function ScreenWait({
   const t = useExtracted();
   const hold = useReadyHold(ready);
   const holding = hold.status === "hold";
+  useOnboardingWait(screen === "notice" ? "examNotice" : "planWait", hold.status !== "go");
 
   if (hold.status === "go") {
     return children;

@@ -169,7 +169,6 @@ export type OnboardingActions = {
   readWarmUp: (warmUpId: string) => Promise<WarmUpDeck | null>;
   /** Ends onboarding: until it's saved, Today and resume bring the learner back to the reveal. */
   markPlanRevealed: (goalId: string) => Promise<boolean>;
-  recordPlanWait: (milliseconds: number) => Promise<void>;
   startOver: (goalIds: string[]) => Promise<void>;
   stopPlacementMock: (mockId: string) => Promise<boolean>;
   understanding: UnderstandingActions;

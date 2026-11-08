@@ -9,6 +9,7 @@ import {
   readLessonOrigin,
 } from "@/lib/public/public-hrefs";
 import { readLessonOpening } from "@/lib/session/lesson-opening";
+import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getFinishedLessonStudyBlock } from "@zoonk/core/lesson-player/finished-study-block";
 import {
   type PlayableLibraryLessonResult,
@@ -110,12 +111,14 @@ async function loadWaiting(result: PlayableLibraryLessonResult | null) {
 }
 
 function LessonWithoutScreens({
+  goalId,
   inSession,
   initialRequest,
   origin,
   result,
   waiting,
 }: {
+  goalId: string | null;
   inSession: boolean;
   initialRequest: LessonRequest;
   origin: LessonOrigin | null;
@@ -128,6 +131,7 @@ function LessonWithoutScreens({
 
   return (
     <LessonWaitingView
+      goalId={goalId}
       inSession={inSession}
       initialRequest={initialRequest}
       lesson={result.lesson}
@@ -230,6 +234,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     result,
     session,
     profile,
+    goalId,
     fit,
     finishedBlockId,
     resume,
@@ -240,6 +245,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     lessonRead,
     sessionRead,
     getLearningProfile(),
+    getActiveGoalId(),
     getLessonFit({ lessonId }),
     finishedBlockRead,
     getLessonProgress({ lessonId }),
@@ -279,6 +285,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
       {played && !isGuest && (
         <LessonPlayerClient
+          goalId={goalId}
           challengeTeam={challengeTeam}
           firstAnswer={firstAnswer}
           learnerId={session?.user.id ?? null}
@@ -296,6 +303,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
       {result.status !== "ready" && (
         <LessonWithoutScreens
+          goalId={goalId}
           inSession={inSession}
           initialRequest={readLessonWritingRequest(query)}
           origin={origin}

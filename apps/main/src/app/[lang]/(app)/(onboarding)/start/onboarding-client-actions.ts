@@ -6,7 +6,6 @@ import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
-import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import {
   type CreateGoalsOutcome,
   type OnboardingActions,
@@ -93,8 +92,6 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   }),
   markPlanRevealed: markPlanRevealedAction,
   readWarmUp: readWarmUpAction,
-  recordPlanWait: (milliseconds) =>
-    recordGenerationWaitAction({ contentKind: "curriculum", milliseconds }),
   startOver: startOverAction,
   stopPlacementMock: (mockId) => stopPlacementMockAction(mockId, getLocalTimeZone()),
   understanding: WEB_UNDERSTANDING_ACTIONS,

@@ -7,6 +7,7 @@ import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import { useReadyHold } from "../../warm-up/use-ready-hold";
 import { type OnboardingActions } from "../onboarding-actions";
+import { useOnboardingWait } from "../onboarding-clock";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -76,6 +77,7 @@ export function PlacementWaiting({
   const patient = usePatience();
   const hold = useReadyHold(questionsReady);
   const holding = hold.status === "hold";
+  useOnboardingWait("placementWait", hold.status !== "go");
   const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
   // The learner's own material is read in the `readExamNotice` step.
   const readsMaterial = shown.steps.readExamNotice !== undefined;

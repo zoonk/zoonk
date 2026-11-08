@@ -180,7 +180,6 @@ export type OnboardingResumeView =
   | { goalId: string; kind: "goal"; title: string }
   | { kind: "today" };
 
-/** The onboarding questions, in the order they're asked. Each one is a screen. */
 export const ONBOARDING_QUESTIONS = [
   "purpose",
   "role",

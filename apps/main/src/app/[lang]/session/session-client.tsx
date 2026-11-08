@@ -7,7 +7,6 @@ import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
-import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import { type DayEntry, type TapStep } from "@/lib/session/day-entry";
 import {
@@ -25,7 +24,6 @@ import { useGoToStudyDestination, useStudyNavigation } from "@/lib/session/use-s
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
-import { useAppLocale } from "@zoonk/learn/locale";
 import { QuestionBlock } from "@zoonk/learn/session/block";
 import { NextStop, type NextStopLesson, type NextStopTap } from "@zoonk/learn/session/next-stop";
 import { SessionSummary, type SummaryGoalKind } from "@zoonk/learn/session/summary";
@@ -160,7 +158,6 @@ export function SessionNextStopClient({
   warmUp: WarmUpDeck | null;
 }) {
   const router = useRouter();
-  const locale = useAppLocale();
   const sessionId = day.status === "unstarted" ? null : day.id;
   const navigation = useStudyNavigation(sessionId ?? "");
   const refresh = useCallback(() => router.refresh(), [router]);
@@ -193,14 +190,8 @@ export function SessionNextStopClient({
 
   return (
     <NextStop
-      actions={{
-        readLesson: readWaitedLesson,
-        recordWait: (milliseconds) =>
-          void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
-        refresh,
-        start,
-        stop: navigation.stop,
-      }}
+      goalId={goalId}
+      actions={{ readLesson: readWaitedLesson, refresh, start, stop: navigation.stop }}
       alternative={tapped ? null : alternative}
       block={drawn}
       blocks={day.blocks}
