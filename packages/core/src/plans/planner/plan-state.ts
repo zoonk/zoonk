@@ -130,9 +130,10 @@ const planSettingsSchema = z.object({
   startDate: isoDateSchema.nullable().default(null),
   /**
    * A language plan studies only the situations up to its aim's band. Plans laid out before that
-   * rule keep every band until the learner moves their aim.
+   * rule keep every band until the learner moves their aim. Absent unless set, so those plans keep
+   * the settings, and so the inputs key, they were saved with.
    */
-  stopsAtAim: z.boolean().default(false),
+  stopsAtAim: z.boolean().optional(),
   team: challengeTeamSchema.nullable().default(null),
   tools: z.array(toolChoiceSchema).default([]),
   weekdayMinutes: z
