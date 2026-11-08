@@ -38,6 +38,7 @@ msgstr "Doğru"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/certificates/certificates-screen.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -66,6 +67,7 @@ msgstr "Atlandı"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -102,6 +104,7 @@ msgstr "Çalışıldı"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-queue.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
@@ -156,6 +159,7 @@ msgstr "Günlük çalışma süresi"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
@@ -220,11 +224,6 @@ msgstr "Tekrar yapmak ve yanlışlarını düzeltmek ücretsiz olmaya devam eder
 msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "Ücretsiz sınava hazırlık haftan bitti"
-
-#: src/_components/guess-hint.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır."
 
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
@@ -4064,6 +4063,7 @@ msgid "This didn't start"
 msgstr "Başlatılamadı"
 
 #: src/generation/lesson-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "Dersini hazırlıyoruz"
@@ -4222,6 +4222,7 @@ msgstr "Sınav mı, dil mi yoksa konu mu olduğunu kontrol ediyoruz…"
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -4365,6 +4366,7 @@ msgid "Reading your question…"
 msgstr "Sorunu okuyoruz…"
 
 #: src/generation/use-generation-copy.ts
+#: src/wait/first-lesson-row.tsx
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "Yaklaşık 5 kısa ekran hazırlıyoruz"
@@ -4523,6 +4525,7 @@ msgid "{count, plural, one {# skill you already know} other {# skills you alread
 msgstr "{count, plural, other {Zaten bildiğin # beceri}}"
 
 #: src/journey/journey-chapters.tsx
+#: src/onboarding/steps/reveal-days.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "Daha fazla ders"
@@ -4750,6 +4753,7 @@ msgstr "Bir sonraki sınav için deneme sınavı"
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -4876,7 +4880,6 @@ msgid "Too tight"
 msgstr "Çok sıkışık"
 
 #: src/journey/pace-details.tsx
-#: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "aefUZL"
 msgid "{time} a day"
@@ -7182,7 +7185,6 @@ msgid "Chapters you finished"
 msgstr "Bitirdiğin üniteler"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/library-course-offer.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -9580,9 +9582,9 @@ msgid "How it works"
 msgstr "Nasıl işler"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "JHbf4S"
-msgid "A course in the Library fits your goal"
-msgstr "Kütüphane’de hedefine uygun bir kurs var"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "Kütüphanede hedefine uygun bir kurs var. Hemen başla"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9859,6 +9861,7 @@ msgstr "{document, select, notice {Planın ilandaki branşlara, konulara ve tari
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Planın hazır"
@@ -10001,11 +10004,6 @@ msgid "Stop and see my plan"
 msgstr "Bitir ve planını gör"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "Hazır olduğunda başlayabilirsin."
-
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "Soruları eklediğin materyale göre hazırlıyoruz. Materyali okumamız birkaç dakika sürüyor."
@@ -10019,6 +10017,11 @@ msgstr "Soruları hedefine ulaşman için gereken becerilere göre hazırlıyoru
 msgctxt "QRwbAL"
 msgid "Your questions are ready"
 msgstr "Soruların hazır"
+
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "Hazır olduğunda başlayabilirsin."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -10036,6 +10039,7 @@ msgid "See it whenever you're ready."
 msgstr "Hazır olduğunda planına göz atabilirsin."
 
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "TTJuzU"
 msgid "One last question, then you'll see it."
 msgstr "Son bir soru kaldı, sonra planını göreceksin."
@@ -10089,12 +10093,23 @@ msgid "Your answers are saved. Try again so it's ready when you finish."
 msgstr "Cevapların kaydedildi. Soruları bitirdiğinde planın hazır olsun diye tekrar dene."
 
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/schedule-step.tsx
 #: src/plan/focus-test/focus-test-result.tsx
 #: src/today/today-action.tsx
 #: src/today/today-progress-card.tsx
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "Planını gör"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "x4Kcgs"
+msgid "Your plan will be waiting when you finish."
+msgstr "Dersi bitirdiğinde planın hazır olacak."
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "z2snrT"
+msgid "Start lesson 1"
+msgstr "1. derse başla"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "LCLlDB"
@@ -10272,29 +10287,15 @@ msgid "Hours of study from scratch, practice included. Less if you already know 
 msgstr "Sıfırdan öğrenmek için gereken çalışma süresi, pratik dahil. Biraz biliyorsan daha kısa sürer."
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "La_2pe"
-msgid "{weekdays} a day, {weekend} on weekends"
-msgstr "Hafta içi günde {weekdays}, hafta sonları {weekend}"
+msgctxt "v9nycX"
+msgid "Plan created"
+msgstr "Plan oluşturuldu"
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "4OjqDe"
-msgid "{days, plural, one {About # day} other {About # days}}"
-msgstr "{days, plural, other {Yaklaşık # gün}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "UA5qaX"
-msgid "{days, plural, one {# day} other {# days}}"
-msgstr "{days, plural, other {# gün}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "1-tKgx"
-msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Planın hedefinin tamamını kapsıyor. Daha erken bitirmek için günlük çalışma süreni artır ya da bir tarih seç; planın en önemli kısımları o tarihe kadar bitirebileceğin şekilde ayarlanır."
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "b3M-c5"
-msgid "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Planının kapsamını günlük çalışma süren belirler. Daha çok ilerlemek veya daha erken bitirmek için günlük çalışma süreni artır ya da bir tarih seç; planın en önemli kısımları o tarihe kadar bitirebileceğin şekilde ayarlanır."
+#: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "Ayarla"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"
@@ -10306,27 +10307,87 @@ msgctxt "7T47RX"
 msgid "Choices"
 msgstr "Seçenekler"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "Plan oluşturuldu"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "Ayarla"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
 msgstr "Tamam. Planın artık hedefinin tamamını kapsıyor."
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Tekrar yap"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Meydan okuma"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "xmtnm9"
+msgid "Start here"
+msgstr "Buradan başla"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "Gg5U7i"
+msgid "Rest day"
+msgstr "Dinlenme günü"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "tWAtPK"
+msgid "Your first week"
+msgstr "İlk haftan"
+
+#: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "UA5qaX"
+msgid "{days, plural, one {# day} other {# days}}"
+msgstr "{days, plural, other {# gün}}"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
 msgctxt "xYZ4fs"
 msgid "Use this date"
 msgstr "Bu tarihi kullan"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BIgEET"
+msgid "{time} on weekends"
+msgstr "hafta sonları {time}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "KInjCw"
+msgid "a day"
+msgstr "günde"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "xAwjqh"
+msgid "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}"
+msgstr "{count, plural, other {ders, {done, number} tanesi tamamlandı}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BSAVzC"
+msgid "{count, plural, one {lesson} other {lessons}}"
+msgstr "{count, plural, other {ders}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "4EBz1E"
+msgid "until the exam"
+msgstr "sınava kadar"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "RokfZv"
+msgid "until your date"
+msgstr "hedef tarihine kadar"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "4OjqDe"
+msgid "{days, plural, one {About # day} other {About # days}}"
+msgstr "{days, plural, other {Yaklaşık # gün}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "x0b1HZ"
+msgid "estimated finish"
+msgstr "tahmini bitiş"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "aTEFtd"
@@ -14240,20 +14301,63 @@ msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "Dersleri hazırlıyoruz"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "22HeK6"
+msgid "Your first lesson"
+msgstr "İlk dersin"
+
+#: src/wait/first-lesson-row.tsx
+msgctxt "zbkRbA"
+msgid "Ready to start"
+msgstr "Başlamaya hazır"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "Dersin hazır"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-quiz.tsx
+msgctxt "IUmRs3"
+msgid "Quiz while you wait"
+msgstr "Beklerken bilgi yarışması"
+
+#: src/wait/wait-quiz.tsx
+msgctxt "LroSLM"
+msgid "Just for fun. Your answers don't count."
+msgstr "Sadece eğlenmek için. Cevapların hesaba katılmaz."
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "8ZwEZ-"
+msgid "Back to the quiz"
+msgstr "Bilgi yarışmasına dön"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "3IyRnV"
+msgid "Play a quiz while you wait"
+msgstr "Beklerken bilgi yarışması oyna"
+
+#: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"
 msgid "That's all for now."
 msgstr "Şimdilik bu kadar."
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/wait-screen.tsx
 msgctxt "e4FgxF"
 msgid "Next guess"
 msgstr "Sıradakini tahmin et"
 
-#: src/warm-up/warm-up-card.tsx
-msgctxt "wPwGoj"
-msgid "Guess while you wait"
-msgstr "Beklerken tahmin et"
+#: src/wait/wait-status.tsx
+msgctxt "YgBrpA"
+msgid "Your first lesson is ready"
+msgstr "İlk dersin hazır"
+
+#: src/wait/wait-status.tsx
+msgctxt "FZtFoB"
+msgid "Writing your first lesson: <lesson>{title}</lesson>"
+msgstr "İlk dersini hazırlıyoruz: <lesson>{title}</lesson>"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"

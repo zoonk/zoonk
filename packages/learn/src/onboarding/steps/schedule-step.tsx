@@ -8,15 +8,15 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { Button } from "@zoonk/ui/components/button";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
+import { OnboardingQuestionShown } from "../onboarding-clock";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
-import { PlanWait } from "./plan-wait";
+import { type LibraryCourseLink, PlanWait } from "./plan-wait";
 import { ScheduleAim, getAimAhead } from "./schedule-aim";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
@@ -194,6 +194,7 @@ function ScheduleWeek({
 
   return (
     <div className="flex flex-col gap-3">
+      <OnboardingQuestionShown step="schedule" />
       <WeekdayToggles days={week.days} onChange={week.setDays} />
 
       {week.studiesOnWeekends && (
@@ -213,13 +214,15 @@ export function ScheduleStep({
   draft,
   exam = false,
   findTimeToCover,
+  firstLesson,
   getTimeAdvice,
   goal,
   languageAim,
+  lessonHref,
+  library,
   onAnswer,
   onChangeAim,
   onChangeDate,
-  onPlanReadyChange,
   pending,
   planReadiness,
   readWarmUp,
@@ -230,12 +233,14 @@ export function ScheduleStep({
   dated: boolean;
   draft: ScheduleDraft | null;
   exam?: boolean;
+  firstLesson: GenerationFirstLesson | null;
   goal: GoalView;
   languageAim: LanguageAimView | null;
+  lessonHref: (lessonId: string) => string;
+  library: LibraryCourseLink | null;
   onAnswer: (input: OnboardingAnswerInput) => void;
   onChangeAim: (aim: LanguageAim) => Promise<boolean>;
   onChangeDate: (draft: ScheduleDraft) => void;
-  onPlanReadyChange: (isReady: boolean) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
   readWarmUp: OnboardingActions["readWarmUp"];
@@ -262,12 +267,11 @@ export function ScheduleStep({
 
   const wait = getPlanWait({ gate: schedule.gate, opened: planReadiness, run });
 
-  useEffect(() => {
-    onPlanReadyChange(wait === null);
-  }, [onPlanReadyChange, wait]);
-
   return (
     <PlanWait
+      firstLesson={firstLesson}
+      lessonHref={lessonHref}
+      library={library}
       next="timeQuestion"
       notice={{
         document: getExamDocument(goal),
@@ -280,6 +284,7 @@ export function ScheduleStep({
     >
       <StepForm
         canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}
+        continueLabel={t("See your plan")}
         onContinue={() => {
           const answer = getScheduleAnswer({ exam, schedule });
 

@@ -4363,7 +4363,7 @@
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again) and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. A run that builds the plan (a first build or a retry before the plan exists) reports the deck once, including a reused or already linked deck. A run on an existing plan does not send this event. This event is never sent when the goal has no deck.",
+                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again), \"lessonId\", \"lessonTitle\" and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. A run that builds the plan (a first build or a retry before the plan exists) reports the deck once, including a reused or already linked deck. A run on an existing plan does not send this event. This event is never sent when the goal has no deck. A learn goal whose first lesson is picked before its plan reports it on the same stream: a `started` event with step `writeFirstLesson` carries its `lessonId` and `lessonTitle`, and a `completed` event with step `firstLessonReady` carries its `lessonId` once the learner can start it, before or after `goalReady`. Each is sent at most once per run; after a reconnect, read the onboarding's `firstLesson`.",
                   "example": "data: {\"at\":1760000000000,\"status\":\"started\",\"step\":\"writeLesson\"}\n\n"
                 }
               }
@@ -21133,9 +21133,86 @@
         }
       }
     },
+    "/goals/{goalId}/plan-reveal/views": {
+      "post": {
+        "description": "Records that the learner pressed the plan reveal's action (Start, or Continue after their first lesson), which ends the goal's onboarding: its `planRevealed` turns true, `GET /me/onboarding-resume` stops bringing it back and Today stops answering `preparing`. Send it before opening Today. Pressing it again keeps the first time.",
+        "operationId": "markPlanRevealed",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Mark the plan reveal as seen",
+        "tags": [
+          "Onboarding"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Recorded"
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/onboarding-resume": {
       "get": {
-        "description": "What a returning learner (guests included) should continue: a goal they typed but haven't confirmed (`draft`), their newest goal while its onboarding hasn't reached the plan (`goal`), or their day when they have an active goal (`today`). `resume` is null when there's nothing to continue.",
+        "description": "What a returning learner (guests included) should continue: a goal they typed but haven't confirmed (`draft`), their newest goal while its onboarding isn't over (`goal`): questions are left or they haven't pressed its plan reveal's action (`planRevealed`), or their day when they have an active goal (`today`). `resume` is null when there's nothing to continue.",
         "operationId": "getOnboardingResume",
         "security": [
           {
@@ -71822,6 +71899,31 @@
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           },
+          "planReveal": {
+            "nullable": true,
+            "description": "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
+            "type": "object",
+            "properties": {
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "goalTitle": {
+                "type": "string"
+              },
+              "planReady": {
+                "type": "boolean",
+                "description": "False while the plan is still being built"
+              }
+            },
+            "required": [
+              "goalId",
+              "goalTitle",
+              "planReady"
+            ],
+            "additionalProperties": false
+          },
           "seconds": {
             "type": "integer",
             "minimum": 0,
@@ -71850,6 +71952,7 @@
           "incorrectCount",
           "isFirstCompletion",
           "nextReviewAt",
+          "planReveal",
           "seconds",
           "studyBlock",
           "totalBrainPower"
@@ -79826,12 +79929,18 @@
           },
           "languageAim": {
             "nullable": true,
-            "description": "Language goals only: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`. Null for other goals",
             "allOf": [
               {
                 "$ref": "#/components/schemas/LanguageAim"
               }
             ]
+          },
+          "nextDays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanDay"
+            },
+            "description": "Today and the six days after it, in the goal's zone, whatever the weekday: the reveal's first week (`week` runs Monday to Sunday)"
           },
           "notice": {
             "nullable": true,
@@ -80191,6 +80300,7 @@
           "fundedMocks",
           "goalId",
           "languageAim",
+          "nextDays",
           "notice",
           "numbers",
           "ownLevel",
@@ -80466,6 +80576,168 @@
         "required": [
           "aim",
           "choices"
+        ],
+        "additionalProperties": false,
+        "description": "Language goals only, null for others: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`"
+      },
+      "PlanDay": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanItem"
+            }
+          },
+          "minutes": {
+            "type": "number",
+            "minimum": 0
+          },
+          "mockFunding": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MockFunding"
+              }
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "done",
+              "missed",
+              "rest",
+              "today",
+              "upcoming"
+            ]
+          }
+        },
+        "required": [
+          "date",
+          "items",
+          "minutes",
+          "mockFunding",
+          "state"
+        ],
+        "additionalProperties": false
+      },
+      "PlanItem": {
+        "type": "object",
+        "properties": {
+          "chapterId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "id": {
+            "nullable": true,
+            "description": "null for selected in-memory work until the learner opens the day; show the row without an action link",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "lesson",
+              "chapter",
+              "checkpoint",
+              "mock",
+              "review",
+              "boss"
+            ]
+          },
+          "lessonId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "minutes": {
+            "nullable": true,
+            "type": "number"
+          },
+          "requiresPlus": {
+            "type": "boolean",
+            "description": "Free exam plans cover the first week and no mock exams"
+          },
+          "scheduledFor": {
+            "nullable": true,
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "skillId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "todo",
+              "done",
+              "skipped",
+              "testedOut"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")"
+          },
+          "writing": {
+            "type": "boolean",
+            "description": "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name"
+          }
+        },
+        "required": [
+          "chapterId",
+          "id",
+          "kind",
+          "lessonId",
+          "minutes",
+          "requiresPlus",
+          "scheduledFor",
+          "skillId",
+          "status",
+          "title",
+          "writing"
+        ],
+        "additionalProperties": false
+      },
+      "MockFunding": {
+        "type": "object",
+        "properties": {
+          "mockDate": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The scheduled date of the mock this day funds."
+          },
+          "mockMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "The mock's real duration in minutes."
+          },
+          "setAsideMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Exact minutes this day sets aside for that mock."
+          }
+        },
+        "required": [
+          "mockDate",
+          "mockMinutes",
+          "setAsideMinutes"
         ],
         "additionalProperties": false
       },
@@ -80902,167 +81174,6 @@
           "later",
           "name",
           "system"
-        ],
-        "additionalProperties": false
-      },
-      "PlanDay": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlanItem"
-            }
-          },
-          "minutes": {
-            "type": "number",
-            "minimum": 0
-          },
-          "mockFunding": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MockFunding"
-              }
-            ]
-          },
-          "state": {
-            "type": "string",
-            "enum": [
-              "done",
-              "missed",
-              "rest",
-              "today",
-              "upcoming"
-            ]
-          }
-        },
-        "required": [
-          "date",
-          "items",
-          "minutes",
-          "mockFunding",
-          "state"
-        ],
-        "additionalProperties": false
-      },
-      "PlanItem": {
-        "type": "object",
-        "properties": {
-          "chapterId": {
-            "nullable": true,
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "id": {
-            "nullable": true,
-            "description": "null for selected in-memory work until the learner opens the day; show the row without an action link",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "lesson",
-              "chapter",
-              "checkpoint",
-              "mock",
-              "review",
-              "boss"
-            ]
-          },
-          "lessonId": {
-            "nullable": true,
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "minutes": {
-            "nullable": true,
-            "type": "number"
-          },
-          "requiresPlus": {
-            "type": "boolean",
-            "description": "Free exam plans cover the first week and no mock exams"
-          },
-          "scheduledFor": {
-            "nullable": true,
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-          },
-          "skillId": {
-            "nullable": true,
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "todo",
-              "done",
-              "skipped",
-              "testedOut"
-            ]
-          },
-          "title": {
-            "type": "string",
-            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")"
-          },
-          "writing": {
-            "type": "boolean",
-            "description": "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name"
-          }
-        },
-        "required": [
-          "chapterId",
-          "id",
-          "kind",
-          "lessonId",
-          "minutes",
-          "requiresPlus",
-          "scheduledFor",
-          "skillId",
-          "status",
-          "title",
-          "writing"
-        ],
-        "additionalProperties": false
-      },
-      "MockFunding": {
-        "type": "object",
-        "properties": {
-          "mockDate": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-            "description": "The scheduled date of the mock this day funds."
-          },
-          "mockMinutes": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "description": "The mock's real duration in minutes."
-          },
-          "setAsideMinutes": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "description": "Exact minutes this day sets aside for that mock."
-          }
-        },
-        "required": [
-          "mockDate",
-          "mockMinutes",
-          "setAsideMinutes"
         ],
         "additionalProperties": false
       },
@@ -87236,6 +87347,36 @@
             },
             "description": "An exam's subjects from its stored notice, with only the options of its choices the learner picked; empty for other goals"
           },
+          "firstLesson": {
+            "nullable": true,
+            "description": "A learn goal's first lesson, picked and written while the plan is still being built, so the learner can start it before the plan is ready. The goal's run reports it live (`writeFirstLesson`, then `firstLessonReady`); this read is the truth after a reconnect. Null until it's picked, and for goals whose first lesson comes from the plan",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "Open it at GET /v1/library/lessons/{lessonId}"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ready",
+                  "writing"
+                ],
+                "description": "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "followUps": {
             "type": "array",
             "items": {
@@ -87377,6 +87518,10 @@
             "additionalProperties": false,
             "description": "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes"
           },
+          "planRevealed": {
+            "type": "boolean",
+            "description": "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state"
+          },
           "quickTestMinutes": {
             "type": "integer",
             "minimum": 0,
@@ -87456,6 +87601,7 @@
           "examChoices",
           "examDays",
           "examSubjects",
+          "firstLesson",
           "followUps",
           "generationId",
           "goal",
@@ -87463,6 +87609,7 @@
           "languageAim",
           "libraryCourse",
           "planReadiness",
+          "planRevealed",
           "quickTestMinutes",
           "recommendedMinutes",
           "steps",

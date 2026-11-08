@@ -49,10 +49,15 @@ export async function insertGoalWithPlan(
     draft,
     id,
     input,
+    planShown = false,
     replacesGoalId,
     testedLanguage,
     userId,
-  }: GoalRecord & { replacesGoalId?: string },
+  }: GoalRecord & {
+    /** The learner reaches this goal's plan without a reveal, so none is owed. */
+    planShown?: boolean;
+    replacesGoalId?: string;
+  },
 ): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
   const { examSubjects, ...details } = draft.details ?? {};
@@ -65,6 +70,7 @@ export async function insertGoalWithPlan(
       id,
       kind: draft.kind,
       language: draft.language,
+      planRevealedAt: planShown ? new Date() : null,
       primaryCourseId: draft.primaryCourseId ?? null,
       prompt: draft.prompt,
       replacesGoalId: replacesGoalId ?? null,

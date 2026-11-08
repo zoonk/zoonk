@@ -35,7 +35,7 @@ import { OnboardingRailProvider } from "./onboarding-rail";
 type StartState =
   | { error: GoalError | null; kind: "entry"; words: string }
   | { kind: "questions" }
-  | { goal: string; kind: "sending"; sentAt: number }
+  | { attemptId?: string; goal: string; kind: "sending"; sentAt: number }
   | { draft: OnboardingDraftView; kind: "draft"; sentAt?: number };
 
 function getInitialState({
@@ -54,7 +54,12 @@ function getInitialState({
   const handedOff = takesHandedOffGoal ? getHandedOffGoal() : null;
 
   return handedOff
-    ? { goal: handedOff.goal, kind: "sending", sentAt: handedOff.sentAt }
+    ? {
+        attemptId: handedOff.attemptId,
+        goal: handedOff.goal,
+        kind: "sending",
+        sentAt: handedOff.sentAt,
+      }
     : { error: null, kind: "entry", words: defaultGoal };
 }
 
@@ -248,9 +253,9 @@ function GoalStartFlow({
     onDraft: showDraft,
     onError: showEntry,
     onExplanation: startExplanation,
-    onSending: ({ goal, sentAt }) => {
+    onSending: ({ attemptId, goal, sentAt }) => {
       draftActions.cancel();
-      setState({ goal, kind: "sending", sentAt });
+      setState({ attemptId, goal, kind: "sending", sentAt });
     },
     understanding: actions.understanding,
   });
@@ -309,7 +314,9 @@ function GoalStartFlow({
           <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
         )}
 
-        {state.kind === "sending" && <SendingGoal goal={state.goal} since={state.sentAt} />}
+        {state.kind === "sending" && (
+          <SendingGoal attemptId={state.attemptId} goal={state.goal} since={state.sentAt} />
+        )}
 
         {state.kind === "draft" && (
           <DraftScreen

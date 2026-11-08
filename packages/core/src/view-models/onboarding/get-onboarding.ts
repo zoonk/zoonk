@@ -13,6 +13,7 @@ import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
+import { readGoalOpening } from "../../goals/goal-opening";
 import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -37,6 +38,7 @@ import {
   getOnboardingSteps,
   isClassTest,
   isCourseDateSkipped,
+  isPlanRevealOwed,
 } from "./onboarding-steps";
 
 export type OnboardingResult =
@@ -158,7 +160,10 @@ function getDateProblem({
   return noSitting ? { kind: "noSitting", ...noSitting } : null;
 }
 
-const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
+/** Daily time doesn't change what the goal is about, so the plan's wait before it can offer one. */
+const SUBJECT_QUESTIONS = new Set<OnboardingStep>(
+  ONBOARDING_QUESTIONS.filter((question) => question !== "schedule"),
+);
 
 const COURSE_KINDS = new Set(["exam", "learn"]);
 
@@ -172,7 +177,7 @@ async function findLibraryCourse({
   steps: OnboardingStep[];
   subject: string;
 }): Promise<OnboardingLibraryCourse | null> {
-  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => QUESTIONS.has(step))) {
+  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => SUBJECT_QUESTIONS.has(step))) {
     return null;
   }
 
@@ -214,12 +219,13 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, planReadiness] = await Promise.all([
+  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson] = await Promise.all([
     findLearningProfileView(userId),
     findActiveGoalId(userId),
     findOnboardingGoalIds(goal),
     findExamNotice({ details, goal, goalDate, today }),
     readPlanReadiness(goal.id),
+    readGoalOpening(goal.openingLessonId),
   ]);
 
   const [earlierGoals, [view]] = await Promise.all([
@@ -283,6 +289,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       examChoices: notice.choices,
       examDays: notice.examDays,
       examSubjects: notice.subjects,
+      firstLesson,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
       goal: view,
@@ -293,6 +300,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
           : null,
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
+      planRevealed: !isPlanRevealOwed(goal),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,

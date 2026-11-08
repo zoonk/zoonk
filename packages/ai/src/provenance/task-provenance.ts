@@ -24,6 +24,8 @@ export type TaskProvenance = {
   gatewayCostUsd?: number;
   /** `mixed` for steps served at different tiers; unset at the standard tier. */
   serviceTier?: string;
+  /** `fast` when every step was served fast; unset otherwise. */
+  speed?: "fast";
   /** `byok` when our provider key paid for the call, `system` when the gateway's credits did. */
   credential?: string;
   latencyMs: number;
@@ -82,12 +84,14 @@ function priceStep(step: GenerationStep) {
       charge: gateway.charge,
       model,
       serviceTier: gateway.serviceTier,
+      speed: gateway.speed,
       usage: toTaskUsage(step.usage),
     }),
     gatewayCostUsd: gateway.costUsd,
     model,
     provider: gateway.servedProvider ?? step.model.provider,
     serviceTier: gateway.serviceTier,
+    speed: gateway.speed,
   };
 }
 
@@ -140,6 +144,7 @@ export function buildTaskProvenance({
     requestedModel: finalStep.model.modelId,
     runId,
     serviceTier: getServedServiceTier(steps.map((step) => step.serviceTier)),
+    ...(steps.every((step) => step.speed === "fast") ? { speed: "fast" as const } : {}),
     usage,
   };
 }

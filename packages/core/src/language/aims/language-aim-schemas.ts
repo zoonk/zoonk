@@ -30,7 +30,11 @@ export const languageAimViewSchema = z
         description: "The aims above the learner's level, lowest first, to offer as a change",
       }),
   })
-  .meta({ id: "LanguageAim" }) satisfies z.ZodType<LanguageAimView>;
+  .meta({
+    description:
+      "Language goals only, null for others: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`",
+    id: "LanguageAim",
+  }) satisfies z.ZodType<LanguageAimView>;
 
 export const languageReasonViewSchema = z
   .object({

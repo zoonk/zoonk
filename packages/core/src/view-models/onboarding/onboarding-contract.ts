@@ -95,8 +95,6 @@ export type GoalUnderstandingView =
 
 export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed"] as const;
 
-type OnboardingDraftStatus = (typeof ONBOARDING_DRAFT_STATUSES)[number];
-
 /** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {
   /** Goals past this many on the card are Plus's: shown locked and left out of the goals created. Null on Plus. */
@@ -106,7 +104,7 @@ export type OnboardingDraftView = {
   goalId: string | null;
   id: string;
   prompt: string;
-  status: OnboardingDraftStatus;
+  status: (typeof ONBOARDING_DRAFT_STATUSES)[number];
   /** Counts the learner's today, which a `targetDate` fix must come after. */
   timeZone: string;
   understanding: GoalUnderstandingView | null;
@@ -180,7 +178,6 @@ export type OnboardingResumeView =
   | { goalId: string; kind: "goal"; title: string }
   | { kind: "today" };
 
-/** The onboarding questions, in the order they're asked. Each one is a screen. */
 export const ONBOARDING_QUESTIONS = [
   "purpose",
   "role",
@@ -211,7 +208,8 @@ export type OnboardingDateProblem =
   | { kind: "passed" | "today" }
   | ({ kind: "noSitting" } & NoSitting);
 
-type OnboardingTimeChoice = { minutes: number; split: DaySplit | null };
+/** A learn goal's first lesson, picked before the plan: the learner can start it once it's `ready`. */
+export type OnboardingFirstLesson = { id: string; status: "ready" | "writing"; title: string };
 
 export type OnboardingView = {
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
@@ -222,6 +220,8 @@ export type OnboardingView = {
   examDays: { days: string[]; estimated: boolean } | null;
   /** knownSubjects must send notice names, not display short names. */
   examSubjects: { name: string; shortName: string | null }[];
+  /** Null until it's picked, and for goals whose first lesson comes from the plan. */
+  firstLesson: OnboardingFirstLesson | null;
   followUps: string[];
   /** Follow via GET /v1/generations/{id}/events; null until the run starts. */
   generationId: string | null;
@@ -233,6 +233,8 @@ export type OnboardingView = {
   libraryCourse: OnboardingLibraryCourse | null;
   /** As the time answers say it, so the time question opens on its wait while the plan can't answer. */
   planReadiness: PlanReadiness;
+  /** The learner pressed the reveal's action. Until then resume brings the reveal back, and a reveal an action opened plays its moment. */
+  planRevealed: boolean;
   /** How long the level question's quick test takes: a language goal's is its level test. */
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
@@ -240,7 +242,7 @@ export type OnboardingView = {
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
   /** The daily times the time question offers, `recommendedMinutes` among them. */
-  timeChoices: OnboardingTimeChoice[];
+  timeChoices: { minutes: number; split: DaySplit | null }[];
 };
 
 const nullableAnswer = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH).nullable();

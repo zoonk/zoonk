@@ -38,6 +38,7 @@ msgstr "Corretta"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/certificates/certificates-screen.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -66,6 +67,7 @@ msgstr "Saltato"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -102,6 +104,7 @@ msgstr "Studiato"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-queue.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
@@ -156,6 +159,7 @@ msgstr "Tempo giornaliero"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
@@ -220,11 +224,6 @@ msgstr "I ripassi e la correzione dei tuoi errori restano gratuiti. Plus sblocca
 msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "La tua settimana gratuita di preparazione all’esame è finita"
-
-#: src/_components/guess-hint.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "Sbagliare ora ti aiuta a ricordare più avanti."
 
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
@@ -4064,6 +4063,7 @@ msgid "This didn't start"
 msgstr "La preparazione non è iniziata"
 
 #: src/generation/lesson-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "Stiamo preparando la tua lezione"
@@ -4222,6 +4222,7 @@ msgstr "Stiamo verificando se si tratta di un esame, una lingua o una materia…
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -4365,6 +4366,7 @@ msgid "Reading your question…"
 msgstr "Stiamo leggendo la tua domanda…"
 
 #: src/generation/use-generation-copy.ts
+#: src/wait/first-lesson-row.tsx
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "Stiamo preparando circa 5 brevi schermate"
@@ -4523,6 +4525,7 @@ msgid "{count, plural, one {# skill you already know} other {# skills you alread
 msgstr "{count, plural, other {# abilità che conosci già}}"
 
 #: src/journey/journey-chapters.tsx
+#: src/onboarding/steps/reveal-days.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "Altre lezioni"
@@ -4750,6 +4753,7 @@ msgstr "Simulazione per la prossima sessione d’esame"
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -4876,7 +4880,6 @@ msgid "Too tight"
 msgstr "Troppo serrato"
 
 #: src/journey/pace-details.tsx
-#: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "aefUZL"
 msgid "{time} a day"
@@ -7182,7 +7185,6 @@ msgid "Chapters you finished"
 msgstr "Capitoli completati"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/library-course-offer.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -9580,9 +9582,9 @@ msgid "How it works"
 msgstr "Come funziona"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "JHbf4S"
-msgid "A course in the Library fits your goal"
-msgstr "Nella Biblioteca c’è un corso adatto al tuo obiettivo"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "Un corso della Biblioteca è adatto al tuo obiettivo. Inizialo ora"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9859,6 +9861,7 @@ msgstr "{document, select, notice {Il tuo piano seguirà le materie, gli argomen
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Il tuo piano è pronto"
@@ -10001,11 +10004,6 @@ msgid "Stop and see my plan"
 msgstr "Fermati e guarda il tuo piano"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "Inizia quando vuoi."
-
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "Si basano sul materiale che hai aggiunto. Ci serve qualche minuto per leggerlo."
@@ -10019,6 +10017,11 @@ msgstr "Si basano sulle competenze necessarie per il tuo obiettivo. Di solito ci
 msgctxt "QRwbAL"
 msgid "Your questions are ready"
 msgstr "Le tue domande sono pronte"
+
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "Inizia quando vuoi."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -10036,6 +10039,7 @@ msgid "See it whenever you're ready."
 msgstr "Guardalo quando vuoi."
 
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "TTJuzU"
 msgid "One last question, then you'll see it."
 msgstr "Un’ultima domanda, poi lo vedrai."
@@ -10089,12 +10093,23 @@ msgid "Your answers are saved. Try again so it's ready when you finish."
 msgstr "Abbiamo salvato le tue risposte. Riprova, così il piano sarà pronto quando avrai finito."
 
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/schedule-step.tsx
 #: src/plan/focus-test/focus-test-result.tsx
 #: src/today/today-action.tsx
 #: src/today/today-progress-card.tsx
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "Vedi il tuo piano"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "x4Kcgs"
+msgid "Your plan will be waiting when you finish."
+msgstr "Il tuo piano ti aspetterà quando avrai finito."
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "z2snrT"
+msgid "Start lesson 1"
+msgstr "Inizia la lezione 1"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "LCLlDB"
@@ -10272,29 +10287,15 @@ msgid "Hours of study from scratch, practice included. Less if you already know 
 msgstr "Ore di studio da zero, pratica inclusa. Meno se conosci già un po’ la lingua."
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "La_2pe"
-msgid "{weekdays} a day, {weekend} on weekends"
-msgstr "{weekdays} al giorno, {weekend} nel fine settimana"
+msgctxt "v9nycX"
+msgid "Plan created"
+msgstr "Piano creato"
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "4OjqDe"
-msgid "{days, plural, one {About # day} other {About # days}}"
-msgstr "{days, plural, one {Circa # giorno} other {Circa # giorni}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "UA5qaX"
-msgid "{days, plural, one {# day} other {# days}}"
-msgstr "{days, plural, one {# giorno} other {# giorni}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "1-tKgx"
-msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Il tuo piano copre ogni parte del tuo obiettivo. Per finire prima, dedicagli più tempo al giorno, oppure scegli una data: il piano include ciò che conta di più nel tempo disponibile."
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "b3M-c5"
-msgid "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Il tempo che dedichi ogni giorno determina quanto puoi studiare con il tuo piano. Per andare oltre o finire prima, dedicagli più tempo al giorno, oppure scegli una data: il piano include ciò che conta di più nel tempo disponibile."
+#: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "Adatta"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"
@@ -10306,27 +10307,87 @@ msgctxt "7T47RX"
 msgid "Choices"
 msgstr "Scelte"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "Piano creato"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "Adatta"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
 msgstr "Fatto. Ora il tuo piano copre l’intero obiettivo."
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Ripassa"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Sfida"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "xmtnm9"
+msgid "Start here"
+msgstr "Inizia da qui"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "Gg5U7i"
+msgid "Rest day"
+msgstr "Giorno di riposo"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "tWAtPK"
+msgid "Your first week"
+msgstr "La tua prima settimana"
+
+#: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "UA5qaX"
+msgid "{days, plural, one {# day} other {# days}}"
+msgstr "{days, plural, one {# giorno} other {# giorni}}"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
 msgctxt "xYZ4fs"
 msgid "Use this date"
 msgstr "Usa questa data"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BIgEET"
+msgid "{time} on weekends"
+msgstr "{time} nel fine settimana"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "KInjCw"
+msgid "a day"
+msgstr "al giorno"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "xAwjqh"
+msgid "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}"
+msgstr "{count, plural, one {lezione, {done, number} già alle spalle} other {lezioni, {done, number} già alle spalle}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BSAVzC"
+msgid "{count, plural, one {lesson} other {lessons}}"
+msgstr "{count, plural, one {lezione} other {lezioni}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "4EBz1E"
+msgid "until the exam"
+msgstr "all’esame"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "RokfZv"
+msgid "until your date"
+msgstr "alla data che hai scelto"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "4OjqDe"
+msgid "{days, plural, one {About # day} other {About # days}}"
+msgstr "{days, plural, one {Circa # giorno} other {Circa # giorni}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "x0b1HZ"
+msgid "estimated finish"
+msgstr "fine prevista"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "aTEFtd"
@@ -14240,20 +14301,63 @@ msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "Lezioni in arrivo"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "22HeK6"
+msgid "Your first lesson"
+msgstr "La tua prima lezione"
+
+#: src/wait/first-lesson-row.tsx
+msgctxt "zbkRbA"
+msgid "Ready to start"
+msgstr "Pronto per iniziare"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "La tua lezione è pronta"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-quiz.tsx
+msgctxt "IUmRs3"
+msgid "Quiz while you wait"
+msgstr "Un quiz mentre aspetti"
+
+#: src/wait/wait-quiz.tsx
+msgctxt "LroSLM"
+msgid "Just for fun. Your answers don't count."
+msgstr "Solo per divertirti. Le tue risposte non contano."
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "8ZwEZ-"
+msgid "Back to the quiz"
+msgstr "Torna al quiz"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "3IyRnV"
+msgid "Play a quiz while you wait"
+msgstr "Fai un quiz mentre aspetti"
+
+#: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"
 msgid "That's all for now."
 msgstr "Per ora è tutto."
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/wait-screen.tsx
 msgctxt "e4FgxF"
 msgid "Next guess"
 msgstr "Fai un’altra ipotesi"
 
-#: src/warm-up/warm-up-card.tsx
-msgctxt "wPwGoj"
-msgid "Guess while you wait"
-msgstr "Indovina mentre aspetti"
+#: src/wait/wait-status.tsx
+msgctxt "YgBrpA"
+msgid "Your first lesson is ready"
+msgstr "La tua prima lezione è pronta"
+
+#: src/wait/wait-status.tsx
+msgctxt "FZtFoB"
+msgid "Writing your first lesson: <lesson>{title}</lesson>"
+msgstr "Stiamo preparando la tua prima lezione: <lesson>{title}</lesson>"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"

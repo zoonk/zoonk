@@ -1,23 +1,36 @@
 "use client";
 
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
-import { GenerationWait } from "../../generation/generation-wait";
-import { useReadyHold } from "../../warm-up/use-ready-hold";
+import {
+  GenerationFailureNotice,
+  GenerationWait,
+  useGenerationProgress,
+} from "../../generation/generation-wait";
+import { useReadyHold } from "../../wait/use-ready-hold";
+import { useDeck } from "../../wait/wait-deck";
+import {
+  WaitAside,
+  WaitContent,
+  WaitScreen,
+  WaitSlot,
+  useWaitScreen,
+} from "../../wait/wait-screen";
+import { WaitStatus } from "../../wait/wait-status";
 import { type OnboardingActions } from "../onboarding-actions";
+import { useOnboardingWait } from "../onboarding-clock";
 import {
   OnboardingColumn,
-  OnboardingDescription,
-  OnboardingFooter,
-  OnboardingHeading,
+  OnboardingPrimaryButton,
   OnboardingSecondaryButton,
-  OnboardingTitle,
 } from "../onboarding-frame";
-import { HeldFooter } from "./held-wait";
+import { useOnboardingHost } from "../onboarding-host";
+import { useOnboardingRail } from "../onboarding-rail";
+import { WaitBackToQuiz, WaitBar, WaitHeading } from "./wait-parts";
 import { WAITING_RUN, getWaitRun } from "./wait-run";
-import { WaitWarmUp } from "./wait-warm-up";
 
 const PATIENCE_MS = 20_000;
 
@@ -34,22 +47,149 @@ function usePatience(): boolean {
   return patient;
 }
 
-function WaitingDescription({
+function PlacementProgress({
   holding,
-  readsMaterial,
+  run,
+  since,
 }: {
   holding: boolean;
-  readsMaterial: boolean;
+  run: GenerationRun;
+  since: number;
+}) {
+  const t = useExtracted();
+  // The learner's own material is read in the `readExamNotice` step.
+  const readsMaterial = run.steps.readExamNotice !== undefined;
+
+  const description = readsMaterial
+    ? t("They come from the material you added. Reading it takes a few minutes.")
+    : t("They come from the skills your goal needs. It usually takes a minute or two.");
+
+  return (
+    <GenerationWait
+      doneLabel={holding ? t("Your questions are ready") : undefined}
+      kind="placement"
+      run={holding ? toHeldRun(run) : run}
+      since={since}
+    >
+      <WaitHeading
+        description={holding ? t("Start them whenever you're ready.") : description}
+        title={holding ? t("Your questions are ready") : t("Getting your questions ready")}
+      />
+    </GenerationWait>
+  );
+}
+
+function PlacementStatus({
+  holding,
+  run,
+  since,
+}: {
+  holding: boolean;
+  run: GenerationRun;
+  since: number;
 }) {
   const t = useExtracted();
 
-  if (holding) {
-    return t("Start them whenever you're ready.");
+  const value = useGenerationProgress({
+    kind: "placement",
+    run: holding ? toHeldRun(run) : run,
+    since,
+  });
+
+  if (!holding && run.status === "failed") {
+    return <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />;
   }
 
-  return readsMaterial
-    ? t("They come from the material you added. Reading it takes a few minutes.")
-    : t("They come from the skills your goal needs. It usually takes a minute or two.");
+  return (
+    <WaitStatus done={holding} value={value}>
+      {holding ? t("Your questions are ready") : t("Getting your questions ready")}
+    </WaitStatus>
+  );
+}
+
+function PlacementBar({
+  canSkip,
+  holding,
+  onSkip,
+  skipping,
+}: {
+  canSkip: boolean;
+  holding: boolean;
+  onSkip: () => void;
+  skipping: boolean;
+}) {
+  const t = useExtracted();
+  const { release, slotShown } = useWaitScreen();
+
+  if (holding) {
+    return (
+      <WaitBar>
+        <OnboardingPrimaryButton className="lg:w-auto lg:min-w-40" onClick={release}>
+          {t("Continue")}
+        </OnboardingPrimaryButton>
+      </WaitBar>
+    );
+  }
+
+  if (!canSkip && !slotShown) {
+    return null;
+  }
+
+  return (
+    <WaitBar>
+      <WaitSlot />
+
+      {canSkip && (
+        <div className="flex flex-col gap-1 lg:items-end">
+          <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
+            {t("Skip for now")}
+          </OnboardingSecondaryButton>
+          <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
+            {t("Your first sessions will ask a few of these instead.")}
+          </p>
+        </div>
+      )}
+    </WaitBar>
+  );
+}
+
+function PlacementWaitPage({
+  canSkip,
+  holding,
+  onSkip,
+  run,
+  skipping,
+}: {
+  canSkip: boolean;
+  holding: boolean;
+  onSkip: () => void;
+  run: GenerationRun;
+  skipping: boolean;
+}) {
+  const since = useMountTime().getTime();
+  const flowRail = useOnboardingRail();
+  const progress = <PlacementProgress holding={holding} run={run} since={since} />;
+
+  return (
+    <WaitBackToQuiz>
+      <OnboardingColumn
+        bar={
+          <PlacementBar canSkip={canSkip} holding={holding} onSkip={onSkip} skipping={skipping} />
+        }
+        rail={
+          <>
+            <WaitAside>{progress}</WaitAside>
+            {flowRail}
+          </>
+        }
+      >
+        <WaitContent
+          progress={progress}
+          status={<PlacementStatus holding={holding} run={run} since={since} />}
+        />
+      </OnboardingColumn>
+    </WaitBackToQuiz>
+  );
 }
 
 export function PlacementWaiting({
@@ -72,14 +212,14 @@ export function PlacementWaiting({
   run: GenerationRun | null;
   skipping: boolean;
 }) {
-  const t = useExtracted();
   const patient = usePatience();
   const hold = useReadyHold(questionsReady);
-  const holding = hold.status === "hold";
+  const deck = useDeck({ readDeck: readWarmUp, warmUpId: run?.warmUpId });
+  const aside = useOnboardingHost()?.kind === "page";
+  useOnboardingWait("placementWait", hold.status !== "go");
   const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
-  // The learner's own material is read in the `readExamNotice` step.
-  const readsMaterial = shown.steps.readExamNotice !== undefined;
   const showQuestions = useEffectEvent(onQuestions);
+  const holding = hold.status === "hold";
 
   useEffect(() => {
     if (hold.status === "go") {
@@ -88,36 +228,14 @@ export function PlacementWaiting({
   }, [hold.status]);
 
   return (
-    <OnboardingColumn>
-      <GenerationWait
-        doneLabel={holding ? t("Your questions are ready") : undefined}
-        kind="placement"
-        run={holding ? toHeldRun(shown) : shown}
-      >
-        <OnboardingHeading>
-          <OnboardingTitle>
-            {holding ? t("Your questions are ready") : t("Getting your questions ready")}
-          </OnboardingTitle>
-          <OnboardingDescription>
-            <WaitingDescription holding={holding} readsMaterial={readsMaterial} />
-          </OnboardingDescription>
-        </OnboardingHeading>
-      </GenerationWait>
-
-      <WaitWarmUp hold={hold} read={readWarmUp} surface="placementWait" warmUpId={run?.warmUpId} />
-
-      {holding && <HeldFooter onContinue={hold.release}>{t("Continue")}</HeldFooter>}
-
-      {!holding && (patient || shown.status === "failed") && (
-        <OnboardingFooter>
-          <OnboardingSecondaryButton disabled={skipping} onClick={onSkip}>
-            {t("Skip for now")}
-          </OnboardingSecondaryButton>
-          <p className="text-muted-foreground text-center text-sm text-pretty">
-            {t("Your first sessions will ask a few of these instead.")}
-          </p>
-        </OnboardingFooter>
-      )}
-    </OnboardingColumn>
+    <WaitScreen aside={aside} deck={deck} hold={hold} surface="placementWait">
+      <PlacementWaitPage
+        canSkip={!holding && (patient || shown.status === "failed")}
+        holding={holding}
+        onSkip={onSkip}
+        run={shown}
+        skipping={skipping}
+      />
+    </WaitScreen>
   );
 }

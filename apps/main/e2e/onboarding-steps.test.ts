@@ -47,11 +47,11 @@ test.describe("Refreshing mid-onboarding", () => {
     await expectHydrated(purpose);
     await purpose.click();
 
-    const date = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
-    await expect(date).toBeVisible();
+    const level = page.getByRole("heading", { name: "How much do you already know?" });
+    await expect(level).toBeVisible();
 
     await page.reload();
-    await expect(date).toBeVisible();
+    await expect(level).toBeVisible();
 
     await page.getByRole("button", { name: "More" }).click();
     await page.getByRole("menuitem", { name: /^Start over/u }).click();

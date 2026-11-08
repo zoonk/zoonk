@@ -2,6 +2,8 @@ import { type Page } from "@playwright/test";
 
 export type StreamEvent = {
   entityId?: string;
+  lessonId?: string;
+  lessonTitle?: string;
   reason?: string;
   status: string;
   step: string;

@@ -6,6 +6,10 @@ export type StepStreamMessage<TStep extends string = string> = {
   /** Server epoch milliseconds at report time, not replay time; absent on older runs. */
   at?: number;
   entityId?: string;
+  /** The goal's first lesson, on `writeFirstLesson` and `firstLessonReady`. */
+  lessonId?: string;
+  /** The first lesson's title, on `writeFirstLesson`. */
+  lessonTitle?: string;
   reason?: WorkflowErrorReason;
   /** A skill `buildSkillGraph` just wrote, in the order written; a graph written again repeats them. */
   skillName?: string;

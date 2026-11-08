@@ -1,3 +1,4 @@
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { writeGoalCourseSearchTerms } from "@zoonk/core/library/curriculum/find-or-create-course";
 import {
   getGoalCourseFormat,
@@ -9,7 +10,7 @@ import { type GoalKind } from "@zoonk/db";
 type CourseInput = Parameters<typeof findGoalCourse>[0];
 
 export async function writeGoalCourseSearchTermsStep(
-  input: Pick<CourseInput, "analytics" | "scope" | "title">,
+  input: Pick<CourseInput, "analytics" | "scope" | "title"> & { serviceTier?: ServiceTier },
 ) {
   "use step";
   return writeGoalCourseSearchTerms(input);

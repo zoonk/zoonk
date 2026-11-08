@@ -170,7 +170,8 @@ export type OnboardingActions = {
   }) => Promise<MaterialQuestionOutcome>;
   /** Null when the deck can't be shown. */
   readWarmUp: (warmUpId: string) => Promise<WarmUpDeck | null>;
-  recordPlanWait: (milliseconds: number) => Promise<void>;
+  /** Ends onboarding: until it's saved, Today and resume bring the learner back to the reveal. */
+  markPlanRevealed: (goalId: string) => Promise<boolean>;
   startOver: (goalIds: string[]) => Promise<void>;
   stopPlacementMock: (mockId: string) => Promise<boolean>;
   understanding: UnderstandingActions;
@@ -179,6 +180,7 @@ export type OnboardingActions = {
 export type OnboardingRoutes = {
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: (goalId: string) => string;
+  lesson: (lessonId: string) => string;
   mock: (mockId: string) => string;
   planLink: (planId: string) => string;
   placementMock: (goalId: string) => string;
@@ -202,4 +204,5 @@ export type OnboardingNavigation = {
   toExplanation: (goalId: string) => void;
   toStart: () => void;
   toSteps: (goalId: string) => void;
+  toToday: () => void;
 };

@@ -183,7 +183,7 @@ describe("onboarding a new goal", () => {
         generationId: null,
         goal: { id: goal?.id },
         goalIds: [goal?.id],
-        steps: ["purpose", "targetDate", "level", "buddy", "placement", "schedule", "plan"],
+        steps: ["purpose", "level", "targetDate", "buddy", "placement", "schedule", "plan"],
         timeChoices: expect.arrayContaining([{ minutes: 60, split: null }]),
       },
       status: "ready",
@@ -279,7 +279,7 @@ describe("onboarding a new goal", () => {
     });
   });
 
-  it("offers a Library course that teaches the goal once every question is answered", async () => {
+  it("offers a Library course that teaches the goal once every question about it is answered", async () => {
     await useLearner();
     const subject = `Tide pools ${randomUUID().slice(0, 8)}`;
     const organization = await aiOrganizationFixture();
@@ -305,7 +305,6 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { purpose: "overview", question: "purpose" } });
     await answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } });
     await answerOnboardingQuestion({ goalId, input: { level: "none", question: "level" } });
-    await answerOnboardingQuestion({ goalId, input: { dailyMinutes: 15, question: "schedule" } });
 
     await expect(getOnboarding({ goalId })).resolves.toMatchObject({
       onboarding: {
@@ -327,7 +326,7 @@ describe("onboarding a new goal", () => {
 
     await answerOnboardingQuestion({ goalId, input: { purpose: "work", question: "purpose" } });
     const afterPurpose = await getSteps(goalId);
-    expect(afterPurpose.slice(0, 2)).toStrictEqual(["role", "targetDate"]);
+    expect(afterPurpose.slice(0, 2)).toStrictEqual(["level", "role"]);
 
     await answerOnboardingQuestion({ goalId, input: { question: "role", role: null } });
     await answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } });

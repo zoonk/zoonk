@@ -68,6 +68,7 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
     requestedModel: first.requestedModel,
     runId: first.runId,
     serviceTier: first.serviceTier,
+    ...(runs.every((run) => run.speed === "fast") ? { speed: "fast" as const } : {}),
     usage: {
       audioSeconds: sum((usage) => usage.audioSeconds),
       cacheReadTokens: sum((usage) => usage.cacheReadTokens),

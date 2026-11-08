@@ -23,7 +23,7 @@ import { LearnNotFound } from "../_components/learn-not-found";
 import { SuggestedGoalClient, TodayClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { getLocalDay } from "./today-local-day";
-import { TodayOnboardingLeft, isOnboardingLeft } from "./today-onboarding-left";
+import { TodayOnboardingLeft, readOnboardingLeft } from "./today-onboarding-left";
 import { TodayPreparingClient } from "./today-preparing-client";
 import { loadTodayScreen } from "./today-view";
 
@@ -188,9 +188,12 @@ async function TodayContent() {
 }
 
 async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
-  // A goal left halfway through its questions has no plan coming until they're answered.
-  if (await isOnboardingLeft(goal.id)) {
-    return <TodayOnboardingLeft goal={goal} />;
+  // A goal left halfway through its questions has no plan coming until they're answered, and a
+  // plan is shown once before its first day.
+  const left = await readOnboardingLeft(goal.id);
+
+  if (left) {
+    return <TodayOnboardingLeft goal={goal} left={left} />;
   }
 
   return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;

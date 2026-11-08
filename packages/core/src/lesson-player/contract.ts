@@ -252,6 +252,17 @@ export const libraryLessonCompletionSchema = z
       .datetime()
       .nullable()
       .meta({ description: "When the lesson's skills come back for review, the earliest first" }),
+    planReveal: z
+      .object({
+        goalId: uuidSchema(),
+        goalTitle: z.string(),
+        planReady: z.boolean().meta({ description: "False while the plan is still being built" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
+      }),
     seconds: z.int().min(0),
     studyBlock: studyBlockCompletionSchema
       .nullable()

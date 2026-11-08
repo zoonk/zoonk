@@ -12,8 +12,16 @@ const providerOrderByModelPrefix = {
 
 type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
 
+/**
+ * The same model served faster at a higher price, for a call a learner is about to read; the
+ * gateway reports the speed it served (`readGatewayMetadata`). `@ai-sdk/gateway` doesn't type it.
+ */
+export type ServedSpeed = "fast";
+
 type ProviderOptionsResult = {
-  gateway: Pick<GatewayProviderOptions, "models" | "order" | "serviceTier">;
+  gateway: Pick<GatewayProviderOptions, "models" | "order" | "serviceTier"> & {
+    speed?: ServedSpeed;
+  };
 };
 
 type ImageProviderOptionsResult = {
@@ -144,15 +152,19 @@ export function chooseServiceTier({ wait }: { wait: CallWait }): ServiceTier | u
 export function buildProviderOptions({
   model,
   serviceTier,
+  speed,
   useFallback,
   fallbackModels,
 }: {
   model: string;
   serviceTier?: ServiceTier;
+  speed?: ServedSpeed;
   useFallback: boolean;
   fallbackModels: readonly string[];
 }): ProviderOptionsResult {
   const gateway = buildGatewayProviderOptions({ fallbackModels, model, useFallback });
 
-  return { gateway: serviceTier ? { ...gateway, serviceTier } : gateway };
+  return {
+    gateway: { ...gateway, ...(serviceTier ? { serviceTier } : {}), ...(speed ? { speed } : {}) },
+  };
 }

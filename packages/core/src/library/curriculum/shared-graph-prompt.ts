@@ -4,8 +4,18 @@ import { type GoalKind } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { LANGUAGE_CODE_PATTERN, getLanguageName } from "@zoonk/utils/languages";
 import { z } from "zod";
+import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding-contract";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
+
+const PRIVATE_GRAPH_QUESTIONS = new Set<OnboardingQuestion>([
+  "followUps",
+  "level",
+  "purpose",
+  "role",
+  "reason",
+  "target",
+]);
 
 type GraphPrompt = Omit<SkillGraphParams, "analytics" | "model" | "reasoning" | "useFallback">;
 
@@ -93,6 +103,30 @@ export function isSharedExamGraph({
   );
 }
 
+export function isAwaitingGraphAnswers({
+  inputs,
+  scope,
+}: {
+  inputs: GoalCurriculumInputs;
+  scope: Pick<CurriculumScope, "ownerId">;
+}): boolean {
+  if (inputs.hasMaterial || scope.ownerId) {
+    return inputs.unansweredQuestions.some(
+      (question) =>
+        PRIVATE_GRAPH_QUESTIONS.has(question) ||
+        (question === "targetDate" && inputs.goal.kind === "exam" && inputs.hasMaterial),
+    );
+  }
+
+  if (inputs.goal.kind === "language" || isSharedExamGraph({ inputs, scope })) {
+    return false;
+  }
+
+  return inputs.unansweredQuestions.some(
+    (question) => question === "purpose" || question === "level",
+  );
+}
+
 function toSharedGoal({ generalGoal }: Pick<CurriculumScope, "generalGoal">): string {
   if (!generalGoal) {
     throw new Error("A shared scope is named by its general goal, never the learner's title");
@@ -118,6 +152,7 @@ export function toScopedGraphPrompt({
       context: undefined,
       goal: inputs.examIdentity ?? toSharedGoal(scope),
       ownLevel: undefined,
+      purpose: undefined,
     };
   }
 
@@ -126,6 +161,6 @@ export function toScopedGraphPrompt({
     context: inputs.sharedContext,
     goal: toSharedGoal(scope),
     // A language's level test places each learner, and rewrites their level while this graph is built.
-    ...(inputs.goal.kind === "language" && { ownLevel: undefined }),
+    ...(inputs.goal.kind === "language" && { ownLevel: undefined, purpose: undefined }),
   };
 }

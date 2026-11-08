@@ -4,7 +4,7 @@ import { type StudyCalendar } from "../planner/plan-calendar";
 import { getExamDayRules } from "../planner/plan-days";
 import { type SkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
-import { buildFundedMocksView, buildWeekView } from "./plan-week-view";
+import { buildFundedMocksView, buildNextDaysView, buildWeekView } from "./plan-week-view";
 
 export function buildPlanTimingView({
   access,
@@ -18,8 +18,21 @@ export function buildPlanTimingView({
   context: PlanReadContext;
   skillAreas: SkillAreas;
   studiedDates: ReadonlySet<string>;
-}): Pick<PlanView, "fundedMocks" | "week"> {
+}): Pick<PlanView, "fundedMocks" | "nextDays" | "week"> {
   const { goal, items, state, today } = context;
+
+  const days = {
+    access,
+    calendar,
+    exam: getExamDayRules({ isExam: goal.kind === "exam", settings: state.settings }),
+    items,
+    overflow: state.settings.checkpointOverflow,
+    skillAreas,
+    startDate: getDateInTimeZone({ date: goal.createdAt, timeZone: context.timeZone }),
+    studiedDates,
+    targetDate: goal.targetDate,
+    today,
+  };
 
   return {
     fundedMocks: buildFundedMocksView({
@@ -29,17 +42,7 @@ export function buildPlanTimingView({
       skillAreas,
       today,
     }),
-    week: buildWeekView({
-      access,
-      calendar,
-      exam: getExamDayRules({ isExam: goal.kind === "exam", settings: state.settings }),
-      items,
-      overflow: state.settings.checkpointOverflow,
-      skillAreas,
-      startDate: getDateInTimeZone({ date: goal.createdAt, timeZone: context.timeZone }),
-      studiedDates,
-      targetDate: goal.targetDate,
-      today,
-    }),
+    nextDays: buildNextDaysView(days),
+    week: buildWeekView(days),
   };
 }

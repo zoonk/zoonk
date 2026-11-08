@@ -1,7 +1,12 @@
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type OnboardingFirstLesson } from "@zoonk/core/view-models/onboarding/contract";
 import { type PollStatus } from "../../_utils/use-poll";
-import { type GenerationFailure, type GenerationRun } from "../../generation/generation-run";
+import {
+  type GenerationFailure,
+  type GenerationFirstLesson,
+  type GenerationRun,
+} from "../../generation/generation-run";
 
 export const WAITING_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
@@ -30,6 +35,26 @@ export function isPlanMade(run: GenerationRun | null): boolean {
 }
 
 export type WaitStop = { failure: GenerationFailure; retry?: () => void };
+
+/**
+ * The run says what changed since the page read the goal, and the read is what a reconnect starts
+ * from, so a lesson either calls ready is ready.
+ */
+export function getFirstLesson({
+  read,
+  run,
+}: {
+  read: OnboardingFirstLesson | null;
+  run: GenerationRun | null;
+}): GenerationFirstLesson | null {
+  const live = run?.firstLesson;
+
+  if (!live) {
+    return read;
+  }
+
+  return read?.id === live.id && read.status === "ready" ? read : live;
+}
 
 /**
  * The notice is read apart from the run, so its wait stops when its own answers stop coming or the

@@ -1,4 +1,5 @@
 import "server-only";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../_utils/library-rows";
@@ -42,11 +43,13 @@ export async function saveGoalSkills({
   analytics,
   provenance,
   scope,
+  serviceTier,
   skills,
 }: {
   analytics?: CurriculumAnalytics;
   provenance: LibraryProvenance;
   scope: CurriculumScope;
+  serviceTier?: ServiceTier;
   skills: readonly GraphSkill[];
 }): Promise<Record<string, string>> {
   const reused = await findReusedIds({ scope, skills });
@@ -57,6 +60,7 @@ export async function saveGoalSkills({
     analytics,
     provenance,
     scope,
+    serviceTier,
     skills: fresh.map((skill) => ({ ...skill, course: skill.area })),
   });
 

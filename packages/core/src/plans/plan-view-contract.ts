@@ -204,6 +204,8 @@ export type PlanView = {
   goalId: string;
   /** Language goals only: the level the course goes up to and the aims to change it to. */
   languageAim: LanguageAimView | null;
+  /** Today and the six days after it. */
+  nextDays: PlanDayView[];
   notice: "reading" | "usual" | null;
   ownLevel: OwnLevel | null;
   fitOffer: (PlanOffer & { canApply: boolean }) | null;

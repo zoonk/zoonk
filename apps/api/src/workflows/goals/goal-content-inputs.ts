@@ -1,4 +1,6 @@
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
+import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { isAwaitingGraphAnswers } from "@zoonk/core/library/curriculum/shared-graph-prompt";
 import { type GoalKind } from "@zoonk/db";
 import { sleep } from "workflow";
 import { isRunActiveStep } from "../_shared/is-run-active-step";
@@ -16,7 +18,6 @@ const MAX_RESEARCH_POLLS: Partial<Record<GoalKind, number>> = {
   learn: LEARN_RESEARCH_POLLS,
 };
 
-/** Purpose, role and level change the skill graph, so the curriculum waits for the learner's answers. */
 const ANSWERS_POLL = "3s";
 const MAX_ANSWERS_POLLS = 60;
 
@@ -41,9 +42,15 @@ function waitForResearch({
   });
 }
 
-function waitForAnswers(goalId: string): Promise<GoalCurriculumInputs | null> {
+function waitForAnswers({
+  goalId,
+  scope,
+}: {
+  goalId: string;
+  scope: CurriculumScope;
+}): Promise<GoalCurriculumInputs | null> {
   return repeatUntil({
-    done: (inputs) => !inputs?.awaitingAnswers || inputs.hasPlanGraph,
+    done: (inputs) => !inputs || !isAwaitingGraphAnswers({ inputs, scope }) || inputs.hasPlanGraph,
     run: () => loadGoalCurriculumStep(goalId),
     times: MAX_ANSWERS_POLLS,
     wait: () => sleep(ANSWERS_POLL),
@@ -130,11 +137,15 @@ async function waitForProductDecision({
 export async function waitForGraphInputs({
   initial,
   researchId,
+  scope,
 }: {
   initial: GoalCurriculumInputs;
   researchId?: string | null;
+  scope: CurriculumScope;
 }): Promise<GoalCurriculumInputs | null> {
-  const inputs = initial.awaitingAnswers ? await waitForAnswers(initial.goal.id) : initial;
+  const inputs = isAwaitingGraphAnswers({ inputs: initial, scope })
+    ? await waitForAnswers({ goalId: initial.goal.id, scope })
+    : initial;
 
   if (!inputs || !researchId || inputs.hasPlanGraph) {
     return inputs;

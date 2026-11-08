@@ -1,0 +1,123 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2005,
+          "outputTokens": 415,
+          "reasoningTokens": 204
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The time estimates are inconsistent: six 3-minute lessons total 18 minutes, while the graph and phase each estimate 0.6 hours (36 minutes), without explaining the additional time.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Differentiate the first two lessons more clearly: identifying a black hole by its defining boundary overlaps with explaining its event horizon. Keep the first focused on what a black hole is and the second on what crossing the horizon means. Otherwise, the result appropriately starts directly with black holes, uses plain US English without formulas, requires no prerequisites, and supplies canonical topic titles and base-form action statements.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A curious adult with no background wants the big picture: the overview level, plain words, no formulas\n      - The first skill is the field's first big idea, such as what a black hole is and how one forms, not a tour of astronomy\n\n      \n  - The output is one skill (the learner's first), the shared course that teaches it, and that skill's first chapter, with its lessons\n  - The skill is where the whole path starts: it builds on nothing the path teaches, starts at the goal's own subject and is pitched at OWN_LEVEL and PURPOSE, never an introduction, overview of the field, history or \"why it matters\"\n  - The course has the canonical title a catalog would use, never a title about this learner\n  - The chapter teaches that skill at its level band, its first lesson starts on a concrete idea of the subject, every lesson is one idea of 2 to 5 minutes, and no two lessons teach the same thing\n  - The skill's name, the objectives, the can-do lines and each lesson's skills are actions in the language's usual form, never orders to the learner; chapter and lesson titles are the canonical, searchable names of their topics, as a course outline names them\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-black-holes-overview-1",
+        "userInput": {
+          "goal": "Understand black holes",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "overview"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2252,
+          "outputTokens": 381,
+          "reasoningTokens": 191
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make the asset-and-liability and accounting-equation lessons as concrete as the purchase and rent examples: classify inventory, customer receivables, and supplier obligations, then illustrate Ativo = Passivo + Patrimônio Líquido with simple amounts in reais. This would strengthen workplace usefulness for a beginner. Otherwise, the result provides one foundational skill, the canonical course Contabilidade, and distinct three-minute lessons in Brazilian Portuguese, with appropriate infinitive action statements.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner works in accounting and has a basic level: the first skill is the foundation their daily work builds on, in Brazilian practice (such as the elements of the patrimônio, or recording a lançamento by partidas dobradas in a plano de contas), taught through workplace examples, not a general business overview\n      - The course is a catalog subject such as \"Contabilidade\", never \"Contabilidade para o meu trabalho\"\n\n      \n  - The output is one skill (the learner's first), the shared course that teaches it, and that skill's first chapter, with its lessons\n  - The skill is where the whole path starts: it builds on nothing the path teaches, starts at the goal's own subject and is pitched at OWN_LEVEL and PURPOSE, never an introduction, overview of the field, history or \"why it matters\"\n  - The course has the canonical title a catalog would use, never a title about this learner\n  - The chapter teaches that skill at its level band, its first lesson starts on a concrete idea of the subject, every lesson is one idea of 2 to 5 minutes, and no two lessons teach the same thing\n  - The skill's name, the objectives, the can-do lines and each lesson's skills are actions in the language's usual form, never orders to the learner; chapter and lesson titles are the canonical, searchable names of their topics, as a course outline names them\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-accounting-for-work-1",
+        "userInput": {
+          "goal": "Contabilidade",
+          "language": "pt",
+          "ownLevel": "basic",
+          "purpose": "work"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2009,
+          "outputTokens": 458,
+          "reasoningTokens": 225
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The final lesson's skill, 'Identify user flow friction,' covers less than its can-do statement, which also requires suggesting an improvement. Align these to make the intended achievement consistent. The estimated duration is also inconsistent: six 3-minute lessons total 18 minutes, whereas the graph and phase each specify 0.6 hours (36 minutes), without explaining the additional time.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Mapping user task flows is a defensible hands-on UX foundation, and the checkout examples make the starting point concrete. For a learner with no experience, strengthen the mapping lesson by explicitly including a tiny learner-created flow and the basic notation needed to draw it, then extend that same artifact in the decision-point lesson.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A career change into UX design from zero: the first skill is the target role's first hands-on foundation (such as finding a user's problem through an interview), not career advice, a portfolio or the history of design\n\n      \n  - The output is one skill (the learner's first), the shared course that teaches it, and that skill's first chapter, with its lessons\n  - The skill is where the whole path starts: it builds on nothing the path teaches, starts at the goal's own subject and is pitched at OWN_LEVEL and PURPOSE, never an introduction, overview of the field, history or \"why it matters\"\n  - The course has the canonical title a catalog would use, never a title about this learner\n  - The chapter teaches that skill at its level band, its first lesson starts on a concrete idea of the subject, every lesson is one idea of 2 to 5 minutes, and no two lessons teach the same thing\n  - The skill's name, the objectives, the can-do lines and each lesson's skills are actions in the language's usual form, never orders to the learner; chapter and lesson titles are the canonical, searchable names of their topics, as a course outline names them\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-ux-career-change-1",
+        "userInput": {
+          "goal": "Become a UX designer",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "careerChange"
+        }
+      }
+    }
+  ],
+  "taskId": "goal-opening"
+}

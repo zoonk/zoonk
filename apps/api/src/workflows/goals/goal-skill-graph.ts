@@ -1,5 +1,6 @@
 import { generateGoalSkillGraph } from "@zoonk/core/library/curriculum/generate-goal-skill-graph";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
+import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { findGoalCourses } from "./goal-courses";
@@ -14,6 +15,7 @@ import {
 
 export async function buildGoalSkillGraph(input: {
   analytics?: ContentAnalytics;
+  firstSkill?: GoalOpeningSkill | null;
   inputs: GoalCurriculumInputs;
   scope: CurriculumScope;
   workflowRunId: string;

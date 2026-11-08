@@ -1,17 +1,16 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useEffect, useEffectEvent, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
-import { type GenerationRun } from "../../generation/generation-run";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
-import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
-import { PlanWait } from "./plan-wait";
+import { type LibraryCourseLink, PlanWait } from "./plan-wait";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
 import {
@@ -25,38 +24,40 @@ import {
 
 const POLL_MS = 3000;
 
-type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
-
 export function PlanReveal({
   actions,
+  buddy,
+  firstLesson,
   focusTestHref,
   goal,
   goalId,
   initialPlan,
   isGuest,
-  libraryCourse,
-  onPlanReadyChange,
+  lessonHref,
+  library,
   planActions,
   planLinkHref,
-  refreshPages,
+  planRevealed,
   run,
   signUpHref,
-  todayHref,
+  toToday,
 }: {
   actions: OnboardingActions;
+  buddy: LearnBuddy | null;
+  firstLesson: GenerationFirstLesson | null;
   focusTestHref: string;
   goal: PlanGoal;
   goalId: string;
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
-  libraryCourse: LibraryCourseLink | null;
-  onPlanReadyChange: (isReady: boolean) => void;
+  lessonHref: (lessonId: string) => string;
+  library: LibraryCourseLink | null;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
-  refreshPages: () => void;
+  planRevealed: boolean;
   run: GenerationRun | null;
   signUpHref: string;
-  todayHref: string;
+  toToday: () => void;
 }) {
   const [plan, setPlan] = useState<PlanView | null>(initialPlan?.plan ?? null);
   const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
@@ -76,17 +77,6 @@ export function PlanReveal({
 
   const readingNotice = plan?.notice === "reading";
   const wait = getRevealWait(plan);
-  const shown = wait === null;
-  const refreshKeptPages = useEffectEvent(refreshPages);
-
-  // Start would open the Today the browser kept, read before this plan, maybe for the goal before it.
-  // First among the effects, so the refresh isn't queued behind an action they send: Start's
-  // navigation would jump Next's queue past it.
-  useEffect(() => {
-    if (shown) {
-      refreshKeptPages();
-    }
-  }, [shown]);
 
   // The page read the plan before placement's answers changed it, so the reveal reads it once more.
   const readAgain = useEffectEvent(() => {
@@ -109,17 +99,22 @@ export function PlanReveal({
 
   const isLoading = !read && poll.status === "polling";
 
-  useEffect(() => {
-    if (!isLoading) {
-      onPlanReadyChange(shown);
-    }
-  }, [isLoading, onPlanReadyChange, shown]);
-
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 
   if (isLoading) {
     return <StepLoading />;
   }
+
+  // Today waits for this: until it's saved, Today sends the learner back here.
+  const start = async (): Promise<boolean> => {
+    const { data: saved } = await safeAsync(() => actions.markPlanRevealed(goalId));
+
+    if (saved) {
+      toToday();
+    }
+
+    return saved === true;
+  };
 
   async function refreshAfter<T>(change: Promise<T>): Promise<T> {
     const done = await change;
@@ -139,6 +134,9 @@ export function PlanReveal({
 
   return (
     <PlanWait
+      firstLesson={firstLesson}
+      lessonHref={lessonHref}
+      library={library}
       next="plan"
       notice={
         plan
@@ -149,7 +147,6 @@ export function PlanReveal({
             }
           : undefined
       }
-      offer={libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
       readWarmUp={actions.readWarmUp}
       run={waitRun}
       wait={wait}
@@ -166,10 +163,12 @@ export function PlanReveal({
         >
           <PlanSheetHosts>
             <RevealBody
+              buddy={buddy}
               isGuest={isGuest}
+              moment={!planRevealed}
+              onStart={start}
               signUpHref={signUpHref}
               syllabus={syllabus}
-              todayHref={todayHref}
             />
           </PlanSheetHosts>
         </PlanScreenProvider>

@@ -136,7 +136,7 @@ function GenerationTimelineStepIndicator({ className, ...props }: React.Componen
     >
       <span className="ring-faint size-2 rounded-full ring-1 group-data-[status=active]/generation-timeline-step:hidden group-data-[status=completed]/generation-timeline-step:hidden group-data-[status=failed]/generation-timeline-step:hidden" />
       <span className="bg-foreground hidden size-2 rounded-full group-data-[status=active]/generation-timeline-step:block" />
-      <CheckIcon className="text-faint hidden size-4 group-data-[status=completed]/generation-timeline-step:block" />
+      <CheckIcon className="text-success hidden size-4 group-data-[status=completed]/generation-timeline-step:block" />
       <CircleAlertIcon className="text-destructive-text hidden size-4 group-data-[status=failed]/generation-timeline-step:block" />
     </span>
   );

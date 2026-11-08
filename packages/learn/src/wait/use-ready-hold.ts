@@ -6,19 +6,19 @@ import { type ReadyHold, getReadyHold } from "./ready-hold";
 const QUIET_MS = 1000;
 
 export type ReadyHoldControl = {
-  /** For the warm-up card: called on each guess on this screen. */
-  onGuess: () => void;
+  /** Called on a guess, on opening the progress and on choosing the quiz. */
+  engage: () => void;
   /** For the main button a held screen pins. */
   release: () => void;
   status: ReadyHold;
 };
 
-/** Every wait that shows a warm-up card moves on through this, so they all follow one rule. */
+/** Every wait moves on through this, so they all follow one rule. */
 export function useReadyHold(ready: boolean): ReadyHoldControl {
-  const [guessed, setGuessed] = useState(false);
+  const [engaged, setEngaged] = useState(false);
   const [released, setReleased] = useState(false);
   const [touched, setTouched] = useState(false);
-  const status = getReadyHold({ guessed, ready, released, touched });
+  const status = getReadyHold({ engaged, ready, released, touched });
   const showing = status !== "go";
 
   useEffect(() => {
@@ -44,5 +44,5 @@ export function useReadyHold(ready: boolean): ReadyHoldControl {
     };
   }, [showing]);
 
-  return { onGuess: () => setGuessed(true), release: () => setReleased(true), status };
+  return { engage: () => setEngaged(true), release: () => setReleased(true), status };
 }

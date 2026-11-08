@@ -1037,6 +1037,26 @@ msgid "Paused"
 msgstr "Duraklatıldı"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Planını gör"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "7aP-Hw"
+msgid "Look it over before you start."
+msgstr "Başlamadan önce gözden geçir."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "rKFY6-"
+msgid "Your plan for {goal} is ready."
+msgstr "{goal} için planın hazır."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "yKjBeN"
+msgid "Plan ready"
+msgstr "Plan hazır"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
 msgid "Continue setting up"
 msgstr "Planını oluşturmaya devam et"

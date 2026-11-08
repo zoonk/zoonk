@@ -22,6 +22,13 @@ type StepGoal = {
   targetDate: string | null;
 };
 
+const ONBOARDING_QUESTION_ORDER = {
+  exam: ONBOARDING_QUESTIONS,
+  explain: ONBOARDING_QUESTIONS,
+  language: ["reason", "level", "followUps", "targetDate", "schedule"],
+  learn: ["purpose", "level", "role", "followUps", "targetDate", "schedule"],
+} as const satisfies Record<StepGoal["kind"], readonly OnboardingQuestion[]>;
+
 type StepProfile = {
   /** Buddy is offered only in the first onboarding; later changes belong to Appearance. */
   hasEarlierGoals: boolean;
@@ -174,7 +181,7 @@ function isDateGone(goal: StepGoal): boolean {
 export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   const answered = new Set(getAnsweredQuestions(goal.details));
 
-  return ONBOARDING_QUESTIONS.filter(
+  return ONBOARDING_QUESTION_ORDER[goal.kind].filter(
     (question) =>
       (question === "targetDate" && isDateGone(goal)) ||
       (!answered.has(question) && isQuestionMissing({ goal, question })),
@@ -213,6 +220,11 @@ export function getOnboardingSteps({
 
 export function hasOnboardingQuestions(steps: readonly OnboardingStep[]): boolean {
   return steps.some((step) => step !== "plan");
+}
+
+/** Every plan is shown once: until the learner presses the reveal's action, setup isn't over. */
+export function isPlanRevealOwed(goal: Pick<Goal, "kind" | "planRevealedAt">): boolean {
+  return goal.kind !== "explain" && goal.planRevealedAt === null;
 }
 
 export function isGoalSetupLeft(
