@@ -12,7 +12,7 @@ import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
 import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
-import { isLanguageStep } from "./_utils/lesson-steps";
+import { getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { LessonResultNotes } from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
@@ -198,7 +198,7 @@ export function LessonStage({
               hyperdriveStreak={screen.hyperdriveStreak}
               next={next}
               result={result}
-              step={step}
+              step={getAnsweredStep({ answer: state.answers[step.id], step })}
             />
           )}
 

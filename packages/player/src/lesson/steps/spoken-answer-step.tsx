@@ -1,5 +1,6 @@
 "use client";
 
+import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { Button } from "@zoonk/ui/components/button";
@@ -218,17 +219,7 @@ function ListeningInstead({
 }) {
   return (
     <PlayerAudioProvider audioUrl={step.listening.sentence?.audioUrl ?? null}>
-      <ExerciseStepView
-        {...props}
-        step={{
-          exercise: step.listening,
-          id: step.id,
-          kind: "listening",
-          position: step.position,
-          skillId: step.skillId,
-          wordHints: null,
-        }}
-      />
+      <ExerciseStepView {...props} step={toListeningStep({ listening: step.listening, step })} />
     </PlayerAudioProvider>
   );
 }

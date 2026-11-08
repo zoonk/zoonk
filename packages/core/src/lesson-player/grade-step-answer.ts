@@ -209,7 +209,7 @@ function gradeExercise({
   };
 }
 
-function toListeningStep({
+export function toListeningStep({
   listening,
   step,
 }: {
