@@ -18,7 +18,10 @@ switch (command) {
 
     break;
   case "blog":
-    await deployBlog();
+    await deployBlog("production");
+    break;
+  case "blog-preview":
+    await deployBlog("preview");
     break;
   case "preview":
   case "staging":
@@ -27,6 +30,6 @@ switch (command) {
     break;
   default:
     throw new Error(
-      "Expected blog, check-preview, cancel-previews, cancel-run, preview, staging, or production",
+      "Expected blog, blog-preview, check-preview, cancel-previews, cancel-run, preview, staging, or production",
     );
 }
