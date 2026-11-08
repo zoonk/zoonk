@@ -36,4 +36,19 @@ export const TEST_CASES: FindChoiceOptionsCase[] = [
       today: TODAY,
     },
   },
+  {
+    expected: { options: 5 },
+    id: "en-lsat",
+    userInput: { board: "LSAC", exam: "LSAT", today: TODAY },
+  },
+  {
+    expected: { options: 4 },
+    id: "en-mcat",
+    userInput: { board: "AAMC", exam: "MCAT", today: TODAY },
+  },
+  {
+    expected: { options: 4 },
+    id: "pt-unicamp-1a-fase",
+    userInput: { board: "Comvest", exam: "Vestibular Unicamp, 1ª fase", today: TODAY },
+  },
 ];

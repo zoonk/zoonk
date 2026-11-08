@@ -150,6 +150,96 @@
           "today": "2026-10-07"
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "options": 5
+        },
+        "id": "en-lsat-1",
+        "userInput": {
+          "board": "LSAC",
+          "exam": "LSAT",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "options": 4
+        },
+        "id": "en-mcat-1",
+        "userInput": {
+          "board": "AAMC",
+          "exam": "MCAT",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "options": 4
+        },
+        "id": "pt-unicamp-1a-fase-1",
+        "userInput": {
+          "board": "Comvest",
+          "exam": "Vestibular Unicamp, 1ª fase",
+          "today": "2026-10-07"
+        }
+      }
     }
   ],
   "taskId": "find-choice-options"
