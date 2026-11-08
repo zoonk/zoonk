@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,10 +44,12 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.leadingIconInset
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -307,7 +310,11 @@ fun SaveErrorText(
             onRetry?.let { TextButton(onClick = it) { Text(retryLabel) } }
         }
         if (failures > 1) {
-            TextButton(onClick = onReport, leadingIcon = { ButtonIcon(R.drawable.ic_flag) }) {
+            TextButton(
+                onClick = onReport,
+                modifier = Modifier.offset(x = -LocalButtonSize.current.leadingIconInset),
+                leadingIcon = { ButtonIcon(R.drawable.ic_flag) },
+            ) {
                 Text(stringResource(R.string.feedback_report_problem))
             }
         }
