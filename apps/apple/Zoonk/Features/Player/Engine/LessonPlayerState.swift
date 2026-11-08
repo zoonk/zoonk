@@ -521,7 +521,11 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     if counts {
-      count(step, isCorrect: result.isCorrect)
+      misses = result.isCorrect ? [] : misses + [Miss(stepId: stepId, skillId: step.skillId)]
+    }
+
+    if isMiss, quickCheck != nil {
+      quickCheck?.missed = true
     }
 
     checkFailed = false
@@ -551,20 +555,18 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     // A first try sent back to self-correct was right after all, and its answer is still on screen.
-    if verdict.isCorrect, notice == .selfCorrect, phase == .playing, let step = currentStep,
-      step.id == stepId, answers[stepId] == answer
+    if verdict.isCorrect, notice == .selfCorrect, phase == .playing, currentStep?.id == stepId,
+      answers[stepId] == answer
     {
       var result = verdict
       result.attemptId = attemptId
-      count(step, isCorrect: true)
       notice = nil
       phase = .feedback
       results[stepId] = result
       return
     }
 
-    guard var result = results[stepId], result.attemptId == attemptId, let step = steps[stepId]
-    else {
+    guard var result = results[stepId], result.attemptId == attemptId else {
       return
     }
 
@@ -572,12 +574,6 @@ struct LessonPlayerState: Equatable, Sendable {
     result.savedMistake = verdict.savedMistake
 
     if result.isCorrect != verdict.isCorrect {
-      if verdict.isCorrect {
-        takeBackMiss(stepId)
-      } else {
-        count(step, isCorrect: false)
-      }
-
       result.isCorrect = verdict.isCorrect
       result.correctAnswer =
         verdict.isCorrect ? verdict.correctAnswer : verdict.correctAnswer ?? result.correctAnswer
@@ -585,27 +581,6 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     results[stepId] = result
-  }
-
-  private mutating func count(_ step: LessonStep, isCorrect: Bool) {
-    guard !isCorrect else {
-      misses = []
-      return
-    }
-
-    misses.append(Miss(stepId: step.id, skillId: step.skillId))
-    quickCheck?.missed = true
-  }
-
-  /// "I know this" ends on its first miss, so the miss it holds is the one on screen.
-  private mutating func takeBackMiss(_ stepId: String) {
-    if let missAt = misses.lastIndex(where: { $0.stepId == stepId }) {
-      misses.removeFirst(missAt + 1)
-    }
-
-    if currentStep?.id == stepId {
-      quickCheck?.missed = false
-    }
   }
 
   /// A question about a numbered picture that never came is left out, since nobody can tell which
