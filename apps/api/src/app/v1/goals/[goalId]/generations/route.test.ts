@@ -1,5 +1,7 @@
+import { rebuildGoalCurriculumWorkflow } from "@/workflows/goals/rebuild-goal-curriculum-workflow";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
 import { describe, expect, it, vi } from "vitest";
@@ -17,6 +19,24 @@ function startRequest(goalId: string) {
 }
 
 describe("POST /v1/goals/{goalId}/generations", () => {
+  it("retries a goal with a saved graph through the rebuild", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const skill = await skillFixture();
+
+    await planFixture({
+      goalId: goal.id,
+      graph: { phases: [{ milestone: null, name: "Saved" }], skills: plannedSkills([skill]) },
+    });
+
+    mockSession(user.id);
+
+    const response = await startRequest(goal.id);
+
+    expect(response.status).toBe(202);
+    expect(vi.mocked(start).mock.calls[0]?.[0]).toBe(rebuildGoalCurriculumWorkflow);
+  });
+
   it("does not replace a newer retry's run with a delayed HTTP receipt", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ generationRunId: "wrun_old", userId: user.id });

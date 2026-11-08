@@ -5,12 +5,7 @@ import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { listOwed } from "../_test-utils/follow-ups";
 import { FOLLOW_UP_SECRET_HEADER, type FollowUp } from "./follow-up-contract";
-import {
-  countFollowUps,
-  endFollowUp,
-  listFollowUps,
-  listLearnersWithOldFollowUps,
-} from "./follow-up-rows";
+import { endFollowUp, listFollowUps, listLearnersWithOldFollowUps } from "./follow-up-rows";
 import { registerFollowUpStarter } from "./follow-up-starter";
 import { oweFollowUps } from "./owe-follow-ups";
 
@@ -25,6 +20,34 @@ function prepareGoal(lessonsAskedAt: number | null): FollowUp {
 }
 
 describe(oweFollowUps, () => {
+  it("reads beyond started rows and still sees a new revision of one", async () => {
+    const user = await userFixture();
+
+    await prisma.followUp.createMany({
+      data: Array.from({ length: 51 }, () => {
+        const goalId = crypto.randomUUID();
+
+        return {
+          input: { goalId },
+          key: goalId,
+          kind: "rebuildGoalCurriculum" as const,
+          userId: user.id,
+        };
+      }),
+    });
+
+    const first = await listFollowUps(user.id);
+    const started = first.map(({ id, revision }) => ({ id, revision }));
+    await expect(listFollowUps(user.id, started)).resolves.toHaveLength(1);
+
+    await prisma.followUp.update({
+      data: { revision: { increment: 1 } },
+      where: { id: first[0]!.id },
+    });
+
+    await expect(listFollowUps(user.id, started)).resolves.toHaveLength(2);
+  });
+
   it("stores a day refresh with its database label and reads its runtime kind", async () => {
     const user = await userFixture();
 
@@ -97,7 +120,7 @@ describe(oweFollowUps, () => {
     await oweFollowUps({ followUps: [writeLesson()], userId: user.id });
     await flush();
 
-    await expect(countFollowUps(user.id)).resolves.toBe(1);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("starts the learner's work itself in an app that registered a starter, without a request", async () => {
@@ -139,7 +162,7 @@ describe(endFollowUp, () => {
     expect(again).toMatchObject({ id: listed?.id, revision: 1 });
 
     await endFollowUp({ id: again?.id ?? "", revision: again?.revision ?? 0 });
-    await expect(countFollowUps(user.id)).resolves.toBe(0);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 });
 
@@ -159,7 +182,7 @@ describe(listFollowUps, () => {
     const owed = await listFollowUps(user.id);
 
     expect(owed.map((row) => row.key)).toStrictEqual([LESSON_ID, second]);
-    await expect(countFollowUps(user.id)).resolves.toBe(2);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(2);
   });
 });
 

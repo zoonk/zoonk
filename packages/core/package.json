@@ -143,6 +143,7 @@
     "./goals/mark-plan-revealed": "./src/goals/mark-plan-revealed.ts",
     "./goals/opening": "./src/goals/goal-opening.ts",
     "./goals/owned-goal": "./src/learner/get-owned-goal.ts",
+    "./goals/rebuild-follow-up": "./src/goals/goal-rebuild-follow-up.ts",
     "./goals/record-generation": "./src/goals/record-goal-generation.ts",
     "./goals/research": "./src/goals/goal-research.ts",
     "./goals/prepare-course-plan": "./src/goals/prepare-course-goal-plan.ts",

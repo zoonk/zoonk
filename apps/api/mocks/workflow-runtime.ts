@@ -20,6 +20,7 @@ export const getWorld = vi.fn(() =>
         return Promise.resolve({ data: event ? [event] : [] });
       },
     },
+    hooks: { list: () => Promise.resolve({ data: [], hasMore: false }) },
     runs: { list: () => Promise.resolve({ data: [], hasMore: false }) },
   }),
 );

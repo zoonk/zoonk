@@ -1,14 +1,24 @@
-import { sleep } from "workflow";
+import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
+import { getWorkflowMetadata, sleep } from "workflow";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, waitForRunToken } from "../_shared/run-token";
-import { getGoalContentToken, goalContentWorkflow } from "./goal-content-workflow";
-import { readGoalGraphStateStep } from "./steps/goal-build-outcome-steps";
+import {
+  type GoalContentInput,
+  getGoalContentToken,
+  goalContentWorkflow,
+} from "./goal-content-workflow";
+import {
+  finishGoalRebuildStep,
+  isGoalRebuildOwedStep,
+  readGoalGraphStateStep,
+} from "./steps/goal-build-outcome-steps";
+import { recordGoalRunStep } from "./steps/record-goal-run-step";
 
 const GRAPH_POLLS = 100;
 
-export async function rebuildGoalCurriculumWorkflow({ goalId }: { goalId: string }) {
-  "use workflow";
+export type RebuildGoalCurriculumInput = GoalContentInput & { followUp: GoalRebuildFollowUp };
 
+async function waitForSavedGraph(goalId: string) {
   if (!(await waitForRunToken(getGoalContentToken({ goalId, rebuild: true })))) {
     throw new Error(`The curriculum is still being rebuilt for ${goalId}`);
   }
@@ -36,5 +46,27 @@ export async function rebuildGoalCurriculumWorkflow({ goalId }: { goalId: string
     throw new Error(`The initial curriculum has not saved its graph for ${goalId}`);
   }
 
-  return goalContentWorkflow({ goalId, rebuild: graph.state === "saved" });
+  return graph.state;
+}
+
+export async function rebuildGoalCurriculumWorkflow(input: RebuildGoalCurriculumInput) {
+  "use workflow";
+
+  const { followUp, goalId } = input;
+  const { workflowRunId: generationId } = getWorkflowMetadata();
+  let failed = true;
+
+  try {
+    if (!(await isGoalRebuildOwedStep({ followUp, goalId }))) {
+      throw new Error("This curriculum rebuild is no longer owed.");
+    }
+
+    await recordGoalRunStep({ generationId, goalId });
+    const state = await waitForSavedGraph(goalId);
+    const result = await goalContentWorkflow({ ...input, rebuild: state === "saved" });
+    failed = false;
+    return result;
+  } finally {
+    await finishGoalRebuildStep({ failed, followUp, generationId, goalId });
+  }
 }

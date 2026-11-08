@@ -23,11 +23,14 @@ async function readRow(row: FollowUpRow): Promise<OwedFollowUp | null> {
 }
 
 /** Internal, for the follow-ups workflow: the learner's owed work, oldest first. Reads only. */
-export async function listFollowUps(userId: string): Promise<OwedFollowUp[]> {
+export async function listFollowUps(
+  userId: string,
+  started: readonly Pick<OwedFollowUp, "id" | "revision">[] = [],
+): Promise<OwedFollowUp[]> {
   const rows = await prisma.followUp.findMany({
     orderBy: { requestedAt: "asc" },
     take: BATCH,
-    where: { userId },
+    where: { ...(started.length > 0 ? { NOT: [...started] } : {}), userId },
   });
 
   const read = await Promise.all(rows.map((row) => readRow(row)));
@@ -52,10 +55,6 @@ export async function endFollowUp({
       revalidateCacheTags([getGoalsCacheTag(row.userId), getLearnerModelCacheTag(row.userId)]);
     }
   }
-}
-
-export function countFollowUps(userId: string): Promise<number> {
-  return prisma.followUp.count({ where: { userId } });
 }
 
 /** Learners whose owed work no run has taken for a while, such as after a start that failed. */
