@@ -97,27 +97,30 @@ function useSwitchFocus({
   return { contentRef, statusRef };
 }
 
+/**
+ * The quiz is the default view. A screen that first showed without a card stays on the progress when
+ * one arrives, so the page never changes under the learner; its bar offers the quiz instead
+ * (`base`). On a narrow screen the progress the learner opened from the strip (`opened`) takes its
+ * place; a wide host has no strip, so that choice doesn't show there.
+ */
 function getView({
-  chosen,
+  base,
   hasQuiz,
+  opened,
   wide,
 }: {
-  chosen: WaitView;
+  base: WaitView;
   hasQuiz: boolean;
+  opened: boolean;
   wide: boolean;
 }): WaitView {
-  if (!hasQuiz) {
+  if (!hasQuiz || (opened && !wide)) {
     return "progress";
   }
 
-  return wide ? "quiz" : chosen;
+  return base;
 }
 
-/**
- * The quiz is the default view. A screen that first showed without a card stays on the progress when
- * one arrives, so the page never changes under the learner; its bar offers the quiz instead. A wide
- * host always shows the quiz, with the progress in its aside.
- */
 export function useWaitView({
   aside,
   hasQuiz,
@@ -145,9 +148,14 @@ export function useWaitView({
     () => false,
   );
 
-  const chosen: WaitView = opened ? "progress" : base;
-  const view = getView({ chosen, hasQuiz, wide: aside && wide });
-  const { contentRef, statusRef } = useSwitchFocus({ chosen, questionRef, view });
+  const wideHost = aside && wide;
+  const view = getView({ base, hasQuiz, opened, wide: wideHost });
+
+  const { contentRef, statusRef } = useSwitchFocus({
+    chosen: opened ? "progress" : base,
+    questionRef,
+    view,
+  });
 
   const openProgress = () => {
     setSwitched(true);
@@ -175,7 +183,7 @@ export function useWaitView({
   };
 
   return {
-    back: opened && view === "progress" && hasQuiz ? backToQuiz : null,
+    back: opened && hasQuiz && !wideHost ? backToQuiz : null,
     contentRef,
     openProgress,
     playQuiz,
