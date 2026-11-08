@@ -51,10 +51,12 @@ describe(toAiGenerationEvent, () => {
         $ai_span_name: "lesson-explanation",
         $ai_total_cost_usd: 0.0125,
         $ai_trace_id: "workflow-run-1",
+        completed_at: Date.parse(provenance.generatedAt),
         content_scope: "personal",
         goal_id: "goal-1",
         prompt_version: "3f9a1c2b7d4e",
         requested_model: "openai/gpt-6-sol",
+        started_at: Date.parse(provenance.generatedAt) - provenance.latencyMs,
         task: "lesson-explanation",
       },
     });

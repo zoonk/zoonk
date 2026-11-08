@@ -35,7 +35,6 @@ export function PlanReveal({
   initialPlan,
   isGuest,
   libraryCourse,
-  onPlanReadyChange,
   planActions,
   planLinkHref,
   refreshPages,
@@ -50,7 +49,6 @@ export function PlanReveal({
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   libraryCourse: LibraryCourseLink | null;
-  onPlanReadyChange: (isReady: boolean) => void;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
   refreshPages: () => void;
@@ -108,12 +106,6 @@ export function PlanReveal({
   });
 
   const isLoading = !read && poll.status === "polling";
-
-  useEffect(() => {
-    if (!isLoading) {
-      onPlanReadyChange(shown);
-    }
-  }, [isLoading, onPlanReadyChange, shown]);
 
   const waitRun = getWaitRun({ poll, run: run ?? WAITING_RUN });
 

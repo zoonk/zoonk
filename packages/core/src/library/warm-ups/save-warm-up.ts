@@ -1,6 +1,7 @@
 import "server-only";
 import { WARM_UP_DECK_SIZE } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { prisma } from "@zoonk/db";
+import { trackOnboardingProgress } from "../../analytics/track-onboarding-progress";
 import { type checkWarmUp } from "./check-warm-up";
 import { readWarmUpStatus } from "./claim-warm-up";
 import { type writeWarmUp } from "./write-warm-up";
@@ -38,5 +39,16 @@ export async function saveWarmUp({
   });
 
   const result = await readWarmUpStatus({ goalId, id });
+
+  if (result.status === "ready") {
+    trackOnboardingProgress({
+      at: Date.now(),
+      deck_id: id,
+      goalId,
+      platform: null,
+      stage: "deck_saved",
+    });
+  }
+
   return result.status === "ready" ? id : null;
 }

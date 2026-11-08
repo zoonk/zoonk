@@ -15,6 +15,7 @@ import { VerdictLabel } from "../_components/verdict-label";
 import { tabStorage } from "../_utils/device-storage";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useLearnAnalytics } from "../learn-context";
+import { useOnboardingClock } from "../onboarding/onboarding-clock";
 
 type Dealt = { pickedId: string | null; position: number };
 
@@ -110,6 +111,7 @@ function NextGuess({
  * still answer this card and read its reveal, but no new card is dealt.
  */
 export function WarmUpCard({
+  goalId,
   deck,
   holding,
   nextOnEnter = true,
@@ -117,6 +119,7 @@ export function WarmUpCard({
   surface,
 }: {
   deck: WarmUpDeck;
+  goalId?: string | null;
   holding: boolean;
   /** False when Enter already runs another button on the screen. */
   nextOnEnter?: boolean;
@@ -125,6 +128,8 @@ export function WarmUpCard({
 }) {
   const t = useExtracted();
   const { track } = useLearnAnalytics();
+  const clock = useOnboardingClock();
+  const eventGoalId = goalId ?? clock?.goalId;
   const questionId = useId();
   const questionRef = useRef<HTMLParagraphElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
@@ -139,9 +144,18 @@ export function WarmUpCard({
 
   useEffect(() => {
     if (hasCard) {
-      track({ name: "Warm-Up Shown", properties: { card_count: deck.cards.length, surface } });
+      track({
+        name: "Warm-Up Shown",
+        properties: {
+          at: Date.now(),
+          card_count: deck.cards.length,
+          deck_id: deck.id,
+          goal_id: eventGoalId,
+          surface,
+        },
+      });
     }
-  }, [deck.cards.length, hasCard, surface, track]);
+  }, [eventGoalId, deck.cards.length, deck.id, hasCard, surface, track]);
 
   const pick = (optionId: string) => {
     const option = card?.options.find((candidate) => candidate.id === optionId);

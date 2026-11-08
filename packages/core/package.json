@@ -15,6 +15,7 @@
     "./analytics/posthog-browser": "./src/analytics/posthog-browser.ts",
     "./analytics/register-shared-properties": "./src/analytics/register-shared-properties.tsx",
     "./analytics/request-platform": "./src/analytics/request-platform.ts",
+    "./analytics/track-onboarding-progress": "./src/analytics/track-onboarding-progress.ts",
     "./analytics/server": "./src/analytics/server.ts",
     "./analytics/shared-properties": "./src/analytics/shared-properties.ts",
     "./analytics/track-learner-event": "./src/analytics/track-learner-event.ts",

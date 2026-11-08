@@ -1,5 +1,6 @@
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { startOnboardingAttempt } from "./attempt-clock";
 import {
   forgetSentGoal,
   getSentGoal,
@@ -22,6 +23,45 @@ function draftBeingRead(id: string): OnboardingDraftView {
 describe(sendGoal, () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
+
+  it("records a submission before the request answers, then joins it to the stored draft", async () => {
+    const track = vi.fn();
+    const attempt = startOnboardingAttempt({ hasAttachment: false, track });
+    const draft = draftBeingRead("timed-draft");
+    const deferred = Promise.withResolvers<{ draft: OnboardingDraftView; status: "started" }>();
+
+    const pending = sendGoal({
+      attempt,
+      goal: draft.prompt,
+      language: "en",
+      understanding: { start: () => deferred.promise },
+    });
+
+    expect(track).toHaveBeenCalledExactlyOnceWith({
+      name: "Goal Typed",
+      properties: {
+        attempt_id: attempt.id,
+        has_attachment: false,
+        submitted_at: attempt.submittedAt,
+      },
+    });
+
+    deferred.resolve({ draft, status: "started" });
+    await pending;
+
+    expect(track).toHaveBeenLastCalledWith({
+      name: "Onboarding Progressed",
+      properties: {
+        at: expect.any(Number),
+        attempt_id: attempt.id,
+        goal_id: null,
+        onboarding_id: draft.id,
+        stage: "attempt_linked",
+      },
+    });
+
+    forgetSentGoal(draft.id);
+  });
 
   it("keeps the sent words for the loading bridge without consuming the click", async () => {
     const draft = draftBeingRead("draft-bridge");

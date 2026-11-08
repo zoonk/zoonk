@@ -4,7 +4,7 @@ import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { CircleStopIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { type LessonNotWritten } from "../_components/lesson-not-written-notice";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
@@ -15,6 +15,8 @@ import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSlowWait } from "../_utils/use-slow-wait";
+import { useVisibleWait } from "../generation/use-visible-wait";
+import { useLearnAnalytics } from "../learn-context";
 import { WarmUpCard } from "../warm-up/warm-up-card";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
 import { SessionFrame } from "./session-frame";
@@ -29,7 +31,6 @@ import { useSessionAction } from "./use-session-action";
 export type NextStopLesson = "failed" | "notStarted" | "ready" | "writing";
 
 export type NextStopActions = {
-  recordWait?: (milliseconds: number) => void;
   refresh: () => void;
   /** Null when it couldn't be read. */
   readLesson?: (
@@ -84,39 +85,18 @@ function StartButton({
  * reading, or doing what "While you wait" offered.
  */
 function useWrittenWhileWaiting({
-  actions,
   block,
   lesson,
 }: {
-  actions: NextStopActions;
   block: DayStep;
   lesson: NextStopLesson;
 }): boolean {
   const ready = lesson === "ready";
   const [waitedFor, setWaitedFor] = useState(ready ? null : block.position);
-  const waiting = useRef<{ position: number; since: number } | null>(null);
-  const record = useEffectEvent((since: number) => actions.recordWait?.(Date.now() - since));
 
   if (!ready && waitedFor !== block.position) {
     setWaitedFor(block.position);
   }
-
-  useEffect(() => {
-    if (!ready) {
-      if (waiting.current?.position !== block.position) {
-        waiting.current = { position: block.position, since: Date.now() };
-      }
-
-      return;
-    }
-
-    const waited = waiting.current;
-
-    if (waited?.position === block.position) {
-      waiting.current = null;
-      record(waited.since);
-    }
-  }, [block.position, ready]);
 
   return ready && waitedFor === block.position;
 }
@@ -239,6 +219,7 @@ function NextStopActionBar({
 }
 
 export function NextStop({
+  goalId,
   actions,
   alternative,
   block,
@@ -252,6 +233,7 @@ export function NextStop({
   tap = null,
   warmUp = null,
 }: {
+  goalId: string;
   actions: NextStopActions;
   alternative: DayStep | null;
   block: DayStep;
@@ -274,10 +256,20 @@ export function NextStop({
   const queue = getSessionQueue({ blocks, nextPosition: block.position });
   const aside = useSessionQueueAside(queue);
 
-  const written = useWrittenWhileWaiting({ actions, block, lesson });
+  const written = useWrittenWhileWaiting({ block, lesson });
   const card = useFirstLessonWarmUp({ deck: warmUp, isReady });
   // The finished wait stays above a card still showing, so the card doesn't move under the learner.
   const heldWait = written && card !== null;
+  const { track } = useLearnAnalytics();
+
+  useVisibleWait({
+    contentKind: "lesson",
+    enabled: !notWritten && (!isReady || heldWait),
+    goalId,
+    surface: "nextStop",
+    track,
+  });
+
   const facts = [formatDuration(block.estimatedMinutes), block.oftenTested && t("Often tested")];
 
   return (
@@ -311,6 +303,7 @@ export function NextStop({
 
         {!notWritten && card && (
           <WarmUpCard
+            goalId={goalId}
             deck={card.deck}
             holding={card.hold.status === "hold"}
             nextOnEnter={!alternative}

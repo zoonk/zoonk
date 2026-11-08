@@ -8,6 +8,8 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { getString } from "@zoonk/utils/json";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 import { mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
@@ -36,6 +38,8 @@ const QUANTUM: Understanding = {
 
 test.describe("Onboarding from a typed goal", () => {
   test("a visitor goes from a goal in their words to a plan", async ({ page }) => {
+    const events = await captureAnalytics(page);
+
     const goal = await storeUnderstanding(page, {
       result: QUANTUM,
       words: "i want to understand quantum physics",
@@ -97,6 +101,42 @@ test.describe("Onboarding from a typed goal", () => {
     });
 
     expect(saved.user.isAnonymous).toBe(true);
+
+    const typed = events.find((event) => event.name === "Goal Typed");
+    expect(typed?.data.submitted_at).toEqual(expect.any(Number));
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          attempt_id: typed?.data.attempt_id,
+          onboarding_id: getString(saved.details, "onboardingId"),
+          stage: "attempt_linked",
+        }),
+        name: "Onboarding Progressed",
+      }),
+    );
+
+    await expect
+      .poll(() => [
+        ...new Set(
+          events
+            .filter((event) => event.data.stage === "question_shown")
+            .map((event) => event.data.question),
+        ),
+      ])
+      .toEqual(["purpose", "level", "role", "targetDate", "buddy", "placement", "schedule"]);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          goal_id: created.id,
+          milliseconds: expect.any(Number),
+          surface: "planWait",
+        }),
+        name: "Generation Waited",
+      }),
+    );
+
     expect(saved.dailyMinutes).toBe(30);
 
     await expect(

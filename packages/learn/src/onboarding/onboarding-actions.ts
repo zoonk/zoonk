@@ -167,7 +167,6 @@ export type OnboardingActions = {
   }) => Promise<MaterialQuestionOutcome>;
   /** Null when the deck can't be shown. */
   readWarmUp: (warmUpId: string) => Promise<WarmUpDeck | null>;
-  recordPlanWait: (milliseconds: number) => Promise<void>;
   startOver: (goalIds: string[]) => Promise<void>;
   stopPlacementMock: (mockId: string) => Promise<boolean>;
   understanding: UnderstandingActions;

@@ -51,6 +51,8 @@
     "./generation": "./src/generation/generation-wait.tsx",
     "./generation/follower": "./src/generation/generation-follower.tsx",
     "./generation/kinds": "./src/generation/generation-kinds.ts",
+    "./generation/wait-clock": "./src/generation/use-visible-wait.ts",
+    "./onboarding/attempt-clock": "./src/onboarding/entry/attempt-clock.ts",
     "./generation/run": "./src/generation/generation-run.ts",
     "./guest-ending": "./src/onboarding/guest-lesson-ending.tsx",
     "./goal-switcher": "./src/shell/goal-switcher.tsx",

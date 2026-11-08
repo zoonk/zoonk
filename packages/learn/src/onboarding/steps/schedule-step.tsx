@@ -7,12 +7,12 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { Button } from "@zoonk/ui/components/button";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
 import { getFullTimeNote, getMarkedTimes, getOffer } from "../../_utils/time-answer";
 import { type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
+import { OnboardingQuestionShown } from "../onboarding-clock";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
 import { PlanWait } from "./plan-wait";
@@ -189,6 +189,7 @@ function ScheduleWeek({
 
   return (
     <div className="flex flex-col gap-3">
+      <OnboardingQuestionShown step="schedule" />
       <WeekdayToggles days={week.days} onChange={week.setDays} />
 
       {week.studiesOnWeekends && (
@@ -212,7 +213,6 @@ export function ScheduleStep({
   goal,
   onAnswer,
   onChangeDate,
-  onPlanReadyChange,
   pending,
   planReadiness,
   readWarmUp,
@@ -226,7 +226,6 @@ export function ScheduleStep({
   goal: GoalView;
   onAnswer: (input: OnboardingAnswerInput) => void;
   onChangeDate: (draft: ScheduleDraft) => void;
-  onPlanReadyChange: (isReady: boolean) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
   readWarmUp: OnboardingActions["readWarmUp"];
@@ -249,10 +248,6 @@ export function ScheduleStep({
   });
 
   const wait = getPlanWait({ gate: schedule.gate, opened: planReadiness, run });
-
-  useEffect(() => {
-    onPlanReadyChange(wait === null);
-  }, [onPlanReadyChange, wait]);
 
   return (
     <PlanWait
