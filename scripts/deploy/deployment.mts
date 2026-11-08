@@ -34,13 +34,16 @@ export function getAppUrl({
   target: Target;
   teamSlug: string;
 }): string {
-  const project = getProject(app);
-
   if (target === "preview") {
-    return `https://${project.name}-pr-${requiredEnv("PR_NUMBER")}-${teamSlug}.vercel.app`;
+    return `https://${getPreviewAlias({ app, teamSlug })}`;
   }
 
+  const project = getProject(app);
   return `https://${target === "production" ? project.productionDomain : project.stagingDomain}`;
+}
+
+function getPreviewAlias({ app, teamSlug }: { app: Project["app"]; teamSlug: string }): string {
+  return `${getProject(app).name}-pr-${requiredEnv("PR_NUMBER")}-${teamSlug}.vercel.app`;
 }
 
 async function getTeamSlug(): Promise<string> {
@@ -49,6 +52,20 @@ async function getTeamSlug(): Promise<string> {
     .parse(await vercel({ path: `/v2/teams/${requiredEnv("VERCEL_ORG_ID")}` }));
 
   return team.slug;
+}
+
+/** Vercel never deletes a preview deployment that keeps a custom alias, so a closed PR drops its own. */
+export async function removePreviewAliases(): Promise<void> {
+  const teamSlug = await getTeamSlug();
+
+  await Promise.all(
+    PROJECTS.map((project) =>
+      vercel({
+        method: "DELETE",
+        path: `/v2/aliases/${getPreviewAlias({ app: project.app, teamSlug })}`,
+      }),
+    ),
+  );
 }
 
 const protectionBypassSchema = z.object({
@@ -167,16 +184,16 @@ async function deployApp({
   project,
   target,
   apiUrl,
-  appUrl,
   cache,
   mainAppUrl,
+  teamSlug,
 }: {
   project: Project;
   target: Target;
   apiUrl: string;
-  appUrl: string;
   cache: CourseCacheAccess | null;
   mainAppUrl: string;
+  teamSlug: string;
 }): Promise<string> {
   if (target === "preview") {
     await assertPullRequestOpen();
@@ -224,7 +241,7 @@ async function deployApp({
 
   if (target === "preview") {
     await vercel({
-      body: { alias: new URL(appUrl).hostname },
+      body: { alias: getPreviewAlias({ app: project.app, teamSlug }) },
       method: "POST",
       path: `/v2/deployments/${deployment.id}/aliases`,
     });
@@ -281,19 +298,11 @@ export async function deploy(target: Target): Promise<void> {
     target === "preview" ? getPreviewCacheAccess() : null,
   ]);
 
-  const urlOf = (app: Project["app"]) => getAppUrl({ app, target, teamSlug });
+  const apiUrl = getAppUrl({ app: "api", target, teamSlug });
+  const mainAppUrl = getAppUrl({ app: "main", target, teamSlug });
 
   const results = await Promise.allSettled(
-    PROJECTS.map((project) =>
-      deployApp({
-        apiUrl: urlOf("api"),
-        appUrl: urlOf(project.app),
-        cache,
-        mainAppUrl: urlOf("main"),
-        project,
-        target,
-      }),
-    ),
+    PROJECTS.map((project) => deployApp({ apiUrl, cache, mainAppUrl, project, target, teamSlug })),
   );
 
   const failures = results.filter((result) => result.status === "rejected");

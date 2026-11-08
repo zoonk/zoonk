@@ -20,32 +20,54 @@ describe("Closed PR cleanup", () => {
     vi.unstubAllEnvs();
   });
 
-  it.each(["closed", "open"])("rechecks PR state before deleting its branch: %s", async (state) => {
-    const deletions: string[] = [];
-    const prReads: URL[] = [];
+  it.each(["closed", "open"])(
+    "rechecks PR state before removing its database branch and addresses: %s",
+    async (state) => {
+      const deletions: string[] = [];
+      const prReads: URL[] = [];
 
-    vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
-      if (url.hostname === "api.github.com") {
-        prReads.push(url);
-        return Promise.resolve(Response.json({ state: prReads.length === 1 ? "closed" : state }));
-      }
+      vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
+        if (url.hostname === "api.github.com") {
+          prReads.push(url);
+          return Promise.resolve(Response.json({ state: prReads.length === 1 ? "closed" : state }));
+        }
 
-      if (url.hostname === "api.vercel.com") {
-        return Promise.resolve(Response.json({ deployments: [], pagination: { next: null } }));
-      }
+        if (init.method === "DELETE") {
+          deletions.push(`${url.hostname}${url.pathname}`);
 
-      if (init.method === "DELETE") {
-        deletions.push(url.pathname);
-        return Promise.resolve(Response.json({}));
-      }
+          return Promise.resolve(
+            url.pathname.includes("zoonk-admin-")
+              ? Response.json({}, { status: 404 })
+              : Response.json({}),
+          );
+        }
 
-      return Promise.resolve(
-        Response.json({ branches: [{ id: "br-preview", name: "preview/pr-42" }] }),
+        if (url.pathname === "/v2/teams/test-team") {
+          return Promise.resolve(Response.json({ slug: "zoonk" }));
+        }
+
+        if (url.hostname === "api.vercel.com") {
+          return Promise.resolve(Response.json({ deployments: [], pagination: { next: null } }));
+        }
+
+        return Promise.resolve(
+          Response.json({ branches: [{ id: "br-preview", name: "preview/pr-42" }] }),
+        );
+      });
+
+      await import("./cleanup.mts");
+      expect(prReads).toHaveLength(2);
+
+      expect(deletions.toSorted()).toStrictEqual(
+        state === "closed"
+          ? [
+              "api.vercel.com/v2/aliases/zoonk-admin-pr-42-zoonk.vercel.app",
+              "api.vercel.com/v2/aliases/zoonk-api-pr-42-zoonk.vercel.app",
+              "api.vercel.com/v2/aliases/zoonk-pr-42-zoonk.vercel.app",
+              "console.neon.tech/api/v2/projects/test-project/branches/br-preview",
+            ]
+          : [],
       );
-    });
-
-    await import("./cleanup.mts");
-    expect(prReads).toHaveLength(2);
-    expect(deletions).toHaveLength(state === "closed" ? 1 : 0);
-  });
+    },
+  );
 });

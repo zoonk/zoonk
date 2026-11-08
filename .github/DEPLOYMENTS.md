@@ -6,7 +6,7 @@ GitHub Actions owns every deployment. The Vercel projects keep the Git connectio
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | PR opened, updated, or reopened  | Code quality, Vitest (unit, database integration and player browser tests), and main/API E2E for PRs targeting `main`.                     |
 | Preview requested                | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR Vercel previews of the apps it changes.             |
-| PR closed                        | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
+| PR closed                        | Cancel remaining preview builds, remove the PR's preview addresses and delete its Neon branch.                                             |
 | Push to `main`                   | Code quality, unit/integration tests, and main/API E2E.                                                                                    |
 | Staging requested                | `pnpm staging` (or "Run workflow" on Staging) waits for `main`'s newest commit to pass CI, then migrates and deploys staging.              |
 | Push to `main` touching the blog | Deploy the blog to production when the push changes `apps/blog`, the lockfile or `turbo.json`. "Run workflow" on Blog redeploys `main`.    |
