@@ -32,4 +32,10 @@ describe(fillPromptLanguages, () => {
       }),
     ).toBe("Talk in Español de México. Title in US English, label in Español de México.");
   });
+
+  it("names only the learner's language when nothing is practiced", () => {
+    expect(
+      fillPromptLanguages({ learnerLanguage: "pt", template: "Answer in {{LEARNER_LANGUAGE}}." }),
+    ).toBe("Answer in Português Brasileiro.");
+  });
 });

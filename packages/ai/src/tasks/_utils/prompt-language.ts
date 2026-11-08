@@ -30,7 +30,7 @@ export function getLanguagePromptContext(params: { targetLanguage: string; userL
 /**
  * Fills `{{TARGET_LANGUAGE}}` and `{{LEARNER_LANGUAGE}}` with the names, so a rule names its
  * language: told only to look up a `LEARNER_LANGUAGE` input, GPT-6 Luna wrote an English learner's
- * text in another language.
+ * text in another language. A prompt with no practiced language passes no `targetLanguage`.
  */
 export function fillPromptLanguages({
   learnerLanguage,
@@ -38,17 +38,22 @@ export function fillPromptLanguages({
   template,
 }: {
   learnerLanguage: string;
-  targetLanguage: string;
+  targetLanguage?: string;
   template: string;
 }): string {
-  const { targetLanguageName, userLanguageName } = getLanguagePromptContext({
-    targetLanguage,
+  const learnerLanguageName = getPromptLanguageName({ language: learnerLanguage });
+  const withLearner = template.replaceAll("{{LEARNER_LANGUAGE}}", () => learnerLanguageName);
+
+  if (!targetLanguage) {
+    return withLearner;
+  }
+
+  const targetLanguageName = getPromptLanguageName({
+    language: targetLanguage,
     userLanguage: learnerLanguage,
   });
 
-  return template
-    .replaceAll("{{TARGET_LANGUAGE}}", () => targetLanguageName)
-    .replaceAll("{{LEARNER_LANGUAGE}}", () => userLanguageName);
+  return withLearner.replaceAll("{{TARGET_LANGUAGE}}", () => targetLanguageName);
 }
 
 function getFallbackLanguageName(params: { language: string; userLanguage?: string }): string {

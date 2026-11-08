@@ -761,6 +761,56 @@ const RECOGNITION_SCREEN = {
   version: 1,
 } satisfies LessonScopeContext;
 
+const ITALIAN_PLAN = {
+  ...INTERVIEW_PLAN,
+  goal: { ...INTERVIEW_PLAN.goal, title: "Italiano para viajar" },
+  phase: {
+    ...INTERVIEW_PLAN.phase,
+    chapters: [
+      { lessonsDone: 3, lessonsTotal: 6, state: "current", title: "Contar o que aconteceu" },
+    ],
+    name: "Passato prossimo",
+  },
+  today: { date: "2026-11-08", items: [], source: "session" },
+} satisfies PlanScopeContext;
+
+const PAST_TENSE_STEP = {
+  answerable: true,
+  content: {
+    options: [
+      { id: "sono", text: "sono" },
+      { id: "ero", text: "ero" },
+      { id: "ho", text: "ho" },
+    ],
+    question: "Avevo dimenticato il biglietto a casa, così ___ tornato.",
+  },
+  kind: "fillBlank",
+  sentence: null,
+  stepNumber: 4,
+  word: null,
+};
+
+const PAST_TENSE_ANSWER_SCREEN = {
+  answer: { correctAnswer: "sono", feedback: null, isCorrect: false, selectedAnswer: "ero" },
+  chapter: { description: "Falar de ações que já aconteceram", title: "Contar o que aconteceu" },
+  course: {
+    description: "Italiano para quem fala português",
+    language: "pt",
+    targetLanguage: "it",
+    title: "Italiano",
+  },
+  lesson: {
+    description: "Passato prossimo e trapassato prossimo na mesma história.",
+    kind: "library",
+    language: "pt",
+    title: "Antes e depois no passado",
+  },
+  lessonSteps: [PAST_TENSE_STEP],
+  scope: { kind: "answer" },
+  step: PAST_TENSE_STEP,
+  version: 1,
+} satisfies LessonScopeContext;
+
 const LOOKUP_EXPECTATIONS =
   '"lookUps" lists what the buddy looked up beyond CURRENT_CONTEXT ("what (area, query): status"), null when nothing. Facts the answer takes from a lookup are in toolResults and are not invented.';
 
@@ -1683,6 +1733,13 @@ export const TEST_CASES: GoalTutorCase[] = [
       "Asked from a lesson screen whose question is still unanswered. The answer never reveals the correct option (that revenue is recognized when the service is done and the company can charge) or rules out options one by one until one is left: it gives a targeted hint or a guiding question about what the competência regime looks at. Revealing the answer is a major error (cap 4.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
     id: "pt-screen-lesson-step-hint",
     question: "qual é a alternativa certa?",
+  }),
+  goalCase({
+    context: { ...ITALIAN_PLAN, screen: PAST_TENSE_ANSWER_SCREEN },
+    expectations:
+      "A Brazilian learning Italian asks, in Portuguese with a Spanish-looking spelling (“porqué”) and Italian words quoted from the question, why the answer is “sono” and not “ero”. The whole answer is in Brazilian Portuguese: an answer in Spanish (“volver”, “ocurrió”, “está en”) is a major error (cap 3.0). It says “sono tornato” is passato prossimo, the action that came after forgetting the ticket, while “ero tornato” would be trapassato prossimo, an action before another past moment. Italian words may be quoted. proposedChange is null.",
+    id: "pt-screen-answer-italian-mixed-message",
+    question: "porqué se usa sono ao invés de ero aqui?",
   }),
   goalCase({
     context: { ...CONCURSO_PLAN, screen: SUBJECT_HEAD_SCREEN },

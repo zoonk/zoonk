@@ -5,10 +5,11 @@ import {
   type GenerateLessonQuestionAnswerParams,
   generateLessonQuestionAnswer,
 } from "./lesson-question";
+import { type LessonScopeContext } from "./lesson-question-context";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor the learner." }));
+vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor in {{LEARNER_LANGUAGE}}." }));
 
 vi.mock("./lesson-question-lesson.prompt.md", () => ({
   default:
@@ -54,7 +55,7 @@ const MOCK = {
   version: 1,
 } satisfies Snapshot;
 
-function lessonSnapshot(kind: "answer" | "lesson" | "step", answerable = true): Snapshot {
+function lessonSnapshot(kind: "answer" | "lesson" | "step", answerable = true): LessonScopeContext {
   const step = {
     answerable,
     content: {},
@@ -99,23 +100,34 @@ describe(generateLessonQuestionAnswer, () => {
 
   it("sends each scope only its own rules after the shared ones", async () => {
     await expect(getInstructions(lessonSnapshot("step"))).resolves.toBe(
-      "Tutor the learner.\nHint, never reveal.",
+      "Tutor in US English.\nHint, never reveal.",
     );
 
     await expect(getInstructions(lessonSnapshot("answer"))).resolves.toBe(
-      "Tutor the learner.\nHint, never reveal.",
+      "Tutor in US English.\nHint, never reveal.",
     );
 
     await expect(getInstructions(lessonSnapshot("step", false))).resolves.toBe(
-      "Tutor the learner.\nAnswer directly.",
+      "Tutor in US English.\nAnswer directly.",
     );
 
     await expect(getInstructions(CHAPTER)).resolves.toBe(
-      "Tutor the learner.\nBeyond a lesson.\nChapter rules.",
+      "Tutor in US English.\nBeyond a lesson.\nChapter rules.",
     );
 
     await expect(getInstructions(MOCK)).resolves.toBe(
-      "Tutor the learner.\nBeyond a lesson.\nMock rules.",
+      "Tutor in US English.\nBeyond a lesson.\nMock rules.",
     );
+  });
+
+  it("names the course's language as the answer's", async () => {
+    const snapshot = lessonSnapshot("answer");
+
+    await expect(
+      getInstructions({
+        ...snapshot,
+        course: { ...snapshot.course, language: "pt", targetLanguage: "it", title: "Italiano" },
+      }),
+    ).resolves.toBe("Tutor in Português Brasileiro.\nHint, never reveal.");
   });
 });

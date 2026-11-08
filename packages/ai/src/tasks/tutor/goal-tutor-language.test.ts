@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { selectAppLanguageNames } from "./goal-tutor-language";
+import { selectTutorLanguage } from "./goal-tutor-language";
 
 const template = readFileSync(new URL("goal-tutor.prompt.md", import.meta.url), "utf8");
 
@@ -20,9 +20,9 @@ const TODAY_TABS = {
 
 const LANGUAGES = Object.keys(TODAY_TABS) as (keyof typeof TODAY_TABS)[];
 
-describe(selectAppLanguageNames, () => {
+describe(selectTutorLanguage, () => {
   it.each(LANGUAGES)("gives a %s learner the app's names in that language alone", (language) => {
-    const prompt = selectAppLanguageNames({ language, template });
+    const prompt = selectTutorLanguage({ language, template });
 
     const others = LANGUAGES.filter((other) => other !== language).map(
       (other) => TODAY_TABS[other],
@@ -33,8 +33,14 @@ describe(selectAppLanguageNames, () => {
     expect(prompt).not.toContain("{{");
   });
 
+  it("names the learner's language as the answer's", () => {
+    const prompt = selectTutorLanguage({ language: "pt", template });
+
+    expect(prompt).toContain("Answer in Português Brasileiro, the language the app shows them");
+  });
+
   it("names nothing in a language the app doesn't show", () => {
-    const prompt = selectAppLanguageNames({ language: "ar", template });
+    const prompt = selectTutorLanguage({ language: "ar", template });
 
     expect(LANGUAGES.filter((language) => prompt.includes(TODAY_TABS[language]))).toStrictEqual([]);
   });
