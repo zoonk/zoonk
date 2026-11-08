@@ -5,12 +5,27 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import kotlinx.coroutines.test.TestScope
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WarmUpStoreTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val session = FakeSession(ana)
     private val store = WarmUpStore({ _, _ -> error("No deck is read here") }, AppCache(session, TestScope()), session)
+
+    @Test
+    fun aDeckIsClaimedOnceAcrossWaitsInTheSameVisit() {
+        assertTrue(store.claimShown("deck-1"))
+        assertFalse(store.claimShown("deck-1"))
+        assertTrue(store.claimShown("deck-2"))
+
+        session.session = null
+        assertFalse(store.claimShown("deck-1"))
+
+        session.session = ana.copy(localId = "another-visit")
+        assertTrue(store.claimShown("deck-1"))
+    }
 
     @Test
     fun aDeckGoesOnAfterTheFurthestCardAnswered() {

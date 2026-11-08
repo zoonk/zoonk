@@ -42,6 +42,9 @@ class WarmUpStore(
         }
 
     private val places = mutableMapOf<Pair<String, String>, Int>()
+    private val shown = mutableSetOf<Pair<String, String>>()
+
+    fun claimShown(warmUpId: String): Boolean = place(warmUpId)?.let(shown::add) ?: false
 
     /** The card after the furthest one the current learner answered. */
     fun next(warmUpId: String): Int = place(warmUpId)?.let(places::get) ?: 0
