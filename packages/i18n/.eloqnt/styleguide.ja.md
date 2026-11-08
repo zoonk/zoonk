@@ -97,7 +97,6 @@
 - “Past date”: “期日を過ぎた”, not “期限切れ” or “終了”
 - “Needs adjusting”: “調整が必要”
 - “Too tight”: “詰め込みすぎ”
-- “Even across skills”: “全スキル均等”
 - “left out”: “入りきらない” (“計画に入りきらなかったレッスン”), not “外れた” or “スキップ”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “スキップ”
 - “Daily time”: “1日の学習時間”

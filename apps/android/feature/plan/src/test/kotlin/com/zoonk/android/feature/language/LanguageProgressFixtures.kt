@@ -18,7 +18,7 @@ internal fun languageProgress(
           {"done":false,"text":"Describe where I live","unitTitle":"Home"},
           {"done":false,"text":"Plan a trip with a friend","unitTitle":"Travel"}],
          "goal":{"id":"$LANGUAGE_GOAL","targetDate":${targetDate?.let { "\"$it\"" }},"targetLanguage":"es","title":"Spanish"},
-         "level":${level?.let { "\"$it\"" }},
+         "level":${level?.let { "{\"label\":\"$it\",\"target\":\"B2\"}" }},
          "levels":[{"label":"B1+","score":2.5,"skill":"reading","startLabel":"A2+","trend":"up"},
           {"label":"B1","score":2,"skill":"listening","startLabel":"A2","trend":"up"},
           {"label":"A2+","score":1.5,"skill":"speaking","startLabel":"A2+","trend":"same"},

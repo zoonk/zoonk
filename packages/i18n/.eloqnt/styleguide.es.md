@@ -78,7 +78,6 @@
 - “Past date” / “Past your date”: “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
 - “Needs adjusting”: “Necesita ajustes”
 - “Too tight”: “Demasiado ajustado”
-- “Even across skills”: “Equilibrado en todas las habilidades”
 - “left out”: “omitir”, not “saltar”
 - “On pace” / “Keeping pace”: “Al día”, not “A buen ritmo”
 - “Daily time”: “Tiempo diario”

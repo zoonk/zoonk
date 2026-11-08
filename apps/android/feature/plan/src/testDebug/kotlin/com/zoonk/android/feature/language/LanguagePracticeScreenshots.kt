@@ -18,7 +18,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.LanguageTodayLevel
+import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.LanguageTodayPronunciation
 import com.zoonk.api.models.LanguageUnits
 import com.zoonk.api.models.LanguageUnitsAlphabet
@@ -103,7 +103,7 @@ class LanguagePracticeScreenshots {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        LanguageLevelCard(LanguageTodayLevel("A2+", "B1"), onOpenPlan = {})
+                        LanguageLevelCard(LanguagePlanLevel("A2+", "B1"), onOpenPlan = {})
                         AlphabetRow(alphabet(pending = true), goal, store, {})
                         AlphabetRow(alphabet(pending = false), goal, store, {})
                         LanguagePracticeNotice(goal, pattern, words, SuggestionLayout.Line, {})

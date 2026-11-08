@@ -84,7 +84,6 @@
 - “Past date”: “Data superata”, not “Scaduto” or “Terminato”
 - “Needs adjusting”: “Da adattare”
 - “Too tight”: “Troppo serrato”
-- “Even across skills”: “Equilibrato tra le abilità”
 - “left out”: “lasciato fuori”, not “saltato”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “saltare” / “saltato”
 - “Daily time”: “Tempo giornaliero”
