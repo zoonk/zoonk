@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -41,13 +42,17 @@ class WaitQuizRestorationTest {
     fun aColdRunReplayKeepsTheAnsweredCardAndViewAndContinuesFromIt() {
         val restore = StateRestorationTester(rule)
         val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
-        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
+        lateinit var warmUps: WarmUpStore
         lateinit var quiz: WaitQuizState
         lateinit var hold: ReadyHold
         lateinit var receiveDeck: () -> Unit
         restore.setContent {
             var id by remember { mutableStateOf<String?>(null) }
+            warmUps =
+                remember {
+                    val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+                    WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
+                }
             receiveDeck = { id = WARM_UP_ID }
             quiz = rememberWaitQuiz(id, warmUps)
             hold = rememberReadyHold(false)
@@ -63,11 +68,14 @@ class WaitQuizRestorationTest {
             quiz.showProgress(hold)
         }
         val answer = quiz.picked
+        val firstStore = warmUps
         restore.emulateSavedInstanceStateRestore()
         rule.runOnIdle { receiveDeck() }
         rule.waitForIdle()
         rule.runOnIdle {
+            assertNotSame(firstStore, warmUps)
             assertFalse(quiz.claimShown())
+            assertFalse(warmUps.claimShown(WARM_UP_ID))
             assertEquals(1, quiz.index)
             assertEquals(answer, quiz.picked)
             assertTrue(quiz.showingProgress)
