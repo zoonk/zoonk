@@ -27,8 +27,13 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.placementOf
+import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.feature.onboarding.typedQuestion
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CompletableDeferred
@@ -51,26 +56,40 @@ class PlacementStepFlowTest {
     private val mockApi = FakeMockApi(options = null)
     private var done = 0
 
-    private fun show() {
+    private fun show(inSetup: Boolean = false) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         val mocks = MockStore(mockApi, cache)
         rule.setContent {
             ZoonkTheme {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlacementStep(
-                        GOAL_ID,
-                        "bar exam",
-                        areaCount = 3,
-                        GenerationRun(),
-                        onRetryRun = null,
+                if (inSetup) {
+                    GoalSetupScreen(
+                        AppRoute.GoalSetup(GOAL_ID),
                         store,
+                        PlanStore(FakePlanApi(), cache),
                         mocks,
+                        false,
                         rememberAppNavigator(),
-                        onProgress = {},
-                        onDone = { done++ },
                     )
+                } else {
+                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                        PlacementStep(
+                            GOAL_ID,
+                            "bar exam",
+                            areaCount = 3,
+                            GenerationRun(),
+                            onRetryRun = null,
+                            store,
+                            mocks,
+                            rememberAppNavigator(),
+                            onProgress = {},
+                            onDone = {
+                                done++
+                                WriteOutcome.Done(Unit)
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -138,6 +157,88 @@ class PlacementStepFlowTest {
         rule.mainClock.advanceTimeBy(POLL_MS)
 
         rule.onNodeWithText("In your own words, what is hearsay?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aStopWhoseOnboardingSaveFailsUsesTheQuestionFailureCount() {
+        api.setup = { setupView(steps = listOf("placement")) }
+        api.reply = { _, _ -> throw ApiException(ApiError.Network) }
+        show(inSetup = true)
+        tap("Start")
+        tap("Stop here and see my plan")
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
+        tap("Stop here and see my plan")
+
+        rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
+        assertEquals(2, api.answers.size)
+        api.reply = { _, _ -> setupView(steps = listOf("plan")) }
+        tap("Stop here and see my plan")
+
+        assertEquals(3, api.answers.size)
+        rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
+        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+    }
+
+    @Test
+    fun stopStaysBusyUntilItsOnboardingAnswerSettles() {
+        api.setup = { setupView(steps = listOf("placement")) }
+        val save = CompletableDeferred<Unit>()
+        api.answerGate = save
+        show(inSetup = true)
+        tap("Start")
+        tap("The Supreme Court")
+        tap("Stop here and see my plan")
+
+        rule.onNodeWithText("Stop here and see my plan").assertIsNotEnabled()
+        rule.onNodeWithText("Confirm").assertIsNotEnabled()
+        rule.onNodeWithText("I don't know yet").assertIsNotEnabled()
+        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
+        save.completeExceptionally(ApiException(ApiError.Network))
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
+    }
+
+    @Test
+    fun aFailedIntroSkipDoesNotCountAsAQuestionFailure() {
+        api.writeFailure = ApiException(ApiError.Network)
+        show()
+        tap("Skip and start from the basics")
+        api.writeFailure = null
+        tap("Start")
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
+        api.writeFailure = ApiException(ApiError.Network)
+        tap("The Supreme Court")
+        tap("Confirm")
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+    }
+
+    @Test
+    fun aFailedWaitingSkipDoesNotCountAsAQuestionFailure() {
+        api.placement = placementOf(status = "preparing", next = null)
+        show()
+        tap("Start")
+        api.writeFailure = ApiException(ApiError.Network)
+        rule.mainClock.advanceTimeBy(30_000)
+        tap("Skip for now")
+        api.writeFailure = null
+        api.placement = placementOf()
+        rule.mainClock.advanceTimeBy(POLL_MS)
+
+        rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
+        api.writeFailure = ApiException(ApiError.Network)
+        tap("The Supreme Court")
+        tap("Confirm")
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
     }
 
     private companion object {

@@ -160,7 +160,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Speaking -> {
-            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::stop)
+            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::skipSpeaking)
         }
 
         is LevelTestPhase.Done -> {

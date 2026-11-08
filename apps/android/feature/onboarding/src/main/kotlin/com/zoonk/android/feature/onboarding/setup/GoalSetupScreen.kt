@@ -46,6 +46,7 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WarmUpStore
@@ -199,7 +200,7 @@ fun GoalSetupScreen(
                 when (val shown = state) {
                     is LoadState.Loaded -> {
                         SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
-                            if (vm.saveFailed) {
+                            if (vm.saveFailed && testing == null) {
                                 Text(
                                     vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
                                     modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -392,9 +393,11 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLACEMENT -> {
-            val placed = {
+            val placementAnswer =
+                OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT))
+            val placed: () -> Unit = {
                 vm.answer(
-                    OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT)),
+                    placementAnswer,
                     from = OnboardingStep.PLACEMENT,
                 )
             }
@@ -424,7 +427,10 @@ private fun ColumnScope.QuestionStep(
                     mocks = mocks,
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },
-                    onDone = placed,
+                    onDone = { question ->
+                        vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = !question)?.await()
+                            ?: WriteOutcome.Obsolete
+                    },
                 )
             }
         }

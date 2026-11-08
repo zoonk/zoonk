@@ -99,7 +99,8 @@ internal class PlacementViewModel(
     fun finish(
         fromScratch: Boolean,
         stopMockId: String? = null,
-        onDone: () -> Unit,
+        fromQuestion: Boolean = false,
+        onDone: suspend () -> WriteOutcome<*>,
     ) {
         if (isSaving) return
         isSaving = true
@@ -107,17 +108,20 @@ internal class PlacementViewModel(
         viewModelScope.launch {
             val stopped = stopMockId?.let { store.stopPlacementMock(it) }
             val outcome = if (stopped == null || stopped is WriteOutcome.Done) store.finishPlacement(goalId, fromScratch) else stopped
-            when (outcome) {
+            val completed = if (outcome is WriteOutcome.Done) onDone() else outcome
+            when (completed) {
                 is WriteOutcome.Done -> {
-                    saveFailures = 0
-                    onDone()
+                    if (fromQuestion) saveFailures = 0
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    finishFailed = true
-                    saveFailures++
+                    if (fromQuestion) {
+                        saveFailures++
+                    } else if (outcome !is WriteOutcome.Done) {
+                        finishFailed = true
+                    }
                 }
             }
             isSaving = false

@@ -30,6 +30,7 @@ import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.SPEAKING_NEXT
 import com.zoonk.android.feature.onboarding.levelTestOf
 import com.zoonk.android.feature.onboarding.listeningQuestion
 import com.zoonk.android.feature.onboarding.preparingTestOf
@@ -314,6 +315,17 @@ class LevelTestStepFlowTest {
         assertEquals(2, api.levelTestAnswers.size)
         assertEquals(api.levelTestAnswers[0], api.levelTestAnswers[1])
         rule.onNodeWithText("Your level today").assertIsDisplayed()
+    }
+
+    @Test
+    fun aSpeakingSkipThatFailsStillShowsTheLevelsAndItsFailure() {
+        api.levelTest = levelTestOf(next = SPEAKING_NEXT, answered = 11)
+        api.writeFailure = ApiException(ApiError.Network)
+        show()
+        tap("Skip this part")
+
+        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
     }
 
     private object SilentOutput : AudioOutput {

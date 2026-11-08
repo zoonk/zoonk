@@ -16,6 +16,8 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingStep
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
@@ -146,14 +148,16 @@ internal class GoalSetupViewModel(
     fun answer(
         input: OnboardingAnswerInput,
         from: OnboardingStep? = flow.current,
-    ) {
-        val step = from ?: return
-        if (isSaving) return
+        showFailure: Boolean = true,
+    ): Deferred<WriteOutcome<Onboarding>>? {
+        val step = from ?: return null
+        if (isSaving) return null
         isSaving = true
         clearFailure()
         val answeredGoal = goalId
-        viewModelScope.launch {
-            when (val outcome = store.answer(goalId, input)) {
+        return viewModelScope.async {
+            val outcome = store.answer(answeredGoal, input)
+            when (outcome) {
                 is WriteOutcome.Done -> {
                     drafts?.words(answeredGoal, step.value)?.remove()
                     applyAnswer(step, outcome.value)
@@ -163,13 +167,14 @@ internal class GoalSetupViewModel(
 
                 else -> {
                     // Only the screen that saved shows its failure: the learner may have gone Back while it saved.
-                    if (flow.current == step) {
+                    if (showFailure && flow.current == step) {
                         saveFailed = true
                         dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
                     }
                 }
             }
             isSaving = false
+            outcome
         }
     }
 

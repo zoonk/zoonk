@@ -160,6 +160,12 @@ internal class LevelTestViewModel(
         finish { stopped = true }
     }
 
+    fun skipSpeaking() {
+        if (isSaving) return
+        stopped = true
+        finish {}
+    }
+
     fun finish(onDone: () -> Unit) {
         if (isSaving) return
         isSaving = true

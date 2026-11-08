@@ -51,6 +51,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.warmup.ReadyHold
@@ -107,7 +108,7 @@ internal fun ColumnScope.PlacementStep(
     mocks: MockStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
-    onDone: () -> Unit,
+    onDone: suspend (fromQuestion: Boolean) -> WriteOutcome<*>,
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
@@ -118,7 +119,7 @@ internal fun ColumnScope.PlacementStep(
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
     val shown = if (hold.over) phase else PlacementPhase.Waiting
-    val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
+    val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = { onDone(false) }) }
     val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
@@ -174,7 +175,7 @@ internal fun ColumnScope.PlacementStep(
                     pending = vm.isSaving,
                     saveFailures = vm.saveFailures,
                     onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                    onStop = { finish(false) },
+                    onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = { onDone(true) }) },
                 )
             }
         }
@@ -184,7 +185,7 @@ internal fun ColumnScope.PlacementStep(
                 pending = vm.isSaving,
                 failed = vm.finishFailed,
                 onContinue = { navigator.open(AppRoute.Mock(shown.mockId)) },
-                onStop = { vm.finish(fromScratch = false, stopMockId = shown.mockId, onDone = onDone) },
+                onStop = { vm.finish(fromScratch = false, stopMockId = shown.mockId, onDone = { onDone(false) }) },
             )
         }
 
