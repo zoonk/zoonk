@@ -226,7 +226,8 @@ internal fun ExplainWaiting(
             }
         }
     }
-    LaunchedEffect(ready) { if (ready) viewModel.recordWait() }
+    com.zoonk.android.data
+        .TrackVisibleWait("explanation", "explanation", explanation.goalId.toString())
 
     TaskScaffold(
         onClose = navigator::closeTask,

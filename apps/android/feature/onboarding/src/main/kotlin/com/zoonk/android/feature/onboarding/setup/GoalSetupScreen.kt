@@ -1,11 +1,13 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -55,6 +58,7 @@ import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WaitQuizState
 import com.zoonk.android.feature.warmup.WarmUpStore
+import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -74,6 +78,7 @@ import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
@@ -124,11 +129,20 @@ fun GoalSetupScreen(
     warmUps: WarmUpStore? = null,
     prepareToday: suspend () -> Unit = {},
 ) {
-    val waitBack = remember { mutableStateOf<WaitQuizState?>(null) }
-    val waitPane = remember { mutableStateOf<androidx.compose.runtime.State<@Composable () -> Unit>?>(null) }
+    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val drafts = LocalSetupDrafts.current
     val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
     val state by store.onboardings[vm.goalId].collectShown()
+    val run by vm.follower.run.collectAsStateWithLifecycle()
+    val quiz = key(vm.goalId) { rememberWaitQuiz(run.warmUpId, warmUps) }
+    TrackDeckReceived(
+        vm.goalId,
+        run.warmUpId,
+        state.value
+            ?.goal
+            ?.details
+            .text("onboardingId"),
+    )
     val view = (state as? LoadState.Loaded)?.value
     val step = vm.flow.current
     val inQuestions = step != null && step != OnboardingStep.PLAN
@@ -155,12 +169,7 @@ fun GoalSetupScreen(
 
     PageScaffold(
         onBack = {
-            when {
-                waitBack.value?.let { it.showingProgress && it.hasQuiz } == true -> waitBack.value?.back()
-                testing != null -> leave()
-                back != null -> back()
-                else -> navigator.back()
-            }
+            if (backDispatcher?.hasEnabledCallbacks() == true) backDispatcher.onBackPressed() else navigator.back()
         },
         title = {
             when {
@@ -200,77 +209,59 @@ fun GoalSetupScreen(
         BoxWithConstraints(Modifier.padding(padding).consumeWindowInsets(padding).onPageSpan { span = it }) {
             val fold = spreadFold(maxWidth, span)
             val bookFold = pageFold(maxWidth, span)
-            val planSoFar: @Composable () -> Unit = {
-                Column {
-                    waitPane.value?.let { content ->
-                        Column(
-                            Modifier.padding(16.dp),
-                            verticalArrangement =
-                                androidx.compose.foundation.layout.Arrangement
-                                    .spacedBy(24.dp),
-                        ) { content.value() }
-                    }
-                    view?.let { PlanSoFar(it.goal) }
-                }
-            }
-            // An open book gives a test's question both pages, never the plan so far: where large text leaves them too
-            // narrow to spread, the question keeps one column before the fold.
-            val planBeside = fold == null && (testing == null || bookFold == null)
-
-            // At an open book's fold the setup lays out both pages itself, so a test's question takes the plan so far's
-            // page at once rather than as Material's panes animate. Its one pane is measured as spreadFold measures it,
-            // so it spans both pages.
-            PageWithSupportingPane(supportingPane = planSoFar.takeIf { planBeside }, panesTouch = fold != null) { asideBeside ->
-                when (val shown = state) {
-                    is LoadState.Loaded -> {
-                        CompositionLocalProvider(
-                            LocalWaitBack provides waitBack,
-                            LocalWaitPane provides waitPane,
-                            LocalWaitBeside provides (asideBeside || fold != null),
-                        ) {
-                            SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
-                                if (vm.saveFailed && step != OnboardingStep.PLAN) {
-                                    Text(
-                                        vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
-                                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                                        color = MaterialTheme.colorScheme.error,
-                                        style = MaterialTheme.typography.bodyMedium,
+            CompositionLocalProvider(
+                LocalSetupQuiz provides quiz,
+                LocalWaitBeside provides (fold != null || supportingPaneBeside(maxWidth)),
+                LocalSetupLayout provides
+                    SetupLayout(
+                        fold,
+                        supportingPane = fold == null && (testing == null || bookFold == null),
+                        foldAside = testing == null,
+                        aside = { view?.let { PlanSoFar(it.goal) } },
+                        failure =
+                            if (vm.saveFailed && step != OnboardingStep.PLAN) {
+                                vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed)
+                            } else {
+                                null
+                            },
+                    ),
+            ) {
+                Column(Modifier.fillMaxSize()) {
+                    when (val shown = state) {
+                        is LoadState.Loaded -> {
+                            step?.let {
+                                val setupStep: @Composable () -> Unit = {
+                                    SetupStep(
+                                        it,
+                                        shown.value,
+                                        vm,
+                                        store,
+                                        plans,
+                                        mocks,
+                                        isGuest,
+                                        navigator,
+                                        route,
+                                        prepareToday,
+                                        announce,
+                                        run,
                                     )
                                 }
-                                step?.let {
-                                    val setupStep =
-                                        @Composable {
-                                            SetupStep(
-                                                it,
-                                                shown.value,
-                                                vm,
-                                                store,
-                                                plans,
-                                                mocks,
-                                                isGuest,
-                                                navigator,
-                                                route,
-                                                asideBeside || fold != null,
-                                                warmUps,
-                                                prepareToday,
-                                                announce,
-                                            )
-                                        }
-                                    if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
+                                if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
+                            }
+                        }
+
+                        is LoadState.Failed -> {
+                            SetupContent {
+                                if (shown.error == ApiError.NotFound) {
+                                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
+                                } else {
+                                    LoadFailedMessage(onRetry = { vm.reload() })
                                 }
                             }
                         }
-                    }
 
-                    is LoadState.Failed -> {
-                        if (shown.error == ApiError.NotFound) {
-                            NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
-                        } else {
-                            LoadFailedMessage(onRetry = { vm.reload() })
-                        }
+                        else -> {}
                     }
-
-                    else -> {}
                 }
             }
             ActivityAnnouncement(announced)
@@ -289,18 +280,14 @@ private fun ColumnScope.SetupStep(
     isGuest: Boolean,
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
-    asideBeside: Boolean,
-    warmUps: WarmUpStore?,
     prepareToday: suspend () -> Unit,
     announce: (String) -> Unit,
+    run: GenerationRun,
 ) {
     val subject = view.subject()
     val pending = vm.isSaving
-    val run by vm.follower.run.collectAsStateWithLifecycle()
     val onRetryRun = vm.follower::retry.takeIf { run.failure == GenerationFailure.Connection || vm.follower.canRestart }
     val onboardingId = view.goal.details.text("onboardingId")
-    TrackDeckReceived(view.goal.id.toString(), run.warmUpId, onboardingId)
-    LaunchedEffect(run.warmUpId) { run.warmUpId?.let { warmUps?.decks?.get(it)?.prepare() } }
     if (step != OnboardingStep.SCHEDULE && step != OnboardingStep.PLAN &&
         step != OnboardingStep.PLACEMENT
     ) {
@@ -309,19 +296,24 @@ private fun ColumnScope.SetupStep(
     val savedFirst = view.firstLesson
     val liveFirst = run.firstLesson
     val firstLesson =
-        liveFirst?.let {
-            it.copy(
-                title = it.title ?: savedFirst?.title,
-                ready =
-                    it.ready || savedFirst?.takeIf { saved -> saved.id.toString() == it.id }?.status?.value == "ready",
+        if (savedFirst != null &&
+            (liveFirst == null || (savedFirst.id.toString() == liveFirst.id && savedFirst.status.value != "writing"))
+        ) {
+            GenerationFirstLesson(
+                savedFirst.id.toString(),
+                savedFirst.title,
+                ready = savedFirst.status.value == "ready",
+                done =
+                    savedFirst.status.value == "done",
             )
-        } ?: savedFirst?.let { GenerationFirstLesson(it.id.toString(), it.title, it.status.value == "ready") }
+        } else {
+            liveFirst?.copy(title = liveFirst.title ?: savedFirst?.title)
+        }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(
         LocalPlanStart provides planStart,
-        LocalSetupWarmUp provides warmUps,
         LocalSetupAim provides
             SetupAimContext(
                 view.languageAim,
@@ -355,7 +347,6 @@ private fun ColumnScope.SetupStep(
             pending,
             run,
             onRetryRun,
-            asideBeside,
             prepareToday,
         )
     }
@@ -376,7 +367,6 @@ private fun ColumnScope.QuestionStep(
     pending: Boolean,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
-    asideBeside: Boolean,
     prepareToday: suspend () -> Unit,
 ) {
     when (step) {
@@ -449,7 +439,7 @@ private fun ColumnScope.QuestionStep(
                 store,
                 vm,
                 pending,
-                factsBeside = asideBeside,
+                factsBeside = LocalWaitBeside.current,
             )
         }
 
@@ -499,7 +489,6 @@ private fun ColumnScope.QuestionStep(
             PlanRevealStep(
                 view.goal,
                 isGuest,
-                view.libraryCourse,
                 run,
                 onRetryRun,
                 plans,

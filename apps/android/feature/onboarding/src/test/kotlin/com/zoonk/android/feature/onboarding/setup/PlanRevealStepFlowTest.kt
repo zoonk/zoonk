@@ -80,7 +80,6 @@ class PlanRevealStepFlowTest {
                         PlanRevealStep(
                             examGoal(),
                             isGuest = false,
-                            libraryCourse = null,
                             GenerationRun(status = GenerationRun.Status.Following, warmUpId = WARM_UP_ID),
                             onRetryRun = null,
                             plans,

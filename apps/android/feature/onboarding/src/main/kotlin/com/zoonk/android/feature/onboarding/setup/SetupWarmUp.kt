@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,8 +39,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 
 internal val LocalSetupWarmUp = compositionLocalOf<WarmUpStore?> { null }
 internal val LocalSetupWait = compositionLocalOf { SetupWaitContext() }
-internal val LocalWaitBack = compositionLocalOf<MutableState<WaitQuizState?>?> { null }
-internal val LocalWaitPane = compositionLocalOf<MutableState<State<@Composable () -> Unit>?>?> { null }
+internal val LocalSetupQuiz = compositionLocalOf<WaitQuizState?> { null }
 internal val LocalWaitBeside = compositionLocalOf { false }
 
 internal data class SetupWaitContext(
@@ -53,7 +53,7 @@ internal data class SetupWaitContext(
 )
 
 @Composable
-internal fun SetupWait(
+internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
     run: GenerationRun,
     kind: GenerationKind,
     surface: AnalyticsEvent.WarmUpSurface,
@@ -62,30 +62,33 @@ internal fun SetupWait(
     readyAction: String,
     onRetry: (() -> Unit)? = null,
     next: PlanNext? = null,
-    offer: @Composable () -> Unit = {},
-    progress: @Composable () -> Unit,
+    waitSurface: String = surface.value,
+    progress: @Composable (Float) -> Unit,
 ) {
     val context = LocalSetupWait.current
-    val quiz = rememberWaitQuiz(run.warmUpId ?: context.warmUpId, LocalSetupWarmUp.current)
-    val beside = LocalWaitBeside.current && quiz.hasQuiz
-    val back = LocalWaitBack.current
-    val pane = LocalWaitPane.current
+    val quiz = LocalSetupQuiz.current ?: rememberWaitQuiz(run.warmUpId ?: context.warmUpId, LocalSetupWarmUp.current)
+    quiz.open()
+    val canShowAside = quiz.hasQuiz && quiz.visitedQuiz
     val first = context.firstLesson
+    val share =
+        com.zoonk.android.ui.components
+            .rememberGenerationProgress(kind, run)
     val shownProgress: @Composable () -> Unit = {
-        progress()
+        progress(share)
         first?.let { FirstLessonRow(it, run) }
     }
-    val progressState = rememberUpdatedState(shownProgress)
-    SideEffect {
-        back?.value = quiz.takeIf { !beside }
-        pane?.value = progressState.takeIf { beside }
-    }
-    DisposableEffect(back, pane) {
-        onDispose {
-            back?.value = null
-            pane?.value = null
+    val layout = LocalSetupLayout.current
+    val aside: (@Composable () -> Unit)? =
+        if (canShowAside && layout != null) {
+            {
+                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) { shownProgress() }
+                    layout.aside()
+                }
+            }
+        } else {
+            null
         }
-    }
     val opensFirst = first?.ready == true && !context.planReady && hold.isOverFor(true)
     LaunchedEffect(opensFirst) {
         if (opensFirst) {
@@ -97,69 +100,68 @@ internal fun SetupWait(
         }
     }
     val line =
-        first?.let {
+        first?.takeUnless { it.done }?.let {
             if (it.ready) {
                 stringResource(R.string.warm_up_first_lesson_ready)
             } else {
                 it.title?.let { name -> stringResource(R.string.warm_up_first_lesson_writing, name) }
             }
         }
-    TrackVisibleWait(surface.value, "curriculum", context.goalId)
-    WaitContent(
-        quiz,
-        hold,
-        surface,
-        kind,
-        run,
-        title,
-        goalId = context.goalId,
-        lessonLine = line,
-        lessonReady = first?.ready == true,
-        progressBeside = beside,
-        onRetry = onRetry,
-    ) {
-        shownProgress()
-    }
-    val actionsVisible =
-        hold.holding || context.planReady || first?.ready == true || context.course != null ||
-            (quiz.hasQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
-    PageWaitActions(hold, visible = actionsVisible) {
-        when {
-            hold.holding || context.planReady -> {
-                if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
+    TrackVisibleWait(waitSurface, "curriculum", context.goalId)
+    SetupContent(aside = aside, reversed = canShowAside) {
+        val beside = LocalWaitBeside.current && canShowAside
+        WaitContent(
+            quiz,
+            hold,
+            surface,
+            kind,
+            run,
+            title,
+            goalId = context.goalId,
+            lessonLine = line,
+            lessonReady = first?.ready == true,
+            progressBeside = beside,
+            progressShare = share,
+            onRetry = onRetry,
+            progress = shownProgress,
+        )
+        val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
+        val course = context.course?.takeIf { !context.planReady && first?.ready != true }
+        val actionsVisible =
+            hold.holding || firstReady || course != null ||
+                (quiz.hasQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
+        PageWaitActions(hold, visible = actionsVisible) {
+            when {
+                hold.holding -> {
+                    if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
+                        Text(
+                            stringResource(R.string.warm_up_plan_ready_one_question),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(readyAction) }
+                }
+
+                firstReady -> {
                     Text(
-                        stringResource(R.string.warm_up_plan_ready_one_question),
+                        stringResource(R.string.warm_up_plan_waiting),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    Button(
+                        onClick = context.onStartLesson,
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                    ) {
+                        Text(stringResource(R.string.warm_up_start_first_lesson))
+                    }
                 }
-                Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(readyAction) }
-            }
 
-            first?.ready == true && context.onStartLesson != null -> {
-                Text(
-                    stringResource(R.string.warm_up_plan_waiting),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Button(
-                    onClick = context.onStartLesson,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-                ) {
-                    Text(stringResource(R.string.warm_up_start_first_lesson))
+                else -> {
+                    if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
+                    WaitQuizAction(quiz, hold, beside)
                 }
-            }
-
-            else -> {
-                if (context.course != null &&
-                    context.onOpenCourse != null
-                ) {
-                    LibraryCourseOffer(context.course, context.onOpenCourse)
-                } else {
-                    offer()
-                }
-                WaitQuizAction(quiz, hold, beside)
             }
         }
     }
@@ -173,8 +175,9 @@ internal fun FirstLessonRow(
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val started = run.stepTimes["writeFirstLesson"]?.started
     val finished = run.stepTimes["firstLessonReady"]?.completed
-    LaunchedEffect(lesson.ready, started) {
-        if (started != null && !lesson.ready) {
+    val settled = lesson.ready || lesson.done
+    LaunchedEffect(settled, started) {
+        if (started != null && !settled) {
             while (true) {
                 kotlinx.coroutines.delay(1_000)
                 now = System.currentTimeMillis()
@@ -184,7 +187,7 @@ internal fun FirstLessonRow(
     com.zoonk.android.ui.components.ListRow(
         headline = { Text(stringResource(R.string.warm_up_first_lesson)) },
         leading = {
-            if (lesson.ready) {
+            if (settled) {
                 com.zoonk.android.ui.components
                     .DoneMark()
             } else {
@@ -197,7 +200,15 @@ internal fun FirstLessonRow(
         },
         supporting = {
             lesson.title?.let { Text(it) }
-            Text(stringResource(if (lesson.ready) R.string.warm_up_ready_to_start else R.string.warm_up_first_lesson_screens))
+            Text(
+                stringResource(
+                    when {
+                        lesson.done -> R.string.lessons_done
+                        lesson.ready -> R.string.warm_up_ready_to_start
+                        else -> R.string.warm_up_first_lesson_screens
+                    },
+                ),
+            )
         },
         meta = {
             val elapsed =

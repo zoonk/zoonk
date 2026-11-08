@@ -9,6 +9,7 @@
   "onboarding_aim_by_month": "9e3be8baf653b7a880d817be86f6468bc33f3fdd9b104280b73c3b2cbb3dd0a2",
   "onboarding_aim_change": "13c5eb7915a156cdbbadfa4b54d18a5970f24f33652a506f1024abd7e714b00a",
   "onboarding_aim_changed": "46a961eb5d084d51558cf8af5cd15bcc4c4db88b662a108d19f0c32ea125d132",
+  "onboarding_aim_description": "a4ab1cdbdeb0272ebb06dc35e2b74c39eb6df3b260a5d8a55c1790041234d1d0",
   "onboarding_aim_finish": "912cd220020465c9bf6deb713a35bedc33ab8ac4ec5b8074a21fad37533e5a80",
   "onboarding_aim_fluent": "55d71850c514f48ffb49e796bd77a52eff0436325fc459b96a134859f951a746",
   "onboarding_aim_from_advanced": "d36808f5cc742ec4e0a96281f1bca266b8ef63c31400bd85245ba6726f0c74ed",
@@ -258,6 +259,7 @@
   "onboarding_read_limit_plus": "de0820a713c1658959e17724389b86e12bdf3ee5b0ee6ffce1b062f53d52c6bd",
   "onboarding_reason_certificate": "f181f9e088cfb2d953d376643b09a052c66543da0401f1780135150523c57f36",
   "onboarding_reason_certificate_description": "3843e3906cdafc27c1402f9b3a03705d6bce223f947dff8395d361d7611350b8",
+  "onboarding_reason_choices": "f8cbc4ca916fd4d7252b24c4f1dc94c07d71422ed52beebd853e6684a949f076",
   "onboarding_reason_description": "70bc69ab50d6a5eb17d4526de9ed401b8a2e63acae9a4b93bdc3717cc53673b3",
   "onboarding_reason_exam": "5a7d9f63f6a60544225cf179ae1ac24160237cfe3da10b526a948e2195f6ed32",
   "onboarding_reason_exam_plan": "6648d97efa55ca86a097202b64bbe6ac60f325f95755364bd097e985ec8f5171",
@@ -466,7 +468,7 @@
   "onboarding_your_text": "1b55cc31a38d0b66963e4344718fb49bafb04287bcb1e0cbc89bd8b2f87a4c59"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Title of the screen where a learner writes their goal. -->
     <string name="onboarding_start_title">¿Qué quieres lograr?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -1126,7 +1128,8 @@
     <string name="onboarding_aim_from_intermediate">Desde un nivel intermedio, con %1$s al día.</string>
     <string name="onboarding_aim_from_advanced">Desde un nivel avanzado, con %1$s al día.</string>
     <string name="onboarding_aim_from_level">Desde %1$s, con %2$s al día.</string>
-    <plurals name="onboarding_reveal_lessons">
+    <!-- The count is the separate animated readout above this noun. -->
+    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
         <item quantity="one">lección</item>
         <item quantity="many">lecciones</item>
         <item quantity="other">lecciones</item>
@@ -1136,4 +1139,6 @@
         <item quantity="many">lecciones, ya completaste %1$s</item>
         <item quantity="other">lecciones, ya completaste %1$s</item>
     </plurals>
+    <string name="onboarding_reason_choices">Por qué aprendes este idioma</string>
+    <string name="onboarding_aim_description">Hasta dónde llega tu curso, lo que define cuánto dura tu plan.</string>
 </resources>

@@ -7,7 +7,6 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.perform
 import com.zoonk.api.models.Explanation
-import com.zoonk.api.models.GenerationWaitInput
 import java.util.UUID
 
 interface ExplainApi {
@@ -21,11 +20,6 @@ interface ExplainApi {
         session: AuthenticatedSession,
         goalId: String,
     ): String
-
-    suspend fun recordWait(
-        session: AuthenticatedSession,
-        milliseconds: Long,
-    )
 }
 
 class LiveExplainApi(
@@ -40,21 +34,6 @@ class LiveExplainApi(
         session: AuthenticatedSession,
         goalId: String,
     ) = perform { api.clients(session).contentGeneration.createGoalGeneration(UUID.fromString(goalId)) }.generationId
-
-    override suspend fun recordWait(
-        session: AuthenticatedSession,
-        milliseconds: Long,
-    ) {
-        perform {
-            api.clients(session).contentGeneration.createGenerationWait(
-                GenerationWaitInput(
-                    contentKind = GenerationWaitInput.ContentKind.EXPLANATION,
-                    milliseconds = milliseconds,
-                    platform = GenerationWaitInput.Platform.ANDROID,
-                ),
-            )
-        }
-    }
 }
 
 /** Quick explanations by goal id, kept across opening and closing them. */

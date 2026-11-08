@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,30 @@ import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageFold
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+
+internal data class SetupLayout(
+    val fold: PageFold?,
+    val supportingPane: Boolean,
+    val foldAside: Boolean,
+    val aside: @Composable () -> Unit,
+    val failure: String?,
+)
+
+internal val LocalSetupLayout = compositionLocalOf<SetupLayout?> { null }
+
+@Composable
+internal fun ColumnScope.SetupContent(
+    aside: (@Composable () -> Unit)? = null,
+    reversed: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    if (LocalSetupLayout.current == null || LocalSetupPage.current != null) {
+        content()
+    } else {
+        SetupColumn(aside = aside, reversed = reversed, content = content)
+    }
+}
 
 /**
  * At least the page's height, so a step's actions can sit at its bottom on phones. Across an open book's [fold] it
@@ -49,6 +74,36 @@ import com.zoonk.android.ui.scaffold.PageFold
 internal fun SetupColumn(
     fold: PageFold? = null,
     aside: (@Composable () -> Unit)? = null,
+    reversed: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val layout = LocalSetupLayout.current
+    if (layout == null) {
+        SetupColumnBody(fold, aside, reversed, content)
+        return
+    }
+    val pane = aside ?: layout.aside
+    PageWithSupportingPane(supportingPane = pane.takeIf { layout.supportingPane }, panesTouch = layout.fold != null) { beside ->
+        CompositionLocalProvider(LocalWaitBeside provides (beside || layout.fold != null)) {
+            SetupColumnBody(layout.fold, pane.takeIf { layout.foldAside }, reversed) {
+                layout.failure?.let {
+                    Text(
+                        it,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                        modifier = Modifier.semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite },
+                    )
+                }
+                content()
+            }
+        }
+    }
+}
+
+@Composable
+private fun SetupColumnBody(
+    fold: PageFold?,
+    aside: (@Composable () -> Unit)?,
+    reversed: Boolean,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(Modifier.fillMaxSize().imePadding()) {
@@ -56,7 +111,6 @@ internal fun SetupColumn(
         val spread = fold?.takeIf { aside == null }
         val waitSlot = remember { mutableStateOf<PageWait?>(null) }
         val wait = waitSlot.value
-        val reversed = LocalWaitPane.current?.value != null
 
         Column(
             when {
@@ -78,7 +132,7 @@ internal fun SetupColumn(
                 else -> {
                     Modifier.fillMaxSize()
                 }
-            }.then(wait?.let { Modifier.watchTouches(it.hold) } ?: Modifier),
+            }.then(wait?.hold?.let { Modifier.watchTouches(it) } ?: Modifier),
         ) {
             BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
                 val height = maxHeight
@@ -106,7 +160,7 @@ internal fun SetupColumn(
                 }
             }
 
-            wait?.takeIf { it.visible && (it.actions != null || it.hold.holding) }?.let { HeldBar(it) }
+            wait?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { HeldBar(it) }
         }
 
         if (fold != null && aside != null) {
@@ -131,7 +185,7 @@ internal val LocalSetupPage = compositionLocalOf<SetupPage?> { null }
 
 /** A wait on the page that can hold once its work is ready, and its one way on then. */
 internal data class PageWait(
-    val hold: ReadyHold,
+    val hold: ReadyHold?,
     val action: String,
     val actions: State<@Composable () -> Unit>? = null,
     val visible: Boolean = true,
@@ -154,7 +208,7 @@ internal fun PageHold(
 
 @Composable
 internal fun PageWaitActions(
-    hold: ReadyHold,
+    hold: ReadyHold? = null,
     visible: Boolean = true,
     content: @Composable () -> Unit,
 ) {
@@ -180,7 +234,7 @@ private fun HeldBar(wait: PageWait) {
                     ) {
                         wait.actions.value()
                     } else {
-                        Button(onClick = wait.hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(wait.action) }
+                        Button(onClick = { wait.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(wait.action) }
                     }
                 }
             }
@@ -199,53 +253,55 @@ internal fun ColumnScope.QuestionPages(
     answer: @Composable ColumnScope.() -> Unit,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
-    val page = LocalSetupPage.current
-    val fold = page?.fold
-    val answerScroll = rememberScrollState()
+    SetupContent {
+        val page = LocalSetupPage.current
+        val fold = page?.fold
+        val answerScroll = rememberScrollState()
 
-    Box(if (fold == null) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
-        // The answer's page is the one column's place, so what the learner picked, typed or recorded stays as the book opens or closes.
-        Column(
-            if (fold == null) {
-                Modifier.fillMaxWidth().heightIn(min = page?.height ?: 0.dp)
-            } else {
-                Modifier
-                    .fillMaxSize()
-                    .padding(start = fold.end)
-                    .semantics { isTraversalGroup = true }
-                    .padding(start = MARGIN, end = MARGIN, bottom = EDGE)
-            },
-            verticalArrangement = Arrangement.spacedBy(GAP),
-        ) {
+        Box(if (fold == null) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
+            // The answer's page is the one column's place, so what the learner picked, typed or recorded stays as the book opens or closes.
             Column(
                 if (fold == null) {
-                    Modifier
+                    Modifier.fillMaxWidth().heightIn(min = page?.height ?: 0.dp)
                 } else {
                     Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .verticalScroll(answerScroll)
-                        .padding(top = EDGE)
+                        .fillMaxSize()
+                        .padding(start = fold.end)
+                        .semantics { isTraversalGroup = true }
+                        .padding(start = MARGIN, end = MARGIN, bottom = EDGE)
                 },
                 verticalArrangement = Arrangement.spacedBy(GAP),
             ) {
-                if (fold == null) read()
-                answer()
+                Column(
+                    if (fold == null) {
+                        Modifier
+                    } else {
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .verticalScroll(answerScroll)
+                            .padding(top = EDGE)
+                    },
+                    verticalArrangement = Arrangement.spacedBy(GAP),
+                ) {
+                    if (fold == null) read()
+                    answer()
+                }
+                OnboardingActions(actions)
             }
-            OnboardingActions(actions)
-        }
 
-        if (fold != null) {
-            Column(
-                Modifier
-                    .width(fold.start)
-                    .fillMaxHeight()
-                    .semantics { isTraversalGroup = true }
-                    .verticalScroll(page.scroll)
-                    .padding(horizontal = MARGIN, vertical = EDGE),
-                verticalArrangement = Arrangement.spacedBy(GAP),
-                content = read,
-            )
+            if (fold != null) {
+                Column(
+                    Modifier
+                        .width(fold.start)
+                        .fillMaxHeight()
+                        .semantics { isTraversalGroup = true }
+                        .verticalScroll(page.scroll)
+                        .padding(horizontal = MARGIN, vertical = EDGE),
+                    verticalArrangement = Arrangement.spacedBy(GAP),
+                    content = read,
+                )
+            }
         }
     }
 }

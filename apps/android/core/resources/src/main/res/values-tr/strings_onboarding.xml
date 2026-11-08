@@ -9,6 +9,7 @@
   "onboarding_aim_by_month": "8c18223bb3fd179ba0ec3a64456ff27d00b04796521e40660da67a698b9e851d",
   "onboarding_aim_change": "3917b4a0202f421cd6b4bf35763df80ac30301a5ac660f7ac23f0a42b9fdd1f0",
   "onboarding_aim_changed": "6cd65563b495bc0fff6053cd631e18d2d7ecd0d0f798854d69c66006894c2e8f",
+  "onboarding_aim_description": "f085f2b4e875003f31a7bcc5b19d401f948de823112156e345960efe602fa29b",
   "onboarding_aim_finish": "4a50c316fb11821f10df76f5f218c98bdcf467492d0cf1687aefef36d2b3280d",
   "onboarding_aim_fluent": "0616eaf8f3de8b4cf6ba42014520cc73955fffa20c2021d95d9df58c3d345eaa",
   "onboarding_aim_from_advanced": "f21e2aa64ce6cded51b14529a2ec81809857deaf65cbca6ede1f33b33baad179",
@@ -258,6 +259,7 @@
   "onboarding_read_limit_plus": "19e8f81cb2f96fe656e886edcd4e480717c11ff294fb39c92c8b1fc667e207e2",
   "onboarding_reason_certificate": "3dc65bd9b6565810b17bb348ce8003a6fa7cce4f98917240b718dd326f643742",
   "onboarding_reason_certificate_description": "0c8055f058530ec39640e6383b11036535e3a4fca148d411fee342bc56b1fa72",
+  "onboarding_reason_choices": "373e79ce7269665c1ab57ae8bd34e9677dfb2512f48f1b32deb0d24f1168d546",
   "onboarding_reason_description": "919c91740ee844ad833a0ef4ce8481279a9f55ef1322f23a7f8f79f799239fa6",
   "onboarding_reason_exam": "4dd72e7f3631ccb88d58670f074a730685855d657da19690a47d02465cc3b4b2",
   "onboarding_reason_exam_plan": "411643c373cbd5b55f985f656df0ff85a6b1b38e172685f5c2a1e43cb33f479d",
@@ -466,7 +468,7 @@
   "onboarding_your_text": "86b1ebc425210bc039b55d1fe8bf687f253656355db7afd05f1d2a0ea1335c5f"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Title of the screen where a learner writes their goal. -->
     <string name="onboarding_start_title">Ne başarmak istiyorsun?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -1103,7 +1105,8 @@
     <string name="onboarding_aim_from_intermediate">Orta seviyeden, günde %1$s</string>
     <string name="onboarding_aim_from_advanced">İleri seviyeden, günde %1$s</string>
     <string name="onboarding_aim_from_level">%1$s düzeyinden, günde %2$s</string>
-    <plurals name="onboarding_reveal_lessons">
+    <!-- The count is the separate animated readout above this noun. -->
+    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
         <item quantity="one">ders</item>
         <item quantity="other">ders</item>
     </plurals>
@@ -1111,4 +1114,6 @@
         <item quantity="one">ders, %1$s tanesi tamamlandı</item>
         <item quantity="other">ders, %1$s tanesi tamamlandı</item>
     </plurals>
+    <string name="onboarding_reason_choices">Bu dili öğrenme nedenin</string>
+    <string name="onboarding_aim_description">Kursunun hedef seviyesi, planının süresini belirler.</string>
 </resources>

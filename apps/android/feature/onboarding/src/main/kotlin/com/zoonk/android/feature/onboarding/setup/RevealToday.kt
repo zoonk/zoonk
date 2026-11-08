@@ -184,7 +184,7 @@ internal fun RevealToday(
             detail =
                 listOf(
                     formatDate(day.localDate.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDayShort),
-                    formatMinutes(day.minutes.dailyGoal.toInt(), currentLocale()),
+                    formatMinutes(day.minutes.planned.toInt(), currentLocale()),
                 ).factsLine(),
         )
         ordered.forEachIndexed { index, step ->
@@ -212,11 +212,28 @@ internal fun RevealToday(
 }
 
 @Composable
-internal fun RevealWeek(plan: Plan) {
+internal fun RevealWeek(
+    plan: Plan,
+    today: com.zoonk.android.feature.session.DayView?,
+) {
+    val listed =
+        today
+            ?.steps
+            .orEmpty()
+            .mapNotNull { it.lessonId }
+            .toSet()
+    val days =
+        plan.nextDays
+            .drop(1)
+            .map { day ->
+                day.copy(items = day.items.filter { it.lessonId == null || it.lessonId !in listed })
+            }.filter { it.items.isNotEmpty() || it.minutes == 0.0 }
+    if (days.none { it.items.isNotEmpty() }) return
     Column {
         SectionHeader(stringResource(R.string.onboarding_reveal_first_week))
-        plan.nextDays.drop(1).forEach { day ->
+        days.forEach { day ->
             ListRow(
+                verticalAlignment = androidx.compose.ui.Alignment.Top,
                 headline = {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(

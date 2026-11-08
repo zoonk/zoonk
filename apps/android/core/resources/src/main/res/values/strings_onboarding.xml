@@ -656,4 +656,6 @@
         <item quantity="one">lesson, %1$s done</item>
         <item quantity="other">lessons, %1$s done</item>
     </plurals>
+    <string name="onboarding_reason_choices">Why you\'re learning it</string>
+    <string name="onboarding_aim_description">How far your course goes, which sets how long your plan is.</string>
 </resources>

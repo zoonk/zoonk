@@ -202,7 +202,9 @@ internal fun ColumnScope.PlacementStep(
 
 @Composable
 internal fun ColumnScope.StepLoading() {
-    Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    SetupContent {
+        Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    }
 }
 
 @Composable
@@ -217,35 +219,37 @@ private fun ColumnScope.PlacementIntro(
     onStart: () -> Unit,
     onScratch: () -> Unit,
 ) {
-    Eyebrow(subject.labelCase())
-    OnboardingHeading(
-        stringResource(R.string.onboarding_placement_title),
-        if (areaCount > 0) {
-            pluralStringResource(R.plurals.onboarding_placement_description_areas, areaCount, areaCount)
-        } else {
-            stringResource(R.string.onboarding_placement_description)
-        },
-    )
-    mock?.let { MockOfferRow(it, onMock) }
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = starting,
-            onClick = onStart,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !pending,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_start))
-        }
-        TextButton(
-            busy = pending,
-            onClick = onScratch,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !starting,
-            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_skip_basics))
+    SetupContent {
+        Eyebrow(subject.labelCase())
+        OnboardingHeading(
+            stringResource(R.string.onboarding_placement_title),
+            if (areaCount > 0) {
+                pluralStringResource(R.plurals.onboarding_placement_description_areas, areaCount, areaCount)
+            } else {
+                stringResource(R.string.onboarding_placement_description)
+            },
+        )
+        mock?.let { MockOfferRow(it, onMock) }
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = starting,
+                onClick = onStart,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_start))
+            }
+            TextButton(
+                busy = pending,
+                onClick = onScratch,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !starting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_skip_basics))
+            }
         }
     }
 }
@@ -310,8 +314,8 @@ private fun ColumnScope.PlacementWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-    ) {
-        GenerationWait(GenerationKind.Placement, shown, onRetry) {
+    ) { share ->
+        GenerationWait(GenerationKind.Placement, shown, onRetry, share = share) {
             OnboardingHeading(
                 title,
                 stringResource(
@@ -590,17 +594,19 @@ private fun ColumnScope.PlacementOutcome(
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
-    eyebrow?.let { SuccessEyebrow(it) }
-    OnboardingHeading(title, description)
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = pending,
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_see_plan))
+    SetupContent {
+        eyebrow?.let { SuccessEyebrow(it) }
+        OnboardingHeading(title, description)
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = pending,
+                onClick = onContinue,
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_see_plan))
+            }
         }
     }
 }
@@ -612,22 +618,24 @@ private fun ColumnScope.PlacementMockRunning(
     onContinue: () -> Unit,
     onStop: () -> Unit,
 ) {
-    OnboardingHeading(
-        stringResource(R.string.onboarding_placement_mock_waiting_title),
-        stringResource(R.string.onboarding_placement_mock_waiting_description),
-    )
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_placement_continue_mock))
-        }
-        TextButton(
-            busy = pending,
-            onClick = onStop,
-            modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_stop_mock))
+    SetupContent {
+        OnboardingHeading(
+            stringResource(R.string.onboarding_placement_mock_waiting_title),
+            stringResource(R.string.onboarding_placement_mock_waiting_description),
+        )
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.onboarding_placement_continue_mock))
+            }
+            TextButton(
+                busy = pending,
+                onClick = onStop,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_stop_mock))
+            }
         }
     }
 }

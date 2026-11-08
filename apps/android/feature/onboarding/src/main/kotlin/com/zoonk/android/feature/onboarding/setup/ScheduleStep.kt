@@ -156,16 +156,34 @@ private fun ColumnScope.ScheduleTime(
     val studiesEverything = exam && fullCourse
     val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend, studiesEverything)
 
+    val aim =
+        LocalSetupAim.current.aim
+            ?.aim
+            ?.value
     val timeAdvice =
         rememberPlanAnswer(
             store.timeAdvice,
-            AdviceQuery(goal, asked.adviceInput(minutes ?: recommendedMinutes)),
+            AdviceQuery(
+                goal,
+                asked.adviceInput(minutes ?: recommendedMinutes).copy(
+                    aim =
+                        com.zoonk.api.models.PlanTimeAdviceInput.Aim.entries.firstOrNull {
+                            it.value ==
+                                aim
+                        },
+                ),
+            ),
             enabled = hasDays && asksAboutTime(dated, found, studiesEverything, minutes),
             paused = paused,
             planMade = run.planMade,
             querySerializer = AdviceQuery.serializer(),
             serializer = PlanTimeAdvice.serializer(),
             ready = { it.ready },
+            scope = {
+                it.input.aim
+                    ?.value
+                    .orEmpty()
+            },
         )
     val advice = timeAdvice.answer?.takeIf { it.ready }
     val askFailed = timeAdvice.status == PollStatus.Failed
@@ -253,7 +271,7 @@ private fun ColumnScope.ScheduleTime(
         },
     ) {
         if (!factsBeside) PlanFactChips(goal)
-        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal)
+        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
 
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
