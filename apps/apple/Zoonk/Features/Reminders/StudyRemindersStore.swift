@@ -26,10 +26,7 @@ final class StudyRemindersStore {
   @ObservationIgnored private let push: any PushAccess
   @ObservationIgnored private let defaults: UserDefaults
   @ObservationIgnored private let saves: QueuedSaves<StudyReminder>
-  /// The phone selection on its way, which sign-out waits for.
-  @ObservationIgnored private var selection: Task<StudyReminder, Error>?
   private static let tokenKey = "studyReminderPushToken"
-  private static let attemptedTokenKey = "studyReminderAttemptedPushToken"
 
   init(
     api: any StudyRemindersAPIClient, cache: AppCache, push: any PushAccess,
@@ -57,13 +54,6 @@ final class StudyRemindersStore {
   private var savedToken: String? {
     get { defaults.string(forKey: Self.tokenKey) }
     set { defaults.set(newValue, forKey: Self.tokenKey) }
-  }
-
-  /// The last token a selection sent, which the server may have taken even when its answer was
-  /// lost: sign-out removes it with the saved one.
-  private var attemptedToken: String? {
-    get { defaults.string(forKey: Self.attemptedTokenKey) }
-    set { defaults.set(newValue, forKey: Self.attemptedTokenKey) }
   }
 
   func isThisPhone(_ reminder: StudyReminder) -> Bool {
@@ -134,26 +124,13 @@ final class StudyRemindersStore {
         return false
       }
 
-      _ = try await select(current, for: identity)
+      _ = try await api.selectPhone(token: identity.bearerToken, pushToken: current)
       return true
     }
 
     if case .done(true) = result {
       savedToken = current
     }
-  }
-
-  /// Before signing out, so push stops reaching this phone for the learner who leaves it: once a
-  /// selection on its way has landed, both the saved token and the last one sent are removed. The
-  /// server removes the phone only while it's one of them.
-  func forgetThisPhone(_ identity: AuthenticatedSession) async throws {
-    _ = try? await selection?.value
-
-    for token in Set([savedToken, attemptedToken].compactMap { $0 }) {
-      try await api.removePhone(token: identity.bearerToken, pushToken: token)
-    }
-
-    attemptedToken = nil
   }
 
   /// Turning push on for no phone yet, or for this one, asks for permission first; for another
@@ -182,8 +159,8 @@ final class StudyRemindersStore {
       return .failed
     }
 
-    let selected = await cache.mutate(invalidating: [.studyReminder]) { identity in
-      try await select(token, for: identity)
+    let selected = await cache.mutate(invalidating: [.studyReminder]) { [api] identity in
+      try await api.selectPhone(token: identity.bearerToken, pushToken: token)
     }
 
     guard case .done = selected else {
@@ -201,18 +178,6 @@ final class StudyRemindersStore {
     }
 
     return show(enabled) ? .on : .failed
-  }
-
-  /// Runs on even when its caller stops waiting, so sign-out can wait for it.
-  private func select(_ token: String, for identity: AuthenticatedSession) async throws
-    -> StudyReminder
-  {
-    attemptedToken = token
-    let selection = Task { [api] in
-      try await api.selectPhone(token: identity.bearerToken, pushToken: token)
-    }
-    self.selection = selection
-    return try await selection.value
   }
 
   /// A failure may come after the phone saved, so what's shown is read again.

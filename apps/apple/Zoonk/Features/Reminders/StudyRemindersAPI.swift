@@ -6,10 +6,8 @@ protocol StudyRemindersAPIClient: Sendable {
   func updateReminder(token: String, _ change: StudyReminderChange) async throws -> StudyReminder
   /// True only for the call that marked the offer shown.
   func claimOffer(token: String) async throws -> Bool
-  /// Makes this phone the one push goes to; push stays as it was.
+  /// Makes this phone the one push goes to, for as long as this session lasts; push stays as it was.
   func selectPhone(token: String, pushToken: String) async throws -> StudyReminder
-  /// Removes the phone only while it's still `pushToken`.
-  func removePhone(token: String, pushToken: String) async throws
 }
 
 struct StudyRemindersAPI: StudyRemindersAPIClient {
@@ -80,16 +78,4 @@ struct StudyRemindersAPI: StudyRemindersAPIClient {
     }
   }
 
-  func removePhone(token: String, pushToken: String) async throws {
-    try await clients.perform(token: token) { client in
-      switch try await client.removeCurrentUserStudyReminderPhone(path: .init(token: pushToken)) {
-      case .ok:
-        return
-      case .unauthorized:
-        throw APIError.unauthorized
-      default:
-        throw APIError.unavailable
-      }
-    }
-  }
 }

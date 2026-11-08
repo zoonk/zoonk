@@ -130,67 +130,6 @@ final class StudyRemindersTests: XCTestCase {
     XCTAssertEqual(phone, "new-token", "B's failed selection must leave A's token refresh possible")
   }
 
-  func testSignOutRemovesATokenWhoseSelectionResponseWasLost() async throws {
-    let context = try await context(token: "a")
-    context.defaults.set("token-a", forKey: "studyReminderPushToken")
-    let api = RemindersAPIStub(phones: ["a": "token-a"], selectionResponseLost: true)
-    let store = StudyRemindersStore(
-      api: api, cache: AppCache(session: context.session), push: PushStub(token: "token-b"),
-      defaults: context.defaults)
-    context.session.willSignOut = { try await store.forgetThisPhone($0) }
-
-    let result = await store.useThisPhone()
-    await context.session.signOut()
-
-    XCTAssertEqual(result, .failed)
-    XCTAssertNil(context.session.authenticatedSession)
-    let phone = await api.phone(for: "a")
-    XCTAssertNil(phone, "the server took token-b, so signing out removes it too")
-  }
-
-  func testSignOutDuringUseThisDeviceRemovesThePhoneWithoutASavedToken() async throws {
-    let context = try await context(token: "a")
-    let selection = RegistrationGate()
-    let api = RemindersAPIStub(phones: ["a": "other-phone"], selectionGate: selection)
-    let store = StudyRemindersStore(
-      api: api, cache: AppCache(session: context.session), push: PushStub(token: "this-phone"),
-      defaults: context.defaults)
-    context.session.willSignOut = { try await store.forgetThisPhone($0) }
-    let setup = Task { await store.useThisPhone() }
-    await selection.waitUntilStarted()
-    let committed = await api.phone(for: "a")
-    XCTAssertEqual(committed, "this-phone", "the server took the selection before answering")
-
-    let signOut = Task { await context.session.signOut() }
-    await Task.yield()
-    selection.finish()
-    await signOut.value
-    _ = await setup.value
-
-    XCTAssertNil(context.session.authenticatedSession)
-    let phone = await api.phone(for: "a")
-    XCTAssertNil(phone, "signed-out A must no longer send reminders to this phone")
-  }
-
-  func testSignOutWaitsUntilThePhoneIsRemoved() async throws {
-    let context = try await context(token: "a")
-    context.defaults.set("phone", forKey: "studyReminderPushToken")
-    let api = RemindersAPIStub(phones: ["a": "phone"], removalFails: true)
-    let store = StudyRemindersStore(
-      api: api, cache: AppCache(session: context.session), push: PushStub(token: "phone"),
-      defaults: context.defaults)
-    context.session.willSignOut = { try await store.forgetThisPhone($0) }
-
-    await context.session.signOut()
-
-    let phone = await api.phone(for: "a")
-    XCTAssertEqual(phone, "phone")
-    XCTAssertEqual(
-      context.session.authenticatedSession?.bearerToken, "a",
-      "a sign-out that left this phone receiving A's reminders didn't happen, so it can be retried")
-    XCTAssertEqual(context.session.failure, .network)
-  }
-
   func testPickedTimesRoundToTheQuarterHourTheyArriveAt() {
     XCTAssertEqual(ReminderTime.rounded("20:07"), "20:00")
     XCTAssertEqual(ReminderTime.rounded("20:08"), "20:15")
@@ -293,24 +232,18 @@ private final class PushStub: PushAccess {
 private actor RemindersAPIStub: StudyRemindersAPIClient {
   private(set) var calls: [String] = []
   private var phones: [String: String]
-  private let removalFails: Bool
   private let updateFails: Bool
   private let selectionGate: RegistrationGate?
   private let selectionErrorToken: String?
-  /// The server takes the selection, but its answer never arrives.
-  private let selectionResponseLost: Bool
 
   init(
-    phones: [String: String] = [:], removalFails: Bool = false, updateFails: Bool = false,
-    selectionGate: RegistrationGate? = nil, selectionErrorToken: String? = nil,
-    selectionResponseLost: Bool = false
+    phones: [String: String] = [:], updateFails: Bool = false,
+    selectionGate: RegistrationGate? = nil, selectionErrorToken: String? = nil
   ) {
     self.phones = phones
-    self.removalFails = removalFails
     self.updateFails = updateFails
     self.selectionGate = selectionGate
     self.selectionErrorToken = selectionErrorToken
-    self.selectionResponseLost = selectionResponseLost
   }
 
   func phone(for token: String) -> String? { phones[token] }
@@ -342,24 +275,7 @@ private actor RemindersAPIStub: StudyRemindersAPIClient {
 
     phones[token] = pushToken
     await selectionGate?.wait()
-
-    if selectionResponseLost {
-      throw APIError.network
-    }
-
     return reminder(token)
-  }
-
-  func removePhone(token: String, pushToken: String) async throws {
-    calls.append("remove \(token) \(pushToken)")
-
-    if removalFails {
-      throw APIError.network
-    }
-
-    if phones[token] == pushToken {
-      phones[token] = nil
-    }
   }
 
   private func reminder(_ token: String) -> StudyReminder {
