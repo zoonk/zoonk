@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -42,6 +43,15 @@ async function readReadiness(goalId: string) {
 }
 
 describe("the onboarding view's plan readiness", () => {
+  it("keeps a failed rebuild behind Try again rather than revealing its old graph", async () => {
+    const { goal, library } = await setup();
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+    await prisma.plan.update({ data: { buildFailedAt: new Date() }, where: { goalId: goal.id } });
+
+    await expect(readReadiness(goal.id)).resolves.toStrictEqual({ time: BUILDING, view: BUILDING });
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: false } });
+  });
+
   it("holds the old plan's reveal while its rebuild is owed or running", async () => {
     const { goal, library } = await setup();
     await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });

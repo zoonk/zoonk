@@ -297,7 +297,7 @@ export async function buildPlanView({
       todayBlocks,
     }),
     planId: context.plan.id,
-    ready: savedContext.phases.length > 0,
+    ready: savedContext.phases.length > 0 && !savedContext.plan.buildFailedAt,
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,

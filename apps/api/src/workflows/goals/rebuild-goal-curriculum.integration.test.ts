@@ -14,13 +14,23 @@ import { rebuildGoalCurriculumWorkflow } from "./rebuild-goal-curriculum-workflo
 
 vi.mock("@zoonk/ai/tasks/identity/goal-specificity", () => ({ classifyGoalSpecificity: vi.fn() }));
 
+async function owedRebuild(goalId: string, userId: string) {
+  const row = await prisma.followUp.create({
+    data: { input: { goalId }, key: goalId, kind: "rebuildGoalCurriculum", userId },
+  });
+
+  return { id: row.id, revision: row.revision };
+}
+
 describe(rebuildGoalCurriculumWorkflow, () => {
   it("closes its composed stream when the goal was deleted", async () => {
     const goalId = crypto.randomUUID();
+    const user = await userFixture();
+    const followUp = await owedRebuild(goalId, user.id);
 
     const rebuildId = await startOnce(
       rebuildGoalCurriculumWorkflow,
-      [{ goalId }],
+      [{ followUp, goalId }],
       `rebuild-ask:${goalId}`,
     );
 
@@ -40,6 +50,7 @@ describe(rebuildGoalCurriculumWorkflow, () => {
     });
 
     const plan = await planFixture({ goalId: goal.id });
+    const followUp = await owedRebuild(goal.id, user.id);
 
     const firstId = await startOnce(
       heldInitialCurriculum,
@@ -58,7 +69,7 @@ describe(rebuildGoalCurriculumWorkflow, () => {
 
     const rebuildId = await startOnce(
       rebuildGoalCurriculumWorkflow,
-      [{ goalId: goal.id }],
+      [{ followUp, goalId: goal.id }],
       `rebuild-ask:${goal.id}`,
     );
 

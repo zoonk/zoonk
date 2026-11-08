@@ -20,7 +20,7 @@ export async function readPlanReadiness({
   const [[plan], rebuilding] = await Promise.all([
     prisma.$queryRaw<PlanReadinessRow[]>`
     SELECT
-      COALESCE(phases <> '[]'::jsonb AND graph -> 'skills' <> '[]'::jsonb, false) AS built,
+      COALESCE(build_failed_at IS NULL AND phases <> '[]'::jsonb AND graph -> 'skills' <> '[]'::jsonb, false) AS built,
       'placement'::"PlanSetupTask" = ANY(setup_tasks) AS "owesPlacement",
       notice_wait_until AS "noticeWaitUntil"
     FROM plans WHERE goal_id = ${goalId}::uuid`,

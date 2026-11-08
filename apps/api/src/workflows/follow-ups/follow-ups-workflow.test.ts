@@ -6,7 +6,6 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
-import { getRun } from "workflow/api";
 import { HookConflictError } from "workflow/errors";
 import { getStartMock } from "../_test-utils/start-mock";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
@@ -26,50 +25,6 @@ const CAUSE = {
 };
 
 describe(followUpsWorkflow, () => {
-  it("keeps a rebuild owed until its run finishes so readiness cannot reveal the old plan", async () => {
-    const user = await userFixture();
-    const goal = await goalFixture({ userId: user.id });
-
-    await prisma.followUp.create({
-      data: {
-        input: { goalId: goal.id },
-        key: goal.id,
-        kind: "rebuildGoalCurriculum",
-        userId: user.id,
-      },
-    });
-
-    const completed = Promise.withResolvers<null>();
-    const followed = Promise.withResolvers<null>();
-
-    vi.mocked(getRun).mockImplementation(
-      () =>
-        ({
-          get returnValue() {
-            followed.resolve(null);
-            return completed.promise;
-          },
-        }) as never,
-    );
-
-    const running = followUpsWorkflow({ userId: user.id });
-
-    try {
-      const outcome = await Promise.race([
-        running.then(() => "ended"),
-        followed.promise.then(() => "waiting"),
-      ]);
-
-      expect(outcome).toBe("waiting");
-      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
-    } finally {
-      completed.resolve(null);
-      await running;
-    }
-
-    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
-  });
-
   it("starts one rebuild for a coalesced answer revision", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -88,11 +43,11 @@ describe(followUpsWorkflow, () => {
 
     expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
       rebuildGoalCurriculumWorkflow,
-      [{ goalId: goal.id }],
+      [{ followUp: { id: owed.id, revision: owed.revision }, goalId: goal.id }],
       { experimental_hook: { token: `goal-rebuild:${goal.id}:${owed.id}:2` } },
     );
 
-    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("starts fresh placement preparation for an answer saved after an earlier run began", async () => {

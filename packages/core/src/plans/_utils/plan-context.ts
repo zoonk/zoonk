@@ -25,6 +25,7 @@ export type PlanContext = {
   items: ContextPlanItem[];
   plan: Pick<
     Plan,
+    | "buildFailedAt"
     | "coveredShare"
     | "estimateHours"
     | "id"
@@ -136,6 +137,7 @@ export async function loadPlanContext({
     items: plan.items.map((item) => toContextItem(item)),
     phases: parsePlanPhases(plan.phases),
     plan: {
+      buildFailedAt: plan.buildFailedAt,
       coveredShare: plan.coveredShare,
       estimateHours: plan.estimateHours,
       id: plan.id,

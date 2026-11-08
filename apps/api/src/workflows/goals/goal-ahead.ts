@@ -184,7 +184,6 @@ async function prepareMockQuestions({
   ]);
 }
 
-/** A rebuilt goal's learner is past placement, so only a first build writes their own work. */
 export function prepareAhead({
   context,
   inputs,
