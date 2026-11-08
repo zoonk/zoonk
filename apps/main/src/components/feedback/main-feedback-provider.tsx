@@ -1,5 +1,6 @@
 "use client";
 
+import { readBrowserSession } from "@/lib/workflow/auth-headers";
 import { type ContentFeedbackAdapters, ContentFeedbackProvider } from "@zoonk/learn/feedback";
 import { safeAsync } from "@zoonk/utils/error";
 import { sendFeedbackRequest } from "./feedback-request";
@@ -9,10 +10,7 @@ import { sendFeedbackRequest } from "./feedback-request";
  * the form opens, since this provider wraps every page.
  */
 async function getViewerEmail(): Promise<string | null> {
-  const { data: session } = await safeAsync(async () => {
-    const { authClient } = await import("@zoonk/auth/client");
-    return authClient.getSession();
-  });
+  const { data: session } = await safeAsync(readBrowserSession);
 
   const user = session?.data?.user;
 

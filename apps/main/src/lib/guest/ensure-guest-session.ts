@@ -1,5 +1,6 @@
 import { ensureLearnerSummary } from "@/lib/learner/learner-store";
 import { carryUsageDataChoiceToAccount } from "@/lib/usage-data/usage-data-choice";
+import { keepSessionToken, readBrowserSession } from "@/lib/workflow/auth-headers";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
@@ -16,8 +17,7 @@ const FAILED: GuestSession = { status: "failed" };
  * could replace a signed-in learner's session. The auth client loads on the first tap that needs it.
  */
 async function startGuestSession(): Promise<GuestSession> {
-  const { authClient } = await import("@zoonk/auth/client");
-  const { data, error: checkError } = await authClient.getSession();
+  const { data, error: checkError } = await readBrowserSession();
 
   if (checkError) {
     logError("[ensureGuestSession] Could not check the session:", checkError);
@@ -28,12 +28,15 @@ async function startGuestSession(): Promise<GuestSession> {
     return { learnerId: data.user.id, status: "ready" };
   }
 
+  const { authClient } = await import("@zoonk/auth/client");
   const { data: guest, error } = await authClient.signIn.anonymous();
 
   if (error || !guest) {
     logError("[ensureGuestSession] Could not start a guest session:", error);
     return error?.code === BOT_CHECK_REFUSED ? { status: "blocked" } : FAILED;
   }
+
+  keepSessionToken(guest.token);
 
   // A visitor's choice goes with the guest before its first learning, so the server's events follow it.
   if (!(await carryUsageDataChoiceToAccount())) {
