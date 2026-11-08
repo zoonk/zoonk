@@ -19,6 +19,7 @@ An eval's job is to find the cheapest model that matches a higher tier's quality
 - First say what matters most for this task: quality when it needs the best output, cost when keeping spend down comes first, or latency when speed is critical. Then pick the best balance.
 - When a cheaper model reaches the same or very similar quality, use it. It's usually faster too.
 - Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected.
+- A model's labels tend to favor its own family. When hand labels decide between models, label blind with two families, then read the outputs where the leading models differ.
 
 ## Regression cases
 
