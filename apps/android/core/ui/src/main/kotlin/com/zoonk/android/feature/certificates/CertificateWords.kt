@@ -49,6 +49,14 @@ fun certificateLevelName(
     return cefrRange?.let { stringResource(R.string.certificates_level_range, level, it) } ?: level
 }
 
+private const val WORD_JOINER = "\u2060"
+
+/**
+ * Main's `keepLevelTogether`: a line may break after a dash, which splits a CEFR range ("A1–" / "A2")
+ * in a title. Only for titles: a name the learner copies must not carry the invisible joiner.
+ */
+fun String.keepingLevelTogether(): String = replace("–", "–$WORD_JOINER")
+
 @Composable
 @ReadOnlyComposable
 fun CertificateName.words(): String =

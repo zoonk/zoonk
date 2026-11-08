@@ -66,6 +66,7 @@ import com.zoonk.android.feature.certificates.caption
 import com.zoonk.android.feature.certificates.certificateLevelName
 import com.zoonk.android.feature.certificates.certificateNameModel
 import com.zoonk.android.feature.certificates.fileName
+import com.zoonk.android.feature.certificates.keepingLevelTogether
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.certificates.pictureLabel
 import com.zoonk.android.feature.certificates.pictureUrl
@@ -375,7 +376,9 @@ private fun NameRow(
 @Composable
 private fun title(awarded: List<CertificateName>): String {
     val only = awarded.singleOrNull() ?: return pluralStringResource(R.plurals.certificates_earned, awarded.size, awarded.size)
-    return only.courseLevel?.let { stringResource(R.string.certificates_level_complete, certificateLevelName(it, only.cefrRange)) }
+    return only.courseLevel?.let {
+        stringResource(R.string.certificates_level_complete, certificateLevelName(it, only.cefrRange).keepingLevelTogether())
+    }
         ?: stringResource(R.string.certificates_course_complete)
 }
 

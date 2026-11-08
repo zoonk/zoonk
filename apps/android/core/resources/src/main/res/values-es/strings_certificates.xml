@@ -34,7 +34,7 @@
   "certificates_download": "b07cae933bc6b52d6ee57296f3a099d7f5522dd226fbac71cc5c121c37801db4",
   "certificates_downloaded": "1eca5503d6653bb31f5cf88e038826a0666f88b0028c0edeec5caaca39cffa22",
   "certificates_earned": "700d8ab699f9c1481b3d6ca3b8761d7dc429d78648ac2e33f1b1176b2d7d1def",
-  "certificates_empty_description": "1fc45890a65781919d1c92c3104196cdcf576a737563c2d82c3386f0ba49b5ca",
+  "certificates_empty_description": "424c90934b8be2d7f016a7b42981f7afa710a3cca697b1bd64bf45da8d6a36bd",
   "certificates_empty_title": "b31835070fc09afc590c0917804d87f230d193f0193a71ed07d81ccf8a7a17ff",
   "certificates_get": "c0eb7a898ca0a2261536fe476e4d803790b9420f95385e96da85e379aec5f73e",
   "certificates_issued_on": "b411be2fcab85fe4ab8efa05abfa144251f8bfd71c354352b4084ea51bed629e",
@@ -83,7 +83,7 @@
   "certificates_title": "269aac309b2a2f38240b639c2c8bcf97ba08e4f6dd65c48c3032911e0f5fd50b",
   "certificates_topics_covered": "dafd7e17ebfee389b06f0bdacef4020a1d8625a59ee6cd835808e11abe323dfa",
   "certificates_up_next": "31b02f58031ccdd2729bc943b354bfbbbacffb8f31f099b97b3dd17df34db6d8",
-  "certificates_up_next_course": "85f64786602d8c94cb72cee67b6a35114cdf33250eed7503fb810c030979ccc4",
+  "certificates_up_next_course": "44f6d228943c7e4ceff8922517d6dc0b6068ee45ce0b83130e8df2c0d15314eb",
   "certificates_verified": "573a1ee0c8b125357841dd1648132a3b53759ae1de86acbf30af4a5d8b9e2b0a",
   "certificates_view": "ca118f9eac8814366e7c0ceb73585d2e5ffb7c7fc95edc84ae002f8b411fb8af",
   "certificates_view_several": "a63b9ce8847d9af9b0c42c9e3da77b3eb21c276aa8efd6718ed7a1a2878f927f"
@@ -101,12 +101,12 @@
     <string name="certificates_lead">Un certificado por cada nivel y plan que completes.</string>
     <!-- What a certificate certifies: a finished course level or plan. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificado de finalización</string>
-    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <!-- A language course level and its CEFR range, such as Intermediate (B1–B2). -->
     <string name="certificates_level_range">%1$s (%2$s)</string>
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Aún no tienes certificados</string>
-    <string name="certificates_empty_description">Tus certificados aparecerán aquí cuando completes un nivel o un plan.</string>
+    <string name="certificates_empty_description">Tus certificados aparecen aquí cuando completas un nivel o un plan y estudias al menos la mitad de sus lecciones.</string>
     <string name="certificates_continue_learning">Seguir aprendiendo</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Ver certificado</string>
@@ -114,7 +114,7 @@
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Obtener tu certificado</string>
     <string name="certificates_up_next">A continuación</string>
-    <string name="certificates_up_next_course">Recibes tu certificado cuando terminas el plan</string>
+    <string name="certificates_up_next_course">Recibes tu certificado cuando completas el plan y estudias al menos la mitad de sus lecciones</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">¡Curso completado!</string>
     <string name="certificates_level_complete">¡%1$s completado!</string>

@@ -34,7 +34,7 @@
   "certificates_download": "eb6e1e11f5ff6d31905645cb6acecb49c1c167e70d5187e828ab830ec9209020",
   "certificates_downloaded": "6c150eb7c3b809be23c078b3dc8f27b1da93db1f0b377834a2014de8d4c2834e",
   "certificates_earned": "014b3ffd2bcbb6d17061123bf8ed3c754e8d6ffc0ee17e7f29fb09b748adfc7f",
-  "certificates_empty_description": "22d9eca34576e40c9ac6221c736852d057a77dfccba58e1d66a31e41a39f2b2f",
+  "certificates_empty_description": "4d65e21d4b52a1e9daeb82f8577d4a307b8d0f679f644c229bb3411bb28e008a",
   "certificates_empty_title": "c52e11f81ea5d868b3e5e6dfab5208f296228425fb79eaaeb6e676408f9d2bff",
   "certificates_get": "d08cb9679a701fbe4fdaf80a72ee9d77334278d8007c0e705705be9b0b9e78f3",
   "certificates_issued_on": "4366a6379e28caa5f0ddfe4b9ecf247d851e75ca0e07df94c796859c7e239f79",
@@ -83,7 +83,7 @@
   "certificates_title": "e7dd358dc931effbbf24d9491bf7d473b1db8e856c697ea1209be98ea816e65c",
   "certificates_topics_covered": "0090afe0bb5329a502e5847116df80cbda15ab483a4fcd977b5d905a5908de0a",
   "certificates_up_next": "41ac7c68c0b715bc2e2c4f2c06bde1a1d78af8fedbf29de5a60af5549faa6f23",
-  "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
+  "certificates_up_next_course": "5a654251c043b82a1549195501c8a872bd7934a6f312730ca4b6f63db7f6ff47",
   "certificates_verified": "ebc12e6b7894dae692f213859e6bec215903b9c3dc12637a0cb7e2e5d928befa",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754",
   "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9"
@@ -100,12 +100,12 @@
     <string name="certificates_lead">Tamamladığın her seviye ve plan için bir sertifika.</string>
     <!-- What a certificate certifies: a finished course level or plan. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Tamamlama sertifikası</string>
-    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <!-- A language course level and its CEFR range, such as Intermediate (B1–B2). -->
     <string name="certificates_level_range">%1$s (%2$s)</string>
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Henüz sertifikan yok</string>
-    <string name="certificates_empty_description">Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür.</string>
+    <string name="certificates_empty_description">Bir seviyeyi veya planı derslerinin en az yarısını çalışarak tamamladığında sertifikaların burada görünür.</string>
     <string name="certificates_continue_learning">Öğrenmeye devam et</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Sertifikayı görüntüle</string>
@@ -113,7 +113,7 @@
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Sertifikanı al</string>
     <string name="certificates_up_next">Sıradaki</string>
-    <string name="certificates_up_next_course">Planı tamamladığında sertifikanı alırsın</string>
+    <string name="certificates_up_next_course">Planı derslerinin en az yarısını çalışarak tamamladığında sertifikanı alırsın</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs tamamlandı!</string>
     <string name="certificates_level_complete">%1$s tamamlandı!</string>
