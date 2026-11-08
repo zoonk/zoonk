@@ -287,7 +287,7 @@ final class LessonPlayerStore {
     starting = Task { await start(lesson, identity: identity) }
   }
 
-  private func ensureRun() async -> Bool {
+  func ensureRun() async -> Bool {
     activate()
     await starting?.value
     return state?.runId != nil && !Task.isCancelled

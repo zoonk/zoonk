@@ -134,10 +134,14 @@ struct SpokenHeard: Hashable, Sendable {
 
 struct SpokenAnswerContext {
   let lessonId: String
-  let studySessionId: String?
   let stepId: String
   let content: SpokenAnswerContent
   let isLocked: Bool
+  /// Spoken grading needs the lesson's run: a recording made while it starts waits for it, and
+  /// isn't graded when it doesn't start.
+  let waitForRun: @MainActor () async -> Bool
+  /// The run's session, once it started.
+  let studySessionId: @MainActor () -> String?
   let onGraded: @MainActor (SpokenAnswerVerdict) -> Void
   /// The microphone is off for the app: the screen offers typing instead.
   let onBlocked: @MainActor () -> Void
