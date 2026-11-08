@@ -230,11 +230,12 @@ export function workflowRunReducer(
         reconnectIn: null,
       };
     case "restart":
-      // The deck is the goal's, so its card stays through Try again.
+      // The deck is the goal's, so its card, or the word it won't come, stays through Try again.
       return {
         ...INITIAL_WORKFLOW_RUN_STATE,
         connection: state.connection + 1,
         replaced: [...state.replaced, ...action.runIds],
+        steps: state.steps.warmUpFailed ? { warmUpFailed: state.steps.warmUpFailed } : {},
         warmUpId: state.warmUpId,
       };
     default:

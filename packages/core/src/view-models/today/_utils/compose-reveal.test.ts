@@ -65,7 +65,7 @@ describe(composeRevealDays, () => {
     ]);
   });
 
-  it("counts Today's minutes from what it lists, and the week's study days with their time", () => {
+  it("counts Today's minutes from what it lists, in the week's time too, with its other study days", () => {
     const days = [
       day("2026-11-08", [lesson("a")], 15),
       day("2026-11-09", [lesson("b")], 15),
@@ -79,7 +79,7 @@ describe(composeRevealDays, () => {
 
     expect({ minutes: reveal.minutes, week: reveal.week }).toStrictEqual({
       minutes: 18,
-      week: { days: 2, minutes: 30 },
+      week: { days: 2, minutes: 18 + 15 },
     });
   });
 

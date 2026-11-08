@@ -299,11 +299,11 @@ describe(getLessonWaitingState, () => {
     });
   });
 
-  it("names the goal's warm-up deck only while the goal's first lesson is waited for", async () => {
+  it("names the goal's ready warm-up deck only while the goal's first lesson is waited for", async () => {
     const { goal, plan, user } = await learnerWithPlan();
 
     const [deck, first, finished] = await Promise.all([
-      warmUpFixture(),
+      warmUpFixture({ status: "writing" }),
       libraryLessonFixture({ contentRunId: randomUUID(), contentStatus: "running" }),
       libraryLessonFixture({ contentStatus: "completed" }),
     ]);
@@ -315,6 +315,12 @@ describe(getLessonWaitingState, () => {
     ]);
 
     mockSession(user.id);
+
+    await expect(getLessonWaitingState({ lessonId: first.id })).resolves.toMatchObject({
+      state: { status: "generating", warmUpId: null },
+    });
+
+    await prisma.warmUp.update({ data: { status: "ready" }, where: { id: deck.id } });
 
     await expect(getLessonWaitingState({ lessonId: first.id })).resolves.toMatchObject({
       state: { status: "generating", warmUpId: deck.id },

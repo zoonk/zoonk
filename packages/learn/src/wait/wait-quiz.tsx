@@ -30,6 +30,12 @@ type Dealt = { pickedId: string | null; position: number };
 
 const POSITION_KEY = "zoonk:warm-up:";
 
+/**
+ * The decks whose card was on screen in this tab. A wait can mount again with the same card (the
+ * plan's wait turns to its notice's, then lesson 1's), and Warm-Up Shown counts one showing.
+ */
+const shownDecks = new Set<string>();
+
 /** The next card the learner hasn't guessed in this tab, so another wait goes on from there. */
 function readPosition(deckId: string): number {
   const saved = Number(tabStorage.get(`${POSITION_KEY}${deckId}`));
@@ -42,7 +48,7 @@ export type WaitQuizState = {
   next: () => void;
   pick: (optionId: string) => void;
   pickedId: string | null;
-  /** The card is on screen: counted once per deck, however often the learner switches views. */
+  /** The card is on screen: counted once per deck in this tab, however often a wait mounts. */
   shown: () => void;
 };
 
@@ -76,7 +82,6 @@ export function useWaitQuiz({
   const clock = useOnboardingClock();
   const eventGoalId = goalId ?? clock?.goalId;
   const moved = useRef(false);
-  const shownDeckId = useRef<string | null>(null);
   const mounted = useIsMounted();
   const [dealt, setDealt] = useState<Dealt | null>(null);
   const stored = deck && mounted ? { pickedId: null, position: readPosition(deck.id) } : null;
@@ -136,11 +141,11 @@ export function useWaitQuiz({
   };
 
   const markShown = () => {
-    if (shownDeckId.current === deck.id) {
+    if (shownDecks.has(deck.id)) {
       return;
     }
 
-    shownDeckId.current = deck.id;
+    shownDecks.add(deck.id);
 
     track({
       name: "Warm-Up Shown",

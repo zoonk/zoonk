@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { readReadyWarmUpId } from "../../library/warm-ups/claim-warm-up";
 
 /**
  * A learner well into a goal doesn't get its beginner cards again. Finished lesson runs count
@@ -39,5 +40,5 @@ export async function findFirstLessonWarmUp({
       )
     LIMIT 1`;
 
-  return goal?.warmUpId ?? null;
+  return readReadyWarmUpId(goal?.warmUpId ?? null);
 }
