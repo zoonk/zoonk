@@ -88,6 +88,7 @@ export function toCheckedItem({
   item: written,
   language,
   optionCount,
+  optionLanguage,
 }: {
   answerFormat: ItemAnswerFormat;
   format: ItemFormat;
@@ -95,8 +96,9 @@ export function toCheckedItem({
   item: GeneratedItem;
   language: string;
   optionCount: number | null;
+  optionLanguage?: string | null;
 }): CheckedItem & { problems: string[] } {
-  const item = repairItem({ item: written, language, optionCount });
+  const item = repairItem({ item: written, language: optionLanguage ?? language, optionCount });
 
   const problems = checkItem({
     ...answerFormat,
@@ -104,6 +106,7 @@ export function toCheckedItem({
     item,
     language,
     optionCount,
+    optionLanguage,
   });
 
   return { index, item, problems };
@@ -157,7 +160,7 @@ export async function createItems({
   skillId,
   source = null,
   sourceCitation = null,
-  targetLanguage = null,
+  optionLanguage = null,
 }: ItemAnswerFormat & {
   analytics?: ImageAnalytics;
   examBlueprintId?: string | null;
@@ -170,14 +173,13 @@ export async function createItems({
   skillId: string;
   source?: SourceVersion | null;
   sourceCitation?: string | null;
-  /** A language goal's options are written in it, so their numbers are read its way. */
-  targetLanguage?: string | null;
+  /** A language goal's options are in the practiced language, so their numbers are read its way. */
+  optionLanguage?: string | null;
 }): Promise<{ created: Item[]; rejected: RejectedItem[]; unchecked: string[] }> {
   const answerFormat = { entry, select };
-  const textLanguage = targetLanguage ?? language;
 
   const checked = items.map((item, index) =>
-    toCheckedItem({ answerFormat, format, index, item, language: textLanguage, optionCount }),
+    toCheckedItem({ answerFormat, format, index, item, language, optionCount, optionLanguage }),
   );
 
   const passing = checked.filter((checkedItem) => checkedItem.problems.length === 0);

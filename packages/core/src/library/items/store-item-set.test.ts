@@ -79,9 +79,9 @@ describe(storeWrittenItemSet, () => {
       examBlueprintId: null,
       format: "multipleChoice",
       language: "pt",
+      optionLanguage: "en",
       provenance: generatedProvenance(),
       skillIds: [skill.id],
-      targetLanguage: "en",
       written: writtenItemSet({
         questions: [
           dollarQuestion("visits had risen by a third"),

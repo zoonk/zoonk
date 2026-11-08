@@ -96,7 +96,7 @@ describe(createItems, () => {
     ).toStrictEqual({ content: { ...expectedContent, select: 1 }, format: "multipleChoice" });
   });
 
-  it("reads a language goal's options in the practiced language, storing them under the learner's", async () => {
+  it("reads a language goal's options in the practiced language and its setup in the learner's", async () => {
     const skill = await skillFixture({ language: "pt", targetLanguage: "en" });
 
     const item = generatedMultipleChoice({
@@ -118,15 +118,15 @@ describe(createItems, () => {
 
     const { created, rejected } = await createItems({
       format: "multipleChoice",
-      items: [item],
+      items: [item, { ...item, context: "Observe a imagem abaixo." }],
       language: "pt",
+      optionLanguage: "en",
       provenance: generatedProvenance(),
       skillId: skill.id,
-      targetLanguage: "en",
     });
 
-    expect(rejected).toStrictEqual([]);
     expect(created).toMatchObject([{ language: "pt" }]);
+    expect(rejected).toMatchObject([{ index: 1 }]);
   });
 
   it("stores how its exam answers a question: the options picked and how a number is typed", async () => {
