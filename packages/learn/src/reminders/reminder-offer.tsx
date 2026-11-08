@@ -219,7 +219,7 @@ function EmailOffer({
         <label className="sr-only" htmlFor={selectId}>
           {t("Reminder time")}
         </label>
-        <ReminderTimeSelect id={selectId} onChange={setTime} time={time} />
+        <ReminderTimeSelect disabled={isSaving} id={selectId} onChange={setTime} time={time} />
         <span className="text-muted-foreground text-xs">{zone}</span>
       </div>
 
