@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
@@ -99,13 +100,24 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   noProgressUser,
   userWithoutProgress: page,
 }) => {
+  const events = await captureAnalytics(page);
   const { deck, goal } = await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  await expect.poll(() => events.filter((event) => event.name === "Warm-Up Shown").length).toBe(1);
+  await page.reload();
   await page.getByRole("button", { name: PLAY_QUIZ }).click();
 
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
 
   await card.getByRole("radio", { name: /alarm scent/u }).click();
   await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await expect
+    .poll(() => events.filter((event) => event.name === "Warm-Up Answered").length)
+    .toBe(1);
+
+  expect(events.filter((event) => event.name === "Warm-Up Shown")).toHaveLength(1);
 
   await mapGoalSkills({ goalId: goal.id });
 
@@ -124,6 +136,29 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   await expect(
     page.getByRole("radiogroup", { name: "How many eyes does a honey bee have?" }),
   ).toBeVisible();
+});
+
+test("blocked tab storage leaves the wait quiz playable", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(globalThis, "sessionStorage", {
+      get() {
+        throw new DOMException("Storage is blocked", "SecurityError");
+      },
+    });
+  });
+
+  await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  await page
+    .getByRole("radiogroup", { name: FIRST_CARD })
+    .getByRole("radio", { name: /alarm scent/u })
+    .click();
+
+  await expect(page.getByText("Good guess!")).toBeVisible();
 });
 
 test("a learner who didn't guess moves on to the time question as soon as the plan is ready", async ({
