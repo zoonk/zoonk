@@ -1,17 +1,21 @@
 import "server-only";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { readStudyDay } from "../../sessions/_utils/read-study-day";
-import { type DayView } from "../../sessions/day-view";
 import { admitToday } from "./_utils/admit-today";
+import { type PlanRevealDays, composeRevealDays } from "./_utils/compose-reveal";
 import { readDaySession } from "./_utils/day-session";
 import { type TodayViewResult } from "./get-today-view";
 
+export type { PlanRevealDays } from "./_utils/compose-reveal";
+
 export type PlanRevealTodayResult =
   | Exclude<TodayViewResult, { status: "ready" }>
-  | { session: DayView; status: "ready" };
+  | { reveal: PlanRevealDays; status: "ready" };
 
 /**
- * The day Today will show, read for the plan reveal before the learner has seen it. Like Today's
- * read, it never creates or settles the day.
+ * The plan reveal's Today and first week, read before the learner has seen their plan: the day
+ * Today will show, and the six days after it composed with it so each lesson shows once. Like
+ * Today's read, it never creates or settles the day.
  */
 export async function getPlanRevealToday(
   goalId: string,
@@ -26,7 +30,11 @@ export async function getPlanRevealToday(
   }
 
   const { goal, userId } = admission.owned;
-  const day = await readStudyDay({ goal, now: new Date(), timeZone, userId });
+
+  const [day, plan] = await Promise.all([
+    readStudyDay({ goal, now: new Date(), timeZone, userId }),
+    getGoalPlan(goalId),
+  ]);
 
   if (!day) {
     return {
@@ -37,5 +45,10 @@ export async function getPlanRevealToday(
   }
 
   const { session } = await readDaySession(day);
-  return { session, status: "ready" };
+  const days = plan.status === "ready" ? plan.nextDays : [];
+
+  return {
+    reveal: { ...composeRevealDays({ blocks: session.blocks, days }), today: session },
+    status: "ready",
+  };
 }

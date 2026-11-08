@@ -20,7 +20,8 @@ async function getRevealToday(
     return todayUnavailableError(result);
   }
 
-  return NextResponse.json(serializeStudySession(result.session));
+  const { today, ...days } = result.reveal;
+  return NextResponse.json({ ...days, today: serializeStudySession(today) });
 }
 
 export const GET = withApiErrorBoundary(getRevealToday);

@@ -110,8 +110,8 @@ async function StepsContent({ params }: Props) {
           plan?.status === "ready"
             ? {
                 plan: plan.plan,
+                reveal: today?.status === "ready" ? today.reveal : null,
                 syllabus: syllabus?.status === "ready" ? syllabus.syllabus : null,
-                today: today?.status === "ready" ? today.session : null,
               }
             : null
         }

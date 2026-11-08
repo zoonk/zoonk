@@ -57,7 +57,7 @@ const planToolSchema = z
   })
   .meta({ id: "PlanTool" });
 
-const planDaySchema = z
+export const planDaySchema = z
   .object({
     date: isoDateSchema,
     items: z.array(planItemSchema),
@@ -143,12 +143,6 @@ export const planResponseSchema = z
       ),
     goalId: uuidSchema(),
     languageAim: languageAimViewSchema.nullable(),
-    nextDays: z
-      .array(planDaySchema)
-      .meta({
-        description:
-          "Today and the six days after it, in the goal's zone, whatever the weekday: the reveal's first week (`week` runs Monday to Sunday). After today each item is listed once, on the first day it's laid out on, so a lesson split across days isn't repeated (a later day may then list nothing though it has time). Today's own day comes from GET /goals/{goalId}/plan-reveal/today: list the days after it without the lessons its blocks already list",
-      }),
     notice: z
       .enum(["reading", "usual"])
       .nullable()

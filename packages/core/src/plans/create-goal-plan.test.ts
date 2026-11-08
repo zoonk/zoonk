@@ -566,8 +566,9 @@ describe(createGoalPlan, () => {
     // What the reveal reads: the lesson checked on today, and counted as done.
     const result = await getGoalPlan(goal.id);
     const read = result.status === "ready" ? result.plan : null;
+    const days = result.status === "ready" ? result.nextDays : [];
 
-    expect(read?.nextDays[0]?.items.find((item) => item.lessonId === finished.id)).toMatchObject({
+    expect(days[0]?.items.find((item) => item.lessonId === finished.id)).toMatchObject({
       status: "done",
     });
 
@@ -757,7 +758,9 @@ describe(getGoalPlan, () => {
 
     expect(plan?.week.days.at(-1)?.date).toBe("2020-10-04");
 
-    expect(plan?.nextDays.map((day) => [day.date, day.state])).toStrictEqual([
+    const days = result.status === "ready" ? result.nextDays : [];
+
+    expect(days.map((day) => [day.date, day.state])).toStrictEqual([
       ["2020-10-04", "today"],
       ["2020-10-05", "upcoming"],
       ["2020-10-06", "upcoming"],
@@ -767,11 +770,7 @@ describe(getGoalPlan, () => {
       ["2020-10-10", "upcoming"],
     ]);
 
-    expect(plan?.nextDays[0]?.items.map((item) => item.kind)).toStrictEqual([
-      "lesson",
-      "lesson",
-      "lesson",
-    ]);
+    expect(days[0]?.items.map((item) => item.kind)).toStrictEqual(["lesson", "lesson", "lesson"]);
   });
 
   it("reads the plan at the pace it was saved with, however others' lessons went since", async () => {

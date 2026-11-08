@@ -17,7 +17,7 @@ import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status"
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { getNoticeWaitState } from "../notice-wait";
-import { type PlanView } from "../plan-view-contract";
+import { type PlanDayView, type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
@@ -149,7 +149,7 @@ type PlanViewInput = { context: PlanContext; now: Date };
 export async function buildPlanView({
   context: savedContext,
   now,
-}: PlanViewInput): Promise<PlanView> {
+}: PlanViewInput): Promise<PlanView & { nextDays: PlanDayView[] }> {
   const {
     catchUp: selectedCatchUp,
     context,

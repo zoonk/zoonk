@@ -227,9 +227,9 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
 
   return {
     plan: result.plan,
+    reveal: today.status === "ready" ? today.reveal : null,
     status: "ready",
     syllabus: syllabus.status === "ready" ? syllabus.syllabus : null,
-    today: today.status === "ready" ? today.session : null,
   };
 }
 

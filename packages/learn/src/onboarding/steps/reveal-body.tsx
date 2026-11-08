@@ -1,7 +1,7 @@
 "use client";
 
-import { type DayView } from "@zoonk/core/sessions/day-view";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
@@ -142,9 +142,9 @@ export function RevealBody({
   isGuest,
   moment,
   onStart,
+  reveal,
   signUpHref,
   syllabus,
-  today,
 }: {
   buddy: LearnBuddy | null;
   isGuest: boolean;
@@ -152,12 +152,12 @@ export function RevealBody({
   moment: boolean;
   onStart: () => Promise<boolean>;
   signUpHref: string;
+  reveal: PlanRevealDays | null;
   syllabus: SyllabusView | null;
-  today: DayView | null;
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const started = today?.blocks.some((block) => isFinished(block)) ?? false;
+  const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
 
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
@@ -199,8 +199,8 @@ export function RevealBody({
           <RevealNoticeDay />
         </header>
 
-        <RevealToday session={today} />
-        <RevealWeek today={today} />
+        <RevealToday reveal={reveal} />
+        <RevealWeek reveal={reveal} />
 
         <div className="flex flex-col gap-2">
           <PlanPhasesBar />

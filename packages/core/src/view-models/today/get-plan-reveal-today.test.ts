@@ -64,8 +64,16 @@ describe(getPlanRevealToday, () => {
       throw new Error("Expected both days to be ready");
     }
 
-    expect(reveal.result.session.blocks.map((block) => block.kind)).toContain("review");
-    expect(reveal.result.session).toStrictEqual(today.today.session);
+    const { minutes, nextDays, today: revealToday } = reveal.result.reveal;
+    expect(revealToday.blocks.map((block) => block.kind)).toContain("review");
+    expect(revealToday).toStrictEqual(today.today.session);
+
+    expect(minutes).toBe(
+      revealToday.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+    );
+
+    expect(nextDays.length).toBeLessThanOrEqual(6);
+    expect(nextDays.every((day) => new Date(day.date) > revealToday.localDate)).toBe(true);
   });
 
   it("answers as Today does for a goal with questions left or another learner's goal", async () => {
