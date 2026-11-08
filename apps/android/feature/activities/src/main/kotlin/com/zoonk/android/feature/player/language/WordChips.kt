@@ -163,7 +163,7 @@ internal fun WordBank(
 /**
  * Main's word bank focus: a word placed or taken out with a keyboard would leave focus on the whole
  * screen, so the next Tab starts over at the top. A placed tile hands focus to the next tile left, else
- * the one before it, or to Check once the answer is complete; a word taken out hands it to the next
+ * the one before it, or to Check once the answer is complete or no tile is left; a word taken out hands it to the next
  * word in the answer, else the one before it, else the tile it went back to. A word pressed without
  * focus (a tap) leaves focus alone.
  */
@@ -184,7 +184,7 @@ internal class WordBankFocus(
         index: Int,
         used: List<Boolean>,
         complete: Boolean,
-    ) = moveTo(if (complete) primary else nearest(used.map { !it }, index)?.let { tiles[it] })
+    ) = moveTo(if (complete) primary else nearest(used.map { !it }, index)?.let { tiles[it] } ?: primary)
 
     fun removed(
         nextWord: Int?,

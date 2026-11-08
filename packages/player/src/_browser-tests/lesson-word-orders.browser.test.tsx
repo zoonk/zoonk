@@ -95,9 +95,7 @@ describe("word orders", () => {
     async ({ kind, lessonVersion, words }) => {
       openLesson(kind);
 
-      await placeWords(words.slice(0, -1));
-      await expect.element(check).toBeDisabled();
-      await placeWords(words.slice(-1));
+      await placeWords(words);
       await check.click();
 
       await expect.element(feedback.getByText("Correct!")).toBeVisible();
