@@ -17,12 +17,12 @@ if (await isClosed()) {
 
   // A reopen can arrive while the remote builds are being canceled.
   if (await isClosed()) {
-    await removePreviewAliases();
-
     if (branch) {
       await neon({ method: "DELETE", path: `/branches/${branch.id}` });
       process.stdout.write("Deleted the closed PR's database branch\n");
     }
+
+    await removePreviewAliases();
   } else {
     process.stdout.write("PR was reopened; keeping its preview\n");
   }

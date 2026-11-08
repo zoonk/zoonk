@@ -70,4 +70,39 @@ describe("Closed PR cleanup", () => {
       );
     },
   );
+
+  it("deletes the database branch even when Vercel fails to remove an address", async () => {
+    const deletions: string[] = [];
+
+    vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
+      if (url.hostname === "api.github.com") {
+        return Promise.resolve(Response.json({ state: "closed" }));
+      }
+
+      if (init.method === "DELETE") {
+        deletions.push(url.hostname);
+
+        return Promise.resolve(
+          url.hostname === "api.vercel.com"
+            ? Response.json({}, { status: 403 })
+            : Response.json({}),
+        );
+      }
+
+      if (url.pathname === "/v2/teams/test-team") {
+        return Promise.resolve(Response.json({ slug: "zoonk" }));
+      }
+
+      if (url.hostname === "api.vercel.com") {
+        return Promise.resolve(Response.json({ deployments: [], pagination: { next: null } }));
+      }
+
+      return Promise.resolve(
+        Response.json({ branches: [{ id: "br-preview", name: "preview/pr-42" }] }),
+      );
+    });
+
+    await expect(import("./cleanup.mts")).rejects.toThrow("HTTP 403");
+    expect(deletions).toContain("console.neon.tech");
+  });
 });
