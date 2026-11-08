@@ -29,8 +29,14 @@ export type TodayAdmission =
   | Exclude<TodayViewResult, { status: "ready" }>
   | { owned: Extract<OwnedGoal, { status: "ready" }>; status: "admitted" };
 
-/** Read-only; admits only an owned active goal with a built plan, completed setup and a seen reveal. */
-export async function admitToday(requestedGoalId?: string): Promise<TodayAdmission> {
+/**
+ * Read-only; admits only an owned active goal with a built plan, completed setup and a seen
+ * reveal. The reveal reads the day it introduces before it's seen (`revealing`).
+ */
+export async function admitToday(
+  requestedGoalId?: string,
+  { revealing = false }: { revealing?: boolean } = {},
+): Promise<TodayAdmission> {
   const session = await getSession();
 
   if (!session) {
@@ -64,7 +70,7 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
 
   // A plan is built while the questions are still answered, on a time the learner hasn't chosen
   // yet, and is shown once before its first day.
-  if (!built || isGoalSetupLeft(owned.goal) || isPlanRevealOwed(owned.goal)) {
+  if (!built || isGoalSetupLeft(owned.goal) || (!revealing && isPlanRevealOwed(owned.goal))) {
     return { goal: { id, kind, title }, status: "preparing", userId };
   }
 

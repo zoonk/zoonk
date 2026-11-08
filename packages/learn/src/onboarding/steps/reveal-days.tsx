@@ -1,6 +1,7 @@
 "use client";
 
 import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-contract";
+import { type DayView } from "@zoonk/core/sessions/day-view";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -22,10 +23,14 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
-import { DoneMark } from "../../_components/status-mark";
 import { isoDateToUtc } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
+import { BlockMark } from "../../session/block-mark";
+import { type DayStep } from "../../session/session-types";
+import { useBlockTitle } from "../../session/use-block-copy";
+import { isFinished, splitTodayQueue } from "../../today/today-queue";
+import { useStepLabel } from "../../today/use-row-label";
 
 const ITEM_KINDS: Record<PlanItemView["kind"], LearnKind> = {
   boss: "challenge",
@@ -37,10 +42,6 @@ const ITEM_KINDS: Record<PlanItemView["kind"], LearnKind> = {
 };
 
 const ICONS_SHOWN = 4;
-
-function isFinished(item: PlanItemView): boolean {
-  return item.status !== "todo";
-}
 
 function isTeaching(item: PlanItemView): boolean {
   return item.kind === "lesson" || item.kind === "chapter";
@@ -66,16 +67,6 @@ function useItemTitle() {
   };
 }
 
-function useChapterTitles(): ReadonlyMap<string, string> {
-  const { plan } = usePlanScreen();
-
-  return new Map(
-    plan.phases
-      .flatMap((phase) => phase.chapters)
-      .flatMap((chapter) => (chapter.chapterId ? [[chapter.chapterId, chapter.title]] : [])),
-  );
-}
-
 /** Lands on the moment's third beat, after the check and the lesson count. */
 function NextTag({ children }: { children: string }) {
   const celebrate = useCelebration();
@@ -91,30 +82,35 @@ function NextTag({ children }: { children: string }) {
   );
 }
 
-function TodayRow({ item, tag }: { item: PlanItemView; tag: string | null }) {
+function TodayRow({
+  block,
+  line,
+  tag,
+}: {
+  block: DayStep;
+  line: string | null;
+  tag: string | null;
+}) {
   const t = useExtracted();
-  const itemTitle = useItemTitle();
-  const chapterTitles = useChapterTitles();
+  const title = useBlockTitle();
   const formatDuration = useFormatDuration();
-  const finished = isFinished(item);
-  const chapter = item.chapterId ? chapterTitles.get(item.chapterId) : undefined;
-  const details = [chapter, item.minutes ? formatDuration(item.minutes) : null].filter(Boolean);
+  const details = [line, formatDuration(block.estimatedMinutes)].filter(Boolean);
 
   return (
     <ListRow data-highlighted={tag ? "" : undefined}>
       <ListRowLeading>
         <ListRowIcon>
-          {finished ? <DoneMark /> : <KindMark kind={ITEM_KINDS[item.kind]} />}
+          <BlockMark block={block} />
         </ListRowIcon>
       </ListRowLeading>
 
       <ListRowContent>
-        <ListRowTitle className={cn(finished && "text-muted-foreground")}>
-          {itemTitle(item)}
+        <ListRowTitle className={cn(isFinished(block) && "text-muted-foreground")}>
+          {title(block)}
         </ListRowTitle>
 
         <ListRowDescription>
-          {finished && `${t("Done")} · `}
+          {block.status === "completed" && `${t("Done")} · `}
           {tag && <NextTag>{tag}</NextTag>}
           {details.join(" · ")}
         </ListRowDescription>
@@ -126,45 +122,45 @@ function TodayRow({ item, tag }: { item: PlanItemView; tag: string | null }) {
 function useFormatDay() {
   const format = useFormatter();
 
-  return (isoDate: string) =>
-    format.dateTime(isoDateToUtc(isoDate), {
-      day: "numeric",
-      month: "short",
-      timeZone: "UTC",
-      weekday: "short",
-    });
+  return (date: Date) =>
+    format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC", weekday: "short" });
 }
 
-export function RevealToday() {
+/** Today's own day, in Today's order: what the learner finished, then where they go on. */
+export function RevealToday({ session }: { session: DayView | null }) {
   const t = useExtracted();
   const formatDay = useFormatDay();
   const formatDuration = useFormatDuration();
-  const { plan } = usePlanScreen();
-  const today = plan.nextDays[0];
+  const catchUp = new Set(session?.catchUp?.positions);
+  const label = useStepLabel((step) => catchUp.has(step.position));
+  const next = session?.blocks.find((block) => block.position === session.nextPosition);
 
-  if (!today || today.items.length === 0) {
+  if (!session || session.blocks.length === 0) {
     return null;
   }
 
-  const next = today.items.find((item) => !isFinished(item));
-  const nextTag = today.items.some((item) => isFinished(item)) ? t("Up next") : t("Start here");
+  const { after, before, done } = next
+    ? splitTodayQueue({ blocks: session.blocks, nextPosition: next.position })
+    : { after: [], before: [], done: session.blocks };
+
+  const nextTag = done.length > 0 ? t("Up next") : t("Start here");
 
   return (
     <PageSection aria-labelledby="reveal-today">
       <PageSectionHeader>
         <PageSectionTitle id="reveal-today">{t("Today")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${formatDay(today.date)} · ${formatDuration(today.minutes)}`}
+          {`${formatDay(session.localDate)} · ${formatDuration(session.minutes.dailyGoal)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 
       <ListGroup>
-        {today.items.map((item, index) => (
+        {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
           <TodayRow
-            item={item}
-            // oxlint-disable-next-line react/no-array-index-key -- in-memory work has no id until the day opens
-            key={item.id ?? `${item.kind}-${index}`}
-            tag={item === next ? nextTag : null}
+            block={block}
+            key={block.position}
+            line={label(block)}
+            tag={block === next ? nextTag : null}
           />
         ))}
       </ListGroup>
@@ -196,7 +192,7 @@ function WeekDayRow({ day }: { day: PlanDayView }) {
   return (
     <ListRow>
       <ListRowLeading className="text-muted-foreground w-21 self-start pt-3 font-mono text-xs tabular-nums">
-        {formatDay(day.date)}
+        {formatDay(isoDateToUtc(day.date))}
       </ListRowLeading>
 
       <ListRowContent>

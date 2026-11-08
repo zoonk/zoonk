@@ -1,5 +1,6 @@
 "use client";
 
+import { type DayView } from "@zoonk/core/sessions/day-view";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Button } from "@zoonk/ui/components/button";
@@ -20,6 +21,7 @@ import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
+import { isFinished } from "../../today/today-queue";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
@@ -142,6 +144,7 @@ export function RevealBody({
   onStart,
   signUpHref,
   syllabus,
+  today,
 }: {
   buddy: LearnBuddy | null;
   isGuest: boolean;
@@ -150,10 +153,11 @@ export function RevealBody({
   onStart: () => Promise<boolean>;
   signUpHref: string;
   syllabus: SyllabusView | null;
+  today: DayView | null;
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const started = plan.nextDays[0]?.items.some((item) => item.status !== "todo") ?? false;
+  const started = today?.blocks.some((block) => isFinished(block)) ?? false;
 
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
@@ -195,7 +199,7 @@ export function RevealBody({
           <RevealNoticeDay />
         </header>
 
-        <RevealToday />
+        <RevealToday session={today} />
         <RevealWeek />
 
         <div className="flex flex-col gap-2">

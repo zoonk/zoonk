@@ -12,6 +12,7 @@ import {
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type DayView } from "@zoonk/core/sessions/day-view";
 import {
   type OnboardingAnswerInput,
   type OnboardingDraftEdit,
@@ -133,7 +134,8 @@ export type PlacementMockOutcome = {
   offer: { access: "open" | "plusRequired"; minutes: { longest: number; shortest: number } } | null;
 };
 
-export type RevealedPlan = { plan: PlanView; syllabus: SyllabusView | null };
+/** `today` is the day Today will show, null until it can be read. */
+export type RevealedPlan = { plan: PlanView; syllabus: SyllabusView | null; today: DayView | null };
 
 export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "failed" };
 
