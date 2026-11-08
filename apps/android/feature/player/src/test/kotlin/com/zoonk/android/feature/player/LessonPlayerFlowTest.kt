@@ -451,7 +451,7 @@ class LessonPlayerFlowTest {
         rule.waitForIdle()
 
         val reopened = openAgain()
-        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null }
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
 
         assertTrue(reopened.state.value?.run is LessonRun.Started)
         assertTrue(reopened.hasUnsent)
@@ -591,7 +591,7 @@ class LessonPlayerFlowTest {
         val reopened = openAgain()
         rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run is LessonRun.Started }
 
-        assertTrue(!reopened.hasUnsent)
+        rule.waitUntil { !reopened.hasUnsent }
         assertEquals(listOf(quiz, idea, next, quiz), reopened.state.value?.queue)
     }
 

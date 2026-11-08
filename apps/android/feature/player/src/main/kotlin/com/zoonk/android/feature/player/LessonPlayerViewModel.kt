@@ -658,6 +658,7 @@ class LessonPlayerViewModel(
                     .map { PendingCheck(it.stepId, ApiJson.decodeFromJsonElement(it.input), it.isCorrect, it.answeredAt) }
                     .filterNot { it.attemptId in queued }
                     .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
+                sendUnsent()
                 val outcome = start(runId = null)
                 if (outcome !is StartOutcome.Started) reading.cancel()
                 if (outcome == null) return@launch
@@ -665,9 +666,9 @@ class LessonPlayerViewModel(
                     is StartOutcome.Started -> {
                         val runId = outcome.run.runId
                         admittedRunId = runId
+                        val hasHeld = heldDeviceVerdicts.isNotEmpty()
                         heldDeviceVerdicts.forEach { held -> unsaved.getOrPut(held.stepId) { mutableListOf() } += held.inRun(runId) }
                         heldDeviceVerdicts.clear()
-                        sendUnsent()
                         reading.await()
                         if (sessions.current != owner) return@launch
                         val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson ?: opened
@@ -680,6 +681,7 @@ class LessonPlayerViewModel(
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
                         mutableState.value = state
+                        if (hasHeld) sendUnsent()
                         work.launch { followLatePictures() }
                     }
 
@@ -925,7 +927,6 @@ class LessonPlayerViewModel(
     }
 
     private suspend fun send(pending: PendingCheck): CheckOutcome {
-        if (admittedRunId == null && !awaitRun()) return CheckOutcome.Failed
         val result =
             cache.mutate(replacing = { markStarted(recorded = (it as? CheckOutcome.Checked)?.result?.checked == true) }) { session ->
                 if (session != owner) return@mutate CheckOutcome.Failed

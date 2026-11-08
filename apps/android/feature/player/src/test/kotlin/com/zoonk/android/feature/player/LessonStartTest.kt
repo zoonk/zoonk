@@ -58,9 +58,10 @@ class LessonStartTest {
         opening: String?,
         tapped: Boolean,
         saved: SavedStateHandle = SavedStateHandle(),
+        draftStore: DraftStore? = null,
     ): LessonPlayerViewModel {
         val cache = AppCache(session, backgroundScope)
-        val drafts = DraftStore(folder.newFolder(), backgroundScope, dispatcher)
+        val drafts = draftStore ?: DraftStore(folder.newFolder(), backgroundScope, dispatcher)
         drafts.follow { DraftsChange("ana") }
         return LessonPlayerViewModel(
             lessonId = LESSON_ID,
@@ -76,6 +77,45 @@ class LessonStartTest {
             saved = saved,
         )
     }
+
+    @Test fun aResentPersistedAnswerStillShowsAsAnswered() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            val drafts = DraftStore(folder.newFolder(), backgroundScope, dispatcher)
+            val first = player(null, tapped = true, draftStore = drafts)
+            first.open(lesson)
+            advanceUntilIdle()
+            api.checkFailures = 1
+            first.act()
+            first.select(LessonAnswer.Check("right"))
+            first.check()
+            advanceUntilIdle()
+            assertTrue(first.hasUnsent)
+            api.checks.clear()
+            api.grade = { _, _ ->
+                api.runAnswers = answered(ONE)
+                checkResult(true)
+            }
+
+            val reopened = player(null, tapped = true, draftStore = drafts)
+            reopened.open(lesson)
+            advanceUntilIdle()
+
+            while (reopened.state.value?.run !is LessonRun.Started || api.checks.isEmpty()) {
+                runCurrent()
+                kotlinx.coroutines.yield()
+            }
+            assertEquals(
+                true,
+                reopened.state.value
+                    ?.results
+                    ?.get(ONE)
+                    ?.isCorrect,
+            )
+            assertEquals(listOf(ONE), api.checks.map { it.first })
+            assertEquals(false, reopened.hasUnsent)
+        }
 
     @Test fun aPendingServerCheckKeepsItsScreenWhenTheRunResumesElsewhere() =
         runTest(dispatcher) {
