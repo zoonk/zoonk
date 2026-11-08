@@ -80,6 +80,53 @@ describe("language view models", () => {
     expect(progress.speakingMock).toBeNull();
   });
 
+  it("shows the goal beside the plan's level only while the level is below it", async () => {
+    const setup = await languageGoalFixture();
+    const { goal, user } = setup;
+    mockSession(user.id);
+    await Promise.all([tagSkills(setup), finishArriving(setup)]);
+
+    const levelsFor = async (targetLevel: string) => {
+      await prisma.goal.update({
+        data: { details: { ...(goal.details as object), targetLevel } },
+        where: { id: goal.id },
+      });
+
+      const [progress, today] = await Promise.all([
+        getLanguageProgressView({ goalId: goal.id }),
+        getLanguageTodayView({ goalId: goal.id }),
+      ]);
+
+      if (progress.status !== "ready" || today.status !== "ready") {
+        throw new Error("Not ready");
+      }
+
+      return {
+        goalTarget: progress.progress.target,
+        level: progress.progress.level,
+        today: today.today.level,
+      };
+    };
+
+    await expect(levelsFor("A2+")).resolves.toStrictEqual({
+      goalTarget: { label: "A2+", score: 1.5 },
+      level: { label: "A2", target: "A2+" },
+      today: { label: "A2", target: "A2+" },
+    });
+
+    await expect(levelsFor("A2")).resolves.toStrictEqual({
+      goalTarget: { label: "A2", score: 1 },
+      level: { label: "A2", target: null },
+      today: { label: "A2", target: null },
+    });
+
+    await expect(levelsFor("A1+")).resolves.toStrictEqual({
+      goalTarget: { label: "A1+", score: 0.5 },
+      level: { label: "A2", target: null },
+      today: { label: "A2", target: null },
+    });
+  });
+
   it("shows the level the learner aims for from what onboarding understood", async () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);

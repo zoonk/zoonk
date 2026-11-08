@@ -10,7 +10,7 @@ type PlanLevel = LanguageProgressView["level"];
 type LevelTarget = LanguageProgressView["target"];
 
 /** "B2 → B1+" reads just "B2": the goal shows beside the level only while the plan is below it. */
-export function toPlanLevel({
+function toPlanLevel({
   label,
   target,
 }: {
