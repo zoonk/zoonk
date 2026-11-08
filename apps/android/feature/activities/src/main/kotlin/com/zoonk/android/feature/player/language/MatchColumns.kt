@@ -59,8 +59,8 @@ internal data class MatchAttempt(
 
 /**
  * Main's `MatchColumnsStep`: tap a word on each side to pair them. A right pair stays matched; a wrong
- * one flashes and counts as a mistake. Once every pair is matched, the board shows each pair on its
- * own row, so the learner sees what goes together.
+ * one flashes and counts as a mistake. The answer goes once every pair is matched, and the board then
+ * shows each pair on its own row, so the learner sees what goes together.
  */
 @Composable
 internal fun MatchColumnsView(
@@ -81,8 +81,9 @@ internal fun MatchColumnsView(
     val allMatched = matched.size == content.pairs.size
     val rights = if (allMatched) content.pairs.map(MatchPair::right) else rightItems
 
+    // After the app was closed in the background, the saved pairs come back but the player's answer doesn't.
     LaunchedEffect(Unit) {
-        if (answer == null && !checked && (matched.isNotEmpty() || mistakes > 0 || selected != null)) {
+        if (answer == null && !checked && allMatched) {
             onAnswer(LessonAnswer.MatchColumns(matched.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes))
         }
     }
@@ -115,6 +116,9 @@ internal fun MatchColumnsView(
                     haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                     val next = matched + (attempt.left to attempt.right)
                     matched = next
+                    if (next.size == content.pairs.size) {
+                        onAnswer(LessonAnswer.MatchColumns(next.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes))
+                    }
                 } else {
                     haptics.performHapticFeedback(HapticFeedbackType.Reject)
                     mistakes += 1
@@ -122,7 +126,6 @@ internal fun MatchColumnsView(
                 }
             }
         }
-        onAnswer(LessonAnswer.MatchColumns(matched.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes))
     }
 
     QuestionScene {

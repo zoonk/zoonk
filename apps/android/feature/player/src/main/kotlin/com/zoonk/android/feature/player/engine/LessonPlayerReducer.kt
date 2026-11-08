@@ -200,7 +200,7 @@ fun reduce(
 
 private fun LessonPlayerState.selectAnswer(action: LessonAction.SelectAnswer): LessonPlayerState {
     if (phase != LessonPhase.Playing) return this
-    val answer = action.answer ?: LessonAnswer.Draft
+    val answer = action.answer ?: return copy(answers = answers - action.stepId)
     return copy(answers = answers + (action.stepId to answer))
 }
 
@@ -262,12 +262,12 @@ private fun LessonPlayerState.startRun(
     val started =
         copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
             .skipSteps(action.optionalStepIds, now)
-    val isUntouched = answers.isEmpty() && results.isEmpty() && quickCheck == null && phase != LessonPhase.Checking
+    val isUntouched = answers.isEmpty() && results.isEmpty() && quickCheck == null
     val answers = (action.answers + action.heldAnswers).filter { it.stepId in steps }.sortedBy(RunAnswer::answeredAt)
 
     if (!isUntouched || firstVerdicts == runVerdicts(answers)) return started
 
-    return started.resumeFrom(answers, now).copy(rounds = rounds, revealed = revealed)
+    return started.resumeFrom(answers, now)
 }
 
 private val LessonPlayerState.isAllAnswered: Boolean

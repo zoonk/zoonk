@@ -142,7 +142,6 @@ private fun MatchPairsActivity(props: ActivityProps) {
         } else {
             selectedLeft = nextLeft
             selectedRight = nextRight
-            props.onAnswerChange(matchAnswer(pairIds, progress))
         }
     }
 
