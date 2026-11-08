@@ -53,6 +53,12 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
     await page.getByRole("radio", { name: /Change careers/u }).click();
 
+    await expect(
+      page.getByRole("heading", { name: "How much do you already know?" }),
+    ).toBeVisible();
+
+    await page.getByRole("radio", { name: /^The basics/u }).click();
+
     await expect(page.getByRole("heading", { name: "Where are you headed?" })).toBeVisible();
     await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
     await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
@@ -63,12 +69,6 @@ test.describe("Onboarding from a typed goal", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "No date" }).click();
-
-    await expect(
-      page.getByRole("heading", { name: "How much do you already know?" }),
-    ).toBeVisible();
-
-    await page.getByRole("radio", { name: /^The basics/u }).click();
 
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
@@ -168,11 +168,11 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   const created = await prisma.goal.findFirstOrThrow({ where: { prompt: words } });
 
   await page.getByRole("radio", { name: /Change careers/u }).click();
+  await page.getByRole("radio", { name: /^The basics/u }).click();
   await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
   await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await page.getByRole("button", { name: "No date" }).click();
-  await page.getByRole("radio", { name: /^The basics/u }).click();
   await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
