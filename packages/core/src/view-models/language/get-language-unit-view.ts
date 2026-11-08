@@ -10,15 +10,16 @@ import { findFreshMistakePattern } from "../../language/patterns/find-fresh-patt
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readActiveGoal } from "../../learner/facts/learning-profile";
-import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
-import { type TestOutPlan, loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
+import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getSkillLevelRows, toIdKey } from "../../library/_utils/shared-rows";
 import { readLessonMapSentences } from "../../library/lessons/lesson-map";
 import { getSession } from "../../users/get-session";
 import { findUpNextLessonId } from "../_utils/up-next-lesson";
+import { readLessonSkills } from "./_utils/lesson-skills";
 import { loadGrammarTips, loadUnitMistakes, loadUnitWords } from "./_utils/unit-content";
 import { type LanguageUnitView } from "./language-view-contract";
 
@@ -56,9 +57,29 @@ function getLessonState({ done, next }: { done: boolean; next: boolean }) {
   return next ? ("next" as const) : ("upcoming" as const);
 }
 
-function listUnitSkillIds({ chapterId, plan }: { chapterId: string; plan: TestOutPlan | null }) {
-  return (plan?.items ?? []).flatMap((item) =>
-    item.chapterId === chapterId && item.lessonId ? item.skillIds : [],
+/** What the learner's lessons in the unit teach: each lesson's plan skills, or its item's skill. */
+async function readUnitSkills({
+  chapterId,
+  saved,
+}: {
+  chapterId: string;
+  saved: Promise<SavedPlan | null> | null;
+}) {
+  const plan = await saved;
+
+  if (!plan) {
+    return [];
+  }
+
+  const taught = await readLessonSkills(plan);
+  const lessons = new Map(taught.map((lesson) => [lesson.lessonId, lesson.skillIds]));
+
+  const items = plan.items.filter(
+    (item) => item.kind === "lesson" && item.chapterId === chapterId && item.lessonId,
+  );
+
+  return getSkillLevelRows(
+    toIdKey(items.flatMap((item) => lessons.get(item.lessonId ?? "") ?? item.skillId ?? [])),
   );
 }
 
@@ -111,9 +132,8 @@ export async function getLanguageUnitView({
 
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const plan = goal
-    ? await loadTestOutPlan(goal.id, { goal, source: readSavedPlan(userId, goal.id) })
-    : null;
+  const saved = goal ? readSavedPlan(userId, goal.id) : null;
+  const plan = goal ? await loadTestOutPlan(goal.id, { goal, source: saved }) : null;
 
   const [
     todayBlocks,
@@ -141,7 +161,7 @@ export async function getLanguageUnitView({
           userId,
         })
       : new Set<string>(),
-    getSkillLevelRows(toIdKey(listUnitSkillIds({ chapterId: chapter.id, plan }))),
+    readUnitSkills({ chapterId: chapter.id, saved }),
   ]);
 
   const chapterIds = [...new Set(plan?.items.flatMap((item) => item.chapterId ?? []))];

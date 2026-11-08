@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { chapterSkillFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -128,18 +129,29 @@ describe("language view models", () => {
     });
   });
 
-  it("reads a lesson at the lowest level of the plan skills it teaches, as certificates count it", async () => {
-    const setup = await languageGoalFixture();
-    const { goal, items, skills, user } = setup;
-    mockSession(user.id);
-    await Promise.all([tagSkills(setup), finishArriving(setup)]);
+  it.each(["lesson", "unit"] as const)(
+    "reads a rental lesson that also teaches an A1 skill through its %s at A1 on Today, and its unit as A1–A2",
+    async (link) => {
+      const setup = await languageGoalFixture();
+      const { goal, items, renting, skills, user } = setup;
+      mockSession(user.id);
+      await Promise.all([tagSkills(setup), finishArriving(setup)]);
 
-    await lessonSkillFixture({ lessonId: items[2]?.lessonId ?? "", skillId: skills[0]?.id ?? "" });
+      const skillId = skills[0]?.id ?? "";
 
-    await expect(getLanguageTodayView({ goalId: goal.id })).resolves.toMatchObject({
-      today: { level: { label: "A1+" } },
-    });
-  });
+      await (link === "lesson"
+        ? lessonSkillFixture({ lessonId: items[2]?.lessonId ?? "", skillId })
+        : chapterSkillFixture({ chapterId: renting.id, skillId }));
+
+      const [today, unit] = await Promise.all([
+        getLanguageTodayView({ goalId: goal.id }),
+        getLanguageUnitView({ chapterId: renting.id }),
+      ]);
+
+      expect(today).toMatchObject({ today: { level: { label: "A1+" } } });
+      expect(unit).toMatchObject({ unit: { unit: { levelRange: "A1–A2" } } });
+    },
+  );
 
   it("shows the level the learner aims for from what onboarding understood", async () => {
     const { goal, user } = await languageGoalFixture();

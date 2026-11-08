@@ -33,6 +33,20 @@ export async function getLessonHomeChapterRows(lessonIds: string[]) {
   });
 }
 
+export async function getChapterSkillRows(chapterIds: string[]) {
+  "use cache";
+
+  if (chapterIds.length === 0) {
+    return [];
+  }
+
+  return prisma.chapterSkill.findMany({
+    orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
+    select: { chapterId: true, skillId: true },
+    where: { chapterId: { in: chapterIds } },
+  });
+}
+
 export type LessonSkillRow = Awaited<ReturnType<typeof getLessonSkillRows>>[number];
 
 export async function getSkillPrerequisiteRows(skillIds: string[]) {

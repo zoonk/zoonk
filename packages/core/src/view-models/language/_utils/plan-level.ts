@@ -1,11 +1,10 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
 import { getPlanLevelLabel, groupLevelItems } from "../../../language/levels/plan-levels";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { getSkillLevelRows, toIdKey } from "../../../library/_utils/shared-rows";
-import { loadPlanScope } from "../../../plans/_utils/plan-scope";
 import { type LanguageProgressView } from "../language-view-contract";
+import { readLessonSkills } from "./lesson-skills";
 
 type PlanLevel = LanguageProgressView["level"];
 type LevelTarget = LanguageProgressView["target"];
@@ -26,23 +25,25 @@ function toPlanLevel({
 
 /** GET-only, after ownership authorization. Null while the plan has no lessons. */
 export async function readPlanLevel({
-  goal,
+  goalId,
   target,
+  userId,
 }: {
-  goal: Goal;
+  goalId: string;
   target: LevelTarget;
+  userId: string;
 }): Promise<PlanLevel> {
-  const plan = await readSavedPlan(goal.userId, goal.id);
+  const plan = await readSavedPlan(userId, goalId);
 
   if (!plan) {
     return null;
   }
 
-  const scope = await loadPlanScope({ goal, plan });
+  const lessons = await readLessonSkills(plan);
 
   const skills = await getSkillLevelRows(
     toIdKey([
-      ...scope.graphSkillIds,
+      ...lessons.flatMap((lesson) => lesson.skillIds),
       ...plan.items.map((item) => (item.kind === "lesson" ? item.skillId : null)),
     ]),
   );
@@ -50,7 +51,7 @@ export async function readPlanLevel({
   const label = getPlanLevelLabel(
     groupLevelItems({
       items: plan.items,
-      scope,
+      scope: { lessons },
       skills: new Map(skills.map((skill) => [skill.id, skill])),
     }),
   );
