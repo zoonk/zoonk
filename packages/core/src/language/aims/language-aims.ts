@@ -1,4 +1,10 @@
-import { type CefrLevel, MAX_CEFR_SCORE, parseCefrScore, toCefrLevel } from "@zoonk/utils/cefr";
+import {
+  type CefrLevel,
+  MAX_CEFR_SCORE,
+  formatCefrScore,
+  parseCefrScore,
+  toCefrLevel,
+} from "@zoonk/utils/cefr";
 import { type JsonObject } from "@zoonk/utils/json";
 
 /** Why a learner studies a language, in the order the reason question lists them. */
@@ -79,10 +85,13 @@ export function getStartHours(level: unknown): number | null {
   return typeof level === "string" ? (OWN_LEVEL_HOURS[level] ?? null) : null;
 }
 
-/** What a language goal aims for: the level the learner picked, or the one their words named. */
-export function readLanguageAim(details: Record<string, unknown>): CefrLevel | null {
+/**
+ * What a language goal aims for, as its CEFR label: the level the learner picked, or the one their
+ * words named, half bands included ("B1+").
+ */
+export function readLanguageAim(details: Record<string, unknown>): string | null {
   const score = parseCefrScore(details.targetScore) ?? parseCefrScore(details.targetLevel);
-  return score === null ? null : toCefrLevel(score);
+  return score === null ? null : formatCefrScore(score);
 }
 
 export type LanguageAimChoice = {
@@ -109,9 +118,10 @@ export type LanguageReasonView = {
 
 export function toLanguageAimView(details: Record<string, unknown>): LanguageAimView {
   const start = getStartHours(details.level) ?? 0;
+  const score = parseCefrScore(readLanguageAim(details));
 
   return {
-    aim: readLanguageAim(details),
+    aim: score === null ? null : toCefrLevel(score),
     choices: LANGUAGE_AIMS.flatMap((aim) => {
       const hours = Math.round(GUIDED_HOURS[aim] - start);
       return hours > 0 ? [{ aim, hours }] : [];
@@ -131,7 +141,7 @@ export function withLanguageAim({
   aim,
   details,
 }: {
-  aim: CefrLevel | null;
+  aim: string | null;
   details: JsonObject;
 }): JsonObject | null {
   if (readLanguageAim(details) === aim) {

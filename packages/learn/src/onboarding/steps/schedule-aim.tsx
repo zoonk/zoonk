@@ -6,8 +6,9 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { getTodayInZone } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
+import { getAimEndDate } from "../../language-aim/aim-end-date";
 import { AimName, AimPicker } from "../../language-aim/aim-picker";
-import { getAimEndDate, useAimWords } from "../../language-aim/use-aim-words";
+import { useAimWords } from "../../language-aim/use-aim-words";
 
 /** The aim's own choices, so a learner past their aim isn't told when they'll reach it. */
 export function getAimAhead(languageAim: LanguageAimView | null): LanguageAim | null {

@@ -6,8 +6,13 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
-async function setup(details: Record<string, unknown>) {
+/** New language plans stop at their aim; plans laid out before that rule have no setting. */
+const NEW_PLAN = { stopsAtAim: true };
+const OLDER_PLAN = {};
+
+async function setup(details: Record<string, unknown>, settings: Record<string, unknown>) {
   const user = await userFixture();
 
   const library = await planLibraryFixture({
@@ -24,7 +29,7 @@ async function setup(details: Record<string, unknown>) {
     dailyMinutes: 30,
     details,
     kind: "language",
-    settings: { startDate: "2020-09-28" },
+    settings: { startDate: "2020-09-28", ...settings },
     targetLanguage: "it",
     userId: user.id,
   });
@@ -43,7 +48,7 @@ async function plannedSkills(planId: string): Promise<Set<string | null>> {
 
 describe("a language goal's aim", () => {
   it("plans only the situations up to the aim, and a higher aim brings the next ones in", async () => {
-    const { goal, plan, skills } = await setup({ level: "none", targetScore: "A2" });
+    const { goal, plan, skills } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
 
     const trip = await plannedSkills(plan.id);
     expect(trip).toContain(skills.trip);
@@ -67,7 +72,7 @@ describe("a language goal's aim", () => {
   });
 
   it("puts the aim back when the learner undoes its change", async () => {
-    const { goal, plan, skills } = await setup({ level: "none", targetScore: "A2" });
+    const { goal, plan, skills } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
 
     const result = await changeGoalPlan({
       goalId: goal.id,
@@ -89,8 +94,32 @@ describe("a language goal's aim", () => {
     await expect(plannedSkills(plan.id)).resolves.not.toContain(skills.fluent);
   });
 
+  it("keeps a plan laid out before aims stopped there as it was, every band and a half band's hours", async () => {
+    const { goal, plan, skills } = await setup({ level: "basic", targetScore: "B1+" }, OLDER_PLAN);
+
+    await refreshGoalPlan({ goalId: goal.id, mode: "forced" });
+
+    await expect(plannedSkills(plan.id)).resolves.toContain(skills.fluent);
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const graph = saved.graph as { skills: { lessons: number }[] };
+
+    expect(graph.skills.reduce((total, skill) => total + skill.lessons, 0)).toBe(2044);
+  });
+
+  it("stops an older plan at its aim once the learner moves the aim", async () => {
+    const { goal, plan, skills } = await setup({ level: "none", targetScore: "C1" }, OLDER_PLAN);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ aim: "B1", kind: "setAim" }] },
+    });
+
+    await expect(plannedSkills(plan.id)).resolves.not.toContain(skills.fluent);
+  });
+
   it("refuses an aim for a goal that isn't a language", async () => {
-    const { goal } = await setup({ level: "none", targetScore: "A2" });
+    const { goal } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
     await prisma.goal.update({ data: { kind: "learn" }, where: { id: goal.id } });
 
     await expect(

@@ -1,5 +1,4 @@
 import { type CourseLevel } from "@zoonk/db";
-import { type CefrLevel } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
 import { sizeLanguageGraph } from "./language-size";
 import { type PlanGraph } from "./plan-state";
@@ -32,6 +31,11 @@ function languageGoal(level?: string) {
   return { details: level === undefined ? {} : { level }, kind: "language" } as const;
 }
 
+/** New plans stop at their aim; plans laid out before that rule keep every band. */
+function aimed(aim: string | null, stopsAtAim = true) {
+  return { goal: { aim }, settings: { stopsAtAim } };
+}
+
 function total(graph: PlanGraph): number {
   return graph.skills.reduce((sum, skill) => sum + skill.lessons, 0);
 }
@@ -44,19 +48,28 @@ function idsOf(graph: PlanGraph): string[] {
   return graph.skills.map((skill) => skill.skillId);
 }
 
-function sizeFrom(level: string, aim: CefrLevel): number {
+function sizeFrom(level: string, aim: string, stopsAtAim = true): number {
   return total(
     sizeLanguageGraph({
-      aim,
       bands: NO_BANDS,
       goal: languageGoal(level),
       graph: graphOf([8, 14, 12]),
+      state: aimed(aim, stopsAtAim),
     }).planned,
   );
 }
 
+function sizeAbove(aim: string, stopsAtAim = true) {
+  return sizeLanguageGraph({
+    bands: BANDS,
+    goal: languageGoal("none"),
+    graph: graphOf([10, 20, 10, 10, 10]),
+    state: aimed(aim, stopsAtAim),
+  });
+}
+
 describe(sizeLanguageGraph, () => {
-  const sizing = { aim: "B2", bands: NO_BANDS, goal: languageGoal("B1+") } as const;
+  const sizing = { bands: NO_BANDS, goal: languageGoal("B1+"), state: aimed("B2") } as const;
 
   it("sizes a language goal's situations to reach the target level, each keeping its share", () => {
     const { graph, planned } = sizeLanguageGraph({ ...sizing, graph: graphOf([8, 14, 12]) });
@@ -69,6 +82,10 @@ describe(sizeLanguageGraph, () => {
   it("counts the guided hours between the levels, half of each hour in new lessons", () => {
     expect(sizeFrom("none", "A2")).toBe(1425);
     expect(sizeFrom("intermediate", "B2")).toBe(sizeFrom("B1", "B2"));
+  });
+
+  it("keeps a half band's hours, so an aim of B1+ sizes past B1", () => {
+    expect(sizeFrom("basic", "B1+")).toBeGreaterThan(sizeFrom("basic", "B1"));
   });
 
   it("gives the same graph when sized again, so a plan saved sized keeps its size", () => {
@@ -93,7 +110,7 @@ describe(sizeLanguageGraph, () => {
     const learn = { details: { level: "B1+" }, kind: "learn" } as const;
 
     expect(sizeLanguageGraph({ ...sizing, goal: learn, graph })).toStrictEqual(unchanged);
-    expect(sizeLanguageGraph({ ...sizing, aim: null, graph })).toStrictEqual(unchanged);
+    expect(sizeLanguageGraph({ ...sizing, graph, state: aimed(null) })).toStrictEqual(unchanged);
 
     expect(sizeLanguageGraph({ ...sizing, goal: languageGoal("C1"), graph })).toStrictEqual(
       unchanged,
@@ -101,33 +118,30 @@ describe(sizeLanguageGraph, () => {
   });
 
   it("stops at the aim: a trip course plans no situation above the beginner band", () => {
-    const { graph, planned } = sizeLanguageGraph({
-      aim: "A2",
-      bands: BANDS,
-      goal: languageGoal("none"),
-      graph: graphOf([10, 20, 10, 10, 10]),
-    });
+    const { graph, planned } = sizeAbove("A2");
 
     expect(idsOf(planned)).toStrictEqual(["s1", "s2"]);
     expect(total(planned)).toBe(1425);
     expect(graph.skills).toHaveLength(5);
   });
 
+  it("sizes a plan laid out before aims stopped there across every band, as it was", () => {
+    const { planned } = sizeAbove("A2", false);
+
+    expect(idsOf(planned)).toHaveLength(5);
+    expect(total(planned)).toBe(1425);
+  });
+
   it("keeps the situations it leaves out at the same scale, so a higher aim brings them back", () => {
-    const trip = sizeLanguageGraph({
-      aim: "A2",
-      bands: BANDS,
-      goal: languageGoal("none"),
-      graph: graphOf([10, 20, 10, 10, 10]),
-    }).graph;
+    const trip = sizeAbove("A2").graph;
 
     expect(lessonsOf(trip)).toStrictEqual([475, 950, 475, 475, 475]);
 
     const talk = sizeLanguageGraph({
-      aim: "B1",
       bands: BANDS,
       goal: languageGoal("none"),
       graph: trip,
+      state: aimed("B1"),
     });
 
     expect(idsOf(talk.planned)).toStrictEqual(["s1", "s2", "s3", "s4"]);
@@ -136,10 +150,10 @@ describe(sizeLanguageGraph, () => {
 
   it("still stops at an aim the learner already reached, without sizing", () => {
     const { planned } = sizeLanguageGraph({
-      aim: "A2",
       bands: BANDS,
       goal: languageGoal("advanced"),
       graph: graphOf([10, 20, 10, 10, 10]),
+      state: aimed("A2"),
     });
 
     expect(lessonsOf(planned)).toStrictEqual([10, 20]);
@@ -154,20 +168,20 @@ describe(sizeLanguageGraph, () => {
       })),
     };
 
-    const sized = (aim: CefrLevel) =>
-      sizeLanguageGraph({ aim, bands: BANDS, goal: languageGoal("none"), graph });
+    const phased = (aim: string) =>
+      sizeLanguageGraph({ bands: BANDS, goal: languageGoal("none"), graph, state: aimed(aim) });
 
-    expect(sized("A2").planned.phases.map((phase) => phase.name)).toStrictEqual(["Basics"]);
-    expect(sized("B2").planned.phases).toHaveLength(2);
-    expect(sized("A2").graph.phases).toHaveLength(3);
+    expect(phased("A2").planned.phases.map((phase) => phase.name)).toStrictEqual(["Basics"]);
+    expect(phased("B2").planned.phases).toHaveLength(2);
+    expect(phased("A2").graph.phases).toHaveLength(3);
   });
 
   it("stops at the aim before the level is known, without sizing", () => {
     const { planned } = sizeLanguageGraph({
-      aim: "B2",
       bands: BANDS,
       goal: languageGoal(),
       graph: graphOf([10, 20, 10, 10, 10]),
+      state: aimed("B2"),
     });
 
     expect(lessonsOf(planned)).toStrictEqual([10, 20, 10, 10]);
@@ -175,11 +189,11 @@ describe(sizeLanguageGraph, () => {
 
   it("keeps a settled situation above the aim, since the learner already studied it", () => {
     const { planned } = sizeLanguageGraph({
-      aim: "A2",
       bands: BANDS,
       goal: languageGoal("none"),
       graph: graphOf([10, 20, 10, 10, 10]),
       settledSkillIds: new Set(["s5"]),
+      state: aimed("A2"),
     });
 
     expect(idsOf(planned)).toStrictEqual(["s1", "s2", "s5"]);
