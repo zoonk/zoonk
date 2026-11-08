@@ -21,13 +21,105 @@
       ],
       "testCase": {
         "expected": {
-          "atLeast": [
-            {
-              "part": 3,
-              "than": 2
-            }
+          "status": "found",
+          "weights": [
+            2,
+            1,
+            3,
+            2,
+            2
+          ]
+        },
+        "id": "en-enem-medicine-ufpe-recife-1",
+        "language": "en",
+        "userInput": {
+          "course": "Medicine",
+          "exam": "ENEM",
+          "institution": "UFPE, Recife campus",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias",
+            "Redação"
           ],
-          "status": "found"
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "status": "found",
+          "weights": [
+            3,
+            2,
+            1,
+            1,
+            3
+          ]
+        },
+        "id": "pt-enem-direito-ufpe-recife-1",
+        "userInput": {
+          "course": "Direito",
+          "exam": "ENEM",
+          "institution": "UFPE, campus Recife",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias",
+            "Redação"
+          ],
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "status": "found",
+          "weights": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
         },
         "id": "pt-enem-medicina-ufmg-1",
         "userInput": {
@@ -65,13 +157,14 @@
       ],
       "testCase": {
         "expected": {
-          "atLeast": [
-            {
-              "part": 3,
-              "than": 2
-            }
-          ],
-          "status": "found"
+          "status": "found",
+          "weights": [
+            2,
+            1,
+            4,
+            2,
+            4
+          ]
         },
         "id": "en-enem-medicine-ufrj-1",
         "language": "en",
@@ -110,7 +203,6 @@
       ],
       "testCase": {
         "expected": {
-          "atLeast": [],
           "status": "unknown"
         },
         "id": "pt-enem-instituicao-inexistente-1",

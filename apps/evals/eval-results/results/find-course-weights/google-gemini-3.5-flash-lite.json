@@ -21,13 +21,14 @@
       ],
       "testCase": {
         "expected": {
-          "atLeast": [
-            {
-              "part": 3,
-              "than": 2
-            }
-          ],
-          "status": "found"
+          "status": "found",
+          "weights": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
         },
         "id": "pt-enem-medicina-ufmg-1",
         "userInput": {
@@ -48,30 +49,31 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Weights 1, 1, 1, 1, 1 differ from the published 2, 1, 4, 2, 4",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "Weights 1, 1, 1, 1, 1 differ from the published 2, 1, 4, 2, 4",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "Weights 1, 1, 1, 1, 1 differ from the published 2, 1, 4, 2, 4",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
         "expected": {
-          "atLeast": [
-            {
-              "part": 3,
-              "than": 2
-            }
-          ],
-          "status": "found"
+          "status": "found",
+          "weights": [
+            2,
+            1,
+            4,
+            2,
+            4
+          ]
         },
         "id": "en-enem-medicine-ufrj-1",
         "language": "en",
@@ -110,7 +112,6 @@
       ],
       "testCase": {
         "expected": {
-          "atLeast": [],
           "status": "unknown"
         },
         "id": "pt-enem-instituicao-inexistente-1",
