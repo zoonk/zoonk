@@ -611,7 +611,7 @@ struct LessonPlayerState: Equatable, Sendable {
     hyperdrive: LessonHyperdriveStart = .none,
     optionalStepIds: [String] = []
   ) {
-    let isUntouched = results.isEmpty && quickCheck == nil && phase != .checking
+    let isUntouched = answers.isEmpty && results.isEmpty && quickCheck == nil
 
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
