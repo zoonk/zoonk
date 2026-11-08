@@ -262,7 +262,7 @@ private fun LessonPlayerState.startRun(
     val started =
         copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
             .skipSteps(action.optionalStepIds, now)
-    val isUntouched = results.isEmpty() && quickCheck == null && phase != LessonPhase.Checking
+    val isUntouched = answers.isEmpty() && results.isEmpty() && quickCheck == null
     val answers = (action.answers + action.heldAnswers).filter { it.stepId in steps }.sortedBy(RunAnswer::answeredAt)
 
     if (!isUntouched || firstVerdicts == runVerdicts(answers)) return started

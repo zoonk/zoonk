@@ -114,6 +114,51 @@ class LessonStartTest {
             assertEquals("the typed answer is graded", listOf(typed), api.checks.map { it.first })
         }
 
+    @Test fun aTypedAnswerSurvivesRetryingAFailedStartAfterCheck() = typedAnswerSurvivesRetryingStart(check = true)
+
+    @Test fun anUncheckedTypedAnswerSurvivesRetryingAFailedStart() = typedAnswerSurvivesRetryingStart(check = false)
+
+    private fun typedAnswerSurvivesRetryingStart(check: Boolean) =
+        runTest(dispatcher) {
+            val first = "00000000-0000-4000-8000-000000000101"
+            val typed = "00000000-0000-4000-8000-000000000102"
+            val last = "00000000-0000-4000-8000-000000000103"
+            lesson = playable(listOf(explanationStep(first), typedAnswerStep(typed), explanationStep(last)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$first"}]"""
+            api.startGate = CompletableDeferred()
+            api.startFailures = 1
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.dispatch(LessonAction.Continue)
+            val answer = LessonAnswer.Typed("Because it maps chances.")
+            vm.dispatch(LessonAction.SelectAnswer(typed, answer))
+            if (check) vm.check()
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertTrue("start failed", vm.state.value?.run is LessonRun.Refused)
+            assertEquals(LessonPhase.Playing, vm.state.value?.phase)
+
+            vm.retryStart()
+            advanceUntilIdle()
+
+            assertTrue("retry started the run", vm.state.value?.run is LessonRun.Started)
+            assertEquals(
+                typed,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                answer,
+                vm.state.value
+                    ?.answers
+                    ?.get(typed),
+            )
+        }
+
     @Test fun deviceVerdictDoesNotWaitForAdmission() =
         runTest(dispatcher) {
             lesson = playable(listOf(checkStep("quiz"), explanationStep("next")))
