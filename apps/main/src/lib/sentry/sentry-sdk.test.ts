@@ -17,7 +17,7 @@ function httpClientError({
     exception: {
       values: [{ mechanism: { handled: false, type: "auto.http.client.fetch" }, type: "Error" }],
     },
-    request: { method, url: "https://www.zoonk.com/start/goal" },
+    request: { method, url: "https://www.zoonk.com/start/goal?token=secret#step" },
     type: undefined,
   };
 }
@@ -39,13 +39,17 @@ describe("Sentry in the browser", () => {
     vi.mocked(init).mockClear();
   });
 
-  it("reports a write the firewall stopped", () => {
+  it("reports a write the firewall stopped, without its query", () => {
     const event = httpClientError({
       headers: { "x-vercel-mitigated": "challenge" },
       method: "POST",
     });
 
-    expect(send(event)).toBe(event);
+    expect(send(event)).toMatchObject({
+      contexts: event.contexts,
+      exception: event.exception,
+      request: { method: "POST", url: "https://www.zoonk.com/start/goal" },
+    });
   });
 
   it("leaves out refusals the app sent itself", () => {

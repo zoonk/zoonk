@@ -27,10 +27,23 @@ function isFirewallStoppedWrite(event: ErrorEvent): boolean {
   return !READ_METHODS.has(method) && "x-vercel-mitigated" in headers;
 }
 
+/** Sentry's HTTP client events carry the raw URL, skipping `urlQueryParams` filtering. */
+function withoutQuery(event: ErrorEvent): ErrorEvent {
+  const url = event.request?.url;
+  return url ? { ...event, request: { ...event.request, url: url.split(/[?#]/u)[0] } } : event;
+}
+
+function keepFirewallStoppedWrites(event: ErrorEvent): ErrorEvent | null {
+  if (!isHttpClientError(event)) {
+    return event;
+  }
+
+  return isFirewallStoppedWrite(event) ? withoutQuery(event) : null;
+}
+
 export function startSentry() {
   init({
-    beforeSend: (event) =>
-      isHttpClientError(event) && !isFirewallStoppedWrite(event) ? null : event,
+    beforeSend: keepFirewallStoppedWrites,
     dataCollection: getSentryDataCollection(),
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     integrations: [
