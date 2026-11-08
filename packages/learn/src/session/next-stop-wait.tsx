@@ -25,6 +25,7 @@ const WAITING_CHECK_MS = 5000;
 // A lesson opens at most five minutes after its text is written, so writing ends well inside this.
 const STUCK_AFTER_MS = { notStarted: 20_000, writing: 600_000 } as const;
 
+/** The wait never shows a set-aside lesson: the session read shows its notice instead. */
 function hasLessonChanged({
   generationId,
   lesson,
@@ -32,10 +33,12 @@ function hasLessonChanged({
 }: {
   generationId: string | null;
   lesson: NextStopLesson;
-  read: { generationId: string | null; lesson: NextStopLesson };
+  read: { generationId: string | null; lesson: NextStopLesson; setAside: boolean };
 }): boolean {
   return (
-    read.lesson !== lesson || (read.lesson === "writing" && read.generationId !== generationId)
+    read.setAside ||
+    read.lesson !== lesson ||
+    (read.lesson === "writing" && read.generationId !== generationId)
   );
 }
 
