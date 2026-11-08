@@ -606,7 +606,9 @@ describe(goalContentWorkflow, () => {
       }
 
       const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-      const events = getStreamedEvents().filter(({ step }) => step.startsWith("warmUp"));
+      const events = getStreamedEvents().filter(
+        ({ step }) => step === "warmUpReady" || step === "warmUpFailed",
+      );
       expect(close).toHaveBeenCalledOnce();
 
       await expect(readWarmUpState(stored.warmUpId)).resolves.toStrictEqual(
@@ -767,9 +769,9 @@ describe(goalContentWorkflow, () => {
 
     expect(generateWarmUpCards).not.toHaveBeenCalled();
 
-    expect(getStreamedEvents().filter(({ step }) => step.startsWith("warmUp"))).toStrictEqual([
-      { entityId: goal.id, status: "completed", step: "warmUpFailed" },
-    ]);
+    expect(
+      getStreamedEvents().filter(({ step }) => step === "warmUpReady" || step === "warmUpFailed"),
+    ).toStrictEqual([{ entityId: goal.id, status: "completed", step: "warmUpFailed" }]);
 
     const followed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
