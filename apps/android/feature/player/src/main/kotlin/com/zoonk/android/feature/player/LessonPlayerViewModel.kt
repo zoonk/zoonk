@@ -227,7 +227,7 @@ class LessonPlayerViewModel(
     private var owner = sessions.current
     private var work = openScope()
     private var starting: Job? = null
-    private var checkingAfterStart: Job? = null
+    private val checksAwaitingRun = mutableListOf<Job>()
     private var admitted = false
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
@@ -471,40 +471,43 @@ class LessonPlayerViewModel(
             return
         }
 
-        val runId = (state.run as? LessonRun.Started)?.runId
-        if (runId == null) {
-            if (checkingAfterStart?.isActive != true) {
-                checkingAfterStart =
-                    work.launch {
-                        if (awaitRun() && mutableState.value?.currentStep?.id == step.id) check()
-                    }
-            }
-            return
-        }
-        val input =
-            LessonStepCheckInput(
-                answer = answer.toApi() ?: return,
-                durationMs = state.answerDurationMs(),
-                runId = UUID.fromString(runId),
-                attemptId = UUID.randomUUID(),
-                timeZone = timeZone(),
-                usedHelp = step.id in state.helped,
-            )
+        val apiAnswer = answer.toApi() ?: return
+        val attemptId = UUID.randomUUID()
+        val durationMs = state.answerDurationMs()
+        val answeredAt = Instant.fromEpochMilliseconds(now())
         val local = if (isServerGradedAnswer(answer, step)) null else gradeOnDevice(step, answer)
-        val pending = PendingCheck(step.id, input, local?.isCorrect, Instant.fromEpochMilliseconds(now()))
-
         if (local == null) {
-            gradeOnServer(step, pending, answer.writtenText)
-            return
+            dispatch(LessonAction.CheckStarted(step.id))
+        } else {
+            countActivity(step)
+            dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = attemptId.toString()), counts = true))
         }
-
-        countActivity(step)
-        dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = pending.attemptId), counts = true))
-        unsaved.getOrPut(step.id) { mutableListOf() } += pending
-        work.launch {
-            keepUnsent()
-            saveScreen(step.id)
-        }
+        checksAwaitingRun.removeAll { it.isCompleted }
+        checksAwaitingRun +=
+            work.launch {
+                if (!awaitRun()) {
+                    if (local == null) dispatch(LessonAction.CheckFailed(step.id))
+                    return@launch
+                }
+                val run = mutableState.value?.run as? LessonRun.Started ?: return@launch
+                val input =
+                    LessonStepCheckInput(
+                        answer = apiAnswer,
+                        durationMs = durationMs,
+                        runId = UUID.fromString(run.runId),
+                        attemptId = attemptId,
+                        timeZone = timeZone(),
+                        usedHelp = step.id in state.helped,
+                    )
+                val pending = PendingCheck(step.id, input, local?.isCorrect, answeredAt)
+                if (local == null) {
+                    if (mutableState.value?.currentStep?.id == step.id) gradeOnServer(step, pending, answer.writtenText)
+                } else {
+                    unsaved.getOrPut(step.id) { mutableListOf() } += pending
+                    keepUnsent()
+                    saveScreen(step.id)
+                }
+            }
     }
 
     /** Null while the lesson's example lines are being written, so a screen reads its line once they're in. */
@@ -856,6 +859,7 @@ class LessonPlayerViewModel(
             dispatch(LessonAction.CompletionFailed)
             return
         }
+        checksAwaitingRun.toList().forEach { it.join() }
         val allSaved = sendUnsent()
         val state = mutableState.value ?: return
         val runId = (state.run as? LessonRun.Started)?.runId

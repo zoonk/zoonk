@@ -42,7 +42,7 @@ class LessonStartTest {
     @get:Rule val folder = TemporaryFolder()
     private val dispatcher = StandardTestDispatcher()
     private val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
-    private val lesson = playable(listOf(explanationStep("first")))
+    private var lesson = playable(listOf(explanationStep("first")))
     private val api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
 
     @Before fun main() = Dispatchers.setMain(dispatcher)
@@ -70,6 +70,72 @@ class LessonStartTest {
             saved = SavedStateHandle(),
         )
     }
+
+    @Test fun deviceVerdictDoesNotWaitForAdmission() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep("quiz"), explanationStep("next")))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.dispatch(
+                com.zoonk.android.feature.player.engine.LessonAction.SelectAnswer(
+                    "quiz",
+                    com.zoonk.android.feature.player.model.LessonAnswer
+                        .Check("right"),
+                ),
+            )
+            vm.check()
+            assertEquals(
+                true,
+                vm.state.value
+                    ?.results
+                    ?.get("quiz")
+                    ?.isCorrect,
+            )
+            assertTrue(api.checks.isEmpty())
+            vm.dispatch(com.zoonk.android.feature.player.engine.LessonAction.Continue)
+            assertEquals(
+                "next",
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(1, api.checks.size)
+            assertEquals(
+                RUN_ID,
+                api.checks
+                    .single()
+                    .second.runId
+                    .toString(),
+            )
+        }
+
+    @Test fun serverCheckShowsBusyWhileAdmissionIsPending() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(typedAnswerStep("write")))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+            vm.dispatch(
+                com.zoonk.android.feature.player.engine.LessonAction.SelectAnswer(
+                    "write",
+                    com.zoonk.android.feature.player.model.LessonAnswer
+                        .Typed("Because"),
+                ),
+            )
+            vm.check()
+            assertEquals(com.zoonk.android.feature.player.engine.LessonPhase.Checking, vm.state.value?.phase)
+            assertTrue(api.checks.isEmpty())
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(1, api.checks.size)
+        }
 
     @Test fun writtenStepsNavigateBeforeAdmissionAndStartWithTheirExactOpening() =
         runTest(dispatcher) {
