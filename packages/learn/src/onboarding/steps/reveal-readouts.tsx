@@ -5,12 +5,13 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { useExtracted, useFormatter } from "next-intl";
 import { BigQuantity } from "../../_components/big-quantity";
-import { daysUntilIsoDate, isoDateToUtc } from "../../_utils/iso-date";
+import { daysUntilIsoDate, isoDateToUtc, useFormatIsoDate } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
 import { useStudyDaysText } from "../../plan/use-study-days-text";
 import { useRevealPhases } from "./plan-shape";
+import { getAimAhead } from "./schedule-aim";
 
 const READOUT_CLASS = "text-readout text-2xl leading-tight";
 
@@ -102,8 +103,10 @@ function MonthYear({ isoDate }: { isoDate: string }) {
   );
 }
 
+/** A language plan without a date ends where its aim is, so it reads as the aim and when. */
 function FinishReadout() {
   const t = useExtracted();
+  const formatDate = useFormatIsoDate();
   const today = useMountTime();
   const { goal, plan } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
@@ -126,7 +129,20 @@ function FinishReadout() {
     return null;
   }
 
-  return (
+  const aim = getAimAhead(plan.languageAim);
+
+  return aim ? (
+    <Readout
+      label={t({
+        description:
+          'Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".',
+        message: "by {month}",
+        values: { month: formatDate(plan.estimate.endDate, "month") },
+      })}
+    >
+      {aim}
+    </Readout>
+  ) : (
     <Readout label={t("estimated finish")}>
       <MonthYear isoDate={plan.estimate.endDate} />
     </Readout>

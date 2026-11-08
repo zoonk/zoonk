@@ -10384,6 +10384,12 @@ msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Etwa # Tag} other {Etwa # Tage}}"
 
+#. Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "XvWNP2"
+msgid "by {month}"
+msgstr "bis {month}"
+
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "x0b1HZ"
 msgid "estimated finish"
