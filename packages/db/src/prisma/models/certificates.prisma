@@ -23,7 +23,10 @@ model Certificate {
   language       String          @db.VarChar(10)
   /// A language goal's language: its course levels follow the CEFR.
   targetLanguage String?         @map("target_language") @db.VarChar(10)
-  /// Unused.
+  /// Unused. The migration that drops it first deletes what the previous release wrote while it
+  /// still ran: `language_level` certificates, and course certificates with fewer than half their
+  /// lessons studied (the same two deletes as `certificates_course_levels_only`). It also removes
+  /// `languageLevel` from `CertificateKind`.
   level          String?         @ignore @db.VarChar(2)
   /// The course level it certifies; null for a plan certified whole.
   courseLevel    CourseLevel?    @map("course_level")
