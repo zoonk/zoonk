@@ -166,6 +166,34 @@ describe("a language goal's aim", () => {
     expect(plan.status === "ready" ? plan.plan.estimate.endDate : null).toBe(end);
   });
 
+  it.each([5, 30])(
+    "dates each aim the same way in Adjust's preview as on the time question, at %i min a day",
+    async (dailyMinutes) => {
+      const { goal } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
+      await prisma.goal.update({ data: { dailyMinutes }, where: { id: goal.id } });
+      await setUpPlanInSteps(goal.id);
+
+      const dates = await Promise.all(
+        (["B1", "B2", "C1"] as const).map(async (aim) => {
+          const [advice, preview] = await Promise.all([
+            getPlanTimeAdvice({ goalId: goal.id, input: { aim } }),
+            previewPlanChange({
+              goalId: goal.id,
+              input: { operations: [{ aim, kind: "setAim" }] },
+            }),
+          ]);
+
+          return {
+            advice: advice.status === "ready" ? advice.advice.endDate : undefined,
+            preview: preview.status === "ready" ? preview.preview.finishDate : undefined,
+          };
+        }),
+      );
+
+      expect(dates.map(({ preview }) => preview)).toStrictEqual(dates.map(({ advice }) => advice));
+    },
+  );
+
   it("refuses an aim for a goal that isn't a language", async () => {
     const { goal } = await setup({ level: "none", targetScore: "A2" }, NEW_PLAN);
     await prisma.goal.update({ data: { kind: "learn" }, where: { id: goal.id } });

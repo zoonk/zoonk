@@ -82141,6 +82141,13 @@
             ],
             "additionalProperties": false
           },
+          "finishDate": {
+            "nullable": true,
+            "description": "When the plan would finish its whole course after the change: null while it's being built, for a plan with a date (it ends on that date whatever it covers), and when the course doesn't fit in the days a plan lays out. Date a language aim's choice by this, as the time advice's `endDate` does",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
           "ready": {
             "type": "boolean",
             "description": "False while the plan is being built: ask again in a few seconds"
@@ -82153,6 +82160,7 @@
         "required": [
           "effect",
           "feasibility",
+          "finishDate",
           "ready",
           "unchanged"
         ],
