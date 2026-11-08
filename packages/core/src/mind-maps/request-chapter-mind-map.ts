@@ -16,7 +16,7 @@ import { findGoalFor, findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getLessonGenerationStates } from "../library/generation/lesson-generation-state";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
-import { MIND_MAP_STALE_AFTER_MS, getMindMapStatus } from "./_utils/mind-map-view";
+import { type MindMapRow, getMindMapStatus } from "./_utils/mind-map-view";
 
 type OnItsWay = "drawing" | "writingLessons";
 
@@ -43,6 +43,7 @@ type Admission =
   | { decision: RefusedUsage; status: "refused" }
   | { status: "claimed" }
   | { status: "joined" }
+  | { status: "ready" }
   | { status: "unauthorized" };
 
 async function findRunId(chapterId: string): Promise<string | null> {
@@ -54,28 +55,36 @@ async function findRunId(chapterId: string): Promise<string | null> {
   return row?.runId ?? null;
 }
 
-/** False when another request holds the map; a failed or stopped run's map is taken over. */
-async function claimMindMapRow(
+/** Waits for any request deciding on the map, then reads the map as it is now. */
+async function lockMindMapRow(
   transaction: TransactionClient,
   { chapterId, now }: { chapterId: string; now: Date },
-): Promise<boolean> {
-  const staleBefore = new Date(now.getTime() - MIND_MAP_STALE_AFTER_MS);
-
-  const claimed = await transaction.$queryRaw<{ id: string }[]>`
+): Promise<MindMapRow> {
+  await transaction.$executeRaw`
     INSERT INTO chapter_mind_maps (chapter_id, language, status, updated_at)
     VALUES (
       ${chapterId}::uuid,
       (SELECT language FROM library_chapters WHERE id = ${chapterId}::uuid),
-      'running',
+      'pending',
       ${now}::timestamp
     )
-    ON CONFLICT (chapter_id) DO UPDATE
-      SET run_id = NULL, status = 'running', updated_at = EXCLUDED.updated_at
-      WHERE chapter_mind_maps.status <> 'running'
-        OR chapter_mind_maps.updated_at < ${staleBefore}::timestamp
-    RETURNING id`;
+    ON CONFLICT (chapter_id) DO NOTHING`;
 
-  return claimed.length > 0;
+  await transaction.$queryRaw`
+    SELECT id FROM chapter_mind_maps WHERE chapter_id = ${chapterId}::uuid FOR UPDATE`;
+
+  return transaction.chapterMindMap.findUniqueOrThrow({
+    select: {
+      imageHeight: true,
+      imageUrl: true,
+      imageWidth: true,
+      status: true,
+      structure: true,
+      thumbnailUrl: true,
+      updatedAt: true,
+    },
+    where: { chapterId },
+  });
 }
 
 /** The chapter's lessons the run writes or joins first: every one not written and not set aside. */
@@ -93,8 +102,9 @@ async function findLessonsToWrite(chapterId: string): Promise<string[]> {
 }
 
 /**
- * Claims the map and each lesson it writes first in one learner write, together with the map's row:
- * a request that finds the map taken by then joins it and keeps no claim.
+ * Decides from the map as it is once this learner's turn comes: a map that's ready or being made by
+ * then is returned or joined and claims nothing. Otherwise the map and each lesson it writes first
+ * are claimed together with the map's row, or not at all.
  */
 async function admitMindMap({
   chapterId,
@@ -119,6 +129,25 @@ async function admitMindMap({
   const admission = await writeLearnerChange<Admission>(
     { userId: viewer.userId },
     async (transaction) => {
+      const row = await lockMindMapRow(transaction, { chapterId, now });
+
+      const current = getMindMapStatus({
+        canHaveMap: true,
+        lessonsToWrite: lessonIds.length,
+        now,
+        owed: false,
+        plusRequired: false,
+        row,
+      });
+
+      if (current === "ready") {
+        return unchanged({ status: "ready" as const });
+      }
+
+      if (current === "drawing" || current === "writingLessons") {
+        return unchanged({ status: "joined" as const });
+      }
+
       const decision = await claimUsagesInWrite({ claims, transaction, viewer });
 
       if (isRefusedUsage(decision)) {
@@ -129,9 +158,12 @@ async function admitMindMap({
         return unchanged({ status: "unauthorized" as const });
       }
 
-      return (await claimMindMapRow(transaction, { chapterId, now }))
-        ? { status: "claimed" }
-        : unchanged({ status: "joined" as const });
+      await transaction.chapterMindMap.update({
+        data: { runId: null, status: "running", updatedAt: now },
+        where: { chapterId },
+      });
+
+      return { status: "claimed" };
     },
   );
 
@@ -184,7 +216,11 @@ async function requestFor({
   const lessonIds = await findLessonsToWrite(chapterId);
   const admission = await admitMindMap({ chapterId, lessonIds, now, viewer });
 
-  if (admission.status === "refused" || admission.status === "unauthorized") {
+  if (
+    admission.status === "ready" ||
+    admission.status === "refused" ||
+    admission.status === "unauthorized"
+  ) {
     return admission;
   }
 
