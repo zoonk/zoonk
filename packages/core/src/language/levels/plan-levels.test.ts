@@ -95,6 +95,15 @@ describe(listPlanLevels, () => {
     expect(at(list, "A2")).toMatchObject({ earned: true, size: 4, studied: 2 });
   });
 
+  it("never sizes a skill below the lessons the plan holds for it", () => {
+    const list = levels({
+      graphSkills: [graph("A1", 2)],
+      items: [...lessons("A1", 1), standIn("A1", 3, "testedOut")],
+    });
+
+    expect(at(list, "A1")).toMatchObject({ earned: false, size: 4, studied: 1 });
+  });
+
   it("measures a skill the graph doesn't hold by its own items, tested-out stand-ins at their size", () => {
     const list = levels({
       graphSkills: [],
