@@ -4,7 +4,12 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import {
+  type Reasoning,
+  type ServedSpeed,
+  type ServiceTier,
+  buildProviderOptions,
+} from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
@@ -143,6 +148,7 @@ export type LanguageLessonParams = {
   knownWords?: string[];
   model?: string;
   serviceTier?: ServiceTier;
+  speed?: ServedSpeed;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
@@ -180,10 +186,25 @@ ${formatList(params.knownWords)}
  * pair; everything else belongs to the pair.
  */
 export async function generateLanguageLesson(params: LanguageLessonParams) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning,
+    serviceTier,
+    speed,
+    useFallback = true,
+  } = params;
+
   const systemPrompt = getSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    serviceTier,
+    speed,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

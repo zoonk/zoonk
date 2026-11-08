@@ -1,4 +1,4 @@
-import { type ServedSpeed, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type OnboardingProgress } from "@zoonk/core/analytics/onboarding-progress";
 import {
   type CourseContentWrite,
@@ -152,15 +152,12 @@ export async function requestOpeningLessonStep({
     };
   }
 
-  const speed: ServedSpeed = "fast";
-
   return {
     cache: "cold",
     input: {
       analytics: { ...writing.analytics, ...analytics },
       forExam: writing.forExam,
       lessonId,
-      speed,
       wait: "learner",
     },
     status: "start",

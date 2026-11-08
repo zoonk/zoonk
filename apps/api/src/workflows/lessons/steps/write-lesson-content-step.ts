@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CallWait, type ServedSpeed, chooseServiceTier } from "@zoonk/ai/provider-options";
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
 import { writeChallengeLessonContent } from "@zoonk/core/library/challenges/write";
 import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
@@ -18,6 +18,7 @@ import {
   fixLessonContent,
   writeLessonContent,
 } from "@zoonk/core/library/lessons/write-content";
+import { getLessonWriterSpeed } from "@zoonk/core/library/lessons/writer-speed";
 import { prisma } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type LessonStreamStep } from "./lesson-progress-step";
@@ -40,7 +41,6 @@ export type WriteInput = {
   forExam?: boolean;
   forceReview?: boolean;
   lessonId: string;
-  speed?: ServedSpeed;
   wait?: CallWait;
   workflowRunId: string;
 };
@@ -80,11 +80,17 @@ async function write({
   const analytics = toContentAnalytics({ ...input, scope: lesson });
   const serviceTier = chooseServiceTier({ wait: input.wait ?? "soon" });
 
+  const speed = await getLessonWriterSpeed({
+    goalId: input.analytics?.goalId,
+    lessonId: input.lessonId,
+  });
+
   if (lesson.targetLanguage) {
     const result = await writeLanguageLessonContent({
       analytics,
       lessonId: input.lessonId,
       serviceTier,
+      speed,
       workflowRunId: input.workflowRunId,
     });
 
@@ -99,6 +105,7 @@ async function write({
       lessonId: input.lessonId,
       model: getScopeModel(lesson),
       serviceTier,
+      speed,
       workflowRunId: input.workflowRunId,
     });
 
@@ -108,7 +115,7 @@ async function write({
   }
 
   const reuse = await loadLessonReuse({ forExam: input.forExam, lessonId: input.lessonId });
-  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier });
+  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier, speed });
 
   if (result.status === "drafted") {
     return { ...result, imageScope: getImageScope(lesson) };
