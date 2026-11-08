@@ -153,7 +153,7 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
       <ListRowContent>
         <ListRowTitle>{item.goal.title}</ListRowTitle>
         <ListRowDescription>
-          {t("Your certificate comes when you finish the plan")}
+          {t("Your certificate comes when you finish the plan, studying at least half its lessons")}
         </ListRowDescription>
       </ListRowContent>
       <ListRowTrailing>
@@ -183,7 +183,9 @@ function EmptyCertificates({
           {t("No certificates yet")}
         </h2>
         <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
-          {t("Your certificates show up here when you finish a level or a plan.")}
+          {t(
+            "Your certificates show up here when you finish a level or a plan, studying at least half its lessons.",
+          )}
         </p>
         <LearnLink
           className={buttonVariants({ className: "mt-5", size: "lg" })}

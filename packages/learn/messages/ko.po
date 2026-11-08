@@ -1945,9 +1945,9 @@ msgid "Certificates"
 msgstr "인증서"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "ojltlj"
-msgid "Your certificate comes when you finish the plan"
-msgstr "계획을 마치면 인증서를 받을 수 있어요"
+msgctxt "CZUJO4"
+msgid "Your certificate comes when you finish the plan, studying at least half its lessons"
+msgstr "레슨을 절반 이상 학습하고 계획을 마치면 인증서를 받아요"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
@@ -1955,9 +1955,9 @@ msgid "No certificates yet"
 msgstr "아직 인증서가 없어요"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "_eLagx"
-msgid "Your certificates show up here when you finish a level or a plan."
-msgstr "레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
+msgctxt "LfpYNe"
+msgid "Your certificates show up here when you finish a level or a plan, studying at least half its lessons."
+msgstr "레슨을 절반 이상 학습하고 레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

@@ -1945,9 +1945,9 @@ msgid "Certificates"
 msgstr "Sertifikalar"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "ojltlj"
-msgid "Your certificate comes when you finish the plan"
-msgstr "Planı tamamladığında sertifikanı alırsın"
+msgctxt "CZUJO4"
+msgid "Your certificate comes when you finish the plan, studying at least half its lessons"
+msgstr "Planı derslerinin en az yarısını çalışarak tamamladığında sertifikanı alırsın"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
@@ -1955,9 +1955,9 @@ msgid "No certificates yet"
 msgstr "Henüz sertifikan yok"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "_eLagx"
-msgid "Your certificates show up here when you finish a level or a plan."
-msgstr "Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür."
+msgctxt "LfpYNe"
+msgid "Your certificates show up here when you finish a level or a plan, studying at least half its lessons."
+msgstr "Bir seviyeyi veya planı derslerinin en az yarısını çalışarak tamamladığında sertifikaların burada görünür."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
