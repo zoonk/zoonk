@@ -404,7 +404,6 @@ class TodayScreenshots {
                 "done-up-next" to doneWithUpNext(),
                 "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0, extra = mapOf("state" to "rest")),
                 "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing", "state" to "waiting")),
-                "limit" to day(blocks = lessons(4, done = 2), next = 2, extra = mapOf("dailyLimit" to limitReached(), "state" to "limit")),
             )
         }
 
@@ -434,14 +433,6 @@ class TodayScreenshots {
             count: Int,
             done: Int = 0,
         ) = (0 until count).map { block(it, status = if (it < done) "completed" else "pending") }
-
-        fun limitReached() =
-            buildJsonObject {
-                put("limitMinutes", 30)
-                put("reached", true)
-                put("remainingMinutes", 0)
-                put("usedMinutes", 30)
-            }
 
         fun day(
             blocks: List<JsonObject>,

@@ -631,7 +631,7 @@ internal fun SpokenAnswerView(
                     )
                 }
 
-                !locked -> {
+                !locked && state.run is com.zoonk.android.feature.player.engine.LessonRun.Started -> {
                     VoiceAnswerRecorder(
                         grade = { recording -> actions.gradeSpoken(step.id, recording) },
                         onGraded = {},

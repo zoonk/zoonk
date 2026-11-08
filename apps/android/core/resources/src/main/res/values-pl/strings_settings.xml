@@ -32,13 +32,9 @@
   "settings_preferences_buddy_line": "2d50702fc142ec469e3e7d0d6cac8ec315721bb5d7b6071509a7111ffbd97cd8",
   "settings_preferences_change": "26325fe63fbb8484be2e96ac24faa2ef7312e2d9dac697f3ce6ef1a53a9d58fb",
   "settings_preferences_choose_buddy": "069d2bec08f5882b9969a76e113bec243acb66c82bd8197b65eff2afac2f62b2",
-  "settings_preferences_daily_limit": "2ca6537a17d15decf4174d1c71284f0266ddb2ad8ee6bc2f281b72a3adba8d32",
-  "settings_preferences_daily_limit_description": "6d16dbfe24b8bf671639481865d9fdadddc6ced2b34bc296fa4d25209e75f30c",
   "settings_preferences_description": "bed43abfe7f34be7cfdf047e389c728c1bf277d15491f0a7960d38d30740f6e9",
   "settings_preferences_language": "25fba28cd51aa6d785fc54f382c006a3448da46386ded7bd498c83446dfdda36",
   "settings_preferences_lessons": "6abf04ac0bbda591090cebf73239a21caebd913c52dc26fee27ca0eeeabc0b43",
-  "settings_preferences_limit_a_day": "6bd4e2eef69f39b6a56053e8db402416dd3e60e367d6950a2460c8f8d269e65c",
-  "settings_preferences_no_limit": "f7537cc9b65866f4dd5fa560f26b5dcc78d75770324657019087115f7291020b",
   "settings_preferences_on_this_device": "7ba7920b539040ef656f503b8a8d8c7550ca3df7c2cc05504ba27a4bb035192b",
   "settings_preferences_save_failed": "2eb38cf5d6a4d5cd309a9a2b012c781367ba6df0c99426217f7002e4570317ef",
   "settings_preferences_share_usage_data": "e9efb9a8dfe52b4f2fd6ab86c381c6b2c29a9b036a6e15e9682dcbbd83c09dab",
@@ -94,11 +90,6 @@
     <string name="settings_preferences_lessons">Lekcje</string>
     <string name="settings_preferences_sounds">Dźwięki</string>
     <string name="settings_preferences_sounds_description">Gdy odpowiesz poprawnie lub skończysz</string>
-    <string name="settings_preferences_daily_limit">Dzienny limit czasu nauki</string>
-    <string name="settings_preferences_daily_limit_description">Po tym czasie kończysz naukę na dziś.</string>
-    <string name="settings_preferences_no_limit">Bez limitu</string>
-    <!-- %1$s is a duration, like "45 min". -->
-    <string name="settings_preferences_limit_a_day">%1$s dziennie</string>
     <string name="settings_preferences_language">Język</string>
     <string name="settings_preferences_app_language">Język aplikacji</string>
     <string name="settings_preferences_on_this_device">Na tym urządzeniu</string>

@@ -110,21 +110,36 @@ class FakeLessonPlayerApi(
         lessonId: String,
     ) = emptyList<String>()
 
+    var retryableStarts = 0
+    val startOpenings = mutableListOf<com.zoonk.api.models.LibraryLessonStartInputOpening?>()
+    var startGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+    var opened: com.zoonk.api.models.StudyBlockOpening? = null
+
     override suspend fun start(
         session: AuthenticatedSession,
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ): LibraryLessonRun {
+        opening: com.zoonk.api.models.LibraryLessonStartInputOpening?,
+    ): LessonStart {
+        startOpenings += opening
+        if (retryableStarts > 0) {
+            retryableStarts--
+            throw ApiException(ApiError.Unavailable, status = 503)
+        }
+        startGate?.await()
+        opened?.let { return LessonStart.Opened(it) }
         if (startFailures > 0) {
             startFailures--
             throw ApiException(ApiError.Network)
         }
-        return ApiJson.decodeFromString(
-            """
-            {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
-            """.trimIndent(),
+        return LessonStart.Started(
+            ApiJson.decodeFromString(
+                """
+                {"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
+                 "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
+                """.trimIndent(),
+            ),
         )
     }
 

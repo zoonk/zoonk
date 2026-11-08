@@ -2,7 +2,6 @@ package com.zoonk.android.feature.session
 
 import androidx.compose.runtime.Immutable
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.api.models.DailyTimeLimit
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
 import com.zoonk.api.models.StudyCheckpoint
@@ -39,7 +38,6 @@ data class DayView(
     val state: StudySession.State,
     val missions: List<DayMission>,
     val fullMeal: StudySessionFullMeal,
-    val dailyLimit: DailyTimeLimit?,
     val emptyDay: EmptyDay?,
     val minutes: StudySessionMinutes,
     val freshStart: FreshStart?,
@@ -96,6 +94,7 @@ data class DayStep(
     val refresh: Boolean,
     val reinforcement: Boolean,
     val weakest: Boolean,
+    val opensInPlayer: Boolean = false,
     val waitReason: StudyBlock.WaitReason?,
 ) {
     val isFinished: Boolean
@@ -214,7 +213,6 @@ fun StudySession.toDayView(): DayView =
         state = state,
         missions = missions.map(StudyMission::toDayMission),
         fullMeal = fullMeal,
-        dailyLimit = dailyLimit,
         emptyDay = emptyDay?.value?.let(::emptyDay),
         minutes = minutes,
         freshStart = freshStart?.value?.let(::freshStart),
@@ -239,7 +237,6 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         state = StudySession.State.entries.first { it.value == state.value },
         missions = missions.map(UnstartedStudyDayMissionsInner::toDayMission),
         fullMeal = fullMeal,
-        dailyLimit = dailyLimit,
         emptyDay = emptyDay?.value?.let(::emptyDay),
         minutes = minutes,
         freshStart = freshStart?.value?.let(::freshStart),
@@ -298,6 +295,7 @@ fun StudyBlock.toDayStep(): DayStep =
         refresh = refresh,
         reinforcement = reinforcement,
         weakest = weakest,
+        opensInPlayer = opensInPlayer,
         waitReason = waitReason,
     )
 
@@ -331,6 +329,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         refresh = refresh,
         reinforcement = reinforcement,
         weakest = weakest,
+        opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
     )
 

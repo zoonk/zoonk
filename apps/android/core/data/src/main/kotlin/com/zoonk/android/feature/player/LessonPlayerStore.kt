@@ -13,6 +13,7 @@ import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toLessonLoad
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AnswerExplanationRequest
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
@@ -23,9 +24,22 @@ import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonCompletionInput
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.LibraryLessonStartInput
+import com.zoonk.api.models.LibraryLessonStartInputOpening
 import com.zoonk.api.models.SpokenAnswerGrade
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonObject
 import java.time.ZoneId
 import java.util.UUID
+
+sealed interface LessonStart {
+    data class Started(
+        val run: LibraryLessonRun,
+    ) : LessonStart
+
+    data class Opened(
+        val opening: com.zoonk.api.models.StudyBlockOpening,
+    ) : LessonStart
+}
 
 /** The public API's lesson operations, as the player calls them. */
 interface LessonPlayerApi {
@@ -44,7 +58,8 @@ interface LessonPlayerApi {
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ): LibraryLessonRun
+        opening: LibraryLessonStartInputOpening? = null,
+    ): LessonStart
 
     suspend fun check(
         session: AuthenticatedSession,
@@ -122,11 +137,25 @@ class LiveLessonPlayerApi(
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ) = perform {
-        api.clients(session).libraryLessons.createLibraryLessonStart(
-            UUID.fromString(lessonId),
-            LibraryLessonStartInput(runId?.let(UUID::fromString), studySessionId?.let(UUID::fromString), timeZone()),
-        )
+        opening: LibraryLessonStartInputOpening?,
+    ): LessonStart {
+        val response =
+            perform {
+                api.clients(session).libraryLessons.createLibraryLessonStart(
+                    UUID.fromString(lessonId),
+                    LibraryLessonStartInput(
+                        opening = opening,
+                        runId = runId?.let(UUID::fromString),
+                        studySessionId = studySessionId?.let(UUID::fromString),
+                        timeZone = timeZone(),
+                    ),
+                )
+            }
+        return if ("runId" in response.jsonObject) {
+            LessonStart.Started(ApiJson.decodeFromJsonElement(response))
+        } else {
+            LessonStart.Opened(ApiJson.decodeFromJsonElement(response.jsonObject.getValue("opening")))
+        }
     }
 
     override suspend fun check(

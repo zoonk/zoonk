@@ -230,7 +230,7 @@ private fun conversationJson(
 private fun checkpointIntro(): LanguageCheckpointCall =
     ApiJson.decodeFromString(
         """
-        {"status":"notStarted","dailyLimitReached":false,"intro":{"character":{"name":"Lucía","place":"Café in Madrid","role":"Waiter"},
+        {"status":"notStarted","intro":{"character":{"name":"Lucía","place":"Café in Madrid","role":"Waiter"},
         "exam":null,"examTask":null,"kind":"checkpoint","level":"A2","minutes":3,
         "objectives":[{"description":"Say what you'd like","label":"Ask for a coffee","met":false}],
         "situation":"You're at a café.","targetLanguage":"es","title":"Order at the café"}}

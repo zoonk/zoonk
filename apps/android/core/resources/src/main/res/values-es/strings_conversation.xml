@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "b9de491f05566ae12b6a40ef0374350a244dbce56d722f886207ac7c16b72d5a",
   "conversation_answers_first": "873721f0128504374359bcb9621f67c96511f827c8f7039d05cd71c1c87b3b09",
   "conversation_at_level": "99eeee436fea3e26610ac04ce23097f8fdb374b27311d00717c4f1b48a4e5558",
-  "conversation_back_to_today": "4613b2c34c6999333596642749873be768d0782a9661bf27454efba22502f65b",
   "conversation_band": "5629314d95d7db70b94f0f6af6d124ae8a8e242970045f11e14198569f489ca1",
   "conversation_band_points": "80bf88922c1a2d08583769bb0bcc5bdc0d79886e11291dbb51158f2ea76d63ee",
   "conversation_below_level": "a9e67b66d7ace5167fa7f484f1eb2177934051c342156948e5d56cb72be1aad9",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "e41558c2eedcae147e1304b6b5cc2bca4e1bdc0c60ee264e5ad93ffa11035429",
   "conversation_still_closing": "4cc6ab03a85bde6e5e87ff924f5bae4870499429bdb63556eabd14159ee123ae",
   "conversation_still_to_get_across": "fad64a6479e62e86d75eba736cbdbc71ef02933992ac8b115ea1786d281fc2b7",
-  "conversation_study_time_used_up": "d0fbe5146c11232bb04caada0a3cc683b8054886428a4cb1396365daeea02560",
   "conversation_take_over": "53e40e7355ec1fe836911ebf6fd55b862f89536a6e6e3e2f32ef1e2ccfd22bce",
   "conversation_take_your_time": "d38c3c496c7b1651223208b174716134ed98bf9bf220bdcb51ac084d60afafb0",
   "conversation_taken_over": "a9e6a690ff855d76fad53cac23478603ef2aa8bfea9399cd462c26a2702d234e",
@@ -313,9 +311,6 @@
     <string name="conversation_call_length">Duración de la llamada</string>
     <string name="conversation_longer_calls_plus">Con Plus puedes hacer llamadas más largas.</string>
     <string name="conversation_opens_when_ready">Tu llamada se abrirá en cuanto esté lista.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">Alcanzaste tu límite de tiempo diario. Podrás hacer esta llamada en tu próxima sesión.</string>
-    <string name="conversation_back_to_today">Volver a Hoy</string>
     <string name="conversation_get_ready">Preparar la llamada</string>
     <string name="conversation_get_ready_description">Este desafío es una llamada breve sobre la unidad. Primero la preparamos según tu nivel de expresión oral, lo que toma hasta medio minuto.</string>
     <string name="conversation_getting_ready">Preparando tu llamada</string>

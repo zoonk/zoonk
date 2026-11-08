@@ -481,12 +481,6 @@ private fun StatusLine(
                 AnnotatedString(stringResource(R.string.essay_send_failed))
             }
 
-            send == EssaySend.DailyLimitReached -> {
-                val reached = stringResource(R.string.essay_daily_limit_reached)
-                AnnotatedString(reached + spaceAfterSentence(reached)) +
-                    statusLink(stringResource(R.string.today_change_limit)) { navigator.open(AppRoute.Preferences) }
-            }
-
             send == EssaySend.LimitReached || gradesLeft == 0 -> {
                 AnnotatedString(stringResource(R.string.essay_limit_reached))
             }

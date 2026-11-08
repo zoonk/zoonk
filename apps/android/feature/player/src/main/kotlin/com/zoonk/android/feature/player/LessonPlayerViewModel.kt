@@ -53,6 +53,8 @@ import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
+import com.zoonk.android.feature.session.route
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
@@ -61,6 +63,7 @@ import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
+import com.zoonk.api.models.LibraryLessonStartInputOpening
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -150,6 +153,10 @@ private sealed interface StartOutcome {
         val run: LibraryLessonRun,
     ) : StartOutcome
 
+    data class Opened(
+        val route: AppRoute,
+    ) : StartOutcome
+
     data class Refused(
         val refusal: LessonRefusal,
     ) : StartOutcome
@@ -170,7 +177,7 @@ private sealed interface CompletionOutcome {
  */
 class LessonPlayerViewModel(
     private val lessonId: String,
-    private val studySessionId: String?,
+    private var studySessionId: String?,
     private val firstAnswer: String?,
     private val store: LessonPlayerStore,
     private val cache: AppCache,
@@ -185,21 +192,29 @@ class LessonPlayerViewModel(
     private val analytics: EventTracker = EventTracker {},
     private val saved: SavedStateHandle,
     private val now: () -> Long = System::currentTimeMillis,
+    private val opening: String? = null,
+    private val tapped: Boolean = false,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
     private val mutableEnding = MutableStateFlow(LessonEnding(inSession = studySessionId != null))
-    private val sessionMover =
+    private var sessionMover =
         sessionSteps?.let { steps ->
             studySessionId?.let { id -> runCatching { UUID.fromString(id) }.getOrNull() }?.let { SessionMover(steps, it, viewModelScope) }
         }
 
-    /** Null until the run starts or is refused. */
+    /** Written screens are available while their run is admitted. */
     val state: StateFlow<LessonPlayerState?> = mutableState.asStateFlow()
 
     /** Where the lesson's end leads, read once it's saved. */
     val ending: StateFlow<LessonEnding> = mutableEnding.asStateFlow()
 
-    val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove())
+    private val mutableRedirect = MutableStateFlow<AppRoute?>(null)
+    val redirect = mutableRedirect.asStateFlow()
+    private val mutableSessionMove = MutableStateFlow(SessionMove())
+    val sessionMove: StateFlow<SessionMove> = mutableSessionMove.asStateFlow()
+
+    // A restored study link waits for a learner action before its start can owe preparation.
+    private var activated = opening == null || tapped
 
     private val mutableExplanations = MutableStateFlow<Map<String, AnswerExplanation>>(emptyMap())
 
@@ -212,6 +227,8 @@ class LessonPlayerViewModel(
     private var owner = sessions.current
     private var work = openScope()
     private var starting: Job? = null
+    private var checkingAfterStart: Job? = null
+    private var admitted = false
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
     private val screenLocks = mutableMapOf<String, Mutex>()
@@ -237,6 +254,7 @@ class LessonPlayerViewModel(
         work = openScope()
         this.lesson = lesson
         owner = session
+        admitted = false
         unsaved.clear()
         screenLocks.clear()
         resending = null
@@ -245,8 +263,10 @@ class LessonPlayerViewModel(
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
         mutableExplanations.value = emptyMap()
-        mutableState.value = null
-        startRun()
+        // Written content is usable while admission runs; server work still waits for its run.
+        openedAt = now()
+        mutableState.value = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt)
+        if (activated) startRun()
     }
 
     /** The app went to the background or the player closed: an unfinished run counts as abandoned, once. */
@@ -258,7 +278,35 @@ class LessonPlayerViewModel(
     }
 
     fun continueSession() {
-        sessionMover?.continueSession()
+        val moment =
+            mutableState.value
+                ?.completion
+                ?.result
+                ?.studyBlock
+        val next = moment?.next
+        if (next?.opensInPlayer == true && next.block.lessonId != null) {
+            val input =
+                LibraryLessonStartInputOpening.StudyBlockOpeningInputValue(
+                    com.zoonk.api.models
+                        .StudyBlockOpeningInput(
+                            com.zoonk.api.models.StudyBlockOpeningTarget
+                                .BlockWrapper(next.target),
+                        ),
+                )
+            mutableSessionMove.value =
+                SessionMove(
+                    leaving =
+                        AppRoute.Lesson(
+                            next.block.lessonId.toString(),
+                            moment.sessionId.toString(),
+                            opening =
+                                com.zoonk.api.ApiRequestJson
+                                    .encodeToString(LibraryLessonStartInputOpening.serializer(), input),
+                        ),
+                )
+        } else {
+            sessionMover?.continueSession()
+        }
     }
 
     fun stopSession() {
@@ -270,7 +318,21 @@ class LessonPlayerViewModel(
         if (starting?.isActive != true) startRun()
     }
 
+    fun activate() {
+        if (!activated) {
+            activated = true
+            startRun()
+        }
+    }
+
     fun dispatch(action: LessonAction) {
+        when (action) {
+            LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
+            LessonAction.RestoreWriting, is LessonAction.SelectAnswer, is LessonAction.DontKnow, is LessonAction.SkipWriting,
+            -> activate()
+
+            else -> Unit
+        }
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
         if (action == LessonAction.Continue) resendAnswers()
         val before = mutableState.value
@@ -304,6 +366,7 @@ class LessonPlayerViewModel(
     }
 
     fun select(answer: LessonAnswer?) {
+        activate()
         val step = mutableState.value?.currentStep ?: return
         dispatch(LessonAction.SelectAnswer(step.id, answer))
     }
@@ -349,6 +412,7 @@ class LessonPlayerViewModel(
         val spoken = step?.content as? StepContent.SpokenAnswer
 
         if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
+        if (!awaitRun()) return GradeOutcome.Failed
 
         dispatch(LessonAction.CheckStarted(stepId))
         val outcome =
@@ -392,6 +456,7 @@ class LessonPlayerViewModel(
      * their verdict at once and are recorded in the background, and the rest wait for the server.
      */
     fun check() {
+        activate()
         val state = mutableState.value ?: return
         val step = state.currentStep ?: return
         val answer = state.answers[step.id] ?: return
@@ -406,7 +471,16 @@ class LessonPlayerViewModel(
             return
         }
 
-        val runId = (state.run as? LessonRun.Started)?.runId ?: return
+        val runId = (state.run as? LessonRun.Started)?.runId
+        if (runId == null) {
+            if (checkingAfterStart?.isActive != true) {
+                checkingAfterStart =
+                    work.launch {
+                        if (awaitRun() && mutableState.value?.currentStep?.id == step.id) check()
+                    }
+            }
+            return
+        }
         val input =
             LessonStepCheckInput(
                 answer = answer.toApi() ?: return,
@@ -488,6 +562,7 @@ class LessonPlayerViewModel(
     }
 
     private fun startRun() {
+        if (!activated) return
         val opened = lesson ?: return
         dispatch(LessonAction.RunStarting)
         starting =
@@ -508,20 +583,30 @@ class LessonPlayerViewModel(
                     .map { PendingCheck(it.stepId, ApiJson.decodeFromJsonElement(it.input), it.isCorrect, it.answeredAt) }
                     .filterNot { it.attemptId in queued }
                     .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
-                sendUnsent()
                 val outcome = start(runId = null)
                 if (outcome !is StartOutcome.Started) reading.cancel()
                 if (outcome == null) return@launch
                 when (outcome) {
                     is StartOutcome.Started -> {
+                        admitted = true
+                        sendUnsent()
                         reading.await()
+                        if (sessions.current != owner) return@launch
                         val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson ?: opened
                         this@LessonPlayerViewModel.lesson = lesson
+                        studySessionId = outcome.run.sessionId?.toString()
+                        sessionMover = sessionSteps?.let { steps -> outcome.run.sessionId?.let { SessionMover(steps, it, viewModelScope) } }
+                        sessionMover?.let { mover -> work.launch { mover.move.collect { mutableSessionMove.value = it } } }
+                        mutableEnding.value = LessonEnding(inSession = studySessionId != null)
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
                         mutableState.value = state
                         work.launch { followLatePictures() }
+                    }
+
+                    is StartOutcome.Opened -> {
+                        mutableRedirect.value = outcome.route
                     }
 
                     is StartOutcome.Refused -> {
@@ -535,10 +620,22 @@ class LessonPlayerViewModel(
     /** Null when the session that opened the lesson isn't current anymore. */
     private suspend fun start(runId: String?): StartOutcome? {
         val result =
-            cache.mutate { session ->
+            cache.mutate(invalidating = if (opening != null) setOf(DataDomain.Goals, DataDomain.UserSession) else emptySet()) { session ->
                 if (session != owner) return@mutate null
                 try {
-                    StartOutcome.Started(store.api.start(session, lessonId, studySessionId, runId))
+                    val input = opening?.let { ApiJson.decodeFromString(LibraryLessonStartInputOpening.serializer(), it) }
+
+                    suspend fun request() = store.api.start(session, lessonId, studySessionId, runId, input)
+                    val result =
+                        try {
+                            request()
+                        } catch (e: ApiException) {
+                            if (e.status == 503) request() else throw e
+                        }
+                    when (result) {
+                        is LessonStart.Started -> StartOutcome.Started(result.run)
+                        is LessonStart.Opened -> StartOutcome.Opened(result.opening.route() ?: AppRoute.Today)
+                    }
                 } catch (e: ApiException) {
                     e.toLessonRefusal()?.let(StartOutcome::Refused) ?: throw e
                 }
@@ -555,8 +652,15 @@ class LessonPlayerViewModel(
         lesson: PlayableLesson,
         run: LibraryLessonRun,
     ): LessonPlayerState {
-        val started = now()
-        var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
+        val started = openedAt
+        var state =
+            mutableState.value?.takeUnless {
+                it.run is LessonRun.Refused || it.steps.keys.toList() !=
+                    lesson.playedSteps.map(
+                        LessonStep::id,
+                    )
+            }
+                ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
         state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress)), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
@@ -686,6 +790,7 @@ class LessonPlayerViewModel(
     }
 
     fun resendAnswers() {
+        if (!admitted) return
         if (unsaved.isNotEmpty() && resending?.isActive != true) work.launch { sendUnsent() }
     }
 
@@ -721,7 +826,14 @@ class LessonPlayerViewModel(
 
     private fun markStarted(recorded: Boolean) = listOfNotNull(lessonStarted?.takeIf { recorded }?.replacing(true))
 
+    private suspend fun awaitRun(): Boolean {
+        if (!activated) return false
+        starting?.join()
+        return sessions.current == owner && mutableState.value?.run is LessonRun.Started && mutableRedirect.value == null
+    }
+
     private suspend fun send(pending: PendingCheck): CheckOutcome {
+        if (!admitted && !awaitRun()) return CheckOutcome.Failed
         val result =
             cache.mutate(replacing = { markStarted(recorded = (it as? CheckOutcome.Checked)?.result?.checked == true) }) { session ->
                 if (session != owner) return@mutate CheckOutcome.Failed
@@ -740,6 +852,10 @@ class LessonPlayerViewModel(
     }
 
     private suspend fun complete() {
+        if (!awaitRun()) {
+            dispatch(LessonAction.CompletionFailed)
+            return
+        }
         val allSaved = sendUnsent()
         val state = mutableState.value ?: return
         val runId = (state.run as? LessonRun.Started)?.runId
@@ -750,7 +866,9 @@ class LessonPlayerViewModel(
         }
 
         val result =
-            cache.mutate(invalidating = setOf(DataDomain.UserProgress, DataDomain.LearnerModel)) { session ->
+            cache.mutate(
+                invalidating = setOf(DataDomain.UserProgress, DataDomain.LearnerModel, DataDomain.Goals, DataDomain.UserSession),
+            ) { session ->
                 if (session != owner) return@mutate null
                 try {
                     CompletionOutcome.Completed(store.api.complete(session, lessonId, runId, state.skippedWritingStepIds))

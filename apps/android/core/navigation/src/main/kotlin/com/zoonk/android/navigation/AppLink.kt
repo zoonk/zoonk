@@ -1,12 +1,43 @@
 package com.zoonk.android.navigation
 
 import com.zoonk.android.data.AppleCallback
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URLDecoder
 
 /** Main's URLs as routes: App Links, and the paths the app's own content links (a buddy answer's `/session?block=…`). */
 object AppLink {
+    private fun lessonOpening(query: Map<String, String>): String? {
+        if (query["block"] != null) {
+            return buildJsonObject {
+                put(
+                    "target",
+                    buildJsonObject {
+                        put("kind", "block")
+                        put("blockId", query.getValue("block"))
+                    },
+                )
+            }.toString()
+        }
+        if (listOf("goal", "day", "ref").none { it in query }) return null
+        return runCatching {
+            buildJsonObject {
+                put("goalId", query.getValue("goal"))
+                put("shownDate", query.getValue("day"))
+                put(
+                    "target",
+                    buildJsonObject {
+                        put("kind", "ref")
+                        put("ref", Json.parseToJsonElement(query.getValue("ref")))
+                    },
+                )
+            }.toString()
+        }.getOrDefault("invalid")
+    }
+
     const val SITE_URL = "https://www.zoonk.com"
 
     /** Must match the API's `APP_LINK_URL`, where its `/auth/apple/android` sends Apple sign-in back. */
@@ -246,7 +277,7 @@ object AppLink {
 
                     "start" -> AppRoute.GoalSetup(goalId = second)
 
-                    "learn" -> AppRoute.Lesson(second, sessionId = session, firstAnswer = query["answer"])
+                    "learn" -> AppRoute.Lesson(second, sessionId = session, firstAnswer = query["answer"], opening = lessonOpening(query))
 
                     "pattern" -> AppRoute.Pattern(patternId = second)
 

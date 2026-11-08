@@ -24,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -153,6 +155,8 @@ internal fun PlayingLesson(
                 lessonId = route.lessonId,
                 studySessionId = route.sessionId,
                 firstAnswer = route.firstAnswer,
+                opening = route.opening,
+                tapped = navigator.takeLessonTap(route),
                 store = app.lessonPlayer,
                 cache = app.cache,
                 sessions = app.sessions,
@@ -177,6 +181,10 @@ internal fun PlayingLesson(
     val signedIn = (session as? SessionState.SignedIn)?.session
     val state by viewModel.state.collectAsStateWithLifecycle()
     val ending by viewModel.ending.collectAsStateWithLifecycle()
+    val redirect by viewModel.redirect.collectAsStateWithLifecycle()
+    LaunchedEffect(redirect) {
+        redirect?.takeIf { navigator.currentRoute == route }?.let { navigator.leaveTaskFor(it) }
+    }
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
 
@@ -203,27 +211,42 @@ internal fun PlayingLesson(
             null
         }
 
-    CompositionLocalProvider(
-        LocalLessonSpeech provides app.speech,
-        LocalCodeSandbox provides app.codeSandbox,
-        LocalChallengeTeam provides team,
-    ) {
-        LessonPlayer(
-            load.lesson,
-            state,
-            ending,
-            viewModel,
-            exits,
-            navigator,
-            endSlot,
-            buddy = summary.value?.buddy,
-            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
-            tutor = tutor,
-            certificatesMoment = { awarded, onClose ->
-                CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
-            },
-        )
-        LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
+    val activation =
+        Modifier
+            .pointerInput(viewModel) {
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitPointerEvent()
+                        viewModel.activate()
+                    }
+                }
+            }.onPreviewKeyEvent {
+                viewModel.activate()
+                false
+            }
+    Box(activation) {
+        CompositionLocalProvider(
+            LocalLessonSpeech provides app.speech,
+            LocalCodeSandbox provides app.codeSandbox,
+            LocalChallengeTeam provides team,
+        ) {
+            LessonPlayer(
+                load.lesson,
+                state,
+                ending,
+                viewModel,
+                exits,
+                navigator,
+                endSlot,
+                buddy = summary.value?.buddy,
+                ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+                tutor = tutor,
+                certificatesMoment = { awarded, onClose ->
+                    CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
+                },
+            )
+            LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
+        }
     }
 }
 

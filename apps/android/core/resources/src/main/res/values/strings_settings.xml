@@ -39,11 +39,6 @@
     <string name="settings_preferences_lessons">Lessons</string>
     <string name="settings_preferences_sounds">Sounds</string>
     <string name="settings_preferences_sounds_description">When you get it right or finish</string>
-    <string name="settings_preferences_daily_limit">Daily time limit</string>
-    <string name="settings_preferences_daily_limit_description">Stop for the day after this much study.</string>
-    <string name="settings_preferences_no_limit">No limit</string>
-    <!-- %1$s is a duration, like "45 min". -->
-    <string name="settings_preferences_limit_a_day">%1$s a day</string>
     <string name="settings_preferences_language">Language</string>
     <string name="settings_preferences_app_language">App language</string>
     <string name="settings_preferences_on_this_device">On this device</string>

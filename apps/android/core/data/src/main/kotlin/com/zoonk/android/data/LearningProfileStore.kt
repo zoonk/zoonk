@@ -50,8 +50,6 @@ class LearningProfileStore(
         update({ it.copy(shareUsageData = share) }, buildJsonObject { put("shareUsageData", share) })
 
     /** Null is no limit. */
-    suspend fun setDailyLimit(minutes: Long?): Boolean =
-        update({ it.copy(dailyLimitMinutes = minutes) }, buildJsonObject { put("dailyLimitMinutes", minutes) })
 
     suspend fun setActiveGoal(goalId: UUID): Boolean =
         update({ it.copy(activeGoalId = goalId) }, buildJsonObject { put("activeGoalId", goalId.toString()) })

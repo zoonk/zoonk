@@ -105,7 +105,7 @@ internal fun LazyListScope.todaySession(
     buddyName: String,
 ) {
     val day = model.day
-    val next = day.nextStep?.takeIf { !day.limitReached }
+    val next = day.nextStep
 
     if (model.today.earlierWork.isNotEmpty()) {
         item(key = "earlier-work", contentType = "earlier-work") { EarlierWork(model, Modifier.pageItem().padding(top = 16.dp)) }
@@ -156,7 +156,7 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     val day = model.day
     val freshStart = day.freshStart ?: return
 
-    if (!day.showsFreshStart(model.today.studiedToday) || model.state == StudySession.State.AHEAD || day.limitReached ||
+    if (!day.showsFreshStart(model.today.studiedToday) || model.state == StudySession.State.AHEAD ||
         model.state == StudySession.State.REST
     ) {
         return
@@ -773,10 +773,6 @@ private fun TodayDayStatus(
 
     when (model.state) {
         StudySession.State.DONE -> {
-            if (day.limitCutDayShort) {
-                LimitStatus(model, actions, reached = true, modifier)
-                return
-            }
             val studied = day.studiedToday()
             val link =
                 if (model.keepLearning) {
@@ -819,10 +815,6 @@ private fun TodayDayStatus(
             TodayStatusLine(R.drawable.ic_schedule, stringResource(R.string.today_lessons_not_written), null, modifier)
         }
 
-        StudySession.State.LIMIT -> {
-            LimitStatus(model, actions, reached = true, modifier)
-        }
-
         StudySession.State.REST -> {
             val welcomeBack = day.freshStart == FreshStart.WelcomeBack
             val clause =
@@ -850,40 +842,8 @@ private fun TodayDayStatus(
         }
 
         StudySession.State.UNDERWAY -> {
-            if (day.limitCapsDay) LimitStatus(model, actions, reached = false, modifier)
         }
     }
-}
-
-/** The day's line while the daily time limit cuts it short, or once it has ended it, with the way to change the limit. */
-@Composable
-private fun LimitStatus(
-    model: TodayDayModel,
-    actions: TodayActionHandlers,
-    reached: Boolean,
-    modifier: Modifier,
-) {
-    val time = formatMinutes((model.day.dailyLimit?.limitMinutes ?: 0).toInt(), currentLocale())
-    TodayStatusLine(
-        icon = R.drawable.ic_hourglass_empty,
-        sentence = stringResource(if (reached) R.string.today_limit_reached else R.string.today_limit_stops, time),
-        clause = if (reached) seeYou(model) else null,
-        modifier = modifier,
-        link = statusLink(stringResource(R.string.today_change_limit)) { actions.navigate(AppRoute.Preferences) },
-    )
-}
-
-/** "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the next session. */
-@Composable
-private fun seeYou(model: TodayDayModel): String {
-    val week = model.day.week
-    val next = week.nextStudyDate ?: return stringResource(R.string.today_see_you_next_session)
-    val today = week.days.firstOrNull { it.isToday }?.date ?: model.day.localDate
-
-    if (next.toEpochDays() - today.toEpochDays() == 1L) return stringResource(R.string.today_see_you_tomorrow)
-
-    val date = next.toJavaLocalDate()
-    return stringResource(R.string.today_see_you_day, formatDate(date, currentLocale(), DateStyle.Weekday, date))
 }
 
 private const val PHONE_DONE_ROWS = 2

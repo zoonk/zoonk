@@ -27,7 +27,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 private const val PROFILE =
-    """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"shareUsageData":null,"soundsEnabled":true}"""
+    """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"shareUsageData":null,"soundsEnabled":true}"""
 
 private class FakeLearningProfileApi : LearningProfileApi {
     val changes = mutableListOf<JsonObject>()
@@ -78,17 +78,27 @@ class LearningProfileStoreTest {
     }
 
     @Test
-    fun noLimitIsSentAsAnExplicitNullAndKeptOnceSaved() =
+    fun aLaterSavedChangeSurvivesAnEarlierOneFailing() =
         runTest {
             val store = loaded()
-            api.current = api.current.copy(dailyLimitMinutes = null)
-
-            assertTrue(store.setDailyLimit(null))
-
-            assertEquals("""{"dailyLimitMinutes":null}""", api.changes.single().toString())
-            assertNull(
+            api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
+            val sounds = async { store.setSoundsEnabled(false) }
+            runCurrent()
+            api.failure = null
+            api.current = api.current.copy(shareUsageData = false)
+            val sharing = async { store.setShareUsageData(false) }
+            assertFalse(sounds.await())
+            assertTrue(sharing.await())
+            store.profile.load()
+            advanceUntilIdle()
+            assertEquals(
+                false,
                 store.profile.state.value.value!!
-                    .dailyLimitMinutes,
+                    .shareUsageData,
+            )
+            assertTrue(
+                store.profile.state.value.value!!
+                    .soundsEnabled,
             )
         }
 
@@ -119,33 +129,6 @@ class LearningProfileStoreTest {
             store.profile.load()
             advanceUntilIdle()
 
-            assertTrue(
-                store.profile.state.value.value!!
-                    .soundsEnabled,
-            )
-        }
-
-    @Test
-    fun aLaterSavedChangeSurvivesAnEarlierOneFailing() =
-        runTest {
-            val store = loaded()
-            api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
-            val sounds = async { store.setSoundsEnabled(false) }
-            runCurrent()
-            api.failure = null
-            api.current = api.current.copy(dailyLimitMinutes = 90)
-            val limit = async { store.setDailyLimit(90) }
-
-            assertFalse(sounds.await())
-            assertTrue(limit.await())
-            store.profile.load()
-            advanceUntilIdle()
-
-            assertEquals(
-                90L,
-                store.profile.state.value.value!!
-                    .dailyLimitMinutes,
-            )
             assertTrue(
                 store.profile.state.value.value!!
                     .soundsEnabled,
@@ -272,13 +255,13 @@ class LearningProfileStoreTest {
                 api.update(
                     AuthenticatedSession(ANA, "token-a", "local-a"),
                     kotlinx.serialization.json.buildJsonObject {
-                        put("dailyLimitMinutes", kotlinx.serialization.json.JsonNull)
+                        put("activeGoalId", kotlinx.serialization.json.JsonNull)
                     },
                 )
 
                 val sent = server.takeRequest()
                 assertEquals("PATCH", sent.method)
-                assertEquals("""{"dailyLimitMinutes":null}""", sent.body!!.utf8())
+                assertEquals("""{"activeGoalId":null}""", sent.body!!.utf8())
             }
         }
 }

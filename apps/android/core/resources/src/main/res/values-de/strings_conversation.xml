@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "73486e5c7a6a511a7e2bf6b1f2b521730c77f7bdb2cbc0b6a93e6ce310e95191",
   "conversation_answers_first": "54d277bb5dea2c0b801bdd8ee8c0b457c46ad07e4498fbd49e32374a0c7e155f",
   "conversation_at_level": "763b3a0ebd5e3ec68bf88be89fbb30db96cc06f73f6672e9c39fe7f4164d6917",
-  "conversation_back_to_today": "498030ad7b68e9600bb31aa298f793cfd4f409437ef7e409f75f184131392467",
   "conversation_band": "682378f32b52e4a8dac00b9a9edec591d89ae86f607b622517d5b05bb16a79de",
   "conversation_band_points": "08d08b88f4b4df20ce4b80f22bab642d154ca3942db2dff9e67910e489662e76",
   "conversation_below_level": "ea8be04fadcb220eadaf702fc6a60ac435d493ce9b6a728e41bd60d87182d29d",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "997e5dd65b804951f9742adc44a3809a7d78c0e33d53dd109be0c6f3966dd535",
   "conversation_still_closing": "d5437f3ce77c03bea2a4f644cf0344f65155a1752ba735995ce281bab219bf1b",
   "conversation_still_to_get_across": "8d340e1d86e954466b75009f8d7557c48d6ef218ec401613c27698fc186fe085",
-  "conversation_study_time_used_up": "cdd84b89065565bb16b8d18dbe5da83d36324e9f495274d33895ae57714c8f7b",
   "conversation_take_over": "15f446f205a55395ea340e481766c132acb4d12e477d437c2e31bf9e3fd1caf7",
   "conversation_take_your_time": "55be5aea7d3165e8afe63e5fc3d4d5db2ce8b1956afdc519b338cf676723dcbc",
   "conversation_taken_over": "a998162b0d0a55e292cef204ce55e2124e22319be1a12cfd82e1b162ca4ef310",
@@ -312,9 +310,6 @@
     <string name="conversation_call_length">Gesprächsdauer</string>
     <string name="conversation_longer_calls_plus">Mit Plus sind längere Gespräche möglich.</string>
     <string name="conversation_opens_when_ready">Dein Gespräch öffnet sich, sobald es bereit ist.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">Du hast dein tägliches Zeitlimit erreicht. Du kannst dieses Gespräch in deiner nächsten Lerneinheit führen.</string>
-    <string name="conversation_back_to_today">Zurück zu Heute</string>
     <string name="conversation_get_ready">Gespräch vorbereiten</string>
     <string name="conversation_get_ready_description">Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Wir erstellen es zuerst passend zu deinem Sprechniveau. Das dauert bis zu einer halben Minute.</string>
     <string name="conversation_getting_ready">Wir bereiten dein Gespräch vor</string>
