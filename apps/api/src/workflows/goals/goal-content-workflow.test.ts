@@ -29,7 +29,7 @@ import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
 import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
-import { claimWarmUp, readWarmUpState } from "@zoonk/core/library/warm-ups/claim";
+import { claimWarmUp, failWarmUp, readWarmUpState } from "@zoonk/core/library/warm-ups/claim";
 import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { getNoticeWaitState } from "@zoonk/core/plans/notice-wait";
@@ -77,6 +77,7 @@ import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import * as lookaheadSteps from "./steps/goal-lookahead-steps";
 import * as planSteps from "./steps/goal-plan-steps";
+import * as warmUpSteps from "./steps/goal-warm-up-steps";
 import * as noticeSteps from "./steps/notice-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateWholeSkillGraph>>["data"];
@@ -787,6 +788,48 @@ describe(goalContentWorkflow, () => {
     ).resolves.toMatchObject({ runId: "other-writer", status: "writing" });
   });
 
+  it.each(["the writer failed before this run claimed", "reading its status kept failing"])(
+    "tells a goal's wait no deck is coming when %s",
+    async (end) => {
+      const [{ goal }, { goal: owner }] = await Promise.all([newGoal(), newGoal()]);
+      const generalGoal = `Arithmetic ${crypto.randomUUID()}`;
+      const scope = { generalGoal, language: "en", ownerId: null, targetLanguage: null };
+
+      vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+        taskResult({ ...recordedSpecificity, generalGoal }),
+      );
+
+      const claim = await claimWarmUp({ goalId: owner.id, scope, workflowRunId: "other-writer" });
+
+      if (claim.status !== "claimed") {
+        throw new Error("Expected another run to claim this deck");
+      }
+
+      // An earlier attempt of this goal's run linked the deck, so its wait shows the quiz coming.
+      await claimWarmUp({ goalId: goal.id, scope, workflowRunId: "earlier-attempt" });
+
+      if (end === "the writer failed before this run claimed") {
+        await failWarmUp({ id: claim.id, workflowRunId: "other-writer" });
+      }
+
+      const statusRead = vi
+        .spyOn(warmUpSteps, "readWarmUpStatusStep")
+        .mockRejectedValue(new Error("Status read failed after retries"));
+
+      try {
+        await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+          status: "built",
+        });
+      } finally {
+        statusRead.mockRestore();
+      }
+
+      expect(
+        getStreamedEvents().filter(({ step }) => step === "warmUpReady" || step === "warmUpFailed"),
+      ).toStrictEqual([{ entityId: goal.id, status: "completed", step: "warmUpFailed" }]);
+    },
+  );
+
   it("builds the skill graph, the plan and the main course, and starts the outlines and placement questions", async () => {
     const { goal } = await newGoal();
 
@@ -865,7 +908,16 @@ describe(goalContentWorkflow, () => {
       (event) => `${String(event.step)}:${String(event.status)}`,
     );
 
-    expect(events.filter((event) => !event.startsWith("preparePlacement"))).toStrictEqual([
+    // The deck step runs beside the plan, so its one event lands anywhere after the scope is decided.
+    expect(events.filter((event) => event.startsWith("warmUp"))).toStrictEqual([
+      "warmUpFailed:completed",
+    ]);
+
+    expect(
+      events.filter(
+        (event) => !event.startsWith("preparePlacement") && !event.startsWith("warmUp"),
+      ),
+    ).toStrictEqual([
       "understandGoal:started",
       "buildSkillGraph:started",
       "buildSkillGraph:completed",
@@ -1957,7 +2009,7 @@ describe(goalContentWorkflow, () => {
       (event) => `${String(event.step)}:${String(event.status)}`,
     );
 
-    expect(events.slice(1, 4)).toStrictEqual([
+    expect(events.filter((event) => !event.startsWith("warmUp")).slice(1, 4)).toStrictEqual([
       "readExamNotice:started",
       "readExamNotice:completed",
       "buildSkillGraph:started",

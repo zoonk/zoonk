@@ -54,15 +54,9 @@ export async function prepareWarmUp({
   goalId: string;
   scope: CurriculumScope;
 }): Promise<void> {
-  const claim = await claimWarmUpStep({ goalId, scope, workflowRunId: context.workflowRunId });
+  const warmUpId = await getDeck({ context, goalId, scope }).catch(() => null);
 
-  if (claim.status === "none") {
-    return;
-  }
-
-  const warmUpId = await getDeck({ claim, context, goalId, scope });
-
-  // A wait shows the quiz's skeleton while the goal's deck is claimed, so it hears either way.
+  // A wait shows the quiz's skeleton while the goal's deck is on its way, so every end reaches it.
   await goalProgressStep(
     warmUpId
       ? { entityId: goalId, status: "completed", step: "warmUpReady", warmUpId }
@@ -71,16 +65,20 @@ export async function prepareWarmUp({
 }
 
 async function getDeck({
-  claim,
   context,
   goalId,
   scope,
 }: {
-  claim: Exclude<WarmUpClaim, { status: "none" }>;
   context: GoalRunContext;
   goalId: string;
   scope: CurriculumScope;
 }): Promise<string | null> {
+  const claim = await claimWarmUpStep({ goalId, scope, workflowRunId: context.workflowRunId });
+
+  if (claim.status === "none") {
+    return null;
+  }
+
   if (claim.status === "ready") {
     return claim.id;
   }
