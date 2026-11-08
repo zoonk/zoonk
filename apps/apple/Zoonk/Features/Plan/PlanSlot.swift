@@ -411,7 +411,8 @@ struct PlanSuggestionSection: View {
 
     if let only = unclaimed.first, let level = only.courseLevel, unclaimed.count == 1 {
       return Text(
-        "\(level.certifiedTitle(cefrRange: only.cefrRange)) complete", tableName: "Plan",
+        "\(level.certifiedTitle(cefrRange: only.cefrRange).keepingLevelTogether) complete",
+        tableName: "Plan",
         comment:
           "A Plan suggestion's title once every lesson and challenge of a course level is done, such as \"Beginner complete\", before the plan's end"
       )

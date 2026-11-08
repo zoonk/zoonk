@@ -119,6 +119,14 @@ extension CourseLevel {
   }
 }
 
+extension String {
+  /// Main's `keepLevelTogether`: a line may break after a dash, which splits a CEFR range ("A1–" /
+  /// "A2") in a title. Only for titles: a name the learner copies must not carry the invisible joiner.
+  var keepingLevelTogether: String {
+    replacingOccurrences(of: "–", with: "–\u{2060}")
+  }
+}
+
 extension CertificateFacts {
   /// The certificate pictures are A4 landscape.
   static let aspectRatio: CGFloat = 297 / 210

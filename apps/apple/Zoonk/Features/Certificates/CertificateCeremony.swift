@@ -257,14 +257,14 @@ struct CertificateCeremony: View {
         comment: "Title when one result earned several certificates")
     }
 
-    guard let level = top.courseLevel else {
+    guard let level = top.levelName else {
       return String(
         localized: "Course complete!", table: "Certificates",
         comment: "Title when the learner finished a whole plan's course")
     }
 
     return String(
-      localized: "\(String(localized: level.localizedTitle)) complete!", table: "Certificates",
+      localized: "\(level.keepingLevelTogether) complete!", table: "Certificates",
       comment: "Title when the learner finished a course's level, such as Beginner")
   }
 

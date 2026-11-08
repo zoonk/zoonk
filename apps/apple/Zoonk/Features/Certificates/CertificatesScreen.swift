@@ -144,7 +144,7 @@ private struct EmptyCertificates: View {
           .accessibilityAddTraits(.isHeader)
 
           Text(
-            "Your certificates show up here when you finish a level or a plan.",
+            "Your certificates show up here when you finish a level or a plan, studying at least half its lessons.",
             tableName: "Certificates", comment: "How the learner earns certificates"
           )
           .typeStyle(.body)
@@ -231,7 +231,8 @@ private struct UpNextRow: View {
     ListRow(
       Text(goal.title),
       description: Text(
-        "Your certificate comes when you finish the plan", tableName: "Certificates",
+        "Your certificate comes when you finish the plan, studying at least half its lessons",
+        tableName: "Certificates",
         comment: "Under a goal on the empty certificates page: when it earns one")
     ) {
       GoalMark(title: goal.title, flag: goal.languageFlag.flatMap(flagEmoji))

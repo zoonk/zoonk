@@ -4523,61 +4523,61 @@
         }
       }
     },
-    "Your certificate comes when you finish the plan" : {
+    "Your certificate comes when you finish the plan, studying at least half its lessons" : {
       "comment" : "Under a goal on the empty certificates page: when it earns one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bekommst dein Zertifikat, wenn du den Plan abschließt"
+            "value" : "Du bekommst dein Zertifikat, wenn du den Plan abschließt und mindestens die Hälfte seiner Lektionen bearbeitet hast"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recibes tu certificado cuando terminas el plan"
+            "value" : "Recibes tu certificado cuando completas el plan y estudias al menos la mitad de sus lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu obtiens ton certificat quand tu termines le plan"
+            "value" : "Tu obtiens ton certificat quand tu termines le plan, à condition d’avoir étudié au moins la moitié de ses leçons"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ricevi il certificato quando completi il piano"
+            "value" : "Ricevi il certificato quando completi il piano, se hai studiato almeno metà delle lezioni"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習計画を終えると証明書がもらえます"
+            "value" : "レッスンの半分以上を学習して学習計画を完了すると、証明書を受け取れます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획을 마치면 인증서를 받을 수 있어요"
+            "value" : "레슨을 절반 이상 학습하고 계획을 마치면 인증서를 받아요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otrzymasz certyfikat po ukończeniu planu"
+            "value" : "Otrzymasz certyfikat, gdy ukończysz plan i przerobisz co najmniej połowę jego lekcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você recebe seu certificado quando conclui o plano"
+            "value" : "Você recebe seu certificado quando conclui o plano e estuda pelo menos metade das aulas"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planı tamamladığında sertifikanı alırsın"
+            "value" : "Planı derslerinin en az yarısını çalışarak tamamladığında sertifikanı alırsın"
           }
         }
       }
@@ -4759,61 +4759,61 @@
         }
       }
     },
-    "Your certificates show up here when you finish a level or a plan." : {
+    "Your certificates show up here when you finish a level or a plan, studying at least half its lessons." : {
       "comment" : "How the learner earns certificates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Zertifikate erscheinen hier, wenn du ein Level oder einen Plan abschließt."
+            "value" : "Deine Zertifikate erscheinen hier, wenn du ein Level oder einen Plan abschließt und dabei mindestens die Hälfte der Lektionen bearbeitet hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus certificados aparecerán aquí cuando completes un nivel o un plan."
+            "value" : "Tus certificados aparecen aquí cuando completas un nivel o un plan y estudias al menos la mitad de sus lecciones."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes certificats apparaissent ici quand tu termines un niveau ou un plan."
+            "value" : "Tes certificats apparaissent ici quand tu termines un niveau ou un plan, à condition d’avoir étudié au moins la moitié de ses leçons."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I tuoi certificati compaiono qui quando completi un livello o un piano."
+            "value" : "I tuoi certificati compaiono qui quando completi un livello o un piano, se hai studiato almeno metà delle lezioni."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベルや学習計画を完了すると、ここに証明書が表示されます。"
+            "value" : "レッスンの半分以上を学習してレベルや学習計画を完了すると、ここに証明書が表示されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
+            "value" : "레슨을 절반 이상 학습하고 레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje certyfikaty pojawią się tutaj, gdy ukończysz poziom lub plan."
+            "value" : "Twoje certyfikaty pojawią się tutaj, gdy ukończysz poziom lub plan i przerobisz co najmniej połowę jego lekcji."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus certificados aparecem aqui quando você conclui um nível ou um plano."
+            "value" : "Seus certificados aparecem aqui quando você conclui um nível ou um plano e estuda pelo menos metade das aulas."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür."
+            "value" : "Bir seviyeyi veya planı derslerinin en az yarısını çalışarak tamamladığında sertifikaların burada görünür."
           }
         }
       }
