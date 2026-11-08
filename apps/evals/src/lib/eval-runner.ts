@@ -111,7 +111,9 @@ async function scoreOutput({
   return {
     categoryScores: scoreResult.categoryScores,
     classification: scoreResult.classification,
+    itemsScored: scoreResult.itemsScored,
     judge: scoreResult.judge,
+    keyFlaws: scoreResult.keyFlaws,
     steps: scoreResult.steps,
     testCase: testCaseWithRun,
   };
@@ -214,7 +216,9 @@ function combineOutputsAndResults(
       extraCalls: output.extraCalls,
       images: output.images,
       inputTokens: output.inputTokens,
+      itemsScored: scored.itemsScored,
       judge: scored.judge,
+      keyFlaws: scored.keyFlaws,
       output: output.output,
       outputTokens: output.outputTokens,
       reasoningTokens: output.reasoningTokens,
@@ -223,7 +227,7 @@ function combineOutputsAndResults(
     };
   });
 
-  return { failedRuns, modelId, results, taskId };
+  return { failedRuns, modelId, outputs, results, taskId };
 }
 
 export const getTaskResults = cache(
@@ -235,10 +239,6 @@ export const getTaskResults = cache(
     }
 
     const scoredResults = await loadExistingScoredResults(taskId, modelId);
-
-    if (scoredResults.length === 0) {
-      return null;
-    }
 
     return combineOutputsAndResults(taskId, modelId, modelOutputs, scoredResults);
   },

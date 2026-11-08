@@ -48,8 +48,9 @@ function formatProblem(drill: StatuteDrill, problem: string): string {
 function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): CodeCheckResult {
   const { drills, dropped } = JSON.parse(output) as StatuteDrillsOutput;
 
-  const checked = drills.map((drill) => ({
+  const checked = drills.map((drill, index) => ({
     drill,
+    itemLocator: `drills[${index}] (${drill.reference})`,
     problems: checkItem({
       item: drill,
       language: input.language,
@@ -67,6 +68,7 @@ function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): Cod
 
   return {
     judgedOutput: JSON.stringify({ drills: passing.map((entry) => entry.drill) }, null, 2),
+    keyFlawItems: passing.map(({ drill, itemLocator }) => ({ item: drill, itemLocator })),
     passed: passing.length === 0 ? 0 : passing.length + SET_CHECKS - setProblems.length,
     problems: [
       ...all.flatMap((entry) =>

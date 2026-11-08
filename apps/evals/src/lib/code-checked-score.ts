@@ -53,6 +53,7 @@ export async function scoreWithCodeChecks({
 
   const judged = await generateScore({
     expectations: getJudgeExpectations(testCase),
+    keyFlawItems: result.keyFlawItems,
     output: result.judgedOutput,
     prompt: JSON.stringify(testCase.userInput, null, 2),
     scoreCategories,

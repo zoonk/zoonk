@@ -13,6 +13,14 @@ import {
 import { getCallsCost, getFailedRunsCost, getRunCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
+  type EvalSummary,
+  HISTORICAL_ATTEMPTS_NOTE,
+  aggregateEvalResults,
+  formatFailureCounts,
+  formatKeyFlaws,
+  getCaseHref,
+} from "@/lib/eval-summary";
+import {
   formatDollars,
   formatLatencyBudget,
   formatLatencyVerdict,
@@ -20,10 +28,9 @@ import {
   formatSeconds,
 } from "@/lib/format";
 import { meetsLatencyBudget } from "@/lib/latency";
-import { calculateAverageScore } from "@/lib/leaderboard";
 import { type ModelConfig, getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
-import { getAllOutputsForTask, loadModelOutputs, removeModelOutputRuns } from "@/lib/output-loader";
+import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
 import {
   getMeteredCalls,
   isPricedFromOutputs,
@@ -46,12 +53,11 @@ import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 
 type ReportRow = {
-  averageScore: number;
+  summary: EvalSummary;
   languages: LanguageSummary[];
   meetsBudget: boolean | null;
   modelId: string;
   sampled: number;
-  scored: number;
   spent: number;
   stats: TaskStats;
 };
@@ -219,24 +225,6 @@ async function generateAndScore({
   return { results: result, spent: getCallsCost({ calls, prices }) };
 }
 
-/** A model whose every run failed has no scored results, but its failed runs were still paid for. */
-async function loadSavedResults({
-  modelId,
-  task,
-}: {
-  modelId: string;
-  task: RegisteredTask;
-}): Promise<TaskEvalResults> {
-  const results = await getTaskResults(task.id, modelId);
-
-  if (results) {
-    return results;
-  }
-
-  const outputs = await loadModelOutputs(task.id, modelId);
-  return { failedRuns: outputs?.failedRuns, modelId, results: [], taskId: task.id };
-}
-
 async function runModel({
   fresh,
   modelId,
@@ -254,18 +242,25 @@ async function runModel({
 }): Promise<ReportRow> {
   const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
   const run = saved ? null : await generateAndScore({ fresh, model, prices, runIds, task });
-  const allResults = run?.results ?? (await loadSavedResults({ modelId, task }));
+
+  const allResults: TaskEvalResults = run?.results ??
+    (await getTaskResults(task.id, modelId)) ?? {
+      modelId,
+      outputs: [],
+      results: [],
+      taskId: task.id,
+    };
 
   const evalResults: TaskEvalResults = {
     ...allResults,
     failedRuns: allResults.failedRuns?.filter((failed) => runIds.has(failed.testCaseId)),
+    outputs: allResults.outputs.filter((output) => runIds.has(output.testCaseId)),
     results: allResults.results.filter((result) => runIds.has(result.testCase.id)),
   };
 
   const stats = getStatsFromResults({ evalResults, prices });
 
   return {
-    averageScore: calculateAverageScore(evalResults),
     languages: summarizeByLanguage({ results: evalResults.results, testCases: task.testCases }),
     meetsBudget:
       evalResults.results.length === 0
@@ -276,9 +271,9 @@ async function runModel({
           }),
     modelId,
     sampled: runIds.size,
-    scored: evalResults.results.length,
     spent: run?.spent ?? getSpent(stats),
     stats,
+    summary: aggregateEvalResults(evalResults),
   };
 }
 
@@ -288,7 +283,15 @@ function formatPerLabel(stats: TaskStats): string {
     .join(", ");
 }
 
-function formatRow({ hasBudget, row }: { hasBudget: boolean; row: ReportRow }): string {
+function formatRow({
+  hasBudget,
+  row,
+  taskId,
+}: {
+  hasBudget: boolean;
+  row: ReportRow;
+  taskId: string;
+}): string {
   const model = getModelById(row.modelId);
 
   const accuracy = row.stats.classification
@@ -298,15 +301,23 @@ function formatRow({ hasBudget, row }: { hasBudget: boolean; row: ReportRow }): 
   return [
     model ? getModelDisplayName(model) : row.modelId,
     model?.kind ?? "",
-    `${row.scored}/${row.sampled}`,
+    `${row.summary.scored}/${row.sampled}`,
+    row.summary.attempted,
+    row.summary.generated,
+    formatFailureCounts(row.summary),
+    formatKeyFlaws(row.summary),
+    row.summary.averageScore?.toFixed(2) ?? "unscored",
     accuracy,
-    formatPerLabel(row.stats) || row.averageScore.toFixed(2),
+    formatPerLabel(row.stats) || "—",
     ...formatLanguageResults(row.languages).map((result) => result.text),
     formatSeconds(row.stats.latencyP50),
     formatSeconds(row.stats.latencyP95),
     ...(hasBudget ? [formatLatencyVerdict(row.meetsBudget)] : []),
     formatDollars(row.spent),
     formatDollars(row.stats.costPer1000Runs),
+    row.summary.caseIds.attempted
+      .map((caseId) => `[${caseId}](${getCaseHref({ caseId, modelId: row.modelId, taskId })})`)
+      .join(", ") || "—",
   ].join(" | ");
 }
 
@@ -314,7 +325,12 @@ function formatReport({ rows, task }: { rows: ReportRow[]; task: RegisteredTask 
   const headers = [
     "Model",
     "Kind",
-    "Cases",
+    "Scored / sampled",
+    "Attempted (recorded)",
+    "Generated",
+    "Generation failures",
+    "Judge-flagged key flaws",
+    "Avg score (scored outputs)",
     "Accuracy",
     "Per label (correct/total)",
     ...REQUIRED_LANGUAGES.map((language) => language.toUpperCase()),
@@ -323,14 +339,18 @@ function formatReport({ rows, task }: { rows: ReportRow[]; task: RegisteredTask 
     ...(task.latencyBudget ? ["Budget"] : []),
     "Spent",
     "Cost / 1k runs",
+    "Case links",
   ];
 
   return [
     `\n### ${task.name} (${task.id})\n`,
+    HISTORICAL_ATTEMPTS_NOTE,
     ...(task.latencyBudget ? [`Latency budget: ${formatLatencyBudget(task.latencyBudget)}\n`] : []),
     `| ${headers.join(" | ")} |`,
     `| ${headers.map(() => "---").join(" | ")} |`,
-    ...rows.map((row) => `| ${formatRow({ hasBudget: Boolean(task.latencyBudget), row })} |`),
+    ...rows.map(
+      (row) => `| ${formatRow({ hasBudget: Boolean(task.latencyBudget), row, taskId: task.id })} |`,
+    ),
   ].join("\n");
 }
 

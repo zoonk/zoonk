@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type KeyFlawItem, type TaskScorer } from "@/lib/types";
 import {
   type PlacementItemsParams,
   type PlacementSkillItems,
@@ -14,11 +14,17 @@ type PlacementItemsCase = Pick<
   "examFormat" | "language" | "quickCount" | "quickFormat" | "skills" | "typedCount"
 >;
 
-type RoleCheck = { passing: GeneratedItem[]; problems: string[]; wanted: number };
+type RoleCheck = {
+  passing: GeneratedItem[];
+  keyFlawItems: KeyFlawItem[];
+  problems: string[];
+  wanted: number;
+};
 
 function checkRole({
   format,
   items,
+  itemPath,
   label,
   language,
   optionCount,
@@ -26,6 +32,7 @@ function checkRole({
 }: {
   format: GeneratedItem["format"];
   items: GeneratedItem[];
+  itemPath: string;
   label: string;
   language: string;
   optionCount: number | null;
@@ -33,6 +40,7 @@ function checkRole({
 }): RoleCheck {
   const checked = items.map((item, index) => ({
     item,
+    itemLocator: `${itemPath}[${index}]`,
     problems: [
       ...checkItem({ expectedFormat: format, item, language, optionCount }),
       ...findOwnEmDashes(item),
@@ -40,8 +48,11 @@ function checkRole({
     ].map((problem) => `${label} ${index + 1}: ${problem}`),
   }));
 
+  const passing = checked.filter((entry) => entry.problems.length === 0);
+
   return {
-    passing: checked.filter((entry) => entry.problems.length === 0).map((entry) => entry.item),
+    keyFlawItems: passing.map(({ item, itemLocator }) => ({ item, itemLocator })),
+    passing: passing.map((entry) => entry.item),
     problems: [
       ...(items.length === wanted ? [] : [`${label}: ${items.length} instead of ${wanted}.`]),
       ...checked.flatMap((entry) => entry.problems),
@@ -62,6 +73,7 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
     const roles = [
       checkRole({
         format: input.quickFormat,
+        itemPath: `skills[${index}].quick`,
         items: written.quick,
         label: `${skill.name}, quick`,
         language: input.language,
@@ -70,6 +82,7 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
       }),
       checkRole({
         format: "typed",
+        itemPath: `skills[${index}].typed`,
         items: written.typed,
         label: `${skill.name}, typed`,
         language: input.language,
@@ -95,6 +108,7 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
       null,
       2,
     ),
+    keyFlawItems: roles.flatMap((role) => role.keyFlawItems),
     passed: roles.reduce((total, role) => total + Math.min(role.passing.length, role.wanted), 0),
     problems: roles.flatMap((role) => role.problems),
     total: roles.reduce((total, role) => total + role.wanted, 0),

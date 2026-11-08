@@ -1,0 +1,5 @@
+# Judge-flagged key flaws
+
+Independently solve every item in **Items to check** using the stem, options and any shared stimulus in the result or user values. Do not trust the keyed answer or its explanation. Return `keyFlaws`, with one entry per flawed item and an empty list when none is flawed. This is a separate record of the judge's findings; do not change the scoring formula or introduce score caps.
+
+Use the exact `itemLocator` supplied for each item. Choose the most specific kind when several apply: `noCorrectOption` when no offered option is correct; `twoDefensible` when more answers are defensible than the selection rule allows; `wrongKey` when the key disagrees with the correct answer; `factualError` for another factual defect in the stem, key or explanation. Record an item only once. Each entry includes the output's `keyedAnswer` and your own short `workedAnswer`, showing the calculation or domain reasoning that establishes the flaw. Never infer flaws from a low score alone. Write the worked answer in English.

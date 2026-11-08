@@ -27,6 +27,10 @@ export function getDefaultSortDirection(key: SortKey): SortDirection {
 
 function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey): number {
   if (key === "averageScore") {
+    if (a.averageScore === null || b.averageScore === null) {
+      return 0;
+    }
+
     const aRounded = roundScoreToFixed(a.averageScore);
     const bRounded = roundScoreToFixed(b.averageScore);
     const byScore = aRounded - bRounded;
@@ -51,5 +55,12 @@ export function sortLeaderboardEntries(
   direction: SortDirection,
 ): LeaderboardEntry[] {
   const sign = direction === "asc" ? 1 : -1;
-  return [...entries].toSorted((left, right) => sign * compareEntries(left, right, key));
+
+  return [...entries].toSorted((left, right) => {
+    if (key === "averageScore" && (left.averageScore === null || right.averageScore === null)) {
+      return Number(left.averageScore === null) - Number(right.averageScore === null);
+    }
+
+    return sign * compareEntries(left, right, key);
+  });
 }

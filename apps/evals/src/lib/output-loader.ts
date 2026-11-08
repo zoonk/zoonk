@@ -36,14 +36,10 @@ export function combineOutputsWithTestCases({
   modelOutputs: ModelOutputs;
   task: Pick<RegisteredTask, "testCases">;
 }): TaskModelOutputResults {
-  const outputs = modelOutputs.outputs.flatMap((output) => {
+  const outputs = modelOutputs.outputs.map((output) => {
     const testCase = findTestCaseForOutput({ task, testCaseId: output.testCaseId });
 
-    if (!testCase) {
-      return [];
-    }
-
-    return [{ ...output, testCase: { ...testCase, id: output.testCaseId } }];
+    return { ...output, testCase: { userInput: {}, ...testCase, id: output.testCaseId } };
   });
 
   return { ...modelOutputs, outputs };
