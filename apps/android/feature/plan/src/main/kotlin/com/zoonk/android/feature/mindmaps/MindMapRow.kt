@@ -159,7 +159,7 @@ internal fun ConnectedMindMapRow(
             local = local,
             cap = if (shown == MindMapShown.Available) host.cap() else null,
             plus = host.plus(),
-            actions = MindMapRowActions({ maps.create(map.chapterId, map.status) }, navigate),
+            actions = MindMapRowActions({ maps.create(map.chapterId) }, navigate),
             modifier = modifier,
         )
     }

@@ -35,14 +35,18 @@ class MindMapViewModel(
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
     val requests: StateFlow<Map<UUID, MindMapLocal>> = locals.asStateFlow()
 
+    private val stopWatching =
+        store.watchReads(goalId) { chapterId, started ->
+            locals.update { all ->
+                all.filterNot { (id, local) -> (chapterId == null || id == chapterId) && !local.pending && local.since < started }
+            }
+        }
+
     private val saved = MutableStateFlow<PictureSave?>(null)
     val save: StateFlow<PictureSave?> = saved.asStateFlow()
 
-    /** Create and Try again: [over] is what the row showed, which a refusal or a lost connection is about. */
-    fun create(
-        chapterId: UUID,
-        over: MindMapShown,
-    ) {
+    /** Create and Try again. */
+    fun create(chapterId: UUID) {
         if (locals.value[chapterId]?.pending == true) return
         locals.update { it + (chapterId to MindMapLocal(pending = true)) }
 
@@ -50,8 +54,8 @@ class MindMapViewModel(
             val local =
                 when (val created = store.create(ChapterKey(goalId, chapterId))) {
                     null, MindMapCreated.Read -> null
-                    MindMapCreated.Unreachable -> MindMapLocal(unreachable = true, over = over)
-                    is MindMapCreated.Refused -> MindMapLocal(limit = created.limit, subject = created.subject, over = over)
+                    MindMapCreated.Unreachable -> MindMapLocal(unreachable = true, since = store.readMark())
+                    is MindMapCreated.Refused -> MindMapLocal(limit = created.limit, subject = created.subject, since = store.readMark())
                 }
             locals.update { if (local == null) it - chapterId else it + (chapterId to local) }
         }
@@ -81,7 +85,7 @@ class MindMapViewModel(
                 waiting = status
                 misses = 0
             } else if (++misses >= MAX_MISSES) {
-                locals.update { it + (chapterId to MindMapLocal(unreachable = true, over = shown)) }
+                locals.update { it + (chapterId to MindMapLocal(unreachable = true, since = store.readMark())) }
                 return
             }
         }
@@ -101,6 +105,8 @@ class MindMapViewModel(
     }
 
     private val isCurrent get() = currentSession() == session
+
+    override fun onCleared() = stopWatching()
 
     fun savedShown() {
         saved.value = null

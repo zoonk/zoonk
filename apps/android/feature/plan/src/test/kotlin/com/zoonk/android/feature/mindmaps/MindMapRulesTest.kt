@@ -38,20 +38,20 @@ class MindMapRulesTest {
     }
 
     @Test
-    fun aLostConnectionShowsOnlyWhileTheReadsShowWhatItWasAbout() {
-        val lost = MindMapLocal(unreachable = true, over = MindMapShown.Drawing)
-
-        assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Drawing, lost))
-        assertEquals(MindMapShown.Available, shownMindMap(MindMapShown.Available, lost))
-        assertEquals(MindMapShown.Ready, shownMindMap(MindMapShown.Ready, lost))
+    fun aRefusalOrALostConnectionShowsUntilANewerReadReplacesIt() {
+        assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Drawing, MindMapLocal(unreachable = true)))
+        assertEquals(
+            MindMapShown.Refused,
+            shownMindMap(MindMapShown.Available, MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day))),
+        )
     }
 
     @Test
-    fun aRefusalShowsOnlyWhileTheReadsShowTheMapItRefused() {
-        val refused = MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day), over = MindMapShown.Available)
+    fun aDrawnMapOrAPlusLockLeavesNothingForAFailureToBeAbout() {
+        val refused = MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day))
 
-        assertEquals(MindMapShown.Refused, shownMindMap(MindMapShown.Available, refused))
-        assertEquals(MindMapShown.Drawing, shownMindMap(MindMapShown.Drawing, refused))
+        assertEquals(MindMapShown.Ready, shownMindMap(MindMapShown.Ready, MindMapLocal(unreachable = true)))
+        assertEquals(MindMapShown.PlusRequired, shownMindMap(MindMapShown.PlusRequired, refused))
     }
 
     @Test

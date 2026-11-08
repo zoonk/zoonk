@@ -124,7 +124,7 @@ class MindMapFollowEffectTest {
                 loadBoth(store)
                 show()
                 reads("drawing")
-                maps.create(key.chapterId, MindMapShown.Available)
+                maps.create(key.chapterId)
                 frame()
                 assertEquals(MindMapShown.Drawing, rendered)
 

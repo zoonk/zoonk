@@ -35,26 +35,30 @@ enum class MindMapShown {
 
 /**
  * What a tap or a poll got that the map's reads can't say: a request on its way ([pending]), a
- * refusal ([limit], worded by [subject]) or a server out of reach ([unreachable]). Each is about what
- * the reads showed then ([over]), so a newer read, after buying Plus say, replaces it.
+ * refusal ([limit], worded by [subject]) or a server out of reach ([unreachable]). A refusal or a
+ * lost connection lasts until a read of the map started after it ([since]) comes through, even one
+ * that reads the same, as after buying Plus.
  */
 data class MindMapLocal(
     val pending: Boolean = false,
     val limit: Limit? = null,
     val subject: LimitSubject = LimitSubject.MindMaps,
     val unreachable: Boolean = false,
-    val over: MindMapShown? = null,
+    val since: Long = 0,
 )
 
-/** The reads decide; a refusal or a lost connection shows only while they still show what it was about. */
+/**
+ * The reads decide, but for a refusal or a lost connection no newer read has replaced yet; a drawn
+ * map or a Plus lock leaves nothing for either to be about.
+ */
 fun shownMindMap(
     server: MindMapShown,
     local: MindMapLocal?,
 ): MindMapShown =
     when {
-        local == null || local.over != server -> server
-        local.unreachable -> MindMapShown.Unreachable
-        local.limit != null -> MindMapShown.Refused
+        server == MindMapShown.Ready || server == MindMapShown.PlusRequired -> server
+        local?.unreachable == true -> MindMapShown.Unreachable
+        local?.limit != null -> MindMapShown.Refused
         else -> server
     }
 

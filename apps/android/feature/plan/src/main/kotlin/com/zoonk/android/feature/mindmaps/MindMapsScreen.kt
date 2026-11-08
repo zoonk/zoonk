@@ -138,7 +138,7 @@ internal fun MindMapsContent(
 internal data class MindMapsActions(
     val back: () -> Unit,
     val keepStudying: () -> Unit,
-    val create: (UUID, MindMapShown) -> Unit,
+    val create: (UUID) -> Unit,
     val navigate: (AppRoute) -> Unit,
 )
 
@@ -209,7 +209,7 @@ private fun LazyListScope.mapGroup(
                 local = local,
                 cap = cap.takeIf { shown == MindMapShown.Available },
                 plus = plus,
-                actions = MindMapRowActions({ actions.create(map.chapterId, map.status.shown) }, actions.navigate),
+                actions = MindMapRowActions({ actions.create(map.chapterId) }, actions.navigate),
             )
         }
     }

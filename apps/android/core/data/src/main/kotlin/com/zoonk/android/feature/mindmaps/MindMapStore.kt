@@ -33,6 +33,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import java.io.IOException
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.cancellation.CancellationException
 
 interface MindMapApi {
@@ -125,11 +127,41 @@ class MindMapStore(
     private val api: MindMapApi,
     private val cache: AppCache,
 ) {
+    private val readsStarted = AtomicLong()
+    private val watchers = CopyOnWriteArrayList<ReadWatcher>()
+
     val list: KeyedResources<UUID, GoalMindMaps> =
-        cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId -> session?.let { api.list(it, goalId) } }
+        cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId -> session?.let { read(goalId, null) { api.list(it, goalId) } } }
 
     val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
-        cache.keyed(Audience.SignedIn, DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
+        cache.keyed(Audience.SignedIn, DOMAINS) { session, key ->
+            session?.let { read(key.goalId, key.chapterId) { api.chapter(it, key) } }
+        }
+
+    /** The number of the last read started: what a screen notes now gives way to any read started later. */
+    fun readMark(): Long = readsStarted.get()
+
+    /**
+     * Tells [arrived] of each read of [goalId]'s maps that comes through: the chapter it covers (null
+     * for the whole list) and the number it started with. Returns what stops it.
+     */
+    fun watchReads(
+        goalId: UUID,
+        arrived: (chapterId: UUID?, started: Long) -> Unit,
+    ): () -> Unit {
+        val watcher = ReadWatcher(goalId, arrived)
+        watchers += watcher
+        return { watchers -= watcher }
+    }
+
+    private suspend fun <T> read(
+        goalId: UUID,
+        chapterId: UUID?,
+        fetch: suspend () -> T,
+    ): T {
+        val started = readsStarted.incrementAndGet()
+        return fetch().also { watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapterId, started) } }
+    }
 
     /** Null when the session changed meanwhile. The reads say what came of it; nothing is written into them. */
     suspend fun create(key: ChapterKey): MindMapCreated? =
@@ -229,6 +261,11 @@ private val String?.limitSubject: LimitSubject
             "aiSpend" -> LimitSubject.Help
             else -> LimitSubject.MindMaps
         }
+
+private class ReadWatcher(
+    val goalId: UUID,
+    val arrived: (chapterId: UUID?, started: Long) -> Unit,
+)
 
 /** A refusal's `details.limit.resource`: what ran out. */
 private fun JsonElement?.ranOut(): String? =
