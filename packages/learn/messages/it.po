@@ -7552,14 +7552,14 @@ msgid "{count, plural, one {# left} other {# left}}"
 msgstr "{count, plural, one {# rimasta} other {# rimaste}}"
 
 #: src/missions/missions-card.tsx
-msgctxt "agm7r8"
-msgid "Today's missions start with today's session."
-msgstr "Le missioni di oggi iniziano con la sessione di oggi."
-
-#: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Missioni completate"
+
+#: src/missions/missions-card.tsx
+msgctxt "agm7r8"
+msgid "Today's missions start with today's session."
+msgstr "Le missioni di oggi iniziano con la sessione di oggi."
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -7897,6 +7897,16 @@ msgid "Sheet"
 msgstr "Foglio"
 
 #: src/mock/mock-break.tsx
+msgctxt "zMR5Za"
+msgid "Next: {name}"
+msgstr "A seguire: {name}"
+
+#: src/mock/mock-break.tsx
+msgctxt "gVB2Pv"
+msgid "Next section"
+msgstr "Prossima sezione"
+
+#: src/mock/mock-break.tsx
 #: src/mock/mock-sheet-sections.tsx
 msgctxt "pP1R8y"
 msgid "Sections"
@@ -7921,16 +7931,6 @@ msgstr "Tempo di pausa rimanente"
 msgctxt "nyrCLe"
 msgid "The next section starts on its own when the break ends."
 msgstr "La prossima sezione inizia automaticamente quando finisce la pausa."
-
-#: src/mock/mock-break.tsx
-msgctxt "zMR5Za"
-msgid "Next: {name}"
-msgstr "A seguire: {name}"
-
-#: src/mock/mock-break.tsx
-msgctxt "gVB2Pv"
-msgid "Next section"
-msgstr "Prossima sezione"
 
 #: src/mock/mock-chooser-last-mock.tsx
 msgctxt "fdQ7Q-"

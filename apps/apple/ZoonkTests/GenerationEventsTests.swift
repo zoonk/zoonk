@@ -18,7 +18,9 @@ final class GenerationEventsTests: XCTestCase {
       transport: transport)
 
     var events: [GenerationEvent] = []
-    for try await event in clients.generationEvents(id: "run-1", token: "learner-token") {
+    for try await event in clients.generationEvents(
+      id: "run-1", token: "learner-token", backoff: .milliseconds(1))
+    {
       events.append(event)
     }
 
@@ -138,7 +140,8 @@ final class GenerationEventsTests: XCTestCase {
       ],
       statuses: ["/v1/generations/run-1": ["running"]])
 
-    let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
+    let events = try await collect(
+      clients(transport).generationEvents(id: "run-1", token: "t", backoff: .milliseconds(1)))
 
     XCTAssertEqual(events.map(\.step), ["writeTestOutQuestions", "testOutQuestionsReady"])
     let requests = await transport.requests

@@ -18,8 +18,10 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getUsagePeriodStarts } from "../entitlements/_utils/usage-periods";
 import { GUEST_DAILY_SPEND_BUDGET_MICROS, getUsageRule } from "../entitlements/limits";
 import { applyLevelEvidence } from "../language/levels/skill-level-rules";
+import { getStudySessionSummary } from "../sessions/get-study-session-summary";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
+import { typedGrade } from "./_test-utils/typed-grade";
 import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
 import type * as SkillLevelRules from "../language/levels/skill-level-rules";
@@ -124,32 +126,6 @@ async function whileLearnerLocked<T>({
   return result;
 }
 
-function typedGrade({
-  feedback,
-  isCorrect,
-  score,
-}: {
-  feedback: string;
-  isCorrect: boolean;
-  score: number;
-}): Awaited<ReturnType<typeof gradeTypedAnswer>> {
-  return {
-    data: {
-      corrections: [],
-      feedback,
-      isCorrect,
-      keyPoints: [{ met: isCorrect, text: "The cloud shows where it's likely to be found" }],
-      method: "model",
-      score,
-      spelling: null,
-    },
-    provenance: null,
-    systemPrompt: "",
-    usage: null,
-    userPrompt: "",
-  };
-}
-
 describe(checkLessonStep, () => {
   it("records a right answer against the lesson's skill and says when it comes back", async () => {
     const { run, skill, steps, user } = await setupRun();
@@ -182,6 +158,199 @@ describe(checkLessonStep, () => {
     expect(outcome.status === "checked" && outcome.result.nextReviewAt).toBe(
       learnerSkill.due?.toISOString(),
     );
+  });
+
+  it("doesn't record or claim a model grade for a new answer after a right answer", async () => {
+    const { lesson, run, steps, user } = await setupRun();
+    const session = await studySessionFixture({ userId: user.id });
+    await studySessionBlockFixture({ lessonId: lesson.id, sessionId: session.id });
+
+    await prisma.learningEvent.update({
+      data: { contentIds: { lessonId: lesson.id, studySessionId: session.id } },
+      where: { id: run.id },
+    });
+
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const attemptId = randomUUID();
+
+    const accepted = {
+      kind: "typedAnswer",
+      text: "it shows where the electron is likely to be.",
+    } as const;
+
+    vi.mocked(gradeTypedAnswer).mockResolvedValueOnce(
+      typedGrade({ feedback: "Both ideas are there.", isCorrect: true, score: 1 }),
+    );
+
+    const first = await check({ answer: accepted, attemptId, runId: run.id, stepId });
+
+    const before = await Promise.all([
+      prisma.attempt.findMany({ where: { userId: user.id } }),
+      prisma.mistake.findMany({ where: { userId: user.id } }),
+      prisma.learnerSkill.findMany({ where: { userId: user.id } }),
+      prisma.modelGrade.findMany({ where: { userId: user.id } }),
+      getStudySessionSummary({ input: { timeZone: "UTC" }, sessionId: session.id }),
+    ]);
+
+    const refused = await check({
+      answer: { kind: "typedAnswer", text: "Because it's probably around there" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    });
+
+    expect(refused).toMatchObject({
+      result: {
+        checked: false,
+        correctAnswer: expect.any(String),
+        savedMistake: false,
+        score: null,
+      },
+      status: "checked",
+    });
+
+    expect(gradeTypedAnswer).toHaveBeenCalledOnce();
+
+    await expect(
+      check({ answer: accepted, attemptId, runId: run.id, stepId }),
+    ).resolves.toMatchObject({ result: { isCorrect: true, score: 1 }, status: first.status });
+
+    const after = await Promise.all([
+      prisma.attempt.findMany({ where: { userId: user.id } }),
+      prisma.mistake.findMany({ where: { userId: user.id } }),
+      prisma.learnerSkill.findMany({ where: { userId: user.id } }),
+      prisma.modelGrade.findMany({ where: { userId: user.id } }),
+      getStudySessionSummary({ input: { timeZone: "UTC" }, sessionId: session.id }),
+    ]);
+
+    expect(after).toStrictEqual(before);
+    expect(before[4]).toMatchObject({ status: "ready", summary: { questions: 1 } });
+  });
+
+  it("keeps a right answer across unfinished sittings and records again after completion", async () => {
+    const { lesson, run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const answer = { kind: "check", optionId: "likely" } as const;
+    await check({ answer, runId: run.id, stepId });
+    vi.useFakeTimers({ now: new Date(Date.now() + 3_600_000), toFake: ["Date"] });
+
+    try {
+      const next = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+      await expect(
+        check({ answer: { kind: "check", optionId: "size" }, runId: next.id, stepId }),
+      ).resolves.toMatchObject({
+        result: { isCorrect: false, savedMistake: false },
+        status: "checked",
+      });
+
+      await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
+      await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
+      await prisma.learningEvent.update({ data: { endedAt: new Date() }, where: { id: next.id } });
+      vi.setSystemTime(new Date(Date.now() + 3_600_000));
+      const fresh = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+      await check({ answer, runId: fresh.id, stepId });
+      await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it.each(["likely", "path"])(
+    "records a miss, self-correction and retry, then refuses a fourth answer (%s)",
+    async (optionId) => {
+      const { lesson, run, steps, user } = await setupRun();
+      const stepId = stepOfKind(steps, "check").id;
+      await check({ answer: { kind: "check", optionId: "size" }, runId: run.id, stepId });
+      await check({ answer: { kind: "check", optionId: "path" }, runId: run.id, stepId });
+      const next = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+      const attemptId = randomUUID();
+      const answer = { kind: "check", optionId } as const;
+      const third = await check({ answer, attemptId, runId: next.id, stepId });
+
+      await expect(
+        check({
+          answer: { kind: "check", optionId: "size" },
+          attemptId: randomUUID(),
+          runId: next.id,
+          stepId,
+        }),
+      ).resolves.toMatchObject({ result: { isCorrect: false, savedMistake: false } });
+
+      await expect(check({ answer, attemptId, runId: next.id, stepId })).resolves.toStrictEqual(
+        third,
+      );
+
+      await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(3);
+    },
+  );
+
+  it("records only one of two concurrent right answers with different ids", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const answer = { kind: "check", optionId: "likely" } as const;
+
+    const outcomes = await whileLearnerLocked({
+      userId: user.id,
+      waiters: 2,
+      writes: () =>
+        Promise.all([
+          check({ answer, attemptId: randomUUID(), runId: run.id, stepId }),
+          check({ answer, attemptId: randomUUID(), runId: run.id, stepId }),
+        ]),
+    });
+
+    expect(outcomes).toMatchObject([
+      { result: { isCorrect: true, savedMistake: false }, status: "checked" },
+      { result: { isCorrect: true, savedMistake: false }, status: "checked" },
+    ]);
+
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
+  });
+
+  it("replays a repeated id whose concurrent grade finishes after a different right answer", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const attemptId = randomUUID();
+    const entered = [Promise.withResolvers<null>(), Promise.withResolvers<null>()] as const;
+    const release = [Promise.withResolvers<null>(), Promise.withResolvers<null>()] as const;
+
+    vi.mocked(gradeTypedAnswer)
+      .mockImplementationOnce(async () => {
+        entered[0].resolve(null);
+        await release[0].promise;
+        return typedGrade({ feedback: "Try again.", isCorrect: false, score: 0.4 });
+      })
+      .mockImplementationOnce(async () => {
+        entered[1].resolve(null);
+        await release[1].promise;
+        return typedGrade({ feedback: "Try again.", isCorrect: false, score: 0.4 });
+      })
+      .mockResolvedValueOnce(typedGrade({ feedback: "Right.", isCorrect: true, score: 1 }));
+
+    const answer = { kind: "typedAnswer", text: "Because it's probably around there" } as const;
+    const first = check({ answer, attemptId, runId: run.id, stepId });
+    await entered[0].promise;
+    const repeated = check({ answer, attemptId, runId: run.id, stepId });
+    await entered[1].promise;
+    release[0].resolve(null);
+    await first;
+
+    await check({
+      answer: { kind: "typedAnswer", text: "We only know where it probably is" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    });
+
+    release[1].resolve(null);
+
+    await expect(repeated).resolves.toMatchObject({
+      result: { isCorrect: false, savedMistake: true, score: 0.4 },
+      status: "checked",
+    });
+
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(2);
   });
 
   it("gives an activity's correct end state with its verdict, so the canvas draws it beside the answer", async () => {
@@ -1065,14 +1234,14 @@ describe(checkLessonStep, () => {
     const stepId = stepOfKind(steps, "spokenAnswer").id;
     mockSession(user.id);
 
-    const right = await check({
-      answer: { arrangedWords: ["Quanto", "é", "o", "aluguel?"], kind: "listening" },
+    const wrong = await check({
+      answer: { arrangedWords: ["o", "Quanto", "é", "aluguel?"], kind: "listening" },
       runId: run.id,
       stepId,
     });
 
-    const wrong = await check({
-      answer: { arrangedWords: ["o", "Quanto", "é", "aluguel?"], kind: "listening" },
+    const right = await check({
+      answer: { arrangedWords: ["Quanto", "é", "o", "aluguel?"], kind: "listening" },
       runId: run.id,
       stepId,
     });
@@ -1088,6 +1257,38 @@ describe(checkLessonStep, () => {
       prisma.mistake.findFirstOrThrow({ where: { stepId, userId: user.id } }),
     ).resolves.toMatchObject({ snapshot: { answer: "o Quanto é aluguel?", format: "listening" } });
   });
+
+  it.each([
+    {
+      answer: { arrangedWords: ["much", "How", "is", "the", "rent?"], kind: "reading" },
+      snapshot: { correctAnswer: "How much is the rent?", question: "Quanto é o aluguel?" },
+    },
+    {
+      answer: { arrangedWords: ["o", "Quanto", "é", "aluguel?"], kind: "listening" },
+      snapshot: { correctAnswer: "Quanto é o aluguel?", question: "How much is the rent?" },
+    },
+    {
+      answer: { kind: "translation", selectedOptionId: randomUUID() },
+      snapshot: { correctAnswer: "rent", question: "aluguel" },
+    },
+  ] satisfies { answer: LessonStepAnswer; snapshot: object }[])(
+    "saves a $answer.kind miss with the prompt the learner saw",
+    async ({ answer, snapshot }) => {
+      const [user, { lesson, steps }] = await Promise.all([userFixture(), languageLessonFixture()]);
+      const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+      const stepId = stepOfKind(steps, answer.kind).id;
+      mockSession(user.id);
+
+      await expect(check({ answer, runId: run.id, stepId })).resolves.toMatchObject({
+        result: { isCorrect: false, savedMistake: true },
+        status: "checked",
+      });
+
+      await expect(
+        prisma.mistake.findFirstOrThrow({ where: { stepId, userId: user.id } }),
+      ).resolves.toMatchObject({ snapshot: { ...snapshot, format: answer.kind } });
+    },
+  );
 
   it("refuses answers to reading screens and answers that don't fit the screen", async () => {
     const { run, steps, user } = await setupRun();

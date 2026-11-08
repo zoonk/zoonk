@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
+  ListRowBody,
   ListRowContent,
   ListRowTitle,
   ListRowTrailing,
@@ -92,15 +93,15 @@ function SubjectRow({
             "cursor-pointer list-none [&::-webkit-details-marker]:hidden",
           )}
         >
-          <ListRowContent>
-            <ListRowTitle>{subject.name}</ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing>
-            {showFrequency && <FrequencyChip frequency={subject.frequency} />}
-            {subjectWeight && (
-              <span className="font-mono text-xs whitespace-nowrap">{subjectWeight}</span>
-            )}
-          </ListRowTrailing>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{subject.name}</ListRowTitle>
+            </ListRowContent>
+            <ListRowTrailing>
+              {showFrequency && <FrequencyChip frequency={subject.frequency} />}
+              {subjectWeight && <span className="font-mono text-xs">{subjectWeight}</span>}
+            </ListRowTrailing>
+          </ListRowBody>
           <ChevronDownIcon
             aria-hidden="true"
             className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-open:rotate-180 motion-reduce:transition-none"

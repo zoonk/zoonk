@@ -65,6 +65,24 @@ enum StepSolver {
       steps.map { ($0.id, picks[$0.id]?.first ?? "") }, uniquingKeysWith: { first, _ in first })
   }
 
+  /// A saved answer keeps only each step's first pick. A wrong one was followed by the right one,
+  /// since there's no answer until every step is solved.
+  static func picks(_ steps: [StepSolverFields.Step], answer: ActivityAnswer?) -> Picks {
+    let pairs = answer?.pairs ?? [:]
+
+    return steps.reduce(into: Picks()) { picks, step in
+      guard let first = pairs[step.id] else {
+        return
+      }
+
+      picks = adding(picks, stepId: step.id, choiceId: first)
+
+      if let correct = step.correct?.id {
+        picks = adding(picks, stepId: step.id, choiceId: correct)
+      }
+    }
+  }
+
   static func adding(_ picks: Picks, stepId: String, choiceId: String) -> Picks {
     var next = picks
 
@@ -80,9 +98,16 @@ private struct StepSolverCanvas: View {
   let fields: StepSolverFields
   let context: ActivityCanvasContext
 
-  @ActivityState("picks") private var picks: StepSolver.Picks = [:]
+  @ActivityState private var picks: StepSolver.Picks
 
   @Environment(\.legibilityWeight) private var legibilityWeight
+
+  init(fields: StepSolverFields, context: ActivityCanvasContext) {
+    self.fields = fields
+    self.context = context
+    _picks = ActivityState(
+      wrappedValue: StepSolver.picks(fields.steps, answer: context.answer), "picks")
+  }
 
   private var isChecked: Bool {
     if case .checked = context.phase { true } else { false }

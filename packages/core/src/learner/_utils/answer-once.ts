@@ -100,18 +100,19 @@ export async function recordAnswerOnce<Refusal extends string>({
     return { recorded: data.recorded, status: "recorded" };
   }
 
+  const saved =
+    answer.attemptId &&
+    (error instanceof AnswerRefusedError || isPrismaUniqueConstraintError(error))
+      ? await findSavedAttempt({ attemptId: answer.attemptId, userId: answer.userId })
+      : null;
+
+  if (saved) {
+    return { saved, status: "saved" };
+  }
+
   if (error instanceof AnswerRefusedError && refused.refusal) {
     return { refusal: refused.refusal, status: "refused" };
   }
 
-  const saved =
-    answer.attemptId && isPrismaUniqueConstraintError(error)
-      ? await findSavedAttempt({ attemptId: answer.attemptId, userId: answer.userId })
-      : null;
-
-  if (!saved) {
-    throw error;
-  }
-
-  return { saved, status: "saved" };
+  throw error;
 }

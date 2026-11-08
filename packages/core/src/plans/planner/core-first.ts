@@ -7,6 +7,11 @@ export function getCoreLessons(lessons: number): number {
   return Math.max(1, Math.ceil(lessons * CORE_SHARE));
 }
 
+/** No challenge waits for these lessons: depth may come after its phase's challenge (R40). */
+export function isPastCore(unit: Pick<QueueUnit, "depth" | "pastCore">): boolean {
+  return unit.depth === true || unit.pastCore === true;
+}
+
 function countLessons(unit: QueueUnit): number {
   return unit.lessonId ? 1 : (unit.lessons ?? 1);
 }
@@ -155,8 +160,13 @@ export function putCoresFirst(
     const lessons = countLessons(unit);
     const before = taken.get(skillId) ?? 0;
     const left = getCoreLessons(totals.get(skillId) ?? 1) - before;
-    const core = unit.inProgress || unit.coreOnly ? lessons : Math.max(0, Math.min(lessons, left));
+    const inCore = Math.max(0, Math.min(lessons, left));
+    const core = unit.inProgress || unit.coreOnly ? lessons : inCore;
     taken.set(skillId, before + lessons);
+
+    if (unit.inProgress && !unit.coreOnly && inCore === 0) {
+      return [{ ...unit, pastCore: true }];
+    }
 
     if (core === lessons) {
       return [unit];

@@ -1,6 +1,7 @@
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -39,29 +40,33 @@ async function CareerPlan() {
           <ListRowLeading>
             <StatusMark status="skipped" />
           </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle className="text-muted-foreground font-normal">
-              {career.skipped}
-            </ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing className="font-sans">
-            {t({
-              description:
-                "Ends a plan row for a topic the plan skips because the learner already knows it. In Brazilian Portuguese: “Você já sabe”.",
-              message: "You know this",
-            })}
-          </ListRowTrailing>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle className="text-muted-foreground font-normal">
+                {career.skipped}
+              </ListRowTitle>
+            </ListRowContent>
+            <ListRowTrailing className="font-sans">
+              {t({
+                description:
+                  "Ends a plan row for a topic the plan skips because the learner already knows it. In Brazilian Portuguese: “Você já sabe”.",
+                message: "You know this",
+              })}
+            </ListRowTrailing>
+          </ListRowBody>
         </ListRow>
 
         <ListRow data-highlighted role="listitem">
           <ListRowLeading>
             <StatusMark status="next" />
           </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle>{today.title}</ListRowTitle>
-            <ListRowDescription>{t("Starts today")}</ListRowDescription>
-          </ListRowContent>
-          <ListRowTrailing>{lessons(today.lessons)}</ListRowTrailing>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{today.title}</ListRowTitle>
+              <ListRowDescription>{t("Starts today")}</ListRowDescription>
+            </ListRowContent>
+            <ListRowTrailing>{lessons(today.lessons)}</ListRowTrailing>
+          </ListRowBody>
         </ListRow>
 
         {ahead.map((topic) => (
@@ -69,10 +74,12 @@ async function CareerPlan() {
             <ListRowLeading>
               <StatusMark status="todo" />
             </ListRowLeading>
-            <ListRowContent>
-              <ListRowTitle className="font-normal">{topic.title}</ListRowTitle>
-            </ListRowContent>
-            <ListRowTrailing>{lessons(topic.lessons)}</ListRowTrailing>
+            <ListRowBody>
+              <ListRowContent>
+                <ListRowTitle className="font-normal">{topic.title}</ListRowTitle>
+              </ListRowContent>
+              <ListRowTrailing>{lessons(topic.lessons)}</ListRowTrailing>
+            </ListRowBody>
           </ListRow>
         ))}
       </ListGroup>

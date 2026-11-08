@@ -7,6 +7,7 @@ import { ChapterMark } from "../_components/chapter-mark";
 import {
   CURRENT_ROW_CLASS,
   ListRow,
+  ListRowBody,
   ListRowButton,
   ListRowContent,
   ListRowDescription,
@@ -74,21 +75,23 @@ export function SyllabusChapterRow({
       <ListRowLeading>
         <ChapterMark chapter={chapter} isNext={isNext} skipped={chapter.known} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowNumberedTitle
-          number={chapter.position}
-          textClassName={cn(
-            "line-clamp-2",
-            (chapter.state === "done" || (!href && !chapter.skillId)) && "text-muted-foreground",
-          )}
-        >
-          {chapter.title}
-        </ListRowNumberedTitle>
-        <ChapterLine chapter={chapter} />
-      </ListRowContent>
-      <ListRowTrailing>
-        <ChapterMeta chapter={chapter} />
-      </ListRowTrailing>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowNumberedTitle
+            number={chapter.position}
+            textClassName={cn(
+              "line-clamp-2",
+              (chapter.state === "done" || (!href && !chapter.skillId)) && "text-muted-foreground",
+            )}
+          >
+            {chapter.title}
+          </ListRowNumberedTitle>
+          <ChapterLine chapter={chapter} />
+        </ListRowContent>
+        <ListRowTrailing>
+          <ChapterMeta chapter={chapter} />
+        </ListRowTrailing>
+      </ListRowBody>
     </>
   );
 

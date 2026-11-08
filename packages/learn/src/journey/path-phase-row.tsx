@@ -14,7 +14,7 @@ import { CurrentPhaseMark } from "./current-phase-mark";
 import { useRoadmapFinish } from "./use-roadmap";
 
 const TRAILING_CLASS =
-  "text-muted-foreground shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums";
+  "text-muted-foreground text-right font-mono text-xs tabular-nums stacked:text-left";
 
 export function PhaseLessons({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();

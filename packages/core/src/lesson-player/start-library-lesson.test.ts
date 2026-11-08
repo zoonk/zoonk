@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
+import { CHALLENGE_STRONG_PATH } from "@zoonk/testing/fixtures/challenge-contents";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -19,6 +21,9 @@ import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
+import { typedGrade } from "./_test-utils/typed-grade";
+import { checkLessonStep } from "./check-lesson-step";
+import { type LessonStepAnswer } from "./contract";
 import { startLibraryLesson } from "./start-library-lesson";
 
 const TIME_ZONE = "America/Sao_Paulo";
@@ -130,6 +135,162 @@ describe(startLibraryLesson, () => {
       ],
       hyperdrive: { knownStepIds: [], streak: 0 },
       runId: first.status === "started" ? first.run.runId : "",
+    });
+  });
+
+  it("brings back each answer with what the learner answered and the result it was saved with", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson({
+      steps: ["check", "activity", "challenge", "typedAnswer", "spokenAnswer", "summary"],
+    });
+
+    const first = await start(lesson.id);
+    const runId = first.status === "started" ? first.run.runId : "";
+    const typedId = stepOfKind(steps, "typedAnswer").id;
+    const typedAttemptId = randomUUID();
+
+    const answer = async (stepId: string, given: LessonStepAnswer, attemptId?: string) => {
+      const outcome = await checkLessonStep({
+        input: { answer: given, attemptId, durationMs: 8000, runId, timeZone: TIME_ZONE },
+        stepId,
+      });
+
+      return outcome.status === "checked" ? outcome.result : null;
+    };
+
+    vi.mocked(gradeTypedAnswer)
+      .mockResolvedValueOnce(typedGrade({ feedback: "Only half.", isCorrect: false, score: 0.4 }))
+      .mockResolvedValueOnce(typedGrade({ feedback: "Both ideas.", isCorrect: true, score: 0.9 }));
+
+    const checkId = stepOfKind(steps, "check").id;
+    const missedCheck = await answer(checkId, { kind: "check", optionId: "path" });
+    const rightCheck = await answer(checkId, { kind: "check", optionId: "likely" });
+    const numeric = { answer: { kind: "numeric", value: 5 }, kind: "activity" } as const;
+    const activity = await answer(stepOfKind(steps, "activity").id, numeric);
+    const choiceIds = [...CHALLENGE_STRONG_PATH];
+    const path = { choiceIds, kind: "challenge" } as const;
+    const challenge = await answer(stepOfKind(steps, "challenge").id, path);
+    const missedText = "It's where the electron is";
+    const missedTyped = { kind: "typedAnswer", text: missedText } as const;
+    await answer(typedId, missedTyped, typedAttemptId);
+    const replayedTyped = await answer(typedId, missedTyped, typedAttemptId);
+    const rightText = "We only know where it probably is";
+    await answer(typedId, { kind: "typedAnswer", text: rightText });
+
+    const spokenId = stepOfKind(steps, "spokenAnswer").id;
+    const transcript = "The electron is a crowd";
+
+    await attemptFixture({
+      answer: { kind: "spoken", transcript },
+      answeredAt: new Date(Date.now() + 1000),
+      isCorrect: false,
+      score: 0.5,
+      stepId: spokenId,
+      userId: user.id,
+    });
+
+    await attemptFixture({
+      answer: { selectedIndex: 0 },
+      answeredAt: new Date(Date.now() + 2000),
+      score: 1,
+      stepId: checkId,
+      userId: user.id,
+    });
+
+    const resumed = await start(lesson.id);
+    const answers = resumed.status === "started" ? resumed.run.answers : [];
+    const restored = { nextReviewAt: null, savedMistake: false };
+
+    const fromSaved = {
+      ...restored,
+      checked: true,
+      corrections: [],
+      expected: null,
+      feedback: null,
+      keyPoints: null,
+      spelling: null,
+    };
+
+    const expected = [
+      {
+        answer: { kind: "check", optionId: "path" },
+        isCorrect: false,
+        result: { ...missedCheck, ...restored, answerText: "The electron's exact path" },
+        stepId: checkId,
+      },
+      {
+        answer: { kind: "check", optionId: "likely" },
+        isCorrect: true,
+        result: {
+          ...rightCheck,
+          ...restored,
+          answerText: "Where the electron is most likely to be found",
+        },
+        stepId: checkId,
+      },
+      {
+        answer: numeric,
+        isCorrect: true,
+        result: { ...activity, ...restored, answerText: "5\u00A0°C" },
+        stepId: stepOfKind(steps, "activity").id,
+      },
+      {
+        answer: path,
+        isCorrect: true,
+        result: {
+          ...challenge,
+          ...restored,
+          answerText:
+            "Ask the AI to check if the difference is real → A gap this small shows up by chance all the time. One more week will tell us. → Launch B for everyone",
+        },
+        stepId: stepOfKind(steps, "challenge").id,
+      },
+      {
+        answer: missedTyped,
+        isCorrect: false,
+        result: { ...replayedTyped, ...restored, answerText: missedText },
+        stepId: typedId,
+      },
+      {
+        answer: { kind: "typedAnswer", text: rightText },
+        isCorrect: true,
+        result: {
+          ...fromSaved,
+          answerText: rightText,
+          correctAnswer: null,
+          isCorrect: true,
+          score: 0.9,
+        },
+        stepId: typedId,
+      },
+      {
+        answer: null,
+        isCorrect: false,
+        result: {
+          ...fromSaved,
+          answerText: transcript,
+          correctAnswer: "The electron is a cloud",
+          isCorrect: false,
+          score: 0.5,
+        },
+        stepId: spokenId,
+      },
+      {
+        answer: null,
+        isCorrect: true,
+        result: { ...fromSaved, answerText: null, correctAnswer: null, isCorrect: true, score: 1 },
+        stepId: checkId,
+      },
+    ];
+
+    expect(answers).toStrictEqual(
+      expected.map((item) => ({ ...item, answeredAt: expect.any(String) })),
+    );
+
+    expect(replayedTyped).toMatchObject({
+      correctAnswer: expect.any(String),
+      feedback: null,
+      keyPoints: null,
+      score: 0.4,
     });
   });
 

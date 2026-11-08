@@ -33,6 +33,14 @@ val LessonStep.isReadStep: Boolean
 
 val LessonStep.isLanguageStep: Boolean get() = content is StepContent.Language
 
+internal fun StepContent.SpokenAnswer.listeningInstead(cantTalk: Boolean): StepContent.Language? =
+    listening?.takeIf { cantTalk }?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
+
+fun LessonStep.asAnswered(answer: LessonAnswer?): LessonStep =
+    (content as? StepContent.SpokenAnswer)
+        ?.listeningInstead(answer is LessonAnswer.Listening)
+        ?.let { copy(content = it) } ?: this
+
 val LessonStep.canSelfCorrect: Boolean get() = isLanguageStep && kind in SELF_CORRECT_KINDS
 
 val LessonStep.isRetryStep: Boolean get() = kind in RETRY_KINDS

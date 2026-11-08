@@ -170,8 +170,14 @@ final class LessonPlayerLoadingTests: XCTestCase {
     someoneElses.keep(theirs)
 
     let transport = HeldAnswersTransport(
-      runAnswers:
-        #"[{"stepId": "one", "isCorrect": false, "answeredAt": "2026-11-07T10:00:00.000Z"}]"#
+      runAnswers: #"""
+        [{"stepId": "one", "isCorrect": false, "answeredAt": "2026-11-07T10:00:00.000Z",
+          "answer": {"kind": "check", "optionId": "wrong"},
+          "result": {"answerText": "Lyon", "checked": true, "correctAnswer": "Paris",
+            "corrections": [], "expected": null, "feedback": "That's Lyon.", "isCorrect": false,
+            "keyPoints": null, "nextReviewAt": null, "savedMistake": false, "score": null,
+            "spelling": null}}]
+        """#
     )
     await transport.failChecks(on: ["two"])
     let store = try checksPlayer(defaults: defaults, transport: transport)
@@ -207,7 +213,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     store.select(.check(optionId: "right"))
     await store.check()
 
-    XCTAssertEqual(kept.read().map(\.isCorrect), [false, true])
+    XCTAssertEqual(kept.read().map(\.grade.isCorrect), [false, true])
     XCTAssertEqual(kept.read(), store.held)
   }
 
@@ -353,7 +359,9 @@ final class LessonPlayerLoadingTests: XCTestCase {
   private func heldAnswer(_ stepId: String, attemptId: String, isCorrect: Bool) -> HeldAnswer {
     HeldAnswer(
       stepId: stepId, answer: .check(optionId: isCorrect ? "right" : "wrong"),
-      attemptId: attemptId, runId: "run", durationMs: 1000, usedHelp: false, isCorrect: isCorrect,
+      attemptId: attemptId, runId: "run", durationMs: 1000, usedHelp: false,
+      grade: LocalGrade(
+        isCorrect: isCorrect, answerText: nil, correctAnswer: nil, feedback: nil),
       answeredAt: Date(timeIntervalSince1970: 1_800_000_000))
   }
 

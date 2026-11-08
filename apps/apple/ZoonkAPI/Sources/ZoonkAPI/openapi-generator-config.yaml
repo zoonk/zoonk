@@ -9,6 +9,7 @@ typeOverrides:
   schemas:
     LessonMap: LessonSummary
     LessonStepAnswer: LessonAnswer
+    LessonStepAnswerOutput: LessonAnswer
     PlayableLibraryStep: LessonStep
 filter:
   operations:

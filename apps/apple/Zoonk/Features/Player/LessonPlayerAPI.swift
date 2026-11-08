@@ -151,7 +151,9 @@ struct LessonPlayerAPI: Sendable {
           runId: run.runId,
           startedAt: run.startedAt,
           answers: run.answers.map {
-            LessonRunAnswer(stepId: $0.stepId, isCorrect: $0.isCorrect, answeredAt: $0.answeredAt)
+            LessonRunAnswer(
+              stepId: $0.stepId, answeredAt: $0.answeredAt, answer: $0.answer?.value1,
+              result: LessonStepResult($0.result, answerText: $0.result.answerText))
           },
           hyperdrive: LessonHyperdriveStart(
             knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
@@ -197,17 +199,7 @@ struct LessonPlayerAPI: Sendable {
         return .failed
       }
 
-      var verdict = LessonStepResult(
-        isCorrect: result.isCorrect, answerText: nil, correctAnswer: result.correctAnswer,
-        feedback: result.feedback)
-      verdict.checked = result.checked
-      verdict.corrections = result.corrections.map { .init(wrong: $0.wrong, right: $0.right) }
-      verdict.keyPoints = result.keyPoints?.map { .init(text: $0.text, met: $0.met) }
-      verdict.score = result.score
-      verdict.spelling = result.spelling
-      verdict.nextReviewAt = result.nextReviewAt
-      verdict.savedMistake = result.savedMistake
-      return .checked(verdict)
+      return .checked(LessonStepResult(result))
     case .conflict, .unprocessableContent, .badRequest, .notFound:
       return .refused
     case .unauthorized:
@@ -480,5 +472,55 @@ struct LessonPlayerAPI: Sendable {
         }
       return .limitReached(tier: tier, period: period)
     }
+  }
+}
+
+/// A live check's result and a saved answer's restored one share these fields, so both read into
+/// the player's result the same way.
+private protocol CheckResultPayload {
+  var checked: Bool { get }
+  var correctAnswer: String? { get }
+  var feedback: String? { get }
+  var isCorrect: Bool { get }
+  var nextReviewAt: Date? { get }
+  var savedMistake: Bool { get }
+  var score: Double? { get }
+  var spelling: String? { get }
+  var resultCorrections: [LessonStepResult.Correction] { get }
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? { get }
+}
+
+extension Components.Schemas.LessonStepCheckResult: CheckResultPayload {
+  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+    corrections.map { .init(wrong: $0.wrong, right: $0.right) }
+  }
+
+  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+    keyPoints?.map { .init(text: $0.text, met: $0.met) }
+  }
+}
+
+extension Components.Schemas.LessonRunAnswerResult: CheckResultPayload {
+  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+    corrections.map { .init(wrong: $0.wrong, right: $0.right) }
+  }
+
+  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+    keyPoints?.map { .init(text: $0.text, met: $0.met) }
+  }
+}
+
+extension LessonStepResult {
+  fileprivate init(_ payload: some CheckResultPayload, answerText: String? = nil) {
+    self.init(
+      isCorrect: payload.isCorrect, answerText: answerText, correctAnswer: payload.correctAnswer,
+      feedback: payload.feedback)
+    checked = payload.checked
+    corrections = payload.resultCorrections
+    keyPoints = payload.resultKeyPoints
+    score = payload.score
+    spelling = payload.spelling
+    nextReviewAt = payload.nextReviewAt
+    savedMistake = payload.savedMistake
   }
 }

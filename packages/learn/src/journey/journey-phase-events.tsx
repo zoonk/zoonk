@@ -7,6 +7,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
+import { MarkedText, TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -19,10 +20,11 @@ export const PATH_ROW_CLASS =
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 
+export const PATH_ROW_BODY_CLASS = cn(TITLE_ROW_CLASS, "min-w-0 flex-1");
+
 const EVENT_ROW_CLASS = cn(PATH_ROW_CLASS, "hover:bg-muted/70");
 
-const EVENT_DATE_CLASS =
-  "text-muted-foreground shrink-0 font-mono text-xs whitespace-nowrap tabular-nums";
+const EVENT_DATE_CLASS = "text-muted-foreground font-mono text-xs tabular-nums";
 
 function EventRow({ children, href }: { children: React.ReactNode; href: string | null }) {
   if (!href) {
@@ -65,13 +67,13 @@ export function CheckpointRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <Trickster className="-m-1 size-5" />
       </span>
-      <span className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3">
-        <span
-          className={cn("flex items-center gap-2 font-medium", isDone && "text-muted-foreground")}
+      <span className={PATH_ROW_BODY_CLASS}>
+        <MarkedText
+          className={cn("font-medium", isDone && "text-muted-foreground")}
+          mark={checkpoint.locked && <PlusMark />}
         >
           {t("Phase challenge")}
-          {checkpoint.locked && <PlusMark />}
-        </span>
+        </MarkedText>
 
         <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
           {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
@@ -81,7 +83,7 @@ export function CheckpointRow({
         </span>
 
         {!brief && !isDone && (
-          <span className="text-muted-foreground col-span-2 text-xs text-pretty">
+          <span className="text-muted-foreground basis-full text-xs text-pretty">
             {goal.kind === "language"
               ? t("A live call where you get your point across")
               : t("Questions on this phase, with no hints")}
@@ -145,18 +147,19 @@ export function MockRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <KindMark kind="mock" />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="flex min-w-0 items-center gap-2 font-medium text-pretty">
-          {forNextSitting ? t("Mock exam for the next sitting") : t("Mock exam")}
-          {locked && <PlusMark />}
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className="flex flex-col">
+          <MarkedText className="font-medium text-pretty" mark={locked && <PlusMark />}>
+            {forNextSitting ? t("Mock exam for the next sitting") : t("Mock exam")}
+          </MarkedText>
+          {funded?.minutes ? (
+            <span className="text-muted-foreground font-mono text-xs tabular-nums">
+              {formatDuration(funded.minutes)}
+            </span>
+          ) : null}
         </span>
-        {funded?.minutes ? (
-          <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {formatDuration(funded.minutes)}
-          </span>
-        ) : null}
+        <span className={EVENT_DATE_CLASS}>{formatPlanDate(date)}</span>
       </span>
-      <span className={EVENT_DATE_CLASS}>{formatPlanDate(date)}</span>
     </EventRow>
   );
 }

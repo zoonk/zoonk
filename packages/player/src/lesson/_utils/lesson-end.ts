@@ -39,3 +39,10 @@ export function leaveMap(state: LessonPlayerState): LessonPlayerState {
 export function isAtEnd(state: LessonPlayerState): boolean {
   return state.phase === "completed" || state.phase === "map";
 }
+
+export function setCompletionStatus(
+  state: LessonPlayerState,
+  status: "failed" | "saving",
+): LessonPlayerState {
+  return state.completion ? { ...state, completion: { ...state.completion, status } } : state;
+}

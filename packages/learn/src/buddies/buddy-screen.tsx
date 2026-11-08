@@ -288,7 +288,22 @@ export function BuddyScreen({
       className="flex-1"
     >
       <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-screen" ref={columnRef}>
-        <BuddyHeader buddy={buddy} faceRef={chatFace.face} name={name} stage={status.stage}>
+        <BuddyHeader
+          buddy={buddy}
+          faceRef={chatFace.face}
+          menu={
+            <BuddyMenu
+              buddy={current}
+              glassesCount={glassesCount}
+              hrefs={hrefs}
+              name={name}
+              onEdit={() => setEditing(true)}
+              onGlasses={() => setWearing(true)}
+            />
+          }
+          name={name}
+          stage={status.stage}
+        >
           <BuddyToday
             buddy={buddy}
             className="min-[72rem]:hidden"
@@ -296,15 +311,6 @@ export function BuddyScreen({
             missionLinks={missionLinks}
             name={name}
             status={status}
-          />
-
-          <BuddyMenu
-            buddy={current}
-            glassesCount={glassesCount}
-            hrefs={hrefs}
-            name={name}
-            onEdit={() => setEditing(true)}
-            onGlasses={() => setWearing(true)}
           />
         </BuddyHeader>
 
