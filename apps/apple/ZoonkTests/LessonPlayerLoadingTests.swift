@@ -29,6 +29,42 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.state?.results["one"])
   }
 
+  func testALateRunPreservesCanvasSelectionWithoutARootTap() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"], code: ["one"]),
+      transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.continueLesson()
+    let work = store.work(for: "one", round: 0)
+    work.set([0: "print(1)"], for: "edits")
+    store.select(nil)
+    store.goBack()
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.rounds["one", default: 0], 0)
+    XCTAssertTrue(
+      store.work(for: "one", round: store.state?.rounds["one", default: 0] ?? 0) === work)
+    XCTAssertNil(store.state?.results["one"])
+  }
+
+  func testNavigationDoesNotKeepAnAnsweredQuestionBlank() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.act()
+    store.continueLesson()
+    store.act()
+    store.goBack()
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.results["one"]?.isCorrect, true)
+  }
+
   func testWrittenContentPaintsWhileStartCarriesItsOpening() async throws {
     let transport = OpeningStartTransport(holds: true)
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))

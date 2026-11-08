@@ -304,7 +304,7 @@ final class LessonPlayerStore {
 
   /// The learner tapped or pressed a key in the lesson, seen once at the player's root.
   func act() {
-    if let id = state?.currentStep?.id { workedHere.insert(id) }
+    if let step = state?.currentStep, step.kind == .activity { workedHere.insert(step.id) }
     acted = true
     activate()
   }
@@ -589,6 +589,7 @@ final class LessonPlayerStore {
   func select(_ answer: LessonAnswer?) {
     activate()
     guard let stepId = state?.currentStep?.id else { return }
+    workedHere.insert(stepId)
     state?.select(answer, for: stepId)
   }
 
