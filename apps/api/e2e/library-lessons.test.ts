@@ -3,6 +3,7 @@ import { type APIRequestContext, request } from "@playwright/test";
 import {
   lessonStepCheckResultSchema,
   libraryLessonCompletionSchema,
+  libraryLessonOpenedSchema,
   libraryLessonRunSchema,
 } from "@zoonk/core/lesson-player/contract";
 import { createdLessonQuestionSchema } from "@zoonk/core/lesson-questions/contract";
@@ -67,6 +68,56 @@ test.describe("Library lessons API", () => {
 
   test.beforeAll(() => {
     baseURL = process.env.E2E_BASE_URL ?? "";
+  });
+
+  test("combines an exact block opening with the run and returns an alternative with no run", async () => {
+    const [{ api, userId }, { lesson }] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "combined-start" }),
+      playableLessonFixture({ steps: ["check"] }),
+    ]);
+
+    const session = await studySessionFixture({ userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "learn",
+      lessonId: lesson.id,
+      sessionId: session.id,
+    });
+
+    const target = { blockId: block.id, kind: "block" };
+
+    const run = await readBody({
+      response: await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
+        data: { opening: { target }, timeZone: "UTC" },
+      }),
+      schema: libraryLessonRunSchema,
+      status: 201,
+    });
+
+    expect(run.sessionId).toBe(session.id);
+
+    await prisma.studySessionBlock.update({
+      data: { status: "completed" },
+      where: { id: block.id },
+    });
+
+    const opened = await readBody({
+      response: await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
+        data: { opening: { target }, timeZone: "UTC" },
+      }),
+      schema: libraryLessonOpenedSchema,
+    });
+
+    expect(opened).toStrictEqual({
+      opening: { blockId: null, kind: "session", sessionId: session.id },
+      status: "opened",
+    });
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "lessonStart", targetId: lesson.id, userId } }),
+    ).resolves.toBe(1);
+
+    await api.dispose();
   });
 
   test("sends a public lesson's screens only with a session, a guest's included", async () => {

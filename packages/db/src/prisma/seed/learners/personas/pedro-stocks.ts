@@ -35,7 +35,6 @@ export const pedroStocks: SeedLearner = {
     },
   ],
   brainPower: 420,
-  dailyLimitMinutes: 60,
   email: "v2-stocks@zoonk.test",
   goal: {
     course: stockMarketCourse,

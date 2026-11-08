@@ -78,12 +78,7 @@ function useEssayWriter(onGraded: (draft: EssayDraft, sent: { editedSince: boole
 
     const result = settled?.status === "settled" ? settled.value : null;
 
-    if (
-      result === null ||
-      result === "dailyLimitReached" ||
-      result === "limitReached" ||
-      result === "signUpRequired"
-    ) {
+    if (result === null || result === "limitReached" || result === "signUpRequired") {
       setStatus(result ?? "error");
       return;
     }

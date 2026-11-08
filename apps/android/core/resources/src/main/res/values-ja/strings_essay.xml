@@ -13,7 +13,6 @@
   "essay_criterion_legal_basis": "5bb2d27befb2a4a3b3a43efdf8ca4988fd107cc0e5946cda68106b832a13fa80",
   "essay_criterion_requests": "8d1ccacdb5e4da3f2b0e41d3bd2573431d9a319cf2d13ea49327bfdc41cea1c5",
   "essay_criterion_topic": "5b767c2c64d13542714e91e7df64e8f1b8762f9e686dbf958979e824195399c8",
-  "essay_daily_limit_reached": "992ebec4c54287230cea43ada1273ed3feaf7dedc1f714d21b5f4c5efbf9b207",
   "essay_element_action": "22a34467c8644d76caa2564fb64e180d976132591cf192280ea967b9ebfe0292",
   "essay_element_agent": "2027351d201b6ff3ab7a8bd8031fe440750e882148ae50169c30a0dda10d4769",
   "essay_element_detail": "4c34e6e575244d6db69b17233f6178621bee074707a3c6f9620abff4b74fb923",
@@ -106,8 +105,6 @@
     <string name="essay_skipped">この小論文はスキップしました。</string>
     <string name="essay_back_to_today">「今日」に戻る</string>
     <string name="essay_send_failed">うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。</string>
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
-    <string name="essay_daily_limit_reached">1日の学習時間の上限に達しました。書いた内容はここに残ります。</string>
     <string name="essay_limit_reached">今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。</string>
     <string name="essay_grading">各評価基準に沿って小論文を評価しています。最大30秒かかります。</string>
     <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>

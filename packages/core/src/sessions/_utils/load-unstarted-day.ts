@@ -84,15 +84,10 @@ export async function loadUnstartedDayView({
   const fields = toDayViewFields({
     answers: [],
     current: true,
-    dailyLimit: day.plan.limit,
     dayMinutes,
     examAccess,
     fullMealEarned: earned,
-    lessonRoom: hasLessonRoom({
-      day: day.input,
-      limitMinutes: day.plan.limit?.limitMinutes ?? null,
-      plannedMinutes: day.plannedMinutes,
-    }),
+    lessonRoom: hasLessonRoom({ day: day.input, plannedMinutes: day.plannedMinutes }),
     missions,
     outlines: day.plan.outlines,
     plusLessons,

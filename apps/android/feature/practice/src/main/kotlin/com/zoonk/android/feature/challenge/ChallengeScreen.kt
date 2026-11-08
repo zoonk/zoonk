@@ -742,28 +742,6 @@ private fun ChallengeFooter(
                     StatusLine(R.drawable.ic_calendar_clock, waitText(wait))
                 }
 
-                challenge.status == Challenge.Status.READY && challenge.dailyLimitReached -> {
-                    StatusLine(null, usedUpText(challenge, movable))
-                    MoveFailed(ui)
-                    TaskActions { width ->
-                        if (movable) {
-                            OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
-                            Button(
-                                busy = ui.moving,
-                                onClick = vm::moveToMonday,
-                                modifier = width,
-                                enabled = !ui.starting,
-                                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
-                            ) { Text(stringResource(R.string.challenge_move)) }
-                        } else {
-                            Button(
-                                onClick = actions::toToday,
-                                modifier = width,
-                            ) { Text(stringResource(R.string.challenge_back_to_today)) }
-                        }
-                    }
-                }
-
                 challenge.status == Challenge.Status.READY -> {
                     StartActions(challenge, ui, movable, actions)
                 }
@@ -926,23 +904,6 @@ private fun PlusRequiredNotice(
 @Composable
 private fun waitText(wait: Challenge.WaitReason): String =
     stringResource(if (wait == Challenge.WaitReason.LESSONS) R.string.missions_after_lessons else R.string.missions_after_challenge)
-
-/** Past today's study time the week's challenge doesn't come back on its own: the next study day plans without it. */
-@Composable
-private fun usedUpText(
-    challenge: Challenge,
-    movable: Boolean,
-): String {
-    if (challenge.kind == Challenge.Kind.WEEKLY) {
-        return stringResource(if (movable) R.string.challenge_used_up_move else R.string.challenge_used_up_weekly)
-    }
-    val next = challenge.nextStudyDate?.toJavaLocalDate() ?: return stringResource(R.string.challenge_used_up_next_session)
-    return if (ChronoUnit.DAYS.between(challenge.today.toJavaLocalDate(), next) == 1L) {
-        stringResource(R.string.challenge_used_up_tomorrow)
-    } else {
-        stringResource(R.string.challenge_used_up_on, formatDate(next, currentLocale(), DateStyle.Weekday))
-    }
-}
 
 @Composable
 private fun OpensLine(challenge: Challenge) {

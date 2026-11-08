@@ -60,12 +60,11 @@ export function useFreshStartText(): string | null {
 
 export function useSessionState() {
   const { today } = useTodayScreen();
-  const { blocks, dailyLimit, state } = today.session;
+  const { blocks, state } = today.session;
 
   return {
     ahead: state === "ahead",
     done: state === "done",
-    limitReached: dailyLimit?.reached === true,
     rest: state === "rest",
     started: blocks.some((block) => block.status !== "pending"),
     waiting: state === "waiting",

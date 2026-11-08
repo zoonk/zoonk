@@ -389,7 +389,7 @@ private actor FakeQuestionBlockClient: QuestionBlockClient {
 
 private let completionJSON = #"""
   {"blockId":"block","brainPower":10,"capsulesOpened":0,"ceremony":null,"certificates":[],"checkpoint":null,"comesBackOn":null,
-   "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"milestones":[],"missions":[],
+   "blocks":[],"sessionId":"s1","goalId":null,"finishedChapterId":null,"next":null,"completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"milestones":[],"missions":[],
    "netScore":null,"nextBlockId":null,"reached":{"energy":null,"level":null},"sessionBar":{"completed":1,"total":3},
    "sessionCompleted":false,"testOutOffer":null,"topHyperdrive":1,"total":1}
   """#

@@ -15,6 +15,7 @@
   "player_activity_your_answer": "2ddda952260395832a5591d07046bc9f16c0340e4971496cdec09a5bf681221b",
   "player_ai_note": "c166454671239b81742c255ca203f00e00be86f68f11069364a901f17691bca4",
   "player_already_knew": "44bd811d003f59c98b63b6ef4274d696e30d19f40d489b514523f639801cfb69",
+  "player_also_correct_label": "de95025e27a3153dc913b555f3cb2191a124864d4ddf0277b62ceb201168eed0",
   "player_answer_feedback": "fdbe6fe3657603b1ec7fd1bc53464847aae3d1dc6a017b85bd01245172d60486",
   "player_answer_options": "d001d566050b5250e20ac01a461ef94e19d388cc03426862f922014915c6456f",
   "player_ask_something_else": "b2453278c3637ff604a538b602dc61e75ae43bc6d2eda7b2dbfe9aa505fda47e",
@@ -244,6 +245,8 @@
     <string name="player_answer_feedback">Commenti sulla risposta</string>
     <string name="player_spelled">Hai scritto:</string>
     <string name="player_correct_answer_label">Risposta:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Anche questa è corretta:</string>
     <string name="player_explain_answer">Spiega la mia risposta</string>
     <string name="player_explain_answer_failed">Al momento non riusciamo a spiegarla. Riprova tra poco.</string>
     <string name="player_explain_answer_title">Perché questa risposta non è corretta</string>

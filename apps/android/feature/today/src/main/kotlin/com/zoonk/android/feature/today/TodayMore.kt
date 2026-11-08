@@ -69,7 +69,7 @@ internal fun TodayMore(
             }
         }
 
-        StudySession.State.LIMIT, StudySession.State.PREPARE, StudySession.State.WAITING -> {}
+        StudySession.State.PREPARE, StudySession.State.WAITING -> {}
     }
 }
 

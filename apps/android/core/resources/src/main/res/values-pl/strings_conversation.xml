@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "c5d22777d8d145f68e206c11ba725e5ee2e2b959af0569271c525389b28b2a19",
   "conversation_answers_first": "ed687f7c18f890053b0ba1e70b868dd4d7de6d1d2ad9021701a9610d9c35223e",
   "conversation_at_level": "494c45910ade52ba8e42c46409edb656fd01c2ae7771226e30e1d4dff1888088",
-  "conversation_back_to_today": "e797c9e523a8a76d03923a320e454b1f7ebf661a29bc4599ff090b4b0b48309e",
   "conversation_band": "3ec46cbb211fee55f3f03d14f473284dda53117f97d3cd8ecee3c5955bbbab19",
   "conversation_band_points": "035ad6889a33a6c826309663a512cea5696d46b20e7a5e85ac372a5e4c371864",
   "conversation_below_level": "90772f8234bf9da3b922fe2108e50c2bde268823a5e921fddc304b85659314f8",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "8f1883b4f3ddd8725ed316c019cf28e52c069e6d5be04fddb099142a36c3d7e5",
   "conversation_still_closing": "a596c85d8053a1bb4496c351226398e0b24d78c7c63f389c9ff7fbd26dd307ca",
   "conversation_still_to_get_across": "b98fe5c26c8208c1576dd7dece0064585a2ba16e164a3b28b3d23fda47f9c136",
-  "conversation_study_time_used_up": "f57aa12f975d515d85bfa53c44c581169d4c086a47fa336f25565bd21453c0a5",
   "conversation_take_over": "81a769dff4c9a436a998ae7964a3c7f4def9f5a8dbd4c84da6e15bfe0b0093f6",
   "conversation_take_your_time": "01c3e6641dce80c2f584c88f4c643e6f8d8e029506bc6435d41a24f78c2fa8da",
   "conversation_taken_over": "d1aad89f61ab8168f28365184ba22e29f616828aa34f9d686038faefa4091513",
@@ -314,9 +312,6 @@
     <string name="conversation_call_length">Czas trwania rozmowy</string>
     <string name="conversation_longer_calls_plus">Dłuższe rozmowy są dostępne w pakiecie Plus.</string>
     <string name="conversation_opens_when_ready">Otworzymy twoją rozmowę, gdy tylko będzie gotowa.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">Twój czas nauki na dziś się skończył. Możesz odbyć tę rozmowę, gdy następnym razem zaczniesz naukę.</string>
-    <string name="conversation_back_to_today">Wróć do „Dziś”</string>
     <string name="conversation_get_ready">Przygotuj rozmowę</string>
     <string name="conversation_get_ready_description">To wyzwanie to krótka rozmowa o tym dziale. Najpierw przygotowujemy ją tak, by pasowała do twojego poziomu mówienia. Zajmuje to do pół minuty.</string>
     <string name="conversation_getting_ready">Przygotowujemy twoją rozmowę</string>

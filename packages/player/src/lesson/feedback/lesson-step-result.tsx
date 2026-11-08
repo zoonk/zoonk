@@ -41,6 +41,17 @@ function getVerdict({
   return result.score !== null && result.score > 0 ? "almost" : "incorrect";
 }
 
+function LabeledAnswerLine({ label, text }: { label: string; text: string }) {
+  return (
+    <FeedbackExplanation>
+      <span className="text-muted-foreground">{label}</span>{" "}
+      <span className="text-success-text font-medium">
+        <LessonRichText text={text} />
+      </span>
+    </FeedbackExplanation>
+  );
+}
+
 function CorrectAnswerLine({
   result,
   step,
@@ -50,24 +61,28 @@ function CorrectAnswerLine({
 }) {
   const t = useExtracted();
 
-  if (
-    !result.correctAnswer ||
-    result.isCorrect ||
-    !result.checked ||
-    !isLanguageStep(step) ||
-    OPTION_LANGUAGE_KINDS.has(step.kind)
-  ) {
+  if (!result.correctAnswer || !result.checked) {
     return null;
   }
 
-  return (
-    <FeedbackExplanation>
-      <span className="text-muted-foreground">{t("Answer:")}</span>{" "}
-      <span className="text-success-text font-medium">
-        <LessonRichText text={result.correctAnswer} />
-      </span>
-    </FeedbackExplanation>
-  );
+  if (result.isCorrect) {
+    return (
+      <LabeledAnswerLine
+        label={t({
+          description:
+            "After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too.",
+          message: "Also correct:",
+        })}
+        text={result.correctAnswer}
+      />
+    );
+  }
+
+  if (!isLanguageStep(step) || OPTION_LANGUAGE_KINDS.has(step.kind)) {
+    return null;
+  }
+
+  return <LabeledAnswerLine label={t("Answer:")} text={result.correctAnswer} />;
 }
 
 function SampleAnswerLine({ result }: { result: LessonStepResult }) {
@@ -99,15 +114,7 @@ function SampleAnswerLine({ result }: { result: LessonStepResult }) {
 
 function SpellingLine({ spelling }: { spelling: string }) {
   const t = useExtracted();
-
-  return (
-    <FeedbackExplanation>
-      <span className="text-muted-foreground">{t("Spelled:")}</span>{" "}
-      <span className="text-success-text font-medium">
-        <LessonRichText text={spelling} />
-      </span>
-    </FeedbackExplanation>
-  );
+  return <LabeledAnswerLine label={t("Spelled:")} text={spelling} />;
 }
 
 function CorrectionLines({ corrections }: { corrections: LessonStepResult["corrections"] }) {

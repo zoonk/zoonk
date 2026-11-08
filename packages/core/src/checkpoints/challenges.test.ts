@@ -7,7 +7,6 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -152,136 +151,6 @@ describe("a phase checkpoint's challenge", () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: started.destination.blockId } }),
     ).resolves.toMatchObject({ status: "active" });
-  });
-
-  it("past today's study time, says so before Start, as Start refuses; a started one goes on", async () => {
-    const { boss, goal, user } = await bossSetup();
-
-    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
-      status: "ready",
-    });
-
-    const unlimited = await challengeOf(boss.id);
-    expect(unlimited).toMatchObject({ dailyLimitReached: false, status: "ready" });
-
-    const limit = (dailyLimitMinutes: number | null) =>
-      prisma.userLearningProfile.upsert({
-        create: { dailyLimitMinutes, userId: user.id },
-        update: { dailyLimitMinutes },
-        where: { userId: user.id },
-      });
-
-    await Promise.all([
-      limit(30),
-      dailyProgressFixtureMany([
-        { date: SESSION_TODAY, timeSpentSeconds: 30 * 60, userId: user.id },
-      ]),
-    ]);
-
-    const limited = await countDatabaseStatements(() => challengeOf(boss.id));
-
-    expect(limited.writes).toBe(0);
-
-    expect(limited.result).toMatchObject({
-      dailyLimitReached: true,
-      nextStudyDate: "2026-10-01",
-      status: "ready",
-    });
-
-    expect(unlimited).toMatchObject({ nextStudyDate: null });
-
-    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
-      status: "dailyLimitReached",
-    });
-
-    await limit(null);
-
-    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toMatchObject({
-      status: "ready",
-    });
-
-    await limit(30);
-
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({
-      dailyLimitReached: false,
-      status: "started",
-    });
-  });
-
-  it("past today's study time in an exam's plan, names no day, as its runs pick the challenge's day", async () => {
-    const { boss, goal, user } = await bossSetup();
-
-    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
-      status: "ready",
-    });
-
-    await Promise.all([
-      prisma.goal.update({
-        data: { kind: "exam", targetDate: new Date("2026-12-15T00:00:00Z") },
-        where: { id: goal.id },
-      }),
-      prisma.subscription.create({
-        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-      }),
-      prisma.userLearningProfile.upsert({
-        create: { dailyLimitMinutes: 30, userId: user.id },
-        update: { dailyLimitMinutes: 30 },
-        where: { userId: user.id },
-      }),
-      dailyProgressFixtureMany([
-        { date: SESSION_TODAY, timeSpentSeconds: 30 * 60, userId: user.id },
-      ]),
-    ]);
-
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({
-      dailyLimitReached: true,
-      nextStudyDate: null,
-      status: "ready",
-    });
-  });
-
-  it("counts today's study time on the learner's day, as Start does, when its goal is on another date", async () => {
-    const { boss, goal, user } = await bossSetup();
-
-    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
-      status: "ready",
-    });
-
-    const active = await goalFixture({ timezone: "Pacific/Kiritimati", userId: user.id });
-    const learnerDay = new Date(SESSION_TODAY.getTime() + DAY_MS);
-
-    await prisma.userLearningProfile.upsert({
-      create: { activeGoalId: active.id, dailyLimitMinutes: 30, userId: user.id },
-      update: { activeGoalId: active.id, dailyLimitMinutes: 30 },
-      where: { userId: user.id },
-    });
-
-    const useUpOn = async (date: Date) => {
-      await prisma.dailyProgress.deleteMany({ where: { userId: user.id } });
-      await dailyProgressFixtureMany([{ date, timeSpentSeconds: 30 * 60, userId: user.id }]);
-    };
-
-    await useUpOn(learnerDay);
-
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({
-      dailyLimitReached: true,
-      status: "ready",
-    });
-
-    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
-      status: "dailyLimitReached",
-    });
-
-    await useUpOn(SESSION_TODAY);
-
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({
-      dailyLimitReached: false,
-      status: "ready",
-    });
-
-    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toMatchObject({
-      status: "ready",
-    });
   });
 
   it("with too few questions, Start asks for them to be written, then starts with the ones written since", async () => {
@@ -715,11 +584,7 @@ describe("the week's challenge before its day", () => {
 
 async function useUpStudyTime({ date, userId }: { date: Date; userId: string }) {
   await Promise.all([
-    prisma.userLearningProfile.upsert({
-      create: { dailyLimitMinutes: 30, userId },
-      update: { dailyLimitMinutes: 30 },
-      where: { userId },
-    }),
+    prisma.userLearningProfile.upsert({ create: { userId }, update: {}, where: { userId } }),
     dailyProgressFixtureMany([{ date, timeSpentSeconds: 30 * 60, userId }]),
   ]);
 }
@@ -755,41 +620,6 @@ describe("the week's challenge on its Sunday, past today's study time", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-  });
-
-  it("keeps Move to Monday: left unstarted, Monday re-plans without it", async () => {
-    const { challenge, goal, skills } = await weeklySunday();
-
-    await Promise.all([
-      studyTheWeek({ skillId: skills[0]?.id ?? "", userId: goal.userId }),
-      useUpStudyTime({ date: SUNDAY, userId: goal.userId }),
-    ]);
-
-    await expect(challengeOf(challenge.id)).resolves.toMatchObject({
-      canMove: true,
-      dailyLimitReached: true,
-      date: "2020-10-11",
-      nextStudyDate: null,
-      status: "ready",
-      today: "2020-10-11",
-    });
-
-    vi.setSystemTime(new Date("2020-10-12T12:00:00Z"));
-
-    await expect(startChallenge({ input: {}, planItemId: challenge.id })).resolves.toStrictEqual({
-      status: "notToday",
-    });
-
-    const monday = await prisma.studySession.findFirstOrThrow({
-      include: { blocks: true },
-      where: { goalId: goal.id, localDate: new Date("2020-10-12") },
-    });
-
-    expect(
-      monday.blocks
-        .filter((block) => block.kind === "checkpoint")
-        .map((block) => readBlockPayload(block).planItemId),
-    ).not.toContain(challenge.id);
   });
 
   it("moved to Monday past today's study time, starts in Monday's session", async () => {

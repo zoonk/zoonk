@@ -217,15 +217,26 @@ enum LessonGrading {
         correctAnswer: fillBlankSentence(exercise.content.template ?? "", answers: answers),
         feedback: exercise.content.feedback)
     case (.reading, .reading(let words)), (.listening, .listening(let words)):
-      guard let expected = arrangedWords(exercise) else {
+      guard let sentence = exercise.sentence, let expected = arrangedWords(exercise) else {
         return nil
       }
 
+      let isListening = exercise.kind == .listening
+      let key = arrangementKey(words)
+      let isLessonOrder = key == arrangementKey(expected)
+      let otherOrders = isListening ? sentence.otherTranslationOrders : sentence.otherSentenceOrders
+      let isCorrect = isLessonOrder || otherOrders.contains { arrangementKey($0) == key }
+
+      if sentence.ordersPending && !isCorrect {
+        return nil
+      }
+
+      // Right in another order, the verdict still shows the lesson's own version.
       return LocalGrade(
-        isCorrect: arrangementKey(words) == arrangementKey(expected),
+        isCorrect: isCorrect,
         answerText: words.joined(separator: " "),
-        correctAnswer: expected.joined(separator: " "),
-        feedback: exercise.sentence?.explanation)
+        correctAnswer: isLessonOrder ? nil : isListening ? sentence.translation : sentence.sentence,
+        feedback: sentence.explanation)
     case (.matchColumns, .matchColumns(let pairs, let mistakes)):
       let expected = (exercise.content.pairs ?? []).map { pairKey($0.left, $0.right) }.sorted()
       let given = pairs.map { pairKey($0.left, $0.right) }.sorted()

@@ -357,11 +357,13 @@
     "./library/language/alphabet-lesson-validator": "./src/library/language/alphabet/alphabet-lesson-validator.ts",
     "./library/language/grade-spoken-answer": "./src/library/language/grade-spoken-answer.ts",
     "./library/language/review-alphabet-lesson": "./src/library/language/alphabet/review-alphabet-lesson.ts",
+    "./library/language/sentence-orders": "./src/library/language/sentence-orders.ts",
     "./library/language/spoken-answer-contract": "./src/library/language/spoken-answer-contract.ts",
     "./library/language/spoken-answer-match": "./src/library/language/spoken-answer-match.ts",
     "./library/language/voice-word": "./src/library/language/voice-word.ts",
     "./library/language/write-alphabet-lesson": "./src/library/language/alphabet/write-alphabet-lesson.ts",
     "./library/language/write-lesson-content": "./src/library/language/write-language-lesson-content.ts",
+    "./library/language/write-owed-sentence-orders": "./src/library/language/write-owed-sentence-orders.ts",
     "./library/lessons/map": "./src/library/lessons/lesson-map.ts",
     "./library/lessons/public": "./src/library/lessons/get-public-library-lesson.ts",
     "./library/lessons/regenerate": "./src/library/lessons/regenerate-lessons.ts",
@@ -579,7 +581,6 @@
     "./sessions/catch-up": "./src/sessions/catch-up-today.ts",
     "./sessions/completion-contract": "./src/sessions/completion-contract.ts",
     "./sessions/contract": "./src/sessions/contract.ts",
-    "./sessions/daily-time-limit": "./src/sessions/get-daily-time-limit.ts",
     "./sessions/day-block": "./src/sessions/day-block.ts",
     "./sessions/day-state": "./src/sessions/day-state.ts",
     "./sessions/day-view": "./src/sessions/day-view.ts",
@@ -650,7 +651,10 @@
     "./view-models/today/get": "./src/view-models/today/get-today-view.ts",
     "./view-models/today/notice": "./src/view-models/today/today-notice.ts",
     "./workflows/steps": "./src/workflows/steps.ts",
-    "./subscriptions/get-web-plus-subscription": "./src/subscriptions/get-web-plus-subscription.ts"
+    "./subscriptions/get-web-plus-subscription": "./src/subscriptions/get-web-plus-subscription.ts",
+    "./sessions/block-view-contract": "./src/sessions/block-view-contract.ts",
+    "./sessions/refresh-owed-day": "./src/sessions/refresh-owed-study-day.ts",
+    "./lesson-player/finished-study-block": "./src/lesson-player/get-finished-study-block.ts"
   },
   "scripts": {
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",

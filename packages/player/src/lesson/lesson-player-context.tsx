@@ -32,6 +32,7 @@ export type LessonPlayerActions = {
   /** Applies to every lesson today without changing the plan. */
   skipWriting: () => void;
   skipSteps: (stepIds: string[]) => void;
+  startRecording: () => void;
   submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;
 };
 

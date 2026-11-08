@@ -172,8 +172,6 @@ function useNextBlock(): DayStep | null {
 
 export function TodaySession({ className }: { className?: string }) {
   const next = useNextBlock();
-  const { today } = useTodayScreen();
-  const limitReached = today.session.dailyLimit?.reached === true;
 
   return (
     <div className={cn("flex min-w-0 flex-col", className)} data-slot="today-session">
@@ -182,7 +180,7 @@ export function TodaySession({ className }: { className?: string }) {
       <DayMeta className="mt-2" />
 
       <div className="mt-3 flex flex-col first:mt-0 empty:hidden">
-        {next && !limitReached ? <SessionQueue next={next} /> : <DayQueue />}
+        {next ? <SessionQueue next={next} /> : <DayQueue />}
       </div>
 
       <TodayDayStatus className="mt-3 first:mt-0" />

@@ -54,11 +54,6 @@
   "challenge_trickster_recordings": "9040d110da87f16255f5a1ec4d6055215a6bfe3b5c13ae005e0b297f8c34362f",
   "challenge_trickster_rule": "878e7147a78dc3676d0ef9456c8f4eef8def14085369b6a78d18677259d6f8d5",
   "challenge_undo": "3feb3fe24bcfa8c1815613a8402fb37b917da3813cbf9ff1a2769b3333ab140c",
-  "challenge_used_up_move": "f3efd9c93d8bbc2e27426ad7b1db4c05be86a3d83511c5890b7452c04838bfef",
-  "challenge_used_up_next_session": "5b1878b0bd5f84385b5ebdf585772f5772a4c58e947fc0b49f4239f2c681ebe8",
-  "challenge_used_up_on": "b3f7d8503f21b5e581d6b393c4e71df1fd5f0cb3ea4b71cc384cf6f26de48415",
-  "challenge_used_up_tomorrow": "3f648d07793ffa5bdaa004c691b8c55f92412d5ef6607df1ef4919ef6030b6a8",
-  "challenge_used_up_weekly": "53332a40271ee4908600c47a59f6001b36995e2d631a4739745d6137163d67db",
   "challenge_weekly_detail": "bdc53e276752ba619d1322ac989099eb0684aa72b30af39e1548429da03619c7",
   "challenge_weekly_rule": "0d19541ecf5a1e32a0a5b2c76bd518a66a020f423313ef1d6e949c66df2c4ff3",
   "challenge_writing": "a2b6e2da3700bb12944f7d5d12a9b3f0f64a7eb11102fafd46a83805be2486ef",
@@ -156,16 +151,6 @@
     <string name="challenge_opens_after_lessons">Bu aşamanın dersleri bitince açılır</string>
     <string name="challenge_not_ready">Bu meydan okuma henüz hazır değil.</string>
     <string name="challenge_next_session">Bir sonraki çalışmanda</string>
-    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">Günlük süre sınırına ulaştın. Bu haftaki meydan okumayı kaçıracaksın.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_move">Günlük süre sınırına ulaştın. Meydan okumayı kaçırmamak için pazartesiye taşı.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_next_session">Günlük süre sınırına ulaştın. Meydan okuma bir sonraki çalışmanda olacak.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_tomorrow">Günlük süre sınırına ulaştın. Meydan okuma yarın burada olacak.</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Günlük süre sınırına ulaştın. Meydan okuma %1$s günü burada olacak.</string>
     <string name="challenge_back_to_today">Bugün’e dön</string>
     <string name="challenge_move">Pazartesiye taşı</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

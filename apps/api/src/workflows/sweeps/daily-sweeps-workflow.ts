@@ -6,6 +6,10 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -16,6 +20,7 @@ import {
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
   listOwedPictureChecksStep,
+  listOwedSentenceOrdersStep,
   purgeEvaluationRunsStep,
   purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
@@ -39,6 +44,7 @@ type SweepCounts = {
   memoryFactsPurged: number;
   pictureChecks: number;
   retiredStepsDeleted: number;
+  sentenceOrders: number;
   verificationsPurged: number;
 };
 
@@ -73,6 +79,22 @@ async function checkOwedPictures(): Promise<number> {
   await startPictureChecks({ assetIds });
 
   return assetIds.length;
+}
+
+async function writeOwedSentenceOrders(): Promise<number> {
+  const lessonIds = await listOwedSentenceOrdersStep();
+
+  await Promise.all(
+    lessonIds.map((lessonId) =>
+      startOnce(
+        sentenceOrdersWorkflow,
+        [{ lessonId, wait: "later" }],
+        getSentenceOrdersToken(lessonId),
+      ),
+    ),
+  );
+
+  return lessonIds.length;
 }
 
 async function deleteGuests(): Promise<number> {
@@ -124,6 +146,7 @@ async function sweep(): Promise<SweepCounts> {
     followUps,
     courseReleases,
     pictures,
+    sentenceOrders,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -139,6 +162,7 @@ async function sweep(): Promise<SweepCounts> {
     // Also catches an update whose start failed.
     updateCoursesBehind(),
     checkOwedPictures(),
+    writeOwedSentenceOrders(),
   ]);
 
   return {
@@ -154,6 +178,7 @@ async function sweep(): Promise<SweepCounts> {
     memoryFactsPurged: countOf(facts),
     pictureChecks: countOf(pictures),
     retiredStepsDeleted: countOf(retired),
+    sentenceOrders: countOf(sentenceOrders),
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),
   };

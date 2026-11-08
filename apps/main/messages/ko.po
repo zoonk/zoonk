@@ -333,7 +333,7 @@ msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "화면 설정"
 
-#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
+#. A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -1282,11 +1282,6 @@ msgstr "저장"
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "저장했어요."
-
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-msgctxt "VnpW_P"
-msgid "Choose your buddy, sounds, a daily time limit and the app's language."
-msgstr "짝꿍과 소리, 하루 학습 시간 제한, 앱 언어를 설정하세요."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx

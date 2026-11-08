@@ -24,6 +24,7 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { openTodayView } from "./_test-utils/open-today-view";
 import { daysAgo, dueSkillFixture } from "./_test-utils/session-goal";
 import { loadDayLessonIds } from "./_test-utils/todays-lessons";
+import { openStudyBlock } from "./open-block";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 const A_MINUTE_LATER = new Date("2026-09-30T12:01:00Z");
@@ -231,6 +232,61 @@ describe("today's session the learner was shown", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it("appends lessons landing mid-day before the learner only taps the queued lessons", async () => {
+    const { course, goal, library } = await setupDayWithStandIn({ laterLessons: 0 });
+
+    await prisma.lesson.updateMany({
+      data: { contentStatus: "completed" },
+      where: { id: { in: library.lessons.map((lesson) => lesson.id) } },
+    });
+
+    const askedAt = await askForLessons({ goalId: goal.id });
+    const saved = await readToday(goal.id);
+    const queued = saved.blocks.filter((block) => block.kind === "learn" && block.lessonId);
+    expect(queued.length).toBeGreaterThan(1);
+
+    const [first] = queued;
+
+    await expect(
+      openStudyBlock({ target: { blockId: first?.id ?? "", kind: "block" }, timeZone: "UTC" }),
+    ).resolves.toMatchObject({ opening: { kind: "lesson" }, status: "ready" });
+
+    vi.setSystemTime(A_MINUTE_LATER);
+    const landed = await landWaitingLessons({ courseId: course.id, library });
+    await followWrittenLessons({ askedAt, goalId: goal.id });
+
+    const afterLanding = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { sessionId: saved.id },
+    });
+
+    expect(afterLanding.slice(0, saved.blocks.length).map((block) => block.id)).toStrictEqual(
+      saved.blocks.map((block) => block.id),
+    );
+
+    expect(afterLanding.slice(saved.blocks.length).map((block) => block.lessonId)).toStrictEqual(
+      expect.arrayContaining(landed),
+    );
+
+    const last = queued.at(-1);
+
+    await expect(
+      openStudyBlock({ target: { blockId: last?.id ?? "", kind: "block" }, timeZone: "UTC" }),
+    ).resolves.toMatchObject({
+      opening: { kind: "lesson", lessonId: last?.lessonId },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: saved.id },
+      }),
+    ).resolves.toMatchObject(
+      afterLanding.map((block) => ({ id: block.id, lessonId: block.lessonId })),
+    );
   });
 
   it.each([
@@ -514,27 +570,6 @@ describe("today's session the learner was shown", () => {
       );
     },
   );
-
-  it("asks for no lessons past the learner's daily time limit", async () => {
-    const { goal } = await setupDayWithStandIn({ laterLessons: 0, outlineStatus: "completed" });
-    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
-    const planned = before.status === "ready" ? before.today.session.minutes.planned : 0;
-
-    expect(before.status === "ready" && before.today.session.lessonsToPrepare).toBe(true);
-
-    await prisma.userLearningProfile.update({
-      data: { dailyLimitMinutes: planned },
-      where: { userId: goal.userId },
-    });
-
-    const capped = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
-
-    expect(capped.status === "ready" && capped.today.session).toMatchObject({
-      lessonsComing: false,
-      lessonsToPrepare: false,
-      minutes: { planned },
-    });
-  });
 
   it("asks for a practice-only day's lessons nobody is outlining, and says they're coming once asked", async () => {
     const { goal } = await setupPlacedDay();

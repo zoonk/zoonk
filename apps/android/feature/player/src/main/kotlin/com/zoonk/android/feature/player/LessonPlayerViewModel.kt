@@ -54,15 +54,19 @@ import com.zoonk.android.feature.player.model.toLessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
+import com.zoonk.android.feature.session.route
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
+import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.LibraryLessonRunAnswersInner
+import com.zoonk.api.models.LibraryLessonStartInputOpening
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -135,6 +139,25 @@ private data class PendingCheck(
     }
 }
 
+private data class HeldDeviceVerdict(
+    val stepId: String,
+    val answer: LessonStepAnswer,
+    val attemptId: UUID,
+    val durationMs: Long,
+    val usedHelp: Boolean,
+    val answeredAt: Instant,
+    val isCorrect: Boolean,
+    val timeZone: String,
+) {
+    fun inRun(runId: UUID) =
+        PendingCheck(
+            stepId,
+            LessonStepCheckInput(answer, durationMs, runId, attemptId, timeZone, usedHelp),
+            isCorrect,
+            answeredAt,
+        )
+}
+
 @Serializable
 private data class UnsentAnswer(
     val stepId: String,
@@ -159,6 +182,10 @@ private sealed interface StartOutcome {
         val run: LibraryLessonRun,
     ) : StartOutcome
 
+    data class Opened(
+        val route: AppRoute,
+    ) : StartOutcome
+
     data class Refused(
         val refusal: LessonRefusal,
     ) : StartOutcome
@@ -179,7 +206,7 @@ private sealed interface CompletionOutcome {
  */
 class LessonPlayerViewModel(
     private val lessonId: String,
-    private val studySessionId: String?,
+    private var studySessionId: String?,
     private val firstAnswer: String?,
     private val store: LessonPlayerStore,
     private val cache: AppCache,
@@ -194,21 +221,29 @@ class LessonPlayerViewModel(
     private val analytics: EventTracker = EventTracker {},
     private val saved: SavedStateHandle,
     private val now: () -> Long = System::currentTimeMillis,
+    private val opening: String? = null,
+    private val tapped: Boolean = false,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
     private val mutableEnding = MutableStateFlow(LessonEnding(inSession = studySessionId != null))
-    private val sessionMover =
+    private var sessionMover =
         sessionSteps?.let { steps ->
             studySessionId?.let { id -> runCatching { UUID.fromString(id) }.getOrNull() }?.let { SessionMover(steps, it, viewModelScope) }
         }
 
-    /** Null until the run starts or is refused. */
+    /** Written screens are available while their run is admitted. */
     val state: StateFlow<LessonPlayerState?> = mutableState.asStateFlow()
 
     /** Where the lesson's end leads, read once it's saved. */
     val ending: StateFlow<LessonEnding> = mutableEnding.asStateFlow()
 
-    val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove())
+    private val mutableRedirect = MutableStateFlow<AppRoute?>(null)
+    val redirect = mutableRedirect.asStateFlow()
+    private val mutableSessionMove = MutableStateFlow(SessionMove())
+    val sessionMove: StateFlow<SessionMove> = mutableSessionMove.asStateFlow()
+
+    // A restored study link waits for a learner action before its start can owe preparation.
+    private var activated = opening == null || tapped
 
     private val mutableExplanations = MutableStateFlow<Map<String, AnswerExplanation>>(emptyMap())
 
@@ -221,6 +256,9 @@ class LessonPlayerViewModel(
     private var owner = sessions.current
     private var work = openScope()
     private var starting: Job? = null
+    private val checksAwaitingRun = mutableListOf<Job>()
+    private var admittedRunId: UUID? = null
+    private val heldDeviceVerdicts = mutableListOf<HeldDeviceVerdict>()
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
     private val screenLocks = mutableMapOf<String, Mutex>()
@@ -231,6 +269,14 @@ class LessonPlayerViewModel(
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var abandonSent = false
+
+    /**
+     * Set the first time the learner taps or types in the lesson on this visit ([act]). A run that starts after that keeps
+     * their screen; one that starts before resumes them at their furthest screen.
+     */
+    private var acted = false
+    private val workedHere = mutableSetOf<String>()
+
     private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
     /** By screen: a server-graded answer sent with no verdict back yet, so Check sends it again under the same attempt. */
@@ -249,6 +295,10 @@ class LessonPlayerViewModel(
         work = openScope()
         this.lesson = lesson
         owner = session
+        admittedRunId = null
+        acted = false
+        workedHere.clear()
+        heldDeviceVerdicts.clear()
         unsaved.clear()
         unverdicted.clear()
         screenLocks.clear()
@@ -258,7 +308,10 @@ class LessonPlayerViewModel(
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
         mutableExplanations.value = emptyMap()
-        startRun()
+        // Written content is usable while admission runs; server work still waits for its run.
+        openedAt = now()
+        mutableState.value = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt)
+        if (activated) startRun()
     }
 
     /** The app went to the background or the player closed: an unfinished run counts as abandoned, once. */
@@ -270,7 +323,35 @@ class LessonPlayerViewModel(
     }
 
     fun continueSession() {
-        sessionMover?.continueSession()
+        val moment =
+            mutableState.value
+                ?.completion
+                ?.result
+                ?.studyBlock
+        val next = moment?.next
+        if (next?.opensInPlayer == true && next.block.lessonId != null) {
+            val input =
+                LibraryLessonStartInputOpening.StudyBlockOpeningInputValue(
+                    com.zoonk.api.models
+                        .StudyBlockOpeningInput(
+                            com.zoonk.api.models.StudyBlockOpeningTarget
+                                .BlockWrapper(next.target),
+                        ),
+                )
+            mutableSessionMove.value =
+                SessionMove(
+                    leaving =
+                        AppRoute.Lesson(
+                            next.block.lessonId.toString(),
+                            moment.sessionId.toString(),
+                            opening =
+                                com.zoonk.api.ApiRequestJson
+                                    .encodeToString(LibraryLessonStartInputOpening.serializer(), input),
+                        ),
+                )
+        } else {
+            sessionMover?.continueSession()
+        }
     }
 
     fun stopSession() {
@@ -282,7 +363,41 @@ class LessonPlayerViewModel(
         if (starting?.isActive != true) startRun()
     }
 
+    fun activate() {
+        if (!activated) {
+            activated = true
+            startRun()
+        }
+    }
+
+    /** The learner tapped or typed in the lesson, seen once at the player's root ([LearnerInput]). */
+    fun act() {
+        mutableState.value
+            ?.currentStep
+            ?.takeIf { it.content is StepContent.Activity }
+            ?.id
+            ?.let { workedHere += it }
+        acted = true
+        activate()
+    }
+
     fun dispatch(action: LessonAction) {
+        when (action) {
+            LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
+            LessonAction.RestoreWriting, is LessonAction.SelectAnswer, is LessonAction.DontKnow, is LessonAction.SkipWriting,
+            -> activate()
+
+            else -> Unit
+        }
+        if (action is LessonAction.SelectAnswer) {
+            workedHere += action.stepId
+        }
+        if (action == LessonAction.ExplainFirst) {
+            mutableState.value
+                ?.currentStep
+                ?.id
+                ?.let { workedHere += it }
+        }
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
         if (action == LessonAction.Continue) resendAnswers()
         val before = mutableState.value
@@ -361,8 +476,13 @@ class LessonPlayerViewModel(
         val spoken = step?.content as? StepContent.SpokenAnswer
 
         if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
-
+        activate()
         dispatch(LessonAction.CheckStarted(stepId))
+        if (!awaitRun()) {
+            dispatch(LessonAction.CheckFailed(stepId))
+            return GradeOutcome.Failed
+        }
+        if (mutableState.value?.currentStep?.id != stepId) return GradeOutcome.Obsolete
         val outcome =
             withTimeoutOrNull(SPOKEN_TIMEOUT) {
                 cache
@@ -404,6 +524,7 @@ class LessonPlayerViewModel(
      * their verdict at once and are recorded in the background, and the rest wait for the server.
      */
     fun check() {
+        activate()
         val state = mutableState.value ?: return
         val step = state.currentStep ?: return
         val answer = state.answers[step.id] ?: return
@@ -418,33 +539,59 @@ class LessonPlayerViewModel(
             return
         }
 
-        val runId = (state.run as? LessonRun.Started)?.runId ?: return
+        val apiAnswer = answer.toApi() ?: return
         val attemptId = unverdicted[step.id]?.takeIf { it.first == answer }?.second ?: UUID.randomUUID()
-        val input =
-            LessonStepCheckInput(
-                answer = answer.toApi() ?: return,
-                durationMs = state.answerDurationMs(),
-                runId = UUID.fromString(runId),
-                attemptId = attemptId,
-                timeZone = timeZone(),
-                usedHelp = step.id in state.helped,
-            )
+        val durationMs = state.answerDurationMs()
+        val answeredAt = Instant.fromEpochMilliseconds(now())
         val local = if (isServerGradedAnswer(answer, step)) null else gradeOnDevice(step, answer)
-        val pending = PendingCheck(step.id, input, local?.isCorrect, Instant.fromEpochMilliseconds(now()))
-
-        if (local == null) {
-            unverdicted[step.id] = answer to attemptId
-            gradeOnServer(step, pending, answer.writtenText)
+        if (local != null) {
+            countActivity(step)
+            dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = attemptId.toString()), counts = true))
+            val held =
+                HeldDeviceVerdict(
+                    step.id,
+                    apiAnswer,
+                    attemptId,
+                    durationMs,
+                    step.id in state.helped,
+                    answeredAt,
+                    local.isCorrect,
+                    timeZone(),
+                )
+            val runId = admittedRunId
+            if (runId == null) {
+                heldDeviceVerdicts += held
+            } else {
+                unsaved.getOrPut(step.id) { mutableListOf() } += held.inRun(runId)
+                work.launch {
+                    keepUnsent()
+                    saveScreen(step.id)
+                }
+            }
             return
         }
-
-        countActivity(step)
-        dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = pending.attemptId), counts = true))
-        unsaved.getOrPut(step.id) { mutableListOf() } += pending
-        work.launch {
-            keepUnsent()
-            saveScreen(step.id)
-        }
+        unverdicted[step.id] = answer to attemptId
+        dispatch(LessonAction.CheckStarted(step.id))
+        checksAwaitingRun.removeAll { it.isCompleted }
+        checksAwaitingRun +=
+            work.launch {
+                if (!awaitRun()) {
+                    dispatch(LessonAction.CheckFailed(step.id))
+                    return@launch
+                }
+                val run = mutableState.value?.run as? LessonRun.Started ?: return@launch
+                val input =
+                    LessonStepCheckInput(
+                        answer = apiAnswer,
+                        durationMs = durationMs,
+                        runId = UUID.fromString(run.runId),
+                        attemptId = attemptId,
+                        timeZone = timeZone(),
+                        usedHelp = step.id in state.helped,
+                    )
+                val pending = PendingCheck(step.id, input, answeredAt = answeredAt)
+                if (mutableState.value?.currentStep?.id == step.id) gradeOnServer(step, pending, answer.writtenText)
+            }
     }
 
     /** Null while the lesson's example lines are being written, so a screen reads its line once they're in. */
@@ -502,9 +649,9 @@ class LessonPlayerViewModel(
     }
 
     private fun startRun() {
+        if (!activated) return
         val opened = lesson ?: return
-        // The lesson shows its wait until the run starts, since the run rebuilds every screen and would drop work done before.
-        mutableState.value = null
+        mutableState.update { state -> state?.takeUnless { it.run is LessonRun.Refused } ?: state?.copy(run = LessonRun.Idle) }
         starting =
             work.launch {
                 // The run keeps the screens it starts with, and the copy shown on opening may predate a plan change or
@@ -529,19 +676,34 @@ class LessonPlayerViewModel(
                 if (outcome == null) return@launch
                 when (outcome) {
                     is StartOutcome.Started -> {
+                        val runId = outcome.run.runId
+                        admittedRunId = runId
+                        val hasHeld = heldDeviceVerdicts.isNotEmpty()
+                        heldDeviceVerdicts.forEach { held -> unsaved.getOrPut(held.stepId) { mutableListOf() } += held.inRun(runId) }
+                        heldDeviceVerdicts.clear()
                         reading.await()
+                        if (sessions.current != owner) return@launch
                         val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson ?: opened
                         this@LessonPlayerViewModel.lesson = lesson
+                        studySessionId = outcome.run.sessionId?.toString()
+                        sessionMover = sessionSteps?.let { steps -> outcome.run.sessionId?.let { SessionMover(steps, it, viewModelScope) } }
+                        sessionMover?.let { mover -> work.launch { mover.move.collect { mutableSessionMove.value = it } } }
+                        mutableEnding.value = LessonEnding(inSession = studySessionId != null)
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
                         replay = outcome.run.replay
                         mutableState.value = state
+                        if (hasHeld) sendUnsent()
                         work.launch { followLatePictures() }
                     }
 
+                    is StartOutcome.Opened -> {
+                        mutableRedirect.value = outcome.route
+                    }
+
                     is StartOutcome.Refused -> {
-                        val opening = LessonPlayerState.initial(opened.id, opened.playedSteps, now = now())
-                        mutableState.value = reduce(opening, LessonAction.RunRefused(outcome.refusal), now())
+                        val current = mutableState.value ?: LessonPlayerState.initial(opened.id, opened.playedSteps, now = now())
+                        mutableState.value = reduce(current, LessonAction.RunRefused(outcome.refusal), now())
                     }
                 }
             }
@@ -550,10 +712,22 @@ class LessonPlayerViewModel(
     /** Null when the session that opened the lesson isn't current anymore. */
     private suspend fun start(runId: String?): StartOutcome? {
         val result =
-            cache.mutate { session ->
+            cache.mutate(invalidating = if (opening != null) setOf(DataDomain.Goals, DataDomain.UserSession) else emptySet()) { session ->
                 if (session != owner) return@mutate null
                 try {
-                    StartOutcome.Started(store.api.start(session, lessonId, studySessionId, runId))
+                    val input = opening?.let { ApiJson.decodeFromString(LibraryLessonStartInputOpening.serializer(), it) }
+
+                    suspend fun request() = store.api.start(session, lessonId, studySessionId, runId, input)
+                    val result =
+                        try {
+                            request()
+                        } catch (e: ApiException) {
+                            if (e.status == 503) request() else throw e
+                        }
+                    when (result) {
+                        is LessonStart.Started -> StartOutcome.Started(result.run)
+                        is LessonStart.Opened -> StartOutcome.Opened(result.opening.route() ?: AppRoute.Today)
+                    }
                 } catch (e: ApiException) {
                     e.toLessonRefusal()?.let(StartOutcome::Refused) ?: throw e
                 }
@@ -570,10 +744,18 @@ class LessonPlayerViewModel(
         lesson: PlayableLesson,
         run: LibraryLessonRun,
     ): LessonPlayerState {
-        val started = now()
-        var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
+        val started = openedAt
+        var state =
+            mutableState.value?.takeUnless {
+                it.run is LessonRun.Refused || it.steps.keys.toList() !=
+                    lesson.playedSteps.map(
+                        LessonStep::id,
+                    )
+            }
+                ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
         val steps = lesson.steps.associateBy(LessonStep::id)
-        state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull { it.held(steps[it.stepId]) }), started)
+        val held = unsaved.values.flatten().mapNotNull { it.held(steps[it.stepId]) }
+        state = reduce(state, run.toStartedAction(held, keepsScreen = acted).copy(workedStepIds = workedHere.toSet()), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
         val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }
@@ -591,20 +773,25 @@ class LessonPlayerViewModel(
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
         // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
-        // run has no answer for, under the round it was saved in, when Android closed the app in the background. A screen
-        // the run answered moves past its saved round, so its canvas draws that answer instead of the work saved there.
-        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
+        // run has no answer for, under the round it was saved in, when Android closed the app in the background; what they
+        // entered on this visit stays. A screen the run answered moves past its saved round, so its canvas draws that
+        // answer instead of the work saved there.
+        val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty().filterKeys { it !in workedHere }
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
-            saved.get<Map<String, String>>(ANSWERS).orEmpty().mapValues { (_, json) ->
-                ApiJson.decodeFromString(LessonAnswer.serializer(), json)
-            }
+            saved
+                .get<Map<String, String>>(ANSWERS)
+                .orEmpty()
+                .mapValues { (_, json) ->
+                    ApiJson.decodeFromString(LessonAnswer.serializer(), json)
+                }.filterKeys { it !in workedHere }
         val resumed = state.withFirstAnswer(started)
         val unanswered = { id: String -> id !in resumed.results }
+        val runAnswered = resumed.results.keys - workedHere
         return resumed.copy(
             answers = resumed.answers + answers.filterKeys(unanswered),
-            revealed = resumed.revealed + revealed.filterKeys(unanswered),
-            rounds = resumed.rounds + rounds + resumed.results.keys.associateWith { (rounds[it] ?: 0) + 1 },
+            revealed = revealed.filterKeys(unanswered) + resumed.revealed,
+            rounds = resumed.rounds + rounds + runAnswered.associateWith { (rounds[it] ?: 0) + 1 },
         )
     }
 
@@ -709,6 +896,7 @@ class LessonPlayerViewModel(
     }
 
     fun resendAnswers() {
+        if (admittedRunId == null) return
         if (unsaved.isNotEmpty() && resending?.isActive != true) work.launch { sendUnsent() }
     }
 
@@ -744,6 +932,12 @@ class LessonPlayerViewModel(
 
     private fun markStarted(recorded: Boolean) = listOfNotNull(lessonStarted?.takeIf { recorded }?.replacing(true))
 
+    private suspend fun awaitRun(): Boolean {
+        if (!activated) return false
+        starting?.join()
+        return sessions.current == owner && mutableState.value?.run is LessonRun.Started && mutableRedirect.value == null
+    }
+
     private suspend fun send(pending: PendingCheck): CheckOutcome {
         val result =
             cache.mutate(replacing = { markStarted(recorded = (it as? CheckOutcome.Checked)?.result?.checked == true) }) { session ->
@@ -763,6 +957,11 @@ class LessonPlayerViewModel(
     }
 
     private suspend fun complete() {
+        if (!awaitRun()) {
+            dispatch(LessonAction.CompletionFailed)
+            return
+        }
+        checksAwaitingRun.toList().forEach { it.join() }
         val allSaved = sendUnsent()
         val state = mutableState.value ?: return
         val runId = (state.run as? LessonRun.Started)?.runId
@@ -773,7 +972,9 @@ class LessonPlayerViewModel(
         }
 
         val result =
-            cache.mutate(invalidating = setOf(DataDomain.UserProgress, DataDomain.LearnerModel)) { session ->
+            cache.mutate(
+                invalidating = setOf(DataDomain.UserProgress, DataDomain.LearnerModel, DataDomain.Goals, DataDomain.UserSession),
+            ) { session ->
                 if (session != owner) return@mutate null
                 try {
                     CompletionOutcome.Completed(store.api.complete(session, lessonId, runId, state.skippedWritingStepIds))
@@ -875,15 +1076,18 @@ class LessonPlayerViewModel(
     }
 }
 
-private fun LibraryLessonRun.toStartedAction(heldAnswers: List<RunAnswer>) =
-    LessonAction.RunStarted(
-        runId = runId.toString(),
-        answers = answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
-        hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
-        startedAt = startedAt,
-        optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
-        heldAnswers = heldAnswers,
-    )
+private fun LibraryLessonRun.toStartedAction(
+    heldAnswers: List<RunAnswer>,
+    keepsScreen: Boolean,
+) = LessonAction.RunStarted(
+    runId = runId.toString(),
+    answers = answers.map(LibraryLessonRunAnswersInner::toRunAnswer),
+    hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
+    startedAt = startedAt,
+    optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
+    heldAnswers = heldAnswers,
+    keepsScreen = keepsScreen,
+)
 
 private fun LibraryLessonRunAnswersInner.toRunAnswer(): RunAnswer {
     val saved = answer?.toLessonAnswer()

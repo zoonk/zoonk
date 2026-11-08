@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
+import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
@@ -23,11 +25,13 @@ import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
+import { languageLessonDraft } from "../../../../../packages/core/src/library/language/_test-utils/language-lesson-draft";
 import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
@@ -35,6 +39,10 @@ import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
 import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
@@ -399,9 +407,49 @@ describe(lessonContentWorkflow, () => {
 
     await expect(
       writeLessonContentStep({ lessonId: lesson.id, workflowRunId: "test-run-id" }),
-    ).resolves.toStrictEqual({ check: null, imageScope: "shared", status: "published" });
+    ).resolves.toStrictEqual({
+      check: null,
+      imageScope: "shared",
+      owesSentenceOrders: false,
+      status: "published",
+    });
 
     expect(writeLessonDraft).not.toHaveBeenCalled();
+  });
+
+  it("starts writing a language lesson's other word orders once the lesson is written", async () => {
+    await aiOrganizationFixture();
+
+    const chapter = await libraryChapterFixture({
+      language: "pt",
+      objectives: ["Alugar um apartamento"],
+      targetLanguage: "en",
+    });
+
+    const lesson = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      language: "pt",
+      specStatus: "completed",
+      targetLanguage: "en",
+    });
+
+    vi.mocked(generateLanguageLesson).mockResolvedValue(taskResult(languageLessonDraft()));
+
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: null,
+      error: new Error("No voice"),
+    });
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      lessonId: lesson.id,
+      status: "ready",
+    });
+
+    expect(start).toHaveBeenCalledWith(
+      sentenceOrdersWorkflow,
+      [{ analytics: undefined, lessonId: lesson.id, wait: "soon" }],
+      { experimental_hook: { token: getSentenceOrdersToken(lesson.id) } },
+    );
   });
 
   it("plans and writes a lesson a learner reaches soon at the standard tier, and one for a later day at the flex tier", async () => {

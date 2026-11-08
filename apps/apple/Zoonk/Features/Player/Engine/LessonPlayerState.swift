@@ -623,7 +623,8 @@ struct LessonPlayerState: Equatable, Sendable {
 
     if result.isCorrect != verdict.isCorrect {
       result.isCorrect = verdict.isCorrect
-      result.correctAnswer = verdict.isCorrect ? nil : verdict.correctAnswer ?? result.correctAnswer
+      result.correctAnswer =
+        verdict.isCorrect ? verdict.correctAnswer : verdict.correctAnswer ?? result.correctAnswer
       result.feedback = verdict.feedback ?? result.feedback
     }
 
@@ -647,16 +648,19 @@ struct LessonPlayerState: Equatable, Sendable {
     skipSteps(lost.map(\.id), now: now)
   }
 
-  /// The run started, before the lesson shows. When it already holds answers (the learner came
+  /// The run started. When it already holds answers the screen doesn't show (the learner came
   /// back to an open run), the lesson continues from them and from the answers the device still
-  /// holds (`held`), which the server doesn't have yet.
+  /// holds (`held`), which the server doesn't have yet. Once the learner did anything on this visit
+  /// (`keepsScreen`), their screen leads.
   mutating func startRun(
     runId: String,
     answers runAnswers: [LessonRunAnswer],
     held: [LessonRunAnswer] = [],
     startedAt: Date = .distantPast,
     hyperdrive: LessonHyperdriveStart = .none,
-    optionalStepIds: [String] = []
+    optionalStepIds: [String] = [],
+    keepsScreen: Bool = false,
+    workedStepIds: Set<String> = []
   ) {
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
@@ -669,7 +673,17 @@ struct LessonPlayerState: Equatable, Sendable {
       all.contains { $0.stepId == answer.stepId && $0.isCorrect } ? all : all + [answer]
     }
 
-    resume(from: answers.filter { steps[$0.stepId] != nil })
+    let known = answers.filter { steps[$0.stepId] != nil }
+
+    if keepsScreen {
+      fillUntouched(from: known, workedStepIds: workedStepIds)
+    } else {
+      resume(from: known)
+    }
+  }
+
+  mutating func retryRun() {
+    run = .idle
   }
 
   mutating func refuseRun(_ refusal: LessonRunRefusal) {
@@ -1019,6 +1033,62 @@ struct LessonPlayerState: Equatable, Sendable {
     notice = nil
     completion = nil
     reviewing = false
+  }
+
+  /// A run that lands after the learner acted on this visit leaves them where they are: screens
+  /// they haven't touched, other than the one in play, show the run's answers, and a check it
+  /// missed once comes back at the end.
+  private mutating func fillUntouched(from known: [LessonRunAnswer], workedStepIds: Set<String>) {
+    for answer in known.reversed() {
+      firstVerdicts[answer.stepId] = answer.isCorrect
+      firstVerdictAttemptIds[answer.stepId] = answer.result.attemptId
+    }
+    let inPlay = currentStep.flatMap { results[$0.id] == nil ? $0.id : nil }
+    let saved = known.filter {
+      $0.stepId != inPlay && !workedStepIds.contains($0.stepId) && answers[$0.stepId] == nil
+        && results[$0.stepId] == nil
+    }
+
+    guard !saved.isEmpty else {
+      return
+    }
+
+    let ids = saved.map(\.stepId)
+    let firsts = saved.enumerated().filter { index, answer in
+      ids.firstIndex(of: answer.stepId) == index
+    }.map(\.element)
+    let lessonQueue = quickCheck?.returnQueue ?? queue
+    let owed = firsts.map(\.stepId).filter { id in
+      let tries = saved.filter { $0.stepId == id }
+      return steps[id]?.isRetried == true && tries.count == 1 && tries.first?.isCorrect == false
+        && lessonQueue.filter { $0 == id }.count == 1
+    }
+
+    if let check = quickCheck {
+      quickCheck = QuickCheck(
+        missed: check.missed, returnPosition: check.returnPosition,
+        returnQueue: check.returnQueue + owed)
+    } else {
+      queue += owed
+    }
+
+    for first in firsts {
+      rounds[first.stepId, default: 0] += 1
+    }
+
+    answerOrder = firsts.map(\.stepId) + answerOrder
+    retried.formUnion(
+      ids.enumerated().filter { index, id in ids.firstIndex(of: id) != index }.map(\.element))
+    retried.formUnion(owed)
+
+    for answer in saved {
+      results[answer.stepId] = answer.result
+      answers[answer.stepId] = answer.answer
+
+      if case .challenge(let choiceIds) = answer.answer {
+        revealed[answer.stepId] = choiceIds.count + 1
+      }
+    }
   }
 
   /// A lesson the learner comes back to continues where they left off: each screen they answered

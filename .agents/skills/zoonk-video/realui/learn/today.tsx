@@ -186,7 +186,6 @@ function buildToday({
       catchUp &&
       (started ? { ...catchUp, blockIds: catchUp.positions.map((p) => `block-${p}`) } : catchUp),
     current: true,
-    dailyLimit: null,
     dayEndsAt: localDate.getTime() + DAY_MS + 3 * 3_600_000,
     emptyDay: null,
     examAccess: { includesMockExams: true, trialEnded: false },
@@ -351,7 +350,6 @@ const ACTIONS = {
   completedLessonsHref: "/completed-lessons",
   continueHref: null,
   continueSession: async () => true,
-  dailyLimitHref: "/settings/appearance",
   decidePlanChange: async () => null,
   examHref: "/exam",
   lessonAgainHref: (id: string) => `/learn/${id}`,

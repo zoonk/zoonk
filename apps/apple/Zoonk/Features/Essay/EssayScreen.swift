@@ -322,9 +322,6 @@ private struct EssayContent: View {
           Text(statusNote)
             .foregroundStyle(.mutedForeground)
 
-          if writer.status == .dailyLimitReached {
-            ChangeLimitButton()
-          }
         }
       }
     }
@@ -335,12 +332,6 @@ private struct EssayContent: View {
   private var statusNote: String? {
     guard !finishFailed, writer.status != .failed else {
       return nil
-    }
-
-    if writer.isWriting, writer.status == .dailyLimitReached {
-      return String(
-        localized: "You've reached your daily time limit. Your text stays here.", table: "Essay",
-        comment: "The daily time limit is a setting that stops study for the day")
     }
 
     if writer.isWriting, writer.status == .signUpRequired {

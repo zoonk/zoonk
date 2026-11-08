@@ -15981,65 +15981,6 @@
         }
       }
     },
-    "Today stops at your daily time limit of %@." : {
-      "comment" : "The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today. The argument is a time, like '3 hr'.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute endet das Lernen, wenn du dein tägliches Zeitlimit von %@ erreichst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El estudio de hoy termina al llegar a tu límite diario de %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, ton temps d’étude est limité à %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi la sessione si ferma al limite giornaliero di %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の学習は、1日の上限時間（%@）で終了します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 학습은 하루 학습 시간 제한인 %@까지만 진행돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś nauka kończy się po %@, zgodnie z twoim dziennym limitem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje, seu estudo vai até o limite diário de %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü çalışma, günlük süre sınırın olan %@ dolunca biter."
-          }
-        }
-      }
-    },
     "Today's +%lld Brain Power is already earned." : {
       "comment" : "Another goal already earned the day's missions reward",
       "localizations" : {
@@ -18668,65 +18609,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planındaki tüm dersleri tamamladın ya da konularını zaten biliyordun."
-          }
-        }
-      }
-    },
-    "You've reached your daily time limit of %@." : {
-      "comment" : "The daily time limit is a setting that stops study for the day. The argument is a time, like '3 hr'.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dein tägliches Zeitlimit von %@ erreicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcanzaste tu límite diario de %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ta limite de temps quotidienne de %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il tuo limite giornaliero di %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日の上限時間（%@）に達しました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 학습 시간 제한인 %@에 도달했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój dzienny limit %@ nauki został osiągnięty."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu seu limite diário de %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük süre sınırın olan %@ doldu."
           }
         }
       }

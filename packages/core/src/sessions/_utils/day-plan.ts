@@ -13,7 +13,6 @@ import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
-import { loadDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
 import { loadExamStructure } from "./exam-structure";
 import { loadIdleListeningSkillIds } from "./load-practice";
@@ -66,7 +65,7 @@ export async function loadDayPlan({
   timeZone,
   userId,
 }: SessionDayContext & { selection?: SelectedDayPlan }) {
-  const [plan, goalPlan, tier, limit, lastStudyDate, hadEarlierDay, listeningSkillIds, outlines] =
+  const [plan, goalPlan, tier, lastStudyDate, hadEarlierDay, listeningSkillIds, outlines] =
     await Promise.all([
       selection
         ? {
@@ -81,7 +80,6 @@ export async function loadDayPlan({
           }),
       loadGoalPlan(goal.id, selection?.source),
       getLearnerTier(userId, readSubscription),
-      loadDailyTimeLimitStatus({ date: localDate, userId }),
       loadLastStudyDate({ today: localDate, userId }),
       hasEarlierDay({ goalId: goal.id, today: localDate }),
       selection
@@ -119,7 +117,6 @@ export async function loadDayPlan({
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
     lastStudyDate,
-    limit,
     listeningSkillIds,
     outlines,
     phases,

@@ -1,11 +1,9 @@
 import { type StudySessionBlock } from "@zoonk/db";
+import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
-import { type BlockCheckpoint } from "../block-payload";
-import { type CapsuleFormat } from "../capsules";
-import { type DayBlockScreen } from "../day-block";
+import { type studyBlockSchema } from "../block-view-contract";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
-import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission } from "../missions";
 import { toDayBlockView } from "./day-block-view";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
@@ -13,57 +11,7 @@ import { type ExamPrepAccess } from "./exam-access";
 import { type PlusLesson } from "./plus-only-lessons";
 import { type StudySessionRow } from "./study-session-access";
 
-type CapsuleView = {
-  format: CapsuleFormat;
-  key: string;
-  lessonId: string | null;
-  opened: boolean;
-  questions: number;
-  title: string;
-};
-
-export type StudyBlockView = Pick<
-  StudySessionBlock,
-  "brainPower" | "canDo" | "id" | "kind" | "lessonId" | "position" | "status"
-> & {
-  answered: number;
-  areaId: string | null;
-  /** The areas most of a practice block asks about, at most two. */
-  areas: string[];
-  /** Whether this lesson's chapter test can be offered after today's test and study history. */
-  canTestOut: boolean;
-  capsules: CapsuleView[];
-  chapterId: string | null;
-  checkpoint: BlockCheckpoint | null;
-  estimatedBrainPower: number;
-  estimatedMinutes: number;
-  extra: boolean;
-  /** Counts as a test in real conditions when the plan omits a mock. */
-  fullReview: boolean;
-  /** Contains drills only, without mixed practice questions. */
-  mistakesOnly: boolean;
-  /** Wrong answers cancel right ones; blanks are allowed. Swipe capsules score net separately. */
-  netScored: boolean;
-  /** An exam's topic the board asks a lot, from past papers: tiles tag it "Often tested". */
-  oftenTested: boolean;
-  planItemId: string | null;
-  planItemKey: string | null;
-  questions: number;
-  /** Bonus practice on fading or due skills, as offered by Content's Review. */
-  refresh: boolean;
-  reinforcement: boolean;
-  /** Where the block plays (`getBlockScreen`); `unknown` for a lesson block until a read adds its lesson's state (`withLessonScreens`). */
-  screen: DayBlockScreen;
-  /** Short subject name; null for mixed blocks and goals with fewer than two subjects. */
-  subject: string | null;
-  title: string | null;
-  /** A practice block's topics, most asked first. */
-  topics: string[];
-  /** Why this phase challenge must wait for earlier work in this session. */
-  waitReason: "challenge" | "lessons" | null;
-  /** No topics are due; uses the weakest studied topics to avoid an empty day. */
-  weakest: boolean;
-};
+export type StudyBlockView = z.infer<typeof studyBlockSchema>;
 
 const NO_SKILLS: ReadonlySet<string> = new Set();
 const NO_SUBJECTS: ReadonlyMap<number, string> = new Map();
@@ -92,7 +40,6 @@ export type StudySessionView = {
   catchUp: CatchUpView | null;
   /** Includes an unfinished session from before midnight; earlier days cannot open more work. */
   current: boolean;
-  dailyLimit: DailyTimeLimitStatus | null;
   dayEndsAt: number;
   /** Null with blocks or no study time; lessonsComing fills automatically, lessonsToPrepare waits for the learner to ask for them, and nothingNew offers alternatives. */
   emptyDay: EmptyDay | null;
@@ -144,6 +91,7 @@ export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | n
 /** Adds only persisted session and block ids to the shared display projection. */
 export function toStudySessionView(
   input: Omit<DayViewFieldsInput, "session" | "missions" | "sessionBar"> & {
+    blockViews?: StudyBlockView[];
     blockSubjects?: ReadonlyMap<number, string>;
     blockedTestOutChapters?: ReadonlySet<string>;
     missions: Mission[];
@@ -162,16 +110,18 @@ export function toStudySessionView(
 
   return withDayState({
     ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
-    blocks: session.blocks.map((block) =>
-      toStudyBlockView({
-        answeredItemIds,
-        block,
-        blockedTestOutChapters,
-        blocks: session.blocks,
-        oftenTestedSkillIds,
-        subject: blockSubjects.get(block.position) ?? null,
-      }),
-    ),
+    blocks:
+      input.blockViews ??
+      session.blocks.map((block) =>
+        toStudyBlockView({
+          answeredItemIds,
+          block,
+          blockedTestOutChapters,
+          blocks: session.blocks,
+          oftenTestedSkillIds,
+          subject: blockSubjects.get(block.position) ?? null,
+        }),
+      ),
     id: session.id,
     missions: input.missions,
     nextBlockId: getNextBlockId(session.blocks),

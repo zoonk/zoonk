@@ -15,6 +15,7 @@
   "player_activity_your_answer": "fb618931ac5d7f01d9dbdf8036cdce48cefda2cae61b13fb43864806fe433a72",
   "player_ai_note": "efcda00e03b6fc0dbca0214704ce6f47c9be2cc11e2fad15d4fe11fcc8e12370",
   "player_already_knew": "f142c6d391c6fc096fa88dafe3ed474c61f832f6ec34623804a3a8023e9ae987",
+  "player_also_correct_label": "fc13078c5e6ead28941343708090f3c6acae65ee473fff66543d13bd13126a2c",
   "player_answer_feedback": "e1d70dc905cd03cd88edffd650467056cccb479e6f0ba5f992dfbae705c60961",
   "player_answer_options": "850a65a3a2725ba3c9549dba9cb45167b93e3040c7c94aff173dbb838f3599ee",
   "player_ask_something_else": "8629cec6c0d8403d209ee9803ef94a8318ab6fc7c28c9d8d7f95de516b084425",
@@ -244,6 +245,8 @@
     <string name="player_answer_feedback">Comentarios sobre la respuesta</string>
     <string name="player_spelled">Se escribe:</string>
     <string name="player_correct_answer_label">Respuesta:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">También es correcto:</string>
     <string name="player_explain_answer">Explicar mi respuesta</string>
     <string name="player_explain_answer_failed">No pudimos explicarlo ahora. Inténtalo de nuevo en un momento.</string>
     <string name="player_explain_answer_title">Por qué esa respuesta no es correcta</string>

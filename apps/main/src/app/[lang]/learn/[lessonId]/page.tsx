@@ -8,7 +8,8 @@ import {
   ORIGIN_PARAM,
   readLessonOrigin,
 } from "@/lib/public/public-hrefs";
-import { getLessonSessionContext } from "@/lib/session/lesson-session-context";
+import { readLessonOpening } from "@/lib/session/lesson-opening";
+import { getFinishedLessonStudyBlock } from "@zoonk/core/lesson-player/finished-study-block";
 import {
   type PlayableLibraryLessonResult,
   getLibraryLessonOutline,
@@ -65,8 +66,18 @@ function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
   const firstAnswer = query[FIRST_ANSWER_PARAM];
   const sessionParam = query[STUDY_SESSION_PARAM];
 
+  const opening = readLessonOpening(query);
+
+  const blockId =
+    opening && opening !== "invalid" && !("goalId" in opening) && opening.target.kind !== "next"
+      ? opening.target.blockId
+      : undefined;
+
   return {
+    blockId,
     firstAnswer: typeof firstAnswer === "string" ? firstAnswer : null,
+    inSession: opening !== null || isUuid(sessionParam),
+    opening,
     origin: readLessonOrigin(query[ORIGIN_PARAM]),
     studySessionId: isUuid(sessionParam) ? sessionParam : null,
   };
@@ -183,11 +194,18 @@ function isGuestLesson({
  */
 async function LessonPlayerContent({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
-  const { firstAnswer, origin, studySessionId } = readPlayerQuery(query);
+
+  const { blockId, firstAnswer, inSession, opening, origin, studySessionId } =
+    readPlayerQuery(query);
 
   const lessonRead = getPlayableLibraryLesson({ lessonId });
   const sessionRead = getSession();
-  const sessionContextRead = getLessonSessionContext(studySessionId);
+
+  const finishedBlockRead = getFinishedLessonStudyBlock({
+    blockId,
+    lessonId,
+    sessionId: studySessionId,
+  });
 
   const lessonDetailsRead = lessonRead.then((lessonResult) => {
     const lesson = lessonResult?.status === "ready" ? lessonResult.lesson : null;
@@ -199,14 +217,13 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     ]);
   });
 
-  const routingRead = Promise.all([lessonRead, sessionRead, sessionContextRead]).then(
-    ([lessonResult, lessonSession, context]) =>
-      getRouting({
-        inSession: context !== null,
-        isGuest: isGuestLesson({ origin, session: lessonSession, studySessionId }),
-        lesson: lessonResult?.status === "ready" ? lessonResult.lesson : null,
-        origin,
-      }),
+  const routingRead = Promise.all([lessonRead, sessionRead]).then(([lessonResult, lessonSession]) =>
+    getRouting({
+      inSession,
+      isGuest: isGuestLesson({ origin, session: lessonSession, studySessionId }),
+      lesson: lessonResult?.status === "ready" ? lessonResult.lesson : null,
+      origin,
+    }),
   );
 
   const [
@@ -214,7 +231,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     session,
     profile,
     fit,
-    sessionContext,
+    finishedBlockId,
     resume,
     tutor,
     [challengeTeam, tutorSuggestions, waiting],
@@ -224,7 +241,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     sessionRead,
     getLearningProfile(),
     getLessonFit({ lessonId }),
-    sessionContextRead,
+    finishedBlockRead,
     getLessonProgress({ lessonId }),
     getTutorViewer(),
     lessonDetailsRead,
@@ -268,7 +285,8 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           lesson={played.lesson}
           resume={resume}
           routing={routing}
-          sessionContext={sessionContext}
+          finishedBlockId={finishedBlockId}
+          opening={opening}
           soundsEnabled={soundsEnabled}
           studySessionId={studySessionId}
           tutor={tutor}
@@ -278,7 +296,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
       {result.status !== "ready" && (
         <LessonWithoutScreens
-          inSession={studySessionId !== null}
+          inSession={inSession}
           initialRequest={readLessonWritingRequest(query)}
           origin={origin}
           result={result}

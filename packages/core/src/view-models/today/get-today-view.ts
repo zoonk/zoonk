@@ -192,7 +192,7 @@ async function loadSessionDay({
     lessonStates,
     shortPlan,
     studied,
-    studySession: withLessonScreens(studySession, lessonStates),
+    studySession: withLessonScreens(studySession, lessonStates, { saved: day.selection === null }),
   };
 }
 

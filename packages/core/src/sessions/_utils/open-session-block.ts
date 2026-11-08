@@ -37,7 +37,6 @@ function afterStart({
       return openingResult(opening);
     case "blockFinished":
       return openingResult({ blockId: null, kind: "session", sessionId });
-    case "dailyLimitReached":
     case "earlierFirst":
       return openingResult({ kind: "today" });
     case "notFound":

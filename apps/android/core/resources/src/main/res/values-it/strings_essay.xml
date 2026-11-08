@@ -13,7 +13,6 @@
   "essay_criterion_legal_basis": "a62003873dfd60e7044408a9eacb9e022a7170bff72ee6a4353868a806e5d1b2",
   "essay_criterion_requests": "752051d6cc24c27944b0e21ad688da14abb1cebf6ccdd5cab309cb25e3639231",
   "essay_criterion_topic": "af24a1f6b92e8b049ec62e371b4847b990e648bd014858946ddccb01557f01a4",
-  "essay_daily_limit_reached": "3f767cc03a9cc752027f92f74be9a40ab4e33952491ef5e79b0de0eb3d97bddc",
   "essay_element_action": "f7073fea6c7e8ab61b29f0f595ce21a24d57114ffeb3bf9458350c7034cc4742",
   "essay_element_agent": "d90b4c226e26544d8aeca0be22f28df7a1064e19b04923e443408b0181b591d9",
   "essay_element_detail": "ce9c646a37191c07ba10f56da2a40ef181765f86701b4e719ffb5c0ada4828b9",
@@ -108,8 +107,6 @@
     <string name="essay_skipped">Hai saltato questo tema.</string>
     <string name="essay_back_to_today">Torna a Oggi</string>
     <string name="essay_send_failed">L’invio non è riuscito. Il tuo testo è ancora qui. Riprova tra poco.</string>
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
-    <string name="essay_daily_limit_reached">Hai raggiunto il limite di tempo giornaliero. Il tuo testo resta qui.</string>
     <string name="essay_limit_reached">Hai esaurito le valutazioni dei temi per oggi. Il tuo testo resta qui; invialo domani.</string>
     <string name="essay_grading">Stiamo esaminando il tuo tema in base a ciascun criterio. Possono volerci fino a 30 secondi.</string>
     <string name="essay_grading_slow">Stiamo ancora valutando il testo. Ci stiamo mettendo più del solito.</string>

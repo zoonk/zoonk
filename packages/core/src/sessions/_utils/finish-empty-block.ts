@@ -7,7 +7,7 @@ import { type FinishStudyBlockResult } from "../finish-study-block";
 import { getMissionBonus } from "../missions";
 import { oweDaySettlement } from "../settle-owed-session-day";
 import { pausedBlockTiming } from "./block-timing";
-import { getNextBlockId, getSessionBar } from "./session-view";
+import { loadCompletionQueue } from "./completion-queue";
 import { settleSessionDay } from "./settle-session-day";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -73,10 +73,16 @@ export async function finishEmptyBlock({
     userId,
   });
 
-  const blocks = settled.session.blocks;
+  const queue = await loadCompletionQueue({
+    blockId: block.id,
+    sessionId: session.id,
+    timeZone,
+    userId,
+  });
 
   return {
     completion: {
+      ...queue,
       blockId: block.id,
       brainPower: 0,
       capsulesOpened: 0,
@@ -90,10 +96,7 @@ export async function finishEmptyBlock({
       milestones: [],
       missions: settled.missions,
       netScore: null,
-      nextBlockId: getNextBlockId(blocks),
       reached: { energy: null, level: null },
-      sessionBar: getSessionBar(blocks),
-      sessionCompleted: settled.sessionCompleted,
       testOutOffer: null,
       topHyperdrive: 0,
       total: 0,

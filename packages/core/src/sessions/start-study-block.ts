@@ -27,7 +27,6 @@ import { withoutReviewedSkills } from "./_utils/without-reviewed-skills";
 import { readBlockPayload } from "./block-payload";
 import { getStoredBlockWait } from "./block-wait";
 import { type StudyBlockStartInput } from "./contract";
-import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 
 type StartedStudyBlock = Pick<
   StudySessionBlock,
@@ -38,7 +37,6 @@ type StartedStudyBlock = Pick<
 export type StartStudyBlockResult =
   | { block: StartedStudyBlock; status: "ready" }
   | { status: "blockFinished" }
-  | { status: "dailyLimitReached" }
   | { reason: "challenge" | "lessons"; status: "earlierFirst" }
   | { status: "notFound" }
   | { status: "plusRequired" }
@@ -140,7 +138,7 @@ async function loadStartableBlock({
   return { block: current, changed: current !== saved };
 }
 
-/** Requires ownership; checks the daily limit before new work, fills checkpoint questions before starting, and owes the session's preparation. */
+/** Requires ownership; fills checkpoint questions before starting, and owes the session's preparation. */
 export async function startStudyBlock({
   blockId,
   input,
@@ -179,12 +177,9 @@ export async function startStudyBlock({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
 
   /** Snapshot reads use the global client; finish them before owning any transition locks. */
-  const [limit, snapshot] = await Promise.all([
-    getDailyTimeLimitStatus(),
-    session.startedAt
-      ? null
-      : captureSessionSnapshot({ goalId: session.goalId, now: snapshotAt, timeZone, userId }),
-  ]);
+  const snapshot = session.startedAt
+    ? null
+    : await captureSessionSnapshot({ goalId: session.goalId, now: snapshotAt, timeZone, userId });
 
   const attempt = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
@@ -208,10 +203,6 @@ export async function startStudyBlock({
 
       if (current.status === "skipped") {
         return { status: "blockFinished" as const };
-      }
-
-      if (current.status === "pending" && limit?.reached) {
-        throw new StudyBlockStartUnchangedError({ status: "dailyLimitReached" });
       }
 
       await tx.$queryRaw`

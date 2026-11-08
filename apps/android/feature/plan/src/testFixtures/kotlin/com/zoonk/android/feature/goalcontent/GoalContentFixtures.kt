@@ -184,7 +184,7 @@ private fun practiceBlock(): AreaPractice =
         {"sessionId":"$SESSION","block":{"answered":0,"brainPower":0,"areas": [], "topics": [], "canTestOut":false,"capsules":[],"estimatedBrainPower":10,
           "estimatedMinutes":5,"extra":true,"fullReview":false,"id":"$BLOCK","kind":"practice","lessonId":null,
           "mistakesOnly":false,"netScored":false,"oftenTested":false,"position":3,"questions":8,"refresh":false,"reinforcement":false,
-          "screen":"session","status":"pending","weakest":false}}
+          "opensInPlayer":false,"screen":"session","status":"pending","weakest":false}}
         """.trimIndent(),
     )
 

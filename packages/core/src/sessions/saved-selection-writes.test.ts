@@ -10,6 +10,7 @@ import * as planner from "../plans/planner/build-plan";
 import { ensureStudySession } from "./ensure-study-session";
 import { openStudyBlock } from "./open-block";
 import { openStudyDay } from "./open-study-day";
+import { refreshOwedStudyDay } from "./refresh-owed-study-day";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -24,7 +25,7 @@ describe("Start and Continue save a fresh selection", () => {
     vi.useRealTimers();
   });
 
-  it("Continue saves changed content inputs while keeping a started block", async () => {
+  it("admits queued work before its owed refresh saves changed inputs, keeping the started block", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
       planLibraryFixture({ skills: [{ lessons: 10 }] }),
@@ -92,6 +93,14 @@ describe("Start and Continue save a fresh selection", () => {
     await expect(
       openStudyBlock({ target: { kind: "next", sessionId: opened.sessionId }, timeZone: "UTC" }),
     ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputsKey: before.inputsKey,
+    });
+
+    expect(build).not.toHaveBeenCalled();
+
+    await refreshOwedStudyDay({ sessionId: opened.sessionId, timeZone: "UTC", userId: user.id });
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(saved.inputsKey).not.toBe(before.inputsKey);

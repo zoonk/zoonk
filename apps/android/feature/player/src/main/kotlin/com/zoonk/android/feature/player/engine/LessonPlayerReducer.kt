@@ -70,6 +70,9 @@ sealed interface LessonAction {
         val startedAt: Instant,
         val optionalStepIds: List<String> = emptyList(),
         val heldAnswers: List<RunAnswer> = emptyList(),
+        /** The learner already did something on this visit, so their screen stays where it is. */
+        val keepsScreen: Boolean = false,
+        val workedStepIds: Set<String> = emptySet(),
     ) : LessonAction
 
     /** A fresh read of the lesson's screens while some pictures were still being drawn. */
@@ -266,11 +269,14 @@ private fun LessonPlayerState.startRun(
             .filter { it.answeredAt < action.startedAt }
             .map(RunAnswer::stepId)
             .toSet()
-    val answers = withHeld(action.answers, action.heldAnswers)
+    val answers = withHeld(action.answers, action.heldAnswers).filter { it.stepId in steps }
+    val started =
+        copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
+            .skipSteps(action.optionalStepIds, now)
 
-    return copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
-        .skipSteps(action.optionalStepIds, now)
-        .resumeFrom(answers, now)
+    if (action.keepsScreen || firstVerdicts == runVerdicts(answers)) return started.fillUntouched(answers, action.workedStepIds)
+
+    return started.resumeFrom(answers, now)
 }
 
 /** The server's answers, then the device's held ones in turn; the server records nothing on a screen after its right answer. */

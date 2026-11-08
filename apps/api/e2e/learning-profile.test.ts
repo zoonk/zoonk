@@ -14,10 +14,9 @@ test.describe("Learning profile API", () => {
     const responses = await Promise.all([
       api.get("/v1/me/learning-profile"),
       api.get("/v1/me/allowance"),
-      api.get("/v1/me/daily-time-limit"),
     ]);
 
-    expect(responses.map((response) => response.status())).toStrictEqual([401, 401, 401]);
+    expect(responses.map((response) => response.status())).toStrictEqual([401, 401]);
     await api.dispose();
   });
 });

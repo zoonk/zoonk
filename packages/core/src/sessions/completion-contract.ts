@@ -7,6 +7,7 @@ import {
   unshownCertificatesSchema,
 } from "../certificates/certificate-contract";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
+import { type StudyCompletionQueue, studyCompletionQueueShape } from "./completion-queue-contract";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
@@ -33,7 +34,7 @@ export type TestOutOffer = {
   lessonsLeft: number;
 };
 
-export type StudyBlockCompletion = {
+export type StudyBlockCompletion = StudyCompletionQueue & {
   blockId: string;
   brainPower: number;
   capsulesOpened: number;
@@ -215,6 +216,7 @@ const checkpointResultSchema = z.object({
 export const studyBlockCompletionSchema = z
   .object({
     blockId: idSchema,
+    ...studyCompletionQueueShape,
     brainPower: countSchema.meta({
       description: "Earned by the block, with the bonus for all offered missions when it just paid",
     }),

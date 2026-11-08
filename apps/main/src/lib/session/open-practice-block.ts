@@ -52,5 +52,5 @@ export async function openPracticeBlock({
     return { outcome: "nothingToPractice" };
   }
 
-  return { outcome: data.status === "unavailable" ? "dailyLimit" : "failed" };
+  return { outcome: "failed" };
 }

@@ -8,10 +8,7 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { DAY_MS, SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-goal";
 import { addExtraStudyBlock } from "./add-extra-study-block";
 
-async function lessonsDoneLearner(
-  dailyMinutes: number,
-  { dailyLimitMinutes = null }: { dailyLimitMinutes?: number | null } = {},
-) {
+async function lessonsDoneLearner(dailyMinutes: number) {
   const user = await userFixture();
 
   const { goal, plan, skills } = await sessionGoalFixture({
@@ -26,7 +23,7 @@ async function lessonsDoneLearner(
       data: { completedAt: daysAgo(3), status: "done" },
       where: { planId: plan.id },
     }),
-    learningProfileFixture({ activeGoalId: goal.id, dailyLimitMinutes, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ...skills.map((skill) =>
       learnerSkillFixture({
         difficulty: 5,
@@ -91,13 +88,6 @@ describe("practice once the plan's lessons are done", () => {
     expect(blocks.every((block) => block.estimatedMinutes <= 15)).toBe(true);
     expect(blocks.every((block) => block.topics.length > 0)).toBe(true);
     expect(new Set(blocks.map((block) => block.topics[0])).size).toBeGreaterThan(1);
-  });
-
-  it("fills a long day only up to the learner's daily limit", async () => {
-    const { minutes, plannedMinutes } = await openPractice(120, { dailyLimitMinutes: 40 });
-
-    expect(minutes).toBeGreaterThan(20);
-    expect(plannedMinutes).toBeLessThanOrEqual(40);
   });
 
   it("keeps adding bonus practice past two blocks once the day is done", async () => {

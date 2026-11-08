@@ -70,7 +70,6 @@ export type LearnerLookUpFound =
       preferences: {
         /** Null while it goes by its own name. */
         buddyName: string | null;
-        dailyLimitMinutes: number | null;
         link: TutorLink | null;
         sounds: boolean;
       };
@@ -158,7 +157,7 @@ export type LearnerLookUpFound =
 
 export const LEARNER_LOOKUP_USES: Record<LearnerLookUp, string> = {
   account:
-    "their account: Free or Plus (`guest` before they create an account), the call minutes left today and this month (null when that period has no cap), whether memory is on, and their preferences (the name they gave you, null when you go by your own; sounds; a daily time limit). Each part links its page. Never say a price. For their plan, call time, memory or settings.",
+    "their account: Free or Plus (`guest` before they create an account), the call minutes left today and this month (null when that period has no cap), whether memory is on, and their preferences (the name they gave you, null when you go by your own; sounds). Each part links its page. Never say a price. For their plan, call time, memory or settings.",
   courses:
     "the courses they study, most recent first, each with the lessons they finished and how far they are (`percentDone`), and whether it's the course this goal is built on. Narrow it with `query` (a course's title). For their courses outside this goal.",
   goals:

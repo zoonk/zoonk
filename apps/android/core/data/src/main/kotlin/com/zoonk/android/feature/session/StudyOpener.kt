@@ -11,7 +11,9 @@ import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.toNotWritten
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.ApiRequestJson
 import com.zoonk.api.models.LessonGeneration
+import com.zoonk.api.models.LibraryLessonStartInputOpening
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenStudyDayRequestTarget
 import com.zoonk.api.models.OpenStudyDayRequestTargetOneOf
@@ -23,6 +25,7 @@ import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockOpening
 import com.zoonk.api.models.StudyBlockOpeningBlock
+import com.zoonk.api.models.StudyBlockOpeningInput
 import com.zoonk.api.models.StudyBlockOpeningMission
 import com.zoonk.api.models.StudyBlockOpeningNext
 import com.zoonk.api.models.StudyBlockOpeningTarget
@@ -32,6 +35,9 @@ import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
 import kotlinx.datetime.LocalDate
 import java.util.UUID
+import com.zoonk.api.models.LibraryLessonStartInputOpening.LibraryLessonStartInputOpeningAnyOfValue as DayOpening
+import com.zoonk.api.models.LibraryLessonStartInputOpening.StudyBlockOpeningInputValue as BlockOpening
+import com.zoonk.api.models.LibraryLessonStartInputOpeningAnyOf as DayOpeningInput
 
 /** The study reads, and the writes a tap makes; nothing here starts AI work. */
 interface StudyApi {
@@ -102,8 +108,22 @@ class StudyOpener(
         step: DayStep,
         next: Boolean,
         goalId: UUID,
-    ): MutationResult<AppRoute?> =
-        cache.mutate(invalidating = OPENING) { session ->
+    ): MutationResult<AppRoute?> {
+        if (step.opensInPlayer && step.lessonId != null) {
+            val opening =
+                if (day.sessionId != null && step.id != null) {
+                    BlockOpening(StudyBlockOpeningInput(blockTarget(step.id), timeZone()))
+                } else {
+                    val body = openDayBody(day.localDate, step, false, timeZone())
+                    DayOpening(
+                        DayOpeningInput(day.goalId ?: goalId, body.shownDate, target = body.target, timeZone = timeZone()),
+                    )
+                }
+            val encoded = ApiRequestJson.encodeToString(LibraryLessonStartInputOpening.serializer(), opening)
+            val route = AppRoute.Lesson(step.lessonId.toString(), day.sessionId?.toString(), opening = encoded)
+            return MutationResult.Done(route)
+        }
+        return cache.mutate(invalidating = OPENING) { session ->
             val sessionId = day.sessionId
             val blockId = step.id
             if (sessionId != null && blockId != null) {
@@ -113,6 +133,7 @@ class StudyOpener(
                 opened.opening?.let { follow(session, it) }
             }
         }
+    }
 
     /** A block a mission card or a buddy answer links, which opens only while it's still free to start. */
     suspend fun openMission(blockId: UUID): MutationResult<AppRoute?> =

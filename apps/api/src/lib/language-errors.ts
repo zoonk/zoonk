@@ -64,7 +64,6 @@ export function conversationRefusalError(
   if (
     result.status === "earlierFirst" ||
     result.status === "blockFinished" ||
-    result.status === "dailyLimitReached" ||
     result.status === "questionsNeeded"
   ) {
     return studySessionError(result);

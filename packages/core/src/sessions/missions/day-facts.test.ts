@@ -1,7 +1,6 @@
 import { type StudyBlockKind, prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -255,21 +254,6 @@ describe("build-time mission facts and selection against the real database", () 
       data: { settings: { weekdayMinutes: [0, 0, 0, 0, 0, 0, 0] } },
       where: { id: input.plan.id },
     });
-
-    const facts = await load(input, [block("review")]);
-    expect(pickMissions(facts)).toStrictEqual([]);
-    expect(facts.firstSteps).not.toBeNull();
-  });
-
-  it("keeps the first-steps list after the daily study-time limit while offering no missions", async () => {
-    const input = await fixture();
-
-    await Promise.all([
-      learningProfileFixture({ dailyLimitMinutes: 10, userId: input.userId }),
-      prisma.dailyProgress.create({
-        data: { date: localDate, dayOfWeek: 2, timeSpentSeconds: 600, userId: input.userId },
-      }),
-    ]);
 
     const facts = await load(input, [block("review")]);
     expect(pickMissions(facts)).toStrictEqual([]);

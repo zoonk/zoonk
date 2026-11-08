@@ -31,7 +31,7 @@ private val Essay.closed get() = status == Essay.Status.COMPLETED || status == E
 
 enum class EssayMode { Grade, Write }
 
-enum class EssaySend { Idle, Pending, Failed, LimitReached, DailyLimitReached, SignUpRequired }
+enum class EssaySend { Idle, Pending, Failed, LimitReached, SignUpRequired }
 
 @Immutable
 data class EssayUi(
@@ -142,7 +142,6 @@ class EssayViewModel(
                     val send =
                         when (result.code) {
                             ESSAY_LIMIT_REACHED -> EssaySend.LimitReached
-                            DAILY_LIMIT_REACHED -> EssaySend.DailyLimitReached
                             SIGN_UP_REQUIRED -> EssaySend.SignUpRequired
                             else -> EssaySend.Failed
                         }
@@ -240,7 +239,6 @@ class EssayViewModel(
 
     private companion object {
         const val ESSAY_LIMIT_REACHED = "ESSAY_LIMIT_REACHED"
-        const val DAILY_LIMIT_REACHED = "DAILY_LIMIT_REACHED"
         const val SIGN_UP_REQUIRED = "SIGN_UP_REQUIRED"
         const val BLOCK_NOT_ACTIVE = "BLOCK_NOT_ACTIVE"
 

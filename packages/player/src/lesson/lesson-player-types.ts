@@ -46,6 +46,7 @@ export type LessonRunAnswers = LibraryLessonRun["answers"];
 export type LessonRunHyperdrive = LibraryLessonRun["hyperdrive"];
 
 export type LessonStartOutcome =
+  | { reason: "opened" }
   | LessonRunRefusal
   | {
       answers: LessonRunAnswers;

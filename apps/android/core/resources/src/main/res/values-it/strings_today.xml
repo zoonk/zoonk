@@ -13,7 +13,6 @@
   "today_catch_up_next_days": "ed7033c60281d41080bbc2dd109ac23c36edecc7507892aad0dbaaf7f5f0f08d",
   "today_catch_up_today": "1429a63a9d87036e4c04aabd6b31f9702d8ebd9ad3fbba501f4c54ce5c857ece",
   "today_catch_up_tomorrow": "27f71228eaa7f40fd573e07e2a957fa9022215f6cf2a0e2a9502e789c255eab7",
-  "today_change_limit": "1812a1d22a246e0c483a2d9ce32bba9b7053d910a87d7e8bdfb38027e8f7ff80",
   "today_choose_focus": "c34c6c17b4dc5cce7991c5e6ae54e03e0d9cdce5246802ecb799660bcfedaa74",
   "today_coming_not_written": "048f424b1dcd344dc4f91c319f1a24d357befe2deccf4c7c8f0554ad08857fdf",
   "today_coming_stalled": "a636ab8e534d204b958cd12729bf7279c40295b39cfcb45135ce38e3d36ec692",
@@ -61,8 +60,6 @@
   "today_keep_learning_failed": "d0d111ec423c06d373c2ca11a89abde2086e35580726f69755d1bc99a8091ecf",
   "today_keep_my_time": "61181e942dd1c2c180f4e6c61120fd0cd61e97c7012cf13739e1264f9318e98b",
   "today_lessons_not_written": "e987241989d20f340873a5f63d75d18bd1c9c719d54684b0071646878cc7c494",
-  "today_limit_reached": "963c8d70c4c796ea907081744b6fe9c95302bbce06abf34cb43ba2e5833d7f07",
-  "today_limit_stops": "c3cabcf7e54c42da8c5dc440419f07edbd6b97f6e41929ccd9598a12051da532",
   "today_mistakes_notebook": "4a3231ab7d8714bc7364e13703c0b36d45da08733bd50bbc2292ad9a5f199fa0",
   "today_mistakes_ready": "a356d8bb06a03f074c22197fafa30b694be7dfd9c300184219d861e6dd59f4a3",
   "today_mistakes_redo": "eb1b3d27cb0d86b8862379c7c085394c3feacc9156caaa5437f867c9427cdbfe",
@@ -133,9 +130,6 @@
   "today_see_day_mock": "f5b5692724379a747d92e3db1ad0cc7da0c1cb4c529f42df8596c1587ed1d5c1",
   "today_see_plan": "847143338f120e65571d97877b2a81f47dd2d6932e41bfe57dce4ee8f9a0fa51",
   "today_see_summary": "1cf473fba915328bf35ea3c575011b0e3ffe38ae81a96699d86193adc0828473",
-  "today_see_you_day": "0cc02887e14783104ebcc68d499b9893f1174eb918ab81c97df946e1c4e6d237",
-  "today_see_you_next_session": "a5b0dbfe8c2b329fc6a81545b4abccebdc07c21c3bbf4cd70cb2d41ed9c34206",
-  "today_see_you_tomorrow": "91b4a9a3e8f306e4c49949b6abcad924b54f75f07a57156b69d640b861a39644",
   "today_see_your_plan": "0b8e788405aaf2194996591b8ed88cab257d9f8572ea3e4be7823733bd4bdeb0",
   "today_setting_up": "b61d2101f1bf6d7b51360a9a56adaa164d32af158989ca31373e8a315516f205",
   "today_setting_up_detail": "8c2ac0ba2133dbde33b0d9959a4729cfcb522f27f0e3cd6e4ede264fb2c53701",
@@ -304,16 +298,6 @@
         <item quantity="other">Alla data prevista restavano %d lezioni da completare.</item>
     </plurals>
     <string name="today_past_date_detail">Adatta il tuo piano per continuare.</string>
-    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_stops">Oggi lo studio si ferma al tuo limite giornaliero di %1$s.</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_reached">Hai raggiunto il limite giornaliero di %1$s.</string>
-    <!-- A link to the setting for the daily time limit. -->
-    <string name="today_change_limit">Modifica il limite</string>
-    <string name="today_see_you_next_session">Ci vediamo alla prossima sessione!</string>
-    <string name="today_see_you_tomorrow">A domani!</string>
-    <!-- %1$s is a weekday, such as "Monday". -->
-    <string name="today_see_you_day">Ci vediamo %1$s!</string>
     <string name="today_nothing_to_review">Oggi non c’è nulla da ripassare.</string>
     <string name="today_nothing_new">Oggi non c’è nulla di nuovo.</string>
     <string name="today_nothing_new_detail">Hai completato tutte le lezioni del piano o ne conoscevi già i contenuti.</string>

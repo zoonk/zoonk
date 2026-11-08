@@ -69,15 +69,19 @@ fun checkResult(
         """.trimIndent(),
     )
 
+/** An answer from a sitting before the fake run's `startedAt`. */
+const val EARLIER_SITTING = "2026-10-28T09:59:00Z"
+
 /** A saved answer as a run sends it back; [answer] is its JSON, null for a recording. */
 fun runAnswerJson(
     stepId: String,
     isCorrect: Boolean,
     answer: String = "null",
     answerText: String? = null,
+    answeredAt: String = "2026-10-28T10:01:00Z",
 ): String =
     """
-    {"answer":$answer,"answeredAt":"2026-10-28T10:01:00Z","isCorrect":$isCorrect,"stepId":"$stepId",
+    {"answer":$answer,"answeredAt":"$answeredAt","isCorrect":$isCorrect,"stepId":"$stepId",
      "result":{"answerText":${answerText?.let { "\"$it\"" } ?: "null"},"checked":true,"correctAnswer":null,"corrections":[],
      "expected":null,"feedback":null,"isCorrect":$isCorrect,"keyPoints":null,"nextReviewAt":null,"savedMistake":false,
      "score":null,"spelling":null}}
@@ -124,21 +128,36 @@ class FakeLessonPlayerApi(
         lessonId: String,
     ) = emptyList<String>()
 
+    var retryableStarts = 0
+    val startOpenings = mutableListOf<com.zoonk.api.models.LibraryLessonStartInputOpening?>()
+    var startGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+    var opened: com.zoonk.api.models.StudyBlockOpening? = null
+
     override suspend fun start(
         session: AuthenticatedSession,
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ): LibraryLessonRun {
+        opening: com.zoonk.api.models.LibraryLessonStartInputOpening?,
+    ): LessonStart {
+        startOpenings += opening
+        if (retryableStarts > 0) {
+            retryableStarts--
+            throw ApiException(ApiError.Unavailable, status = 503)
+        }
+        startGate?.await()
+        opened?.let { return LessonStart.Opened(it) }
         if (startFailures > 0) {
             startFailures--
             throw ApiException(ApiError.Network)
         }
-        return ApiJson.decodeFromString(
-            """
-            {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
-            """.trimIndent(),
+        return LessonStart.Started(
+            ApiJson.decodeFromString(
+                """
+                {"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
+                 "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
+                """.trimIndent(),
+            ),
         )
     }
 

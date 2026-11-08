@@ -9,20 +9,12 @@ function day(overrides: Partial<Day> = {}): Day {
       { position: 0, status: "completed" },
       { position: 1, status: "pending" },
     ],
-    dailyLimit: null,
     emptyDay: null,
     minutes: { dailyGoal: 45, done: 5, planned: 45 },
     nextPosition: 1,
     ...overrides,
   };
 }
-
-const LIMIT_REACHED: Day["dailyLimit"] = {
-  limitMinutes: 60,
-  reached: true,
-  remainingMinutes: 0,
-  usedMinutes: 60,
-};
 
 function dayState(input: Day) {
   return withDayState(input).state;
@@ -55,22 +47,6 @@ describe(withDayState, () => {
             { position: 0, status: "completed" },
             { position: 1, status: "skipped" },
           ],
-          nextPosition: null,
-        }),
-      ),
-    ).toBe("done");
-  });
-
-  it("stops at the daily limit with blocks still to do", () => {
-    expect(dayState(day({ dailyLimit: LIMIT_REACHED }))).toBe("limit");
-  });
-
-  it("is done, not limited, when the limit is reached on the last block", () => {
-    expect(
-      dayState(
-        day({
-          blocks: [{ position: 0, status: "completed" }],
-          dailyLimit: LIMIT_REACHED,
           nextPosition: null,
         }),
       ),

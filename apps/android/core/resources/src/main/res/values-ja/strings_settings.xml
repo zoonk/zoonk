@@ -32,13 +32,9 @@
   "settings_preferences_buddy_line": "3f2f018254f692a759aac6149a5620059a52ee7789ad0201f5b8c831144099bf",
   "settings_preferences_change": "1bf18033162686dd2157f0d2cc2f05c509997aed1fd3c14474b9221b49eba489",
   "settings_preferences_choose_buddy": "dc2f308bf984da7b35eeff9b2cbc9a34a71bbf99998c104075148c0cee779220",
-  "settings_preferences_daily_limit": "f17516e92231f528cec02e5326c13ea5271877abb9b8848935675a95ea83dc2e",
-  "settings_preferences_daily_limit_description": "da559afa720aa05c603af63354e9e7464b3de45abb4dce2d5dc0a2830220e769",
   "settings_preferences_description": "98a0216fa13922ffefc0b0dd0a87d6d083cc5a5a39aa8094e74ca9d00686ef14",
   "settings_preferences_language": "711a2ddef8edabcfaf2ea0e02111fd4b4bb303eb1b776079f233ac3d54b19b2f",
   "settings_preferences_lessons": "422c40ecdd74e50813995134072e8ff9c5557aad4715b0a2bc5c5fe9840455aa",
-  "settings_preferences_limit_a_day": "ac43a9fbfbf98e67623dfa6861f928f189e5982a682d1ee8146733cb45277913",
-  "settings_preferences_no_limit": "cafef55eafe24ea7d072e52305e79b48c7ad975e56dd92a4421725e57278d37d",
   "settings_preferences_on_this_device": "c0a2d98cf9ddd99cc8c136a3a1c40ca2b570c29317bfe355a48c3a4f64f2006d",
   "settings_preferences_save_failed": "ccd1308e7ba482b252d245b98f159063851645f50643921432e9c9884aafb90c",
   "settings_preferences_share_usage_data": "17e99e362edaadae762d517b6c2e46f8eca99ced22c312ac50756fe08819a4f7",
@@ -94,11 +90,6 @@
     <string name="settings_preferences_lessons">レッスン</string>
     <string name="settings_preferences_sounds">効果音</string>
     <string name="settings_preferences_sounds_description">正解したときや学習を終えたとき</string>
-    <string name="settings_preferences_daily_limit">1日の学習時間の上限</string>
-    <string name="settings_preferences_daily_limit_description">設定した時間に達したら、その日の学習を終えます。</string>
-    <string name="settings_preferences_no_limit">制限なし</string>
-    <!-- %1$s is a duration, like "45 min". -->
-    <string name="settings_preferences_limit_a_day">1日%1$s</string>
     <string name="settings_preferences_language">言語</string>
     <string name="settings_preferences_app_language">アプリの言語</string>
     <string name="settings_preferences_on_this_device">この端末で使用する言語</string>

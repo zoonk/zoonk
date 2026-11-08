@@ -5,6 +5,8 @@ import {
   lessonStepCheckInputSchema,
   lessonStepCheckResultSchema,
   libraryLessonCompletionSchema,
+  libraryLessonOpenedSchema,
+  libraryLessonRetryableSchema,
   libraryLessonRunSchema,
   libraryLessonStartInputSchema,
 } from "@zoonk/core/lesson-player/contract";
@@ -142,6 +144,11 @@ export const libraryLessonPaths = {
       },
       requestParams: { path: lessonPathParamsSchema },
       responses: {
+        "200": {
+          content: { "application/json": { schema: libraryLessonOpenedSchema } },
+          description:
+            "The explicit study opening leads elsewhere; no run or lesson allowance was created",
+        },
         "201": {
           content: { "application/json": { schema: libraryLessonRunSchema } },
           description: "The run to answer and finish",
@@ -159,6 +166,10 @@ export const libraryLessonPaths = {
         },
         "404": notFoundResponse,
         "429": tooManyRequestsResponse,
+        "503": {
+          content: { "application/json": { schema: libraryLessonRetryableSchema } },
+          description: "The study opening could not commit; retry the same opening",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Start a Library lesson",

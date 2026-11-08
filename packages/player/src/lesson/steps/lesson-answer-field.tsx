@@ -3,39 +3,14 @@
 import { MAX_TYPED_ANSWER_LENGTH } from "@zoonk/core/lesson-player/contract";
 import { Input } from "@zoonk/ui/components/input";
 import { Textarea } from "@zoonk/ui/components/textarea";
-import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef } from "react";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
-import { CHECK_BOUNDS } from "../use-step-grading";
 
 function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
   const t = useExtracted();
   const { state } = useLessonPlayer();
-
-  const isSlow = useTakingLong({
-    active: state.phase === "checking",
-    afterMs: CHECK_BOUNDS.slowMs,
-  });
-
-  if (state.checkFailed || isSlow) {
-    return (
-      <p
-        aria-live="polite"
-        className={cn(
-          "text-xs",
-          state.checkFailed ? "text-destructive-text" : "text-muted-foreground",
-        )}
-        id={id}
-      >
-        {state.checkFailed
-          ? t("We couldn't check your answer this time. Try again.")
-          : t("Still checking. This is taking longer than usual.")}
-      </p>
-    );
-  }
 
   if (isNumber || state.phase !== "playing") {
     return null;

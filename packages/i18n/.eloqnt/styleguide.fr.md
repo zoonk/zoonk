@@ -8,7 +8,6 @@
 
 ## Glossary
 
-- “daily time limit” (the learner's setting): “limite de temps quotidienne”
 - “plan” (study plan): “plan”, not “programme” or “parcours”; subscription plan: “formule”
 - “Free” (subscription): “gratuite”
 - “session” (study): “séance”; sign-in session: “session”

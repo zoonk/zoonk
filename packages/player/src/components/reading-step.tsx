@@ -84,11 +84,13 @@ function ReadingPromptText({
 }
 
 export function ReadingStep({
+  isLocked,
   onSelectAnswer,
   result,
   selectedAnswer,
   step,
 }: {
+  isLocked: boolean;
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
@@ -103,6 +105,7 @@ export function ReadingStep({
   return (
     <ArrangeWordsInteraction
       answer={step.sentence.sentence}
+      isLocked={isLocked}
       answerKind="reading"
       onSelectAnswer={onSelectAnswer}
       result={result}

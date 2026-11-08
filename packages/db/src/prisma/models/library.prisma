@@ -148,6 +148,8 @@ model Lesson {
   heldBackDrafts    Json                   @default("[]") @map("held_back_drafts")
   /// Set when the last allowed draft was held back: nothing writes it again and plans move on.
   setAsideAt        DateTime?              @map("set_aside_at")
+  /// Runs that started writing the orders, claimed before each one pays for its model call.
+  sentenceOrdersAttempts Int               @default(0) @map("sentence_orders_attempts") @db.SmallInt
   /// Public on SEO pages.
   summary           Json?
   /// The map of the version staged on its steps (`Step.staged`), until it replaces `summary`.

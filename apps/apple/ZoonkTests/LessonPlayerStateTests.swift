@@ -3,6 +3,19 @@ import XCTest
 @testable import Zoonk
 
 final class LessonPlayerStateTests: XCTestCase {
+  func testALateRunsFirstMissSurvivesCheckingAPreservedCorrectDraft() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    state.select(.check(optionId: "right"), for: "check")
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)], keepsScreen: true)
+    XCTAssertEqual(state.answers["check"], .check(optionId: "right"))
+    XCTAssertNil(state.results["check"])
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.firstVerdicts["check"], false)
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+  }
+
   func testReadsAnswersAndEndsInOrder() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
@@ -118,6 +131,18 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.revealed["worked"], 2)
     state.continueLesson()
     XCTAssertEqual(state.phase, .completed)
+  }
+
+  func testPendingWordOrdersWaitForTheServerOnlyOnALocalMiss() throws {
+    let pending = try step(
+      reading.replacingOccurrences(of: "\"ordersPending\": false", with: "\"ordersPending\": true"))
+    let ready = try step(reading)
+    let wrong = LessonAnswer.reading(arrangedWords: ["suis", "Je", "Marie"])
+    let right = LessonAnswer.reading(arrangedWords: ["Je", "suis", "Marie"])
+
+    XCTAssertNil(LessonGrading.grade(wrong, step: pending))
+    XCTAssertEqual(LessonGrading.grade(right, step: pending)?.isCorrect, true)
+    XCTAssertEqual(LessonGrading.grade(wrong, step: ready)?.isCorrect, false)
   }
 
   func testBuiltLanguageAnswerGetsOneChanceToSelfCorrect() throws {
@@ -278,6 +303,41 @@ final class LessonPlayerStateTests: XCTestCase {
 
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .ready)
+  }
+
+  func testRunStartedAfterAnAnswerKeepsTheLearnersScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+
+    state.startRun(
+      runId: "run", answers: [runAnswer("check", isCorrect: false)], keepsScreen: true)
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.firstVerdicts["check"], false)
+  }
+
+  func testRunStartedAfterTheLearnerActedShowsItsAnswersOnScreensTheyHaveNotTouched() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    let lessonQueue = state.queue
+
+    state.startRun(
+      runId: "run",
+      answers: [runAnswer("check", isCorrect: false), runAnswer("second", isCorrect: false)],
+      keepsScreen: true)
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+    XCTAssertEqual(state.answers["second"], .check(optionId: "wrong"))
+    XCTAssertEqual(state.results["second"]?.isCorrect, false)
+    XCTAssertEqual(state.firstVerdicts, ["check": false, "second": false])
+    XCTAssertEqual(
+      state.queue, lessonQueue + ["second"], "a check missed once comes back at the end")
   }
 
   func testOptionalScreensAreLeftOut() throws {
@@ -798,11 +858,24 @@ final class LessonGradingTests: XCTestCase {
     let step = try step(reading)
 
     let right = LessonGrading.grade(.reading(arrangedWords: ["je", "suis", "Marie"]), step: step)
-    let wrong = LessonGrading.grade(.reading(arrangedWords: ["Marie", "suis", "je"]), step: step)
+    let wrong = LessonGrading.grade(.reading(arrangedWords: ["suis", "je", "Marie"]), step: step)
 
     XCTAssertEqual(right?.isCorrect, true)
-    XCTAssertEqual(right?.correctAnswer, "Je suis Marie.")
+    XCTAssertNil(right?.correctAnswer, "the lesson's own order needs no other version")
     XCTAssertEqual(wrong?.isCorrect, false)
+    XCTAssertEqual(wrong?.correctAnswer, "Je suis Marie.")
+  }
+
+  func testArrangedWordsInAnotherStoredOrderAreRightAndShowTheLessonsOrder() throws {
+    let step = try step(reading)
+
+    let other = LessonGrading.grade(.reading(arrangedWords: ["Marie", "je", "suis"]), step: step)
+    let unlisted = LessonGrading.grade(
+      .reading(arrangedWords: ["Marie", "suis", "je"]), step: step)
+
+    XCTAssertEqual(other?.isCorrect, true)
+    XCTAssertEqual(other?.correctAnswer, "Je suis Marie.")
+    XCTAssertEqual(unlisted?.isCorrect, false, "only the orders the lesson lists are right")
   }
 
   func testArrangedWordsCompareWordByWordAsCoreDoes() throws {
@@ -1104,7 +1177,8 @@ private let reading = language(
   "reading", kind: "reading", content: "{}",
   sentence: #"""
     {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
-     "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": []}
+     "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": [],
+     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": []}
     """#, sentenceWords: ["Je", "suis", "Marie."])
 
 private let japaneseReading = language(
@@ -1112,7 +1186,7 @@ private let japaneseReading = language(
   sentence: #"""
     {"id": "s", "sentence": "私は学生です。", "translation": "I am a student.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": ["学", "生"],
-     "translationDistractors": []}
+     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": []}
     """#, sentenceWords: ["私", "は", "学生", "です。"])
 
 private let numericActivity = teaching(

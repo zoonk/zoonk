@@ -6,7 +6,7 @@ import {
   type ScheduledUnit,
 } from "./schedule-units";
 
-export function isStudyDay({ minutes, open }: Pick<DayShape, "minutes" | "open">): boolean {
+function isStudyDay({ minutes, open }: Pick<DayShape, "minutes" | "open">): boolean {
   return open && minutes > 0;
 }
 

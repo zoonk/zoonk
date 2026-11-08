@@ -1,4 +1,5 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/completion-contract";
 import { StudyFreshStart, StudySessionStatus } from "@zoonk/db";
 import { formatDuration } from "@zoonk/utils/duration";
@@ -14,11 +15,8 @@ import {
   lessonsToPrepareSchema,
 } from "./day-lessons";
 import { listeningTranscriptSchema } from "./item-set";
-import { studyBlockSchema } from "./study-block";
 import { studyBlockQuestionSchema } from "./study-block-question";
 import { weeklyStudyTimeSchema } from "./weekly-study-time";
-
-export { studyBlockSchema } from "./study-block";
 
 const EXAMPLE_FUNDED_DAILY_MINUTES = 14.875;
 const EXAMPLE_DAILY_MINUTES = 15;
@@ -42,26 +40,14 @@ export const extraTimeSchema = z
       }),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["dailyLimit", "nothingToStudy", "plusRequired", "sessionNotFinished"])
+      .enum(["nothingToStudy", "plusRequired", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+          "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });
-
-const dailyLimitSchema = z
-  .object({
-    limitMinutes: z.number().int().min(0).nullable(),
-    reached: z.boolean(),
-    remainingMinutes: z.number().int().min(0).nullable(),
-    usedMinutes: z.number().int().min(0),
-  })
-  .meta({
-    description: "The learner's own daily time limit, when they set one",
-    id: "DailyTimeLimit",
-  });
 
 export const studySessionResponseSchema = z
   .object({
@@ -74,7 +60,6 @@ export const studySessionResponseSchema = z
         description:
           "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's",
       }),
-    dailyLimit: dailyLimitSchema.nullable(),
     dayEndsAt: z
       .number()
       .int()
@@ -173,7 +158,7 @@ export const studySessionResponseSchema = z
           .nullable()
           .meta({
             description:
-              "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+              "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
           }),
         time: weeklyStudyTimeSchema,
       })

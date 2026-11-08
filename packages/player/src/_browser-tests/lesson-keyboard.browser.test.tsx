@@ -531,6 +531,7 @@ describe("lesson by keyboard", () => {
 
         await press("p");
         await expect.poll(() => plays.mock.calls.length).toBe(shown + 3);
+        await expect.element(play).toBeVisible();
 
         document.body.dispatchEvent(
           new KeyboardEvent("keydown", { bubbles: true, cancelable: true, key: "P" }),

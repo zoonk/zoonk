@@ -53,6 +53,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   mistakesOnly: false,
   netScored: false,
   oftenTested: false,
+  opensInPlayer: false,
   planItemId: null,
   planItemKey: null,
   position: 0,

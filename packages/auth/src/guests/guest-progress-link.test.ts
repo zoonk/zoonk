@@ -66,7 +66,6 @@ async function seed({ table, userId, value }: { table: Table; userId: string; va
           buddyKind: "zu",
           buddyName: `Buddy ${value}`,
           createdAt: DAY,
-          dailyLimitMinutes: value,
           instructions: `Instructions ${value}`,
           interests: { value },
           memoryEnabled: value > 5,
@@ -336,59 +335,6 @@ describe("guest progress linking", () => {
       expect(energy).toMatchObject(expected);
     },
   );
-
-  it("keeps a Buddy picked on the account while the guest profile is waiting", async () => {
-    const [accountId, guestId] = await Promise.all([
-      createLearner({ isAnonymous: false }),
-      createLearner({ isAnonymous: true }),
-    ]);
-
-    const table = "user_learning_profiles";
-
-    await Promise.all([
-      seed({ table, userId: accountId, value: 7 }),
-      seed({ table, userId: guestId, value: 3 }),
-    ]);
-
-    await prisma.userLearningProfile.update({
-      data: { buddyKind: null },
-      where: { userId: accountId },
-    });
-
-    const lock = await holdRows({ table, userIds: [guestId] });
-
-    const transfer = prisma.$transaction((transaction) =>
-      mergeLearningProfile({ guestUserId: guestId, transaction, userId: accountId }),
-    );
-
-    try {
-      await waitForBlocked({ blocker: lock.blocker, count: 1 });
-
-      await prisma.userLearningProfile.update({
-        data: {
-          buddyGlasses: "retro",
-          buddyKind: "otto",
-          buddyName: "Picked now",
-          dailyLimitMinutes: 99,
-        },
-        where: { userId: accountId },
-      });
-    } finally {
-      lock.release.resolve(null);
-      await lock.held;
-    }
-
-    await transfer;
-
-    await expect(
-      prisma.userLearningProfile.findUnique({ where: { userId: accountId } }),
-    ).resolves.toMatchObject({
-      buddyGlasses: "retro",
-      buddyKind: "otto",
-      buddyName: "Picked now",
-      dailyLimitMinutes: 99,
-    });
-  });
 
   it.each([
     { active: false, picked: false },

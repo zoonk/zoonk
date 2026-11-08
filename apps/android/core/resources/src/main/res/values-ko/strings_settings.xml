@@ -32,13 +32,9 @@
   "settings_preferences_buddy_line": "ae1bfe80a5e5ff6eb5a4e6e20a03046de611cc631bfc95af479e4128b4be6e2a",
   "settings_preferences_change": "109c361b90abf6432fd2ac5ee1c80a50e71045e58ecf2f17e1298b44fac4c539",
   "settings_preferences_choose_buddy": "8b83762c7e1de140e7cbcb106126ecb77e50f0611dc82c6b77dc34111504384e",
-  "settings_preferences_daily_limit": "ad0e3d328c59bad2ae076eb34b71d1a5d64ecbf8f0a5845a5038a58e1990738d",
-  "settings_preferences_daily_limit_description": "3d6c2276b97e29e554787c650fbcf8f8904e93bd4a76359e7e654f73404bbdce",
   "settings_preferences_description": "1c9ce2f173fc97e18709f11f313cdf43c73f868e7fbfe7e552149e6eb5cf4d89",
   "settings_preferences_language": "5b83bc5293bf8ebda5ef36b768608ecf7688cc545a1ad12852f6427e700cb35e",
   "settings_preferences_lessons": "07a6ea93c6d0e36805e92cb346e5b5a069c06d7718f1cc61001b4a795b3cf977",
-  "settings_preferences_limit_a_day": "5965a304593415e44f8532a2627149b1d9e50bdea36fb6d64487da5d065836e7",
-  "settings_preferences_no_limit": "ed7a7f69c81b2514b37e8a3d418cc34dc3eb4708cb9f2364c07dd85471ab3561",
   "settings_preferences_on_this_device": "79c8e5fea6c4519f49c694132ae69a21f949a2ac9503753c4d1c126e10320f21",
   "settings_preferences_save_failed": "ba7636ee4896cc2dc3de2f91456d72d2a2dac9aff05bade72ebe17f18b82fc77",
   "settings_preferences_share_usage_data": "2cb412d570fea104a4adc657a5961046daf9ed79601e251373422214e651980c",
@@ -94,11 +90,6 @@
     <string name="settings_preferences_lessons">레슨</string>
     <string name="settings_preferences_sounds">효과음</string>
     <string name="settings_preferences_sounds_description">정답을 맞히거나 학습을 마쳤을 때</string>
-    <string name="settings_preferences_daily_limit">하루 학습 시간 제한</string>
-    <string name="settings_preferences_daily_limit_description">설정한 시간만큼 공부하면 그날 학습을 마쳐요.</string>
-    <string name="settings_preferences_no_limit">제한 없음</string>
-    <!-- %1$s is a duration, like "45 min". -->
-    <string name="settings_preferences_limit_a_day">하루 %1$s</string>
     <string name="settings_preferences_language">언어</string>
     <string name="settings_preferences_app_language">앱 언어</string>
     <string name="settings_preferences_on_this_device">이 기기에서</string>

@@ -1,7 +1,6 @@
 import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { accessErrorCodes } from "../../access-error-codes";
 import { allowanceResponseSchema } from "../schemas/allowance";
-import { dailyTimeLimitResponseSchema } from "../schemas/daily-time-limit";
 import { learningProfileResponseSchema } from "../schemas/learning-profile";
 import {
   notFoundResponse,
@@ -26,21 +25,6 @@ export const learnerProfilePaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get current user's allowance",
-      tags: ["Account"],
-    },
-  },
-  "/me/daily-time-limit": {
-    get: {
-      operationId: "getCurrentUserDailyTimeLimit",
-      responses: {
-        "200": {
-          content: { "application/json": { schema: dailyTimeLimitResponseSchema } },
-          description: "Minutes studied today and the learner's daily limit, if any",
-        },
-        "401": unauthorizedResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Get current user's daily time limit",
       tags: ["Account"],
     },
   },
