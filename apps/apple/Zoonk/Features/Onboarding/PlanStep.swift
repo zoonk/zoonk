@@ -5,6 +5,7 @@ import SwiftUI
 struct PlanStep: View {
   let view: GoalOnboarding
 
+  @Environment(OnboardingStore.self) private var onboarding
   @Environment(PlanStore.self) private var plans
   /// Once the wait shows, reading the plan again never swaps it for a spinner.
   @State private var isWaiting = false
@@ -28,7 +29,8 @@ struct PlanStep: View {
       if let read {
         NoticeReadingView(
           document: read.examDocument, lastEdition: read.schedule.targetDateEstimated,
-          generationID: view.generationId, goalID: view.goal.id, next: .reveal, holding: holding)
+          deck: onboarding.waitDeck(for: view), goalID: view.goal.id, next: .reveal,
+          holding: holding)
       }
     } ready: {
       if let read {
@@ -191,7 +193,7 @@ struct PlanBuilding: View {
       let ready = ready(firstLesson)
 
       WaitScreen(
-        deckID: run.warmUpID ?? onboarding.deckID(generationID: view.generationId),
+        deck: deck(run),
         goalID: view.goal.id,
         progressTitle: Text(title),
         ready: ready,
@@ -252,6 +254,17 @@ struct PlanBuilding: View {
   }
 
   /// Plan first when both are ready; lesson 1 first offers itself while the plan is still built.
+  /// The run this wait follows has the last word on its deck: ready, or none coming once it stopped.
+  private func deck(_ run: FollowedRun) -> WaitDeck {
+    if let id = run.warmUpID {
+      return WaitDeck(id: id)
+    }
+
+    var deck = onboarding.waitDeck(for: view)
+    deck.isComing = deck.isComing && !run.isStopped
+    return deck
+  }
+
   private func ready(_ firstLesson: GenerationWait.FirstLesson?) -> WaitReady? {
     if let holding {
       return next.ready(holding)
@@ -400,15 +413,13 @@ struct NoticeReadingView: View {
   let document: ExamDocument
   let lastEdition: Bool
   /// The goal's run, which reports its warm-up deck.
-  let generationID: String?
+  let deck: WaitDeck
   let goalID: String
   let next: PlanNext
   let holding: WaitHolding?
   /// Set once asking the plan failed: shows that, with the way to ask again.
   var reconnect: (() -> Void)?
 
-  @Environment(OnboardingStore.self) private var onboarding
-  @State private var warmUpID: String?
   @State private var since = Date.now
 
   /// Reading a notice and fitting it into the plan usually takes about four minutes, after the plan
@@ -418,7 +429,7 @@ struct NoticeReadingView: View {
 
   var body: some View {
     WaitScreen(
-      deckID: warmUpID ?? onboarding.deckID(generationID: generationID), goalID: goalID,
+      deck: deck, goalID: goalID,
       progressTitle: title, ready: holding.map(next.ready)
     ) {
       if let reconnect {
@@ -456,13 +467,6 @@ struct NoticeReadingView: View {
       }
     }
     .measuresWait(surface: "examNotice", contentKind: "curriculum", goalID: goalID)
-    .task(id: generationID) {
-      if let generationID, onboarding.deckID(generationID: generationID) == nil,
-        let id = await onboarding.warmUpID(generationID: generationID)
-      {
-        warmUpID = id
-      }
-    }
   }
 
   /// Main's `useNoticeProgress`: from the plan built toward the end over the reading's usual time.

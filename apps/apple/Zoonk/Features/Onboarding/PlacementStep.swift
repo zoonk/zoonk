@@ -11,7 +11,6 @@ struct PlacementStep: View {
   @Environment(ExamStore.self) private var exam
   @Environment(OnboardingStore.self) private var onboarding
   @State private var phase = Phase.loading
-  @State private var warmUpID: String?
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
@@ -273,7 +272,7 @@ struct PlacementStep: View {
       : Text(Self.questionsReady)
 
     return WaitScreen(
-      deckID: warmUpID ?? onboarding.deckID(generationID: view.generationId), goalID: view.goal.id,
+      deck: onboarding.waitDeck(for: view), goalID: view.goal.id,
       progressTitle: title,
       ready: holding.map { holding in
         WaitReady(
@@ -421,7 +420,6 @@ struct PlacementStep: View {
       do {
         for try await event in onboarding.events(generationID: generationID) {
           if let id = event.warmUpID {
-            warmUpID = id
             onboarding.found(deckID: id, generationID: generationID)
           }
 

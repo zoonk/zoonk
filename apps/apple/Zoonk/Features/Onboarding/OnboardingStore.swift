@@ -7,9 +7,9 @@ import Observation
 final class OnboardingStore {
   private(set) var sentGoal: SentGoal?
   let resume: Resource<OnboardingResume>
-  /// Each goal run's warm-up deck, once anything following the run heard it, so a wait that opens
-  /// after the questions has its quiz at once.
-  private var decks: [String: String] = [:]
+  /// What each goal run's stream said of its deck: ready (its id), or nil once the run ended its
+  /// deck step without one. A wait trusts this over an onboarding read that may be older.
+  private var decks: [String: String?] = [:]
 
   @ObservationIgnored private let api: OnboardingAPI
   @ObservationIgnored private let cache: AppCache
@@ -103,27 +103,48 @@ final class OnboardingStore {
   }
 
   func found(deckID: String, generationID: String) {
-    if decks[generationID] != deckID {
-      decks[generationID] = deckID
+    if decks[generationID] != .some(deckID) {
+      decks[generationID] = .some(deckID)
     }
   }
 
-  func deckID(generationID: String?) -> String? {
-    generationID.flatMap { decks[$0] }
+  /// The deck a wait deals from, and whether one is on its way: the onboarding read names the
+  /// deck at open, and the run's stream says when it's ready or that none is coming.
+  func waitDeck(for view: GoalOnboarding) -> WaitDeck {
+    if let generationID = view.generationId, let heard = decks[generationID] {
+      return WaitDeck(id: heard, isComing: false)
+    }
+
+    switch view.warmUp?.status {
+    case .ready?: return WaitDeck(id: view.warmUp?.id, isComing: false)
+    case .writing?: return WaitDeck(id: nil, isComing: true)
+    case nil: return WaitDeck(id: nil, isComing: false)
+    }
   }
 
-  /// The warm-up deck a goal's run reported, read from its first event. Nil when it reported none
-  /// or its stream broke: the deck is optional.
-  func warmUpID(generationID: String) async -> String? {
+  /// Follows a goal's run until it says whether its deck is ready, so every wait after it knows.
+  /// Returns the deck once it's ready; nil when the run ended its deck step without one, or ended.
+  func followDeck(generationID: String) async -> String? {
     do {
       for try await event in events(generationID: generationID) {
         if let id = event.warmUpID {
           found(deckID: id, generationID: generationID)
           return id
         }
+
+        if event.step == "warmUpFailed", event.status == "completed" {
+          break
+        }
       }
+    } catch is GenerationStopped {
+      // A stopped run writes no deck.
     } catch {
+      // A broken stream says nothing about the deck.
       return nil
+    }
+
+    if !Task.isCancelled {
+      decks[generationID] = .some(nil)
     }
 
     return nil
