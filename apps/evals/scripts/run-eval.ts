@@ -254,13 +254,10 @@ async function runModel({
 
   return {
     languages: summarizeByLanguage({ results: evalResults.results, testCases: task.testCases }),
-    meetsBudget:
-      evalResults.results.length === 0
-        ? null
-        : meetsLatencyBudget({
-            budget: task.latencyBudget,
-            latency: { p50: stats.latencyP50, p95: stats.latencyP95 },
-          }),
+    meetsBudget: meetsLatencyBudget({
+      budget: task.latencyBudget,
+      latency: { p50: stats.latencyP50, p95: stats.latencyP95 },
+    }),
     modelId,
     sampled: runIds.size,
     spent: run?.spent ?? getSpent(stats),
