@@ -100,6 +100,38 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(checks, ["one in run"])
   }
 
+  func testRetryingStartKeepsAndSavesLocallyCheckedAnswersOnce() async throws {
+    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    for step in ["one", "two"] {
+      store.select(.check(optionId: "right"))
+      await store.check()
+      XCTAssertEqual(store.state?.results[step]?.isCorrect, true)
+      store.continueLesson()
+    }
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    await waitUntil { store.state?.currentStep?.id == "three" }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+    XCTAssertEqual(store.state?.results["one"]?.isCorrect, true)
+    XCTAssertEqual(store.state?.results["two"]?.isCorrect, true)
+    await transport.release()
+    await retrying.value
+    await waitUntil { store.held.isEmpty }
+    let checks = await transport.checks
+    XCTAssertEqual(checks.sorted(), ["one in run", "two in run"])
+    XCTAssertEqual(store.state?.runId, "run")
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
   func testAServerCheckShowsItIsCheckingWhileTheRunStarts() async throws {
     let transport = OpeningStartTransport(holds: true)
     let store = try openingPlayer(
@@ -766,15 +798,17 @@ private let sessionLessonCompletion = #"""
 private actor OpeningStartTransport: ClientTransport {
   let holds: Bool
   let opensElsewhere: Bool
+  let failsFirstStart: Bool
   private var gate: CheckedContinuation<Void, Never>?
   private(set) var count = 0
   private(set) var inputs: [String] = []
   /// Each check as "step in run".
   private(set) var checks: [String] = []
 
-  init(holds: Bool, opensElsewhere: Bool = false) {
+  init(holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false) {
     self.holds = holds
     self.opensElsewhere = opensElsewhere
+    self.failsFirstStart = failsFirstStart
   }
 
   func release() {
@@ -797,6 +831,9 @@ private actor OpeningStartTransport: ClientTransport {
     if holds { await withCheckedContinuation { gate = $0 } }
     var headers = HTTPFields()
     headers[.contentType] = "application/json"
+    if failsFirstStart, count == 1 {
+      throw APIError.network
+    }
     if opensElsewhere {
       return (
         HTTPResponse(status: count == 1 ? .serviceUnavailable : .ok, headerFields: headers),
