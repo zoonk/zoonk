@@ -35,37 +35,54 @@ describe("the lesson adapter's study-start policy", () => {
     vi.unstubAllGlobals();
   });
 
-  it("holds the whole request until activation and sends the exact opening once", async () => {
-    vi.stubGlobal("navigator", { userActivation: { hasBeenActive: false } });
-    const events = new EventTarget();
-    vi.stubGlobal("addEventListener", events.addEventListener.bind(events));
-    vi.stubGlobal("removeEventListener", events.removeEventListener.bind(events));
-    const { startLibraryLesson } = await startModule();
-    const onOpened = vi.fn();
+  it.each([true, false])(
+    "holds the whole request until activation (UserActivation supported: %s)",
+    async (supported) => {
+      const activation = { hasBeenActive: false };
+      vi.stubGlobal("navigator", supported ? { userActivation: activation } : {});
+      const events = new EventTarget();
+      vi.stubGlobal("addEventListener", events.addEventListener.bind(events));
+      vi.stubGlobal("removeEventListener", events.removeEventListener.bind(events));
+      const { startLibraryLesson } = await startModule();
+      const onOpened = vi.fn();
 
-    const pending = startLibraryLesson({
-      lessonId: LESSON,
-      onOpened,
-      opening: OPENING,
-      studySessionId: null,
-    });
+      const pending = startLibraryLesson({
+        lessonId: LESSON,
+        onOpened,
+        opening: OPENING,
+        studySessionId: null,
+      });
 
-    await Promise.resolve();
-    expect(mocks.guest).not.toHaveBeenCalled();
-    expect(mocks.send).not.toHaveBeenCalled();
-    events.dispatchEvent(new Event("pointerdown"));
-    await expect(pending).resolves.toStrictEqual({ reason: "opened" });
-    expect(mocks.send).toHaveBeenCalledOnce();
-    const sentBody = mocks.send.mock.calls[0]?.[1]?.body;
+      await Promise.resolve();
+      expect(mocks.guest).not.toHaveBeenCalled();
+      expect(mocks.send).not.toHaveBeenCalled();
+      events.dispatchEvent(new Event("pointerdown"));
+      await Promise.resolve();
+      expect(mocks.send).not.toHaveBeenCalled();
 
-    if (typeof sentBody !== "string") {
-      throw new TypeError("Expected the JSON start body");
-    }
+      if (supported) {
+        for (const event of ["click", "keydown", "pointerup", "touchend"]) {
+          events.dispatchEvent(new Event(event));
+        }
+      }
 
-    const body: unknown = JSON.parse(sentBody);
-    expect(body).toMatchObject({ opening: OPENING });
-    expect(onOpened).toHaveBeenCalledExactlyOnceWith({ kind: "today" });
-  });
+      await Promise.resolve();
+      expect(mocks.send).not.toHaveBeenCalled();
+      activation.hasBeenActive = true;
+      events.dispatchEvent(new Event("pointerup"));
+      await expect(pending).resolves.toStrictEqual({ reason: "opened" });
+      expect(mocks.send).toHaveBeenCalledOnce();
+      const sentBody = mocks.send.mock.calls[0]?.[1]?.body;
+
+      if (typeof sentBody !== "string") {
+        throw new TypeError("Expected the JSON start body");
+      }
+
+      const body: unknown = JSON.parse(sentBody);
+      expect(body).toMatchObject({ opening: OPENING });
+      expect(onOpened).toHaveBeenCalledExactlyOnceWith({ kind: "today" });
+    },
+  );
 
   it("does not apply an alternative opening after the originating navigation ends", async () => {
     const { startLibraryLesson } = await startModule();

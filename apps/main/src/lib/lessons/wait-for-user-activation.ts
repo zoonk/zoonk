@@ -1,4 +1,5 @@
 const documentActivation = { seen: false, tracking: false, waiting: Promise.withResolvers<null>() };
+const ACTIVATION_EVENTS = ["click", "keydown", "pointerup", "touchend"] as const;
 
 /** Called before hydration so browsers without UserActivation retain an in-app tap too. */
 export function trackUserActivation(): void {
@@ -9,19 +10,26 @@ export function trackUserActivation(): void {
   documentActivation.tracking = true;
 
   const activated = () => {
+    if (navigator.userActivation && !navigator.userActivation.hasBeenActive) {
+      return;
+    }
+
     documentActivation.seen = true;
     documentActivation.waiting.resolve(null);
-    globalThis.removeEventListener("pointerdown", activated, true);
-    globalThis.removeEventListener("keydown", activated, true);
+
+    for (const event of ACTIVATION_EVENTS) {
+      globalThis.removeEventListener(event, activated, true);
+    }
   };
 
-  globalThis.addEventListener("pointerdown", activated, { capture: true, once: true });
-  globalThis.addEventListener("keydown", activated, { capture: true, once: true });
+  for (const event of ACTIVATION_EVENTS) {
+    globalThis.addEventListener(event, activated, true);
+  }
 }
 
 /** A study URL must not owe preparation merely because a document loaded; every automatic start waits here too. */
 export async function waitForUserActivation(): Promise<void> {
-  if (documentActivation.seen || navigator.userActivation?.hasBeenActive) {
+  if (navigator.userActivation ? navigator.userActivation.hasBeenActive : documentActivation.seen) {
     return;
   }
 
