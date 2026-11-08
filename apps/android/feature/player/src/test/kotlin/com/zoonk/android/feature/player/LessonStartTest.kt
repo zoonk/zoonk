@@ -75,6 +75,45 @@ class LessonStartTest {
         )
     }
 
+    @Test fun aPendingServerCheckKeepsItsScreenWhenTheRunResumesElsewhere() =
+        runTest(dispatcher) {
+            val first = "00000000-0000-4000-8000-000000000101"
+            val typed = "00000000-0000-4000-8000-000000000102"
+            val quiz = "00000000-0000-4000-8000-000000000103"
+            val last = "00000000-0000-4000-8000-000000000104"
+            lesson = playable(listOf(explanationStep(first), typedAnswerStep(typed), checkStep(quiz), explanationStep(last)))
+            api.load = LessonLoad.Ready(lesson)
+            // The learner answered the typed screen in an earlier visit.
+            api.runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$typed"}]"""
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.dispatch(LessonAction.Continue)
+            assertEquals(
+                typed,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            vm.dispatch(LessonAction.SelectAnswer(typed, LessonAnswer.Typed("Because it maps chances.")))
+            vm.check()
+            assertEquals(LessonPhase.Checking, vm.state.value?.phase)
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertTrue(vm.state.value?.run is LessonRun.Started)
+            assertEquals(
+                "the checked screen stays",
+                typed,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals("the typed answer is graded", listOf(typed), api.checks.map { it.first })
+        }
+
     @Test fun deviceVerdictDoesNotWaitForAdmission() =
         runTest(dispatcher) {
             lesson = playable(listOf(checkStep("quiz"), explanationStep("next")))
