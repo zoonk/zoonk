@@ -12,7 +12,7 @@ type Analytics = Parameters<typeof generateLanguageSentenceOrders>[0]["analytics
 
 /** Every try claims one, a step's retries included, so two runs' tries end a failure no retry fixes. */
 const MAX_ATTEMPTS = 8;
-const OWED_LESSONS_PER_SWEEP = 100;
+const OWED_LESSONS_PER_SWEEP = 1000;
 
 export type OwedSentenceOrdersStatus = "changed" | "skipped" | "written";
 
@@ -211,15 +211,21 @@ export async function writeCheckedSentenceOrders({
 
 /** Internal bridge for the daily sweep. */
 export async function listOwedSentenceOrders(): Promise<string[]> {
-  const lessons = await prisma.lessonSentence.groupBy({
-    by: ["lessonId"],
-    orderBy: { _min: { ordersOwedAt: "asc" } },
-    take: OWED_LESSONS_PER_SWEEP,
-    where: {
-      lesson: { sentenceOrdersAttempts: { lt: MAX_ATTEMPTS } },
-      ordersOwedAt: { not: null },
-    },
-  });
+  const lessons = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT lesson.id
+    FROM library_lessons lesson
+    JOIN lesson_sentences sentence ON sentence.lesson_id = lesson.id
+    WHERE sentence.orders_owed_at IS NOT NULL
+      AND lesson.sentence_orders_attempts < ${MAX_ATTEMPTS}
+    GROUP BY lesson.id
+    ORDER BY (
+      SELECT MAX(COALESCE(activity.ended_at, activity.started_at))
+      FROM learning_events activity
+      WHERE activity.kind = 'lesson'
+        AND activity.content_ids @> jsonb_build_object('lessonId', lesson.id::text)
+    ) DESC NULLS LAST, MIN(sentence.orders_owed_at) ASC, lesson.id ASC
+    LIMIT ${OWED_LESSONS_PER_SWEEP}
+  `;
 
-  return lessons.map((lesson) => lesson.lessonId);
+  return lessons.map((lesson) => lesson.id);
 }

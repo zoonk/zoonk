@@ -5,6 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -276,6 +277,48 @@ describe(dailySweepsWorkflow, () => {
     expect(started).not.toContain(written.lesson.id);
     expect(started).not.toContain(failing.lesson.id);
     expect(result.sentenceOrders).toBe(started.length);
+  });
+
+  it("prioritizes the lessons learners played most recently over older debt and unplayed lessons", async () => {
+    const [recent, older, unplayed, user] = await Promise.all([
+      languageLessonFixture(),
+      languageLessonFixture(),
+      languageLessonFixture(),
+      userFixture(),
+    ]);
+
+    const now = Date.now();
+
+    await Promise.all([
+      prisma.lessonSentence.updateMany({
+        data: { ordersOwedAt: new Date(now - 60 * DAY_MS) },
+        where: { lessonId: unplayed.lesson.id },
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: recent.lesson.id },
+        endedAt: new Date(now - DAY_MS),
+        userId: user.id,
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: recent.lesson.id },
+        endedAt: new Date(now - 30 * DAY_MS),
+        userId: user.id,
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: older.lesson.id },
+        endedAt: new Date(now - 2 * DAY_MS),
+        userId: user.id,
+      }),
+    ]);
+
+    await dailySweepsWorkflow(scheduledRun());
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === sentenceOrdersWorkflow)
+      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds)
+      .filter((id) => [recent.lesson.id, older.lesson.id, unplayed.lesson.id].includes(id));
+
+    expect(started).toStrictEqual([recent.lesson.id, older.lesson.id, unplayed.lesson.id]);
   });
 
   it("starts one repair for a lesson an old writer finishes after migration", async () => {
