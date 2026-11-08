@@ -4,6 +4,8 @@ import OpenAPIRuntime
 struct GenerationEvent: Decodable, Hashable, Sendable {
   let at: Date?
   let entityID: String?
+  let lessonID: String?
+  let lessonTitle: String?
   let reason: String?
   let skillName: String?
   let status: String
@@ -13,6 +15,8 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   private enum CodingKeys: String, CodingKey {
     case at
     case entityID = "entityId"
+    case lessonID = "lessonId"
+    case lessonTitle
     case reason
     case skillName
     case status
@@ -21,11 +25,14 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   }
 
   init(
-    at: Date? = nil, entityID: String? = nil, reason: String? = nil, skillName: String? = nil,
-    status: String, step: String, warmUpID: String? = nil
+    at: Date? = nil, entityID: String? = nil, lessonID: String? = nil, lessonTitle: String? = nil,
+    reason: String? = nil, skillName: String? = nil, status: String, step: String,
+    warmUpID: String? = nil
   ) {
     self.at = at
     self.entityID = entityID
+    self.lessonID = lessonID
+    self.lessonTitle = lessonTitle
     self.reason = reason
     self.skillName = skillName
     self.status = status
@@ -37,6 +44,8 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     at = try container.decodeIfPresent(Int.self, forKey: .at).map(dateFromEpochMilliseconds)
     entityID = try container.decodeIfPresent(String.self, forKey: .entityID)
+    lessonID = try container.decodeIfPresent(String.self, forKey: .lessonID)
+    lessonTitle = try container.decodeIfPresent(String.self, forKey: .lessonTitle)
     reason = try container.decodeIfPresent(String.self, forKey: .reason)
     skillName = try container.decodeIfPresent(String.self, forKey: .skillName)
     status = try container.decode(String.self, forKey: .status)

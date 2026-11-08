@@ -7,6 +7,9 @@ import Observation
 final class OnboardingStore {
   private(set) var sentGoal: SentGoal?
   let resume: Resource<OnboardingResume>
+  /// Each goal run's warm-up deck, once anything following the run heard it, so a wait that opens
+  /// after the questions has its quiz at once.
+  private var decks: [String: String] = [:]
 
   @ObservationIgnored private let api: OnboardingAPI
   @ObservationIgnored private let cache: AppCache
@@ -14,6 +17,7 @@ final class OnboardingStore {
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
+  @ObservationIgnored private var revealDays: [String: Resource<StudyDay>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
     let api = OnboardingAPI(clients: clients)
@@ -98,12 +102,23 @@ final class OnboardingStore {
     clients.generationEvents(id: generationID, token: session.authenticatedSession?.bearerToken)
   }
 
+  func found(deckID: String, generationID: String) {
+    if decks[generationID] != deckID {
+      decks[generationID] = deckID
+    }
+  }
+
+  func deckID(generationID: String?) -> String? {
+    generationID.flatMap { decks[$0] }
+  }
+
   /// The warm-up deck a goal's run reported, read from its first event. Nil when it reported none
   /// or its stream broke: the deck is optional.
   func warmUpID(generationID: String) async -> String? {
     do {
       for try await event in events(generationID: generationID) {
         if let id = event.warmUpID {
+          found(deckID: id, generationID: generationID)
           return id
         }
       }
@@ -210,6 +225,35 @@ final class OnboardingStore {
 
     onboarding(goalID: updated.goal.id).update { _ in updated }
     return updated
+  }
+
+  /// The reveal's Today: the goal's first day as Today will show it. Reading it writes nothing.
+  func revealToday(goalID: String) -> Resource<StudyDay> {
+    if let resource = revealDays[goalID] {
+      return resource
+    }
+
+    let resource: Resource<StudyDay> = cache.resource(
+      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress]
+    ) { [api] session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.revealToday(goalID: goalID, token: session.bearerToken)
+    }
+
+    revealDays[goalID] = resource
+    return resource
+  }
+
+  /// The reveal's action: until it's saved, resume and Today bring the learner back to the plan.
+  func markPlanRevealed(goalID: String) async throws {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.markPlanRevealed(goalID: goalID, token: identity.bearerToken)
+    }
+
+    onboarding(goalID: goalID).invalidate()
   }
 
   func writeGoal(goalID: String) async throws -> String {

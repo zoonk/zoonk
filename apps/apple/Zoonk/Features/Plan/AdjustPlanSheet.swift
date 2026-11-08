@@ -44,6 +44,10 @@ struct AdjustPlanSheet: View {
           )
           .id(Section.date)
 
+          if let languageAim = plan.languageAim, !languageAim.choices.isEmpty {
+            aimSection(languageAim)
+          }
+
           PlanTimeSection(
             editor: editor, goal: goal, plan: plan, weekendOn: weekendOn,
             asksStudyEverything: section == .everything
@@ -96,6 +100,78 @@ struct AdjustPlanSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
+  }
+
+  /// Main's `PlanAim`: how far a language course goes, applied with the editor's summary and Undo.
+  private func aimSection(_ languageAim: LanguageAimView) -> some View {
+    SwiftUI.Section {
+      ForEach(languageAim.choices, id: \.aim) { choice in
+        Button {
+          guard choice.aim != languageAim.aim else {
+            return
+          }
+
+          Task {
+            await editor.change(
+              [.aim(choice.aim)],
+              sentence: String(
+                localized: "Your course now goes up to \(choice.aim).", table: "Plan",
+                comment: "Says a language course's aim changed; the argument is a level like B1"))
+          }
+        } label: {
+          VStack(alignment: .leading, spacing: 2) {
+            AimName(aim: choice.aim)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
+
+            Text(aimDetail(choice, languageAim: languageAim))
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .contentShape(.rect)
+        }
+        .pickedRow(choice.aim == languageAim.aim)
+        .accessibilityAddTraits(choice.aim == languageAim.aim ? .isSelected : [])
+      }
+    } header: {
+      VStack(alignment: .leading, spacing: 4) {
+        SectionTitle(
+          Text(
+            "Your aim", tableName: "Plan",
+            comment:
+              "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
+          ))
+
+        Text(
+          "How far your course goes, which sets how long your plan is.", tableName: "Plan",
+          comment: "Under the levels a language course can aim for"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .textCase(nil)
+      }
+    }
+  }
+
+  private func aimDetail(_ choice: LanguageAimView.Choice, languageAim: LanguageAimView) -> String {
+    let hours = choice.hours.formatted()
+
+    guard
+      let end = languageAim.endDate(
+        hours: choice.hours, planEnd: plan.estimate.endDate, today: plan.today)
+    else {
+      return String(
+        localized: "About \(hours) h more", table: "Plan",
+        comment: "Under a language level to aim for: the hours of study still needed to reach it")
+    }
+
+    return String(
+      localized: "About \(hours) h more · around \(PlanDate.longText(end, month: true))",
+      table: "Plan",
+      comment:
+        "Under a language level to aim for: the hours of study still needed to reach it, then when; the second argument is a month and year, like 'Nov 2027'"
+    )
   }
 
   private var daysSection: some View {

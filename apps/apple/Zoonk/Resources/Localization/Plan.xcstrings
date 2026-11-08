@@ -9610,6 +9610,130 @@
         }
       }
     },
+    "About %@ h more" : {
+      "comment" : "Under a language level to aim for: the hours of study still needed to reach it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %@ Std. mehr"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente %@ h más"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encore environ %@ h"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora circa %@ h"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あと約%@時間"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "약 %@시간 더 필요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze około %@ godz. nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %@ h a mais"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %@ sa. daha"
+          }
+        }
+      }
+    },
+    "About %@ h more · around %@" : {
+      "comment" : "Under a language level to aim for: the hours of study still needed to reach it, then when; the second argument is a month and year, like 'Nov 2027'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %@ Std. mehr · voraussichtlich %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %1$@ h more · around %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente %@ h más · hacia %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encore environ %@ h · vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora circa %@ h · verso %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あと約%@時間・%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "약 %@시간 더 필요 · %@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze około %@ godz. nauki · orientacyjnie: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %@ h a mais · por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %@ sa. daha · %@ civarında"
+          }
+        }
+      }
+    },
     "About the exam" : {
       "comment" : "Opens the exam's page",
       "localizations" : {
@@ -12650,24 +12774,6 @@
     "Also in %lld exams" : {
       "comment" : "Marks a subject on one exam's plan that the learner's other exams also test",
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Also in %lld exam"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Also in %lld exams"
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "variations" : {
             "plural" : {
@@ -12681,6 +12787,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Auch in %lld Prüfungen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Also in %lld exam"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Also in %lld exams"
                 }
               }
             }
@@ -12767,12 +12891,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Także na %lld egzaminie"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -12783,6 +12901,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Także na %lld egzaminach"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Także na %lld egzaminie"
                 }
               },
               "other" : {
@@ -17991,6 +18115,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sırada çalışacağın konular bunlar."
+          }
+        }
+      }
+    },
+    "How far your course goes, which sets how long your plan is." : {
+      "comment" : "Under the levels a language course can aim for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kursziel bestimmt, wie lange dein Plan dauert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta dónde llega tu curso, lo que define cuánto dura tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le niveau visé par ton cours détermine la durée de ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il livello a cui arriva il tuo corso determina la durata del piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コースで目指すレベルによって、学習計画の期間が決まります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코스에서 어디까지 배울지에 따라 계획 기간이 정해져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docelowy poziom kursu określa czas trwania planu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até onde seu curso vai, o que define a duração do seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursunun hedef seviyesi, planının süresini belirler."
           }
         }
       }
@@ -29996,24 +30179,6 @@
     "Topics shared with your %lld other exams count for every exam that has them, so you study them once." : {
       "comment" : "On one exam's plan, when the learner has several other exams that test some of the same topics",
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Topics shared with your %lld other exam count for both exams, so you study them once."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Topics shared with your %lld other exams count for every exam that has them, so you study them once."
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "variations" : {
             "plural" : {
@@ -30027,6 +30192,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Themen, die auch in deinen %lld anderen Prüfungen vorkommen, zählen für alle Prüfungen, in denen sie geprüft werden. Du lernst sie also nur einmal."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Topics shared with your %lld other exam count for both exams, so you study them once."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Topics shared with your %lld other exams count for every exam that has them, so you study them once."
                 }
               }
             }
@@ -30113,12 +30296,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tematów wspólnych z twoim %lld innym egzaminem uczysz się tylko raz na oba egzaminy."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -30129,6 +30306,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Tematów wspólnych z twoimi %lld innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tematów wspólnych z twoim %lld innym egzaminem uczysz się tylko raz na oba egzaminy."
                 }
               },
               "other" : {
@@ -33213,6 +33396,65 @@
         }
       }
     },
+    "Your aim" : {
+      "comment" : "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein angestrebtes Level"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu meta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau visé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello a cui punti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目指すレベル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 레벨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój docelowy poziom"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível que você quer alcançar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedeflediğin seviye"
+          }
+        }
+      }
+    },
     "Your answers choose for you" : {
       "comment" : "What the focus test does",
       "localizations" : {
@@ -33327,6 +33569,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbetin hazır olur olmaz açılır."
+          }
+        }
+      }
+    },
+    "Your course now goes up to %@." : {
+      "comment" : "Says a language course's aim changed; the argument is a level like B1",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kurs reicht jetzt bis %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu curso ahora llega hasta %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton cours va maintenant jusqu’au niveau %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ora il tuo corso arriva fino a %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コースで目指すレベルが%@になりました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이제 코스에서 %@까지 배워요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój kurs obejmuje teraz materiał do poziomu %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu curso agora vai até %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursunun hedef seviyesi artık %@."
           }
         }
       }

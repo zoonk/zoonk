@@ -323,7 +323,7 @@ extension GoalPlan {
         "access": { "freeWeekOver": false, "mocksRequirePlus": false },
         "areas": [], "bases": null, "course": null, "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
-        "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",
+        "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal", "nextDays": [],
         "phases": [], "planId": "\(planId)", "ready": true,
         "schedule": {
           "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false, "studyDays": 7,

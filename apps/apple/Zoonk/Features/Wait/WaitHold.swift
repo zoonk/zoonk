@@ -2,7 +2,7 @@ import SwiftUI
 
 @MainActor
 @Observable
-final class WarmUpVisit {
+final class WaitVisit {
   /// Stays on this screen until "Next guess", whatever another window guesses meanwhile.
   struct Dealt: Equatable {
     let deckID: String
@@ -10,11 +10,24 @@ final class WarmUpVisit {
     var picked: String?
   }
 
+  /// What the screen's own page shows: the quiz, or the progress when no card was there as it opened.
+  enum Page {
+    case quiz
+    case progress
+  }
+
   let surface: AnalyticsEvent.WarmUpSurface
   private(set) var guesses = 0
   private(set) var dealt: Dealt?
   /// Ready while the learner plays: they finish the card on show, and no new one is dealt.
   fileprivate(set) var isHolding = false
+  /// The learner guessed, opened the progress or chose the quiz here, so once what they wait for is
+  /// ready, they stay until they press the bar.
+  private(set) var isEngaged = false
+  /// Decided once, as the screen first shows, so the page never changes under the learner.
+  private(set) var page: Page?
+  /// The progress pushed over the quiz; every Back pops it.
+  var showsProgress = false
   @ObservationIgnored private(set) var shownDeck: String?
   @ObservationIgnored fileprivate var isTouched = false
   /// A touch ending, or the moment the wait ended: the screen moves on one quiet second later.
@@ -24,9 +37,23 @@ final class WarmUpVisit {
     self.surface = surface
   }
 
-  var guessed: Bool { guesses > 0 }
+  func open(hasCard: Bool) {
+    if page == nil {
+      page = hasCard ? .quiz : .progress
+    }
+  }
 
-  func show(_ deck: WarmUpDeck, card: Int) {
+  func openProgress() {
+    showsProgress = true
+    isEngaged = true
+  }
+
+  func playQuiz() {
+    page = .quiz
+    isEngaged = true
+  }
+
+  func show(_ deck: WarmUpDeck, card: Int, goalID: String?) {
     if dealt?.deckID != deck.id {
       deal(card, deckID: deck.id)
     }
@@ -36,7 +63,9 @@ final class WarmUpVisit {
     }
 
     shownDeck = deck.id
-    UsageAnalytics.track(.warmUpShown(surface: surface, cardCount: deck.cards.count))
+    UsageAnalytics.track(
+      .warmUpShown(
+        surface: surface, cardCount: deck.cards.count, deckID: deck.id, goalID: goalID, at: .now))
   }
 
   /// Only the first pick counts: the answer shows at once.
@@ -47,6 +76,7 @@ final class WarmUpVisit {
 
     self.dealt = dealt
     guesses += 1
+    isEngaged = true
     UsageAnalytics.track(
       .warmUpAnswered(
         surface: surface, cardID: cardID, position: dealt.card + 1, correct: correct))
@@ -58,30 +88,31 @@ final class WarmUpVisit {
   }
 }
 
-struct WarmUpHolding {
+struct WaitHolding {
   let moveOn: () -> Void
 }
 
-enum WarmUpStage {
-  /// The wait, with its cards; `holding` once ready while the learner who guessed on it stays.
-  case waiting(holding: WarmUpHolding?)
+enum WaitStage {
+  /// The wait, with its cards; `holding` once ready while a learner who played or watched stays.
+  case waiting(holding: WaitHolding?)
   /// What the wait was for.
   case ready
 }
 
-/// The owner's rule for every wait that deals warm-up cards: once what it waits for is ready, a
-/// learner who hasn't guessed on it moves on after one second without a touch (a guess in that
-/// second counts), and one who has stays with a main button, so nobody is pulled away mid-card.
-struct WarmUpHold<Content: View>: View {
+/// Main's `getReadyHold`, the rule every wait follows: once what it waits for is ready, a learner who
+/// guessed, opened the progress or chose the quiz on it stays until they press the bar, so nobody is
+/// pulled away mid-card. Anyone else moves on after one second without a touch (playing in that
+/// second counts).
+struct WaitHold<Content: View>: View {
   let isReady: Bool
   /// Said when the wait starts holding: its title changes, and focus stays where it is. Nil for a
   /// screen that says it's ready itself.
   let announcement: LocalizedStringResource?
   let onMoveOn: () -> Void
   /// One view for every stage keeps a screen that stays (the session) from being rebuilt.
-  @ViewBuilder let content: (WarmUpStage) -> Content
+  @ViewBuilder let content: (WaitStage) -> Content
 
-  @State private var visit: WarmUpVisit
+  @State private var visit: WaitVisit
   @State private var stage: Stage
 
   private enum Stage {
@@ -96,14 +127,14 @@ struct WarmUpHold<Content: View>: View {
     surface: AnalyticsEvent.WarmUpSurface,
     isReady: Bool,
     announcement: LocalizedStringResource?,
-    @ViewBuilder content: @escaping (WarmUpStage) -> Content,
+    @ViewBuilder content: @escaping (WaitStage) -> Content,
     onMoveOn: @escaping () -> Void = {}
   ) {
     self.isReady = isReady
     self.announcement = announcement
     self.onMoveOn = onMoveOn
     self.content = content
-    _visit = State(initialValue: WarmUpVisit(surface: surface))
+    _visit = State(initialValue: WaitVisit(surface: surface))
     _stage = State(initialValue: isReady ? .done : .waiting)
   }
 
@@ -124,8 +155,8 @@ struct WarmUpHold<Content: View>: View {
           visit.isHolding = false
         }
       }
-      .onChange(of: visit.guessed) { _, guessed in
-        if guessed, stage == .settling {
+      .onChange(of: visit.isEngaged) { _, engaged in
+        if engaged, stage == .settling {
           hold()
         }
       }
@@ -136,11 +167,11 @@ struct WarmUpHold<Content: View>: View {
       }
   }
 
-  private var shown: WarmUpStage {
+  private var shown: WaitStage {
     switch stage {
     // Ready shows only once it is: a wait that comes back shows at once.
     case .done where isReady: .ready
-    case .holding: .waiting(holding: WarmUpHolding(moveOn: moveOn))
+    case .holding: .waiting(holding: WaitHolding(moveOn: moveOn))
     case .waiting, .settling, .done: .waiting(holding: nil)
     }
   }
@@ -150,7 +181,7 @@ struct WarmUpHold<Content: View>: View {
       return
     }
 
-    if visit.guessed {
+    if visit.isEngaged {
       hold()
     } else if visit.shownDeck == nil {
       moveOn()
@@ -171,7 +202,7 @@ struct WarmUpHold<Content: View>: View {
       }
     }
 
-    if visit.guessed {
+    if visit.isEngaged {
       hold()
     } else {
       moveOn()
@@ -188,28 +219,12 @@ struct WarmUpHold<Content: View>: View {
   }
 
   private func moveOn() {
+    // The ready action can be pressed on the pushed progress, which goes with the wait.
+    visit.showsProgress = false
     // A wait that comes back on this screen is a new one.
-    visit = WarmUpVisit(surface: visit.surface)
+    visit = WaitVisit(surface: visit.surface)
     stage = .done
     onMoveOn()
-  }
-}
-
-extension View {
-  func warmUpHoldBar(_ holding: WarmUpHolding?, label: Text) -> some View {
-    safeAreaBar(edge: .bottom) {
-      if let holding {
-        Button(action: holding.moveOn) {
-          label.frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
-        .keepsOffFold()
-        .scenePadding(.horizontal)
-        .padding(.vertical, 10)
-      }
-    }
   }
 }
 

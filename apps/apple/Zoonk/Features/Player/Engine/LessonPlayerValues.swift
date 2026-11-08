@@ -111,4 +111,14 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let day: DayResult?
   /// When the lesson was one of the session's blocks.
   let block: BlockMoment?
+  /// Set when this was the goal's first lesson, started before the learner saw their plan.
+  var planReveal: PlanRevealLead?
+}
+
+/// Where the goal's first lesson leads when the learner hasn't seen their plan yet.
+struct PlanRevealLead: Hashable, Sendable {
+  let goalID: String
+  let goalTitle: String
+  /// False while the plan is still being built.
+  let planReady: Bool
 }
