@@ -23,7 +23,7 @@ type ScopeModels = { fallbackModels: readonly string[]; model: string };
 
 /**
  * On 5 plans built from a learner's own job, notes or goal (8 Nov 2026), Terra scored 8.96 (EN
- * 8.63, PT 9.21) at $17.56/1k in 28 s median, and Luna at high reasoning 7.86 (PT 7.69, under the
+ * 8.63, PT 9.18) at $21.65/1k in 28 s p50, and Luna at high reasoning 7.86 (PT 7.69, under the
  * floor) at $9.27/1k in 144 s. Read blind, Terra won 4 and tied 1: Luna split one-lesson topics in
  * two and filled the new hook and application with placeholders. Opus is an outage route with no
  * run on these cases.
