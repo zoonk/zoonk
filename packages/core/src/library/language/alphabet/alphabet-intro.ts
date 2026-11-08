@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
-import { CAPSULE_LEDGER_KIND } from "../../../milestones/award-milestones";
+import { hasFinishedLesson } from "../../../lesson-player/_utils/lesson-runs";
 import { getAlphabetIdentityKey } from "./alphabet-identity";
 
 const READS_SCRIPT_SCORE = 1;
@@ -21,21 +21,6 @@ export type AlphabetIntro = {
 
 function isSkipped(details: Goal["details"]): boolean {
   return isJsonObject(details) && details[ALPHABET_INTRO_DETAIL] === "skipped";
-}
-
-async function hasFinishedLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
-  const finished = await prisma.learningEvent.findFirst({
-    select: { id: true },
-    where: {
-      OR: [{ lessonKind: null }, { lessonKind: { not: CAPSULE_LEDGER_KIND } }],
-      contentIds: { equals: lessonId, path: ["lessonId"] },
-      endedAt: { not: null },
-      kind: { in: ["lesson", "review"] },
-      userId,
-    },
-  });
-
-  return finished !== null;
 }
 
 async function readsScript({ language, userId }: { language: string; userId: string }) {

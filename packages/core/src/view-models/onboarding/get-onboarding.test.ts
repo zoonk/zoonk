@@ -51,7 +51,7 @@ describe(getOnboarding, () => {
     );
   });
 
-  it("reports the goal's first lesson as done once this learner finished it", async () => {
+  it("reports the goal's first lesson as done once this learner finished it, not a capsule of it", async () => {
     const [learner, other, lesson] = await Promise.all([
       userFixture(),
       userFixture(),
@@ -64,7 +64,16 @@ describe(getOnboarding, () => {
       userId: learner.id,
     });
 
-    await learningEventFixture({ contentIds: { lessonId: lesson.id }, userId: other.id });
+    await Promise.all([
+      learningEventFixture({ contentIds: { lessonId: lesson.id }, userId: other.id }),
+      learningEventFixture({
+        contentIds: { lessonId: lesson.id },
+        kind: "review",
+        lessonKind: "capsule",
+        userId: learner.id,
+      }),
+    ]);
+
     mockSession(learner.id);
     await expect(readFirstLesson(goal.id)).resolves.toMatchObject({ status: "ready" });
 
