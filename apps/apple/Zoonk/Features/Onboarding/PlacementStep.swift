@@ -132,6 +132,7 @@ struct PlacementStep: View {
       PlacementQuestionScreen(
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
         labels: labels, isSaving: isSaving, failures: questionFailures,
+        saveFailure: finishFailed ? Self.saveFailureMessage : nil,
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
@@ -201,13 +202,14 @@ struct PlacementStep: View {
   @ViewBuilder private var saveFailure: some View {
     if finishFailed, !isSaving {
       Section {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Onboarding",
-            comment: "A change couldn't be saved"))
+        FailureLine(message: Self.saveFailureMessage)
       }
     }
   }
+
+  private static let saveFailureMessage = LocalizedStringResource(
+    "That didn't save. Try again.", table: "Onboarding",
+    comment: "A change couldn't be saved")
 
   private var isMockOpen: Bool {
     router.tasks.contains { route in
@@ -568,6 +570,7 @@ struct PlacementQuestionScreen<Media: View>: View {
     comment: "Answers a placement question without guessing")
   let isSaving: Bool
   let failures: Int
+  var saveFailure: LocalizedStringResource?
   let onAnswer: (PracticeAnswer) -> Void
   let onStop: () -> Void
   @ViewBuilder var media: () -> Media
@@ -601,6 +604,10 @@ struct PlacementQuestionScreen<Media: View>: View {
       asked.stimulus
     } response: {
       asked.response
+
+      if let saveFailure, !isSaving {
+        FailureLine(message: saveFailure)
+      }
 
       if failures > 0, !isSaving {
         FailureLine(message: PracticeSaveError.message(failures: failures))
@@ -654,12 +661,14 @@ extension PlacementQuestionScreen where Media == EmptyView {
     labels: PracticeTrueFalseLabels,
     isSaving: Bool,
     failures: Int,
+    saveFailure: LocalizedStringResource? = nil,
     onAnswer: @escaping (PracticeAnswer) -> Void,
     onStop: @escaping () -> Void
   ) {
     self.init(
       subject: subject, number: number, progress: progress, question: question, labels: labels,
-      isSaving: isSaving, failures: failures, onAnswer: onAnswer, onStop: onStop,
+      isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
     )
   }
