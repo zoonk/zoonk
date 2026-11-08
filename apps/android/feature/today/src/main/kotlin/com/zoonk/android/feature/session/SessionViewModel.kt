@@ -126,7 +126,8 @@ class SessionViewModel(
      * Reads [lessonId]'s readiness every few seconds and follows the run writing it, reading the day
      * again once it's written: the wait shows until the day does, so its step is offered as ready. A
      * lesson nobody writes is waited on only when the learner [asked] for it; a failed one is still
-     * read, since it may be written again elsewhere, unless its checks set it aside.
+     * read for as long as Main's wait reads it, since it may be written again elsewhere, unless its
+     * checks set it aside.
      */
     suspend fun followLesson(
         lessonId: UUID,
@@ -134,6 +135,7 @@ class SessionViewModel(
         readDay: suspend () -> Unit,
     ) {
         try {
+            var failedSince: Long? = null
             while (true) {
                 when (val read = cache.mutate { readiness(it, lessonId) }) {
                     MutationResult.Obsolete -> {
@@ -151,6 +153,8 @@ class SessionViewModel(
                         }
                         if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
                         if ((status == LessonReadiness.Status.NOT_STARTED && !asked) || read.value.setAside) return
+                        failedSince = if (status == LessonReadiness.Status.FAILED) failedSince ?: now() else null
+                        if (failedSince?.let { now() - it >= FAILED_LESSON_READ_MILLIS } == true) return
                     }
                 }
                 delay(LESSON_CHECK_MILLIS)
@@ -239,6 +243,8 @@ class SessionViewModel(
 }
 
 internal const val LESSON_CHECK_MILLIS = 5_000L
+
+internal const val FAILED_LESSON_READ_MILLIS = 600_000L
 
 /** Main's `NextStopLesson` while it isn't ready: what the next stop waits on. */
 enum class NextStopLesson { NotStarted, Writing, Failed }

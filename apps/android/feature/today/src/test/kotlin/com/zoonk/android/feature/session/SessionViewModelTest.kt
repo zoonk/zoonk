@@ -4,6 +4,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.StudyBlockOpeningTarget
 import kotlinx.coroutines.CoroutineScope
@@ -15,12 +16,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID
@@ -37,7 +40,10 @@ class SessionViewModelTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private fun TestScope.viewModel(api: FakeStudyApi): SessionViewModel {
+    private fun TestScope.viewModel(
+        api: FakeStudyApi,
+        readiness: suspend (AuthenticatedSession, UUID) -> LessonReadiness = { _, _ -> error("Not used") },
+    ): SessionViewModel {
         val scope = CoroutineScope(SupervisorJob() + dispatcher)
         val cache = AppCache(FakeSession(ana), scope)
         return SessionViewModel(
@@ -45,8 +51,9 @@ class SessionViewModelTest {
             StudySessionStore(api, cache) { "UTC" },
             { _, _ -> },
             cache,
-            readiness = { _, _ -> error("Not used") },
+            readiness = readiness,
             generations = { error("Not used") },
+            now = { testScheduler.currentTime },
         )
     }
 
@@ -122,7 +129,30 @@ class SessionViewModelTest {
             assertEquals(listOf(blockId(1)), api.targets.map { (it as StudyBlockOpeningTarget.BlockWrapper).value.blockId })
         }
 
+    @Test
+    fun aFailedLessonIsReadForTenMinutesThenLeftToTryAgain() =
+        runTest(dispatcher) {
+            val failed =
+                LessonReadiness(
+                    alternative = null,
+                    generationId = null,
+                    setAside = false,
+                    status = LessonReadiness.Status.FAILED,
+                    warmUpId = null,
+                )
+            val viewModel = viewModel(FakeStudyApi()) { _, _ -> failed }
+
+            val following = backgroundScope.launch { viewModel.followLesson(LESSON, asked = false) {} }
+            advanceTimeBy(FAILED_LESSON_READ_MILLIS - LESSON_CHECK_MILLIS)
+            assertTrue(following.isActive)
+
+            advanceTimeBy(2 * LESSON_CHECK_MILLIS)
+            assertTrue(following.isCompleted)
+        }
+
     private companion object {
+        val LESSON: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000a1")
+
         val BELT =
             Milestone(
                 beltStartBrainPower = 500,
