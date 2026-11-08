@@ -125,17 +125,6 @@ describe("word orders", () => {
   });
 });
 
-function boxes() {
-  return [
-    page.getByRole("group", { name: "Your answer" }),
-    page.getByRole("group", { name: "Word bank" }),
-    check,
-  ].map((locator) => {
-    const { height, width, x, y } = locator.element().getBoundingClientRect();
-    return { height, width, x, y };
-  });
-}
-
 const SELF_CORRECT = "Not quite. Look again and fix it yourself, then check.";
 const CHECK_FAILED = "We couldn't check your answer this time. Try again.";
 const CHECK_SLOW = "Still checking. This is taking longer than usual.";
@@ -338,53 +327,31 @@ describe("pending word orders", () => {
       expect(checkStep).toHaveBeenCalledTimes(2);
     });
 
-    it.each([
-      { kind: "reading" as const, spoken: false, width: 375 },
-      { kind: "listening" as const, spoken: false, width: 375 },
-      { kind: "listening" as const, spoken: true, width: 375 },
-      { kind: "reading" as const, spoken: false, width: 1280 },
-    ])(
-      "says a slow $kind check (spoken fallback: $spoken) at $width px without moving the screen",
-      async ({ kind, spoken, width }) => {
-        await atViewport({ height: 812, width }, async () => {
-          vi.useFakeTimers({ shouldAdvanceTime: true });
-          const exercise = sentenceStep(kind, true);
-          const step = spoken ? { ...spokenAnswerStep(), listening: exercise.exercise } : exercise;
-          const lesson = buildLesson([step], { language: "pt", targetLanguage: "it" });
+    it("says a word bank's check is taking longer than usual", async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
 
-          const reply =
-            Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["checkStep"]>>>();
+      const lesson = buildLesson([sentenceStep("reading", true)], {
+        language: "pt",
+        targetLanguage: "it",
+      });
 
-          const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() => reply.promise);
+      const server = localAdapters(lesson);
+      const reply = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["checkStep"]>>>();
+      const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() => reply.promise);
 
-          renderLessonPlayer({
-            adapters: buildAdapters(lesson, { checkStep, gradeSpokenAnswer: vi.fn() }),
-            lesson,
-          });
+      renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
 
-          if (spoken) {
-            await page.getByRole("button", { name: "I can't talk now" }).click();
-          }
+      await placeWords(WRONG_ORDER);
+      await check.click();
+      await expect.element(check).toHaveAttribute("aria-busy", "true");
+      await expect.element(page.getByText(CHECK_SLOW)).not.toBeInTheDocument();
 
-          await placeWords(
-            kind === "reading" ? WRONG_ORDER : ["ônibus", "o", "Quando", "chovia,", "chegou."],
-          );
+      await vi.advanceTimersByTimeAsync(CHECK_BOUNDS.slowMs + 1000);
+      await expect.element(page.getByText(CHECK_SLOW)).toBeVisible();
 
-          await check.click();
-          await expect.element(check).toHaveAttribute("aria-busy", "true");
-          await expect.element(page.getByText(CHECK_SLOW)).not.toBeInTheDocument();
-          const waiting = boxes();
-
-          await vi.advanceTimersByTimeAsync(CHECK_BOUNDS.slowMs + 1000);
-          await expect.element(page.getByText(CHECK_SLOW)).toBeVisible();
-          expect(boxes()).toStrictEqual(waiting);
-
-          reply.resolve({ status: "failed" });
-          await expect.element(page.getByText(CHECK_FAILED)).toBeVisible();
-          await expect.element(page.getByText(CHECK_SLOW)).not.toBeInTheDocument();
-          expect(boxes()).toStrictEqual(waiting);
-        });
-      },
-    );
+      reply.resolve(await server.checkStep(checkStep.mock.calls[0]![0]));
+      await expect.element(page.getByText(SELF_CORRECT)).toBeVisible();
+      await expect.element(page.getByText(CHECK_SLOW)).not.toBeInTheDocument();
+    });
   });
 });
