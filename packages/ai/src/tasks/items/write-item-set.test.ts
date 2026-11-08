@@ -72,6 +72,26 @@ describe(writeItemSet, () => {
     expect(userPrompt).toContain("OPTION_COUNT: 5");
     expect(userPrompt).toContain("USED_TITLES: A biblioteca de domingo | O rio da cidade");
   });
+
+  it("writes a language exam's set in its language and where it is spoken", async () => {
+    const { userPrompt } = await writeItemSet({
+      examFormat: { name: "CELI 2", style: "Comprensione della lettura" },
+      format: "multipleChoice",
+      language: "pt",
+      questionCount: 3,
+      skills: SKILLS,
+      targetLanguage: "it",
+    });
+
+    expect(withItemRules).toHaveBeenCalledWith(
+      "# Set",
+      expect.objectContaining({ languageGoal: true }),
+    );
+
+    expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
+    expect(userPrompt).toContain("- Place: Italy");
+    expect(userPrompt).not.toMatch(/Brazil|Register/u);
+  });
 });
 
 describe(toSetItem, () => {

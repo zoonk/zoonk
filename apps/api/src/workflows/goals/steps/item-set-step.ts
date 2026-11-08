@@ -45,6 +45,7 @@ export async function prepareItemSetStep({
       level: skill.level ?? "intermediate",
       name: skill.name,
     })),
+    targetLanguage: first.targetLanguage,
     usedTitles,
   });
 
