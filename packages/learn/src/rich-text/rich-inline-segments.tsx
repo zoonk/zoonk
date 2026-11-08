@@ -114,6 +114,7 @@ function MarkedRun({
   );
 }
 
+/** One element, so a flex parent wraps the text as one line instead of laying out each styled word. */
 export function RichInlineSegments({
   markStyle = "highlight",
   segments,
@@ -121,13 +122,17 @@ export function RichInlineSegments({
   markStyle?: RichMarkStyle;
   segments: RichInlineSegment[];
 }) {
-  return toRuns(segments).map((run) =>
-    run.marked ? (
-      <MarkedRun key={`mark-${run.start}`} markStyle={markStyle}>
-        <SegmentViews segments={run.segments} start={run.start} />
-      </MarkedRun>
-    ) : (
-      <SegmentViews key={`run-${run.start}`} segments={run.segments} start={run.start} />
-    ),
+  return (
+    <span>
+      {toRuns(segments).map((run) =>
+        run.marked ? (
+          <MarkedRun key={`mark-${run.start}`} markStyle={markStyle}>
+            <SegmentViews segments={run.segments} start={run.start} />
+          </MarkedRun>
+        ) : (
+          <SegmentViews key={`run-${run.start}`} segments={run.segments} start={run.start} />
+        ),
+      )}
+    </span>
   );
 }

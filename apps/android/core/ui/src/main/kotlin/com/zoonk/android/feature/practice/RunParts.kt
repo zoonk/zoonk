@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -128,9 +129,10 @@ private fun timeMachineText(
 }
 
 /**
- * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives, then [content], the numbers and the day's moment. Where the screen
- * splits ([ResultPages]) all of it takes the page before the split, and the way on the page after.
+ * A run's result in place of its questions: "Saving your progress" holds the title's place while
+ * [saving], since only the server says it's done, then the title and [content], the numbers and the
+ * day's moment. Where the screen splits ([ResultPages]) all of it takes the page before the split,
+ * and the way on the page after.
  */
 @Composable
 private fun RunDone(
@@ -145,27 +147,18 @@ private fun RunDone(
         withMoment = !saving,
         columnModifier = Modifier.taskColumn(),
         done = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                detail?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = if (saving) stringResource(R.string.player_saving_progress) else title,
+                    modifier = Modifier.semantics { heading() },
+                    color = if (saving) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                detail?.takeUnless { saving }?.let {
+                    Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
                 }
             }
-            if (saving) {
-                Text(
-                    text = stringResource(R.string.player_saving_progress),
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            } else {
-                content()
-            }
+            if (!saving) content()
         },
         next = {},
     )

@@ -9294,6 +9294,65 @@
         }
       }
     },
+    "Saving your progress…" : {
+      "comment" : "In place of a lesson's end title until the lesson is saved",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir speichern deinen Fortschritt…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando tu progreso…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement de ta progression…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo salvando i tuoi progressi…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習の進捗を保存しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진도를 저장하고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisujemy twoje postępy…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvando seu progresso…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlerlemeni kaydediyoruz…"
+          }
+        }
+      }
+    },
     "Say it instead" : {
       "comment" : "Tries the microphone again",
       "localizations" : {
@@ -11359,6 +11418,65 @@
         }
       }
     },
+    "That didn't go through. Your answers are kept." : {
+      "comment" : "Under the title of a finished lesson whose save failed, above Try again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das hat nicht geklappt. Deine Antworten bleiben erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo guardar. Conservamos tus respuestas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça n’a pas marché. Tes réponses sont conservées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’invio non è riuscito. Le tue risposte sono al sicuro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送信できませんでした。回答はそのまま残っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전송하지 못했어요. 답은 그대로 남아 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się przesłać odpowiedzi. Nic nie przepadło."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu certo. Suas respostas foram mantidas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gönderilemedi. Cevapların saklanıyor."
+          }
+        }
+      }
+    },
     "That's a lot of learning today" : {
       "comment" : "A Plus learner reached the day's limit",
       "localizations" : {
@@ -12948,65 +13066,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu dersi açamadık"
-          }
-        }
-      }
-    },
-    "We couldn't save this lesson. Try again in a moment. Nothing you did was lost." : {
-      "comment" : "Saving a finished lesson failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten diese Lektion nicht speichern. Versuch es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos guardar esta lección. Inténtalo de nuevo en un momento. No se perdió nada de lo que hiciste."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous n’avons pas pu enregistrer cette leçon. Réessaie dans un instant. Rien de ce que tu as fait n’a été perdu."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a salvare questa lezione. Riprova tra poco. Non hai perso nulla di quello che hai fatto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このレッスンを保存できませんでした。少し待ってからもう一度試してください。ここまでの内容はすべて残っています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 레슨을 저장하지 못했어요. 잠시 후 다시 시도해 보세요. 학습한 내용은 모두 그대로 남아 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało nam się zapisać tej lekcji. Spróbuj ponownie za chwilę. Nic nie przepadło."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos salvar esta aula. Tente de novo em instantes. Nada do que você fez foi perdido."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu dersi kaydedemedik. Birazdan tekrar dene. Yaptıkların kaybolmadı."
           }
         }
       }
@@ -14718,6 +14777,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dersin hazır. İstediğin zaman başlayabilirsin."
+          }
+        }
+      }
+    },
+    "Your lesson isn't saved yet" : {
+      "comment" : "Title at a lesson's end when saving it failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lektion ist noch nicht gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu lección aún no se guardó"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta leçon n’est pas encore enregistrée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua lezione non è ancora stata salvata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンはまだ保存されていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨이 아직 저장되지 않았어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcja nie została jeszcze zapisana"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua aula ainda não foi salva"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersin henüz kaydedilmedi"
           }
         }
       }

@@ -1,7 +1,7 @@
 "use client";
 
 import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
-import { type Dispatch, type RefObject, useCallback, useEffect } from "react";
+import { type Dispatch, type RefObject, useCallback } from "react";
 import { fromLocalGrade } from "./_utils/lesson-results";
 import {
   type UnsentAnswer,
@@ -15,6 +15,7 @@ import {
   type LessonPlayerLesson,
   type LessonRunAnswers,
 } from "./lesson-player-types";
+import { useWhenBack } from "./use-when-back";
 
 export type StartedRun = { learnerId: string; runId: string };
 
@@ -230,21 +231,7 @@ export function useHeldAnswers({
     return resendHeld();
   }, [ensureRun, holdKept, resendHeld]);
 
-  useEffect(() => {
-    const resendWhenBack = () => {
-      if (document.visibilityState === "visible") {
-        void resendHeld();
-      }
-    };
-
-    globalThis.addEventListener("online", resendWhenBack);
-    document.addEventListener("visibilitychange", resendWhenBack);
-
-    return () => {
-      globalThis.removeEventListener("online", resendWhenBack);
-      document.removeEventListener("visibilitychange", resendWhenBack);
-    };
-  }, [resendHeld]);
+  useWhenBack(() => void resendHeld());
 
   return { hold, reopen, resendHeld, resendKept };
 }

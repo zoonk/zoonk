@@ -96,6 +96,7 @@
   "player_lesson_complete": "36d2a70d7cfd4713bcbb94f0dd610c91f8e7f97e6c9069ac6e628758795fa235",
   "player_lesson_map": "41762a67a134a47ddcd4678faa9bae81cfd325108c0d79ea7addb91823065210",
   "player_lesson_map_nested": "2c050a8255cde596287017ac1405380c2b7d1806b2ceea04739716b8937b5e25",
+  "player_lesson_not_saved": "8886fab3bdc652708e96ed3be0d4ce790b7f130797df691b33dad1415880433d",
   "player_lesson_of": "1062104bd23d7e1820e0e9ab8e5196b8f29622506e859c4b90a9fa2d35c421c5",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
   "player_microphone_blocked": "6347cfd9522a5d5fb670890f070a888f91d6ad42f493d1190575411ddb09c64f",
@@ -406,6 +407,7 @@
     <string name="player_already_knew">もともと知っていた内容でした</string>
     <string name="player_saving_progress">学習の進捗を保存しています…</string>
     <string name="player_save_failed">送信できませんでした。回答はそのまま残っています。</string>
+    <string name="player_lesson_not_saved">レッスンはまだ保存されていません</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$sに復習</string>
     <string name="player_next_lesson">次のレッスン</string>

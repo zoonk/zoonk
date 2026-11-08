@@ -102,14 +102,14 @@ internal fun ArrangeWordsView(
         placed = next
         val words = next.map(PlacedWord::word)
         when {
-            correctWords.isNotEmpty() && words.size == correctWords.size -> onAnswer(kind.answer(words))
+            words.isNotEmpty() -> onAnswer(kind.answer(words))
             answer != null -> onAnswer(null)
         }
     }
 
     // After the app was closed in the background, the saved words come back but the player's answer doesn't.
     LaunchedEffect(Unit) {
-        if (answer == null && !checked && correctWords.isNotEmpty() && placed.size == correctWords.size) {
+        if (answer == null && !checked && placed.isNotEmpty()) {
             onAnswer(kind.answer(placed.map(PlacedWord::word)))
         }
     }
@@ -139,7 +139,6 @@ internal fun ArrangeWordsView(
                 language = language,
                 focus = focus,
                 onPlace = { index ->
-                    if (placed.size >= correctWords.size) return@WordBank
                     val option = bank[index]
                     option.audioUrl?.let { sounds?.speak(listOf(SpokenText(null, recording = it))) }
                     val next = placed + PlacedWord(option.word, option.romanization, index)

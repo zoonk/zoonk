@@ -96,6 +96,7 @@
   "player_lesson_complete": "e9d16a9667842ea37376ed0d6fb87f21d3a712eae0d2ac07ee1f7b5e47a925cc",
   "player_lesson_map": "cb555e387a836416318be3cef089401e45d62d1d7c8d61badeeed99f74f100a5",
   "player_lesson_map_nested": "dfea8e881cd56d240f27a1fb336e8e9dcd03fcf8f1e5906d75a6caa1431bec48",
+  "player_lesson_not_saved": "a00ab959e150512e36511cfe0341bfcea51abbf7a332eae7fec12c5f852242f1",
   "player_lesson_of": "675dea7a5f48105d339971bd08ece4401450102b1fac625036230ac3b7772716",
   "player_listen": "2bfe217970c7e15766874c21b06d7011f8c4d85e65f9d934e11cf2056455a0fc",
   "player_microphone_blocked": "a77ce5515d31089725fd4cfdf2209fefca4a48fa4c52e96017a6f95ed8312ba5",
@@ -418,6 +419,7 @@
     <string name="player_already_knew">To już znasz</string>
     <string name="player_saving_progress">Zapisujemy twoje postępy…</string>
     <string name="player_save_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
+    <string name="player_lesson_not_saved">Lekcja nie została jeszcze zapisana</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Powtórka: %1$s</string>
     <string name="player_next_lesson">Przejdź do kolejnej lekcji</string>

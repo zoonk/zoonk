@@ -206,7 +206,7 @@ export function QuestionBlock({
         total={run.total}
       />
 
-      <BlockBody kind={detail.block.kind} phase={phase}>
+      <BlockBody phase={phase}>
         <FinishReadyBody phase={phase} />
         {isNetScoredQuestion({ detail, question }) && (
           <SwipeScore detail={detail} answers={run.state.answers} />

@@ -4,6 +4,7 @@ import { generateText, streamText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import beyondLessonPrompt from "./lesson-question-beyond.prompt.md";
 import chapterPrompt from "./lesson-question-chapter.prompt.md";
@@ -14,6 +15,7 @@ import {
 import lessonPrompt from "./lesson-question-lesson.prompt.md";
 import mockPrompt from "./lesson-question-mock.prompt.md";
 import systemPrompt from "./lesson-question.prompt.md";
+import screenRulesPrompt from "./lesson-screen-rules.prompt.md";
 import { getLessonScreenVariants } from "./lesson-screen-variants";
 
 export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
@@ -29,12 +31,14 @@ export type LessonQuestionPriorTurn = { answer: string; question: string };
 
 type LessonTutorContextSnapshot = Exclude<LessonQuestionContextSnapshot, PlanScopeContext>;
 
+const lessonScopePrompt = `${lessonPrompt}\n${screenRulesPrompt}`;
+
 const SCOPE_PROMPTS = {
-  answer: lessonPrompt,
+  answer: lessonScopePrompt,
   chapter: `${beyondLessonPrompt}\n${chapterPrompt}`,
-  lesson: lessonPrompt,
+  lesson: lessonScopePrompt,
   mock: `${beyondLessonPrompt}\n${mockPrompt}`,
-  step: lessonPrompt,
+  step: lessonScopePrompt,
 } satisfies Record<LessonTutorContextSnapshot["scope"]["kind"], string>;
 
 function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
@@ -43,7 +47,10 @@ function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
     variants: getLessonScreenVariants(contextSnapshot),
   });
 
-  return `${systemPrompt}\n${scopePrompt}`;
+  const learnerLanguage =
+    "language" in contextSnapshot ? contextSnapshot.language : contextSnapshot.course.language;
+
+  return fillPromptLanguages({ learnerLanguage, template: `${systemPrompt}\n${scopePrompt}` });
 }
 
 export type LessonQuestionAnswerCompletion = {

@@ -4,13 +4,12 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { formatCast } from "../_utils/cast";
-import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { type ItemExamFormat } from "./generate-items";
 import { withItemRules } from "./item-rules";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem, type ItemFormat } from "./item-schemas";
+import { formatItemSetting } from "./item-setting";
 import trueFalseBalance from "./placement-items-true-false.prompt.md";
 import typedAnswers from "./placement-items-typed-answers.prompt.md";
 import typedCheck from "./placement-items-typed-check.prompt.md";
@@ -109,16 +108,11 @@ function buildUserPrompt(params: PlacementItemsParams): string {
       ? `\n    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}`
       : "";
 
-  const targetLanguageLine = targetLanguage
-    ? `\n    TARGET_LANGUAGE: ${getPromptLanguageName({ language: targetLanguage, userLanguage: language })}`
-    : "";
-
   return `
     QUICK_FORMAT: ${quickFormat}
     QUICK_COUNT: ${params.quickCount}${typedLine}${optionCount}
-    LANGUAGE: ${getPromptLanguageName({ language })}${targetLanguageLine}
-${formatLocalContext(language)}
-    ${formatCast({ language, seed: params.skills.map((skill) => skill.name).join(":") })}
+    LANGUAGE: ${getPromptLanguageName({ language })}
+${formatItemSetting({ language, seed: params.skills.map((skill) => skill.name).join(":"), targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}
     SKILLS:

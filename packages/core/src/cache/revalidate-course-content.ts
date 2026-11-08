@@ -49,8 +49,6 @@ export async function notifyCourseContent(tags: readonly string[]): Promise<void
     throw new Error("APP_CACHE_SECRET is missing");
   }
 
-  // Main's Vercel Bot Protection answers server calls with a 429 challenge; a firewall bypass rule
-  // matches this exact path, the POST method and the secret header, so changing any of them needs that rule updated.
   const response = await fetch(new URL("/api/cache/tags", MAIN_URL), {
     body: JSON.stringify({ tags }),
     cache: "no-store",

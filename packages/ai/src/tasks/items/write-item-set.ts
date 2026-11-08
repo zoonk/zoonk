@@ -4,14 +4,13 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { formatCast } from "../_utils/cast";
-import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 import { type ItemExamFormat } from "./generate-items";
 import { withItemRules } from "./item-rules";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
+import { formatItemSetting } from "./item-setting";
 import { formatPastQuestions } from "./past-question-lines";
 import taskPrompt from "./write-item-set.prompt.md";
 
@@ -34,6 +33,8 @@ export type WriteItemSetParams = {
   format: ItemSetFormat;
   questionCount: number;
   language: string;
+  /** A language exam's sets are written in it. */
+  targetLanguage?: string | null;
   examFormat?: ItemExamFormat | null;
   usedTitles?: readonly string[];
   model?: string;
@@ -110,8 +111,7 @@ function buildUserPrompt(params: WriteItemSetParams): string {
     FORMAT: ${format}
     QUESTION_COUNT: ${questionCount}${optionCount}
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatLocalContext(language)}
-    ${formatCast({ language, seed: skills.map((skill) => skill.name).join(":") })}
+${formatItemSetting({ language, seed: skills.map((skill) => skill.name).join(":"), targetLanguage: params.targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}${usedTitles}
     SKILLS:
@@ -137,7 +137,7 @@ export async function writeItemSet(params: WriteItemSetParams) {
   const systemPrompt = withItemRules(taskPrompt, {
     field: false,
     formats: [format],
-    languageGoal: false,
+    languageGoal: Boolean(params.targetLanguage),
     pictures: false,
   });
 
