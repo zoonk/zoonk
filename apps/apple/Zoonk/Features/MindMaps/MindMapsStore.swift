@@ -62,10 +62,15 @@ struct GoalMindMaps: Decodable, Equatable, Sendable {
   let chapters: [ChapterMindMap]
 }
 
-/// Main's `MindMapLimit`, and whether what ran out was the lessons the map writes first.
+/// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first, or the day's
+/// AI spend.
 struct MindMapLimit: Equatable, Sendable {
+  enum Resource: Hashable, Sendable {
+    case aiSpend, lessons, mindMap
+  }
+
   let limit: HelpLimit
-  let isLessons: Bool
+  let resource: Resource
 }
 
 /// What a tap on Create or Try again got that the map's own status doesn't say.
@@ -85,7 +90,6 @@ enum MindMapRequest: Equatable, Sendable {
 @Observable
 final class MindMapsStore {
   private(set) var requesting: Set<String> = []
-  @ObservationIgnored private var following: Set<String> = []
 
   @ObservationIgnored private let api: any MindMapsAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -111,7 +115,7 @@ final class MindMapsStore {
 
     let api = api
     let list: Resource<GoalMindMaps> = cache.resource(
-      audience: .signedIn, domains: [.goals, .userProgress],
+      audience: .signedIn, domains: [.goals, .userProgress, .userSubscription],
       isEmpty: \.chapters.isEmpty
     ) { session in
       guard let session else {
@@ -134,7 +138,7 @@ final class MindMapsStore {
 
     let api = api
     let map: Resource<ChapterMindMap> = cache.resource(
-      audience: .signedIn, domains: [.goals, .userProgress]
+      audience: .signedIn, domains: [.goals, .userProgress, .userSubscription]
     ) { session in
       guard let session else {
         return nil
@@ -163,8 +167,7 @@ final class MindMapsStore {
 
     switch started {
     case .done(.read):
-      await refresh(goalId: goalId, chapterId: chapterId)
-      return nil
+      return await refresh(goalId: goalId, chapterId: chapterId) ? nil : .unreachable
     case .done(.refused(let limit)):
       return .refused(limit)
     case .failed:
@@ -175,67 +178,86 @@ final class MindMapsStore {
   }
 
   /// Only reads, never asks for the map again, and never gives up on a run on its own: writing the
-  /// lessons can take minutes, and the server fails a run that stops reporting. Leaving the screen
-  /// or signing out ends it sooner, and three reads in a row that don't reach the server end it as
-  /// `unreachable`. `status` is the one the row shows: once the lessons are written and the drawing
-  /// starts, the row reads it again to say so.
-  func follow(
-    goalId: String, chapterId: String, from status: ChapterMindMap.Status
-  ) async -> MindMapRequestFailure? {
-    guard !following.contains(chapterId), let session = cache.session.authenticatedSession else {
+  /// lessons can take minutes, and the server fails a run that stops reporting. It ends once what's
+  /// shown of the map says where the run stands and the run is done. Leaving the screen or signing
+  /// out ends it sooner, and three beats in a row whose reads don't come through end it as
+  /// `unreachable`.
+  func follow(goalId: String, chapterId: String) async -> MindMapRequestFailure? {
+    guard let session = cache.session.authenticatedSession else {
       return nil
     }
 
-    following.insert(chapterId)
-    defer { following.remove(chapterId) }
-
-    var shown = status
     var missed = 0
 
     while cache.session.authenticatedSession == session {
+      var beat = drawingPoll
+
       do {
         let read = try await api.status(
           token: session.bearerToken, goalId: goalId, chapterId: chapterId)
-        missed = 0
+        var isRead = shows(read, goalId: goalId, chapterId: chapterId)
 
-        guard read.isOnItsWay else {
-          break
+        if !isRead {
+          isRead = await refresh(goalId: goalId, chapterId: chapterId)
         }
 
-        if read != shown {
-          shown = read
-          await refresh(goalId: goalId, chapterId: chapterId)
+        if isRead {
+          missed = 0
+
+          if !read.isOnItsWay, shows(read, goalId: goalId, chapterId: chapterId) {
+            return nil
+          }
+
+          beat = read == .writingLessons ? writingPoll : drawingPoll
+        } else {
+          missed += 1
         }
       } catch APIError.network, APIError.unavailable {
         missed += 1
-
-        if missed == 3 {
-          return Task.isCancelled ? nil : .unreachable
-        }
       } catch {
-        // Cancelled, or an answer reading again won't change: the reads say where it stands.
-        break
+        // Cancelled, or an answer reading again won't change.
+        return nil
+      }
+
+      if missed == 3 {
+        return Task.isCancelled ? nil : .unreachable
       }
 
       do {
-        try await Task.sleep(for: shown == .writingLessons ? writingPoll : drawingPoll)
+        try await Task.sleep(for: beat)
       } catch {
         return nil
       }
     }
 
-    guard !Task.isCancelled, cache.session.authenticatedSession == session else {
-      return nil
-    }
-
-    await refresh(goalId: goalId, chapterId: chapterId)
     return nil
   }
 
-  private func refresh(goalId: String, chapterId: String) async {
-    async let list: Void = list(goalId: goalId).refresh()
-    async let map: Void = map(goalId: goalId, chapterId: chapterId).refresh()
-    _ = await (list, map)
+  /// Whether every copy of the map read so far, in the list and on its own, says `status`.
+  private func shows(_ status: ChapterMindMap.Status, goalId: String, chapterId: String) -> Bool {
+    let listed = lists[goalId]?.value?.chapters.first { $0.chapterId == chapterId }
+    let map = maps["\(goalId):\(chapterId)"]?.value
+
+    return [listed, map].allSatisfy { $0 == nil || $0?.status == status }
+  }
+
+  /// Reads again only the copies of the map already read; one not read yet loads fresh when shown.
+  /// False when a read didn't come through.
+  private func refresh(goalId: String, chapterId: String) async -> Bool {
+    async let list = Self.reread(lists[goalId])
+    async let map = Self.reread(maps["\(goalId):\(chapterId)"])
+    let (listed, read) = await (list, map)
+    return listed && read
+  }
+
+  private static func reread<Value>(_ resource: Resource<Value>?) async -> Bool {
+    guard let resource, resource.value != nil else {
+      return true
+    }
+
+    let revision = resource.revision
+    await resource.refresh()
+    return resource.revision != revision
   }
 }
 
@@ -316,9 +338,13 @@ struct MindMapsAPI: MindMapsAPIClient {
     let details = refusal.details?.value as? [String: (any Sendable)?]
     let resource = ((details?["limit"] ?? nil) as? [String: (any Sendable)?])?["resource"] ?? nil
 
-    return .refused(
-      MindMapLimit(
-        limit: limit,
-        isLessons: ["lessonStart", "generatedLessons"].contains(resource as? String)))
+    let ranOut: MindMapLimit.Resource =
+      switch resource as? String {
+      case "aiSpend": .aiSpend
+      case "lessonStart", "generatedLessons": .lessons
+      default: .mindMap
+      }
+
+    return .refused(MindMapLimit(limit: limit, resource: ranOut))
   }
 }

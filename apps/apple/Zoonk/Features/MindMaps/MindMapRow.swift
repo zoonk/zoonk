@@ -53,7 +53,7 @@ struct MindMapRow: View {
     // until its status changes or the connection drops.
     .task(id: map.status.isOnItsWay && failure == nil) {
       if map.status.isOnItsWay, failure == nil {
-        failure = await store.follow(goalId: goalId, chapterId: map.chapterId, from: map.status)
+        failure = await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
   }
@@ -344,8 +344,13 @@ extension MindMapSlot where Mark == EmptyView {
 }
 
 extension MindMapLimit {
-  /// Main's `MindMapLimitNotice` words: what ran out and when it comes back.
-  var message: String {
+  /// Main's `MindMapLimitNotice` words: what ran out and when it comes back. The day's AI spend
+  /// keeps the help notice's own words.
+  var message: String? {
+    guard resource != .aiSpend else {
+      return nil
+    }
+
     switch limit {
     case .slowDown:
       return String(
@@ -356,7 +361,7 @@ extension MindMapLimit {
         localized: "Create your free account to continue.", table: "MindMaps",
         comment: "A guest must create an account to make a map")
     case .limitReached(let period, let tier):
-      return isLessons ? Self.lessons(period, tier) : Self.maps(period, tier)
+      return resource == .lessons ? Self.lessons(period, tier) : Self.maps(period, tier)
     }
   }
 

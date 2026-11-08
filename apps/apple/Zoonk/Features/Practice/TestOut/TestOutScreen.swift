@@ -135,7 +135,8 @@ struct TestOutScreen: View {
         ],
         day: DayResult(result))
 
-      if let chapter = result.finishedChapter?.value1 {
+      // Undo puts the chapter's lessons back, so it isn't finished anymore.
+      if let chapter = result.finishedChapter?.value1, undo != .done {
         FinishedChapterSection(chapter: chapter)
       }
     } response: {

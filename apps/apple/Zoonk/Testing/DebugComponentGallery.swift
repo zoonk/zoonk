@@ -481,14 +481,20 @@
           goalId: "debug", map: Self.map(.plusRequired, id: "library-plus"), place: .library)
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
-        HelpLimitNotice(
-          limit: .limitReached(period: .month, tier: .free),
-          message: MindMapLimit(limit: .limitReached(period: .month, tier: .free), isLessons: true)
+        ForEach(Self.refusals, id: \.self) { resource in
+          HelpLimitNotice(
+            limit: .limitReached(period: .day, tier: .free),
+            message: MindMapLimit(
+              limit: .limitReached(period: .day, tier: .free), resource: resource
+            )
             .message
-        )
-        .controlSize(.small)
+          )
+          .controlSize(.small)
+        }
       }
     }
+
+    private static let refusals: [MindMapLimit.Resource] = [.mindMap, .lessons, .aiSpend]
 
     private static let chapterStates = [
       map(.available, id: "available"), map(.available, id: "lessons", lessons: 3),
