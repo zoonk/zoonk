@@ -60,7 +60,11 @@ export function useStepGrading({
   );
 
   const gradeOnServer = useCallback(
-    async ({ answer, step }: CheckContext) => {
+    async ({
+      answer,
+      answerText: localAnswerText,
+      step,
+    }: CheckContext & { answerText?: string | null }) => {
       const durationMs = getAnswerDurationMs(state.stepStartedAt);
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
@@ -86,7 +90,7 @@ export function useStepGrading({
       );
 
       if (outcome?.status === "checked") {
-        const answerText = "text" in answer ? answer.text : "";
+        const answerText = localAnswerText ?? ("text" in answer ? answer.text : "");
 
         dispatch({
           counts: outcome.result.checked,

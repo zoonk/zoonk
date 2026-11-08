@@ -149,7 +149,7 @@ export function useLessonPlayerActions({
     const graded = gradeStepAnswer({ answer, language, step });
 
     if (isServerGradedAnswer({ answer, isCorrect: graded?.isCorrect, step })) {
-      void gradeOnServer({ answer, step });
+      void gradeOnServer({ answer, answerText: graded?.answerText, step });
       return;
     }
 

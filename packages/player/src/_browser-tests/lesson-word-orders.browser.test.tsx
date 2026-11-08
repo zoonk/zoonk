@@ -2,7 +2,10 @@ import { serializeExerciseSteps } from "@zoonk/core/player/contracts/prepare-les
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectCount } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { stubTutorApi } from "../_test-utils/tutor-api";
+import { buildTutor } from "../_test-utils/tutor-config";
 import {
   type LessonPlayerAdapters,
   type PlayableLanguageStep,
@@ -231,6 +234,35 @@ describe("pending word orders", () => {
         .toBeVisible();
     },
   );
+
+  it("keeps the learner's picked words in the tutor quote after a server-checked fallback miss", async () => {
+    await atViewport({ height: 812, width: 375 }, async () => {
+      const localStep = sentenceStep("listening", true);
+      const step = { ...spokenAnswerStep(), id: localStep.id, listening: localStep.exercise };
+      const lesson = buildLesson([step], { language: "pt", targetLanguage: "it" });
+      stubTutorApi({ lesson });
+
+      renderLessonPlayer({
+        adapters: buildAdapters(lesson, { gradeSpokenAnswer: vi.fn() }),
+        lesson,
+        tutor: buildTutor(),
+      });
+
+      await page.getByRole("button", { name: "I can't talk now" }).click();
+
+      const words = ["ônibus", "o", "Quando", "chovia,", "chegou."];
+      await placeWords(words);
+      await check.click();
+      await expect.element(feedback.getByText("Not quite")).toBeVisible();
+      await page.getByRole("button", { name: "Ask Pip" }).click();
+
+      await expect
+        .element(
+          page.getByRole("dialog").getByText(`You picked ${words.join(" ")} on`, { exact: false }),
+        )
+        .toBeVisible();
+    });
+  });
 
   it.each([true, false])(
     "keeps a locally right answer instant (pending: %s)",
