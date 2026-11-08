@@ -63,7 +63,7 @@ function units({
   goal = GOAL,
   heldKeys = [],
   items = TWO_LEVELS.items,
-  leftOut = [],
+  notHeld = [],
   levelCourseId = COURSE,
   missing = [],
   phases = [{}, {}],
@@ -73,8 +73,7 @@ function units({
   goal?: Parameters<typeof listCertificateUnits>[0]["goal"];
   heldKeys?: string[];
   items?: CertifiableItem[];
-  /** Written lessons the plan doesn't hold. */
-  leftOut?: CountedLesson[];
+  notHeld?: CountedLesson[];
   levelCourseId?: string | null;
   missing?: UnwrittenLessons[];
   phases?: { challengeLeftOut?: boolean }[];
@@ -94,7 +93,7 @@ function units({
     levelCourseId,
     phases,
     planCreatedAt: PLAN_CREATED_AT,
-    scope: { graphSkillIds: [], lessons: [...held, ...leftOut], unwritten: missing },
+    scope: { graphSkillIds: [], lessons: [...held, ...notHeld], unwritten: missing },
     studiesPastTarget,
   });
 }
@@ -155,12 +154,12 @@ describe(listCertificateUnits, () => {
       entry.phase === 1 && entry.kind === "lesson" ? { ...entry, skillId: "waves" } : entry,
     );
 
-    const leftOut = Array.from({ length: 3 }, () => ({
+    const notHeld = Array.from({ length: 3 }, () => ({
       lessonId: randomUUID(),
       skillIds: ["waves"],
     }));
 
-    expect(finished(units({ items, leftOut }))).toStrictEqual(["course:overview", "goal"]);
+    expect(finished(units({ items, notHeld }))).toStrictEqual(["course:overview", "goal"]);
 
     expect(finished(units({ items, missing: [{ lessons: 3, skillId: "waves" }] }))).toStrictEqual([
       "course:overview",

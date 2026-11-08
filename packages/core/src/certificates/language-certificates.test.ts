@@ -835,7 +835,6 @@ async function listLevelKeys(userId: string) {
   return certificates.map((row) => row.key);
 }
 
-/** Whether the plan earned its A1 level, or for a course goal, its course certificate. */
 async function isCertified({ goal, user }: ItalianPlan, course: boolean) {
   if (!course) {
     const keys = await listLevelKeys(user.id);

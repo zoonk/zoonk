@@ -27,8 +27,6 @@ export type PlanLevel = {
 
 type Placement = { level: CefrLevel; tagged: boolean };
 
-type LevelSkills = ReadonlyMap<string, LevelSkill>;
-
 /** An untagged skill counts at its band's lower level, so the level never reads above the truth. */
 function placeSkill(skill: LevelSkill | undefined): Placement | null {
   if (skill?.cefrLevel) {
@@ -51,7 +49,7 @@ function placeLesson({
   skills,
 }: {
   skillIds: readonly string[];
-  skills: LevelSkills;
+  skills: ReadonlyMap<string, LevelSkill>;
 }): Placement | null {
   const placements = skillIds.flatMap((skillId) => placeSkill(skills.get(skillId)) ?? []);
 
@@ -66,7 +64,13 @@ function placeLesson({
  * Where each item counts: at its lesson's level when the plan counts its lesson, otherwise at its
  * skill's. The size, the studied count, a level's blockers and its label all read this one map.
  */
-function placeItems({ scope, skills }: { scope: Pick<PlanScope, "lessons">; skills: LevelSkills }) {
+function placeItems({
+  scope,
+  skills,
+}: {
+  scope: Pick<PlanScope, "lessons">;
+  skills: ReadonlyMap<string, LevelSkill>;
+}) {
   const lessons = new Map(
     scope.lessons.map((lesson) => [
       lesson.lessonId,
@@ -129,7 +133,7 @@ export function groupLevelItems({
 }: {
   items: readonly LevelItem[];
   scope: Pick<PlanScope, "lessons">;
-  skills: LevelSkills;
+  skills: ReadonlyMap<string, LevelSkill>;
 }): LevelItems[] {
   return groupByLevel({ items, place: placeItems({ scope, skills }).place });
 }
@@ -148,7 +152,7 @@ export function listPlanLevels({
   heldBackLessonIds?: ReadonlySet<string>;
   items: readonly LevelItem[];
   scope: PlanScope;
-  skills: LevelSkills;
+  skills: ReadonlyMap<string, LevelSkill>;
 }): PlanLevel[] {
   const { lessons, place } = placeItems({ scope, skills });
   const atLevel = groupByLevel({ items, place });

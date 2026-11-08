@@ -49,7 +49,7 @@ function unwritten(skillId: string, count: number): UnwrittenLessons {
   return { lessons: count, skillId };
 }
 
-/** The plan counts each item's lesson at the item's skill unless `lessons` says what it teaches. */
+/** The plan counts each item's lesson at the item's skill unless `taught` says what it teaches. */
 function levels({
   heldBackLessonIds,
   items,
