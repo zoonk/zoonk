@@ -12,13 +12,19 @@ const COPYRIGHT_YEAR = String(new Date().getFullYear());
 const FOOTER_LINK_CLASS =
   "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px]";
 
-export async function PublicFooter({ pathname }: { pathname?: string }) {
+export async function PublicFooter({
+  exploreLinks = true,
+  pathname,
+}: {
+  exploreLinks?: boolean;
+  pathname?: string;
+}) {
   const t = await getExtracted();
 
   return (
     <footer className="border-t" id={PUBLIC_FOOTER_ID}>
       <div className={PUBLIC_CONTAINER_CLASS}>
-        <FooterExploreLinks />
+        {exploreLinks && <FooterExploreLinks />}
 
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-7 gap-y-3 py-8 text-sm">
           <ZoonkLogo className="text-foreground size-6" />
