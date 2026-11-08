@@ -34,6 +34,7 @@ import { findSubjectQuestionsTask } from "./find-subject-questions/task";
 import { findTargetCutoffTask } from "./find-target-cutoff/task";
 import { findTopicFrequencyTask } from "./find-topic-frequency/task";
 import { generateItemsTask } from "./generate-items/task";
+import { goalOpeningTask } from "./goal-opening/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
 import { goalTutorSearchTask } from "./goal-tutor-search/task";
 import { goalTutorTask } from "./goal-tutor/task";
@@ -143,6 +144,7 @@ export const TASKS: readonly RegisteredTask[] = [
   challengeCaseTask,
   questionGeneralityTask,
   skillGraphTask,
+  goalOpeningTask,
   courseOutlineTask,
   courseDetailsTask,
   courseIconTask,
