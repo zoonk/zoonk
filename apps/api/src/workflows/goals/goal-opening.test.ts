@@ -5,6 +5,7 @@ import {
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { generateGoalOpening } from "@zoonk/ai/tasks/curriculum/goal-opening";
 import { generateWholeSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
+import { findTeachingChapters } from "@zoonk/ai/tasks/curriculum/teaching-chapters";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
@@ -30,6 +31,7 @@ import { getRun, start } from "workflow/api";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
+import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import * as outlineSteps from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
@@ -293,6 +295,99 @@ describe("a learn goal's opening", () => {
       ).resolves.toMatchObject({ cache, status });
     },
   );
+
+  it("finishes outlining the opening's course after lesson 1 is ready", async () => {
+    const { goal } = await newGoal();
+    let release!: () => void;
+
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    const outlines: Promise<unknown>[] = [];
+    let outlining = false;
+
+    vi.mocked(findTeachingChapters).mockImplementation(async ({ skills }) =>
+      taskResult(skills.map(({ key }) => ({ after: 1, chapter: null, key }))),
+    );
+
+    vi.mocked(generateCourseOutline).mockImplementation(async () => {
+      outlining = true;
+      await held;
+      return taskResult(recordedOutline);
+    });
+
+    getStartMock().mockImplementation(async (workflow, args) => {
+      if (workflow === courseOutlineWorkflow) {
+        const run = courseOutlineWorkflow(
+          ...(args as [Parameters<typeof courseOutlineWorkflow>[0]]),
+        );
+
+        outlines.push(run);
+        return { returnValue: run, runId: "course-outline-run" } as never;
+      }
+
+      const [input] = args as [{ lessonId?: string }];
+
+      return {
+        returnValue: Promise.resolve(
+          workflow === lessonContentWorkflow ? { lessonId: input.lessonId, status: "ready" } : null,
+        ),
+        runId: "started-run",
+      } as never;
+    });
+
+    const run = goalContentWorkflow({ goalId: goal.id });
+
+    try {
+      await vi.waitFor(
+        () => {
+          expect(outlining).toBe(true);
+          expect(getStreamedEvents().map(({ step }) => step)).toContain("firstLessonReady");
+        },
+        { timeout: 5000 },
+      );
+    } finally {
+      await prisma.goal.update({
+        data: {
+          details: {
+            answered: [
+              "purpose",
+              "level",
+              "role",
+              "followUps",
+              "targetDate",
+              "buddy",
+              "placement",
+              "schedule",
+            ],
+            level: "basic",
+            placementDeclined: true,
+            purpose: "overview",
+          },
+        },
+        where: { id: goal.id },
+      });
+
+      release();
+      await run;
+      await Promise.all(outlines);
+    }
+
+    const chapterCount = await prisma.courseChapter.count({
+      where: { course: { title: opening.graph.courses[0]?.title } },
+    });
+
+    expect(chapterCount).toBeGreaterThan(1);
+
+    const items = await prisma.planItem.findMany({
+      where: { kind: "lesson", plan: { goalId: goal.id } },
+    });
+
+    expect(items.filter(({ lessonId }) => lessonId !== null).length).toBeGreaterThan(
+      opening.chapter.lessons.length + 1,
+    );
+  });
 
   it("saves the opening chapter before starting the graph", async () => {
     const { goal } = await newGoal();
