@@ -88,6 +88,7 @@ class WaitQuizState internal constructor(
     showingProgress: Boolean,
     visitedQuiz: Boolean = !showingProgress,
     opened: Boolean = false,
+    shown: Boolean = false,
 ) {
     var warmUpId by mutableStateOf(warmUpId)
         internal set
@@ -101,6 +102,8 @@ class WaitQuizState internal constructor(
         private set
     internal var opened by mutableStateOf(opened)
         private set
+    internal var shown by mutableStateOf(shown)
+        private set
     var deck by mutableStateOf<WarmUpDeck?>(null)
         internal set
     var coming by mutableStateOf(false)
@@ -110,7 +113,12 @@ class WaitQuizState internal constructor(
     val canShowQuiz get() = hasQuiz || coming
     val hasNext get() = picked != null && index + 1 < (deck?.cards?.size ?: 0)
 
-    internal fun claimShown(): Boolean = warmUpId?.let { warmUps?.claimShown(it) } ?: false
+    internal fun claimShown(): Boolean {
+        if (shown) return false
+        val id = warmUpId ?: return false
+        shown = true
+        return warmUps?.claimShown(id) ?: false
+    }
 
     fun open() {
         if (opened) return
@@ -179,17 +187,22 @@ fun rememberWaitQuiz(
                         it.visitedQuiz,
                         it.warmUpId.orEmpty(),
                         it.opened,
+                        it.shown,
                     )
                 },
                 restore = {
+                    val id = (it[4] as String).ifEmpty { null }
+                    val shown = it[6] as Boolean
+                    if (shown && id != null) warmUps?.claimShown(id)
                     WaitQuizState(
-                        (it[4] as String).ifEmpty { null },
+                        id,
                         warmUps,
                         it[0] as Int,
                         (it[1] as String).ifEmpty { null },
                         it[2] as Boolean,
                         it[3] as Boolean,
                         it[5] as Boolean,
+                        shown,
                     )
                 },
             )
