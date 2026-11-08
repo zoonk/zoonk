@@ -80,8 +80,7 @@ export async function loadLanguageLessonInputs({
   const unit = lesson.homeChapter;
   const knownWords = await findKnownWords({ chapterId: unit?.id ?? null, lessonId });
 
-  // Only plan skills have levels, and a lesson linked only to its finer skills has its plan skills
-  // on its unit.
+  // Finer skills have no level, so a lesson linked only to them takes its unit's plan skills' levels.
   const lessonLevels = lesson.skills.flatMap(({ skill }) => skill.cefrLevel ?? []);
 
   const levels =
