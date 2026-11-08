@@ -971,12 +971,73 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.steps["check"]?.imagePending, false)
   }
 
-  private func answer(_ state: inout LessonPlayerState, right: Bool) throws {
+  func testAMissTheServerFindsRightLeavesTheMissStreak() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+    state.continueLesson()
+    state.continueLesson()
+    try answer(&state, right: false, attemptId: "check-attempt")
+    state.continueLesson()
+    state.continueLesson()
+    try answer(&state, right: false, attemptId: "second-attempt")
+    XCTAssertEqual(state.struggleOffer?.id, "explanation-2")
+
+    var secondRight = state
+    secondRight.confirm(
+      "second", attemptId: "second-attempt", answer: wrong, verdict: verdict(true))
+    XCTAssertEqual(secondRight.misses, [])
+    XCTAssertNil(secondRight.struggleOffer, "the screen says Correct!")
+
+    var checkRight = state
+    checkRight.confirm("check", attemptId: "check-attempt", answer: wrong, verdict: verdict(true))
+    XCTAssertEqual(
+      checkRight.misses, [.init(stepId: "second", skillId: nil)], "the misses after it stay")
+  }
+
+  func testARightAnswerTheServerFindsWrongJoinsTheMissStreak() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+    state.continueLesson()
+    state.continueLesson()
+    try answer(&state, right: false)
+    state.continueLesson()
+    state.continueLesson()
+    try answer(&state, right: true, attemptId: "second-attempt")
+
+    state.confirm(
+      "second", attemptId: "second-attempt", answer: .check(optionId: "right"),
+      verdict: verdict(false))
+
+    XCTAssertEqual(state.misses, [.init(stepId: "second", skillId: nil)])
+  }
+
+  func testIKnowThisGoesOnWhenTheServerFindsItsOneMissRight() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+    state.continueLesson()
+    state.knowThis()
+    try answer(&state, right: false, attemptId: "check-attempt")
+    XCTAssertEqual(state.quickCheck?.missed, true)
+
+    state.confirm("check", attemptId: "check-attempt", answer: wrong, verdict: verdict(true))
+    XCTAssertEqual(state.quickCheck?.missed, false)
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "second")
+    XCTAssertNotNil(state.quickCheck, "still testing out")
+  }
+
+  private let wrong = LessonAnswer.check(optionId: "wrong")
+
+  private func verdict(_ isCorrect: Bool) -> LessonStepResult {
+    LessonStepResult(isCorrect: isCorrect, answerText: nil, correctAnswer: nil, feedback: nil)
+  }
+
+  private func answer(
+    _ state: inout LessonPlayerState, right: Bool, attemptId: String? = nil
+  ) throws {
     let step = try XCTUnwrap(state.currentStep)
     let optionId = right ? "right" : "wrong"
     state.select(.check(optionId: optionId), for: step.id)
     let grade = try XCTUnwrap(LessonGrading.grade(.check(optionId: optionId), step: step))
-    state.resolve(step.id, result: LessonStepResult(grade))
+    state.resolve(step.id, result: LessonStepResult(grade, attemptId: attemptId))
   }
 
   private func helpLesson() throws -> [LessonStep] {
@@ -1177,7 +1238,13 @@ final class LessonPlayerSavingTests: XCTestCase {
   }
 
   func testAFirstTrySentBackToSelfCorrectThatTheServerCallsRightShowsAsRight() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(fillBlank)])
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(check(id: "check")), try step(fillBlank)])
+    let missed = LessonAnswer.check(optionId: "wrong")
+    state.select(missed, for: "check")
+    let miss = try XCTUnwrap(LessonGrading.grade(missed, step: try XCTUnwrap(state.currentStep)))
+    state.resolve("check", result: LessonStepResult(miss))
+    state.continueLesson()
     let step = try XCTUnwrap(state.currentStep)
     let answer = LessonAnswer.fillBlank(userAnswers: ["est"])
     state.select(answer, for: step.id)
@@ -1190,10 +1257,11 @@ final class LessonPlayerSavingTests: XCTestCase {
       verdict: LessonStepResult(isCorrect: true, answerText: nil, correctAnswer: nil, feedback: nil)
     )
 
-    XCTAssertEqual(state.firstVerdicts, [step.id: true])
+    XCTAssertEqual(state.firstVerdicts, ["check": false, step.id: true])
     XCTAssertNil(state.notice)
     XCTAssertEqual(state.phase, .feedback)
     XCTAssertEqual(state.currentResult?.isCorrect, true)
+    XCTAssertEqual(state.misses, [], "a right answer ends the miss streak")
   }
 
   func testAListeningTranslationWithoutSpacesIsOneWordAsInCore() {
