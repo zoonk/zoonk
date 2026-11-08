@@ -167,6 +167,58 @@ describe("a finished chapter", () => {
     ]);
   });
 
+  it("finishes by a lesson filed under its home beside one the plan names the chapter for", async () => {
+    const chapter = await chapterOfTwoLessons();
+    const { goal, user } = await learnerOf(chapter);
+    const lessonId = chapter.last.id;
+
+    await prisma.lesson.update({
+      data: { homeChapterId: chapter.chapter.id },
+      where: { id: lessonId },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { chapterId: null },
+      where: { lessonId, plan: { goalId: goal.id } },
+    });
+
+    await expect(
+      finishRun({ lessonId, runId: await startRun({ lessonId }) }),
+    ).resolves.toMatchObject({
+      finishedChapter: { chapterId: chapter.chapter.id, goalId: goal.id, title: "Cells" },
+    });
+
+    await expect(owedMaps(user.id)).resolves.toStrictEqual([
+      { input: { chapterId: chapter.chapter.id, goalId: goal.id }, key: chapter.chapter.id },
+    ]);
+  });
+
+  it("waits for a lesson filed under its home before the one the plan names the chapter for", async () => {
+    const chapter = await chapterOfTwoLessons();
+    const { goal, user } = await learnerOf(chapter);
+    const skill = await skillFixture();
+
+    await lessonSkillFixture({ lessonId: chapter.first.id, skillId: skill.id });
+
+    await prisma.lesson.update({
+      data: { homeChapterId: chapter.chapter.id },
+      where: { id: chapter.first.id },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { chapterId: null, status: "todo" },
+      where: { lessonId: chapter.first.id, plan: { goalId: goal.id } },
+    });
+
+    const lessonId = chapter.last.id;
+
+    await expect(
+      finishRun({ lessonId, runId: await startRun({ lessonId }) }),
+    ).resolves.toMatchObject({ finishedChapter: null });
+
+    await expect(owedMaps(user.id)).resolves.toStrictEqual([]);
+  });
+
   it("reports only a finish in the goal being studied, yet owes every finished chapter's map", async () => {
     const chapter = await chapterOfTwoLessons();
     const { goal: studied, user } = await learnerOf(chapter);

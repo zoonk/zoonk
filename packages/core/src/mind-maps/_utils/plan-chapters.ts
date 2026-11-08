@@ -16,15 +16,7 @@ export function planChapters(goals: Sql): Sql {
       WHERE ${goals}
     ),
     own AS (
-      SELECT
-        goal_id,
-        chapter_id,
-        min(position) AS first_position,
-        coalesce(array_agg(id) FILTER (WHERE kind IN ('chapter', 'lesson')), '{}') AS item_ids,
-        coalesce(
-          bool_and(status IN ('done', 'tested_out')) FILTER (WHERE kind IN ('chapter', 'lesson')),
-          false
-        ) AS finished
+      SELECT goal_id, chapter_id, min(position) AS first_position
       FROM items
       WHERE chapter_id IS NOT NULL
       GROUP BY goal_id, chapter_id
@@ -76,7 +68,9 @@ export function planChapters(goals: Sql): Sql {
     ),
     -- Each lesson's area: its first skill's (getItemArea), else its chapter.
     item_areas AS (
-      SELECT f.goal_id, f.id, f.position, f.status, coalesce(taught.area, f.chapter_id) AS area
+      SELECT
+        f.goal_id, f.id, f.position, f.status, f.chapter_id,
+        coalesce(taught.area, f.chapter_id) AS area
       FROM filing f
       LEFT JOIN LATERAL (
         SELECT fa.area FROM entries e
@@ -88,37 +82,44 @@ export function planChapters(goals: Sql): Sql {
       ) taught ON true
       WHERE f.kind IN ('chapter', 'lesson')
     ),
-    -- A chapter the map files skills under without an item of its own (findChapterArea): done
-    -- once the lessons in it are.
+    -- A chapter the map files skills under without an item of its own (findChapterArea).
     filed AS (
-      SELECT
-        fa.goal_id,
-        fa.area AS chapter_id,
-        min(ia.position) AS first_position,
-        min(fa.position) AS first_taught,
-        coalesce(array_agg(DISTINCT ia.id) FILTER (WHERE ia.id IS NOT NULL), '{}') AS item_ids,
-        coalesce(bool_and(ia.status IN ('done', 'tested_out')), false) AS finished
+      SELECT fa.goal_id, fa.area AS chapter_id, min(fa.position) AS first_taught
       FROM first_areas fa
-      LEFT JOIN item_areas ia ON ia.goal_id = fa.goal_id AND ia.area = fa.area
       WHERE fa.area IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM own o WHERE o.goal_id = fa.goal_id AND o.chapter_id = fa.area)
       GROUP BY fa.goal_id, fa.area
+    ),
+    -- The chapter and lesson items that count toward each chapter: those that name it, and those
+    -- saved without a chapter that the map files there. A filed chapter takes every item filed there.
+    members AS (
+      SELECT goal_id, chapter_id, id, position, status
+      FROM items
+      WHERE chapter_id IS NOT NULL AND kind IN ('chapter', 'lesson')
+      UNION
+      SELECT ia.goal_id, ia.area, ia.id, ia.position, ia.status
+      FROM item_areas ia
+      WHERE ia.area IS NOT NULL
+        AND (
+          ia.chapter_id IS NULL
+          OR NOT EXISTS (SELECT 1 FROM own o WHERE o.goal_id = ia.goal_id AND o.chapter_id = ia.area)
+        )
+    ),
+    chapters AS (
+      SELECT goal_id, chapter_id, false AS is_filed, first_position, 0 AS first_taught FROM own
+      UNION ALL
+      SELECT goal_id, chapter_id, true, NULL, first_taught FROM filed
     )
     SELECT
-      goal_id,
-      chapter_id,
-      finished,
-      item_ids,
+      c.goal_id,
+      c.chapter_id,
+      coalesce(bool_and(m.status IN ('done', 'tested_out')), false) AS finished,
+      coalesce(array_agg(m.id) FILTER (WHERE m.id IS NOT NULL), '{}') AS item_ids,
       (row_number() OVER (
-        PARTITION BY goal_id ORDER BY is_filed, first_position NULLS LAST, first_taught
+        PARTITION BY c.goal_id
+        ORDER BY c.is_filed, coalesce(c.first_position, min(m.position)) NULLS LAST, c.first_taught
       ))::int AS plan_position
-    FROM (
-      SELECT
-        goal_id, chapter_id, finished, item_ids, false AS is_filed, first_position,
-        0 AS first_taught
-      FROM own
-      UNION ALL
-      SELECT goal_id, chapter_id, finished, item_ids, true, first_position, first_taught
-      FROM filed
-    ) chapters`;
+    FROM chapters c
+    LEFT JOIN members m ON m.goal_id = c.goal_id AND m.chapter_id = c.chapter_id
+    GROUP BY c.goal_id, c.chapter_id, c.is_filed, c.first_position, c.first_taught`;
 }
