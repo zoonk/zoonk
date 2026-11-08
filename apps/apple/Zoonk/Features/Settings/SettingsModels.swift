@@ -5,7 +5,6 @@ struct LearningPreferences: Equatable, Sendable {
   var buddyPicked: Bool
   var availableGlasses: [BuddyGlasses]
   var soundsEnabled: Bool
-
 }
 
 enum PreferencesUpdate: Equatable, Sendable {

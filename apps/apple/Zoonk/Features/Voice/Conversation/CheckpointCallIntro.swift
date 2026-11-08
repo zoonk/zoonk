@@ -36,7 +36,6 @@ struct CheckpointCallIntro: View {
       ConversationIntro(intro: CallIntro(preview.intro)) {
         if needsPlus {
           CallStartFooter(isLocked: true, callee: nil) {}
-
         } else {
           startButton(writesFirst: false, callee: preview.intro.character.name)
         }
@@ -113,9 +112,9 @@ struct CheckpointCallIntro: View {
     }
   }
 
-  /// Mirrors main's `startCheckpointCallAction`: what changed since the intro was read (the daily
-  /// time limit, earlier work, the block finished elsewhere, the block gone, a call no longer
-  /// written) shows as the intro is read again; only a failure is worth another try.
+  /// Mirrors main's `startCheckpointCallAction`: what changed since the intro was read (earlier
+  /// work, the block finished elsewhere, the block gone, a call no longer written) shows as the
+  /// intro is read again; only a failure is worth another try.
   private func start(writesFirst: Bool) async {
     isStarting = true
     didFail = false
@@ -136,7 +135,6 @@ struct CheckpointCallIntro: View {
       needsPlus = true
     case .done(.refused(let refusal)) where Self.changes.contains(refusal.code):
       await call.refresh()
-
     case .failed(.notFound):
       await call.refresh()
     case .done(.refused), .failed:
@@ -163,7 +161,5 @@ struct CheckpointCallIntro: View {
     }
   }
 
-  private static let changes: Set<String> = [
-    "BLOCK_FINISHED", "EARLIER_FIRST",
-  ]
+  private static let changes: Set<String> = ["BLOCK_FINISHED", "EARLIER_FIRST"]
 }
