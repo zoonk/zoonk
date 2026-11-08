@@ -200,7 +200,7 @@ export function RevealBody({
         </header>
 
         <RevealToday session={today} />
-        <RevealWeek />
+        <RevealWeek today={today} />
 
         <div className="flex flex-col gap-2">
           <PlanPhasesBar />

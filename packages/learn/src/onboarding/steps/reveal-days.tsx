@@ -218,12 +218,25 @@ function isListed(day: PlanDayView): boolean {
   return day.items.length > 0 || day.minutes === 0;
 }
 
-export function RevealWeek() {
+/** The days after today, without the lessons Today already lists: each lesson shows once. */
+function getDaysAhead({ days, today }: { days: readonly PlanDayView[]; today: DayView | null }) {
+  const listed = new Set(today?.blocks.flatMap((block) => block.lessonId ?? []));
+
+  return days
+    .slice(1)
+    .map((day) => ({
+      ...day,
+      items: day.items.filter((item) => !item.lessonId || !listed.has(item.lessonId)),
+    }))
+    .filter((day) => isListed(day));
+}
+
+export function RevealWeek({ today }: { today: DayView | null }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const studied = plan.nextDays.filter((day) => day.items.length > 0);
-  const ahead = plan.nextDays.slice(1).filter((day) => isListed(day));
+  const ahead = getDaysAhead({ days: plan.nextDays, today });
 
   if (!ahead.some((day) => day.items.length > 0)) {
     return null;
