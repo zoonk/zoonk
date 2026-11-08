@@ -1,4 +1,4 @@
-import { normalizePunctuation, wordSeparator } from "@zoonk/utils/string";
+import { NO_SPACE_SCRIPT, normalizePunctuation } from "@zoonk/utils/string";
 import {
   type ArrangeText,
   normalizeArrangeWord,
@@ -19,12 +19,10 @@ function keyLength(tiles: readonly Tile[]): number {
  * spells nothing. `spelling` holds the tiles already spelling the first piece.
  */
 function spellWithTiles({
-  allowJoinedTiles,
   pieces,
   spelling = [],
   tiles,
 }: {
-  allowJoinedTiles: boolean;
   pieces: readonly Tile[];
   spelling?: readonly Tile[];
   tiles: readonly Tile[];
@@ -38,15 +36,16 @@ function spellWithTiles({
   const left = piece.key.slice(keyLength(spelling));
 
   if (!left) {
-    const after = spellWithTiles({ allowJoinedTiles, pieces: rest, tiles });
+    const after = spellWithTiles({ pieces: rest, tiles });
     return after && spelling.length > 0 ? [[...spelling], ...after] : after;
   }
+
+  const allowJoinedTiles = NO_SPACE_SCRIPT.test(piece.text);
 
   for (const [index, tile] of tiles.entries()) {
     const spelled =
       tile.key && (allowJoinedTiles ? left.startsWith(tile.key) : left === tile.key)
         ? spellWithTiles({
-            allowJoinedTiles,
             pieces,
             spelling: [...spelling, tile],
             tiles: tiles.toSpliced(index, 1),
@@ -93,7 +92,7 @@ export function keepOtherArrangeOrders({
       .split(/\s+/u)
       .map((piece) => toTile(piece));
 
-    const spelled = spellWithTiles({ allowJoinedTiles: wordSeparator(text) === "", pieces, tiles });
+    const spelled = spellWithTiles({ pieces, tiles });
     const key = spelled && toOrderKey(spelled.flat());
 
     if (!spelled || !key || seen.has(key)) {

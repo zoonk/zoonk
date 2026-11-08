@@ -117,6 +117,27 @@ describe(keepOtherArrangeOrders, () => {
     expect(segmentLearnerWords(kept!)).toStrictEqual(["毎朝", "私は", "コーヒーを", "飲みます"]);
   });
 
+  it.each([
+    {
+      kept: "Python を 私は 勉強しています",
+      order: "Pythonを私は勉強しています",
+      text: "私は Python を勉強しています",
+    },
+    {
+      kept: "毎日 私は iPhone で 写真を 撮ります",
+      order: "毎日私はiPhoneで写真を撮ります",
+      text: "私は毎日 iPhone で写真を撮ります",
+    },
+  ])("keeps joined Japanese phrases around a spaced Latin word: $text", ({ kept, order, text }) => {
+    const orders = keepOtherArrangeOrders({ kind: "listening", orders: [order], text });
+
+    expect(orders).toStrictEqual([kept]);
+
+    expect(segmentLearnerWords(orders[0]!).toSorted()).toStrictEqual(
+      segmentLearnerWords(text).toSorted(),
+    );
+  });
+
   it("builds a reading sentence from the word tiles its screen shows", () => {
     const kept = keepOtherArrangeOrders({
       kind: "reading",
