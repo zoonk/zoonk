@@ -384,11 +384,14 @@ class FakeOnboardingApi : OnboardingApi {
         return PlacementAnswerResult(isCorrect = true, placement = placement)
     }
 
+    var placementFinishGate: CompletableDeferred<Unit>? = null
+
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
     ) {
+        placementFinishGate?.await()
         writeFailure?.let { throw it }
     }
 

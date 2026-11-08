@@ -241,6 +241,56 @@ class PlacementStepFlowTest {
         rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
     }
 
+    @Test
+    fun aWaitingSkipWhoseSaveFailsAfterTheQuestionsOpenStillSaysSo() {
+        api.setup = { setupView(steps = listOf("placement")) }
+        api.placement = placementOf(status = "preparing", next = null)
+        val save = CompletableDeferred<Unit>()
+        api.answerGate = save
+        show(inSetup = true)
+        tap("Start")
+        rule.mainClock.advanceTimeBy(30_000)
+        tap("Skip for now")
+        api.placement = placementOf()
+        rule.mainClock.advanceTimeBy(POLL_MS)
+        rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
+        save.completeExceptionally(ApiException(ApiError.Network))
+
+        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
+        api.writeFailure = ApiException(ApiError.Network)
+        tap("The Supreme Court")
+        tap("Confirm")
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+    }
+
+    @Test
+    fun aWaitingSkipWhoseFinishFailsAfterTheQuestionsOpenStillSaysSo() {
+        api.setup = { setupView(steps = listOf("placement")) }
+        api.placement = placementOf(status = "preparing", next = null)
+        val finish = CompletableDeferred<Unit>()
+        api.placementFinishGate = finish
+        show(inSetup = true)
+        tap("Start")
+        rule.mainClock.advanceTimeBy(30_000)
+        tap("Skip for now")
+        api.placement = placementOf()
+        rule.mainClock.advanceTimeBy(POLL_MS)
+        rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
+        finish.completeExceptionally(ApiException(ApiError.Network))
+
+        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
+        api.writeFailure = ApiException(ApiError.Network)
+        tap("The Supreme Court")
+        tap("Confirm")
+
+        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
+        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+    }
+
     private companion object {
         const val POLL_MS = 3_500L
     }

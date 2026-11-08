@@ -200,7 +200,7 @@ fun GoalSetupScreen(
                 when (val shown = state) {
                     is LoadState.Loaded -> {
                         SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
-                            if (vm.saveFailed && testing == null) {
+                            if (vm.saveFailed) {
                                 Text(
                                     vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
                                     modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

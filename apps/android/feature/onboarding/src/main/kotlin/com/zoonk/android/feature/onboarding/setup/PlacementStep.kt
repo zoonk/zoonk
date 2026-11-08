@@ -166,6 +166,7 @@ internal fun ColumnScope.PlacementStep(
         }
 
         is PlacementPhase.Question -> {
+            FinishFailed(vm.finishFailed)
             key(shown.item.itemId) {
                 PlacementQuestion(
                     item = shown.item,
