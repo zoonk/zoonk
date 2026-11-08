@@ -28,9 +28,14 @@ async function buildScopedPlan({
 }): Promise<BuiltPlan | null> {
   const rebuild = Boolean(input.rebuild);
 
-  const [inputs, scopeDecision] = await Promise.all([
-    waitForGraphInputs({ initial, researchId: input.researchId }),
-    decided,
+  const [inputs] = await Promise.all([
+    decided.then((scope) =>
+      waitForGraphInputs({
+        initial,
+        researchId: input.researchId,
+        scope: keepMaterialPrivate({ inputs: initial, scope }),
+      }),
+    ),
     rebuild ? null : startPairLevelTest({ context, goal: initial.goal }),
   ]);
 
@@ -38,7 +43,7 @@ async function buildScopedPlan({
     return null;
   }
 
-  const scope = keepMaterialPrivate({ inputs, scope: scopeDecision });
+  const scope = keepMaterialPrivate({ inputs, scope: await decided });
   const researchId = input.researchId ?? null;
   const curriculum = await buildCurriculum({ context, inputs, rebuild, researchId, scope });
 
