@@ -17,9 +17,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
 
-/** What ran out: each has main's own words for it. */
-enum class LimitSubject { Help, Lessons, MindMaps, Outlines, Calls }
-
 /**
  * Main's limit notice: what ran out and when it comes back, with "Create a free account" for a guest
  * and "See Plus" on Free. Plus and a slow-down only say when.

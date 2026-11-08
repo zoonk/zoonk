@@ -10,6 +10,7 @@ import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
@@ -105,9 +106,25 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(
-                MindMapLocal(shown = MindMapShown.Refused, limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month), lessonsRanOut = true),
+                MindMapLocal(
+                    shown = MindMapShown.Refused,
+                    limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                    subject = LimitSubject.Lessons,
+                ),
                 maps.requests.value[chapterId],
             )
+        }
+
+    @Test
+    fun aRefusalOverTheDaysAiSpendIsWordedAsHelpNotMaps() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            api.create = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 429, refusal("plus", "day", "aiSpend")) }
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+
+            assertEquals(LimitSubject.Help, maps.requests.value[chapterId]?.subject)
         }
 
     @Test

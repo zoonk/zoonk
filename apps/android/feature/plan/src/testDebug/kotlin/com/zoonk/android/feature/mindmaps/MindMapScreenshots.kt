@@ -30,6 +30,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
@@ -212,7 +213,12 @@ class MindMapScreenshots {
                     place,
                     shown = MindMapShown.Refused,
                     lessonsToWrite = 4,
-                    local = MindMapLocal(MindMapShown.Refused, Limit.Reached(LimitTier.Free, LimitPeriod.Month), lessonsRanOut = true),
+                    local =
+                        MindMapLocal(
+                            MindMapShown.Refused,
+                            Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                            subject = LimitSubject.Lessons,
+                        ),
                 )
             }
         }

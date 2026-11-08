@@ -72,7 +72,7 @@ class MindMapViewModel(
                     }
 
                     is MindMapCreated.Refused -> {
-                        MindMapLocal(shown = MindMapShown.Refused, limit = created.limit, lessonsRanOut = created.lessonsRanOut)
+                        MindMapLocal(shown = MindMapShown.Refused, limit = created.limit, subject = created.subject)
                     }
                 }
             locals.update { it + (chapterId to local) }

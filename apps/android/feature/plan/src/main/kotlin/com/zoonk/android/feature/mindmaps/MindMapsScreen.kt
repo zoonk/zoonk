@@ -280,7 +280,7 @@ private fun MindMapsHero(
             }
 
             else -> {
-                MindMapLimit(cap, lessonsRanOut = false, navigate, Modifier.padding(top = 12.dp))
+                MindMapLimit(cap, LimitSubject.MindMaps, navigate, Modifier.padding(top = 12.dp))
             }
         }
     }

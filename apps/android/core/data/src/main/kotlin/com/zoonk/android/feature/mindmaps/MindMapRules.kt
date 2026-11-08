@@ -2,6 +2,7 @@ package com.zoonk.android.feature.mindmaps
 
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.AllowanceResponse
@@ -33,13 +34,13 @@ enum class MindMapShown {
 }
 
 /**
- * What a screen did about one map: its request's answer, and whether following it got stuck. A
- * refusal over the lessons the map would write first ([lessonsRanOut]) is worded as lessons.
+ * What a screen did about one map: its request's answer, worded by what ran out ([subject]), and
+ * whether following it got stuck.
  */
 data class MindMapLocal(
     val shown: MindMapShown? = null,
     val limit: Limit? = null,
-    val lessonsRanOut: Boolean = false,
+    val subject: LimitSubject = LimitSubject.MindMaps,
     val pending: Boolean = false,
     val stuck: Boolean = false,
 )

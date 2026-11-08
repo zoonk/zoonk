@@ -234,20 +234,17 @@ internal fun rememberSavePicture(
 
 private const val PICTURE_TYPE = "image/webp"
 
-/**
- * A map that can't be made now: why, worded as lessons when what ran out was the lessons it would
- * write first, with Create a free account or See Plus where they help.
- */
+/** A map that can't be made now: why, worded by what ran out, with Create a free account or See Plus where they help. */
 @Composable
 internal fun MindMapLimit(
     limit: Limit,
-    lessonsRanOut: Boolean,
+    subject: LimitSubject,
     navigate: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LimitNotice(
         limit = limit,
-        subject = if (lessonsRanOut) LimitSubject.Lessons else LimitSubject.MindMaps,
+        subject = subject,
         onCreateAccount = { navigate(AppRoute.Login) },
         onSeePlus = { navigate(AppRoute.Subscription) },
         modifier = modifier,

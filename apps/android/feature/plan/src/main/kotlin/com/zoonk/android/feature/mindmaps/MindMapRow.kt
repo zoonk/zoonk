@@ -40,6 +40,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
@@ -213,7 +214,7 @@ internal fun MindMapRow(
         if (notice != null) {
             MindMapLimit(
                 notice,
-                local?.lessonsRanOut == true,
+                local?.subject ?: LimitSubject.MindMaps,
                 actions.navigate,
                 Modifier.padding(start = LIST_ITEM_INSET + MARK_SIZE + MARK_GAP, end = LIST_ITEM_INSET, bottom = 12.dp),
             )

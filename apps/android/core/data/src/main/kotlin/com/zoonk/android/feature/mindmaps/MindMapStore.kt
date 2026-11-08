@@ -16,6 +16,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.data.withBearer
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
@@ -118,10 +119,10 @@ sealed interface MindMapCreated {
     /** The chapter's lessons, and so its map, are Plus-only for this learner. */
     data object PlusRequired : MindMapCreated
 
-    /** [lessonsRanOut]: what ran out was the lessons the map would write first, not the maps. */
+    /** [subject]: what ran out, the maps, the lessons the map would write first, or the day's AI help. */
     data class Refused(
         val limit: Limit,
-        val lessonsRanOut: Boolean,
+        val subject: LimitSubject,
     ) : MindMapCreated
 
     data object Failed : MindMapCreated
@@ -174,7 +175,7 @@ class MindMapStore(
         }
         val limit = Limit.of(result)
         return when {
-            limit != null -> MindMapCreated.Refused(limit, lessonsRanOut = result.details.ranOut() in LESSON_RESOURCES)
+            limit != null -> MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
             result.status == UNPROCESSABLE -> MindMapCreated.Unavailable
             else -> MindMapCreated.Failed
         }
@@ -246,9 +247,17 @@ class MindMapStore(
         val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress)
         const val UNPROCESSABLE = 422
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
-        val LESSON_RESOURCES = setOf("lessonStart", "generatedLessons")
     }
 }
+
+/** Main's wording for what ran out: lessons for the lessons a map writes first, help for the day's AI spend. */
+private val String?.limitSubject: LimitSubject
+    get() =
+        when (this) {
+            "lessonStart", "generatedLessons" -> LimitSubject.Lessons
+            "aiSpend" -> LimitSubject.Help
+            else -> LimitSubject.MindMaps
+        }
 
 /** A refusal's `details.limit.resource`: what ran out. */
 private fun JsonElement?.ranOut(): String? =
