@@ -10,6 +10,7 @@ import {
 } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
+  chapterSkillFixture,
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
@@ -1130,6 +1131,90 @@ describe("a course level, its skills where its course teaches them", () => {
     await finishWithItem(user.id, { id: "", lessonId: lessons[4]?.id ?? null });
 
     expect(loadPlanScope).not.toHaveBeenCalled();
+  });
+
+  it("awards a finished level when a later level's chapter tags its skill", async () => {
+    const { course, lessons, plan, user } = await sharedLevelsPlan({ shared: false });
+
+    await chapterSkillFixture({
+      chapterId: plan.items[4]?.chapterId ?? "",
+      skillId: plan.items[0]?.skillId ?? "",
+    });
+
+    await finishWithItem(user.id, { id: "", lessonId: lessons[4]?.id ?? null });
+
+    await expect(listCourseKeys(user.id)).resolves.toStrictEqual([`${course.id}:beginner`]);
+  });
+
+  it("awards a tested-out skill's own level when the course has no chapter at it", async () => {
+    const [user, course, chapter, basics, advanced] = await Promise.all([
+      userFixture(),
+      courseFixture({ format: "core", isPublished: true, visibility: "public" }),
+      libraryChapterFixture({ level: "intermediate" }),
+      skillFixture({ level: "beginner" }),
+      skillFixture({ level: "intermediate" }),
+    ]);
+
+    await courseChapterFixture({
+      chapterId: chapter.id,
+      courseId: course.id,
+      level: "intermediate",
+    });
+
+    const goal = await goalFixture({ primaryCourseId: course.id, userId: user.id });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        skills: plannedSkills([
+          { ...basics, lessons: 6 },
+          { ...advanced, lessons: 6, phase: 1 },
+        ]).map((skill) => ({ ...skill, outlined: true })),
+      },
+      items: [
+        { completedAt: new Date(), kind: "boss", phase: 0, status: "done" },
+        { chapterId: chapter.id, kind: "chapter", phase: 1, skillId: advanced.id },
+        { kind: "boss", phase: 1 },
+      ],
+      phases: [{ name: "Beginner" }, { name: "Intermediate" }],
+    });
+
+    await writeLearnerChange({ userId: user.id }, (tx) =>
+      testOutKnownPlanItems(tx, {
+        goalId: goal.id,
+        items: plan.items.map((item) => ({
+          ...item,
+          skillIds: item.skillId ? [item.skillId] : [],
+        })),
+        knownSkillIds: new Set([basics.id]),
+        placedSkills: [{ id: basics.id, phase: 0 }],
+        testedOutAt: new Date(),
+        timeZone: TIME_ZONE,
+      }),
+    );
+
+    const lessons = await Promise.all(Array.from({ length: 6 }, () => libraryLessonFixture()));
+
+    await Promise.all(
+      lessons.flatMap((lesson, index) => [
+        lessonSkillFixture({ lessonId: lesson.id, skillId: basics.id }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: advanced.id }),
+        planItemFixture({
+          completedAt: index < 2 ? new Date() : null,
+          lessonId: lesson.id,
+          phase: 1,
+          planId: plan.id,
+          position: 4 + index,
+          skillId: advanced.id,
+          status: index < 2 ? "done" : "todo",
+        }),
+      ]),
+    );
+
+    mockSession(user.id);
+    await finishWithItem(user.id, { id: "", lessonId: lessons[2]?.id ?? null });
+
+    await expect(listCourseKeys(user.id)).resolves.toStrictEqual([`${course.id}:beginner`]);
   });
 
   it("still waits for a level's own lesson and challenge whatever a later level credits it", async () => {
