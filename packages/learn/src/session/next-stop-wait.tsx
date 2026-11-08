@@ -40,8 +40,8 @@ function hasLessonChanged({
 }
 
 /**
- * Reads the whole session only when the lesson changed; a failed wait always does, since the
- * session read is what shows a set-aside lesson's notice.
+ * Reads the whole session only when the lesson changed. A failed lesson is still checked: after Try
+ * again, it stays failed until the new run takes it.
  */
 function useWaitingCheck({
   actions,
@@ -61,7 +61,7 @@ function useWaitingCheck({
     intervalMs: WAITING_CHECK_MS,
     key: `${lessonId ?? block.position}:${lesson}:${generationId ?? ""}`,
     onPoll: async (signal) => {
-      if (lesson === "failed" || !lessonId || !actions.readLesson) {
+      if (!lessonId || !actions.readLesson) {
         actions.refresh();
         return;
       }
