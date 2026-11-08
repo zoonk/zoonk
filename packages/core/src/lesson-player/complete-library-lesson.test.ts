@@ -17,6 +17,7 @@ import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { publishLessonVersion } from "../_test-utils/publish-lesson-version";
 import { trackServerEvent } from "../analytics/server";
+import { markPlanRevealed } from "../goals/mark-plan-revealed";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
@@ -183,6 +184,28 @@ describe(completeLibraryLesson, () => {
     },
   );
 
+  it("sends a learner who started with their goal's first lesson to see the plan, until they have", async () => {
+    const { lesson, runId, user } = await playLesson();
+
+    const goal = await goalFixture({
+      openingLessonId: lesson.id,
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await expect(complete({ lessonId: lesson.id, runId })).resolves.toMatchObject({
+      completion: { planReveal: { goalId: goal.id, goalTitle: goal.title, planReady: false } },
+      status: "completed",
+    });
+
+    await markPlanRevealed(goal.id);
+
+    await expect(complete({ lessonId: lesson.id, runId })).resolves.toMatchObject({
+      completion: { planReveal: null },
+      status: "completed",
+    });
+  });
+
   it("closes the run and adds Brain Power, Energy and the day's first completion", async () => {
     const { lesson, runId, user } = await playLesson({ checkOption: "path" });
 
@@ -194,6 +217,7 @@ describe(completeLibraryLesson, () => {
         correctCount: 1,
         incorrectCount: 1,
         isFirstCompletion: true,
+        planReveal: null,
         studyBlock: null,
         totalBrainPower: MISSED_THEN_RIGHT,
       },

@@ -125,6 +125,12 @@ export const onboardingResponseSchema = z
       description:
         "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes",
     }),
+    planRevealed: z
+      .boolean()
+      .meta({
+        description:
+          "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state",
+      }),
     quickTestMinutes: z
       .int()
       .positive()

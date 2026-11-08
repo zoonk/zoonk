@@ -9,7 +9,7 @@ import { type LearningProfileView } from "../../profile/learning-profile-contrac
 import { getSession } from "../../users/get-session";
 import { parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { type OnboardingResumeView } from "./onboarding-contract";
-import { getOnboardingSteps, hasOnboardingQuestions } from "./onboarding-steps";
+import { getOnboardingSteps, hasOnboardingQuestions, isPlanRevealOwed } from "./onboarding-steps";
 
 export type OnboardingResumeResult =
   | { resume: OnboardingResumeView | null; status: "ready" }
@@ -25,6 +25,7 @@ type ResumeGoal = Pick<
   | "examBlueprintId"
   | "id"
   | "kind"
+  | "planRevealedAt"
   | "replacesGoalId"
   | "status"
   | "targetDate"
@@ -62,7 +63,7 @@ function findOpenDraft({ drafts, goals }: { drafts: ResumeDraft[]; goals: Resume
   );
 }
 
-/** Onboarding ends at the plan reveal; quick explanations have no onboarding. */
+/** Onboarding ends when the learner presses the plan reveal's action; quick explanations have none. */
 async function isInOnboarding({
   goal,
   goals,
@@ -72,6 +73,10 @@ async function isInOnboarding({
   goals: ResumeGoal[];
   profile: LearningProfileView;
 }): Promise<boolean> {
+  if (isPlanRevealOwed(goal)) {
+    return true;
+  }
+
   const onboardingId = readOnboardingId(goal);
 
   const steps = getOnboardingSteps({
@@ -147,6 +152,7 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
         examBlueprintId: true,
         id: true,
         kind: true,
+        planRevealedAt: true,
         replacesGoalId: true,
         status: true,
         targetDate: true,

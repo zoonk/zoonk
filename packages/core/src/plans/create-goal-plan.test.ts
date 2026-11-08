@@ -24,15 +24,15 @@ import { getGoalPlan } from "./get-goal-plan";
 /** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-function mockClock() {
+function mockClock(day: string) {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
-    currentDate: new Date("2020-09-28T00:00:00Z"),
-    currentInstant: NOW,
+    currentDate: new Date(`${day}T00:00:00Z`),
+    currentInstant: new Date(`${day}T12:00:00Z`),
     timeZone: "UTC",
   });
 }
 
-async function setup() {
+async function setup({ day = "2020-09-28" }: { day?: string } = {}) {
   const user = await userFixture();
 
   const library = await planLibraryFixture({
@@ -43,12 +43,12 @@ async function setup() {
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 12,
     details: { answered: [] },
-    settings: { startDate: "2020-09-28" },
+    settings: { startDate: day },
     userId: user.id,
   });
 
   mockSession(user.id);
-  mockClock();
+  mockClock(day);
 
   return { goal, library, plan, user };
 }
@@ -96,7 +96,7 @@ describe(createGoalPlan, () => {
     );
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -220,7 +220,7 @@ describe(createGoalPlan, () => {
     });
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
 
     const taught = await Promise.all(
       [physics, enem].map(async (course) => {
@@ -290,7 +290,7 @@ describe(createGoalPlan, () => {
     });
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
 
     await createGoalPlan({
       goalId: goal.id,
@@ -370,7 +370,7 @@ describe(createGoalPlan, () => {
     });
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -419,7 +419,7 @@ describe(createGoalPlan, () => {
     });
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -481,7 +481,7 @@ describe(createGoalPlan, () => {
     });
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const endOfWeek = new Date("2020-10-04T00:00:00Z");
@@ -594,7 +594,7 @@ describe(createGoalPlan, () => {
     });
 
     mockSession(user.id);
-    mockClock();
+    mockClock("2020-09-28");
 
     await learningEventFixture({
       contentIds: { lessonId: finished?.id ?? "" },
@@ -735,6 +735,33 @@ describe(getGoalPlan, () => {
 
     expect(plan?.estimate.endDate).toBe("2020-10-03");
     expect(plan?.feasibility).not.toHaveProperty("alternative");
+  });
+
+  it("lists today and the six days after it, even on a Sunday, the last day of its week", async () => {
+    vi.setSystemTime(new Date("2020-10-04T12:00:00Z"));
+    const { goal, library } = await setup({ day: "2020-10-04" });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const result = await getGoalPlan(goal.id);
+    const plan = result.status === "ready" ? result.plan : null;
+
+    expect(plan?.week.days.at(-1)?.date).toBe("2020-10-04");
+
+    expect(plan?.nextDays.map((day) => [day.date, day.state])).toStrictEqual([
+      ["2020-10-04", "today"],
+      ["2020-10-05", "upcoming"],
+      ["2020-10-06", "upcoming"],
+      ["2020-10-07", "upcoming"],
+      ["2020-10-08", "upcoming"],
+      ["2020-10-09", "upcoming"],
+      ["2020-10-10", "upcoming"],
+    ]);
+
+    expect(plan?.nextDays[0]?.items.map((item) => item.kind)).toStrictEqual([
+      "lesson",
+      "lesson",
+      "lesson",
+    ]);
   });
 
   it("reads the plan at the pace it was saved with, however others' lessons went since", async () => {

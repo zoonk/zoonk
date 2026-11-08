@@ -5,7 +5,7 @@ import { readActiveGoal, readLearningProfile } from "../../../learner/facts/lear
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { getOwnedGoal } from "../../../learner/get-owned-goal";
 import { getSession } from "../../../users/get-session";
-import { isGoalSetupLeft } from "../../onboarding/onboarding-steps";
+import { isGoalSetupLeft, isPlanRevealOwed } from "../../onboarding/onboarding-steps";
 import { type TodayViewResult } from "../get-today-view";
 
 /** Do not persist an empty day before the background plan has items. */
@@ -29,7 +29,7 @@ export type TodayAdmission =
   | Exclude<TodayViewResult, { status: "ready" }>
   | { owned: Extract<OwnedGoal, { status: "ready" }>; status: "admitted" };
 
-/** Read-only; admits only an owned active goal with a built plan and completed setup. */
+/** Read-only; admits only an owned active goal with a built plan, completed setup and a seen reveal. */
 export async function admitToday(requestedGoalId?: string): Promise<TodayAdmission> {
   const session = await getSession();
 
@@ -62,8 +62,9 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
 
   const { id, kind, title } = owned.goal;
 
-  // A plan is built while the questions are still answered, on a time the learner hasn't chosen yet.
-  if (!built || isGoalSetupLeft(owned.goal)) {
+  // A plan is built while the questions are still answered, on a time the learner hasn't chosen
+  // yet, and is shown once before its first day.
+  if (!built || isGoalSetupLeft(owned.goal) || isPlanRevealOwed(owned.goal)) {
     return { goal: { id, kind, title }, status: "preparing", userId };
   }
 

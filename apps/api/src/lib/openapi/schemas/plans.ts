@@ -141,6 +141,12 @@ export const planResponseSchema = z
         "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
       ),
     goalId: uuidSchema(),
+    nextDays: z
+      .array(planDaySchema)
+      .meta({
+        description:
+          "Today and the six days after it, in the goal's zone, whatever the weekday: the reveal's first week (`week` runs Monday to Sunday)",
+      }),
     notice: z
       .enum(["reading", "usual"])
       .nullable()

@@ -214,6 +214,11 @@ export function hasOnboardingQuestions(steps: readonly OnboardingStep[]): boolea
   return steps.some((step) => step !== "plan");
 }
 
+/** Every plan is shown once: until the learner presses the reveal's action, setup isn't over. */
+export function isPlanRevealOwed(goal: Pick<Goal, "kind" | "planRevealedAt">): boolean {
+  return goal.kind !== "explain" && goal.planRevealedAt === null;
+}
+
 export function isGoalSetupLeft(
   goal: Pick<Goal, "details" | "kind" | "replacesGoalId" | "targetDate">,
 ): boolean {

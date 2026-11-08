@@ -27,7 +27,7 @@ const SETUP_ANSWERED = [
   "schedule",
 ];
 
-/** A goal past its setup, as every goal on Today and the Plan is; pass `answered` in `details` for one mid-setup. */
+/** A goal past its setup with its plan seen, as every goal on Today and the Plan is; pass `answered` in `details` for one mid-setup and `planRevealedAt: null` for one whose reveal is ahead. */
 export async function goalFixture({
   details,
   ...attrs
@@ -38,6 +38,7 @@ export async function goalFixture({
       details: { answered: SETUP_ANSWERED, ...details },
       kind: "learn",
       language: "en",
+      planRevealedAt: new Date(),
       prompt: "I want to learn test subjects",
       title: "Learn test subjects",
       ...attrs,

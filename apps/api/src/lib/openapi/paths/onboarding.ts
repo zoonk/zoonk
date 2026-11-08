@@ -210,10 +210,22 @@ export const onboardingPaths = {
       tags: ["Onboarding"],
     },
   },
+  "/goals/{goalId}/plan-reveal/views": {
+    post: {
+      description:
+        "Records that the learner pressed the plan reveal's action (Start, or Continue after their first lesson), which ends the goal's onboarding: its `planRevealed` turns true, `GET /me/onboarding-resume` stops bringing it back and Today stops answering `preparing`. Send it before opening Today. Pressing it again keeps the first time.",
+      operationId: "markPlanRevealed",
+      requestParams: { path: goalPathParamsSchema },
+      responses: { ...goalErrors, "204": { description: "Recorded" } },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Mark the plan reveal as seen",
+      tags: ["Onboarding"],
+    },
+  },
   "/me/onboarding-resume": {
     get: {
       description:
-        "What a returning learner (guests included) should continue: a goal they typed but haven't confirmed (`draft`), their newest goal while its onboarding hasn't reached the plan (`goal`), or their day when they have an active goal (`today`). `resume` is null when there's nothing to continue.",
+        "What a returning learner (guests included) should continue: a goal they typed but haven't confirmed (`draft`), their newest goal while its onboarding isn't over (`goal`): questions are left or they haven't pressed its plan reveal's action (`planRevealed`), or their day when they have an active goal (`today`). `resume` is null when there's nothing to continue.",
       operationId: "getOnboardingResume",
       responses: {
         "200": {
