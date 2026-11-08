@@ -54,6 +54,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.practice.SaveFailureReportButton
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
@@ -109,6 +110,7 @@ internal fun ColumnScope.PlacementStep(
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
@@ -175,6 +177,7 @@ internal fun ColumnScope.PlacementStep(
                     typedWords = rememberUnsentWords(goalId, typedDraftStep(shown.item.itemId), count = 1),
                     pending = vm.isSaving,
                     saveFailures = vm.saveFailures,
+                    onReportSaveFailure = onReportSaveFailure,
                     onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
                     onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = onDone) },
                 )
@@ -362,6 +365,7 @@ internal fun ColumnScope.PlacementQuestion(
     saveFailures: Int,
     onAnswer: (PlacementAnswer, Long) -> Unit,
     onStop: () -> Unit,
+    onReportSaveFailure: () -> Unit = {},
     dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
     media: @Composable () -> Unit = {},
 ) {
@@ -420,6 +424,7 @@ internal fun ColumnScope.PlacementQuestion(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+        if (saveFailures > 1 && !pending) SaveFailureReportButton(onReportSaveFailure)
         BesideOrAbove(
             start = {
                 OutlinedButton(

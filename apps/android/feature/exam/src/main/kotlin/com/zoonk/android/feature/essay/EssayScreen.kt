@@ -72,6 +72,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
@@ -80,6 +81,7 @@ import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
+import com.zoonk.android.feature.practice.SaveFailureReportButton
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionTitle
@@ -186,6 +188,7 @@ private fun EssayLoaded(
     LaunchedEffect(move.leaving) { move.leaving?.let(navigator::leaveTaskFor) }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
+    val saveReport = rememberSaveFailureReport(app, "essay")
     val grade = ui.grade
     val finishing = ui.finishing || move.busy
     val finishFailures = maxOf(ui.finishFailures, if (move.failed != null) 1 else 0)
@@ -199,11 +202,22 @@ private fun EssayLoaded(
         }
 
         (ui.mode == EssayMode.Grade || ui.closed) && grade != null -> {
-            EssayGradeSteps(essay, grade, ui.finished, ui.closed, ui.switched, finishing, finishFailures, viewModel, navigator)
+            EssayGradeSteps(
+                essay,
+                grade,
+                ui.finished,
+                ui.closed,
+                ui.switched,
+                finishing,
+                finishFailures,
+                viewModel,
+                navigator,
+                onReportSaveFailure = saveReport::open,
+            )
         }
 
         else -> {
-            EssayWrite(essay, ui, finishing, finishFailures, viewModel, navigator)
+            EssayWrite(essay, ui, finishing, finishFailures, viewModel, navigator, onReportSaveFailure = saveReport::open)
         }
     }
 }
@@ -216,6 +230,7 @@ internal fun EssayWrite(
     finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val rubric = EssayRubric.of(essay.rubric.value)
     val texts = essay.context?.takeIf { isLongText(it) }
@@ -247,7 +262,7 @@ internal fun EssayWrite(
         bottomBar = {
             TaskActionBar {
                 StatusLine(ui.send, ui.gradesLeft, navigator)
-                if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish)
+                if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish, onReport = onReportSaveFailure)
                 TaskActions { width ->
                     if (rewriting) {
                         OutlinedButton(
@@ -546,6 +561,7 @@ internal fun EssayGradeSteps(
     finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     ResultScreen {
         val rubric = EssayRubric.of(essay.rubric.value)
@@ -629,6 +645,7 @@ internal fun EssayGradeSteps(
                                     style = MaterialTheme.typography.bodyMedium,
                                 )
                             }
+                            if (finishFailures > 1 && !finishing) SaveFailureReportButton(onReportSaveFailure)
                             if (!tooShort && !beside) {
                                 TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
                                     Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)

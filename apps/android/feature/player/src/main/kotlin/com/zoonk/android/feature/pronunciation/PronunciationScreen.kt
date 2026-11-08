@@ -89,6 +89,8 @@ import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
+import com.zoonk.android.feature.practice.SaveFailureReportButton
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ReachedFacts
@@ -137,6 +139,7 @@ fun PronunciationScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val saveReport = rememberSaveFailureReport(app, "pronunciation")
     val summary by app.learnerSummary.summary.collectShown()
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val owner = (session as? SessionState.SignedIn)?.session?.localId
@@ -157,6 +160,7 @@ fun PronunciationScreen(
             app.speech,
             navigator,
             buddy = summary.value?.buddy,
+            onReportSaveFailure = saveReport::open,
             ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
         )
     }
@@ -175,13 +179,14 @@ internal fun PronunciationTask(
     navigator: AppNavigator,
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context) }
     val round = model.round
 
     if (round != null) {
-        PronunciationRoundScreen(round, model, speech, navigator, buddy, ceremony)
+        PronunciationRoundScreen(round, model, speech, navigator, buddy, ceremony, onReportSaveFailure)
         return
     }
 
@@ -221,6 +226,7 @@ internal fun PronunciationRoundScreen(
     navigator: AppNavigator,
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     when (val step = round.step) {
         is RoundStep.Result -> {
@@ -231,7 +237,7 @@ internal fun PronunciationRoundScreen(
         }
 
         is RoundStep.Word -> {
-            WordStep(round, step, model, speech, navigator)
+            WordStep(round, step, model, speech, navigator, onReportSaveFailure)
         }
     }
 }
@@ -243,6 +249,7 @@ private fun WordStep(
     model: PronunciationViewModel,
     speech: SpeechPlayer,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit,
 ) {
     val word = round.words[step.index]
     // Each word has its own sounds, so leaving it stops them.
@@ -282,6 +289,7 @@ private fun WordStep(
             bottomBar = {
                 TaskActionBar {
                     if (round.finishFailures > 0 && !round.pending) SaveFailed(round.finishFailures, onRetry = model::finish)
+                    if (round.finishFailures > 1 && !round.pending) SaveFailureReportButton(onReportSaveFailure)
                     WordActions(round, step, model, status, tapRecord)
                 }
             },

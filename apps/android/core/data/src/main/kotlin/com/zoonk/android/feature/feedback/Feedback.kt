@@ -3,6 +3,7 @@ package com.zoonk.android.feature.feedback
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiClients
@@ -21,6 +22,7 @@ data class FeedbackTarget(
     val screen: String,
     val contentKind: FeedbackSubmissionContext.ContentKind? = null,
     val contentId: UUID? = null,
+    val reportType: FeedbackSubmissionContext.ReportType? = null,
 )
 
 fun interface FeedbackApi {
@@ -41,14 +43,13 @@ class LiveFeedbackApi(
     }
 }
 
-/** Sends a message to the team, as anyone: a visitor gives an email for the reply. */
 class FeedbackSender(
     private val api: FeedbackApi,
     private val sessions: SessionSource,
 ) {
     suspend fun send(
         target: FeedbackTarget,
-        email: String,
+        email: String?,
         message: String,
     ): Boolean =
         try {
@@ -59,8 +60,12 @@ class FeedbackSender(
                     contentKind = target.contentKind,
                     platform = FeedbackSubmissionContext.Platform.ANDROID,
                     screen = target.screen,
+                    reportType = target.reportType,
                 )
-            api.send(sessions.current, FeedbackSubmission(email = email, message = message, context = context))
+            api.send(
+                sessions.current,
+                FeedbackSubmission(email = email?.trim()?.takeIf(String::isNotEmpty), message = message, context = context),
+            )
             true
         } catch (e: CancellationException) {
             throw e
@@ -74,8 +79,9 @@ enum class FeedbackStatus { Idle, Sending, Sent, Failed }
 class FeedbackViewModel(
     private val sender: FeedbackSender,
     val target: FeedbackTarget,
+    initialMessage: String = "",
 ) : ViewModel() {
-    var message by mutableStateOf("")
+    var message by mutableStateOf(initialMessage)
         private set
     var typedEmail by mutableStateOf("")
         private set
@@ -93,8 +99,16 @@ class FeedbackViewModel(
     }
 
     /** [accountEmail] is the signed-in account's; without one the learner types it. */
-    fun canSend(accountEmail: String?): Boolean =
-        status != FeedbackStatus.Sending && message.isNotBlank() && (accountEmail ?: typedEmail).isNotBlank()
+    fun canSend(accountEmail: String?): Boolean {
+        val email = (accountEmail ?: typedEmail).trim()
+        val validEmail =
+            if (email.isEmpty()) {
+                target.reportType == FeedbackSubmissionContext.ReportType.SAVE_FAILURE
+            } else {
+                PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
+            }
+        return status != FeedbackStatus.Sending && message.isNotBlank() && validEmail
+    }
 
     fun send(accountEmail: String?) {
         if (!canSend(accountEmail)) return

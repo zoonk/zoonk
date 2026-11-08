@@ -38,6 +38,7 @@ import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.plainItemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -288,15 +289,26 @@ fun ListeningSet(set: ItemSet) {
 fun SaveErrorText(
     failures: Int,
     onRetry: (() -> Unit)? = null,
+    onReport: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.practice_save_error),
-            modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.practice_save_error),
+                modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+        }
+        if (failures > 1) SaveFailureReportButton(onReport)
+    }
+}
+
+@Composable
+fun SaveFailureReportButton(onReport: () -> Unit) {
+    TextButton(onClick = onReport, leadingIcon = { ButtonIcon(R.drawable.ic_flag) }) {
+        Text(stringResource(R.string.feedback_report_problem))
     }
 }
 

@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "feedback_email": "7fe000456f56c0d3894829c7e599455154ab2ad2c39bc5f1dc14680b47db99a2",
+  "feedback_email_optional": "e98fd329fd2e34aaf0760de79c957ab484b903e6a312608ed37fea3e50993b22",
   "feedback_failed": "a6f78eaf4a989709afa310887e908b23775997f819ad24ec079fd703aa6d8e3d",
   "feedback_follow_us": "4dd47fd635004e19395f019e7760e86d4c1bc4bdd4047db2d5d8749ceb6ed751",
   "feedback_help_description": "f0c370a0060274d054d6eeb615289bbe2038692a0751f2e8b278ac5138b04658",
@@ -9,6 +10,7 @@
   "feedback_message_placeholder": "88e028376e413ebdeededc67dec18f7a16e5c1de3f8652ffb55af18e249af4aa",
   "feedback_more": "66af5bb1e84e22b2c405f76409d7cc87f7fabe5066a3362a544aad8d6a2215f3",
   "feedback_report_problem": "bf28adc7c7823d658e88c283d1494979d1f294881d03a37f4c26f59300af2d9a",
+  "feedback_save_failure_message": "5dc12e10c2883b72e7fd54a0d6aa9fd2db1cb71392f7b07e997900c200a256b8",
   "feedback_screen_attached": "27ab41ea2c1d39f880b634b3762087679012b3740e16f63d7cec107d4046f4e7",
   "feedback_send": "ce81350d190f07c05b03ca3d57f26b2d7c85ffadc4284ee76150ce79895c520f",
   "feedback_send_feedback": "ea27e2a387a0ac43b2ca85a571265ac5073dae5600074bc99ac901b1636010d0",
@@ -32,4 +34,6 @@
     <string name="feedback_send_feedback_description">Bir sorunla mı karşılaştın ya da bir fikrin mi var? Aşağıya yaz veya hello@zoonk.com adresine e-posta gönder.</string>
     <string name="feedback_thanks">Teşekkürler! Mesajını aldık.</string>
     <string name="feedback_more">Diğer seçenekler</string>
+    <string name="feedback_save_failure_message">Cevaplarımı kaydedemedim.</string>
+    <string name="feedback_email_optional">Cevap almak istersen e-posta adresin</string>
 </resources>
