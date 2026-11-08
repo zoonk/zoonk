@@ -22,6 +22,8 @@ const GOAL_CONTENT_STEPS = [
   "createPlan",
   "outlineCourses",
   "prepareFirstLessons",
+  "writeFirstLesson",
+  "firstLessonReady",
   "goalReady",
 ] as const;
 

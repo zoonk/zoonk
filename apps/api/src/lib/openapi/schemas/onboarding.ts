@@ -76,6 +76,22 @@ export const onboardingResponseSchema = z
         description:
           "An exam's subjects from its stored notice, with only the options of its choices the learner picked; empty for other goals",
       }),
+    firstLesson: z
+      .object({
+        id: uuidSchema().meta({ description: "Open it at GET /v1/library/lessons/{lessonId}" }),
+        status: z
+          .enum(["ready", "writing"])
+          .meta({
+            description:
+              "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it",
+          }),
+        title: z.string(),
+      })
+      .nullable()
+      .meta({
+        description:
+          "A learn goal's first lesson, picked and written while the plan is still being built, so the learner can start it before the plan is ready. The goal's run reports it live (`writeFirstLesson`, then `firstLessonReady`); this read is the truth after a reconnect. Null until it's picked, and for goals whose first lesson comes from the plan",
+      }),
     followUps: z
       .array(z.string())
       .meta({

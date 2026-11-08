@@ -213,6 +213,9 @@ export type OnboardingDateProblem =
   | { kind: "passed" | "today" }
   | ({ kind: "noSitting" } & NoSitting);
 
+/** A learn goal's first lesson, picked before the plan: the learner can start it once it's `ready`. */
+export type OnboardingFirstLesson = { id: string; status: "ready" | "writing"; title: string };
+
 type OnboardingTimeChoice = { minutes: number; split: DaySplit | null };
 
 export type OnboardingView = {
@@ -224,6 +227,8 @@ export type OnboardingView = {
   examDays: { days: string[]; estimated: boolean } | null;
   /** knownSubjects must send notice names, not display short names. */
   examSubjects: { name: string; shortName: string | null }[];
+  /** Null until it's picked, and for goals whose first lesson comes from the plan. */
+  firstLesson: OnboardingFirstLesson | null;
   followUps: string[];
   /** Follow via GET /v1/generations/{id}/events; null until the run starts. */
   generationId: string | null;
