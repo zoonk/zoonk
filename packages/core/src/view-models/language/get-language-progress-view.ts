@@ -50,9 +50,10 @@ export async function getLanguageProgressView(
 
   const { goal, units, userId } = loaded.context;
   const details = readGoalDetails(goal);
+  const target = getTargetLevel(details);
 
   const [level, levels, doneIds, allowance] = await Promise.all([
-    readPlanLevel({ goalId: goal.id, userId }),
+    readPlanLevel({ goalId: goal.id, target, userId }),
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
     loadDoneUnitIds({ units, userId }),
     getAllowance(),
@@ -78,7 +79,7 @@ export async function getLanguageProgressView(
       speaking,
       speakingMock: getSpeakingMockExam(goal),
       speakingMockPaused: getSpeakingMockExam(goal) !== null && !isLiveCallAvailable(),
-      target: getTargetLevel(details),
+      target,
     },
     status: "ready",
   };

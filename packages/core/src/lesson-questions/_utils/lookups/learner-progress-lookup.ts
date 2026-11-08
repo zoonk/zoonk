@@ -80,7 +80,7 @@ function toLanguage(language: LanguageProgressView | null) {
 
   return {
     canDo: language.canDo.map((check) => ({ done: check.done, text: check.text })),
-    level: language.level,
+    level: language.level?.label ?? null,
     skills: language.levels.map((level) => ({
       level: level.label,
       levelAtStart: level.startLabel,

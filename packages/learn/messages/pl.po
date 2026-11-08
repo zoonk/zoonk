@@ -4582,16 +4582,6 @@ msgid "{points, number} this week"
 msgstr "{points, number} w tym tygodniu"
 
 #: src/journey/journey-hero.tsx
-msgctxt "iuIhWr"
-msgid "Even across skills"
-msgstr "Równo we wszystkich umiejętnościach"
-
-#: src/journey/journey-hero.tsx
-msgctxt "3JHj0V"
-msgid "{skill} leads"
-msgstr "{skill} na prowadzeniu"
-
-#: src/journey/journey-hero.tsx
 #: src/language/exam-speaking/prep-timer.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/syllabus/subject-aside.tsx

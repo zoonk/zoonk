@@ -4582,16 +4582,6 @@ msgid "{points, number} this week"
 msgstr "이번 주 {points, number}"
 
 #: src/journey/journey-hero.tsx
-msgctxt "iuIhWr"
-msgid "Even across skills"
-msgstr "스킬 간 균형"
-
-#: src/journey/journey-hero.tsx
-msgctxt "3JHj0V"
-msgid "{skill} leads"
-msgstr "{skill} 수준이 가장 높아요"
-
-#: src/journey/journey-hero.tsx
 #: src/language/exam-speaking/prep-timer.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/syllabus/subject-aside.tsx

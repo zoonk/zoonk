@@ -286,7 +286,7 @@ struct PlanNumbersSection: View {
       return PlanNumber(
         label: String(
           localized: "Level", table: "Plan", comment: "Label of a language goal's level"),
-        value: language.levelText, detail: language.leadingSkill)
+        value: language.levelText)
     }
 
     guard context.goal.kind == .learn, let lessons = syllabus?.lessons else {

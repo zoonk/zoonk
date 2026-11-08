@@ -245,7 +245,6 @@
   "plan_estimate_based_on_last": "3691f6601bb15a1f8352d18193fcb926a64b72c684460090c9ce4362e5234229",
   "plan_estimate_waits": "f8e6418793b6f2d453581817ec99da423fb50176d729a6d620dedcc4278196ef",
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
-  "plan_even_across_skills": "2f7d71c09316ec6c8cbca6908ea936d406e45c9eb65469001b346b8567e1d573",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
   "plan_everything": "55669f95986e81d8bde70ce730c9d1480b70d4819269397d96121b502a11f11a",
   "plan_exam_choice_left_out": "0b3a8ebd8a6ffe0c07561a86c9bc8866c619b091ed5b2ba8c8a8b8fe83d57d45",
@@ -454,7 +453,6 @@
   "plan_short_mock_and_practice": "1df55f194eb94bf88a88a84fffcdde3be007b125e72bcb6e0c8bb79dade246de",
   "plan_short_mock_and_review": "d7f08fbc923cbda1ae49deb259f185a60a7c3b5ba477c9f1a537bfcd2d65b945",
   "plan_show_fewer_chapters": "cde0cce702cb6088073a5e2b027c7996f5e3f81467c459247781f66e28d2e129",
-  "plan_skill_leads": "07d16b151de1a87d58fc94b2c85a79b5b789155d9b51e02a4da6c4eddd4a7953",
   "plan_skills_you_know": "1274ac9a53579713ff2f0fbc9ca2a14c890251f25442d58fd8ae80eb697dfadd",
   "plan_skipped": "65c73cc6179833e0845f7072bfb46f92abaf046d71e69c2a565510c13c951ed2",
   "plan_skipped_known": "debc47821e48359400ff5c7910fec6cfd2b5fde54bfb9fdc40cbfb123fdc4938",
@@ -890,10 +888,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">Seviye</string>
     <string name="plan_your_level">Seviyen</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">Beceriler dengeli</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">%1$s önde</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Henüz ders tamamlamadın</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->

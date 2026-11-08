@@ -95,7 +95,6 @@
 - “Past date”: “Hedef tarih geçti”, not “Süresi doldu”, “Tarihi geçti” or “Bitti”
 - “Needs adjusting”: “Ayarlanmalı”
 - “Too tight”: “Çok sıkışık”
-- “Even across skills”: “Beceriler dengeli”
 - “left out”: “dışarıda kaldı”, not “atlandı”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “atla” / “atlandı”
 - “Daily time”: “Günlük çalışma süresi”

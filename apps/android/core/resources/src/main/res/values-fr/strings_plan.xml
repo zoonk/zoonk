@@ -245,7 +245,6 @@
   "plan_estimate_based_on_last": "bba743495159f715405e15dc57bebb2f8688eecd5760802370a7a3df165d9533",
   "plan_estimate_waits": "cdee3f5bfd6ec2c002a4c07753d6ee8088524e0d3f6017995eda1490bbea52ee",
   "plan_estimated_score": "471ba09383b266bb1ae2d1e0e64492502e45da480ab3d606f34d5fe572793f58",
-  "plan_even_across_skills": "7c985f27693eb58e9e08c3bc3285a12abe975031afe598764b1d0cabeae67ed3",
   "plan_every_day": "67e5455f0a80959a38845bd03a9c49b00c1a86fe73787b398593a67c43b3f2b8",
   "plan_everything": "3ca6dd60fab787a0abc5aaf547e44c57772c2558c435b254bd993b9bb72a723b",
   "plan_exam_choice_left_out": "9b55780dab527eb225c99df71020fde9270269ed98b412d1ac32ce9c021a4f9e",
@@ -454,7 +453,6 @@
   "plan_short_mock_and_practice": "5b9df78603f275d3e6bf24f93124a4f24cfd63ab888d6bab939b736ac3e07d0b",
   "plan_short_mock_and_review": "2861a7575d8828e7b0d80306334f054c59cf72065cb0dcc38a81a67ee94c2d06",
   "plan_show_fewer_chapters": "ae7da92c32bb4d244a9c314e41a2963dae9b0a2d9d354ecae961e843ba5850e7",
-  "plan_skill_leads": "6941466b7a69ad09a5531d60cd1a5853f6faa8f40640c608ed04e0dfdcd7ea19",
   "plan_skills_you_know": "901af5c5ae24c167bc11c0602ee1c0d74b3040da7f8e81c317a82e6dc09ac8bf",
   "plan_skipped": "f48b12cda9274763a75897cf58f4af93673e0aae86a86806bd2b805a0c6428e3",
   "plan_skipped_known": "936d561e4f1237f5082aefff06f1ef4088f6ff30cd1fd650a78658a0f7f84ea1",
@@ -915,10 +913,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">Niveau</string>
     <string name="plan_your_level">Ton niveau</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">Équilibré entre les compétences</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">%1$s en tête</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Aucune leçon étudiée pour l’instant</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->

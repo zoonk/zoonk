@@ -26,6 +26,24 @@ const levelTargetSchema = z
   .nullable()
   .meta({ description: "The level the learner aims for, when they gave one" });
 
+const planLevelSchema = z
+  .object({
+    label: z.string().meta({ description: 'The plan\'s level, "A2+"' }),
+    target: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "The level the learner aims for while the plan's level is below it; null once it reaches it or when they gave none",
+      }),
+  })
+  .meta({ id: "LanguagePlanLevel" })
+  .nullable()
+  .meta({
+    description:
+      "The plan's level: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
+  });
+
 export const languageProgressViewSchema = z
   .object({
     canDo: z
@@ -37,13 +55,7 @@ export const languageProgressViewSchema = z
       targetLanguage: z.string(),
       title: z.string(),
     }),
-    level: z
-      .string()
-      .nullable()
-      .meta({
-        description:
-          'The plan\'s level ("A2+"): the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with "+" once half of that level\'s lessons are finished; null while the plan has no lessons',
-      }),
+    level: planLevelSchema,
     levels: z.array(languageSkillLevelSchema),
     speaking: speakingPaperViewSchema
       .nullable()
@@ -194,19 +206,7 @@ export type LanguageUnitView = z.infer<typeof languageUnitViewSchema>;
 
 export const languageTodayViewSchema = z
   .object({
-    level: z
-      .object({
-        label: z.string().meta({ description: 'The plan\'s level, "A2+"' }),
-        target: z
-          .string()
-          .nullable()
-          .meta({ description: "The level the learner aims for, when they gave one" }),
-      })
-      .nullable()
-      .meta({
-        description:
-          "The plan's level, shown instead of preparation: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
-      }),
+    level: planLevelSchema,
     pronunciation: duePronunciationSchema
       .nullable()
       .meta({ description: "Mispronounced words due to be said again today" }),

@@ -245,7 +245,6 @@
   "plan_estimate_based_on_last": "e4e2fae06ff9b514b42d96631183ba6fd89ba2903bb66a995fef32d427e91ae8",
   "plan_estimate_waits": "52f3a14b045afa4619ab98936a3e0ba5f928a753d733a07450d48c06206ee823",
   "plan_estimated_score": "a8cbf5fdca146797a99c46f3302182465d8b00243c205418ce49a36498d9059a",
-  "plan_even_across_skills": "18e65462b87c642159add94bc18ea1eefc1cfa0e075ecf8b199dfe75b47c7438",
   "plan_every_day": "3a6a23cf2b886c2d43df42fd6d80cc199282ba434c4edf54efd17f39a70f8d27",
   "plan_everything": "b21c98179d3a019b875738f5d53dcccf08ffca198d73584c2d5f8254432ee7f9",
   "plan_exam_choice_left_out": "a81f9310fa8a4863e8e15e4ce9008bc14d1c04df595b759a04a4d9c77cc3e18a",
@@ -454,7 +453,6 @@
   "plan_short_mock_and_practice": "ac93b82082aef7bb73fe21db2edaffca982e9ba981a8493b593b9355de2ad275",
   "plan_short_mock_and_review": "8d3c1f15483e06e08226f8c2997e6f9a45cd5300c4bd9f0d90e6a7ae5650b72c",
   "plan_show_fewer_chapters": "b655475093dccd20a6a3afd8483d6c84d0384d1994b0051718be4e99d67d91fc",
-  "plan_skill_leads": "f9b4997c20ec6165a22eb55de5c8cd6a77184301f093db819dd49dd551c26f71",
   "plan_skills_you_know": "3006702fc568cd5bb7198630bf9fc50f80e03476433f1097fe7db163caa7c35b",
   "plan_skipped": "fe316707a8b15656b19010f645712b759c973e945514545987131b2e3bfbd23e",
   "plan_skipped_known": "7a34016948657330d2edc4563cd7471955d36416208954ca9d2836bbc5f933ae",
@@ -915,10 +913,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">Nivel</string>
     <string name="plan_your_level">Tu nivel</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">Equilibrado en todas las habilidades</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">Mayor nivel en %1$s</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Aún no hay lecciones aprendidas</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->

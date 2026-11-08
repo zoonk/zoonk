@@ -38212,8 +38212,12 @@
           },
           "level": {
             "nullable": true,
-            "description": "The plan's level (\"A2+\"): the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
-            "type": "string"
+            "description": "The plan's level: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguagePlanLevel"
+              }
+            ]
           },
           "levels": {
             "type": "array",
@@ -38276,6 +38280,25 @@
         ],
         "additionalProperties": false
       },
+      "LanguagePlanLevel": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The plan's level, \"A2+\""
+          },
+          "target": {
+            "nullable": true,
+            "description": "The level the learner aims for while the plan's level is below it; null once it reaches it or when they gave none",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "target"
+        ],
+        "additionalProperties": false
+      },
       "LanguageSkillLevel": {
         "type": "object",
         "properties": {
@@ -38326,24 +38349,12 @@
         "properties": {
           "level": {
             "nullable": true,
-            "description": "The plan's level, shown instead of preparation: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
-            "type": "object",
-            "properties": {
-              "label": {
-                "type": "string",
-                "description": "The plan's level, \"A2+\""
-              },
-              "target": {
-                "nullable": true,
-                "description": "The level the learner aims for, when they gave one",
-                "type": "string"
+            "description": "The plan's level: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguagePlanLevel"
               }
-            },
-            "required": [
-              "label",
-              "target"
-            ],
-            "additionalProperties": false
+            ]
           },
           "pronunciation": {
             "nullable": true,

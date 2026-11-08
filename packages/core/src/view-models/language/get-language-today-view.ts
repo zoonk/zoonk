@@ -26,18 +26,11 @@ export async function getLanguageTodayView(
   const { goal, userId } = loaded.context;
   const details = readGoalDetails(goal);
 
-  const [label, pronunciation, speaking] = await Promise.all([
-    readPlanLevel({ goalId: goal.id, userId }),
+  const [level, pronunciation, speaking] = await Promise.all([
+    readPlanLevel({ goalId: goal.id, target: getTargetLevel(details), userId }),
     readDuePronunciation(userId, goal.targetLanguage),
     loadSpeakingPaperEntry({ goal }),
   ]);
 
-  return {
-    status: "ready",
-    today: {
-      level: label ? { label, target: getTargetLevel(details)?.label ?? null } : null,
-      pronunciation,
-      speaking,
-    },
-  };
+  return { status: "ready", today: { level, pronunciation, speaking } };
 }

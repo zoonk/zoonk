@@ -93,7 +93,6 @@
 - “Past date”: “Po terminie”, not “Wygasły” or “Zakończony”
 - “Needs adjusting”: “Wymaga dostosowania”
 - “Too tight”: “Zbyt napięty”
-- “Even across skills”: “Równo we wszystkich umiejętnościach”
 - “left out”: “nie zmieścić się” (“Lekcje, które się nie zmieściły”), not “pominąć”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “pomiń” / “pominięte”
 - “Daily time”: “Dzienny czas nauki”
