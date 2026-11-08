@@ -103,7 +103,11 @@ class StudyReminderStore(
     val learner: AuthenticatedSession? get() = sessions.current
 
     private val settings = Mutex()
+    private val phoneWrites = Mutex()
     private var pushChoices = 0
+
+    /** A token sent for this installation that the server may hold, though its answer hasn't come back. */
+    private var uploading: String? = null
 
     fun isThisPhone(reminder: StudyReminder): Boolean = push.token != null && reminder.push.phone?.token == push.token
 
@@ -127,9 +131,7 @@ class StudyReminderStore(
     /** Push goes to this phone from now on; whether it's on doesn't change. Ask for notifications first. */
     suspend fun useThisPhone(learner: AuthenticatedSession? = this.learner): MutationResult<StudyReminder> {
         val token = push.register() ?: return MutationResult.Failed(ApiError.Unavailable)
-        return save(learner) { session -> api.selectPhone(session, phone(token)) }.also {
-            if (it is MutationResult.Done) push.save(token)
-        }
+        return phoneWrites.withLock { upload(token) { save(learner) { session -> api.selectPhone(session, phone(token)) } } }
     }
 
     /**
@@ -148,36 +150,56 @@ class StudyReminderStore(
         }
     }
 
-    /** Before [session] signs out: this phone stops getting its reminders, if it's the one they go to. */
-    suspend fun leave(session: AuthenticatedSession) {
-        push.token?.let { api.removePhone(session, it) }
-    }
+    /**
+     * Before [session] signs out: this phone stops getting its reminders, if it's the one they go to.
+     * It waits for a phone write under way, then removes every token the server may hold for it.
+     */
+    suspend fun leave(session: AuthenticatedSession) =
+        phoneWrites.withLock {
+            listOfNotNull(push.token, uploading).distinct().forEach { api.removePhone(session, it) }
+            uploading = null
+        }
 
     /**
      * FCM gave this installation [token]: when the token it replaced is the learner's phone, the new one
      * takes its place. The old one stays this installation's until the server has the new one, so a
-     * failed upload is tried again (on FCM's next callback or [reconcile]) and sign-out removes the
-     * token the server has.
+     * failed upload is tried again (on FCM's next callback or [reconcile]), and sign-out removes both.
      */
     suspend fun follow(token: String) {
-        val previous = push.token ?: return
-        if (previous == token) return
-        val followed =
-            cache.mutate(
-                invalidating = setOf(DataDomain.StudyReminder),
-                replacing = { saved: StudyReminder? -> listOfNotNull(saved?.let(reminder::replacing)) },
-            ) { session ->
-                if (api
-                        .reminder(session)
-                        .push.phone
-                        ?.token == previous
-                ) {
-                    api.selectPhone(session, phone(token))
-                } else {
-                    null
+        phoneWrites.withLock {
+            val previous = push.token ?: return
+            if (previous == token) return
+            upload(token) {
+                cache.mutate(
+                    invalidating = setOf(DataDomain.StudyReminder),
+                    replacing = { saved: StudyReminder? -> listOfNotNull(saved?.let(reminder::replacing)) },
+                ) { session ->
+                    if (api
+                            .reminder(session)
+                            .push.phone
+                            ?.token == previous
+                    ) {
+                        api.selectPhone(session, phone(token))
+                    } else {
+                        null
+                    }
                 }
             }
-        if (followed is MutationResult.Done) push.save(token)
+        }
+    }
+
+    /** Sends [token] with [write]; this installation keeps it once the server took it. */
+    private suspend fun <T> upload(
+        token: String,
+        write: suspend () -> MutationResult<T>,
+    ): MutationResult<T> {
+        uploading = token
+        return write().also {
+            if (it is MutationResult.Done) {
+                push.save(token)
+                uploading = null
+            }
+        }
     }
 
     /** After the stored session is back: a token that changed while the app was closed, or didn't upload, follows now. */
