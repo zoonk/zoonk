@@ -18,6 +18,7 @@ struct FocusTestScreen: View {
   @State private var questions: [PracticeQuestion] = []
   @State private var isSubmitting = false
   @State private var submitFailures = 0
+  @State private var showsSaveReport = false
   @State private var result: Components.Schemas.FocusTestResult?
   @State private var undone = false
   @State private var undoFailed = false
@@ -52,8 +53,9 @@ struct FocusTestScreen: View {
                   ? nil : test.areas.count * test.questionsPerArea,
                 upcomingEnded: writingEnded,
                 upcomingLimit: (writeFailure as? PracticeAPIError)?.helpLimit,
-                isPending: isSubmitting, failures: submitFailures
-              ) { answers in Task { await submit(answers) } }
+                isPending: isSubmitting, failures: submitFailures,
+                onReport: { showsSaveReport = true },
+                onFinish: { answers in Task { await submit(answers) } })
             } else {
               intro(test)
             }
@@ -74,6 +76,9 @@ struct FocusTestScreen: View {
     )
     .task(id: session.authenticatedSession) { await read() }
     .clearsRefusal { writeFailure = nil }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "focus-test", reportType: .saveFailure), isReport: true)
   }
 
   private func intro(_ test: FocusTestQuestions) -> some View {

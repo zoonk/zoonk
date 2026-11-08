@@ -4,6 +4,78 @@ import XCTest
 
 @MainActor
 final class FeedbackFormStoreTests: XCTestCase {
+  func testSaveReportSubmitsWithoutAnEmailAndKeepsItsContext() async {
+    let api = FeedbackAPISpy(result: .success(()))
+    let context = FeedbackContext(screen: "placement-question", reportType: .saveFailure)
+    let store = FeedbackFormStore(api: api, context: context, token: "guest-session")
+
+    XCTAssertEqual(store.message, "I couldn't save my answers.")
+    XCTAssertTrue(store.canSubmit)
+    store.email = "  \n"
+    store.message = "My answers still won't save."
+
+    await store.submit()
+
+    let submissions = await api.submissions()
+    XCTAssertEqual(store.state, .sent)
+    XCTAssertEqual(
+      submissions,
+      [
+        FeedbackSubmissionRecord(
+          submission: FeedbackSubmission(
+            context: context, email: nil, message: "My answers still won't save."),
+          token: "guest-session")
+      ])
+  }
+
+  func testSaveReportValidatesATypedEmailAndRequiresAMessage() async {
+    let api = FeedbackAPISpy(result: .success(()))
+    let store = FeedbackFormStore(
+      api: api, context: FeedbackContext(screen: "level-test", reportType: .saveFailure))
+    store.email = "invalid-email"
+
+    await store.submit()
+
+    XCTAssertFalse(store.canSubmit)
+    let submissions = await api.submissions()
+    XCTAssertTrue(submissions.isEmpty)
+    store.email = "learner@zoonk.test"
+    XCTAssertTrue(store.canSubmit)
+    store.message = "  \n"
+    XCTAssertFalse(store.canSubmit)
+  }
+
+  func testRegularFeedbackAndContentReportsStillRequireAnEmail() {
+    let api = FeedbackAPISpy(result: .success(()))
+    for context in [
+      nil, FeedbackContext(contentID: "chapter-id", contentKind: .chapter),
+      FeedbackContext(screen: "exam"),
+    ] {
+      let store = FeedbackFormStore(api: api, context: context)
+      XCTAssertTrue(store.message.isEmpty)
+      store.message = "Please help."
+      XCTAssertFalse(store.canSubmit)
+      store.email = "learner@zoonk.test"
+      XCTAssertTrue(store.canSubmit)
+    }
+  }
+
+  func testFailedSaveReportKeepsTheDraftAndCanRetry() async {
+    let api = FeedbackAPISpy(result: .failure(FeedbackFailure.unavailable))
+    let store = FeedbackFormStore(
+      api: api, context: FeedbackContext(screen: "placement-question", reportType: .saveFailure))
+    store.message = "These answers won't save."
+
+    await store.submit()
+    await store.submit()
+
+    XCTAssertEqual(store.state, .failed(.unavailable))
+    XCTAssertEqual(store.message, "These answers won't save.")
+    XCTAssertTrue(store.email.isEmpty)
+    let submissions = await api.submissions()
+    XCTAssertEqual(submissions.count, 2)
+  }
+
   func testSubmitNormalizesFieldsAndPublishesSuccess() async {
     let api = FeedbackAPISpy(result: .success(()))
     let context = FeedbackContext(contentID: CourseChapter.testFixture.id, contentKind: .chapter)

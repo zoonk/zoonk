@@ -320,14 +320,19 @@ struct PracticeSecondaryButton: View {
 
 struct PracticeSaveError: View {
   let failures: Int
+  let onReport: () -> Void
   let retry: () -> Void
 
   var body: some View {
     HStack {
-      FailureLine(
-        message: Self.message(failures: failures)
-      )
-      .typeStyle(.body)
+      VStack(alignment: .leading, spacing: 4) {
+        FailureLine(message: Self.message(failures: failures))
+          .typeStyle(.body)
+
+        if failures > 1 {
+          SaveFailureReportButton(action: onReport)
+        }
+      }
 
       Spacer()
 

@@ -64,6 +64,7 @@ private struct EssayContent: View {
   @State private var finishing = false
   @State private var finishFailures = 0
   @State private var confirmsLeave = false
+  @State private var showsSaveReport = false
   @State private var openCriteria: Set<String> = []
   @FocusState private var isBoxFocused: Bool
 
@@ -146,6 +147,10 @@ private struct EssayContent: View {
       }
     }
     .interactiveDismissDisabled(writer.isWriting && writer.unsent)
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "essay", reportType: .saveFailure), isReport: true
+    )
     .confirmationDialog(
       Text("Leave for now?", tableName: "Essay", comment: "Leaving with unsent text"),
       isPresented: $confirmsLeave, titleVisibility: .visible
@@ -312,6 +317,9 @@ private struct EssayContent: View {
             : LocalizedStringResource(
               "That didn't go through. Try again in a moment.", table: "Essay",
               comment: "Finishing the block failed"))
+        if finishFailures > 1 {
+          SaveFailureReportButton { showsSaveReport = true }
+        }
       } else if writer.status == .failed {
         FailureLine(
           message: writer.saveFailures > 1
@@ -319,6 +327,9 @@ private struct EssayContent: View {
             : LocalizedStringResource(
               "That didn't go through. Your text is still here. Try again in a moment.",
               table: "Essay", comment: "Grading failed"))
+        if writer.saveFailures > 1 {
+          SaveFailureReportButton { showsSaveReport = true }
+        }
       } else if writer.isWriting, writer.status == .signUpRequired {
         HelpLimitNotice(limit: .signUpRequired)
       } else if let statusNote {

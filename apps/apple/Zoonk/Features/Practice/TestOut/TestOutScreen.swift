@@ -30,6 +30,7 @@ struct TestOutScreen: View {
   @State private var writeFailure: (any Error)?
   @State private var isSubmitting = false
   @State private var submitFailures = 0
+  @State private var showsSaveReport = false
   @State private var result: Components.Schemas.ChapterTestOutResult?
   @State private var undo: UndoState = .idle
 
@@ -74,8 +75,9 @@ struct TestOutScreen: View {
           case .loaded(.test(let test)):
             GradedAtEndRun(
               questions: test.questions, labels: test.trueFalseLabels, draftKey: draftKey,
-              hint: { _ in rule(test.passMark) }, isPending: isSubmitting, failures: submitFailures
-            ) { answers in Task { await submit(answers) } }
+              hint: { _ in rule(test.passMark) }, isPending: isSubmitting, failures: submitFailures,
+              onReport: { showsSaveReport = true },
+              onFinish: { answers in Task { await submit(answers) } })
           }
         }
       }
@@ -93,6 +95,9 @@ struct TestOutScreen: View {
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
     .clearsRefusal { writeFailure = nil }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "test-out", reportType: .saveFailure), isReport: true)
   }
 
   private func preparing(failure: (any Error)?) -> some View {

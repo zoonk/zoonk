@@ -165,20 +165,19 @@ private struct FeedbackForm: View {
       if store.asksForEmail {
         Section {
           FormField(
-            title: Text(
-              "Email address",
-              tableName: "Feedback",
-              comment: "Email field label in the feedback form."),
+            title: emailLabel,
             isFocused: focusedField == .email
           ) {
             emailField
           }
         } footer: {
-          SectionFooter {
-            Text(
-              "We'll use this email to contact you.",
-              tableName: "Feedback",
-              comment: "Explains why the feedback form asks for an email address.")
+          if !store.isSaveReport {
+            SectionFooter {
+              Text(
+                "We'll use this email to contact you.",
+                tableName: "Feedback",
+                comment: "Explains why the feedback form asks for an email address.")
+            }
           }
         }
       }
@@ -245,12 +244,7 @@ private struct FeedbackForm: View {
         "you@example.com",
         tableName: "Feedback",
         comment: "Example email address in the feedback form.")
-    ) {
-      Text(
-        "Email address",
-        tableName: "Feedback",
-        comment: "Email field label in the feedback form.")
-    }
+    ) { emailLabel }
     .focused($focusedField, equals: .email)
     .textInputAutocapitalization(.never)
     .keyboardType(.emailAddress)
@@ -260,11 +254,17 @@ private struct FeedbackForm: View {
     .onSubmit {
       focusedField = .message
     }
-    .accessibilityLabel(
-      Text(
-        "Email address",
-        tableName: "Feedback",
-        comment: "Email field label in the feedback form."))
+    .accessibilityLabel(emailLabel)
+  }
+
+  private var emailLabel: Text {
+    store.isSaveReport
+      ? Text(
+        "Your email, if you'd like a reply", tableName: "Feedback",
+        comment: "Optional reply email for a report about answers that repeatedly failed to save")
+      : Text(
+        "Email address", tableName: "Feedback",
+        comment: "Email field label in the feedback form.")
   }
 
   private var confirmation: some View {
@@ -294,7 +294,14 @@ private struct FeedbackForm: View {
   }
 
   private func failureMessage(_ failure: FeedbackFailure) -> LocalizedStringResource {
-    switch failure {
+    if store.isSaveReport, failure != .validation {
+      return LocalizedStringResource(
+        "We couldn't send your message. Try again, or email us at hello@zoonk.com.",
+        table: "Feedback",
+        comment: "A save failure report could not be sent; the learner can retry or email support")
+    }
+
+    return switch failure {
     case .network:
       LocalizedStringResource(
         "You're offline. Check your connection and try again.",
@@ -311,6 +318,24 @@ private struct FeedbackForm: View {
         table: "Feedback",
         comment: "Feedback form error when the submitted fields are invalid.")
     }
+  }
+}
+
+struct SaveFailureReportButton: View {
+  let action: () -> Void
+
+  var body: some View {
+    Button(action: action) {
+      Label {
+        Text(
+          "Report a problem", tableName: "Feedback",
+          comment: "Opens the feedback form to report a problem")
+      } icon: {
+        Image(systemName: "flag")
+      }
+    }
+    .buttonStyle(.ghost)
+    .controlSize(.small)
   }
 }
 

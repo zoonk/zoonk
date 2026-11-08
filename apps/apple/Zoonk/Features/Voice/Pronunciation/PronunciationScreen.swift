@@ -89,6 +89,7 @@ private struct PronunciationRoundView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var round: PronunciationRound?
   @State private var recorder = VoiceRecorder()
+  @State private var showsSaveReport = false
 
   let reviews: Components.Schemas.PronunciationReviews
 
@@ -104,6 +105,10 @@ private struct PronunciationRoundView: View {
     .onAppear {
       round = round ?? PronunciationRound(words: reviews.words, actions: actions)
     }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "pronunciation", reportType: .saveFailure), isReport: true
+    )
     .onDisappear {
       recorder.cancel()
       voice.player.stop(owner: reviews.goalId)
@@ -209,6 +214,9 @@ private struct PronunciationRoundView: View {
       } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
         FailureLine(message: statusLine(notice))
           .typeStyle(.note)
+        if (round?.answerFailures ?? 0) > 1 {
+          SaveFailureReportButton { showsSaveReport = true }
+        }
       } else {
         Text(statusLine(notice))
           .typeStyle(.note)
@@ -339,14 +347,19 @@ private struct PronunciationRoundView: View {
 
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
-      FailureLine(
-        message: round.finishFailures > 1
-          ? PracticeSaveError.repeatedMessage
-          : LocalizedStringResource(
-            "We couldn't save your answers.", table: "Voice",
-            comment: "Finishing the round failed")
-      )
-      .typeStyle(.body)
+      VStack(alignment: .leading, spacing: 4) {
+        FailureLine(
+          message: round.finishFailures > 1
+            ? PracticeSaveError.repeatedMessage
+            : LocalizedStringResource(
+              "We couldn't save your answers.", table: "Voice",
+              comment: "Finishing the round failed")
+        )
+        .typeStyle(.body)
+        if round.finishFailures > 1 {
+          SaveFailureReportButton { showsSaveReport = true }
+        }
+      }
 
       Spacer()
 
