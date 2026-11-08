@@ -282,6 +282,88 @@
           "total": 180
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 54,
+            "2": 44
+          },
+          "status": "found"
+        },
+        "id": "en-sat-1",
+        "userInput": {
+          "board": "College Board",
+          "exam": "SAT",
+          "subjects": [
+            "Reading and Writing",
+            "Math"
+          ],
+          "today": "2026-10-06",
+          "total": 98
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 45,
+            "4": 45
+          },
+          "status": "found"
+        },
+        "id": "pt-enem-1",
+        "userInput": {
+          "board": "Inep",
+          "exam": "Enem",
+          "subjects": [
+            "Linguagens, Códigos e suas Tecnologias",
+            "Ciências Humanas e suas Tecnologias",
+            "Ciências da Natureza e suas Tecnologias",
+            "Matemática e suas Tecnologias"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
     }
   ],
   "taskId": "find-subject-questions"
