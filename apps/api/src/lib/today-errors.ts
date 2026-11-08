@@ -11,7 +11,7 @@ export const todayErrorCodes = {
   suggestedGoalAlreadyAnswered: "SUGGESTED_GOAL_ALREADY_ANSWERED",
 } as const;
 
-export function noGoalError(suggestedGoal: SuggestedGoalView | null) {
+function noGoalError(suggestedGoal: SuggestedGoalView | null) {
   return createErrorResponse({
     code: todayErrorCodes.noGoal,
     details: { suggestedGoal },
@@ -20,7 +20,7 @@ export function noGoalError(suggestedGoal: SuggestedGoalView | null) {
   });
 }
 
-export function planNotReadyError(goal: { id: string; kind: string; title: string }) {
+function planNotReadyError(goal: { id: string; kind: string; title: string }) {
   return createErrorResponse({
     code: todayErrorCodes.planNotReady,
     details: { goal },
