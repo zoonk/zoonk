@@ -34,7 +34,7 @@ import { bringBackMissedLessons } from "../plans/bring-back-missed-lessons";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { type PlanGraphSkill, parsePlanGraph } from "../plans/planner/plan-state";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
-import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
+import { completeLessonPlanItems, completePlanItem } from "../sessions/_utils/plan-items";
 import { claimCourseCertificate } from "./claim-course-certificate";
 
 const TIME_ZONE = "America/Sao_Paulo";
@@ -1068,6 +1068,120 @@ describe("a level's size, each written lesson counted once", () => {
 
     await expect(listLevelKeys(fixture.user.id)).resolves.toContain("it:A1");
   });
+});
+
+function listCourseCertificateKeys(userId: string) {
+  return prisma.certificate
+    .findMany({ orderBy: { key: "asc" }, where: { kind: "course", userId } })
+    .then((rows) => rows.map((row) => row.key));
+}
+
+describe("a course level's half, its skills taken from the plan's graph", () => {
+  it.each([false, true])(
+    "keeps a skill a dated plan left wholly out in the level's size (its lessons written: %s)",
+    async (outlined) => {
+      const fixture = await italianPlan({
+        items: [{ skill: 0 }, { skill: 0 }],
+        skills: [
+          { lessons: 2, level: "A1" },
+          { lessons: 10, level: "A1" },
+        ],
+      });
+
+      const courseIds = [fixture.goal.primaryCourseId ?? ""];
+
+      await asCourseGoal(fixture);
+      await updateGraphSkill(fixture, { attrs: { courseIds, outlined: true }, skill: 0 });
+      await updateGraphSkill(fixture, { attrs: { courseIds, outlined }, skill: 1 });
+
+      if (outlined) {
+        await writeLessons(fixture, { count: 10, skill: 1 });
+      }
+
+      await prisma.planItem.deleteMany({ where: { planId: fixture.plan.id } });
+
+      await prisma.goal.update({
+        data: { dailyMinutes: 5, targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        where: { id: fixture.goal.id },
+      });
+
+      await refreshGoalPlan({ goalId: fixture.goal.id });
+
+      const items = await prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { planId: fixture.plan.id },
+      });
+
+      expect(items.filter((item) => item.kind === "lesson")).toMatchObject([
+        { skillId: fixture.skills[0]?.id },
+      ]);
+
+      for (const item of items.filter((entry) => entry.status === "todo")) {
+        // oxlint-disable-next-line no-await-in-loop -- A learner finishes one item at a time.
+        await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
+          item.lessonId
+            ? completeLessonPlanItems(tx, {
+                lessonId: item.lessonId,
+                now: new Date(),
+                userId: fixture.user.id,
+              }).then(() => null)
+            : completePlanItem(tx, {
+                now: new Date(),
+                planItemId: item.id,
+                userId: fixture.user.id,
+              }),
+        );
+      }
+
+      await expect(listCourseCertificateKeys(fixture.user.id)).resolves.toStrictEqual([]);
+    },
+  );
+
+  it.each([false, true])(
+    "credits the lessons shared with another level that size it (shared: %s)",
+    async (shared) => {
+      const fixture = await italianPlan({
+        items: [
+          { skill: 0, status: "done" },
+          { skill: 0, status: "done" },
+          ...Array.from({ length: 6 }, (_, index) => ({
+            skill: 1,
+            status: index === 5 ? ("todo" as const) : ("done" as const),
+            unit: 1,
+          })),
+        ],
+        skills: [
+          { lessons: 2, level: "A1" },
+          { lessons: 6, level: "B1" },
+        ],
+      });
+
+      const courseId = fixture.goal.primaryCourseId ?? "";
+
+      await asCourseGoal(fixture);
+
+      await Promise.all([
+        prisma.courseChapter.deleteMany({ where: { chapterId: fixture.units[2]?.id, courseId } }),
+        prisma.courseChapter.updateMany({
+          data: { level: "intermediate" },
+          where: { chapterId: fixture.units[1]?.id, courseId },
+        }),
+        updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 }),
+      ]);
+
+      await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 1 });
+
+      if (shared) {
+        await shareLessons(fixture);
+      }
+
+      await finishLesson(fixture, 7);
+
+      await expect(listCourseCertificateKeys(fixture.user.id)).resolves.toStrictEqual(
+        [`${courseId}:beginner`, `${courseId}:intermediate`].toSorted(),
+      );
+    },
+  );
 });
 
 const TEST_LEVELS = CEFR_LEVELS.slice(0, 5);

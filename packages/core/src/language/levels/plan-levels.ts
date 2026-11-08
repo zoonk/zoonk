@@ -151,7 +151,7 @@ export function listPlanLevels({
 }: {
   heldBackLessonIds?: ReadonlySet<string>;
   items: readonly LevelItem[];
-  scope: PlanScope;
+  scope: Omit<PlanScope, "keptSkills">;
   skills: ReadonlyMap<string, LevelSkill>;
 }): PlanLevel[] {
   const { lessons, place } = placeItems({ scope, skills });

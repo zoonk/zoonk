@@ -95,6 +95,8 @@ async function courseGoal({
     Promise.all(items.map(() => playableLessonFixture({ steps: ["explanation"] }))),
   ]);
 
+  const chapterOf = (item: ItemSpec, index: number) => item.chapter ?? index % chapters.length;
+
   await Promise.all([
     courseCategoryFixture({ category: "science", courseId: course.id }),
     ...chapters.map((chapter, position) =>
@@ -105,6 +107,17 @@ async function courseGoal({
         position,
       }),
     ),
+    ...items.map(async (item, index) => {
+      if (item.kind === "boss") {
+        return;
+      }
+
+      const skill = await skillFixture({
+        level: specs[chapterOf(item, index)]?.level ?? "beginner",
+      });
+
+      await lessonSkillFixture({ lessonId: lessons[index]?.lesson.id ?? "", skillId: skill.id });
+    }),
   ]);
 
   const goal = await goalFixture({
@@ -122,7 +135,7 @@ async function courseGoal({
     goalId: goal.id,
     items: items.map((item, index) => {
       const isChallenge = item.kind === "boss";
-      const chapter = chapters[item.chapter ?? index % chapters.length];
+      const chapter = chapters[chapterOf(item, index)];
 
       return {
         chapterId: isChallenge ? null : (chapter?.id ?? null),
@@ -605,10 +618,7 @@ describe("level and plan certificates", () => {
     await Promise.all([
       chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: skipped.id }),
       lessonSkillFixture({ lessonId: skipped.id, skillId: skill.id }),
-      prisma.plan.update({
-        data: { graph: { skills: plannedSkills([{ id: skill.id, name: skill.name }]) } },
-        where: { id: fixture.plan.id },
-      }),
+      setGraphSkill(fixture, { id: skill.id, lessons: 1, name: skill.name }),
     ]);
 
     await updateGoal({ goalId: fixture.goal.id, input: { details: {} } });

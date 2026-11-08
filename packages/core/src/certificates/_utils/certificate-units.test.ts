@@ -30,7 +30,7 @@ function lesson({
     level,
     minutes: 5,
     phase,
-    skillId: null,
+    skillId: chapterId ? `${chapterId}-skill` : null,
     status,
   };
 }
@@ -60,29 +60,44 @@ const TWO_LEVELS = {
 
 function units({
   chapters = TWO_LEVELS.chapters,
+  extraSkills = [],
   goal = GOAL,
   heldKeys = [],
   items = TWO_LEVELS.items,
-  notHeld = [],
+  taught = [],
   levelCourseId = COURSE,
   missing = [],
   phases = [{}, {}],
   studiesPastTarget = false,
 }: {
   chapters?: LevelChapter[];
+  /** Graph skills the plan holds no item of. */
+  extraSkills?: Pick<CertifiableItem, "level" | "skillId">[];
   goal?: Parameters<typeof listCertificateUnits>[0]["goal"];
   heldKeys?: string[];
   items?: CertifiableItem[];
-  notHeld?: CountedLesson[];
+  /** Lessons and what they teach, over each item's own skill. */
+  taught?: CountedLesson[];
   levelCourseId?: string | null;
   missing?: UnwrittenLessons[];
   phases?: { challengeLeftOut?: boolean }[];
   studiesPastTarget?: boolean;
 } = {}) {
+  const taughtIds = new Set(taught.map((entry) => entry.lessonId));
+
   const held = items.flatMap((entry) =>
-    entry.lessonId
+    entry.lessonId && !taughtIds.has(entry.lessonId)
       ? [{ lessonId: entry.lessonId, skillIds: entry.skillId ? [entry.skillId] : [] }]
       : [],
+  );
+
+  const graphSkills = [...items, ...extraSkills].filter((entry) => entry.skillId);
+  const skillIds = [...new Set(graphSkills.flatMap((entry) => entry.skillId ?? []))];
+
+  const skillLevels = new Map(
+    graphSkills.flatMap((entry) =>
+      entry.skillId && entry.level ? [[entry.skillId, entry.level] as const] : [],
+    ),
   );
 
   return listCertificateUnits({
@@ -93,7 +108,13 @@ function units({
     levelCourseId,
     phases,
     planCreatedAt: PLAN_CREATED_AT,
-    scope: { graphSkillIds: [], lessons: [...held, ...notHeld], unwritten: missing },
+    scope: {
+      graphSkillIds: skillIds,
+      keptSkills: skillIds.map((skillId) => ({ skillId })),
+      lessons: [...held, ...taught],
+      unwritten: missing,
+    },
+    skillLevels,
     studiesPastTarget,
   });
 }
@@ -154,12 +175,12 @@ describe(listCertificateUnits, () => {
       entry.phase === 1 && entry.kind === "lesson" ? { ...entry, skillId: "waves" } : entry,
     );
 
-    const notHeld = Array.from({ length: 3 }, () => ({
+    const taught = Array.from({ length: 3 }, () => ({
       lessonId: randomUUID(),
       skillIds: ["waves"],
     }));
 
-    expect(finished(units({ items, notHeld }))).toStrictEqual(["course:overview", "goal"]);
+    expect(finished(units({ items, taught }))).toStrictEqual(["course:overview", "goal"]);
 
     expect(finished(units({ items, missing: [{ lessons: 3, skillId: "waves" }] }))).toStrictEqual([
       "course:overview",
@@ -167,6 +188,33 @@ describe(listCertificateUnits, () => {
     ]);
 
     expect(finished(units({ items, missing: [{ lessons: 2, skillId: "waves" }] }))).toStrictEqual([
+      "course:overview",
+      "course:beginner",
+    ]);
+  });
+
+  it("sizes a level by its graph skills, so one a dated plan left wholly out still counts", () => {
+    const leftOut = { level: "beginner", skillId: "interference" } as const;
+
+    expect(
+      finished(
+        units({ extraSkills: [leftOut], missing: [{ lessons: 10, skillId: "interference" }] }),
+      ),
+    ).toStrictEqual(["course:overview"]);
+  });
+
+  it("credits a level's lessons that another level holds, as they size it", () => {
+    const items = TWO_LEVELS.items.map((entry) =>
+      entry.chapterId === "o2" ? { ...entry, status: "testedOut" as const } : entry,
+    );
+
+    const taught = items.flatMap((entry) =>
+      entry.level === "beginner" && entry.lessonId && entry.skillId
+        ? [{ lessonId: entry.lessonId, skillIds: [entry.skillId, "o1-skill"] }]
+        : [],
+    );
+
+    expect(finished(units({ items, taught }))).toStrictEqual([
       "course:overview",
       "course:beginner",
     ]);

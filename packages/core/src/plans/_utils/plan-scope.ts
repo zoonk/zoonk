@@ -109,5 +109,10 @@ export async function loadPlanScope({
     }),
   ];
 
-  return { graphSkillIds, lessons, unwritten: listUnwritten({ entries: kept, lessons }) };
+  return {
+    graphSkillIds,
+    keptSkills: skills.map(({ courseIds, skillId }) => ({ courseIds, skillId })),
+    lessons,
+    unwritten: listUnwritten({ entries: kept, lessons }),
+  };
 }

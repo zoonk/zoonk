@@ -12,6 +12,8 @@ export type UnwrittenLessons = { lessons: number; skillId: string };
 export type PlanScope = {
   /** Every skill of the plan's graph, a merged one under its survivor. */
   graphSkillIds: readonly string[];
+  /** The graph's skills outside the areas the learner removed. */
+  keptSkills: readonly { courseIds?: readonly string[]; skillId: string }[];
   lessons: readonly CountedLesson[];
   unwritten: readonly UnwrittenLessons[];
 };

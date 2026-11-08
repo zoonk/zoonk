@@ -111,7 +111,16 @@ async function outlinedCourse(
     "Robot learning",
   ];
 
-  const created = await Promise.all(names.map((name) => skillFixture({ name })));
+  const created = await Promise.all(
+    names.map((name) =>
+      skillFixture({
+        level: specs.find((spec) => [...spec.lessons.flat(), ...(spec.tags ?? [])].includes(name))
+          ?.level,
+        name,
+      }),
+    ),
+  );
+
   const skills = new Map(created.map((skill) => [skill.name, skill.id]));
 
   const chapters = await Promise.all(
