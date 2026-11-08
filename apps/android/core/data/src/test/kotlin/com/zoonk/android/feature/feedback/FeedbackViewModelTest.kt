@@ -128,6 +128,16 @@ class FeedbackViewModelTest {
     }
 
     @Test
+    fun typedEmailsTheServerRejectsStayBlocked() {
+        val form = FeedbackViewModel(sender, FeedbackTarget("support"))
+        form.onMessageChange("The timer skips a second.")
+        for (email in listOf("name@gmail.com.", "name@gmail..com", "joão@gmail.com")) {
+            form.onEmailChange(email)
+            assertFalse(email, form.canSend(null))
+        }
+    }
+
+    @Test
     fun aSaveReportStillNeedsAMessage() {
         val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.")
         form.onMessageChange(" ")

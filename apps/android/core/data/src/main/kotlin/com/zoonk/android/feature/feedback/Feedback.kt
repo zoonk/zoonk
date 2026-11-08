@@ -102,9 +102,19 @@ class FeedbackViewModel(
         val email = typedEmail.trim()
         val validEmail =
             when {
-                accountEmail != null -> accountEmail.isNotBlank()
-                email.isEmpty() -> target.reportType == FeedbackSubmissionContext.ReportType.SAVE_FAILURE
-                else -> email.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+"))
+                accountEmail != null -> {
+                    accountEmail.isNotBlank()
+                }
+
+                email.isEmpty() -> {
+                    target.reportType == FeedbackSubmissionContext.ReportType.SAVE_FAILURE
+                }
+
+                else -> {
+                    email.matches(
+                        Regex("""^(?:[A-Za-z0-9_'+\-]+\.)*[A-Za-z0-9_'+\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$"""),
+                    )
+                }
             }
         return status != FeedbackStatus.Sending && message.isNotBlank() && validEmail
     }
