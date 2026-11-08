@@ -170,6 +170,7 @@
   "player_stop_for_today": "472db717c3a08fd47b72a37c56badedffcba72e84ed5e09cd34798d3e1f5ed32",
   "player_summary": "662e443f1c50af361c3b3a3ef31819590792d7092b92938e7d2e658db059be66",
   "player_summary_ideas": "1693857678708108e9bde80eacae9c9432860ee9ab55def2f5928f61a3428820",
+  "player_time_studied": "de809d138f482b1ab33389771eebbdf8d9351f3b123c45d02dfb518835869ec7",
   "player_try_again": "98c42e59730cf58e9c534343d929414f919eb4b3d2e66179d23be4828287cd4e",
   "player_unchecked_compare": "a22cedd09f0b036c8eae50b72af0d192cf7b021589c4ab99fe357dd5c610ae3c",
   "player_verdict_almost": "9089dbe39a23e172c9175286850fb03bf42908070012881a8171d5c3661c362e",
@@ -408,6 +409,8 @@
     <string name="player_saving_progress">学習の進捗を保存しています…</string>
     <string name="player_save_failed">送信できませんでした。回答はそのまま残っています。</string>
     <string name="player_lesson_not_saved">レッスンはまだ保存されていません</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s学習済み</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$sに復習</string>
     <string name="player_next_lesson">次のレッスン</string>

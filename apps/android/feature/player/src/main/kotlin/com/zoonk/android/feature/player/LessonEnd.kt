@@ -341,11 +341,10 @@ private fun LessonEndMap(map: StepContent.Map) {
     LessonMapView(map)
 }
 
-/** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */
 @Composable
 internal fun LessonReadouts(
     state: LessonPlayerState,
-    withReview: Boolean = true,
+    withFacts: Boolean = true,
 ) {
     val result = state.completion?.result ?: return
     val segments = state.screen().segments
@@ -355,13 +354,18 @@ internal fun LessonReadouts(
     val brainPower = block?.ownBrainPower ?: result.brainPower
     val locale = currentLocale()
 
+    val studied =
+        result.seconds.takeIf { withFacts && it > 0 }?.let { seconds ->
+            stringResource(R.string.player_time_studied, formatDuration(seconds, locale))
+        }
+
     val review =
-        result.nextReviewAt?.takeIf { withReview }?.let { reviewAt ->
+        result.nextReviewAt?.takeIf { withFacts }?.let { reviewAt ->
             val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
             stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }
 
-    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(review))
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied, review))
 }
 
 /**
