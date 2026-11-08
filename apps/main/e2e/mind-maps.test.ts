@@ -94,7 +94,14 @@ test.describe("Mind maps", () => {
       await expect(finished.getByText("Mind map ready")).toBeVisible();
       await finished.getByRole("button", { name: /Open$/u }).click();
 
-      await expect(page.getByRole("dialog", { name: chapter.title })).toBeVisible();
+      const viewer = page.getByRole("dialog", { name: chapter.title });
+
+      await expect(
+        viewer.getByRole("img", { name: `Mind map: ${STRUCTURE.title}. ${STRUCTURE.centralIdea}` }),
+      ).toBeVisible();
+
+      // The outline is also in a hidden description for screen readers.
+      await expect(viewer.getByText(STRUCTURE.summary).filter({ visible: true })).toBeVisible();
     } finally {
       await page.context().close();
     }
