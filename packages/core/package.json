@@ -375,6 +375,7 @@
     "./library/lessons/public": "./src/library/lessons/get-public-library-lesson.ts",
     "./library/lessons/regenerate": "./src/library/lessons/regenerate-lessons.ts",
     "./library/lessons/regeneration-filter": "./src/library/lessons/regeneration-filter.ts",
+    "./library/lessons/writer-speed": "./src/library/lessons/lesson-writer-speed.ts",
     "./library/lessons/reuse": "./src/library/lessons/lesson-reuse.ts",
     "./library/lessons/versions": "./src/library/lessons/lesson-versions.ts",
     "./library/lessons/write-content": "./src/library/lessons/write-lesson-content.ts",

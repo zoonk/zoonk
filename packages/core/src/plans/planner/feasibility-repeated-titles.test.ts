@@ -82,6 +82,26 @@ describe("repeated-title feasibility", () => {
     expect(feasibility.coveredShare).toBe(1);
   });
 
+  it("keeps a shown lesson once when a later outline puts its duplicate first", () => {
+    const input = repeatedTitleInput();
+    const first = buildPlan({ ...input, lessons: input.lessons.slice(0, 2) });
+
+    const updated = buildPlan({
+      ...input,
+      graph: { ...input.graph, skills: input.graph.skills.toReversed() },
+      items: first.items.map((item, position) => ({ ...item, id: `saved-${position}`, position })),
+      mode: "automatic",
+    });
+
+    expect(
+      updated.items.filter(
+        (item) => item.lessonId === "physics-ohm" || item.lessonId === "enem-ohm",
+      ),
+    ).toHaveLength(1);
+
+    expect(updated.items.some((item) => item.lessonId === "physics-ohm")).toBe(true);
+  });
+
   it("counts a repeated title's minutes once in what the plan requires", () => {
     const input = repeatedTitleInput();
     const built = buildPlan(input);

@@ -1,5 +1,5 @@
 import "server-only";
-import { type ServiceTier } from "@zoonk/ai/provider-options";
+import { type ServedSpeed, type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   type LanguageLessonContent,
   generateLanguageLesson,
@@ -71,11 +71,13 @@ export async function writeLanguageLessonContent({
   analytics,
   lessonId,
   serviceTier,
+  speed,
   workflowRunId,
 }: {
   analytics?: Analytics;
   lessonId: string;
   serviceTier?: ServiceTier;
+  speed?: ServedSpeed;
   workflowRunId: string;
 }): Promise<WriteLanguageLessonResult> {
   const state = await loadLanguageLessonInputs({ lessonId, workflowRunId });
@@ -91,6 +93,7 @@ export async function writeLanguageLessonContent({
       ...inputs.writerInput,
       analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
       serviceTier,
+      speed,
     }),
     getSharedOrganization(),
   ]);
