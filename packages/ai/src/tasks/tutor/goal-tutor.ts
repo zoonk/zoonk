@@ -7,6 +7,7 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
 import { type PlanScopeContext, type TutorScreenContext } from "../lessons/lesson-question-context";
+import screenRulesPrompt from "../lessons/lesson-screen-rules.prompt.md";
 import { getLessonScreenVariants } from "../lessons/lesson-screen-variants";
 import {
   type OfferGoalAppTool,
@@ -136,14 +137,16 @@ function createPrepareStep({
 /** A goal's kind stays the same for a whole conversation, so its messages share a cached prompt. */
 const examSystemPrompt = `${systemPrompt}\n${examGoalPrompt}`;
 
+const lessonPrompt = `${lessonScreenPrompt}\n${screenRulesPrompt}`;
+
 /** A thread stays on one screen, so its messages share a cached prompt. */
 const SCREEN_PROMPTS = {
-  answer: lessonScreenPrompt,
+  answer: lessonPrompt,
   chapter: chapterScreenPrompt,
   item: itemScreenPrompt,
-  lesson: lessonScreenPrompt,
+  lesson: lessonPrompt,
   mock: mockScreenPrompt,
-  step: lessonScreenPrompt,
+  step: lessonPrompt,
   subject: subjectScreenPrompt,
 } satisfies Record<TutorScreenContext["scope"]["kind"], string>;
 

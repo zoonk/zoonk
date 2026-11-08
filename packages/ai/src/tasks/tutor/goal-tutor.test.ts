@@ -19,6 +19,10 @@ vi.mock("./goal-tutor-lesson.prompt.md", () => ({
     "{{#questionScreen}}Don't give the answer away.{{/questionScreen}}{{#teachingScreen}}Answer directly.{{/teachingScreen}}",
 }));
 
+vi.mock("../lessons/lesson-screen-rules.prompt.md", () => ({
+  default: "{{#guessScreen}}Hint until it's revealed.{{/guessScreen}}Weigh their reasoning.",
+}));
+
 vi.mock("./goal-tutor-mock.prompt.md", () => ({ default: "Read the mock's result." }));
 vi.mock("./goal-tutor-subject.prompt.md", () => ({ default: "Read the subject." }));
 vi.mock("./goal-tutor-item.prompt.md", () => ({ default: "Read the question." }));
@@ -122,6 +126,11 @@ describe(generateGoalTutorAnswer, () => {
       PlanScopeContext["screen"]
     >;
 
+    const guess = {
+      scope: { kind: "step" },
+      step: { answerable: false, content: { variant: "guess" }, kind: "hook" },
+    } as NonNullable<PlanScopeContext["screen"]>;
+
     const mock = { scope: { kind: "mock" } } as NonNullable<PlanScopeContext["screen"]>;
 
     await expect(getInstructions("learn", chapter)).resolves.toBe(
@@ -129,11 +138,15 @@ describe(generateGoalTutorAnswer, () => {
     );
 
     await expect(getInstructions("learn", step)).resolves.toBe(
-      instructions(["Tutor every goal."], "Don't give the answer away."),
+      instructions(["Tutor every goal."], "Don't give the answer away.\nWeigh their reasoning."),
     );
 
     await expect(getInstructions("learn", teaching)).resolves.toBe(
-      instructions(["Tutor every goal."], "Answer directly."),
+      instructions(["Tutor every goal."], "Answer directly.\nWeigh their reasoning."),
+    );
+
+    await expect(getInstructions("learn", guess)).resolves.toBe(
+      instructions(["Tutor every goal."], "\nHint until it's revealed.Weigh their reasoning."),
     );
 
     await expect(getInstructions("exam", mock)).resolves.toBe(
