@@ -38,60 +38,31 @@ class MindMapViewModel(
     private val saved = MutableStateFlow<PictureSave?>(null)
     val save: StateFlow<PictureSave?> = saved.asStateFlow()
 
-    fun create(chapterId: UUID) {
+    /** Create and Try again: [over] is what the row showed, which a refusal or a lost connection is about. */
+    fun create(
+        chapterId: UUID,
+        over: MindMapShown,
+    ) {
         if (locals.value[chapterId]?.pending == true) return
         locals.update { it + (chapterId to MindMapLocal(pending = true)) }
 
         viewModelScope.launch {
-            val key = ChapterKey(goalId, chapterId)
-            val created = store.create(key)
             val local =
-                when (created) {
-                    // The lock lives in the store's reads, so a later read (after buying Plus) replaces it.
-                    null, MindMapCreated.PlusRequired -> {
-                        MindMapLocal()
-                    }
-
-                    MindMapCreated.Ready -> {
-                        MindMapLocal(shown = MindMapShown.Ready)
-                    }
-
-                    is MindMapCreated.OnItsWay -> {
-                        MindMapLocal(shown = created.shown)
-                    }
-
-                    MindMapCreated.Unavailable -> {
-                        MindMapLocal(shown = MindMapShown.Unavailable)
-                    }
-
-                    MindMapCreated.Failed -> {
-                        MindMapLocal(shown = MindMapShown.Unreachable)
-                    }
-
-                    is MindMapCreated.Refused -> {
-                        MindMapLocal(shown = MindMapShown.Refused, limit = created.limit, subject = created.subject)
-                    }
+                when (val created = store.create(ChapterKey(goalId, chapterId))) {
+                    null, MindMapCreated.Read -> null
+                    MindMapCreated.Unreachable -> MindMapLocal(unreachable = true, over = over)
+                    is MindMapCreated.Refused -> MindMapLocal(limit = created.limit, subject = created.subject, over = over)
                 }
-            locals.update { it + (chapterId to local) }
-        }
-    }
-
-    /** Try again: follows the map again after the poll got stuck, otherwise asks for it again. */
-    fun retry(chapterId: UUID) {
-        val local = locals.value[chapterId]
-        if (local?.stuck == true) {
-            locals.update { it + (chapterId to MindMapLocal(shown = local.shown ?: MindMapShown.Drawing)) }
-        } else {
-            create(chapterId)
+            locals.update { if (local == null) it - chapterId else it + (chapterId to local) }
         }
     }
 
     /**
-     * Runs while the screen shows the map on its way ([shown]), until the screen's reads show how it
-     * ended. It never writes what a status said: an answer can land after a newer read (Plus bought
-     * meanwhile), so the reads stay the row's only truth. A status or a read that fails, or reads
-     * that don't show it yet, count as a miss; a stuck poll keeps what it waited on, so Try again
-     * follows it at the same pace.
+     * Runs while the screen shows the map on its way ([shown]): asks where the run stands, reads the
+     * map again whenever the reads show otherwise, and ends once they show it ended. It never writes
+     * what a status said, since an answer can land after a newer read (Plus bought meanwhile). A
+     * status or a read that fails, or reads that still disagree, count as a miss; three in a row say
+     * the server is out of reach.
      */
     suspend fun follow(
         chapterId: UUID,
@@ -105,28 +76,12 @@ class MindMapViewModel(
             delay(waiting.pollEvery)
             val status = store.status(session, key)?.shown
 
-            when {
-                status == null -> {
-                    misses++
-                }
-
-                status.onItsWay -> {
-                    misses = 0
-                    if (status != waiting) locals.update { it + (chapterId to MindMapLocal(shown = status)) }
-                    waiting = status
-                }
-
-                else -> {
-                    if (store.reread(key, status)) {
-                        locals.update { it - chapterId }
-                        return
-                    }
-                    misses++
-                }
-            }
-
-            if (misses >= MAX_MISSES) {
-                locals.update { it + (chapterId to MindMapLocal(shown = waiting, stuck = true)) }
+            if (status != null && store.agrees(key, status)) {
+                if (!status.onItsWay) return
+                waiting = status
+                misses = 0
+            } else if (++misses >= MAX_MISSES) {
+                locals.update { it + (chapterId to MindMapLocal(unreachable = true, over = shown)) }
                 return
             }
         }

@@ -107,7 +107,6 @@ internal fun MindMapsContent(
                             back = back,
                             keepStudying = { navigator.select(AppTab.Today) },
                             create = maps::create,
-                            retry = maps::retry,
                             navigate = navigator::open,
                         ),
                     subject = subject,
@@ -139,8 +138,7 @@ internal fun MindMapsContent(
 internal data class MindMapsActions(
     val back: () -> Unit,
     val keepStudying: () -> Unit,
-    val create: (UUID) -> Unit,
-    val retry: (UUID) -> Unit,
+    val create: (UUID, MindMapShown) -> Unit,
     val navigate: (AppRoute) -> Unit,
 )
 
@@ -211,7 +209,7 @@ private fun LazyListScope.mapGroup(
                 local = local,
                 cap = cap.takeIf { shown == MindMapShown.Available },
                 plus = plus,
-                actions = MindMapRowActions({ actions.create(map.chapterId) }, { actions.retry(map.chapterId) }, actions.navigate),
+                actions = MindMapRowActions({ actions.create(map.chapterId, map.status.shown) }, actions.navigate),
             )
         }
     }

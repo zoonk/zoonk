@@ -87,7 +87,6 @@ internal val GoalMindMap.facts get() = MapFacts(chapterId, title, position, stat
 /** [navigate] opens the viewer, sign-up and Plus. */
 internal data class MindMapRowActions(
     val create: () -> Unit,
-    val retry: () -> Unit,
     val navigate: (AppRoute) -> Unit,
 )
 
@@ -160,7 +159,7 @@ internal fun ConnectedMindMapRow(
             local = local,
             cap = if (shown == MindMapShown.Available) host.cap() else null,
             plus = host.plus(),
-            actions = MindMapRowActions({ maps.create(map.chapterId) }, { maps.retry(map.chapterId) }, navigate),
+            actions = MindMapRowActions({ maps.create(map.chapterId, map.status) }, navigate),
             modifier = modifier,
         )
     }
@@ -323,7 +322,7 @@ private fun rowAction(
         }
 
         shown == MindMapShown.Failed || shown == MindMapShown.Unreachable -> {
-            { RowButton(R.string.mindmaps_try_again, R.string.mindmaps_try_again_spoken, map, place, pending, actions.retry) }
+            { RowButton(R.string.mindmaps_try_again, R.string.mindmaps_try_again_spoken, map, place, pending, actions.create) }
         }
 
         (shown == MindMapShown.Available && cap == null) || slowedDown -> {

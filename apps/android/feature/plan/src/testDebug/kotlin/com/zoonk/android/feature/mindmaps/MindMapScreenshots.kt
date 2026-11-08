@@ -166,12 +166,12 @@ class MindMapScreenshots {
         const val BOOK = "w852dp-h883dp-xhdpi"
         val SESSION = AuthenticatedSession("ana", "token-a", "local-a")
         val FREE_CAP = Limit.Reached(LimitTier.Free, LimitPeriod.Day)
-        val NO_ACTIONS = MindMapsActions({}, {}, {}, {}, {})
-        val ROW_ACTIONS = MindMapRowActions({}, {}, {})
+        val NO_ACTIONS = MindMapsActions({}, {}, { _, _ -> }, {})
+        val ROW_ACTIONS = MindMapRowActions({}, {})
 
         @Composable
         fun Library(cap: Limit? = null) {
-            val stuck = mapOf(UUID.fromString(mapChapter(11)) to MindMapLocal(shown = MindMapShown.Drawing, stuck = true))
+            val stuck = mapOf(UUID.fromString(mapChapter(11)) to MindMapLocal(unreachable = true, over = MindMapShown.Failed))
             MindMapsPage(goalMindMaps(), stuck, cap, plus = false, NO_ACTIONS)
         }
 
@@ -215,9 +215,9 @@ class MindMapScreenshots {
                     lessonsToWrite = 4,
                     local =
                         MindMapLocal(
-                            MindMapShown.Refused,
-                            Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                            limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month),
                             subject = LimitSubject.Lessons,
+                            over = MindMapShown.Available,
                         ),
                 )
             }

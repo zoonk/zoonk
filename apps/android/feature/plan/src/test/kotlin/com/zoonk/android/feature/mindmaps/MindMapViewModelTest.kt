@@ -59,15 +59,20 @@ class MindMapViewModelTest {
     fun stop() = Dispatchers.resetMain()
 
     @Test
-    fun aTapAsksForTheMapAndFollowsIt() =
+    fun aTapAsksForTheMapAndReadsItAgainWhereItsShown() =
         runTest(dispatcher) {
-            val (maps) = setUp()
+            val (maps, store) = setUp()
+            val shown = launch { store.chapter[key].shown.collect {} }
+            advanceUntilIdle()
+            api.chapter = { chapterMindMap("drawing") }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
             assertEquals(listOf(key), api.created)
-            assertEquals(MindMapLocal(shown = MindMapShown.Drawing), maps.requests.value[chapterId])
+            assertNull(maps.requests.value[chapterId])
+            assertEquals(MindMapShown.Drawing, store.chapterShown())
+            shown.cancel()
         }
 
     @Test
@@ -78,10 +83,10 @@ class MindMapViewModelTest {
             advanceUntilIdle()
             api.create = { generation("ready") }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
-            assertEquals(MindMapShown.Ready, maps.requests.value[chapterId]?.shown)
+            assertNull(maps.requests.value[chapterId])
             assertEquals(2, api.chapters)
             shown.cancel()
         }
@@ -92,11 +97,11 @@ class MindMapViewModelTest {
             val (maps) = setUp()
             api.create = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 403, refusal("free", "day")) }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
             assertEquals(
-                MindMapLocal(shown = MindMapShown.Refused, limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day)),
+                MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day), over = MindMapShown.Available),
                 maps.requests.value[chapterId],
             )
         }
@@ -107,14 +112,14 @@ class MindMapViewModelTest {
             val (maps) = setUp()
             api.create = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, refusal("free", "month", "lessonStart")) }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
             assertEquals(
                 MindMapLocal(
-                    shown = MindMapShown.Refused,
                     limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month),
                     subject = LimitSubject.Lessons,
+                    over = MindMapShown.Available,
                 ),
                 maps.requests.value[chapterId],
             )
@@ -213,7 +218,7 @@ class MindMapViewModelTest {
             val (maps) = setUp()
             api.create = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 429, refusal("plus", "day", "aiSpend")) }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
             assertEquals(LimitSubject.Help, maps.requests.value[chapterId]?.subject)
@@ -226,8 +231,9 @@ class MindMapViewModelTest {
             val shown = launch { store.chapter[key].shown.collect {} }
             advanceUntilIdle()
             api.create = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", 402) }
+            api.chapter = { chapterMindMap("plusRequired") }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
             assertEquals(MindMapShown.PlusRequired, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
@@ -262,13 +268,18 @@ class MindMapViewModelTest {
     @Test
     fun aChapterWithoutAMapHasNoneToMake() =
         runTest(dispatcher) {
-            val (maps) = setUp()
+            val (maps, store) = setUp()
+            val shown = launch { store.chapter[key].shown.collect {} }
+            advanceUntilIdle()
             api.create = { throw ApiException(ApiError.Unavailable, status = 422) }
+            api.chapter = { chapterMindMap("unavailable") }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
-            assertEquals(MindMapShown.Unavailable, maps.requests.value[chapterId]?.shown)
+            assertNull(maps.requests.value[chapterId])
+            assertEquals(MindMapShown.Unavailable, store.chapterShown())
+            shown.cancel()
         }
 
     @Test
@@ -277,10 +288,10 @@ class MindMapViewModelTest {
             val (maps) = setUp()
             api.create = { throw ApiException(ApiError.Network) }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
-            assertEquals(MindMapShown.Unreachable, maps.requests.value[chapterId]?.shown)
+            assertEquals(MindMapShown.Unreachable, shownMindMap(MindMapShown.Available, maps.requests.value[chapterId]))
         }
 
     @Test
@@ -302,19 +313,20 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun threeMissesInARowStopFollowingAndTryAgainFollowsAgain() =
+    fun threeMissesInARowSayTheServerIsOutOfReachAndTryAgainAsksAgain() =
         runTest(dispatcher) {
             val (maps) = setUp()
 
             maps.follow(chapterId, MindMapShown.WritingLessons)
 
             assertEquals(3, api.asked)
-            assertEquals(MindMapLocal(shown = MindMapShown.WritingLessons, stuck = true), maps.requests.value[chapterId])
+            assertEquals(MindMapLocal(unreachable = true, over = MindMapShown.WritingLessons), maps.requests.value[chapterId])
 
-            maps.retry(chapterId)
+            maps.create(chapterId, MindMapShown.WritingLessons)
+            advanceUntilIdle()
 
-            assertEquals(MindMapLocal(shown = MindMapShown.WritingLessons), maps.requests.value[chapterId])
-            assertTrue(api.created.isEmpty())
+            assertEquals(listOf(key), api.created)
+            assertNull(maps.requests.value[chapterId])
         }
 
     @Test
@@ -354,8 +366,9 @@ class MindMapViewModelTest {
             val (maps, store) = setUp()
             val shown = launch { store.list[goalId].shown.collect {} }
             advanceUntilIdle()
+            api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "drawing"))) }
 
-            maps.create(chapterId)
+            maps.create(chapterId, MindMapShown.Available)
             advanceUntilIdle()
 
             val listed =
@@ -364,7 +377,7 @@ class MindMapViewModelTest {
                     ?.chapters
                     ?.first { it.chapterId == chapterId }
             assertEquals(GoalMindMap.Status.DRAWING, listed?.status)
-            assertEquals(1, api.lists)
+            assertEquals(2, api.lists)
             shown.cancel()
         }
 
@@ -408,7 +421,7 @@ class MindMapViewModelTest {
 
             maps.follow(chapterId, MindMapShown.Drawing)
 
-            assertEquals(MindMapLocal(shown = MindMapShown.Drawing, stuck = true), maps.requests.value[chapterId])
+            assertEquals(MindMapLocal(unreachable = true, over = MindMapShown.Drawing), maps.requests.value[chapterId])
             shown.cancel()
         }
 

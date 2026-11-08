@@ -34,31 +34,28 @@ enum class MindMapShown {
 }
 
 /**
- * What a screen did about one map: its request's answer, worded by what ran out ([subject]), and
- * whether following it got stuck.
+ * What a tap or a poll got that the map's reads can't say: a request on its way ([pending]), a
+ * refusal ([limit], worded by [subject]) or a server out of reach ([unreachable]). Each is about what
+ * the reads showed then ([over]), so a newer read, after buying Plus say, replaces it.
  */
 data class MindMapLocal(
-    val shown: MindMapShown? = null,
+    val pending: Boolean = false,
     val limit: Limit? = null,
     val subject: LimitSubject = LimitSubject.MindMaps,
-    val pending: Boolean = false,
-    val stuck: Boolean = false,
+    val unreachable: Boolean = false,
+    val over: MindMapShown? = null,
 )
 
-/**
- * Main's `useMindMapRequest`: the server's ready and Plus lock win; a poll that got stuck says it
- * couldn't reach the server; a map this screen saw finish shows as still drawing until the server's
- * read says so.
- */
+/** The reads decide; a refusal or a lost connection shows only while they still show what it was about. */
 fun shownMindMap(
     server: MindMapShown,
     local: MindMapLocal?,
 ): MindMapShown =
     when {
-        server == MindMapShown.Ready || server == MindMapShown.PlusRequired -> server
-        local?.stuck == true -> MindMapShown.Unreachable
-        local?.shown == MindMapShown.Ready -> MindMapShown.Drawing
-        else -> local?.shown ?: server
+        local == null || local.over != server -> server
+        local.unreachable -> MindMapShown.Unreachable
+        local.limit != null -> MindMapShown.Refused
+        else -> server
     }
 
 val GoalMindMap.Status.shown: MindMapShown

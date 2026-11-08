@@ -199,7 +199,7 @@ class GoalContentScreenshots {
                         null,
                         null,
                         plus = false,
-                        MindMapRowActions({}, {}, {}),
+                        MindMapRowActions({}, {}),
                         modifier,
                     )
                 }
