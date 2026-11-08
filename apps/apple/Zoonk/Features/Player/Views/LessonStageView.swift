@@ -613,7 +613,6 @@ extension LessonStep {
     }
 
     return switch answer {
-    case .draft: false
     case .typedAnswer(let text), .spokenAnswer(let text):
       !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     case .fillBlank(let answers):

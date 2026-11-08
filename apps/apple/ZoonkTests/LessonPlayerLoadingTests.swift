@@ -251,30 +251,6 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.state?.currentResult?.answerText, "Bonjour")
   }
 
-  func testCantTalkNowKeepsItsEmptyTypedFallbackWhenTheRunStarts() async throws {
-    let transport = OpeningStartTransport(
-      holds: true,
-      runAnswers: #"[{"stepId":"spoken","isCorrect":true,"answeredAt":"2026-11-07T08:00:00.000Z"}]"#
-    )
-    let store = try openingPlayer(
-      checkLesson(["spoken", "next"], spoken: ["spoken"]), transport: transport,
-      defaults: temporaryDefaults())
-    let loading = Task { await store.load() }
-    await startRequested(transport)
-    store.select(nil)
-    store.cantTalkToday = true
-    await store.check()
-
-    await transport.release()
-    await loading.value
-
-    XCTAssertEqual(store.state?.currentStep?.id, "spoken")
-    XCTAssertEqual(store.spokenAnswerMode(canListen: false, canSpeak: true), .type)
-    XCTAssertNil(store.state?.currentAnswer)
-    let checks = await transport.checks
-    XCTAssertEqual(checks, [])
-  }
-
   func testASpokenTakeCanTryAgainWhenAdmissionFails() async throws {
     let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
     let store = try openingPlayer(checkLesson(["spoken"], spoken: ["spoken"]), transport: transport)
@@ -311,25 +287,18 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   func testCanvasWorkMadeBeforeAdmissionSurvivesTheRunStarting() async throws {
-    let transport = OpeningStartTransport(
-      holds: true,
-      runAnswers: #"[{"stepId":"one","isCorrect":true,"answeredAt":"2026-11-07T08:00:00.000Z"}]"#)
+    let transport = OpeningStartTransport(holds: true)
     let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
+    store.select(.check(optionId: "right"))
     let work = store.work(for: "one", round: 0)
     work.set(["left": "right"], for: "pairs")
-    XCTAssertNil(store.state?.currentAnswer)
-    await store.check()
 
     await transport.release()
     await loading.value
 
-    XCTAssertEqual(store.state?.currentStep?.id, "one")
-    XCTAssertTrue(store.state?.answers.isEmpty == false)
     XCTAssertTrue(store.work(for: "one", round: 0) === work)
-    let checks = await transport.checks
-    XCTAssertEqual(checks, [])
     XCTAssertEqual(
       store.work(for: "one", round: 0).value("pairs") as [String: String]?, ["left": "right"])
   }
@@ -664,16 +633,13 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   /// Opened from Today with the learner's tap: the start goes out as the lesson opens.
-  private func openingPlayer(
-    _ lesson: PlayableLesson, transport: OpeningStartTransport, defaults: UserDefaults = .standard
-  )
+  private func openingPlayer(_ lesson: PlayableLesson, transport: OpeningStartTransport)
     -> LessonPlayerStore
   {
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
     return player(
-      cache: cache, content: content, transport: transport, defaults: defaults,
-      opening: .block("block"),
+      cache: cache, content: content, transport: transport, opening: .block("block"),
       activated: true)
   }
 
