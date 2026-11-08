@@ -41,12 +41,14 @@ function getWordResultState({
 
 function PlacedWordTile({
   id,
+  isLocked,
   onClick,
   option,
   position,
   resultState,
 }: {
   id: string;
+  isLocked: boolean;
   onClick: () => void;
   option: WordBankOption;
   position: number;
@@ -56,7 +58,7 @@ function PlacedWordTile({
   const hasResult = Boolean(resultState);
 
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
-    disabled: hasResult,
+    disabled: isLocked,
     id,
   });
 
@@ -79,12 +81,12 @@ function PlacedWordTile({
       aria-label={ariaLabel}
       className={cn(
         WORD_CHIP_CLASS,
-        hasResult ? "pointer-events-none" : "hover:bg-muted/60 touch-none",
+        isLocked ? "pointer-events-none" : "hover:bg-muted/60 touch-none",
         isDragging && "opacity-30",
         resultState === "correct" && ANSWER_TONE.right,
         resultState === "incorrect" && ANSWER_TONE.wrong,
       )}
-      disabled={hasResult}
+      disabled={isLocked}
       onClick={(event) => removeKeepingFocus(event, onClick)}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
@@ -108,6 +110,7 @@ function DragOverlayWord({ option }: { option: WordBankOption }) {
 
 export function ArrangeWordsAnswerArea({
   correctWords,
+  isLocked,
   onDragEnd,
   onDragStart,
   onRemove,
@@ -115,6 +118,7 @@ export function ArrangeWordsAnswerArea({
   result,
 }: {
   correctWords: string[];
+  isLocked: boolean;
   onDragEnd: (event: DragEndEvent) => void;
   onDragStart: (event: DragStartEvent) => void;
   onRemove: (index: number) => void;
@@ -123,7 +127,6 @@ export function ArrangeWordsAnswerArea({
 }) {
   const t = useExtracted();
   const dndId = useId();
-  const hasResult = result !== undefined;
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -161,7 +164,7 @@ export function ArrangeWordsAnswerArea({
       onDragCancel={handleDragCancel}
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart}
-      sensors={hasResult ? undefined : sensors}
+      sensors={isLocked ? undefined : sensors}
     >
       <SortableContext items={itemIds} strategy={rectSortingStrategy}>
         <div
@@ -176,6 +179,7 @@ export function ArrangeWordsAnswerArea({
             placedWords.map((option, index) => (
               <PlacedWordTile
                 id={option.id}
+                isLocked={isLocked}
                 key={option.id}
                 onClick={() => onRemove(index)}
                 option={option}

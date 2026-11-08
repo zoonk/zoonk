@@ -69,6 +69,7 @@ export function ArrangeWordsInteraction({
   answer,
   answerKind,
   children,
+  isLocked: isStepLocked,
   onSelectAnswer,
   result,
   selectedAnswer,
@@ -77,12 +78,14 @@ export function ArrangeWordsInteraction({
   answer: string;
   answerKind: "reading" | "listening";
   children: React.ReactNode;
+  isLocked: boolean;
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
+  const isLocked = isStepLocked || result !== undefined;
 
   const correctWords = segmentArrangeWords({ kind: answerKind, text: answer });
 
@@ -119,7 +122,7 @@ export function ArrangeWordsInteraction({
   };
 
   const handlePlace = (tile: WordBankTile) => {
-    if (result || placedWords.length >= correctWords.length) {
+    if (isLocked || placedWords.length >= correctWords.length) {
       return;
     }
 
@@ -170,13 +173,14 @@ export function ArrangeWordsInteraction({
         correctWords={correctWords}
         onDragEnd={handleDragEnd}
         onDragStart={() => void trigger("selection")}
+        isLocked={isLocked}
         onRemove={handleRemove}
         placedWords={placedWords}
         result={result}
       />
 
       <WordBank
-        disabled={result !== undefined}
+        disabled={isLocked}
         onPlace={handlePlace}
         tiles={getWordBankTiles({ placedWords, words: wordBankOptions })}
       />

@@ -295,6 +295,38 @@ describe("pending word orders", () => {
     await expect.element(page.getByText(SELF_CORRECT)).toBeVisible();
   });
 
+  it("keeps the words in place while the server checks them, and frees them if the check fails", async () => {
+    const lesson = buildLesson([sentenceStep("reading", true)], {
+      language: "pt",
+      targetLanguage: "it",
+    });
+
+    const reply = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["checkStep"]>>>();
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() => reply.promise);
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await placeWords(WRONG_ORDER);
+    await check.click();
+    await expect.element(check).toHaveAttribute("aria-busy", "true");
+
+    const answer = page.getByRole("group", { name: "Your answer" });
+    const firstPlaced = answer.getByRole("button", { name: "Position 1: pioveva. Tap to remove." });
+    await expect.element(firstPlaced).toBeDisabled();
+
+    await expect
+      .element(
+        page
+          .getByRole("group", { name: "Word bank" })
+          .getByRole("button", { exact: true, name: "piove" }),
+      )
+      .toBeDisabled();
+
+    reply.resolve({ status: "failed" });
+    await expect.element(page.getByText(CHECK_FAILED)).toBeVisible();
+    await firstPlaced.click();
+    await expect.element(answer.getByRole("button", { name: /pioveva/u })).not.toBeInTheDocument();
+  });
+
   describe("a slow or failed check", () => {
     afterEach(() => {
       vi.useRealTimers();
