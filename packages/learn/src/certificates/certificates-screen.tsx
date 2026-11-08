@@ -156,7 +156,7 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
           <ListRowTitle>{item.goal.title}</ListRowTitle>
           <ListRowDescription>
             {item.progress === null
-              ? t("Comes when every skill you practice reaches the next level")
+              ? t("Comes when you finish a level, studying at least half of it")
               : t("Your certificate comes when you finish the plan")}
           </ListRowDescription>
         </ListRowContent>

@@ -1936,9 +1936,9 @@ msgid "Certificates"
 msgstr "Zertifikate"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "Ek6qb7"
-msgid "Comes when every skill you practice reaches the next level"
-msgstr "Du bekommst es, sobald alle Fähigkeiten, die du übst, das nächste Level erreichen"
+msgctxt "OqErrx"
+msgid "Comes when you finish a level, studying at least half of it"
+msgstr "Erhältst du, wenn du ein Level abschließt und mindestens die Hälfte der Lektionen bearbeitet hast"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "ojltlj"
@@ -6447,6 +6447,46 @@ msgid "Goal {level}"
 msgstr "Ziel: {level}"
 
 #: src/language/progress/skill-levels-card.tsx
+msgctxt "Mc3CoH"
+msgid "Estimated listening level: {level}"
+msgstr "Geschätztes Level im Hören: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "0EWsJk"
+msgid "Estimated reading level: {level}"
+msgstr "Geschätztes Level im Lesen: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "8qPntS"
+msgid "Estimated speaking level: {level}"
+msgstr "Geschätztes Level im Sprechen: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "damvcS"
+msgid "Estimated writing level: {level}"
+msgstr "Geschätztes Level im Schreiben: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "tli5KO"
+msgid "Your listening estimate went up to {level}"
+msgstr "Dein geschätztes Level im Hören ist auf {level} gestiegen"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "NHA9sL"
+msgid "Your reading estimate went up to {level}"
+msgstr "Dein geschätztes Level im Lesen ist auf {level} gestiegen"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "BYWqip"
+msgid "Your speaking estimate went up to {level}"
+msgstr "Dein geschätztes Level im Sprechen ist auf {level} gestiegen"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "rafLc9"
+msgid "Your writing estimate went up to {level}"
+msgstr "Dein geschätztes Level im Schreiben ist auf {level} gestiegen"
+
+#: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
 msgid "up since the level test"
 msgstr "Seit dem Einstufungstest gestiegen"
@@ -6456,25 +6496,27 @@ msgctxt "LPKiOF"
 msgid "down since the level test"
 msgstr "Seit dem Einstufungstest gesunken"
 
+#. Two or more skills' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "kzq7R0"
+msgid "{skills} estimates went up"
+msgstr "Die geschätzten Level für {skills} sind gestiegen"
+
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "K_24wg"
 msgid "Levels move as you practice. They get more accurate every week."
 msgstr "Deine Level verändern sich beim Üben. Sie werden jede Woche genauer."
 
+#. Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "iQhtOC"
-msgid "{skill} went up to {level} since the level test."
-msgstr "Bei {skill} bist du seit dem Einstufungstest auf {level} gestiegen."
+msgctxt "JinbRe"
+msgid "Practice estimates"
+msgstr "Geschätzte Level fürs Üben"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "EZzhCX"
-msgid "{skills} went up since the level test."
-msgstr "In {skills} hast du dich seit dem Einstufungstest verbessert."
-
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "hZMjM-"
-msgid "Level by skill"
-msgstr "Level nach Fähigkeit"
+msgctxt "Ep338j"
+msgid "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan."
+msgstr "Diese Einschätzungen bestimmen, wie schwer die Übungen sind. Für Zertifikate zählen die abgeschlossenen Lektionen in deinem Plan."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"

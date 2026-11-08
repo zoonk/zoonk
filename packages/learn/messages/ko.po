@@ -1936,9 +1936,9 @@ msgid "Certificates"
 msgstr "인증서"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "Ek6qb7"
-msgid "Comes when every skill you practice reaches the next level"
-msgstr "연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요"
+msgctxt "OqErrx"
+msgid "Comes when you finish a level, studying at least half of it"
+msgstr "레벨의 레슨을 절반 이상 학습하고 해당 레벨을 완료하면 받을 수 있어요"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "ojltlj"
@@ -6447,6 +6447,46 @@ msgid "Goal {level}"
 msgstr "목표 {level}"
 
 #: src/language/progress/skill-levels-card.tsx
+msgctxt "Mc3CoH"
+msgid "Estimated listening level: {level}"
+msgstr "듣기 수준 추정치: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "0EWsJk"
+msgid "Estimated reading level: {level}"
+msgstr "읽기 수준 추정치: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "8qPntS"
+msgid "Estimated speaking level: {level}"
+msgstr "말하기 수준 추정치: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "damvcS"
+msgid "Estimated writing level: {level}"
+msgstr "쓰기 수준 추정치: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "tli5KO"
+msgid "Your listening estimate went up to {level}"
+msgstr "듣기 수준 추정치가 {level}까지 올랐어요"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "NHA9sL"
+msgid "Your reading estimate went up to {level}"
+msgstr "읽기 수준 추정치가 {level}까지 올랐어요"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "BYWqip"
+msgid "Your speaking estimate went up to {level}"
+msgstr "말하기 수준 추정치가 {level}까지 올랐어요"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "rafLc9"
+msgid "Your writing estimate went up to {level}"
+msgstr "쓰기 수준 추정치가 {level}까지 올랐어요"
+
+#: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
 msgid "up since the level test"
 msgstr "레벨 테스트 이후 상승"
@@ -6456,25 +6496,27 @@ msgctxt "LPKiOF"
 msgid "down since the level test"
 msgstr "레벨 테스트 이후 하락"
 
+#. Two or more skills' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "kzq7R0"
+msgid "{skills} estimates went up"
+msgstr "{skills} 수준 추정치가 올랐어요"
+
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "K_24wg"
 msgid "Levels move as you practice. They get more accurate every week."
 msgstr "연습하면서 레벨이 바뀌어요. 매주 더 정확해져요."
 
+#. Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "iQhtOC"
-msgid "{skill} went up to {level} since the level test."
-msgstr "레벨 테스트 이후 {skill} 레벨이 {level}까지 올랐어요."
+msgctxt "JinbRe"
+msgid "Practice estimates"
+msgstr "연습 수준 추정치"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "EZzhCX"
-msgid "{skills} went up since the level test."
-msgstr "레벨 테스트 이후 {skills} 레벨이 올랐어요."
-
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "hZMjM-"
-msgid "Level by skill"
-msgstr "스킬별 레벨"
+msgctxt "Ep338j"
+msgid "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan."
+msgstr "이 추정치에 맞춰 연습 난이도를 정해요. 인증서는 계획에서 완료한 레슨을 기준으로 발급돼요."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"

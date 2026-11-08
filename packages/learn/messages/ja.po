@@ -1936,9 +1936,9 @@ msgid "Certificates"
 msgstr "証明書"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "Ek6qb7"
-msgid "Comes when every skill you practice reaches the next level"
-msgstr "練習しているすべてのスキルが次のレベルに進むと取得できます"
+msgctxt "OqErrx"
+msgid "Comes when you finish a level, studying at least half of it"
+msgstr "レベルのレッスンを半分以上学習し、そのレベルを終えると取得できます"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "ojltlj"
@@ -6447,6 +6447,46 @@ msgid "Goal {level}"
 msgstr "目標 {level}"
 
 #: src/language/progress/skill-levels-card.tsx
+msgctxt "Mc3CoH"
+msgid "Estimated listening level: {level}"
+msgstr "リスニングの推定レベル：{level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "0EWsJk"
+msgid "Estimated reading level: {level}"
+msgstr "リーディングの推定レベル：{level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "8qPntS"
+msgid "Estimated speaking level: {level}"
+msgstr "スピーキングの推定レベル：{level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "damvcS"
+msgid "Estimated writing level: {level}"
+msgstr "ライティングの推定レベル：{level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "tli5KO"
+msgid "Your listening estimate went up to {level}"
+msgstr "リスニングの推定レベルが{level}に上がりました"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "NHA9sL"
+msgid "Your reading estimate went up to {level}"
+msgstr "リーディングの推定レベルが{level}に上がりました"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "BYWqip"
+msgid "Your speaking estimate went up to {level}"
+msgstr "スピーキングの推定レベルが{level}に上がりました"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "rafLc9"
+msgid "Your writing estimate went up to {level}"
+msgstr "ライティングの推定レベルが{level}に上がりました"
+
+#: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
 msgid "up since the level test"
 msgstr "レベルテスト時より上昇"
@@ -6456,25 +6496,27 @@ msgctxt "LPKiOF"
 msgid "down since the level test"
 msgstr "レベルテスト時より低下"
 
+#. Two or more skills' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "kzq7R0"
+msgid "{skills} estimates went up"
+msgstr "{skills}の推定レベルが上がりました"
+
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "K_24wg"
 msgid "Levels move as you practice. They get more accurate every week."
 msgstr "レベルは練習に応じて変わります。毎週、より正確に実力を表すようになります。"
 
+#. Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "iQhtOC"
-msgid "{skill} went up to {level} since the level test."
-msgstr "レベルテスト後、{skill}が{level}に上がりました。"
+msgctxt "JinbRe"
+msgid "Practice estimates"
+msgstr "練習用の推定レベル"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "EZzhCX"
-msgid "{skills} went up since the level test."
-msgstr "レベルテスト後、{skills}のレベルが上がりました。"
-
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "hZMjM-"
-msgid "Level by skill"
-msgstr "スキル別レベル"
+msgctxt "Ep338j"
+msgid "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan."
+msgstr "推定レベルをもとに練習の難しさを調整します。証明書は、学習計画で終えたレッスンに応じて取得できます。"
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"

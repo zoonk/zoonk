@@ -1936,9 +1936,9 @@ msgid "Certificates"
 msgstr "Sertifikalar"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "Ek6qb7"
-msgid "Comes when every skill you practice reaches the next level"
-msgstr "Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın"
+msgctxt "OqErrx"
+msgid "Comes when you finish a level, studying at least half of it"
+msgstr "Bir seviyeyi derslerinin en az yarısını çalışarak tamamladığında verilir"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "ojltlj"
@@ -6447,6 +6447,46 @@ msgid "Goal {level}"
 msgstr "Hedef {level}"
 
 #: src/language/progress/skill-levels-card.tsx
+msgctxt "Mc3CoH"
+msgid "Estimated listening level: {level}"
+msgstr "Tahmini dinleme seviyesi: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "0EWsJk"
+msgid "Estimated reading level: {level}"
+msgstr "Tahmini okuma seviyesi: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "8qPntS"
+msgid "Estimated speaking level: {level}"
+msgstr "Tahmini konuşma seviyesi: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "damvcS"
+msgid "Estimated writing level: {level}"
+msgstr "Tahmini yazma seviyesi: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "tli5KO"
+msgid "Your listening estimate went up to {level}"
+msgstr "Tahmini dinleme seviyen {level} düzeyine yükseldi"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "NHA9sL"
+msgid "Your reading estimate went up to {level}"
+msgstr "Tahmini okuma seviyen {level} düzeyine yükseldi"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "BYWqip"
+msgid "Your speaking estimate went up to {level}"
+msgstr "Tahmini konuşma seviyen {level} düzeyine yükseldi"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "rafLc9"
+msgid "Your writing estimate went up to {level}"
+msgstr "Tahmini yazma seviyen {level} düzeyine yükseldi"
+
+#: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
 msgid "up since the level test"
 msgstr "seviye tespit testinden bu yana yükseldi"
@@ -6456,25 +6496,27 @@ msgctxt "LPKiOF"
 msgid "down since the level test"
 msgstr "seviye tespit testinden bu yana geriledi"
 
+#. Two or more skills' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "kzq7R0"
+msgid "{skills} estimates went up"
+msgstr "{skills} için tahmini seviyeler yükseldi"
+
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "K_24wg"
 msgid "Levels move as you practice. They get more accurate every week."
 msgstr "Pratik yaptıkça seviyelerin değişir. Her hafta becerilerini daha doğru yansıtır."
 
+#. Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "iQhtOC"
-msgid "{skill} went up to {level} since the level test."
-msgstr "{skill} seviyen seviye tespit testinden bu yana {level} seviyesine yükseldi."
+msgctxt "JinbRe"
+msgid "Practice estimates"
+msgstr "Tahmini beceri seviyeleri"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "EZzhCX"
-msgid "{skills} went up since the level test."
-msgstr "{skills} seviyelerin seviye tespit testinden bu yana yükseldi."
-
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "hZMjM-"
-msgid "Level by skill"
-msgstr "Beceriye göre seviyeler"
+msgctxt "Ep338j"
+msgid "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan."
+msgstr "Bu tahminler alıştırmaların zorluk düzeyini belirler. Sertifikalar planında tamamladığın derslere göre verilir."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"

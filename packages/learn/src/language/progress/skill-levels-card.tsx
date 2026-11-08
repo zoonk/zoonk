@@ -49,16 +49,59 @@ function TargetLabel({
   );
 }
 
+function useEstimatedLevel() {
+  const t = useExtracted();
+
+  return ({ label, skill }: LanguageSkillLevel): string => {
+    switch (skill) {
+      case "listening":
+        return t("Estimated listening level: {level}", { level: label });
+      case "reading":
+        return t("Estimated reading level: {level}", { level: label });
+      case "speaking":
+        return t("Estimated speaking level: {level}", { level: label });
+      case "writing":
+        return t("Estimated writing level: {level}", { level: label });
+      default:
+        return skill satisfies never;
+    }
+  };
+}
+
+function useRisenEstimate() {
+  const t = useExtracted();
+
+  return ({ label, skill }: LanguageSkillLevel): string => {
+    switch (skill) {
+      case "listening":
+        return t("Your listening estimate went up to {level}", { level: label });
+      case "reading":
+        return t("Your reading estimate went up to {level}", { level: label });
+      case "speaking":
+        return t("Your speaking estimate went up to {level}", { level: label });
+      case "writing":
+        return t("Your writing estimate went up to {level}", { level: label });
+      default:
+        return skill satisfies never;
+    }
+  };
+}
+
+/** The grid's name column fits only the skill's name, so the full sentence is what's read aloud. */
 function LevelRow({ level }: { level: LanguageSkillLevel }) {
   const t = useExtracted();
   const skillName = useSkillName();
+  const estimatedLevel = useEstimatedLevel();
 
   return (
     <li className={`${ROW_GRID} min-h-11 py-2.5`}>
-      <span className="min-w-0 text-sm font-medium text-pretty">{skillName(level.skill)}</span>
+      <span className="sr-only">{estimatedLevel(level)}</span>
+      <span aria-hidden="true" className="min-w-0 text-sm font-medium text-pretty">
+        {skillName(level.skill)}
+      </span>
       <LevelBar score={level.score} />
       <span className="flex items-center justify-end gap-0.5 font-mono text-xs font-medium tabular-nums">
-        {level.label}
+        <span aria-hidden="true">{level.label}</span>
         {level.trend === "up" && (
           <ArrowUpIcon
             aria-label={t("up since the level test")}
@@ -81,15 +124,12 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
   const t = useExtracted();
   const format = useFormatter();
   const skillName = useSkillName();
+  const risenEstimate = useRisenEstimate();
   const rises = listRises(levels);
   const [only] = rises;
 
   if (!only) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        {t("Levels move as you practice. They get more accurate every week.")}
-      </p>
-    );
+    return null;
   }
 
   return (
@@ -98,12 +138,12 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
         <TrendingUpIcon className="text-success-text size-4" />
       </LineMarker>
       {rises.length === 1
-        ? t("{skill} went up to {level} since the level test.", {
-            level: only.label,
-            skill: skillName(only.skill),
-          })
-        : t("{skills} went up since the level test.", {
-            skills: format.list(rises.map((rise) => skillName(rise.skill))),
+        ? risenEstimate(only)
+        : t({
+            description:
+              'Two or more skills\' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".',
+            message: "{skills} estimates went up",
+            values: { skills: format.list(rises.map((rise) => skillName(rise.skill))) },
           })}
     </p>
   );
@@ -115,13 +155,23 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
   const targetShare = target ? getLevelShare(target.score) : null;
 
   if (levels.length === 0) {
-    return <RiseLine levels={levels} />;
+    return (
+      <p className="text-muted-foreground text-sm">
+        {t("Levels move as you practice. They get more accurate every week.")}
+      </p>
+    );
   }
 
   return (
     <section aria-labelledby="language-levels-title" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <SectionLabel id="language-levels-title">{t("Level by skill")}</SectionLabel>
+        <SectionLabel id="language-levels-title">
+          {t({
+            description:
+              "Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.",
+            message: "Practice estimates",
+          })}
+        </SectionLabel>
         <TargetLabel target={target} targetDate={progress.goal.targetDate} />
       </div>
 
@@ -144,7 +194,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
             style={{ left: `calc(${BAR_START} + (${BAR_WIDTH}) * ${targetShare})` }}
           />
         )}
-        <ul aria-label={t("Level by skill")} className="flex flex-col [&>li+li]:border-t">
+        <ul aria-label={t("Practice estimates")} className="flex flex-col [&>li+li]:border-t">
           {levels.map((level) => (
             <LevelRow key={level.skill} level={level} />
           ))}
@@ -152,6 +202,12 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
       </div>
 
       <RiseLine levels={levels} />
+
+      <p className="text-muted-foreground text-sm">
+        {t(
+          "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan.",
+        )}
+      </p>
     </section>
   );
 }
