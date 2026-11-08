@@ -33,18 +33,18 @@ struct LanguageAimView: Codable, Equatable, Sendable {
 }
 
 extension View {
-  /// Main's `useAimEnds`: when each other aim would be reached, from the planner as picking it would
+  /// Main's `useAimEnds`: when each of `aims` would be reached, from the planner as picking it would
   /// lay the plan out (`read`, nil without a date). Asked again when `key` changes and only while
   /// the choices show, since each ask plans the goal again.
   func readsAimEnds(
-    _ ends: Binding<[String: String]>, of languageAim: LanguageAimView, key: some Equatable,
+    _ ends: Binding<[String: String]>, aims: [String], key: some Equatable,
     read: @escaping @MainActor @Sendable (String) async -> String?
   ) -> some View {
     task(id: key) {
       ends.wrappedValue = [:]
 
       await withTaskGroup(of: (String, String?).self) { group in
-        for aim in languageAim.otherAims {
+        for aim in aims {
           group.addTask { (aim, await read(aim)) }
         }
 
@@ -211,7 +211,7 @@ struct AimChoicesSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
-    .readsAimEnds($ends, of: languageAim, key: languageAim.aim, read: readEnd)
+    .readsAimEnds($ends, aims: languageAim.otherAims, key: languageAim.aim, read: readEnd)
   }
 
   private func apply(_ aim: String) {

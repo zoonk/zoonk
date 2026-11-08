@@ -174,6 +174,9 @@ struct PlanChangePreview: Decodable, Equatable, Sendable {
 
   let effect: PlanEffect?
   let feasibility: Feasibility?
+  /// When the whole course would finish after the change; nil for a plan with a date, or past the
+  /// days a plan lays out.
+  let finishDate: String?
   let ready: Bool
   let unchanged: Bool
 }

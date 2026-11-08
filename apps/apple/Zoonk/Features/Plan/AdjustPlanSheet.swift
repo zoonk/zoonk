@@ -46,15 +46,12 @@ struct AdjustPlanSheet: View {
           .id(Section.date)
 
           if let languageAim = plan.languageAim, !languageAim.choices.isEmpty {
-            // A plan with a date ends on it whatever the aim, so its aims show their hours alone.
-            if plan.schedule.targetDate == nil {
-              aimSection(languageAim)
-                .readsAimEnds($aimEnds, of: languageAim, key: plan) { [editor] aim in
-                  await editor.preview([.aim(aim)])?.effect?.endDateAfter
-                }
-            } else {
-              aimSection(languageAim)
-            }
+            aimSection(languageAim)
+              .readsAimEnds(
+                $aimEnds, aims: languageAim.choices.map(\.aim), key: plan
+              ) { [editor] aim in
+                await editor.preview([.aim(aim)])?.finishDate
+              }
           }
 
           PlanTimeSection(
@@ -136,9 +133,7 @@ struct AdjustPlanSheet: View {
             Text(
               aimChoiceDetail(
                 hours: choice.hours,
-                end: plan.schedule.targetDate != nil
-                  ? nil
-                  : choice.aim == languageAim.aim ? plan.estimate.endDate : aimEnds[choice.aim])
+                end: aimEnds[choice.aim])
             )
             .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
