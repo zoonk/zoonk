@@ -96,6 +96,16 @@ final class PlanAskingTests: XCTestCase {
     PlanAsking(interval: .milliseconds(1), settle: .milliseconds(1), timeout: timeout)
   }
 
+  /// A language goal's date answers one aim: another aim's line never shows it while its own asks.
+  func testTheLastAnswerStandsInOnlyForAKeyLikeIts() async {
+    let asking = makeAsking()
+
+    await asking.ask("B1 15 min", when: true) { Answer(id: 1, ready: true) }
+
+    XCTAssertEqual(asking.last(for: "B1 20 min") { $0.hasPrefix("B1") }?.id, 1)
+    XCTAssertNil(asking.last(for: "B2 15 min") { $0.hasPrefix("B2") })
+  }
+
   func testAsksAgainWhileThePlanIsntReady() async {
     let asking = makeAsking()
     let replies = Replies([

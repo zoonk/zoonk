@@ -68,6 +68,12 @@ private struct ExplanationView: View {
       .announcesStatus(
         explanation.lesson == nil && !isRetrying && !retryFailed ? stillWriting : nil
       )
+      // Main's explanation wait: the writing, then its outline until the learner starts it.
+      .measuresWait(
+        surface: "explanation", contentKind: "explanation",
+        isActive: explanation.lesson == nil || !(readsAtOnce || hasPlayed),
+        goalID: explanation.goalId
+      )
       .task {
         if readsAtOnce, !hasPlayed, let lesson = explanation.lesson {
           hasPlayed = true

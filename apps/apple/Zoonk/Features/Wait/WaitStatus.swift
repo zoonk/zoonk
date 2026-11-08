@@ -126,7 +126,9 @@ struct FirstLessonSection: View {
               .frame(minHeight: lineHeight)
 
             Group {
-              if lesson.isReady {
+              if lesson.isDone {
+                Text("Done", tableName: "Onboarding", comment: "A finished step of a wait")
+              } else if lesson.isReady {
                 Text(
                   "Ready to start", tableName: "Onboarding",
                   comment: "Under the goal's first lesson once it's written")

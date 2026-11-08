@@ -13,18 +13,16 @@ private struct ReadableColumn: ViewModifier {
   let width: CGFloat
   let alignment: HorizontalAlignment
 
-  @State private var available: CGFloat = 0
-
   func body(content: Content) -> some View {
-    let room = max(0, available - width)
+    // A reader, so the column fits the width in the same layout pass. A width kept in state
+    // re-padded the list a pass later, and two nested columns (a lone page around a list) did that
+    // to each other forever while an iPad rotated.
+    GeometryReader { proxy in
+      let room = max(0, proxy.size.width - width)
 
-    content
-      .safeAreaPadding(.leading, alignment == .leading ? 0 : room / 2)
-      .safeAreaPadding(.trailing, alignment == .leading ? room : room / 2)
-      .onGeometryChange(for: CGFloat.self) {
-        $0.size.width
-      } action: {
-        available = $0
-      }
+      content
+        .safeAreaPadding(.leading, alignment == .leading ? 0 : room / 2)
+        .safeAreaPadding(.trailing, alignment == .leading ? room : room / 2)
+    }
   }
 }

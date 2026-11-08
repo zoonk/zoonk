@@ -207,7 +207,7 @@ struct PlanBuilding: View {
         } else {
           WaitStatusStrip(
             label: Text(title), isDone: holding != nil, share: { wait.shownShare(at: $0) },
-            firstLesson: firstLesson)
+            firstLesson: firstLesson?.isDone == true ? nil : firstLesson)
         }
       } progress: {
         WaitHeading(
@@ -257,7 +257,7 @@ struct PlanBuilding: View {
       return next.ready(holding)
     }
 
-    guard let firstLesson, firstLesson.isReady else {
+    guard let firstLesson, firstLesson.isReady, !firstLesson.isDone else {
       return nil
     }
 
@@ -277,7 +277,9 @@ struct PlanBuilding: View {
 
 extension GenerationWait.FirstLesson {
   init(_ read: Components.Schemas.Onboarding.FirstLessonPayload) {
-    self.init(id: read.id, title: read.title, isReady: read.status == .ready)
+    self.init(
+      id: read.id, title: read.title, isReady: read.status != .writing, isDone: read.status == .done
+    )
   }
 }
 
@@ -533,6 +535,20 @@ private struct PlanReveal: View {
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
+  /// The moment plays the first time this device shows the reveal before its action is pressed;
+  /// opened again, after a restart too, the reveal draws its end, still.
+  @State private var playsMoment: Bool
+
+  init(view: GoalOnboarding, plan: GoalPlan) {
+    self.view = view
+    self.plan = plan
+    _playsMoment = State(
+      initialValue: !view.planRevealed && !UserDefaults.standard.bool(forKey: Self.momentKey(view)))
+  }
+
+  private static func momentKey(_ view: GoalOnboarding) -> String {
+    "planReveal.momentPlayed.\(view.goal.id)"
+  }
 
   var body: some View {
     let goal = learnerGoal
@@ -564,10 +580,12 @@ private struct PlanReveal: View {
       .onboardingColumn()
     }
     .loads(syllabus, day, refreshable: false)
-    // The moment plays once, the first time the reveal shows before the learner pressed its action;
-    // a revisit shows its end, still.
-    .celebratesOnce(id: "planReveal:\(goal.id)")
-    .environment(\.celebrates, !view.planRevealed)
+    .environment(\.celebrates, playsMoment)
+    .onAppear {
+      if playsMoment {
+        UserDefaults.standard.set(true, forKey: Self.momentKey(view))
+      }
+    }
     .onDisappear { openingToday?.cancel() }
     .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
@@ -600,14 +618,13 @@ private struct PlanReveal: View {
     switch day.state {
     case .loaded(let day):
       RevealToday(day: day)
+      RevealWeek(plan: plan, today: day)
     case .idle, .loading:
-      // Today's rows hold their place, so the week doesn't move as they come.
+      // Today's rows hold their place; the week waits for them, since it leaves out their lessons.
       RevealTodayPlaceholder()
     case .empty, .failed:
-      EmptyView()
+      RevealWeek(plan: plan, today: nil)
     }
-
-    RevealWeek(plan: plan)
   }
 
   /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.

@@ -342,14 +342,16 @@ final class OnboardingStore {
     }
   }
 
-  func timeAdvice(goalID: String, week: ScheduleWeek, dailyMinutes: Int) async throws -> TimeAdvice
-  {
+  /// `aim` asks about a language goal's other aim; nil answers for its own.
+  func timeAdvice(
+    goalID: String, week: ScheduleWeek, dailyMinutes: Int, aim: String? = nil
+  ) async throws -> TimeAdvice {
     guard let token = session.authenticatedSession?.bearerToken else {
       throw CancellationError()
     }
 
     return try await api.timeAdvice(
-      goalID: goalID, week: week, dailyMinutes: dailyMinutes, token: token)
+      goalID: goalID, week: week, dailyMinutes: dailyMinutes, aim: aim, token: token)
   }
 
   func timeToCover(goalID: String, week: ScheduleWeek) async throws -> TimeToCover {

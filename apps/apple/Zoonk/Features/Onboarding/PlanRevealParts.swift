@@ -239,7 +239,7 @@ struct RevealToday: View {
           Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
         ) {
           Text(
-            [revealDay(day.localDate), planDurationText(minutes: day.minutes.dailyGoal)]
+            [revealDay(day.localDate), planDurationText(minutes: Double(day.minutes.planned))]
               .joinedFacts())
         }
       }
@@ -266,11 +266,13 @@ struct RevealTodayPlaceholder: View {
 /// Main's `RevealWeek`: the six days after today, each day's lessons by name.
 struct RevealWeek: View {
   let plan: GoalPlan
+  /// The reveal's Today, whose lessons the days after it don't list again.
+  let today: StudyDay?
 
   private static let marksShown = 4
 
   var body: some View {
-    let ahead = plan.nextDays.dropFirst().filter { !$0.items.isEmpty || $0.minutes == 0 }
+    let ahead = daysAhead
 
     if ahead.contains(where: { !$0.items.isEmpty }) {
       let studied = plan.nextDays.filter { !$0.items.isEmpty }
@@ -296,6 +298,19 @@ struct RevealWeek: View {
         }
       }
     }
+  }
+
+  /// Main's `getDaysAhead`: a day with time but nothing laid out is past the plan's end.
+  private var daysAhead: [RevealDay] {
+    let listed = Set(today?.blocks.compactMap(\.lessonId) ?? [])
+
+    return plan.nextDays.dropFirst()
+      .map { day in
+        RevealDay(
+          date: day.date, items: day.items.filter { !listed.contains($0.lessonId ?? "") },
+          minutes: day.minutes)
+      }
+      .filter { !$0.items.isEmpty || $0.minutes == 0 }
   }
 
   private func row(_ day: RevealDay) -> some View {

@@ -26,24 +26,52 @@ struct LanguageAimView: Codable, Equatable, Sendable {
     choices.contains { $0.aim == aim } ? aim : nil
   }
 
-  /// Main's `getAimEndDate`: when the learner reaches `hours` of study at the pace that reaches the
-  /// current aim by `endDate`. Nil past the days a plan lays out.
-  func endDate(hours: Int, planEnd: String?, today: String) -> String? {
-    guard let planEnd, let current = choices.first(where: { $0.aim == aim })?.hours, current > 0,
-      let start = PlanDate.date(today), let end = PlanDate.date(planEnd)
-    else {
-      return nil
-    }
-
-    let days = (end.timeIntervalSince(start) / 86_400 * Double(hours) / Double(current)).rounded()
-
-    guard days <= 3650 else {
-      return nil
-    }
-
-    return start.addingTimeInterval(days * 86_400)
-      .formatted(Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day())
+  /// The aims the planner dates: every choice but the current one, whose date its screen shows.
+  var otherAims: [String] {
+    choices.map(\.aim).filter { $0 != aim }
   }
+}
+
+extension View {
+  /// Main's `useAimEnds`: when each other aim would be reached, from the planner as picking it would
+  /// lay the plan out (`read`, nil without a date). Asked again when `key` changes and only while
+  /// the choices show, since each ask plans the goal again.
+  func readsAimEnds(
+    _ ends: Binding<[String: String]>, of languageAim: LanguageAimView, key: some Equatable,
+    read: @escaping @MainActor @Sendable (String) async -> String?
+  ) -> some View {
+    task(id: key) {
+      ends.wrappedValue = [:]
+
+      await withTaskGroup(of: (String, String?).self) { group in
+        for aim in languageAim.otherAims {
+          group.addTask { (aim, await read(aim)) }
+        }
+
+        for await (aim, end) in group where !Task.isCancelled {
+          ends.wrappedValue[aim] = end
+        }
+      }
+    }
+  }
+}
+
+/// Under an aim to pick: the hours of study still needed, then when it's reached once that's known.
+func aimChoiceDetail(hours: Int, end: String?) -> String {
+  let hours = hours.formatted()
+
+  guard let end else {
+    return String(
+      localized: "About \(hours) h more", table: "Onboarding",
+      comment: "Under a language level to aim for: the hours of study still needed to reach it")
+  }
+
+  return String(
+    localized: "About \(hours) h more · around \(PlanDate.longText(end, month: true))",
+    table: "Onboarding",
+    comment:
+      "Under a language level to aim for: the hours of study still needed to reach it, then when; the second argument is a month and year, like 'Nov 2027'"
+  )
 }
 
 /// Main's `useAimWords`: what each aim lets the learner do.
@@ -111,14 +139,17 @@ struct AimChoicesSheet: View {
   let languageAim: LanguageAimView
   /// What the hours count from, the learner's level and their time a day; nil while unknown.
   var fromLine: String?
-  var planEnd: String?
-  let today: String
+  /// When the current aim is reached, as its screen says.
+  var currentEnd: String?
+  /// When another aim would be reached, as picking it would lay the plan out.
+  let readEnd: @MainActor @Sendable (String) async -> String?
   /// False when it couldn't be saved.
   let pick: (String) async -> Bool
 
   @Environment(\.dismiss) private var dismiss
   @State private var picking: String?
   @State private var failed = false
+  @State private var ends: [String: String] = [:]
 
   var body: some View {
     NavigationStack {
@@ -133,9 +164,13 @@ struct AimChoicesSheet: View {
                   .typeStyle(.rowTitle)
                   .foregroundStyle(Color(.foreground))
 
-                Text(detail(choice))
-                  .typeStyle(.meta)
-                  .foregroundStyle(.mutedForeground)
+                Text(
+                  aimChoiceDetail(
+                    hours: choice.hours,
+                    end: choice.aim == languageAim.aim ? currentEnd : ends[choice.aim])
+                )
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
               }
               .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -176,25 +211,7 @@ struct AimChoicesSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
-  }
-
-  private func detail(_ choice: LanguageAimView.Choice) -> String {
-    let hours = choice.hours.formatted()
-
-    guard
-      let end = languageAim.endDate(hours: choice.hours, planEnd: planEnd, today: today)
-    else {
-      return String(
-        localized: "About \(hours) h more", table: "Onboarding",
-        comment: "Under a language level to aim for: the hours of study still needed to reach it")
-    }
-
-    return String(
-      localized: "About \(hours) h more · around \(PlanDate.longText(end, month: true))",
-      table: "Onboarding",
-      comment:
-        "Under a language level to aim for: the hours of study still needed to reach it, then when; the second argument is a month and year, like 'Nov 2027'"
-    )
+    .readsAimEnds($ends, of: languageAim, key: languageAim.aim, read: readEnd)
   }
 
   private func apply(_ aim: String) {

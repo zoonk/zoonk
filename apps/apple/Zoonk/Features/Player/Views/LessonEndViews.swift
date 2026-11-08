@@ -622,10 +622,11 @@ struct LessonWaitingView: View {
   let progress: GenerationWait
   var alternative: Components.Schemas.ReadyAlternative?
   var warmUpID: String?
+  /// The learner's active goal, whose clock the wait and its quiz join.
+  var goalID: String?
   var holding: WaitHolding?
   let write: () -> Void
 
-  @Environment(LearnerSummaryStore.self) private var learner
   @State private var isLate = false
 
   var body: some View {
@@ -642,7 +643,7 @@ struct LessonWaitingView: View {
         let shown = holding == nil && writing == .writing ? progress : progress.finished
 
         WaitScreen(
-          deckID: warmUpID, progressTitle: title,
+          deckID: warmUpID, goalID: goalID, progressTitle: title,
           ready: holding.map { holding in
             WaitReady(
               label: Text(
@@ -701,7 +702,7 @@ struct LessonWaitingView: View {
     .announcesStatus(notWrittenLine)
     .measuresWait(
       surface: "lessonWait", contentKind: "lesson", isActive: writing == .writing || holding != nil,
-      goalID: learner.summary.value?.activeGoalID
+      goalID: goalID
     )
     .task(id: writing) {
       isLate = false

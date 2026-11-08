@@ -23,7 +23,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
   private(set) var status = Status.idle
   /// Changes on `restart`, so a task keyed by it asks again.
   private(set) var round = 0
-  private var latest: Answer?
+  private var latest: (key: Key, answer: Answer)?
 
   @ObservationIgnored private var out: (key: Key, id: UUID, answer: Task<Answer, Error>)?
   @ObservationIgnored private let clock: C
@@ -45,15 +45,16 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
     answers[key].flatMap { $0.ready ? $0 : nil }
   }
 
-  /// The answer for `key`, else the last one that came, only while it's ready: an unready answer says
-  /// nothing about the goal.
-  func last(for key: Key) -> Answer? {
-    (answers[key] ?? latest).flatMap { $0.ready ? $0 : nil }
+  /// The answer for `key`, else the last one that came for a key `isLike` accepts, only while it's
+  /// ready: an unready answer says nothing about the goal.
+  func last(for key: Key, isLike: (Key) -> Bool = { _ in true }) -> Answer? {
+    (answers[key] ?? latest.flatMap { isLike($0.key) ? $0.answer : nil })
+      .flatMap { $0.ready ? $0 : nil }
   }
 
   /// What the answer for `key`, else the last one that came, says of the plan, ready or not.
   func readiness(for key: Key) -> PlanReadiness? {
-    (answers[key] ?? latest)?.readiness
+    (answers[key] ?? latest?.answer)?.readiness
   }
 
   func restart() {
@@ -95,7 +96,7 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
 
         try Task.checkCancellation()
         answers[key] = next
-        latest = next
+        latest = (key, next)
         failures = 0
 
         if next.ready {
