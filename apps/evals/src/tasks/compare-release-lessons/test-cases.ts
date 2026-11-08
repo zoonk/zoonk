@@ -204,6 +204,73 @@ Improvements
 - Faster search in large vaults.
 - The command palette remembers recent commands.`;
 
+const PYTHON_LESSONS = [
+  {
+    canDo: "Try code in the interactive interpreter",
+    ideas: ["run python with no arguments to open the REPL", "type exit() to leave"],
+    title: "The interactive interpreter",
+  },
+  {
+    canDo: "Read a submitted web form in a CGI script",
+    ideas: ["import cgi", "cgi.FieldStorage() parses the form's fields"],
+    title: "Handle form data with the cgi module",
+  },
+  {
+    canDo: "Format text with f-strings",
+    ideas: ["prefix the string with f", "put expressions inside braces"],
+    title: "f-strings",
+  },
+];
+
+const PYTHON_313_NOTES = `What's New In Python 3.13
+
+Summary – Release Highlights
+Python 3.13 is the latest stable release of the Python programming language, with a mix of changes to the language, the implementation and the standard library.
+
+A new and improved interactive interpreter, based on PyPy's, featuring multi-line editing and color support, as well as colorized exception tracebacks.
+
+An experimental free-threaded build mode, which disables the Global Interpreter Lock, allowing threads to run more concurrently.
+
+A preliminary, experimental JIT, providing the ground work for significant performance improvements.
+
+Removals: PEP 594 (Removing dead batteries from the standard library) scheduled removals of many deprecated modules: aifc, audioop, chunk, cgi, cgitb, crypt, imghdr, mailcap, msilib, nis, nntplib, ossaudiodev, pipes, sndhdr, spwd, sunau, telnetlib, uu, xdrlib, lib2to3.`;
+
+const NODE_LESSONS = [
+  {
+    canDo: "Carregar um módulo ES em um arquivo CommonJS",
+    ideas: [
+      "require() não carrega módulos ES e lança ERR_REQUIRE_ESM",
+      "use import() dinâmico para carregar o módulo",
+    ],
+    title: "Módulos ES dentro de CommonJS",
+  },
+  {
+    canDo: "Ler um arquivo de forma assíncrona",
+    ideas: ["importe readFile de node:fs/promises", "use await readFile('dados.txt', 'utf8')"],
+    title: "Ler arquivos com fs/promises",
+  },
+  {
+    canDo: "Rodar os scripts do package.json",
+    ideas: ["npm run test executa o script test", "scripts ficam no campo scripts do package.json"],
+    title: "Scripts do package.json",
+  },
+];
+
+const NODE_23_NOTES = `Node.js 23.0.0 (Current)
+
+We're excited to announce the release of Node.js 23! Highlights include the default enablement of support for require()ing ES modules, the removal of 32-bit Windows support, and node --run going stable.
+
+require(esm) is now enabled by default
+Support for loading native ES modules using require() had been available on v20.x and v22.x under the command line flag --experimental-require-module. In v23.x, this feature is now enabled by default.
+
+Removal of Windows 32-bit support
+Due to issues with upstream dependencies, Node.js 23 removes support for Windows 32-bit systems.
+
+node --run is now stable
+The node --run command runs a script from package.json, and is now stable.
+
+Test runner: support for glob patterns in coverage files.`;
+
 export const TEST_CASES: TestCase<CompareReleaseLessonsExpected, CompareReleaseLessonsInput>[] = [
   {
     expected: { changed: [3, 4, 5, 7], unchanged: [1, 2, 6], whatsNew: true },
@@ -269,6 +336,30 @@ export const TEST_CASES: TestCase<CompareReleaseLessonsExpected, CompareReleaseL
       product: "Obsidian",
       releaseNotes: OBSIDIAN_19_NOTES,
       to: "Obsidian 1.9",
+    },
+  },
+  {
+    expected: { changed: [2], unchanged: [1, 3], whatsNew: true },
+    id: "en-language-removed-module",
+    userInput: {
+      from: "Python 3.12",
+      language: "en",
+      lessons: PYTHON_LESSONS,
+      product: "Python",
+      releaseNotes: PYTHON_313_NOTES,
+      to: "Python 3.13",
+    },
+  },
+  {
+    expected: { changed: [1], unchanged: [2, 3], whatsNew: true },
+    id: "pt-runtime-new-major",
+    userInput: {
+      from: "Node.js 22",
+      language: "pt",
+      lessons: NODE_LESSONS,
+      product: "Node.js",
+      releaseNotes: NODE_23_NOTES,
+      to: "Node.js 23",
     },
   },
 ];

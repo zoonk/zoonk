@@ -418,6 +418,136 @@
           "to": "Obsidian 1.9"
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "changed": [
+            2
+          ],
+          "unchanged": [
+            1,
+            3
+          ],
+          "whatsNew": true
+        },
+        "id": "en-language-removed-module-1",
+        "userInput": {
+          "from": "Python 3.12",
+          "language": "en",
+          "lessons": [
+            {
+              "canDo": "Try code in the interactive interpreter",
+              "ideas": [
+                "run python with no arguments to open the REPL",
+                "type exit() to leave"
+              ],
+              "title": "The interactive interpreter"
+            },
+            {
+              "canDo": "Read a submitted web form in a CGI script",
+              "ideas": [
+                "import cgi",
+                "cgi.FieldStorage() parses the form's fields"
+              ],
+              "title": "Handle form data with the cgi module"
+            },
+            {
+              "canDo": "Format text with f-strings",
+              "ideas": [
+                "prefix the string with f",
+                "put expressions inside braces"
+              ],
+              "title": "f-strings"
+            }
+          ],
+          "product": "Python",
+          "releaseNotes": "What's New In Python 3.13\n\nSummary – Release Highlights\nPython 3.13 is the latest stable release of the Python programming language, with a mix of changes to the language, the implementation and the standard library.\n\nA new and improved interactive interpreter, based on PyPy's, featuring multi-line editing and color support, as well as colorized exception tracebacks.\n\nAn experimental free-threaded build mode, which disables the Global Interpreter Lock, allowing threads to run more concurrently.\n\nA preliminary, experimental JIT, providing the ground work for significant performance improvements.\n\nRemovals: PEP 594 (Removing dead batteries from the standard library) scheduled removals of many deprecated modules: aifc, audioop, chunk, cgi, cgitb, crypt, imghdr, mailcap, msilib, nis, nntplib, ossaudiodev, pipes, sndhdr, spwd, sunau, telnetlib, uu, xdrlib, lib2to3.",
+          "to": "Python 3.13"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "changed": [
+            1
+          ],
+          "unchanged": [
+            2,
+            3
+          ],
+          "whatsNew": true
+        },
+        "id": "pt-runtime-new-major-1",
+        "userInput": {
+          "from": "Node.js 22",
+          "language": "pt",
+          "lessons": [
+            {
+              "canDo": "Carregar um módulo ES em um arquivo CommonJS",
+              "ideas": [
+                "require() não carrega módulos ES e lança ERR_REQUIRE_ESM",
+                "use import() dinâmico para carregar o módulo"
+              ],
+              "title": "Módulos ES dentro de CommonJS"
+            },
+            {
+              "canDo": "Ler um arquivo de forma assíncrona",
+              "ideas": [
+                "importe readFile de node:fs/promises",
+                "use await readFile('dados.txt', 'utf8')"
+              ],
+              "title": "Ler arquivos com fs/promises"
+            },
+            {
+              "canDo": "Rodar os scripts do package.json",
+              "ideas": [
+                "npm run test executa o script test",
+                "scripts ficam no campo scripts do package.json"
+              ],
+              "title": "Scripts do package.json"
+            }
+          ],
+          "product": "Node.js",
+          "releaseNotes": "Node.js 23.0.0 (Current)\n\nWe're excited to announce the release of Node.js 23! Highlights include the default enablement of support for require()ing ES modules, the removal of 32-bit Windows support, and node --run going stable.\n\nrequire(esm) is now enabled by default\nSupport for loading native ES modules using require() had been available on v20.x and v22.x under the command line flag --experimental-require-module. In v23.x, this feature is now enabled by default.\n\nRemoval of Windows 32-bit support\nDue to issues with upstream dependencies, Node.js 23 removes support for Windows 32-bit systems.\n\nnode --run is now stable\nThe node --run command runs a script from package.json, and is now stable.\n\nTest runner: support for glob patterns in coverage files.",
+          "to": "Node.js 23"
+        }
+      }
     }
   ],
   "taskId": "compare-release-lessons"
