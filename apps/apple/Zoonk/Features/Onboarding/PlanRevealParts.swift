@@ -164,6 +164,16 @@ struct RevealReadouts: View {
       return nil
     }
 
+    // A language course ends at its aim, so the reveal names the level and when it's reached.
+    if let aim = plan.languageAim?.aimAhead {
+      return (
+        AnyView(Text(verbatim: aim).typeStyle(.readout).monospaced()),
+        String(
+          localized: "by \(PlanDate.longText(endDate, month: true))", table: "Onboarding",
+          comment: "Under the level a language plan reaches, as in 'B1 by Nov 2027'")
+      )
+    }
+
     return (
       AnyView(MonthYear(date: date)),
       String(

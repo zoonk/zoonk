@@ -229,6 +229,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let feasibility: Feasibility?
   let fitOffer: FitOffer?
   let goalId: String
+  /// A language goal's level the course goes up to and the aims to change it to; nil for others.
+  let languageAim: LanguageAimView?
   /// Today and the six days after it, whatever the weekday: the reveal's first week.
   let nextDays: [RevealDay]
   let notice: Notice?

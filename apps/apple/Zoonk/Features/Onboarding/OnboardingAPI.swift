@@ -13,6 +13,10 @@ extension GoalOnboarding {
 
     return (try? PracticeJSON.recode(goal.details, as: Details.self))?.onboardingId
   }
+
+  var languageAimView: LanguageAimView? {
+    languageAim.flatMap { try? PracticeJSON.recode($0, as: LanguageAimView.self) }
+  }
 }
 typealias OnboardingAnswer = Components.Schemas.OnboardingAnswerInput
 typealias GoalPlacement = Components.Schemas.Placement
