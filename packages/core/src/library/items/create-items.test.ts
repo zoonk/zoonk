@@ -96,6 +96,39 @@ describe(createItems, () => {
     ).toStrictEqual({ content: { ...expectedContent, select: 1 }, format: "multipleChoice" });
   });
 
+  it("reads a language goal's options in the practiced language, storing them under the learner's", async () => {
+    const skill = await skillFixture({ language: "pt", targetLanguage: "en" });
+
+    const item = generatedMultipleChoice({
+      options: [
+        {
+          isCorrect: true,
+          misconception: null,
+          reason: "O aluguel é mil dólares.",
+          text: "$1,000",
+        },
+        {
+          isCorrect: false,
+          misconception: "Lê a vírgula como decimal",
+          reason: "Isso é um dólar.",
+          text: "$1",
+        },
+      ],
+    });
+
+    const { created, rejected } = await createItems({
+      format: "multipleChoice",
+      items: [item],
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+      targetLanguage: "en",
+    });
+
+    expect(rejected).toStrictEqual([]);
+    expect(created).toMatchObject([{ language: "pt" }]);
+  });
+
   it("stores how its exam answers a question: the options picked and how a number is typed", async () => {
     const skill = await skillFixture();
     const [right, wrong] = generatedMultipleChoice().options;

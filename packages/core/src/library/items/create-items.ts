@@ -157,6 +157,7 @@ export async function createItems({
   skillId,
   source = null,
   sourceCitation = null,
+  targetLanguage = null,
 }: ItemAnswerFormat & {
   analytics?: ImageAnalytics;
   examBlueprintId?: string | null;
@@ -169,11 +170,14 @@ export async function createItems({
   skillId: string;
   source?: SourceVersion | null;
   sourceCitation?: string | null;
+  /** A language goal's options are written in it, so their numbers are read its way. */
+  targetLanguage?: string | null;
 }): Promise<{ created: Item[]; rejected: RejectedItem[]; unchecked: string[] }> {
   const answerFormat = { entry, select };
+  const textLanguage = targetLanguage ?? language;
 
   const checked = items.map((item, index) =>
-    toCheckedItem({ answerFormat, format, index, item, language, optionCount }),
+    toCheckedItem({ answerFormat, format, index, item, language: textLanguage, optionCount }),
   );
 
   const passing = checked.filter((checkedItem) => checkedItem.problems.length === 0);

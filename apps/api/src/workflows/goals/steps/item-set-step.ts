@@ -56,6 +56,7 @@ export async function prepareItemSetStep({
     optionCount: format === "multipleChoice" ? (first.exam?.optionCount ?? null) : null,
     provenance,
     skillIds: skills.map((skill) => skill.id),
+    targetLanguage: first.targetLanguage,
     written: data,
   });
 

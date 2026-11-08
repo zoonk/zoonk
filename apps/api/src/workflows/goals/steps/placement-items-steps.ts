@@ -52,6 +52,7 @@ async function storeSkillItems({
     optionCount: format === "multipleChoice" ? (exam?.optionCount ?? null) : null,
     provenance,
     skillId: skill.id,
+    targetLanguage: skill.targetLanguage,
   });
 
   await startPictureChecks({ analytics, assetIds: unchecked });

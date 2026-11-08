@@ -21,6 +21,7 @@ export async function storeWrittenItemSet({
   optionCount = null,
   provenance,
   skillIds,
+  targetLanguage = null,
   written,
 }: {
   examBlueprintId: string | null;
@@ -29,6 +30,7 @@ export async function storeWrittenItemSet({
   optionCount?: number | null;
   provenance: LibraryProvenance;
   skillIds: readonly string[];
+  targetLanguage?: string | null;
   written: WrittenItemSet;
 }): Promise<{ problems: string[]; rejected: RejectedItem[]; setId: string | null }> {
   const set = repairWrittenItemSet(written);
@@ -55,6 +57,7 @@ export async function storeWrittenItemSet({
     minItems: MIN_SET_QUESTIONS,
     optionCount,
     provenance,
+    targetLanguage,
   });
 
   const rejected = [

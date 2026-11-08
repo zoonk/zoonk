@@ -17,6 +17,7 @@ export async function createItemSet({
   minItems = 1,
   optionCount = null,
   provenance,
+  targetLanguage = null,
 }: {
   content: object;
   examBlueprintId?: string | null;
@@ -26,6 +27,8 @@ export async function createItemSet({
   minItems?: number;
   optionCount?: number | null;
   provenance: LibraryProvenance;
+  /** A language exam's questions are written in it, so their numbers are read its way. */
+  targetLanguage?: string | null;
 }): Promise<{ rejected: RejectedItem[]; set: (ItemSet & { items: Item[] }) | null }> {
   parseItemSetContent({ content, kind });
 
@@ -35,7 +38,7 @@ export async function createItemSet({
       format,
       index,
       item,
-      language,
+      language: targetLanguage ?? language,
       optionCount,
     }),
     answerFormat: { entry, select },
