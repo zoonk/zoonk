@@ -3,7 +3,6 @@
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { Button } from "@zoonk/ui/components/button";
-import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, KeyboardIcon, MicIcon, SquareIcon } from "lucide-react";
@@ -15,7 +14,6 @@ import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
-import { CHECK_BOUNDS } from "../use-step-grading";
 import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
 import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
@@ -68,29 +66,10 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
     }
   };
 
-  const isSlow = useTakingLong({
-    active: state.phase === "checking",
-    afterMs: CHECK_BOUNDS.slowMs,
-  });
-
   const noSpeech = useNoSpeechMessage();
   const isIdle = recorder.status === "idle" || recorder.status === "acquiring";
   const issue = isIdle ? state.checkIssue : null;
   const limit = issue?.status === "noSpeech" ? null : issue;
-
-  function getIdleHint() {
-    if (issue?.status === "noSpeech") {
-      return noSpeech;
-    }
-
-    if (state.checkFailed) {
-      return t("We couldn't check your answer this time. Try again.");
-    }
-
-    return isSlow
-      ? t("Still checking. This is taking longer than usual.")
-      : t("Tap and say it out loud");
-  }
 
   return (
     <div className="flex flex-col items-start gap-2">
@@ -119,10 +98,10 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
           <p
             className={cn(
               "text-muted-foreground text-sm",
-              state.checkFailed && isIdle && "text-destructive-text",
+              issue?.status === "noSpeech" && "text-destructive-text",
             )}
           >
-            {isIdle && getIdleHint()}
+            {isIdle && (issue?.status === "noSpeech" ? noSpeech : t("Tap and say it out loud"))}
             {isRecording &&
               t({
                 description: "“Stop” is the label of the button that ends the recording.",

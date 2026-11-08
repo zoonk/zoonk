@@ -1,5 +1,5 @@
 import { serializeExerciseSteps } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectCount } from "../_test-utils/activity-player";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
@@ -7,6 +7,7 @@ import {
   type LessonPlayerAdapters,
   type PlayableLanguageStep,
 } from "../lesson/lesson-player-types";
+import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson, localAdapters } from "../preview/preview-lesson";
 import { spokenAnswerStep } from "../preview/preview-steps";
 
@@ -122,6 +123,9 @@ describe("word orders", () => {
 });
 
 const SELF_CORRECT = "Not quite. Look again and fix it yourself, then check.";
+const CHECK_FAILED = "We couldn't check your answer this time. Try again.";
+const CHECK_SLOW = "Still checking. This is taking longer than usual.";
+const WRONG_ORDER = ["pioveva", "Quando", "l'autobus", "è", "arrivato"];
 
 describe("pending word orders", () => {
   it.each([
@@ -257,5 +261,65 @@ describe("pending word orders", () => {
     await placeWords(["pioveva", "Quando", "l'autobus", "è", "arrivato"]);
     await check.click();
     await expect.element(page.getByText(SELF_CORRECT)).toBeVisible();
+  });
+
+  describe("a slow or failed check", () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("says a word bank's check failed and lets the learner check again", async () => {
+      const lesson = buildLesson([sentenceStep("reading", true)], {
+        language: "pt",
+        targetLanguage: "it",
+      });
+
+      const server = localAdapters(lesson);
+
+      const checkStep = vi
+        .fn<LessonPlayerAdapters["checkStep"]>()
+        .mockRejectedValueOnce(new Error("offline"))
+        .mockImplementationOnce((input) => server.checkStep(input));
+
+      renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+      await placeWords(WRONG_ORDER);
+      await check.click();
+
+      await expect.element(page.getByText(CHECK_FAILED)).toBeVisible();
+      await expect.element(check).toBeEnabled();
+
+      await check.click();
+      await expect.element(page.getByText(SELF_CORRECT)).toBeVisible();
+      await expect.element(page.getByText(CHECK_FAILED)).not.toBeInTheDocument();
+      expect(checkStep).toHaveBeenCalledTimes(2);
+    });
+
+    it("says a word bank's check is taking longer than usual", async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+
+      const lesson = buildLesson([sentenceStep("reading", true)], {
+        language: "pt",
+        targetLanguage: "it",
+      });
+
+      const server = localAdapters(lesson);
+      const reply = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["checkStep"]>>>();
+      const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() => reply.promise);
+
+      renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+      await placeWords(WRONG_ORDER);
+      await check.click();
+      await expect.element(check).toHaveAttribute("aria-busy", "true");
+      await expect.element(page.getByText(CHECK_SLOW)).not.toBeInTheDocument();
+
+      await vi.advanceTimersByTimeAsync(CHECK_BOUNDS.slowMs + 1000);
+      await expect.element(page.getByText(CHECK_SLOW)).toBeVisible();
+
+      reply.resolve(await server.checkStep(checkStep.mock.calls[0]![0]));
+      await expect.element(page.getByText(SELF_CORRECT)).toBeVisible();
+      await expect.element(page.getByText(CHECK_SLOW)).not.toBeInTheDocument();
+    });
   });
 });
