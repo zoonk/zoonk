@@ -1,4 +1,4 @@
-import { type CallWait } from "@zoonk/ai/provider-options";
+import { type CallWait, type ServedSpeed } from "@zoonk/ai/provider-options";
 import { MAX_LESSON_DRAFTS } from "@zoonk/core/library/generation/held-back-drafts";
 import { LESSON_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-lessons";
@@ -41,6 +41,8 @@ export type LessonContentInput = {
   analytics?: ContentAnalytics;
   forExam?: boolean;
   forceReview?: boolean;
+  /** A goal's first lesson only: the learner is about to read it. */
+  speed?: ServedSpeed;
   wait?: CallWait;
 };
 

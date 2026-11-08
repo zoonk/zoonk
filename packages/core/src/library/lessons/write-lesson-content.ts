@@ -1,5 +1,5 @@
 import "server-only";
-import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type CallReuse, type ServedSpeed, type ServiceTier } from "@zoonk/ai/provider-options";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
@@ -69,6 +69,7 @@ export async function writeLessonContent({
   lessonId,
   reuse = "bounded",
   serviceTier,
+  speed,
   workflowRunId,
 }: {
   analytics?: LessonAnalytics;
@@ -77,6 +78,8 @@ export async function writeLessonContent({
   lessonId: string;
   reuse?: CallReuse;
   serviceTier?: ServiceTier;
+  /** Only the first draft's writer: fixes and reviews keep the standard speed. */
+  speed?: ServedSpeed;
   workflowRunId: string;
 }): Promise<
   | Extract<LessonContentOutcome, { status: "missingSpec" | "notClaimed" }>
@@ -100,6 +103,7 @@ export async function writeLessonContent({
     heldBackProblems: writer.heldBackProblems,
     model: writer.model,
     serviceTier,
+    speed,
   });
 
   const writerModel = draft.provenance.model;
