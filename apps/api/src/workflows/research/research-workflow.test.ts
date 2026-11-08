@@ -42,6 +42,8 @@ import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
 import { researchWorkflow } from "./research-workflow";
+import { extractBlueprint } from "./steps/extract-blueprint-step";
+import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
 import { storeSource } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
@@ -151,6 +153,14 @@ async function replayTcdfResearch() {
   });
 
   return { extraction, plan: uniquePlan };
+}
+
+async function publishedPdf(text: string) {
+  return sourceFixture({
+    extractedText: text,
+    mimeType: "application/pdf",
+    url: `https://www.example.com/${randomUUID()}/edital.pdf`,
+  });
 }
 
 function supportAll() {
@@ -785,6 +795,59 @@ describe(researchWorkflow, () => {
 
     await expect(storeSource({ document: notice, language: "pt", topic: "exam" })).rejects.toBe(
       timedOut,
+    );
+  });
+
+  it("goes on without the first pass over a notice whose publisher stopped answering", async () => {
+    const { goal } = await examGoal();
+    const notice = await publishedPdf(await readFixture("tcdf-2026-notice.txt"));
+    vi.mocked(fetch).mockImplementation(async () => new PageResponse("Busy", { status: 503 }));
+
+    await expect(
+      recordNoticeFormatsStep({
+        analytics: { contentScope: "shared" },
+        exam: "TCDF 2026",
+        goalId: goal.id,
+        sourceIds: [notice.id],
+      }),
+    ).resolves.toBeUndefined();
+
+    expect(extractQuestionFormats).not.toHaveBeenCalled();
+  });
+
+  it("checks a shared reading against the notice's stored text, so a publisher that stops answering can't skip it", async () => {
+    const [extraction, text] = await Promise.all([
+      readJsonFixture<BlueprintExtraction>("tcdf-2026-extraction.json"),
+      readFixture("tcdf-2026-notice.txt"),
+    ]);
+
+    const notice = await publishedPdf(text);
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: extraction });
+
+    vi.mocked(extractQuestionFormats).mockResolvedValue({
+      ...TASK_RESULT,
+      data: extraction.formats,
+    });
+
+    vi.mocked(fetch)
+      .mockImplementationOnce(
+        async () =>
+          new PageResponse(new TextEncoder().encode("%PDF-1.7"), {
+            headers: { "content-type": "application/pdf" },
+          }),
+      )
+      .mockImplementation(async () => new PageResponse("Busy", { status: 503 }));
+
+    await extractBlueprint({
+      analytics: { contentScope: "shared" },
+      background: false,
+      exam: "TCDF 2026",
+      shared: true,
+      sourceIds: [notice.id],
+    });
+
+    expect(checkExamReading).toHaveBeenCalledWith(
+      expect.objectContaining({ documents: [expect.objectContaining({ file: null, text })] }),
     );
   });
 

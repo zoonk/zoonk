@@ -48,6 +48,13 @@ export function MomentSaving() {
   return <p className="text-muted-foreground shimmer text-sm">{t("Saving your progress…")}</p>;
 }
 
+/** Holds a moment's title place until the server confirms it: "done" can still turn out not to be. */
+export function MomentSavingTitle() {
+  const t = useExtracted();
+
+  return <span className="text-muted-foreground shimmer">{t("Saving your progress…")}</span>;
+}
+
 export function PendingMainAction({ children }: { children: React.ReactNode }) {
   return (
     <Button aria-busy className={TASK_MAIN_ACTION_CLASS} disabled focusableWhenDisabled size="xl">

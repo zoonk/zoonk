@@ -188,7 +188,7 @@ private fun EssayLoaded(
 
     val grade = ui.grade
     val finishing = ui.finishing || move.busy
-    val finishFailed = ui.finishFailed || move.failed != null
+    val finishFailures = maxOf(ui.finishFailures, if (move.failed != null) 1 else 0)
     when {
         ui.drafts == null -> {
             RunLoading(navigator::closeTask)
@@ -199,11 +199,11 @@ private fun EssayLoaded(
         }
 
         (ui.mode == EssayMode.Grade || ui.closed) && grade != null -> {
-            EssayGradeSteps(essay, grade, ui.finished, ui.closed, ui.switched, finishing, finishFailed, viewModel, navigator)
+            EssayGradeSteps(essay, grade, ui.finished, ui.closed, ui.switched, finishing, finishFailures, viewModel, navigator)
         }
 
         else -> {
-            EssayWrite(essay, ui, finishing, finishFailed, viewModel, navigator)
+            EssayWrite(essay, ui, finishing, finishFailures, viewModel, navigator)
         }
     }
 }
@@ -213,7 +213,7 @@ internal fun EssayWrite(
     essay: Essay,
     ui: EssayUi,
     finishing: Boolean,
-    finishFailed: Boolean,
+    finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
 ) {
@@ -247,7 +247,7 @@ internal fun EssayWrite(
         bottomBar = {
             TaskActionBar {
                 StatusLine(ui.send, ui.gradesLeft, navigator)
-                if (finishFailed && !finishing) SaveErrorText(viewModel::finish)
+                if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish)
                 TaskActions { width ->
                     if (rewriting) {
                         OutlinedButton(
@@ -543,7 +543,7 @@ internal fun EssayGradeSteps(
     closed: Boolean,
     announce: Boolean,
     finishing: Boolean,
-    finishFailed: Boolean,
+    finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
 ) {
@@ -613,9 +613,17 @@ internal fun EssayGradeSteps(
                             StepPagerActions(count, shown, onIndexChange = { index = it }, finalAction = finalActions)
                         }
                         if (pages || shown == count - 1) {
-                            if (finishFailed && !finishing) {
+                            if (finishFailures > 0 && !finishing) {
                                 Text(
-                                    stringResource(R.string.essay_finish_failed),
+                                    stringResource(
+                                        if (finishFailures >
+                                            1
+                                        ) {
+                                            R.string.practice_save_error_repeat
+                                        } else {
+                                            R.string.essay_finish_failed
+                                        },
+                                    ),
                                     Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
                                     color = MaterialTheme.colorScheme.error,
                                     style = MaterialTheme.typography.bodyMedium,

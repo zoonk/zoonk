@@ -96,6 +96,7 @@
   "player_lesson_complete": "cbb709d22a4255706059af72c5ad8fa03d07603f0e93a9f6cdc17581702894cd",
   "player_lesson_map": "e3cd2edd4868e4ed933814179c09f4f3291dd08c7e6f2f44aa552c7a3e0a68ff",
   "player_lesson_map_nested": "13cc069819b3a81efc73902e547a286b9f99844e9e301360695e02bdcc1baefa",
+  "player_lesson_not_saved": "566f3a07725ff3bfd6eb744afbd032afc39b1a1906175bd3e9773b66b5fd6049",
   "player_lesson_of": "77f8e143211024c89ebbeff43401e51f5d0088247e3d0a68dcbc807a572a054b",
   "player_listen": "2c3a1e1d4744442bb0e25bb21d912496b7f443f7d9dd8d415bfb9b4554e32753",
   "player_microphone_blocked": "fa2f1c1b5e431071256daec5aec33442b410264e86d7cd1737c0eda0dc5c1101",
@@ -410,6 +411,7 @@
     <string name="player_already_knew">Bunu zaten biliyordun</string>
     <string name="player_saving_progress">İlerlemeni kaydediyoruz…</string>
     <string name="player_save_failed">Gönderilemedi. Cevapların saklanıyor.</string>
+    <string name="player_lesson_not_saved">Dersin henüz kaydedilmedi</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$s tarihinde tekrar</string>
     <string name="player_next_lesson">Sonraki derse geç</string>

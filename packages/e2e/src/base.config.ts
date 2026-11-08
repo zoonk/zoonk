@@ -8,6 +8,9 @@ const CHROMIUM_PROJECT = {
   use: { ...devices["Desktop Chrome"], ...(process.env.CI ? { channel: "chrome" as const } : {}) },
 };
 
+/** Fails a hung CI run with Playwright's summary before its E2E job's 15-minute limit kills it with none. */
+const CI_GLOBAL_TIMEOUT_MS = 420_000;
+
 export function createBaseConfig(options: {
   globalSetup?: string;
   testDir: string;
@@ -20,6 +23,7 @@ export function createBaseConfig(options: {
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,
     globalSetup: options.globalSetup,
+    globalTimeout: process.env.CI ? CI_GLOBAL_TIMEOUT_MS : 0,
     projects: [CHROMIUM_PROJECT],
     reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
     retries: process.env.CI ? 2 : 0,

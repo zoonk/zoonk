@@ -34,7 +34,7 @@ export type NextStopActions = {
   /** Null when it couldn't be read. */
   readLesson?: (
     lessonId: string,
-  ) => Promise<{ generationId: string | null; lesson: NextStopLesson } | null>;
+  ) => Promise<{ generationId: string | null; lesson: NextStopLesson; setAside: boolean } | null>;
   start: (step: DayStep) => Promise<boolean>;
   stop: () => Promise<boolean>;
 };

@@ -65,6 +65,11 @@ export function FillBlankWordBank({
   const tiles = options.map((option, index) => getWordTileData({ blanks, index, option, options }));
 
   return (
-    <WordBank disabled={disabled} onPlace={(tile) => onPlaceWord(tile.option)} tiles={tiles} />
+    <WordBank
+      disabled={disabled}
+      fillsAnswer={blanks.filter((blank) => blank === null).length <= 1}
+      onPlace={(tile) => onPlaceWord(tile.option)}
+      tiles={tiles}
+    />
   );
 }

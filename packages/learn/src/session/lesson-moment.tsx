@@ -20,6 +20,7 @@ import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
 type LessonMomentCompletion = {
+  failures: number;
   result:
     | (ProgressCelebration & {
         brainPower: number;
@@ -171,7 +172,7 @@ export function LessonMoment({
   const moment = completion.result?.studyBlock ?? null;
 
   if (completion.status === "failed") {
-    return <FailedMoment onRetry={onRetry} title={title} />;
+    return <FailedMoment failures={completion.failures} onRetry={onRetry} />;
   }
 
   if (!moment && completion.status === "saved") {
@@ -186,7 +187,7 @@ export function LessonMoment({
   }
 
   if (!moment) {
-    return <PendingMoment action={t("Continue")} title={title} />;
+    return <PendingMoment action={t("Continue")} />;
   }
 
   return (

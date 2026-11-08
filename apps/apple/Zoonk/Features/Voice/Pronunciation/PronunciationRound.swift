@@ -46,7 +46,8 @@ final class PronunciationRound {
   private(set) var step: Step
   private(set) var outcomes: [Int: Outcome] = [:]
   private(set) var isPending = false
-  private(set) var finishFailed = false
+  private(set) var finishFailures = 0
+  private(set) var answerFailures = 0
   @ObservationIgnored private var answered = 0
   @ObservationIgnored private let actions: Actions
 
@@ -82,6 +83,7 @@ final class PronunciationRound {
 
     switch await actions.answer(word.id, roundId, recording) {
     case .graded(let grade):
+      answerFailures = 0
       answered += 1
       outcomes[index] = grade.isCorrect ? .right : .wrong
       step = .word(index: index, state: .graded(grade))
@@ -90,6 +92,7 @@ final class PronunciationRound {
     case .limit(let limit):
       step = .word(index: index, state: .ready(.limit(limit)))
     case .failed:
+      answerFailures += 1
       step = .word(index: index, state: .ready(.failed))
     case .obsolete:
       break
@@ -130,14 +133,14 @@ final class PronunciationRound {
     }
 
     isPending = true
-    finishFailed = false
     defer { isPending = false }
 
     switch await actions.finish(roundId) {
     case .done(let result):
+      finishFailures = 0
       step = .result(result)
     case .failed:
-      finishFailed = true
+      finishFailures += 1
     case .obsolete:
       break
     }

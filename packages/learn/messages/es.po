@@ -469,6 +469,11 @@ msgid "That didn't work. Try again in a moment."
 msgstr "No funcionó. Inténtalo de nuevo en un momento."
 
 #: src/_components/save-error.tsx
+msgctxt "71Gfs0"
+msgid "Still not going through. You can come back later."
+msgstr "Aún no se pudo guardar. Puedes volver más tarde."
+
+#: src/_components/save-error.tsx
 msgctxt "7i_b3c"
 msgid "That didn't go through. Your answers are kept."
 msgstr "No se pudo guardar. Conservamos tus respuestas."
@@ -12562,6 +12567,11 @@ msgstr "vector {base}"
 msgctxt "a8JHBW"
 msgid "Study {minutes} more minutes"
 msgstr "Estudiar {minutes} minutos más"
+
+#: src/session/failed-moment.tsx
+msgctxt "kapQxt"
+msgid "Your lesson isn't saved yet"
+msgstr "Tu lección aún no se guardó"
 
 #: src/session/lesson-moment.tsx
 #: src/session/study-moment.tsx

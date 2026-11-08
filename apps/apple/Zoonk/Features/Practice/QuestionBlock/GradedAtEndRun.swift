@@ -13,7 +13,7 @@ struct GradedAtEndRun: View {
   var upcomingEnded = false
   var upcomingLimit: HelpLimit?
   var isPending: Bool
-  var failed: Bool
+  var failures: Int
   let onFinish: ([PracticeChoiceAnswer]) -> Void
 
   @State private var answers: [PracticeChoiceAnswer] = []
@@ -27,7 +27,7 @@ struct GradedAtEndRun: View {
     let index = answers.count
     let shown = sentBy == nil ? index : index - 1
     let question = questions.indices.contains(shown) ? questions[shown] : nil
-    let locked = isPending || failed || sentBy != nil
+    let locked = isPending || failures > 0 || sentBy != nil
 
     PracticeTaskLayout(segments: segments(total: total, index: index), index: index) {
       if let question {
@@ -94,8 +94,8 @@ struct GradedAtEndRun: View {
         asked(question, isLocked: locked).response
       }
     } actions: {
-      if failed {
-        PracticeSaveError { onFinish(answers) }
+      if failures > 0, !isPending {
+        PracticeSaveError(failures: failures) { onFinish(answers) }
       }
 
       if question != nil {
@@ -122,7 +122,7 @@ struct GradedAtEndRun: View {
         }
       } else if GradedRunStage(answered: index, asked: questions.count, total: total)
         == .readyToSubmit,
-        !failed
+        failures == 0 || isPending
       {
         // Answers kept on the device from a send that didn't go through: they go as the same test.
         PracticeMainButton(
@@ -130,7 +130,7 @@ struct GradedAtEndRun: View {
             "Finish", table: "Practice", comment: "Sends a test's answers to be graded."),
           icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
-      } else if upcomingEnded, !failed {
+      } else if upcomingEnded, failures == 0 || isPending {
         if let upcomingLimit {
           HelpLimitNotice(limit: upcomingLimit)
             .frame(maxWidth: .infinity, alignment: .leading)

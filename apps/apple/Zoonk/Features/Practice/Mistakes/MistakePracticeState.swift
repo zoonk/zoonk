@@ -36,6 +36,7 @@ enum MistakePracticePhase: Equatable {
 /// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the
 /// run in progress.
 struct MistakePracticeState: Equatable {
+  private(set) var saveFailures = 0
   private(set) var answerIds: [String] = []
   private(set) var fixedIds: [String] = []
   private(set) var index = 0
@@ -91,6 +92,7 @@ struct MistakePracticeState: Equatable {
 
   mutating func answerFailed() {
     guard case .checking(let sent) = phase else { return }
+    saveFailures += 1
     phase = .answerFailed(sent)
   }
 
@@ -98,6 +100,7 @@ struct MistakePracticeState: Equatable {
     guard case .checking(let sent) = phase else { return }
     let (answer, sender) = (sent.answer, sent.sender)
 
+    saveFailures = 0
     answerIds.append(grade.answerId)
 
     var fixed = fixedIds

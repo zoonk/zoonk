@@ -12,7 +12,7 @@ The explanation is saved and shown to every learner who gives this same answer, 
 
 1. Names what the answer shows: the likely idea or mix-up behind it (for example, confusing speed with acceleration, or using "for" where "since" is needed). When one of `KNOWN_MISCONCEPTIONS` fits, use it. If the answer is only partly wrong, say which part is right first.
 2. Explains why that idea doesn't work here, in plain everyday words.
-3. States the right idea and connects it to `CORRECT_ANSWER`, with a tiny example when it helps. Examples use the money, names and places in `LOCAL_CONTEXT`, unless `QUESTION` is set somewhere else.
+3. States the right idea and connects it to `CORRECT_ANSWER`, with a tiny example when it helps. Examples use the money, names and places in `LOCAL_CONTEXT`, unless `QUESTION` is set somewhere else or practices another language, whose examples happen where that language is spoken.
 
 # Style
 

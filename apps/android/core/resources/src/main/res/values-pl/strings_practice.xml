@@ -22,6 +22,7 @@
   "practice_pause_text": "e8863336e6d698500a89bc292cc1d5a72cd366d4b3b5687fbcc2cc6de15f0674",
   "practice_progress": "08fa73db955304ed92ba8210656ac208124a90228a708c6a3a09d6ce51ca03bb",
   "practice_save_error": "93fb049ab782f7702b498355f494032d6e634ad383e00d5b1af046c329fc0c3d",
+  "practice_save_error_repeat": "9aff8583bd1d46205c6bba294b5b375c2bbd2b94e86ce26e76202a7e7618ecac",
   "practice_time_machine_answered": "55b5c79d7b1427aeae99929df3f8bb139b65776198c5d8c4a0160f2cf52c99c6",
   "practice_time_machine_right_again": "46d2b87ce880e3069e8358b12dccbe88eea71d81a8d5860415dc2759b5a81b41",
   "practice_time_machine_right_before": "a107b3daf8ef19e5938dbf6ba61fc84817c2625fba730659808912002a9d1aa1",
@@ -50,6 +51,7 @@
     <string name="practice_finish_ready_detail">Zakończ, żeby zobaczyć, jak ci poszło.</string>
     <string name="practice_already_answered">Twoja odpowiedź na to pytanie jest już zapisana.</string>
     <string name="practice_save_error">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
+    <string name="practice_save_error_repeat">Znowu nie udało się przesłać odpowiedzi. Możesz wrócić później.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d poprawna odpowiedź</item>
         <item quantity="few">%d poprawne odpowiedzi</item>

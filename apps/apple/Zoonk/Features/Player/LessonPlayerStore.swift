@@ -833,6 +833,11 @@ final class LessonPlayerStore {
     await saveCompletion()
   }
 
+  func retryFailedFinish() async {
+    guard state?.completion?.status == .failed else { return }
+    await finish()
+  }
+
   private func saveCompletion() async {
     guard await ensureRun() else {
       state?.completionFailed()

@@ -73,7 +73,7 @@ async function checkReading({
   "use step";
 
   const { data, error } = await safeAsync(async () => {
-    const documents = await loadSourceDocuments(sourceIds);
+    const documents = await loadSourceDocuments(sourceIds, { preferText: true });
 
     return checkExamReading({
       analytics,

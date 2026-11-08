@@ -6,6 +6,26 @@ import { generatedProvenance, writtenItemSet } from "./_test-utils/generated-ite
 import { parseItemSetContent } from "./item-set-content";
 import { storeWrittenItemSet } from "./store-item-set";
 
+function dollarQuestion(evidence: string) {
+  return {
+    difficulty: "medium" as const,
+    evidence,
+    fixedOrder: false,
+    format: "multipleChoice" as const,
+    options: [
+      { isCorrect: true, misconception: null, reason: "O texto diz mil dólares.", text: "$1,000" },
+      {
+        isCorrect: false,
+        misconception: "Lê a vírgula como decimal",
+        reason: "Isso é um dólar.",
+        text: "$1",
+      },
+    ],
+    question: `Quanto custou a mudança? ${evidence}`,
+    skill: 1,
+  };
+}
+
 describe(storeWrittenItemSet, () => {
   it("stores the passage and its questions in order, each on the skill its number names", async () => {
     const [blueprint, reading, inference] = await Promise.all([
@@ -50,6 +70,31 @@ describe(storeWrittenItemSet, () => {
       [0, reading.id, "trueFalse", blueprint.id],
       [1, reading.id, "trueFalse", blueprint.id],
     ]);
+  });
+
+  it("reads a language exam's options in the practiced language, storing them under the learner's", async () => {
+    const skill = await skillFixture({ language: "pt", targetLanguage: "en" });
+
+    const stored = await storeWrittenItemSet({
+      examBlueprintId: null,
+      format: "multipleChoice",
+      language: "pt",
+      optionLanguage: "en",
+      provenance: generatedProvenance(),
+      skillIds: [skill.id],
+      written: writtenItemSet({
+        questions: [
+          dollarQuestion("visits had risen by a third"),
+          dollarQuestion("Weekday visits stayed the same"),
+        ],
+      }),
+    });
+
+    expect(stored).toMatchObject({ problems: [], rejected: [] });
+
+    await expect(
+      prisma.item.findMany({ select: { language: true }, where: { setId: stored.setId ?? "" } }),
+    ).resolves.toStrictEqual([{ language: "pt" }, { language: "pt" }]);
   });
 
   it("stores nothing when its stimulus fails, or fewer than two questions pass", async () => {

@@ -52,6 +52,7 @@ export async function prepareExamFormatItemsStep({
     level: skill.level ?? "intermediate",
     serviceTier: chooseServiceTier({ wait }),
     skill: { description: skill.description, name: skill.name },
+    targetLanguage: skill.targetLanguage,
   });
 
   const { created, unchecked } = await createItems({
@@ -62,6 +63,7 @@ export async function prepareExamFormatItemsStep({
     items: data.items,
     language: skill.language,
     optionCount: format === "multipleChoice" ? (exam?.optionCount ?? null) : null,
+    optionLanguage: skill.targetLanguage,
     provenance,
     select: select ?? undefined,
     skillId: skill.id,

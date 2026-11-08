@@ -83,8 +83,10 @@ describe(deploy, () => {
     }
   });
 
-  it("starts every preview build at once, pointing each app at the others' branch URLs", async () => {
+  it("starts every preview build at once, pointing each app at the others' PR addresses", async () => {
+    vi.stubEnv("DEPLOY_REF", `cw/${"a-branch-name-long-enough-for-vercel-to-shorten-".repeat(2)}`);
     const submissions: Call[] = [];
+    const aliases: Call[] = [];
     const barrier = Promise.withResolvers<boolean>();
 
     intercept(async (call) => {
@@ -96,6 +98,11 @@ describe(deploy, () => {
         return { slug: "zoonk" };
       }
 
+      if (call.url.pathname.endsWith("/aliases")) {
+        aliases.push(call);
+        return {};
+      }
+
       if (call.method === "POST") {
         submissions.push(call);
 
@@ -104,7 +111,7 @@ describe(deploy, () => {
         }
 
         await barrier.promise;
-        return { id: String(call.body.project) };
+        return { id: `dpl-${String(call.body.project)}` };
       }
 
       return { readyState: "READY", url: "preview.vercel.app" };
@@ -128,60 +135,45 @@ describe(deploy, () => {
     const [api, ...clients] = submissions;
 
     expect(api?.body.env).toMatchObject({
-      MAIN_APP_URL: "https://zoonk-git-main-zoonk.vercel.app",
+      MAIN_APP_URL: "https://zoonk-pr-42-zoonk.vercel.app",
       NEXT_PUBLIC_API_URL: "",
     });
 
     for (const call of clients) {
       expect(call.body.env).toHaveProperty(
         "NEXT_PUBLIC_API_URL",
-        "https://zoonk-api-git-main-zoonk.vercel.app",
+        "https://zoonk-api-pr-42-zoonk.vercel.app",
       );
 
       expect(call.body.env).not.toHaveProperty("MAIN_APP_URL");
     }
+
+    expect(
+      Object.fromEntries(aliases.map((call) => [call.url.pathname, call.body.alias])),
+    ).toStrictEqual({
+      "/v2/deployments/dpl-admin-project/aliases": "zoonk-admin-pr-42-zoonk.vercel.app",
+      "/v2/deployments/dpl-api-project/aliases": "zoonk-api-pr-42-zoonk.vercel.app",
+      "/v2/deployments/dpl-main-project/aliases": "zoonk-pr-42-zoonk.vercel.app",
+    });
   });
 
-  it("waits for the API preview's actual URL when its branch URL can't be predicted", async () => {
-    vi.stubEnv("DEPLOY_REF", "a".repeat(60));
-
+  it("deploys no preview when the team's address suffix can't be read", async () => {
     const submissions: Call[] = [];
-    const ready = new Set<string>();
 
     intercept((call) => {
-      if (call.url.hostname === "api.github.com") {
-        return { state: "open" };
-      }
-
       if (call.url.pathname === "/v2/teams/test-team") {
-        return { slug: "zoonk" };
+        throw new Error("Vercel is down");
       }
 
       if (call.method === "POST") {
-        if (call.body.project !== PROJECTS[0].id && !ready.has(PROJECTS[0].id)) {
-          throw new Error("Consumer deployed before the API was ready");
-        }
-
         submissions.push(call);
-        return { id: String(call.body.project) };
       }
 
-      const id = call.url.pathname.split("/").at(-1) ?? "";
-      ready.add(id);
-      return { readyState: "READY", url: `${id}.vercel.app` };
+      return { id: "deployment", readyState: "READY", url: "preview.vercel.app" };
     });
 
-    await deploy("preview");
-    expect(submissions).toHaveLength(3);
-
-    for (const call of submissions.slice(1)) {
-      expect(call.body.env).toHaveProperty(
-        "NEXT_PUBLIC_API_URL",
-        `https://${PROJECTS[0].id}.vercel.app`,
-      );
-    }
-
-    expect(submissions[0]?.body.env).not.toHaveProperty("MAIN_APP_URL");
+    await expect(deploy("preview")).rejects.toThrow("Vercel is down");
+    expect(submissions).toHaveLength(0);
   });
 
   it.each([
@@ -348,29 +340,13 @@ describe(assertPullRequestOpen, () => {
 });
 
 describe(getAppUrl, () => {
-  it("builds a preview app's address from Vercel's branch URL pattern", () => {
-    expect(
-      getAppUrl({ app: "main", branch: "feat/Learning_v2", target: "preview", teamSlug: "zoonk" }),
-    ).toBe("https://zoonk-git-feat-learning-v2-zoonk.vercel.app");
-
-    expect(
-      getAppUrl({ app: "api", branch: "learning-v2", target: "preview", teamSlug: "zoonk" }),
-    ).toBe("https://zoonk-api-git-learning-v2-zoonk.vercel.app");
-  });
-
   it("uses each app's own domain in production and staging", () => {
-    expect(getAppUrl({ app: "admin", branch: "main", target: "production", teamSlug: "" })).toBe(
+    expect(getAppUrl({ app: "admin", target: "production", teamSlug: "" })).toBe(
       "https://admin.zoonk.com",
     );
 
-    expect(getAppUrl({ app: "api", branch: "main", target: "staging", teamSlug: "" })).toBe(
+    expect(getAppUrl({ app: "api", target: "staging", teamSlug: "" })).toBe(
       "https://api.zoonk.dev",
     );
-  });
-
-  it("gives no preview address when Vercel would shorten it", () => {
-    expect(
-      getAppUrl({ app: "main", branch: "a".repeat(60), target: "preview", teamSlug: "zoonk" }),
-    ).toBeNull();
   });
 });

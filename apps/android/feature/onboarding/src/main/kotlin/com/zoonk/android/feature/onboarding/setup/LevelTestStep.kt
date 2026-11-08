@@ -64,6 +64,7 @@ import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
@@ -98,7 +99,7 @@ fun ColumnScope.LanguageLevelTestStep(
     store: OnboardingStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
-    onDone: () -> Unit,
+    onDone: suspend () -> WriteOutcome<*>,
 ) {
     val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle()) }
     val test by store.levelTests[goalId].collectShown()
@@ -114,7 +115,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
-    val finish = { vm.finish(onDone) }
+    val finish = { vm.finish(onDone = onDone) }
 
     when (phase) {
         LevelTestPhase.Loading -> {
@@ -153,6 +154,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Question -> {
+            FinishFailed(vm.finishFailed)
             key(phase.question.id) {
                 val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
                 TestQuestion(phase.question, targetLanguage, audioPending, vm, navigator)
@@ -160,7 +162,8 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Speaking -> {
-            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::stop)
+            FinishFailed(vm.finishFailed)
+            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::skipSpeaking)
         }
 
         is LevelTestPhase.Done -> {
@@ -298,13 +301,11 @@ private fun ColumnScope.TestQuestion(
         labels = TrueFalseLabels.TRUE_FALSE,
         typedWords = null,
         pending = vm.isSaving,
-        answerFailed = vm.answerFailed,
-        finishFailed = false,
+        saveFailures = vm.saveFailures,
         onAnswer = { answer, durationMs ->
             val index = answer.selectedIndex()
             vm.answer(question.id, index, durationMs, skipped = noAudio && index == null)
         },
-        onRetry = vm::retryAnswer,
         onStop = vm::stop,
         dontKnowLabel =
             stringResource(

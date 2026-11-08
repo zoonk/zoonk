@@ -96,6 +96,7 @@
   "player_lesson_complete": "614de0afda152acadf73389a4d99e03be4910a1c8ad59b5606bd39d6f05d0201",
   "player_lesson_map": "4019029b0f4c7cd2f9e115424738daa2622ffb4cd91d2a85c7cabc1206a7976a",
   "player_lesson_map_nested": "fa2a73edda5aeea6fbef9a49488aa8fe7a17ac3888f179a80ff3c242415ffd2a",
+  "player_lesson_not_saved": "2cb2532b7a45f0ad4848d52a73d18512052a23ef21aa8feb44485a18b67fd244",
   "player_lesson_of": "f2e3f32fe7f41ea048e072aa5be6c39c5b4c618baa05a8e4b9b95d6999aee175",
   "player_listen": "3840fbf9176a031dc18f83778aef41d73981c0be9f655fa2db608e3950db06c8",
   "player_microphone_blocked": "121eeff15f157528639dfe3185e4550f8dd5beeb3cca11a54f30c8a4cff14cc3",
@@ -406,6 +407,7 @@
     <string name="player_already_knew">이미 알고 있던 내용이에요</string>
     <string name="player_saving_progress">진도를 저장하고 있어요…</string>
     <string name="player_save_failed">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
+    <string name="player_lesson_not_saved">레슨이 아직 저장되지 않았어요</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$s에 복습</string>
     <string name="player_next_lesson">다음 레슨</string>

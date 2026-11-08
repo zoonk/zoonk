@@ -215,7 +215,7 @@ struct MistakePracticeScreen: View {
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed(let sent) = state.phase {
-        PracticeSaveError { Task { await send(sent) } }
+        PracticeSaveError(failures: state.saveFailures) { Task { await send(sent) } }
       }
 
       PracticeActionRow {
