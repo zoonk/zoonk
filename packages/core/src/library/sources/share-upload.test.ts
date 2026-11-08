@@ -164,12 +164,13 @@ describe(shareSourceUpload, () => {
     servePublisherImage(learnerBytes);
     await expect(shareNotice(source.id)).resolves.toMatchObject({ merged: false });
 
-    servePublisherImage(new TextEncoder().encode(`PNG ${randomUUID()}`));
+    const publisherBytes = new TextEncoder().encode(`PNG ${randomUUID()}`);
+    servePublisherImage(publisherBytes);
     const refresh = await refreshWebSource(source.id);
     const [document] = await loadSourceDocuments([source.id]);
 
     expect(document?.contentHash).toBe(refresh?.source.contentHash);
-    expect(document?.file).toStrictEqual({ data: new URL(NOTICE_URL), mediaType: "image/png" });
+    expect(document?.file).toStrictEqual({ data: publisherBytes, mediaType: "image/png" });
 
     expect(del).toHaveBeenCalledWith(blobUrl, PRIVATE_STORE);
   });

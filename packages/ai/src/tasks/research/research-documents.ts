@@ -7,7 +7,7 @@ const MAX_IMAGES_PER_DOCUMENT = 8;
 
 /** PDFs and images go as files, since models read them natively. */
 export type ResearchDocument = {
-  file: { data: Uint8Array | URL; mediaType: string } | null;
+  file: { data: Uint8Array; mediaType: string } | null;
   images: { data: string; mediaType: string }[];
   text: string | null;
   title: string;
