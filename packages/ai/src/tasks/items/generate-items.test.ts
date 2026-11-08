@@ -46,6 +46,26 @@ describe(generateItems, () => {
     expect(userPrompt).not.toMatch(/OPTION_COUNT|FIELD|TARGET_LANGUAGE/u);
   });
 
+  it("writes a language exam's essay in its language, set where it is spoken", async () => {
+    const { userPrompt } = await generateItems({
+      examFormat: { name: "CELI 3", style: "Produzione scritta" },
+      format: "essay",
+      language: "pt",
+      level: "intermediate",
+      skill,
+      targetLanguage: "it",
+    });
+
+    expect(withItemRules).toHaveBeenCalledWith(
+      "# Goal",
+      expect.objectContaining({ languageGoal: true }),
+    );
+
+    expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
+    expect(userPrompt).toContain("- Place: Italy");
+    expect(userPrompt).not.toMatch(/Brazil|Register/u);
+  });
+
   it("shows the exam's real past questions to match in difficulty, and none without them", async () => {
     const exam = { name: "Cebraspe", optionCount: null, style: "Certo ou errado." };
 
