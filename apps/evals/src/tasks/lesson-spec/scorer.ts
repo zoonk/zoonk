@@ -1,6 +1,10 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
-import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/lesson-spec/rules";
+import {
+  type LessonScreenKind,
+  type LessonSpec,
+  getLessonSpecIssues,
+} from "@zoonk/ai/tasks/lesson-spec/rules";
 import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
@@ -79,6 +83,43 @@ function getTemplateProblem({
     : null;
 }
 
+const QUESTION_KINDS: ReadonlySet<LessonScreenKind> = new Set([
+  "activity",
+  "application",
+  "check",
+  "guess",
+]);
+
+function getQuestionPictureProblem(lessons: LessonSpec[]): string | null {
+  const shown = lessons
+    .flatMap((lesson) => lesson.screens)
+    .some((screen) => QUESTION_KINDS.has(screen.kind) && screen.visual);
+
+  return shown
+    ? null
+    : "No question shows a picture, so the learner never answers by looking at what the lesson teaches them to recognize.";
+}
+
+function checkExpected({
+  expected,
+  lessons,
+}: {
+  expected: LessonSpecExpected | undefined;
+  lessons: LessonSpec[];
+}): { count: number; problems: string[] } {
+  const results = [
+    expected?.pictures === "some" || expected?.pictures === "none"
+      ? getPictureProblem({ expected, lessons })
+      : undefined,
+    (expected?.avoidTemplates?.length ?? 0) > 0
+      ? getTemplateProblem({ expected, lessons })
+      : undefined,
+    expected?.questionPicture ? getQuestionPictureProblem(lessons) : undefined,
+  ].filter((result) => result !== undefined);
+
+  return { count: results.length, problems: results.filter((result) => result !== null) };
+}
+
 function checkLessonSpecs({
   expected,
   level,
@@ -100,29 +141,19 @@ function checkLessonSpecs({
   }));
 
   const passing = results.filter((result) => result.problems.length === 0);
-  const hasPictureCheck = expected?.pictures !== undefined && expected.pictures !== "any";
-  const pictureProblem = hasPictureCheck ? getPictureProblem({ expected, lessons }) : null;
-  const hasTemplateCheck = (expected?.avoidTemplates?.length ?? 0) > 0;
-  const templateProblem = hasTemplateCheck ? getTemplateProblem({ expected, lessons }) : null;
-  const extraChecks = Number(hasPictureCheck) + Number(hasTemplateCheck);
+  const expectedChecks = checkExpected({ expected, lessons });
 
   return {
     judgedOutput: JSON.stringify({ lessons: passing.map((result) => result.lesson) }, null, 2),
     passed:
       passing.length === 0
         ? 0
-        : passing.length +
-          (hasPictureCheck && !pictureProblem ? 1 : 0) +
-          (hasTemplateCheck && !templateProblem ? 1 : 0),
+        : passing.length + expectedChecks.count - expectedChecks.problems.length,
     problems:
       lessons.length === 0
         ? ["The output has no valid lesson specs."]
-        : [
-            ...results.flatMap((result) => result.problems),
-            ...(pictureProblem ? [pictureProblem] : []),
-            ...(templateProblem ? [templateProblem] : []),
-          ],
-    total: Math.max(lessons.length, 1) + extraChecks,
+        : [...results.flatMap((result) => result.problems), ...expectedChecks.problems],
+    total: Math.max(lessons.length, 1) + expectedChecks.count,
   };
 }
 

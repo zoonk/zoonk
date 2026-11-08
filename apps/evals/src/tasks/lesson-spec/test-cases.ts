@@ -41,6 +41,54 @@ function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonSpecParams {
   };
 }
 
+const KITCHEN_HANDBOOK = [
+  '<page ref="S1:4" of="Kitchen handbook, page 4">',
+  "Cooling cooked food (FDA Food Code 3-501.14)",
+  "Stage 1: from 135°F to 70°F within 2 hours.",
+  "Stage 2: from 70°F to 41°F or below within the next 4 hours (6 hours in all).",
+  "Not at 70°F by the 2-hour mark? Reheat to 165°F and start over, or throw it out.",
+  "</page>",
+  '<page ref="S1:5" of="Kitchen handbook, page 5">',
+  "How we cool on the line:",
+  "- Split big batches into shallow pans, 2 inches deep or less.",
+  "- Soups and sauces: ice bath, stir every 15 minutes.",
+  "- Never cool a full stockpot in the walk-in.",
+  "- Log the temperature at 0, 2 and 6 hours on the cooling sheet.",
+  'Remember: "135 to 70 in 2, 70 to 41 in 4."',
+  "</page>",
+].join("\n");
+
+const DRIP_RATE_NOTES = [
+  '<page ref="S1:1" of="Meu caderno - Cálculo de medicação, página 1">',
+  "Gotejamento de soro, equipo de macrogotas:",
+  "gotas/min = V ÷ (T × 3)",
+  "V = volume em mL, T = tempo em horas",
+  "1 mL = 20 gotas",
+  "Ex.: 600 mL em 8 h → 600 ÷ 24 = 25 gotas/min",
+  "</page>",
+  '<page ref="S1:2" of="Meu caderno - Cálculo de medicação, página 2">',
+  "Equipo de microgotas: microgotas/min = V ÷ T (1 mL = 60 microgotas)",
+  "Ex.: 600 mL em 8 h → 600 ÷ 8 = 75 microgotas/min",
+  "Resultado quebrado: arredondar para número inteiro e sempre conferir com a prescrição.",
+  'Dica da professora: "macro divide por 3, micro não divide".',
+  "</page>",
+].join("\n");
+
+const WITHDRAWAL_NOTES = [
+  '<page ref="S1:1" of="Anotações - Direito do Consumidor, aula 3">',
+  "Direito de arrependimento (CDC, art. 49)",
+  "- Compra FORA do estabelecimento comercial (internet, telefone, a domicílio)",
+  "- Prazo: 7 dias, contados da assinatura ou do recebimento do produto",
+  "- Não precisa dar motivo",
+  "- Devolve tudo o que foi pago, frete incluído, com correção monetária (parágrafo único)",
+  "</page>",
+  '<page ref="S1:2" of="Anotações - Direito do Consumidor, aula 3">',
+  "Cuidado na prova:",
+  "- Loja física: NÃO tem arrependimento pelo art. 49 (só se a loja oferecer)",
+  "- 7 dias ≠ 30/90 dias do vício do produto (art. 26)",
+  "</page>",
+].join("\n");
+
 const UNANSWERABLE_GUESS = `
   - Right after the first explanation, one guess predicts something a beginner could get wrong, followed by another explanation or worked example
   - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
@@ -1161,6 +1209,114 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       lessonTitle: "Ponto de pedido",
       level: "beginner",
       skills: ["Calcular o ponto de pedido de um ingrediente"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English, for one learner starting as a line cook, built from their kitchen's handbook
+      - Follows MATERIAL: the two stages and their limits as written (135°F to 70°F within 2 hours, then to 41°F within 4 more, 6 hours in all), what to do when a batch misses 70°F at 2 hours (reheat to 165°F and start over, or throw it out), the handbook's methods (shallow pans 2 inches deep or less, an ice bath with stirring) and its memory aid; nothing contradicts them
+      - A check plans the trap of treating the 6 hours as one budget: a batch still at 80°F after 2 hours has failed, even with 4 hours left
+      - The application is a batch on the learner's own line with its cooling-log temperatures, and asks them to decide what to do with it
+      - No teaching picture, since the material has its own: the cooling log's temperatures over time are a table or a line chart the app draws, with exact values in the brief
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-cooling-food-private",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Keeping food safe",
+      courseTitle: "My first line cook job",
+      isPrivate: true,
+      language: "en",
+      lessonCanDo: "Check whether a batch is cooling fast enough and fix it when it isn't",
+      lessonDescription: "Cool soups and sauces fast enough to stay inside the two-stage limits.",
+      lessonTitle: "Cooling cooked food",
+      level: "beginner",
+      material: KITCHEN_HANDBOOK,
+      skills: ["Check a batch against the two-stage cooling limits"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for one nursing technician student, built from their own notebook
+      - Follows MATERIAL: the formulas as written (macrogotas: V ÷ (T × 3); microgotas: V ÷ T, with V in mL and T in hours), the notebook's example (600 mL in 8 h: 25 gotas/min and 75 microgotas/min), rounding to a whole number and checking against the prescription, and the teacher's memory aid; nothing contradicts them
+      - A check plans the trap of dividing by 3 for a microgotas set, or forgetting to for a macrogotas one, and a check uses a volume that doesn't divide evenly, rounded to a whole number as the notes say
+      - Every number in a brief is computed right
+      - The application is a prescription on a shift (volume, hours and which set) and asks for the drip rate
+      - No teaching picture, since the material has its own: a formula to explore or a small table comparing the two sets fits where one helps
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-gotejamento-private",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Soroterapia",
+      courseTitle: "Técnico de enfermagem: cálculo de medicação",
+      isPrivate: true,
+      language: "pt",
+      lessonCanDo: "Calcular o gotejamento de um soro em gotas e microgotas por minuto",
+      lessonDescription:
+        "Calcule quantas gotas por minuto o soro deve correr no equipo de macrogotas e no de microgotas.",
+      lessonTitle: "Cálculo de gotejamento",
+      level: "beginner",
+      material: DRIP_RATE_NOTES,
+      skills: [
+        "Calcular gotas por minuto num equipo de macrogotas",
+        "Calcular microgotas por minuto num equipo de microgotas",
+      ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English, for one learner who sells handmade candles online
+      - The costs of one candle come from the learner's own shop (wax, wick, jar, fragrance, the marketplace's fee) with numbers that add up
+      - Margin is explained as a share of the price, and a check plans the trap of confusing markup with margin (adding 40% to the cost doesn't leave a 40% margin); every calculation in a brief is right
+      - Where numbers need comparing, a table, a chart or a template to explore (a formula with sliders for cost and margin) shows them, never a picture: the lesson is private
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-candle-pricing-private",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Pricing",
+      courseTitle: "Running my candle shop",
+      isPrivate: true,
+      language: "en",
+      lessonCanDo: "Set a candle's price from its cost and the margin you want",
+      lessonDescription:
+        "Add up what one candle costs to make and set a price that leaves the profit you want.",
+      lessonTitle: "Price a candle to cover its costs",
+      level: "beginner",
+      skills: [
+        "Add up the cost to make one candle",
+        "Set a price from the cost and a target margin",
+      ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for one law student, built from their own class notes
+      - Follows MATERIAL: only purchases made outside the store (internet, phone, at home), 7 days counted from signing or from receiving the product, no reason needed, and everything paid returned with correction, freight included; nothing contradicts them, never business days or counting from the purchase when the product arrives later
+      - Checks plan the notes' two traps: a purchase in a physical store has no right of withdrawal under art. 49, and the 7 days aren't the 30 or 90 days for a defect (art. 26)
+      - The application is a realistic purchase with its dates and asks whether, and until when, the buyer can withdraw
+      - No teaching picture, since the material has its own: a timeline or a small table the app draws fits for counting the days
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-arrependimento-private",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Compras e contratos",
+      courseTitle: "Direito do Consumidor",
+      isPrivate: true,
+      language: "pt",
+      lessonCanDo: "Decidir se uma compra dá direito de arrependimento e até quando",
+      lessonDescription:
+        "Quando o consumidor pode desistir de uma compra sem dar motivo e o que recebe de volta.",
+      lessonTitle: "Direito de arrependimento",
+      level: "beginner",
+      material: WITHDRAWAL_NOTES,
+      skills: ["Aplicar o direito de arrependimento do art. 49 do CDC"],
     },
   },
   {
