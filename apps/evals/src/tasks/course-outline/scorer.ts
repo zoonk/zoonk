@@ -14,12 +14,14 @@ const MAX_TOOL_NAME_LENGTH = 60;
 const MAX_TOOL_NAME_WORDS = 8;
 const MAX_CHAPTER_TOOLS = 4;
 
-function parseChapters(output: string): OutlineChapter[] {
+type Outline = { chapters: OutlineChapter[]; uncoveredSkillKeys: string[] };
+
+function parseOutline(output: string): Outline {
   try {
-    const parsed = JSON.parse(output) as { chapters?: OutlineChapter[] };
-    return parsed.chapters ?? [];
+    const parsed = JSON.parse(output) as Partial<Outline>;
+    return { chapters: parsed.chapters ?? [], uncoveredSkillKeys: parsed.uncoveredSkillKeys ?? [] };
   } catch {
-    return [];
+    return { chapters: [], uncoveredSkillKeys: [] };
   }
 }
 
@@ -82,7 +84,10 @@ function checkOutline({
   params: CourseOutlineParams;
 }): CodeCheckResult {
   const { level, withoutTools = false } = params;
-  const chapters = parseChapters(output);
+  const { chapters, uncoveredSkillKeys } = parseOutline(output);
+
+  const coversSkills =
+    (params.requiredSkills?.length ?? 0) + (params.extendSkills?.length ?? 0) > 0;
 
   const chapterProblems = chapters.map((chapter) => [
     ...getToolProblems({ chapter, level, withoutTools }),
@@ -95,16 +100,23 @@ function checkOutline({
     !pattern ||
     chapters.some((chapter) => (chapter.tools ?? []).some((tool) => pattern.test(tool.name)));
 
+  const leavesSkillsOut = coversSkills && uncoveredSkillKeys.length > 0;
+
   const problems = [
     ...chapterProblems.flat(),
     !found && `No chapter names the tool the course practices with (${expected?.tool}).`,
+    leavesSkillsOut &&
+      `No chapter teaches ${uncoveredSkillKeys.length} required skill(s): ${uncoveredSkillKeys.join(", ")}.`,
   ].filter((problem) => typeof problem === "string");
 
   return {
     judgedOutput: output,
-    passed: chapterProblems.filter((list) => list.length === 0).length + (pattern && found ? 1 : 0),
+    passed:
+      chapterProblems.filter((list) => list.length === 0).length +
+      (pattern && found ? 1 : 0) +
+      (coversSkills && !leavesSkillsOut ? 1 : 0),
     problems: chapters.length === 0 ? ["The output has no chapters."] : problems,
-    total: Math.max(chapters.length + (pattern ? 1 : 0), 1),
+    total: Math.max(chapters.length + (pattern ? 1 : 0) + (coversSkills ? 1 : 0), 1),
   };
 }
 

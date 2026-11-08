@@ -1264,418 +1264,6 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "All five required skills are tagged on chapters that substantively teach them, and uncoveredSkillKeys is correctly empty. Each of the six extension skills has its own relevant continuation chapter. Chapter tags and lesson content stay within their respective areas, avoiding the cross-area mixing highlighted by the case.",
-          "score": 10,
-          "label": "Coverage",
-          "weight": 25
-        },
-        {
-          "categoryId": "order",
-          "reasoning": "No material prerequisite-order failure is evident. Earlier supplied chapters support the chemistry extensions and mathematical comparisons. Within the new chapters, atomic evidence progresses through successive models, wave propagation precedes applications, and double-entry tables precede conditional proportions. Independent subject strands do not require a single cross-disciplinary prerequisite chain.",
-          "score": 10,
-          "label": "Order",
-          "weight": 15
-        },
-        {
-          "categoryId": "granularity",
-          "reasoning": "Chapters contain 6–10 lessons, all estimated at 3–4 minutes, with searchable titles and predominantly concrete, verb-first can-do statements. However, the dissociation lesson inconsistently targets dissolution, and the Libras lesson's comparison outcome is not supported by its stated scope. Comparing Canudos and Contestado in three minutes also needs a narrower comparison target rather than several historical dimensions.",
-          "score": 8,
-          "label": "Lesson granularity",
-          "weight": 20
-        },
-        {
-          "categoryId": "noFiller",
-          "reasoning": "There are no introductory, recap, motivational, or study-tip chapters. Most extensions add useful material. However, 'Mobilidade de cargas e condução' and 'Condução de sais sólidos e fundidos' substantially reuse the same explanation about mobile charges in ionic substances. They should be merged or given clearly different analytical tasks; this triggers the cap for two filler or duplicative lessons.",
-          "score": 8,
-          "label": "No filler",
-          "weight": 15
-        },
-        {
-          "categoryId": "levelFit",
-          "reasoning": "The outline uses Brazilian Portuguese, is shared rather than personalized, and does not name the exam in titles, descriptions, or objectives. Its extensions generally build on the supplied earlier chapters, while newly required topics receive appropriate foundations. The overview-specific chapter-count and notation restrictions do not apply to this intermediate band.",
-          "score": 9,
-          "label": "Level & language fit",
-          "weight": 15
-        },
-        {
-          "categoryId": "aiEraSkills",
-          "reasoning": "The outline emphasizes interpretation, evidence, source comparison, extrapolation limits, material selection, and evaluation rather than lengthy rote procedures. Nevertheless, writing and data analysis have no explicit work-with-AI lesson involving task specification, output review, or error detection, so the category is capped at 8.",
-          "score": 8,
-          "label": "Skills for a world with AI",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 11 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 14310,
-          "outputTokens": 1739,
-          "reasoningTokens": 957
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Some lessons need tighter alignment or differentiation. The dissociation lesson's can-do says 'dissolução' rather than 'dissociação'; the Libras can-do promises a comparison that its description does not define. The two lessons on charge mobility and conduction in solid versus molten salts substantially overlap. The claim about independent writing-competency scores also needs qualification: tangential treatment of the theme can constrain scores in other competencies.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Add a focused activity evaluating an AI-generated interpretation, data claim, or writing assessment against explicit evidence and criteria. Make the comparison of Canudos and Contestado manageable in three minutes by specifying one comparison axis and providing the necessary context.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate band of a shared ENEM course, from a real run (10 Oct 2026) that put Portuguese text lessons, math chart lessons and physics wave lessons in one chapter (\"Painéis visuais e representações de ondas\") and joined Linguagens with Ciências Humanas in another\n      - Every chapter's tagged skills share one area (each skill's `area`), and every lesson of a chapter belongs to that area: no text or map lessons in a chapter tagged with a math or physics skill\n      - Each EXTEND_SKILLS skill gets one new chapter that continues its listed chapters without repeating their lessons\n      - No title, description or objective names the exam (\"ENEM\")\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-enem-intermediate-one-area-per-chapter-1",
-        "userInput": {
-          "courseTitle": "ENEM",
-          "exams": [
-            {
-              "name": "ENEM",
-              "style": "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente."
-            }
-          ],
-          "extendSkills": [
-            {
-              "area": "Ciências da Natureza",
-              "chapters": [
-                {
-                  "lessons": [
-                    "Raio atômico e posição periódica",
-                    "Energia de ionização e eletronegatividade",
-                    "Ligação iônica e propriedades",
-                    "Ligações covalentes e metálicas"
-                  ],
-                  "title": "Propriedades periódicas e ligações"
-                },
-                {
-                  "lessons": [
-                    "Grupos, períodos e elétrons externos",
-                    "Raio atômico e raio iônico",
-                    "Tendências da energia de ionização",
-                    "Eletronegatividade na tabela periódica"
-                  ],
-                  "title": "Tendências e comparações periódicas"
-                },
-                {
-                  "lessons": [
-                    "Blindagem eletrônica e carga nuclear efetiva",
-                    "Energias de ionização sucessivas",
-                    "Afinidade eletrônica",
-                    "Estabilidade de subníveis e exceções periódicas",
-                    "Caráter metálico na tabela periódica",
-                    "Reatividade dos metais alcalinos",
-                    "Reatividade dos halogênios",
-                    "Caráter ácido e básico de óxidos",
-                    "Polarizabilidade de íons",
-                    "Tendências nos metais de transição"
-                  ],
-                  "title": "Exceções e reatividade na tabela periódica"
-                }
-              ],
-              "description": "Usar a organização periódica para comparar características e propriedades dos elementos.",
-              "key": "01a122ed-b691-70ed-bd88-151e261d77fa",
-              "lessons": 6,
-              "name": "Comparar propriedades periódicas"
-            },
-            {
-              "area": "Ciências da Natureza",
-              "chapters": [
-                {
-                  "lessons": [
-                    "Raio atômico e posição periódica",
-                    "Energia de ionização e eletronegatividade",
-                    "Ligação iônica e propriedades",
-                    "Ligações covalentes e metálicas"
-                  ],
-                  "title": "Propriedades periódicas e ligações"
-                },
-                {
-                  "lessons": [
-                    "Geometria molecular e repulsão eletrônica",
-                    "Pares não ligantes e forma molecular",
-                    "Polaridade molecular e simetria",
-                    "Forças de dispersão e polarizabilidade",
-                    "Interações dipolo-dipolo",
-                    "Ligações de hidrogênio entre moléculas",
-                    "Forças intermoleculares e temperatura de ebulição",
-                    "Viscosidade e tensão superficial",
-                    "Sólidos cristalinos e amorfos",
-                    "Polimorfismo cristalino"
-                  ],
-                  "title": "Forma molecular e organização das partículas"
-                }
-              ],
-              "description": "Distinguir ligações iônicas, covalentes e metálicas",
-              "key": "01a12220-bb3f-70cc-be04-8e001d907327",
-              "lessons": 10,
-              "name": "Relacionar ligações e propriedades"
-            },
-            {
-              "area": "Matemática",
-              "chapters": [
-                {
-                  "lessons": [
-                    "Leitura de gráficos"
-                  ],
-                  "title": "Estatística"
-                },
-                {
-                  "lessons": [
-                    "Eixos truncados",
-                    "Valores absolutos e proporções",
-                    "Gráficos acumulados",
-                    "Gráficos com dois eixos verticais",
-                    "Séries indexadas",
-                    "Pictogramas e proporção visual"
-                  ],
-                  "title": "Comparações e distorções em gráficos"
-                },
-                {
-                  "lessons": [
-                    "Tabelas de características biológicas",
-                    "Bactérias, arqueias e eucariontes",
-                    "Diversidade dos eucariontes",
-                    "Grupos de plantas",
-                    "Grupos de animais",
-                    "Cladogramas e parentesco",
-                    "Mapas de calor",
-                    "Gráficos de dispersão",
-                    "Diagrama de caixa",
-                    "Barras de erro em gráficos"
-                  ],
-                  "title": "Dados de biodiversidade e classificação"
-                }
-              ],
-              "description": "Leia o título, os eixos e as unidades antes dos números, e só então compare o que a questão pede.",
-              "key": "588e45be-560f-86b2-824c-bb3c0479f598",
-              "lessons": 10,
-              "name": "Ler gráficos e tabelas"
-            },
-            {
-              "area": "Linguagens",
-              "chapters": [
-                {
-                  "lessons": [
-                    "Variação regional, social e situacional",
-                    "Norma-padrão e preconceito linguístico",
-                    "Escolha lexical e posicionamento",
-                    "Marcas lexicais de avaliação"
-                  ],
-                  "title": "Variação linguística e escolhas lexicais"
-                },
-                {
-                  "lessons": [
-                    "Alternância de registro",
-                    "Escrita digital e situação de uso",
-                    "Oralidade representada na escrita",
-                    "Variação geracional",
-                    "Contato entre variedades regionais",
-                    "Linguagem de grupos e pertencimento",
-                    "Empréstimos linguísticos",
-                    "Línguas indígenas e português brasileiro",
-                    "Variedades linguísticas na ficção",
-                    "Variação linguística e registro formal"
-                  ],
-                  "title": "Língua em contato e situações de uso"
-                }
-              ],
-              "description": "Identificar variedades da língua portuguesa e explicar sua relação com grupos e situações de uso.",
-              "key": "01a122ed-ade1-7368-91ad-a81e1c90aff0",
-              "lessons": 10,
-              "name": "Reconhecer variação linguística"
-            },
-            {
-              "area": "Ciências Humanas",
-              "chapters": [
-                {
-                  "lessons": [
-                    "A Primeira República"
-                  ],
-                  "title": "Brasil República"
-                },
-                {
-                  "lessons": [
-                    "Os limites da alternância presidencial",
-                    "Interesses de São Paulo e Minas Gerais",
-                    "A Primeira República",
-                    "A Reação Republicana de 1922",
-                    "A disputa pela sucessão de 1930",
-                    "Aliança Liberal e ruptura de 1930"
-                  ],
-                  "title": "Acordos e rupturas das oligarquias"
-                },
-                {
-                  "lessons": [
-                    "Federalismo e poder estadual",
-                    "Limites do direito ao voto",
-                    "Clientelismo e apoio político",
-                    "Voto aberto e pressão sobre eleitores",
-                    "Fraudes na apuração",
-                    "Verificação de poderes e degola",
-                    "A cadeia de apoio da política dos governadores",
-                    "Convênio de Taubaté e sustentação dos preços",
-                    "Custos públicos da valorização do café",
-                    "Fontes eleitorais e alcance do controle oligárquico"
-                  ],
-                  "title": "Engrenagens do domínio oligárquico"
-                }
-              ],
-              "description": "De 1894 a 1930, as elites de São Paulo e Minas Gerais dominaram a presidência, muitas vezes se alternando.",
-              "key": "c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb",
-              "lessons": 10,
-              "name": "Explicar a política do café com leite"
-            },
-            {
-              "area": "Redação",
-              "chapters": [
-                {
-                  "lessons": [
-                    "As cinco competências"
-                  ],
-                  "title": "Redação"
-                },
-                {
-                  "lessons": [
-                    "Desvios de norma na competência I",
-                    "Recorte temático na competência II",
-                    "Sustentação argumentativa na competência III",
-                    "Relações de sentido na competência IV",
-                    "Elementos da intervenção na competência V",
-                    "Problemas simultâneos em um trecho"
-                  ],
-                  "title": "Diagnóstico das competências da redação"
-                },
-                {
-                  "lessons": [
-                    "Recorrência de desvios na competência I",
-                    "Variação linguística e registro formal",
-                    "Repertório produtivo na competência II",
-                    "Uso dos textos motivadores",
-                    "Sustentação argumentativa na competência III",
-                    "Desenvolvimento de exemplos",
-                    "Ambiguidade na referência",
-                    "Conectivos e relações efetivas",
-                    "Elementos da intervenção na competência V",
-                    "Direitos humanos na proposta de intervenção"
-                  ],
-                  "title": "Calibração das competências da redação"
-                }
-              ],
-              "description": "A redação vale cinco competências, de 0 a 200 cada: norma culta, tema, argumentação, coesão e proposta de intervenção.",
-              "key": "5dbcc48f-5cf6-8de9-88af-5ff186e54f50",
-              "lessons": 10,
-              "name": "Conhecer as cinco competências da redação"
-            }
-          ],
-          "language": "pt",
-          "level": "intermediate",
-          "otherLevelChapters": [
-            "Porcentagem",
-            "Funções",
-            "Cadeias de reajustes percentuais",
-            "Modelos lineares em tarifas e faixas",
-            "Otimização quadrática com restrições",
-            "Preço final em ofertas com condições",
-            "Estatística",
-            "Desconto real em compras por quantidade",
-            "Percentuais além dos casos inteiros",
-            "Medidas centrais em conjuntos de dados",
-            "Fatores percentuais em valores compostos",
-            "Comparações e distorções em gráficos",
-            "Razão e proporção",
-            "Dados de biodiversidade e classificação",
-            "Ecologia",
-            "Proporcionalidade inversa e composta",
-            "Escalas em mapas, plantas e maquetes",
-            "Ecologia: Destinos da energia nas teias alimentares",
-            "Ecologia: Estimativas de energia em teias alimentares",
-            "Eletricidade",
-            "Eletricidade: Tensões e falhas em circuitos série",
-            "Lei de Ohm em gráficos e circuitos",
-            "Brasil República",
-            "Brasil República: Conflitos e queda do Estado Novo",
-            "Acordos e rupturas das oligarquias",
-            "Engrenagens do domínio oligárquico",
-            "Interpretação de texto",
-            "Inferência, coesão e vozes textuais",
-            "Foco textual e pertinência do repertório",
-            "Uso crítico de repertório na argumentação",
-            "Inferências em argumentos e vozes do texto",
-            "Redação",
-            "Coerência e escolhas no fechamento da redação",
-            "Proposta de intervenção detalhada",
-            "Diagnóstico das competências da redação",
-            "Calibração das competências da redação",
-            "Medidas e movimento",
-            "Precisão de medidas e chances em experimentos",
-            "Unidades em situações e gráficos físicos",
-            "Escalas e unidades em medidas especializadas",
-            "Propriedades periódicas e ligações",
-            "Tendências e comparações periódicas",
-            "Exceções e reatividade na tabela periódica",
-            "Forma molecular e organização das partículas",
-            "Variação linguística e escolhas lexicais",
-            "Língua em contato e situações de uso",
-            "Recursos linguísticos e efeitos de sentido",
-            "Nomeação e enquadramento lexical",
-            "Decisão entre alternativas"
-          ],
-          "requiredSkills": [
-            {
-              "area": "Linguagens",
-              "description": "Relacionar palavras, imagens e outros recursos para interpretar textos de diferentes gêneros.",
-              "key": "01a1221f-40fc-77ad-a11d-d8a466e14767",
-              "name": "Interpretar textos multimodais"
-            },
-            {
-              "area": "Ciências da Natureza",
-              "description": "Relacionar frequência, comprimento de onda e velocidade à propagação de oscilações e ondas.",
-              "key": "01a122ed-b690-7ea1-9fb6-54fea3ff6c5d",
-              "name": "Analisar a propagação de ondas"
-            },
-            {
-              "area": "Ciências da Natureza",
-              "description": "Usar modelos atômicos e partículas subatômicas para explicar a constituição da matéria.",
-              "key": "01a122ed-b690-7fcc-ac2b-e84e1fa28d64",
-              "name": "Interpretar modelos atômicos"
-            },
-            {
-              "area": "Ciências Humanas",
-              "description": "Comparar a produção agrária e outras formas de organização do trabalho segundo a propriedade, a técnica e as relações sociais.",
-              "key": "01a122ed-ade3-73bd-bf80-6754435d94ab",
-              "name": "Comparar sistemas produtivos e relações de trabalho"
-            },
-            {
-              "area": "Ciências Humanas",
-              "description": "Relacionar identidades culturais, costumes e formas de convivência às condições históricas em que se formam.",
-              "key": "01a122ed-ade1-73b4-a3ab-d158ba1de158",
-              "name": "Analisar a formação de identidades culturais"
-            }
-          ],
-          "withoutTools": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "coverage",
           "reasoning": "Data entry, formatting, formulas, references, SUM, AVERAGE, IF, sorting, filtering, tables, charts, printing, and file sharing are covered. Lookup functions and pivot tables are entirely absent, triggering the maximum score of 7 for two missing pillars. No required skill-key list was supplied, so empty chapter tags are not independently counted as omissions.",
           "score": 7,
           "label": "Coverage",
@@ -2366,6 +1954,418 @@
               "name": "Mapear status do Jira para o Linear"
             }
           ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five required skills are tagged on chapters that genuinely teach them. Each of the six extension skills receives its own relevant chapter. Chapter tags and lesson content remain within their respective areas, and uncoveredSkillKeys is correctly empty. No missing-skill or missing-area cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence is studyable using the supplied earlier chapters. Atomic models precede the new periodic-property and materials chapters; wave lessons establish oscillation and frequency before propagation relationships; and table reading precedes conditional proportions. No clear prerequisite inversion triggers an ordering cap.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters contain six to ten lessons, and lessons consistently specify three or four minutes, a focused scope, an observable verb-first can-do line, and an action-based skill. Titles are searchable and subject-specific. Comparisons generally constitute one coherent instructional task rather than umbrella lessons.",
+          "score": 10,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The outline contains substantive subject lessons rather than overview, recap, study-tip, or motivational filler. Historical material teaches historical content, and material-selection and source-comparison lessons have concrete analytical purposes. Similarities with earlier chapter topics generally introduce distinguishable subtopics rather than demonstrably repeating the same lessons.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text is Brazilian Portuguese, is shared rather than personalized, and never names the exam in titles, descriptions, or objectives. Most extensions build appropriately on earlier material. However, basic identification of argumentative prose versus narrative or poetry is a level mismatch after the supplied advanced essay-diagnosis chapters, triggering the cap of 8 for one mismatch.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The band strongly emphasizes interpretation, evidence, estimation, source comparison, and judging conclusions rather than lengthy routine procedures. Nevertheless, its writing and data-analysis instruction includes no explicit work-with-AI activity, triggering the category's cap of 8.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 14310,
+          "outputTokens": 2275,
+          "reasoningTokens": 1552
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The essay lesson 'Tipo dissertativo-argumentativo na competência II' returns to basic text-type identification after earlier chapters already addressed argument development and competency calibration, making it a weak intermediate-level continuation. Also, 'Dissociação e ionização em água' has a can-do line about distinguishing dissolution from ionization; dissolution and dissociation are not interchangeable terms.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a focused activity reviewing AI-generated writing feedback or a graph interpretation, requiring learners to identify unsupported claims and justify corrections. Replace basic essay-type identification with evaluating a subtler genre-boundary problem, and align the dissociation lesson's can-do wording with its title and description.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate band of a shared ENEM course, from a real run (10 Oct 2026) that put Portuguese text lessons, math chart lessons and physics wave lessons in one chapter (\"Painéis visuais e representações de ondas\") and joined Linguagens with Ciências Humanas in another\n      - Every chapter's tagged skills share one area (each skill's `area`), and every lesson of a chapter belongs to that area: no text or map lessons in a chapter tagged with a math or physics skill\n      - Each EXTEND_SKILLS skill gets one new chapter that continues its listed chapters without repeating their lessons\n      - No title, description or objective names the exam (\"ENEM\")\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-intermediate-one-area-per-chapter-1",
+        "userInput": {
+          "courseTitle": "ENEM",
+          "exams": [
+            {
+              "name": "ENEM",
+              "style": "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente."
+            }
+          ],
+          "extendSkills": [
+            {
+              "area": "Ciências da Natureza",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Raio atômico e posição periódica",
+                    "Energia de ionização e eletronegatividade",
+                    "Ligação iônica e propriedades",
+                    "Ligações covalentes e metálicas"
+                  ],
+                  "title": "Propriedades periódicas e ligações"
+                },
+                {
+                  "lessons": [
+                    "Grupos, períodos e elétrons externos",
+                    "Raio atômico e raio iônico",
+                    "Tendências da energia de ionização",
+                    "Eletronegatividade na tabela periódica"
+                  ],
+                  "title": "Tendências e comparações periódicas"
+                },
+                {
+                  "lessons": [
+                    "Blindagem eletrônica e carga nuclear efetiva",
+                    "Energias de ionização sucessivas",
+                    "Afinidade eletrônica",
+                    "Estabilidade de subníveis e exceções periódicas",
+                    "Caráter metálico na tabela periódica",
+                    "Reatividade dos metais alcalinos",
+                    "Reatividade dos halogênios",
+                    "Caráter ácido e básico de óxidos",
+                    "Polarizabilidade de íons",
+                    "Tendências nos metais de transição"
+                  ],
+                  "title": "Exceções e reatividade na tabela periódica"
+                }
+              ],
+              "description": "Usar a organização periódica para comparar características e propriedades dos elementos.",
+              "key": "01a122ed-b691-70ed-bd88-151e261d77fa",
+              "lessons": 6,
+              "name": "Comparar propriedades periódicas"
+            },
+            {
+              "area": "Ciências da Natureza",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Raio atômico e posição periódica",
+                    "Energia de ionização e eletronegatividade",
+                    "Ligação iônica e propriedades",
+                    "Ligações covalentes e metálicas"
+                  ],
+                  "title": "Propriedades periódicas e ligações"
+                },
+                {
+                  "lessons": [
+                    "Geometria molecular e repulsão eletrônica",
+                    "Pares não ligantes e forma molecular",
+                    "Polaridade molecular e simetria",
+                    "Forças de dispersão e polarizabilidade",
+                    "Interações dipolo-dipolo",
+                    "Ligações de hidrogênio entre moléculas",
+                    "Forças intermoleculares e temperatura de ebulição",
+                    "Viscosidade e tensão superficial",
+                    "Sólidos cristalinos e amorfos",
+                    "Polimorfismo cristalino"
+                  ],
+                  "title": "Forma molecular e organização das partículas"
+                }
+              ],
+              "description": "Distinguir ligações iônicas, covalentes e metálicas",
+              "key": "01a12220-bb3f-70cc-be04-8e001d907327",
+              "lessons": 10,
+              "name": "Relacionar ligações e propriedades"
+            },
+            {
+              "area": "Matemática",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Leitura de gráficos"
+                  ],
+                  "title": "Estatística"
+                },
+                {
+                  "lessons": [
+                    "Eixos truncados",
+                    "Valores absolutos e proporções",
+                    "Gráficos acumulados",
+                    "Gráficos com dois eixos verticais",
+                    "Séries indexadas",
+                    "Pictogramas e proporção visual"
+                  ],
+                  "title": "Comparações e distorções em gráficos"
+                },
+                {
+                  "lessons": [
+                    "Tabelas de características biológicas",
+                    "Bactérias, arqueias e eucariontes",
+                    "Diversidade dos eucariontes",
+                    "Grupos de plantas",
+                    "Grupos de animais",
+                    "Cladogramas e parentesco",
+                    "Mapas de calor",
+                    "Gráficos de dispersão",
+                    "Diagrama de caixa",
+                    "Barras de erro em gráficos"
+                  ],
+                  "title": "Dados de biodiversidade e classificação"
+                }
+              ],
+              "description": "Leia o título, os eixos e as unidades antes dos números, e só então compare o que a questão pede.",
+              "key": "588e45be-560f-86b2-824c-bb3c0479f598",
+              "lessons": 10,
+              "name": "Ler gráficos e tabelas"
+            },
+            {
+              "area": "Linguagens",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Variação regional, social e situacional",
+                    "Norma-padrão e preconceito linguístico",
+                    "Escolha lexical e posicionamento",
+                    "Marcas lexicais de avaliação"
+                  ],
+                  "title": "Variação linguística e escolhas lexicais"
+                },
+                {
+                  "lessons": [
+                    "Alternância de registro",
+                    "Escrita digital e situação de uso",
+                    "Oralidade representada na escrita",
+                    "Variação geracional",
+                    "Contato entre variedades regionais",
+                    "Linguagem de grupos e pertencimento",
+                    "Empréstimos linguísticos",
+                    "Línguas indígenas e português brasileiro",
+                    "Variedades linguísticas na ficção",
+                    "Variação linguística e registro formal"
+                  ],
+                  "title": "Língua em contato e situações de uso"
+                }
+              ],
+              "description": "Identificar variedades da língua portuguesa e explicar sua relação com grupos e situações de uso.",
+              "key": "01a122ed-ade1-7368-91ad-a81e1c90aff0",
+              "lessons": 10,
+              "name": "Reconhecer variação linguística"
+            },
+            {
+              "area": "Ciências Humanas",
+              "chapters": [
+                {
+                  "lessons": [
+                    "A Primeira República"
+                  ],
+                  "title": "Brasil República"
+                },
+                {
+                  "lessons": [
+                    "Os limites da alternância presidencial",
+                    "Interesses de São Paulo e Minas Gerais",
+                    "A Primeira República",
+                    "A Reação Republicana de 1922",
+                    "A disputa pela sucessão de 1930",
+                    "Aliança Liberal e ruptura de 1930"
+                  ],
+                  "title": "Acordos e rupturas das oligarquias"
+                },
+                {
+                  "lessons": [
+                    "Federalismo e poder estadual",
+                    "Limites do direito ao voto",
+                    "Clientelismo e apoio político",
+                    "Voto aberto e pressão sobre eleitores",
+                    "Fraudes na apuração",
+                    "Verificação de poderes e degola",
+                    "A cadeia de apoio da política dos governadores",
+                    "Convênio de Taubaté e sustentação dos preços",
+                    "Custos públicos da valorização do café",
+                    "Fontes eleitorais e alcance do controle oligárquico"
+                  ],
+                  "title": "Engrenagens do domínio oligárquico"
+                }
+              ],
+              "description": "De 1894 a 1930, as elites de São Paulo e Minas Gerais dominaram a presidência, muitas vezes se alternando.",
+              "key": "c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb",
+              "lessons": 10,
+              "name": "Explicar a política do café com leite"
+            },
+            {
+              "area": "Redação",
+              "chapters": [
+                {
+                  "lessons": [
+                    "As cinco competências"
+                  ],
+                  "title": "Redação"
+                },
+                {
+                  "lessons": [
+                    "Desvios de norma na competência I",
+                    "Recorte temático na competência II",
+                    "Sustentação argumentativa na competência III",
+                    "Relações de sentido na competência IV",
+                    "Elementos da intervenção na competência V",
+                    "Problemas simultâneos em um trecho"
+                  ],
+                  "title": "Diagnóstico das competências da redação"
+                },
+                {
+                  "lessons": [
+                    "Recorrência de desvios na competência I",
+                    "Variação linguística e registro formal",
+                    "Repertório produtivo na competência II",
+                    "Uso dos textos motivadores",
+                    "Sustentação argumentativa na competência III",
+                    "Desenvolvimento de exemplos",
+                    "Ambiguidade na referência",
+                    "Conectivos e relações efetivas",
+                    "Elementos da intervenção na competência V",
+                    "Direitos humanos na proposta de intervenção"
+                  ],
+                  "title": "Calibração das competências da redação"
+                }
+              ],
+              "description": "A redação vale cinco competências, de 0 a 200 cada: norma culta, tema, argumentação, coesão e proposta de intervenção.",
+              "key": "5dbcc48f-5cf6-8de9-88af-5ff186e54f50",
+              "lessons": 10,
+              "name": "Conhecer as cinco competências da redação"
+            }
+          ],
+          "language": "pt",
+          "level": "intermediate",
+          "otherLevelChapters": [
+            "Porcentagem",
+            "Funções",
+            "Cadeias de reajustes percentuais",
+            "Modelos lineares em tarifas e faixas",
+            "Otimização quadrática com restrições",
+            "Preço final em ofertas com condições",
+            "Estatística",
+            "Desconto real em compras por quantidade",
+            "Percentuais além dos casos inteiros",
+            "Medidas centrais em conjuntos de dados",
+            "Fatores percentuais em valores compostos",
+            "Comparações e distorções em gráficos",
+            "Razão e proporção",
+            "Dados de biodiversidade e classificação",
+            "Ecologia",
+            "Proporcionalidade inversa e composta",
+            "Escalas em mapas, plantas e maquetes",
+            "Ecologia: Destinos da energia nas teias alimentares",
+            "Ecologia: Estimativas de energia em teias alimentares",
+            "Eletricidade",
+            "Eletricidade: Tensões e falhas em circuitos série",
+            "Lei de Ohm em gráficos e circuitos",
+            "Brasil República",
+            "Brasil República: Conflitos e queda do Estado Novo",
+            "Acordos e rupturas das oligarquias",
+            "Engrenagens do domínio oligárquico",
+            "Interpretação de texto",
+            "Inferência, coesão e vozes textuais",
+            "Foco textual e pertinência do repertório",
+            "Uso crítico de repertório na argumentação",
+            "Inferências em argumentos e vozes do texto",
+            "Redação",
+            "Coerência e escolhas no fechamento da redação",
+            "Proposta de intervenção detalhada",
+            "Diagnóstico das competências da redação",
+            "Calibração das competências da redação",
+            "Medidas e movimento",
+            "Precisão de medidas e chances em experimentos",
+            "Unidades em situações e gráficos físicos",
+            "Escalas e unidades em medidas especializadas",
+            "Propriedades periódicas e ligações",
+            "Tendências e comparações periódicas",
+            "Exceções e reatividade na tabela periódica",
+            "Forma molecular e organização das partículas",
+            "Variação linguística e escolhas lexicais",
+            "Língua em contato e situações de uso",
+            "Recursos linguísticos e efeitos de sentido",
+            "Nomeação e enquadramento lexical",
+            "Decisão entre alternativas"
+          ],
+          "requiredSkills": [
+            {
+              "area": "Linguagens",
+              "description": "Relacionar palavras, imagens e outros recursos para interpretar textos de diferentes gêneros.",
+              "key": "01a1221f-40fc-77ad-a11d-d8a466e14767",
+              "name": "Interpretar textos multimodais"
+            },
+            {
+              "area": "Ciências da Natureza",
+              "description": "Relacionar frequência, comprimento de onda e velocidade à propagação de oscilações e ondas.",
+              "key": "01a122ed-b690-7ea1-9fb6-54fea3ff6c5d",
+              "name": "Analisar a propagação de ondas"
+            },
+            {
+              "area": "Ciências da Natureza",
+              "description": "Usar modelos atômicos e partículas subatômicas para explicar a constituição da matéria.",
+              "key": "01a122ed-b690-7fcc-ac2b-e84e1fa28d64",
+              "name": "Interpretar modelos atômicos"
+            },
+            {
+              "area": "Ciências Humanas",
+              "description": "Comparar a produção agrária e outras formas de organização do trabalho segundo a propriedade, a técnica e as relações sociais.",
+              "key": "01a122ed-ade3-73bd-bf80-6754435d94ab",
+              "name": "Comparar sistemas produtivos e relações de trabalho"
+            },
+            {
+              "area": "Ciências Humanas",
+              "description": "Relacionar identidades culturais, costumes e formas de convivência às condições históricas em que se formam.",
+              "key": "01a122ed-ade1-73b4-a3ab-d158ba1de158",
+              "name": "Analisar a formação de identidades culturais"
+            }
+          ],
+          "withoutTools": true
         }
       }
     }
