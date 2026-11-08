@@ -111,13 +111,14 @@ fun setupView(
     examChoices: String = "[]",
     planReady: Boolean = true,
     firstLesson: String = "null",
+    warmUp: String = "null",
     planRevealed: Boolean = false,
     languageAim: String = if (kind == "language") languageAimOf() else "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
         {"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
-         "languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
+         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
@@ -264,7 +265,7 @@ class FakeOnboardingApi : OnboardingApi {
     override suspend fun revealToday(
         session: AuthenticatedSession,
         goalId: String,
-    ): com.zoonk.api.models.StudyDay = throw ApiException(ApiError.NotFound)
+    ): com.zoonk.api.models.PlanRevealToday = throw ApiException(ApiError.NotFound)
 
     override suspend fun markPlanRevealed(
         session: AuthenticatedSession,

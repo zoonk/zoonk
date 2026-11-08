@@ -47,7 +47,7 @@ class GenerationFollowerTest {
         restart: (suspend () -> String?)? = null,
     ): GenerationFollower {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return GenerationFollower(kind, scope, source, readGenerationId, restart, now = { 10_000 })
+        return GenerationFollower(kind, scope, source, readGenerationId, restart)
     }
 
     @Test
@@ -170,7 +170,7 @@ class GenerationFollowerTest {
             assertEquals(GenerationRun.Status.Ready, run.status)
             assertEquals(StepState.Completed, run.steps["readGoal"])
             assertEquals(StepTimes(started = 1_000, completed = 4_000), run.stepTimes["readGoal"])
-            assertEquals(6_000L, run.clockOffsetMillis)
+            assertNull(run.clockOffsetMillis)
         }
 
     @Test

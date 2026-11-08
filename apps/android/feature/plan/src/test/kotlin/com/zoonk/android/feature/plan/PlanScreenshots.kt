@@ -330,6 +330,7 @@ class PlanScreenshots {
             it.resolve(
                 it,
                 PlanChangePreview(
+                    finishDate = null,
                     effect =
                         ApiJson.decodeFromString(
                             effect(""""lessonsAdded":14,"endDateBefore":"2027-01-31","endDateAfter":"2027-04-18""""),
@@ -453,6 +454,7 @@ class PlanScreenshots {
             it.resolve(
                 it,
                 com.zoonk.api.models.PlanChangePreview(
+                    finishDate = null,
                     effect =
                         com.zoonk.api.models.PlanEffect(
                             endDateAfter = kotlinx.datetime.LocalDate.parse(end),
@@ -643,7 +645,7 @@ class PlanScreenshots {
             ApiJson.decodeFromString<PlanChangePreview>(
                 """
                 {"effect":{"lessonsAdded":6,"lessonsRemoved":0,"topicsAdded":[{"area":"Matemática","topics":["Probabilidade","Estatística"]}]},
-                 "feasibility":{"coreFits":true,"coveredShare":0.82,"fits":false,"measure":"exam"},"ready":true,"unchanged":false}
+                 "finishDate":null,"feasibility":{"coreFits":true,"coveredShare":0.82,"fits":false,"measure":"exam"},"ready":true,"unchanged":false}
                 """.trimIndent(),
             )
         val edits =

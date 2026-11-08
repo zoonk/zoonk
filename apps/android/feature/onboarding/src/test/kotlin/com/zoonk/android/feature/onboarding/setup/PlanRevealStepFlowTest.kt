@@ -200,7 +200,6 @@ class PlanRevealStepFlowTest {
     fun aGuessWhileThePlanIsBuiltDoesntHoldItOnceItsDocumentsAreRead() {
         planApi.shownPlan = planOf(ready = false)
         show()
-        rule.onNodeWithText("Play a quiz while you wait").performScrollTo().performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         planApi.shownPlan = planOf(notice = "reading")
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
@@ -218,7 +217,6 @@ class PlanRevealStepFlowTest {
     fun aGuessWhileTheDocumentsAreReadKeepsItsAnswerThroughALostConnectionAndHoldsThePlan() {
         planApi.shownPlan = planOf(notice = "reading")
         show()
-        rule.onNodeWithText("Play a quiz while you wait").performScrollTo().performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         planApi.planFailure = ApiException(ApiError.Network)
         rule.mainClock.advanceTimeBy(POLL_MILLIS * 3)

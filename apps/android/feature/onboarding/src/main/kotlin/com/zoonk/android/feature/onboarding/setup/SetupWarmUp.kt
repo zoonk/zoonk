@@ -68,7 +68,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
     val context = LocalSetupWait.current
     val quiz = LocalSetupQuiz.current ?: rememberWaitQuiz(run.warmUpId ?: context.warmUpId, LocalSetupWarmUp.current)
     quiz.open()
-    val canShowAside = quiz.hasQuiz && quiz.visitedQuiz
+    val canShowAside = quiz.canShowQuiz && quiz.visitedQuiz
     val first = context.firstLesson
     val share =
         com.zoonk.android.ui.components
@@ -129,7 +129,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
         val course = context.course?.takeIf { !context.planReady && first?.ready != true }
         val actionsVisible =
             hold.holding || firstReady || course != null ||
-                (quiz.hasQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
+                (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
         PageWaitActions(hold, visible = actionsVisible) {
             when {
                 hold.holding -> {

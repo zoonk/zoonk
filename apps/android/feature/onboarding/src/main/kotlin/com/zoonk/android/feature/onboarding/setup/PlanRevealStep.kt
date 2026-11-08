@@ -108,7 +108,7 @@ internal fun ColumnScope.PlanRevealStep(
     saveFailed: Boolean = false,
     playMoment: () -> Boolean = { false },
     planRevealed: Boolean = false,
-    today: com.zoonk.android.data.Resource<com.zoonk.api.models.StudyDay>? = null,
+    today: com.zoonk.android.data.Resource<com.zoonk.api.models.PlanRevealToday>? = null,
 ) {
     val resource = plans.plan[goal.id]
     val state by resource.collectShown()
@@ -173,10 +173,10 @@ internal fun ColumnScope.PlanRevealStep(
             } else {
                 val syllabus by plans.syllabus[goal.id].collectShown()
                 val todayState = today?.collectShown()?.value
-                val preview = todayState?.value?.let { it.toDayView() }
+                val preview = todayState?.value
                 RevealBody(
                     plan = plan,
-                    studyDay = preview,
+                    reveal = preview,
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
@@ -330,7 +330,7 @@ internal fun ColumnScope.NoticeReading(
 @Composable
 private fun ColumnScope.RevealBody(
     plan: Plan,
-    studyDay: com.zoonk.android.feature.session.DayView?,
+    reveal: com.zoonk.api.models.PlanRevealToday?,
     goal: Goal,
     syllabus: Syllabus?,
     isGuest: Boolean,
@@ -344,15 +344,16 @@ private fun ColumnScope.RevealBody(
     onSeePlus: () -> Unit,
 ) {
     SetupContent {
-        val today = remember { LocalDate.now() }
+        val studyDay = reveal?.today?.toDayView()
+        val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
         val coverage = revealCoverage(plan, goal.kind, syllabus)
 
-        RevealHero(plan, goal, playMoment)
+        RevealHero(plan, goal, playMoment, today)
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
-        studyDay?.let { RevealToday(it, playMoment) }
-        RevealWeek(plan, studyDay)
+        studyDay?.let { RevealToday(it, reveal.minutes, playMoment) }
+        reveal?.let { RevealWeek(it) }
 
         val started = studyDay?.steps?.any { it.isFinished } == true
         PageWaitActions {

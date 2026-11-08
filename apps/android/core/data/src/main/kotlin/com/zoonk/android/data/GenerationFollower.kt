@@ -35,7 +35,7 @@ data class GenerationRun(
     val failure: GenerationFailure? = null,
     val steps: Map<String, StepState> = emptyMap(),
     val stepTimes: Map<String, StepTimes> = emptyMap(),
-    /** This device's clock minus the server's, from the freshest event received. */
+    /** This device's clock minus the server's, from the events response's Date header. */
     val clockOffsetMillis: Long? = null,
     /** The newest skill the run's skill graph wrote, while it writes them. */
     val skillName: String? = null,
@@ -72,7 +72,6 @@ class GenerationFollower(
     private val readGenerationId: (suspend () -> String?)? = null,
     /** Starts the work again; null when there's nothing left to write. Throws when it couldn't start. */
     private val restart: (suspend () -> String?)? = null,
-    private val now: () -> Long = System::currentTimeMillis,
 ) {
     private val state = MutableStateFlow(GenerationRun())
     val run: StateFlow<GenerationRun> = state.asStateFlow()
@@ -236,7 +235,7 @@ class GenerationFollower(
             run.copy(
                 steps = run.steps + (event.step to if (run.steps[event.step] == StepState.Completed) StepState.Completed else step),
                 stepTimes = run.stepTimes + (event.step to newTimes),
-                clockOffsetMillis = at?.let { offset(it, run.clockOffsetMillis) } ?: run.clockOffsetMillis,
+                clockOffsetMillis = event.clockOffsetMillis ?: run.clockOffsetMillis,
                 skillName = event.skillName ?: run.skillName,
                 warmUpId = event.warmUpId ?: run.warmUpId,
                 firstLesson =
@@ -266,15 +265,6 @@ class GenerationFollower(
         if (!kind.isDone(state.value.steps)) return null
         state.update { it.copy(status = GenerationRun.Status.Ready) }
         return Ending.Ready.takeUnless { state.value.firstLesson?.ready == false }
-    }
-
-    /** A replayed event arrives long after its time, so the smallest gap is the closest to the clocks' difference. */
-    private fun offset(
-        at: Long,
-        previous: Long?,
-    ): Long {
-        val gap = now() - at
-        return previous?.coerceAtMost(gap) ?: gap
     }
 
     private suspend fun readStatus(id: String): Generation.Status? = runCatchingApi { source.status(id) }

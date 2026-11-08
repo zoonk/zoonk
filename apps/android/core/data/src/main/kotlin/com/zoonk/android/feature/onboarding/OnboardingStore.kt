@@ -137,7 +137,7 @@ class OnboardingStore(
         }
 
     val revealToday =
-        cache.keyed<String, com.zoonk.api.models.StudyDay>(
+        cache.keyed<String, com.zoonk.api.models.PlanRevealToday>(
             Audience.SignedIn,
             setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress),
         ) { session, goalId -> session?.let { api.revealToday(it, goalId) } }

@@ -131,7 +131,7 @@ interface OnboardingApi {
     suspend fun revealToday(
         session: AuthenticatedSession,
         goalId: String,
-    ): com.zoonk.api.models.StudyDay
+    ): com.zoonk.api.models.PlanRevealToday
 
     suspend fun markPlanRevealed(
         session: AuthenticatedSession,
