@@ -4,7 +4,7 @@ import {
   type EssayGrade,
   type GradeEssayParams,
 } from "@zoonk/ai/tasks/grading/grade-essay";
-import { AP_ANSWERS, ENEM_ESSAYS, OTHER_ESSAYS } from "./essays";
+import { AP_ANSWERS, ENEM_ESSAYS, EN_ESSAYS, OTHER_ESSAYS } from "./essays";
 
 type GradeEssayInput = Omit<GradeEssayParams, "model" | "useFallback" | "reasoning">;
 
@@ -14,6 +14,8 @@ export type GradeEssayExpected = {
   zeroReason: EssayGrade["zeroReason"];
   feedbackLanguage: "en" | "pt";
   interventionElements?: Partial<EnemInterventionElements>;
+  /** Words the feedback must use, such as the word minimum an essay falls short of. */
+  feedbackMentions?: string[];
 };
 
 const VACCINE_PROMPT = `Tema: Desafios para combater a desinformação sobre vacinas no Brasil.
@@ -125,6 +127,54 @@ const AP_HISTORY_RUBRIC = [
     description:
       "1 point for using historical reasoning (causation, comparison or continuity and change) to frame or structure an argument; 2 points for demonstrating a complex understanding, such as explaining multiple causes or effects, both change and continuity, or nuance by analyzing multiple variables.",
     points: 2,
+  },
+];
+
+const IELTS_REMOTE_PROMPT = `IELTS Academic Writing Task 2. Write at least 250 words.
+Some people think that working from home benefits both employees and companies, while others believe it harms teamwork and productivity. Discuss both views and give your own opinion.`;
+
+const IELTS_CRITERIA = [
+  {
+    criterion: "Task Response",
+    description:
+      "Band 0 to 9: addresses all parts of the task (both views and a clear opinion) with relevant, extended and supported ideas",
+  },
+  {
+    criterion: "Coherence and Cohesion",
+    description:
+      "Band 0 to 9: logical organization, clear paragraphing and a range of cohesive devices used appropriately",
+  },
+  {
+    criterion: "Lexical Resource",
+    description:
+      "Band 0 to 9: range and precision of vocabulary, collocation, spelling and word formation",
+  },
+  {
+    criterion: "Grammatical Range and Accuracy",
+    description:
+      "Band 0 to 9: range of structures and how many sentences are free of grammar and punctuation errors",
+  },
+];
+
+const AP_LANG_PROMPT = `AP English Language and Composition, argument essay (original practice question). Many schools have banned students from using phones during the school day. Write an essay that argues your position on whether schools should ban phones during the school day.`;
+
+const AP_LANG_RUBRIC = [
+  {
+    criterion: "Thesis",
+    description: "Responds to the prompt with a defensible thesis that presents a position.",
+    points: 1,
+  },
+  {
+    criterion: "Evidence and commentary",
+    description:
+      "4 points for specific evidence that supports all claims in a line of reasoning, with commentary that consistently explains how the evidence supports it; 3 for specific evidence with commentary that explains most of it; 2 for some specific evidence with commentary that explains some of it or mostly restates it; 1 for mostly general evidence with summary instead of commentary.",
+    points: 4,
+  },
+  {
+    criterion: "Sophistication",
+    description:
+      "Demonstrates sophistication of thought or a complex understanding of the rhetorical situation, such as explaining the significance of the argument in a broader context or the tensions in it.",
+    points: 1,
   },
 ];
 
@@ -259,6 +309,7 @@ export const TEST_CASES: TestCase<GradeEssayExpected, GradeEssayInput>[] = [
   {
     expected: {
       feedbackLanguage: "en",
+      feedbackMentions: ["250"],
       nextStepCriteria: ["criterion-1"],
       totalBand: { max: 26, min: 18 },
       zeroReason: null,
@@ -268,32 +319,7 @@ export const TEST_CASES: TestCase<GradeEssayExpected, GradeEssayInput>[] = [
       essay: OTHER_ESSAYS.ieltsFreeUniversity,
       language: "en",
       prompt: IELTS_PROMPT,
-      rubric: {
-        criteria: [
-          {
-            criterion: "Task Response",
-            description:
-              "Band 0 to 9: addresses all parts of the task (both views and a clear opinion) with relevant, extended and supported ideas",
-          },
-          {
-            criterion: "Coherence and Cohesion",
-            description:
-              "Band 0 to 9: logical organization, clear paragraphing and a range of cohesive devices used appropriately",
-          },
-          {
-            criterion: "Lexical Resource",
-            description:
-              "Band 0 to 9: range and precision of vocabulary, collocation, spelling and word formation",
-          },
-          {
-            criterion: "Grammatical Range and Accuracy",
-            description:
-              "Band 0 to 9: range of structures and how many sentences are free of grammar and punctuation errors",
-          },
-        ],
-        kind: "custom",
-        maxScore: 36,
-      },
+      rubric: { criteria: IELTS_CRITERIA, kind: "custom", maxScore: 36 },
     },
   },
   {
@@ -340,6 +366,36 @@ export const TEST_CASES: TestCase<GradeEssayExpected, GradeEssayInput>[] = [
       language: "pt",
       prompt: AP_HISTORY_PROMPT,
       rubric: { criteria: AP_HISTORY_RUBRIC, kind: "ap" },
+    },
+  },
+  {
+    expected: {
+      feedbackLanguage: "en",
+      nextStepCriteria: ["criterion-1", "criterion-2", "criterion-3", "criterion-4"],
+      totalBand: { max: 33, min: 27 },
+      zeroReason: null,
+    },
+    id: "ielts-task-2-remote-work-strong-en",
+    userInput: {
+      essay: EN_ESSAYS.ieltsRemoteWork,
+      language: "en",
+      prompt: IELTS_REMOTE_PROMPT,
+      rubric: { criteria: IELTS_CRITERIA, kind: "custom", maxScore: 36 },
+    },
+  },
+  {
+    expected: {
+      feedbackLanguage: "en",
+      nextStepCriteria: ["criterion-2", "criterion-3"],
+      totalBand: { max: 3, min: 2 },
+      zeroReason: null,
+    },
+    id: "ap-english-language-phones-argument-en",
+    userInput: {
+      essay: EN_ESSAYS.apLangPhones,
+      language: "en",
+      prompt: AP_LANG_PROMPT,
+      rubric: { criteria: AP_LANG_RUBRIC, kind: "ap" },
     },
   },
 ];

@@ -8,17 +8,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -65,17 +65,17 @@
         {
           "conclusion": "Next step on c1, expected one of c2, c3, c5.",
           "kind": "majorErrors",
-          "score": 9.6
+          "score": 9.64
         },
         {
           "conclusion": "Next step on c1, expected one of c2, c3, c5.",
           "kind": "minorErrors",
-          "score": 9.6
+          "score": 9.64
         },
         {
           "conclusion": "Next step on c1, expected one of c2, c3, c5.",
           "kind": "potentialImprovements",
-          "score": 9.6
+          "score": 9.64
         }
       ],
       "testCase": {
@@ -118,17 +118,17 @@
         {
           "conclusion": "Total 640 (range 600–680), expected 320–600.",
           "kind": "majorErrors",
-          "score": 9.33
+          "score": 9.43
         },
         {
           "conclusion": "Total 640 (range 600–680), expected 320–600.",
           "kind": "minorErrors",
-          "score": 9.33
+          "score": 9.43
         },
         {
           "conclusion": "Total 640 (range 600–680), expected 320–600.",
           "kind": "potentialImprovements",
-          "score": 9.33
+          "score": 9.43
         }
       ],
       "testCase": {
@@ -208,17 +208,17 @@
         {
           "conclusion": "Next step on c1, expected one of c2, c3, c5.",
           "kind": "majorErrors",
-          "score": 9.6
+          "score": 9.64
         },
         {
           "conclusion": "Next step on c1, expected one of c2, c3, c5.",
           "kind": "minorErrors",
-          "score": 9.6
+          "score": 9.64
         },
         {
           "conclusion": "Next step on c1, expected one of c2, c3, c5.",
           "kind": "potentialImprovements",
-          "score": 9.6
+          "score": 9.64
         }
       ],
       "testCase": {
@@ -373,17 +373,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 6 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
+          "conclusion": "All 7 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
+          "conclusion": "All 7 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
+          "conclusion": "All 7 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -391,6 +391,9 @@
       "testCase": {
         "expected": {
           "feedbackLanguage": "en",
+          "feedbackMentions": [
+            "250"
+          ],
           "nextStepCriteria": [
             "criterion-1"
           ],
@@ -615,6 +618,136 @@
                 "criterion": "Analysis and reasoning",
                 "description": "1 point for using historical reasoning (causation, comparison or continuity and change) to frame or structure an argument; 2 points for demonstrating a complex understanding, such as explaining multiple causes or effects, both change and continuity, or nuance by analyzing multiple variables.",
                 "points": 2
+              }
+            ],
+            "kind": "ap"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 32.5 (range 28.9–36), expected 27–33.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 32.5 (range 28.9–36), expected 27–33.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 32.5 (range 28.9–36), expected 27–33.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "en",
+          "nextStepCriteria": [
+            "criterion-1",
+            "criterion-2",
+            "criterion-3",
+            "criterion-4"
+          ],
+          "totalBand": {
+            "max": 33,
+            "min": 27
+          },
+          "zeroReason": null
+        },
+        "id": "ielts-task-2-remote-work-strong-en-1",
+        "userInput": {
+          "essay": "In recent years, many companies have allowed their staff to work from home for part or all of the week. While some people argue that this arrangement benefits both employees and employers, others believe that it weakens teamwork and productivity. In my view, remote work brings more advantages than disadvantages, provided that companies manage it carefully.\n\nOn the one hand, critics point out that working from home can isolate employees. Junior staff, in particular, may miss the informal advice they would pick up by sitting next to experienced colleagues, and spontaneous conversations that often lead to new ideas become less frequent. Moreover, some managers find it harder to monitor performance when their team is not in the office, which can lead to misunderstandings about workload and deadlines.\n\nOn the other hand, the benefits for employees are considerable. Without a daily commute, workers save time and money, and many report a better balance between their professional and family lives. For companies, remote work widens the pool of applicants, since they are no longer limited to candidates who live near the office, and it can reduce the cost of renting large premises. Several studies have also found that people who work from home take fewer sick days.\n\nIn my opinion, the problems of isolation and supervision can largely be solved through good organisation. Regular video meetings, clear goals and occasional days in the office allow teams to keep the advantages of flexibility while maintaining the personal contact that new employees need.\n\nIn conclusion, although remote work presents some challenges for collaboration, I believe that its advantages for both workers and businesses outweigh them, as long as employers adapt the way they lead their teams.",
+          "language": "en",
+          "prompt": "IELTS Academic Writing Task 2. Write at least 250 words.\nSome people think that working from home benefits both employees and companies, while others believe it harms teamwork and productivity. Discuss both views and give your own opinion.",
+          "rubric": {
+            "criteria": [
+              {
+                "criterion": "Task Response",
+                "description": "Band 0 to 9: addresses all parts of the task (both views and a clear opinion) with relevant, extended and supported ideas"
+              },
+              {
+                "criterion": "Coherence and Cohesion",
+                "description": "Band 0 to 9: logical organization, clear paragraphing and a range of cohesive devices used appropriately"
+              },
+              {
+                "criterion": "Lexical Resource",
+                "description": "Band 0 to 9: range and precision of vocabulary, collocation, spelling and word formation"
+              },
+              {
+                "criterion": "Grammatical Range and Accuracy",
+                "description": "Band 0 to 9: range of structures and how many sentences are free of grammar and punctuation errors"
+              }
+            ],
+            "kind": "custom",
+            "maxScore": 36
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 3 (range 2–4), expected 2–3.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 3 (range 2–4), expected 2–3.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 3 (range 2–4), expected 2–3.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "en",
+          "nextStepCriteria": [
+            "criterion-2",
+            "criterion-3"
+          ],
+          "totalBand": {
+            "max": 3,
+            "min": 2
+          },
+          "zeroReason": null
+        },
+        "id": "ap-english-language-phones-argument-en-1",
+        "userInput": {
+          "essay": "Phones have become a normal part of every teenager's life, and many schools now ban them during the school day. I believe schools should ban phones during class, because phones distract students and make it harder to learn.\n\nFirst, phones are very distracting. When a phone buzzes, students want to check it right away. In my school, many students look at their phones under the desk during class, and then they miss what the teacher says. Studies show that students who use their phones in class get lower grades. This shows that phones are bad for learning.\n\nSecond, phones can cause problems between students. Some students use social media to make fun of other students or to share pictures without permission. If phones are banned, this will happen less during the day, and students will feel safer at school.\n\nSome people say that students need phones for emergencies. However, schools have phones in the office, and parents can call the school if something happens. So this is not a good reason to allow phones in class.\n\nIn conclusion, schools should ban phones during the school day. Phones distract students and cause problems, and students can still be reached in an emergency. Banning phones will help students focus and learn better.",
+          "language": "en",
+          "prompt": "AP English Language and Composition, argument essay (original practice question). Many schools have banned students from using phones during the school day. Write an essay that argues your position on whether schools should ban phones during the school day.",
+          "rubric": {
+            "criteria": [
+              {
+                "criterion": "Thesis",
+                "description": "Responds to the prompt with a defensible thesis that presents a position.",
+                "points": 1
+              },
+              {
+                "criterion": "Evidence and commentary",
+                "description": "4 points for specific evidence that supports all claims in a line of reasoning, with commentary that consistently explains how the evidence supports it; 3 for specific evidence with commentary that explains most of it; 2 for some specific evidence with commentary that explains some of it or mostly restates it; 1 for mostly general evidence with summary instead of commentary.",
+                "points": 4
+              },
+              {
+                "criterion": "Sophistication",
+                "description": "Demonstrates sophistication of thought or a complex understanding of the rhetorical situation, such as explaining the significance of the argument in a broader context or the tensions in it.",
+                "points": 1
               }
             ],
             "kind": "ap"

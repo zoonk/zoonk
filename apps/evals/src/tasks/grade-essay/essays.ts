@@ -84,6 +84,28 @@ Belo Horizonte, data.
 Advogado, OAB n.º...`,
 };
 
+export const EN_ESSAYS = {
+  apLangPhones: `Phones have become a normal part of every teenager's life, and many schools now ban them during the school day. I believe schools should ban phones during class, because phones distract students and make it harder to learn.
+
+First, phones are very distracting. When a phone buzzes, students want to check it right away. In my school, many students look at their phones under the desk during class, and then they miss what the teacher says. Studies show that students who use their phones in class get lower grades. This shows that phones are bad for learning.
+
+Second, phones can cause problems between students. Some students use social media to make fun of other students or to share pictures without permission. If phones are banned, this will happen less during the day, and students will feel safer at school.
+
+Some people say that students need phones for emergencies. However, schools have phones in the office, and parents can call the school if something happens. So this is not a good reason to allow phones in class.
+
+In conclusion, schools should ban phones during the school day. Phones distract students and cause problems, and students can still be reached in an emergency. Banning phones will help students focus and learn better.`,
+
+  ieltsRemoteWork: `In recent years, many companies have allowed their staff to work from home for part or all of the week. While some people argue that this arrangement benefits both employees and employers, others believe that it weakens teamwork and productivity. In my view, remote work brings more advantages than disadvantages, provided that companies manage it carefully.
+
+On the one hand, critics point out that working from home can isolate employees. Junior staff, in particular, may miss the informal advice they would pick up by sitting next to experienced colleagues, and spontaneous conversations that often lead to new ideas become less frequent. Moreover, some managers find it harder to monitor performance when their team is not in the office, which can lead to misunderstandings about workload and deadlines.
+
+On the other hand, the benefits for employees are considerable. Without a daily commute, workers save time and money, and many report a better balance between their professional and family lives. For companies, remote work widens the pool of applicants, since they are no longer limited to candidates who live near the office, and it can reduce the cost of renting large premises. Several studies have also found that people who work from home take fewer sick days.
+
+In my opinion, the problems of isolation and supervision can largely be solved through good organisation. Regular video meetings, clear goals and occasional days in the office allow teams to keep the advantages of flexibility while maintaining the personal contact that new employees need.
+
+In conclusion, although remote work presents some challenges for collaboration, I believe that its advantages for both workers and businesses outweigh them, as long as employers adapt the way they lead their teams.`,
+};
+
 export const AP_ANSWERS = {
   biologyEnzymes: `(a) The independent variable is the temperature of the water bath.
 
