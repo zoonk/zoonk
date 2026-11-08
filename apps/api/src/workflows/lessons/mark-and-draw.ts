@@ -59,17 +59,46 @@ export async function markAndDraw({
   ]);
 
   const runs = { lessonId, marksRunId: marks.runId, picturesRunId: pictures.runId };
+  const deadline = sleep(new Date(opensAt));
+  const read = (previous?: MarksAndPictures) => readSettled({ lessonId, previous, runs });
 
-  const last = await repeatUntil<MarksAndPictures>({
-    done: (settled) => (settled.marked && settled.drawn) || Date.now() >= opensAt,
-    run: async (previous) => {
-      await sleep(SETTLE_POLL_MS);
-      const settled = await readMarksAndPicturesStep(runs);
-      await reportSettled({ lessonId, previous, settled });
-      return settled;
-    },
-    times: MAX_SETTLE_POLLS,
-  });
+  // A failed child settles the wait as an ended one does.
+  const afterMarks = await Promise.race([marks.returnValue.catch(() => null), deadline]).then(() =>
+    read(),
+  );
+
+  const afterPictures = await Promise.race([pictures.returnValue.catch(() => null), deadline]).then(
+    () => read(afterMarks),
+  );
+
+  const done = (settled: MarksAndPictures) =>
+    (settled.marked && settled.drawn) || Date.now() >= opensAt;
+
+  // Both runs ended, but an icon another lesson's run draws can still be drawing.
+  const last = done(afterPictures)
+    ? afterPictures
+    : await repeatUntil<MarksAndPictures>({
+        done,
+        run: async (previous = afterPictures) => {
+          await sleep(SETTLE_POLL_MS);
+          return read(previous);
+        },
+        times: MAX_SETTLE_POLLS,
+      });
 
   await reportSettled({ lessonId, previous: last, settled: { drawn: true, marked: true } });
+}
+
+async function readSettled({
+  lessonId,
+  previous,
+  runs,
+}: {
+  lessonId: string;
+  previous?: MarksAndPictures;
+  runs: Parameters<typeof readMarksAndPicturesStep>[0];
+}): Promise<MarksAndPictures> {
+  const settled = await readMarksAndPicturesStep(runs);
+  await reportSettled({ lessonId, previous, settled });
+  return settled;
 }

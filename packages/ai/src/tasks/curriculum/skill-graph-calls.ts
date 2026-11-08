@@ -23,7 +23,7 @@ import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-sy
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
-const courseSchema = z.object({
+export const courseSchema = z.object({
   key: z.string(),
   levels: z.array(z.enum(COURSE_LEVELS)),
   title: z.string(),
@@ -31,7 +31,7 @@ const courseSchema = z.object({
 
 const phaseSchema = z.object({ milestone: z.string(), title: z.string() });
 
-const skillSchema = z.object({
+export const skillSchema = z.object({
   area: z.string(),
   course: z.string(),
   description: z.string(),
@@ -214,6 +214,11 @@ function buildUserPrompt({ params, part }: { params: SkillGraphParams; part: Gra
   ].filter(Boolean);
 
   return `\n${parts.join("\n\n")}\n  `;
+}
+
+/** What a call that writes part of a learn goal's path reads about the goal, as the graph reads it. */
+export function formatGoalPrompt(params: SkillGraphParams): string {
+  return buildUserPrompt({ params, part: { kind: "whole" } });
 }
 
 async function writePart<TOutput>({

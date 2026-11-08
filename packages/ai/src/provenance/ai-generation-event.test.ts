@@ -98,4 +98,18 @@ describe(toAiGenerationEvent, () => {
       service_tier: "flex",
     });
   });
+
+  it("keeps the clock and the tier and speed actually served on the same event", () => {
+    const { properties } = toAiGenerationEvent({
+      provenance: { ...provenance, serviceTier: "priority", speed: "fast" },
+      task: "lesson-writer",
+    });
+
+    expect(properties).toMatchObject({
+      completed_at: Date.parse(provenance.generatedAt),
+      service_tier: "priority",
+      speed: "fast",
+      started_at: Date.parse(provenance.generatedAt) - provenance.latencyMs,
+    });
+  });
 });

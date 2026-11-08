@@ -94,21 +94,28 @@ describe(trackOnboardingProgress, () => {
     const user = await userFixture();
     mockSession(user.id);
     const onboardingId = crypto.randomUUID();
+
     const language = await goalFixture({
       details: { onboardingId, reason: "Pass IELTS" },
       kind: "language",
       targetLanguage: "en",
       userId: user.id,
     });
+
     const pending: Parameters<typeof after>[0][] = [];
+
     vi.mocked(after).mockImplementation((work) => {
       pending.push(work);
     });
+
     const moved = await moveLanguageGoalToExam(language.id);
+
     if (moved.status !== "moved") {
       throw new Error("Expected an exam goal");
     }
+
     await Promise.all(pending.map((work) => (typeof work === "function" ? work() : work)));
+
     expect(analytics.trackServerEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         properties: expect.objectContaining({

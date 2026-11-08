@@ -56,6 +56,7 @@ export function toAiGenerationEvent({
     prompt_version: provenance.promptVersion,
     requested_model: provenance.requestedModel,
     service_tier: provenance.serviceTier,
+    speed: provenance.speed,
     started_at: Date.parse(provenance.generatedAt) - provenance.latencyMs,
     task,
     ...extraProperties,

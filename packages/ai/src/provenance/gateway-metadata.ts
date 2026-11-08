@@ -12,6 +12,8 @@ type GatewayGenerationMetadata = {
   servedProvider?: string;
   /** `flex` or `priority`; unset for the standard tier. */
   serviceTier?: string;
+  /** `fast` only when the gateway served the call fast; unset at the standard speed. */
+  speed?: "fast";
 };
 
 const jsonObjectSchema = z.record(z.string(), z.unknown());
@@ -79,5 +81,6 @@ export function readGatewayMetadata(
     servedModel: served?.canonicalSlug,
     servedProvider: z.string().safeParse(routing?.finalProvider).data,
     serviceTier: servedTierSchema.safeParse(gateway?.serviceTier).data,
+    speed: z.literal("fast").safeParse(routing?.speed).data,
   };
 }
