@@ -9,6 +9,8 @@ import { type StreamEvent, followRun } from "./generation-run";
 import { continueToLastStep } from "./result-steps";
 import { answerRight, createStudyDay, openAs, pressUntil, writeStudyLesson } from "./study-day";
 
+const WAITING_CHECK_MS = 5000;
+
 async function expectMoment(page: Page, title: string) {
   await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
 }
@@ -268,6 +270,63 @@ test.describe("Today's session", () => {
     await expect(writing).toBeVisible();
     await expect(start).toHaveCount(0);
     expect(asked).toStrictEqual(["POST"]);
+
+    await page.context().close();
+  });
+
+  test("a lesson whose writing failed checks only its readiness until Try again's run takes it", async ({
+    browser,
+  }) => {
+    const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
+
+    const page = await openAs(browser, user);
+    const { asked, runId } = await acceptLessonWriting(page);
+    const reads = { readiness: 0, session: 0 };
+
+    page.on("request", (request) => {
+      const url = new URL(request.url());
+      const headers = request.headers();
+
+      if (url.pathname.endsWith(`/v1/library/lessons/${lesson.id}/readiness`)) {
+        reads.readiness += 1;
+      }
+
+      if (url.pathname === "/session" && headers.rsc && !headers["next-router-prefetch"]) {
+        reads.session += 1;
+      }
+    });
+
+    await page.clock.install();
+    await page.goto("/session");
+    const retry = page.getByRole("button", { name: "Try again" });
+    await expect(page.getByText("This didn't finish")).toBeVisible();
+    await expectHydrated(retry);
+
+    // Each check sets its next one once its read answers, so the clock moves until two have run.
+    await expect(async () => {
+      await page.clock.runFor(WAITING_CHECK_MS);
+      expect(reads.readiness).toBeGreaterThanOrEqual(2);
+    }).toPass({ timeout: 10_000 });
+
+    expect(reads.session).toBe(0);
+
+    await retry.click();
+    await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
+    expect(asked).toStrictEqual(["POST"]);
+
+    // The run takes the lesson in its workflow's first step, after the request that started it.
+    await prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: lesson.id },
+    });
+
+    const writing = page.getByRole("progressbar", { name: "Writing your lesson" });
+
+    await expect(async () => {
+      await page.clock.runFor(WAITING_CHECK_MS);
+      await expect(writing).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 15_000 });
 
     await page.context().close();
   });
