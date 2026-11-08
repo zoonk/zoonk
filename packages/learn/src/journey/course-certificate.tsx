@@ -17,7 +17,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useCertificateLevel } from "../certificates/certificate-labels";
+import { keepLevelTogether, useCertificateLevel } from "../certificates/certificate-labels";
 import { SlotContent } from "../plan/plan-suggestion-context";
 
 /**
@@ -125,7 +125,7 @@ function useCompleteTitle(unclaimed: PlanCertificates["unclaimed"]): string {
       description:
         "A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end",
       message: "{level} complete",
-      values: { level },
+      values: { level: keepLevelTogether(level) },
     });
   }
 

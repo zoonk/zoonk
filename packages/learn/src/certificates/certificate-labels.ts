@@ -8,6 +8,8 @@ import { useLevelName } from "../course/use-level-name";
 
 const MINUTES_PER_HOUR = 60;
 
+const WORD_JOINER = "\u2060";
+
 type NamedLevel = Pick<CertificateFacts, "cefrRange" | "courseLevel">;
 
 type NamedFacts = NamedLevel & Pick<CertificateFacts, "title">;
@@ -17,6 +19,14 @@ export function roundStudyMinutes(minutes: number): number {
   return minutes < MINUTES_PER_HOUR
     ? minutes
     : Math.round(minutes / MINUTES_PER_HOUR) * MINUTES_PER_HOUR;
+}
+
+/**
+ * Browsers may break a line after a dash, which splits a CEFR range ("A1–" / "A2") in a title. Only
+ * for titles: a name the learner copies must not carry the invisible joiner.
+ */
+export function keepLevelTogether(level: string): string {
+  return level.replaceAll("–", `–${WORD_JOINER}`);
 }
 
 export function useCertificateLevel() {
