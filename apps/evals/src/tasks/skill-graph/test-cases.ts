@@ -364,6 +364,54 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   {
     expectations: `
       - MUST be in US English
+      - A curious adult wants the big picture of black holes: one overview course in plain words, about 10 to 25 skills and one phase
+      - The learner's first lesson already teaches FIRST_SKILL: the graph starts with it exactly as given (key, name, description, level, course), with no prerequisites, and every other skill comes after it
+      - No other skill teaches what FIRST_SKILL teaches under another name (such as a second skill on what an event horizon is); skills that build on it list it as a prerequisite
+    `,
+    id: "en-black-holes-first-skill",
+    userInput: {
+      firstSkill: {
+        course: { key: "astronomy", title: "Astronomy" },
+        description:
+          "Describe a black hole as a region where gravity is so strong that nothing, not even light, can escape once inside its event horizon.",
+        key: "explain-black-holes",
+        level: "overview",
+        name: "Explain black holes and event horizons",
+      },
+      goal: "Understand black holes",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "none",
+      purpose: "overview",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Someone who works in accounting, at a basic level, wants to get better at it for their job: the skills Brazilian accounting work uses, in the order the job needs them, taken from canonical courses, including using AI tools well for that work
+      - The learner's first lesson already teaches FIRST_SKILL: the graph starts with it exactly as given (key, name, description, level, course), with no prerequisites, and every other skill comes after it
+      - No other skill teaches what FIRST_SKILL teaches under another name (such as a second skill on the patrimonial equation); skills that build on it, such as recording entries by partidas dobradas, list it as a prerequisite
+    `,
+    id: "pt-accounting-work-first-skill",
+    userInput: {
+      firstSkill: {
+        course: { key: "contabilidade", title: "Contabilidade" },
+        description:
+          "Identificar como cada transação altera ativos, passivos e patrimônio líquido, mantendo a equação patrimonial equilibrada.",
+        key: "analisar-transacoes-equacao-patrimonial",
+        level: "beginner",
+        name: "Analisar transações pela equação patrimonial",
+      },
+      goal: "Contabilidade",
+      goalKind: "learn",
+      language: "pt",
+      ownLevel: "basic",
+      purpose: "work",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
       - An adult beginner wants to study economics in depth
       - Begin with economic choices, scarcity, opportunity cost and everyday markets, rather than a separate mathematics or statistics course
       - Retain quantitative depth: place algebra, calculus and statistics just before the economic methods that use them, rather than in a complete math block after the opening, plus microeconomics, macroeconomics, econometrics and policy
