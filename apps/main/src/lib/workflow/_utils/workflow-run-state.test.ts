@@ -72,6 +72,18 @@ describe(workflowRunReducer, () => {
     expect(run([{ runIds: [], type: "restart" }], dealt).warmUpId).toBe("deck");
   });
 
+  it("keeps the word that the goal's deck won't come through a start over, so no skeleton comes back", () => {
+    const failed = run([
+      event({ status: "completed", step: "warmUpFailed" }),
+      event({ status: "started", step: "buildSkillGraph" }),
+      event({ status: "error", step: "buildSkillGraph" }),
+    ]);
+
+    expect(run([{ runIds: ["failed-run"], type: "restart" }], failed).steps).toStrictEqual({
+      warmUpFailed: "completed",
+    });
+  });
+
   it("keeps the first lesson the run writes, ready once it reports so, through a replay", () => {
     const writing = event({
       lessonId: "lesson",
