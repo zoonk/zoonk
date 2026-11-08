@@ -2,8 +2,10 @@ import "server-only";
 import { getExtracted } from "next-intl/server";
 import { formatCount } from "./certificate-format";
 import {
+  type FactsFit,
   type SheetCovered,
   getCoveredFallbacks,
+  getFactsFit,
   getLinkOverflow,
   getPostOverflow,
   getSheetOverflow,
@@ -143,6 +145,7 @@ function shrinkUntil({
 
 export type FittedSheet = {
   covered: SheetCovered;
+  facts: FactsFit;
   moreTopics: string | null;
   name: ShapedText;
   title: ShapedText;
@@ -185,15 +188,17 @@ export async function fitSheet({
   const shaping = { locale, scale, view };
   const name = getName(shaping, SHEET.name);
   const title = getTitle(shaping, SHEET.title);
+  const facts = getFactsFit(view);
 
   const [nameShaped, titleShaped] = await Promise.all([
     shapeSpec({ ...name, scale: shaping.scale, spec: SHEET.name }),
     shapeSpec({ ...title, scale: shaping.scale, spec: SHEET.title }),
   ]);
 
-  const overflow = (parts: Omit<FittedSheet, "moreTopics">) =>
+  const overflow = (parts: Omit<FittedSheet, "facts" | "moreTopics">) =>
     getSheetOverflow({
       covered: parts.covered,
+      facts,
       finePrint: view.finePrint,
       labelledGraph: view.graph.label !== null,
       nameHeight: parts.name.blockHeight / shaping.scale,
@@ -221,6 +226,7 @@ export async function fitSheet({
 
   return {
     covered,
+    facts,
     moreTopics: await getMoreTopics({ covered, locale, view }),
     name: fittedName,
     title: fittedTitle,

@@ -8,16 +8,18 @@ import { SHARE, SHEET, lineBox } from "./certificate-spec";
 
 const SHEET_CONTENT_HEIGHT = SHEET.height / (SHEET.width / SHEET.units) - SHEET.marginY * 2;
 
+const SHEET_CONTENT_WIDTH = SHEET.units - SHEET.marginX * 2;
+
 export const TOPIC_COLUMN_WIDTH =
   (SHEET.topics.width - SHEET.topics.columnGap * (SHEET.topics.columns - 1)) / SHEET.topics.columns;
 
 const TOPIC_TEXT_WIDTH = TOPIC_COLUMN_WIDTH - SHEET.topics.check - SHEET.topics.checkGap;
 
-/** Wide scripts take a full em; Geist's Latin averages a little over half of one. */
+/** Wide scripts take a full em; Geist's Latin averages a little over half of one, Geist Mono's 0.6. */
 const WIDE_CHARACTER =
   /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}＀-￯]/u;
 
-const EM_WIDTH = { narrow: 0.56, wide: 1 };
+const EM_WIDTH = { mono: 0.6, narrow: 0.56, wide: 1 };
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
@@ -76,32 +78,85 @@ function getCoveredHeight(covered: SheetCovered): number {
   return SHEET.covered.above + label + SHEET.covered.listGap + list;
 }
 
-function getFooterHeight(finePrint: string): number {
+type Fact = { label: string; value: string };
+
+/** What the verify block and the QR code leave the facts and the fine print, in u. */
+function getFactsColumnWidth({
+  displayUrl,
+  verifyLabel,
+}: {
+  displayUrl: string;
+  verifyLabel: string;
+}): number {
+  const { footer } = SHEET;
+
+  const verifyWidth = Math.max(
+    countEms({ narrow: EM_WIDTH.narrow, text: verifyLabel }) * footer.labelSize,
+    countEms({ narrow: EM_WIDTH.mono, text: displayUrl }) * footer.verifySize,
+  );
+
+  return SHEET_CONTENT_WIDTH - verifyWidth - footer.qr - footer.columnGap * 2;
+}
+
+function getFactWidth(fact: Fact): number {
+  const { footer } = SHEET;
+
+  return Math.max(
+    countEms({ narrow: EM_WIDTH.narrow, text: fact.label }) * footer.labelSize,
+    countEms({ narrow: EM_WIDTH.mono, text: fact.value }) * footer.valueSize,
+  );
+}
+
+export type FactsFit = { column: number; gap: number; scale: number };
+
+/** Facts wider than their column close their gaps to the footer's column gap, then shrink. */
+export function getFactsFit({
+  displayUrl,
+  facts,
+  verifyLabel,
+}: {
+  displayUrl: string;
+  facts: readonly Fact[];
+  verifyLabel: string;
+}): FactsFit {
+  const { columnGap, factGap } = SHEET.footer;
+  const column = getFactsColumnWidth({ displayUrl, verifyLabel });
+  const gaps = facts.length - 1;
+  const textWidth = facts.reduce((sum, fact) => sum + getFactWidth(fact), 0);
+  const spare = (column - textWidth) / Math.max(gaps, 1);
+  const gap = Math.min(factGap, Math.max(columnGap, spare));
+
+  return { column, gap, scale: Math.min(1, (column - gap * gaps) / textWidth) };
+}
+
+function getFooterHeight({ facts, finePrint }: { facts: FactsFit; finePrint: string }): number {
   const { footer } = SHEET;
 
   const finePrintLines = estimateLines({
     fontSize: footer.finePrintSize,
     text: finePrint,
-    width: footer.finePrintWidth,
+    width: Math.min(footer.finePrintWidth, facts.column),
   });
 
-  const facts = lineBox(footer.labelSize) + footer.factLabelGap + lineBox(footer.valueSize);
+  const factsHeight = lineBox(footer.labelSize) + footer.factLabelGap + lineBox(footer.valueSize);
 
   const finePrintHeight =
     finePrintLines * lineBox(footer.finePrintSize, footer.finePrintLineHeight);
 
-  return Math.max(footer.qr, facts + footer.finePrintGap + finePrintHeight);
+  return Math.max(footer.qr, factsHeight + footer.finePrintGap + finePrintHeight);
 }
 
 /** How far the sheet's parts run past its content box, in u; zero or less fits. */
 export function getSheetOverflow({
   covered,
+  facts,
   finePrint,
   labelledGraph,
   nameHeight,
   titleHeight,
 }: {
   covered: SheetCovered;
+  facts: FactsFit;
   finePrint: string;
   labelledGraph: boolean;
   nameHeight: number;
@@ -115,7 +170,10 @@ export function getSheetOverflow({
     SHEET.meta.above + SHEET.meta.chipHeight,
     getCoveredHeight(covered),
     SHEET.graph.above + getGraphHeight(labelledGraph),
-    SHEET.footer.above + SHEET.footer.rule + SHEET.footer.ruleGap + getFooterHeight(finePrint),
+    SHEET.footer.above +
+      SHEET.footer.rule +
+      SHEET.footer.ruleGap +
+      getFooterHeight({ facts, finePrint }),
   ].reduce((sum, part) => sum + part, 0);
 
   return height - SHEET_CONTENT_HEIGHT;

@@ -107,38 +107,47 @@ function SheetMeta({ px, view }: { px: Scale; view: CertificateView }) {
   );
 }
 
-function SheetFacts({ px, view }: { px: Scale; view: CertificateView }) {
+function SheetFacts({
+  facts,
+  px,
+  view,
+}: {
+  facts: FittedSheet["facts"];
+  px: Scale;
+  view: CertificateView;
+}) {
   const { footer } = SHEET;
+  const factPx: Scale = (value) => px(value * facts.scale);
 
   return (
     <div
       style={{ display: "flex", flexBasis: 0, flexDirection: "column", flexGrow: 1, minWidth: 0 }}
     >
-      <div style={{ display: "flex", gap: px(footer.factGap) }}>
-        {view.facts.map((fact) => (
+      <div style={{ display: "flex", gap: px(facts.gap) }}>
+        {view.facts.map(({ label, value }) => (
           <div
-            key={fact.label}
-            style={{ display: "flex", flexDirection: "column", gap: px(footer.factLabelGap) }}
+            key={label}
+            style={{ display: "flex", flexDirection: "column", gap: factPx(footer.factLabelGap) }}
           >
             <span
               style={{
                 color: CERTIFICATE_COLORS.muted,
-                fontSize: px(footer.labelSize),
+                fontSize: factPx(footer.labelSize),
                 fontWeight: 500,
               }}
             >
-              {fact.label}
+              {label}
             </span>
             <span
               style={{
                 fontFamily: "Geist Mono",
-                fontSize: px(footer.valueSize),
+                fontSize: factPx(footer.valueSize),
                 fontWeight: 500,
                 letterSpacing: 0,
                 whiteSpace: "nowrap",
               }}
             >
-              {fact.value}
+              {value}
             </span>
           </div>
         ))}
@@ -159,7 +168,15 @@ function SheetFacts({ px, view }: { px: Scale; view: CertificateView }) {
   );
 }
 
-function SheetFooter({ px, view }: { px: Scale; view: CertificateView }) {
+function SheetFooter({
+  facts,
+  px,
+  view,
+}: {
+  facts: FittedSheet["facts"];
+  px: Scale;
+  view: CertificateView;
+}) {
   const { footer } = SHEET;
 
   return (
@@ -173,7 +190,7 @@ function SheetFooter({ px, view }: { px: Scale; view: CertificateView }) {
         paddingTop: px(footer.ruleGap),
       }}
     >
-      <SheetFacts px={px} view={view} />
+      <SheetFacts facts={facts} px={px} view={view} />
 
       <div
         style={{
@@ -259,7 +276,7 @@ export function CertificateSheet({
         <CertificateGraph route={SHEET.route} scale={scale} showLabels view={view} />
       </div>
 
-      <SheetFooter px={px} view={view} />
+      <SheetFooter facts={fitted.facts} px={px} view={view} />
     </div>
   );
 }
