@@ -1380,6 +1380,33 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
+      - Checks are planned like that exam's items: at least two have the learner judge a statement right or wrong, each brief giving the statement and its verdict
+      - At least one statement to judge is right, and it's one candidates are tempted to reject, not an obvious truth (a regression: production's plan, 8 Nov 2026, planned three statements to judge and made all three wrong, "Gabarito: Errado; distrator: Certo", as did 47 of 48 such checks that day, so a candidate could answer "Errado" without reading)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-desigualdades-territoriais-verdicts",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["Oportunidades e resultados desiguais", "Efeitos distributivos das políticas"],
+        before: ["Interseccionalidade das desigualdades"],
+      }),
+      chapterTitle: "Desigualdades e distribuição de oportunidades",
+      courseTitle: "Administração Pública",
+      exams: MOBILITY_LESSON.exams,
+      language: "pt",
+      lessonCanDo: "Analisar como o território condiciona o acesso a oportunidades",
+      lessonDescription:
+        "Localização, infraestrutura e oferta de serviços influenciam as oportunidades entre regiões e dentro das cidades.",
+      lessonTitle: "Desigualdades territoriais",
+      level: "intermediate",
+      skills: ["Analisar desigualdades territoriais"],
+    },
+  },
+  {
+    expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner organizing the household's money
       - The visuals mix kinds, as the idea on each screen needs: sorting expenses into categories is a template to explore or an activity (\`categorize\`), and a picture shows the story's object where seeing it helps (a receipt with items of different kinds); a plan where every visual is a table fails (a regression: an earlier plan used tables for 13 of 17 visuals across this course)
       - Two teaching screens in a row never show tables with the same columns (a regression: an earlier plan showed an item-to-category table on three teaching screens in a row)
