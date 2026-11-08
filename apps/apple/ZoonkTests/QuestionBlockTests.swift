@@ -139,8 +139,10 @@ final class QuestionBlockRunTests: XCTestCase {
 
     seconds = 30
     await run.submit(.choice(0))
+    XCTAssertEqual(run.state.saveFailures, 1)
     seconds = 90
     await run.submit(.choice(0))
+    XCTAssertEqual(run.state.saveFailures, 2)
     seconds = 100
     await run.submit(.choice(1))
 

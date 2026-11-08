@@ -326,7 +326,7 @@ struct QuestionBlockView: View {
     case .finishReady:
       PracticeMainButton(title: finishTitle, icon: .forward) { Task { await run.finish() } }
     case .finishFailed:
-      PracticeSaveError { Task { await run.finish() } }
+      PracticeSaveError(failures: run.state.saveFailures) { Task { await run.finish() } }
     case .finishing, .finished:
       EmptyView()
     case .feedback(_, let feedback):
@@ -337,7 +337,7 @@ struct QuestionBlockView: View {
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed = phase {
-        PracticeSaveError { Task { await run.retryAnswer() } }
+        PracticeSaveError(failures: run.state.saveFailures) { Task { await run.retryAnswer() } }
       }
 
       if run.drillStage == .idea {

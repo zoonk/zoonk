@@ -70,8 +70,14 @@ final class MistakePracticeStateTests: XCTestCase {
     state.answerFailed()
     XCTAssertEqual(state.phase, .answerFailed(sent))
     XCTAssertTrue(state.acceptsAnswer)
+    XCTAssertEqual(state.saveFailures, 1)
+    state.check(sent)
+    XCTAssertEqual(state.saveFailures, 1)
+    state.answerFailed()
+    XCTAssertEqual(state.saveFailures, 2)
 
     answer(&state, .choice(1), grade: makeGrade(isCorrect: true))
+    XCTAssertEqual(state.saveFailures, 0)
     state.next()
     XCTAssertEqual(state.phase, .ending)
   }

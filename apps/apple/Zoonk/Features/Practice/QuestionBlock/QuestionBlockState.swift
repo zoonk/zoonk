@@ -56,6 +56,7 @@ struct NetTally: Equatable {
 /// `answers` holds this visit's grades; the block's own `answered` marks the ones saved before it,
 /// so a reload still counts a blank as neither right nor wrong.
 struct QuestionBlockState: Equatable {
+  private(set) var saveFailures = 0
   private(set) var answers: [String: PracticeAnsweredMark] = [:]
   private(set) var hyperdrive = 1
   private(set) var index: Int
@@ -80,6 +81,7 @@ struct QuestionBlockState: Equatable {
   }
 
   mutating func answered(_ answer: PracticeAnswer, feedback: PracticeFeedback, itemId: String) {
+    saveFailures = 0
     answers[itemId] = PracticeAnsweredMark(blank: feedback.blank, isCorrect: feedback.isCorrect)
     hyperdrive = feedback.hyperdrive.level
     phase = .feedback(answer: answer, feedback: feedback)
@@ -87,10 +89,12 @@ struct QuestionBlockState: Equatable {
 
   mutating func answerFailed() {
     guard case .checking(let sent) = phase else { return }
+    saveFailures += 1
     phase = .answerFailed(sent)
   }
 
   mutating func alreadyAnswered() {
+    saveFailures = 0
     phase = .alreadyAnswered
   }
 
@@ -104,10 +108,12 @@ struct QuestionBlockState: Equatable {
   }
 
   mutating func finishFailed() {
+    saveFailures += 1
     phase = .finishFailed
   }
 
   mutating func finished(_ completion: Components.Schemas.StudyBlockCompletion) {
+    saveFailures = 0
     phase = .finished(completion)
   }
 

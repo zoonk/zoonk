@@ -80,9 +80,11 @@ struct LessonCompletionView: View {
       ProgressView()
     case .failed:
       Text(
-        "We couldn't save this lesson. Try again in a moment. Nothing you did was lost.",
-        tableName: "Player",
-        comment: "Saving a finished lesson failed"
+        completion.saveFailures > 1
+          ? PracticeSaveError.repeatedMessage
+          : LocalizedStringResource(
+            "We couldn't save this lesson. Try again in a moment. Nothing you did was lost.",
+            table: "Player", comment: "Saving a finished lesson failed")
       )
       .foregroundStyle(.mutedForeground)
     case .saved:

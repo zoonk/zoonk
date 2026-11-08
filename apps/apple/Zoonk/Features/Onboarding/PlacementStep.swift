@@ -15,7 +15,8 @@ struct PlacementStep: View {
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
-  @State private var failed = false
+  @State private var saveFailures = 0
+  @State private var failedAnswer: SentAnswer?
   @State private var waitRound = 0
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
   @State private var shown = (answered: 0, spent: 0.0)
@@ -129,7 +130,7 @@ struct PlacementStep: View {
     case .question(let question, let labels):
       PlacementQuestionScreen(
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
-        labels: labels, isSaving: isSaving, failed: failed,
+        labels: labels, isSaving: isSaving, failures: saveFailures,
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
@@ -197,7 +198,7 @@ struct PlacementStep: View {
   }
 
   @ViewBuilder private var saveFailure: some View {
-    if failed {
+    if saveFailures > 0, !isSaving {
       Section {
         FailureLine(
           message: LocalizedStringResource(
@@ -464,7 +465,9 @@ struct PlacementStep: View {
     }
 
     isSaving = true
-    failed = false
+    let sent = SentAnswer(
+      answer: answer, sender: answer.isDontKnow ? .notSure : .check,
+      measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
 
     Task {
       defer { isSaving = false }
@@ -472,12 +475,15 @@ struct PlacementStep: View {
       do {
         let result = try await onboarding.answerPlacement(
           goalID: view.goal.id, itemID: question.itemId, answer: answer,
-          duration: shownAt.duration(to: .now))
+          duration: .milliseconds(sent.durationMs))
+        saveFailures = 0
+        failedAnswer = nil
         shown.answered += 1
         show(result.placement)
       } catch is CancellationError {
       } catch {
-        failed = true
+        failedAnswer = sent
+        saveFailures += 1
       }
     }
   }
@@ -488,7 +494,6 @@ struct PlacementStep: View {
     }
 
     isSaving = true
-    failed = false
 
     Task {
       defer { isSaving = false }
@@ -504,15 +509,16 @@ struct PlacementStep: View {
         switch stopped {
         case .done:
           try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: false)
+          saveFailures = 0
           try await onDone()
         case .failed:
-          failed = true
+          saveFailures += 1
         case .obsolete:
           break
         }
       } catch is CancellationError {
       } catch {
-        failed = true
+        saveFailures += 1
       }
     }
   }
@@ -523,17 +529,17 @@ struct PlacementStep: View {
     }
 
     isSaving = true
-    failed = false
 
     Task {
       defer { isSaving = false }
 
       do {
         try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
+        saveFailures = 0
         try await onDone()
       } catch is CancellationError {
       } catch {
-        failed = true
+        saveFailures += 1
       }
     }
   }
@@ -551,12 +557,15 @@ struct PlacementQuestionScreen<Media: View>: View {
     "I don't know yet", table: "Onboarding",
     comment: "Answers a placement question without guessing")
   let isSaving: Bool
-  let failed: Bool
+  let failures: Int
   let onAnswer: (PracticeAnswer) -> Void
   let onStop: () -> Void
   @ViewBuilder var media: () -> Media
 
   @State private var draft: PracticeAnswer?
+  @State private var submission: Submission?
+
+  private enum Submission { case confirm, dontKnow, stop }
 
   var body: some View {
     PracticeTaskLayout {
@@ -583,38 +592,44 @@ struct PlacementQuestionScreen<Media: View>: View {
     } response: {
       asked.response
 
-      if failed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Onboarding",
-            comment: "A change couldn't be saved"))
+      if failures > 0, !isSaving {
+        FailureLine(message: PracticeSaveError.message(failures: failures))
       }
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        icon: .check, isBusy: isSaving, isDisabled: draft?.complete == nil
+        icon: .check, isBusy: isSaving && submission == .confirm,
+        isDisabled: isSaving || draft?.complete == nil
       ) {
         if let answer = draft?.complete {
+          submission = .confirm
           onAnswer(answer)
         }
       }
 
       PracticeSecondaryButton(
-        title: dontKnowLabel, icon: .notSure, isDisabled: isSaving
+        title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+        isDisabled: isSaving
       ) {
+        submission = .dontKnow
         onAnswer(.dontKnow)
       }
 
-      Button(action: onStop) {
+      BusyButton(isBusy: isSaving && submission == .stop) {
+        submission = .stop
+        onStop()
+      } label: {
         Text("Stop here and see my plan", tableName: "Onboarding", comment: "Ends placement early")
       }
-      .disabled(isSaving)
+      .disabled(isSaving && submission != .stop)
     }
   }
 
   private var asked: PracticeQuestionView {
-    PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+    PracticeQuestionView(question: question, labels: labels, isLocked: isSaving, draft: $draft) {
+      answer in
+      submission = .confirm
       onAnswer(answer)
     }
   }
@@ -628,13 +643,14 @@ extension PlacementQuestionScreen where Media == EmptyView {
     question: PracticeQuestion,
     labels: PracticeTrueFalseLabels,
     isSaving: Bool,
-    failed: Bool,
+    failures: Int,
     onAnswer: @escaping (PracticeAnswer) -> Void,
     onStop: @escaping () -> Void
   ) {
     self.init(
       subject: subject, number: number, progress: progress, question: question, labels: labels,
-      isSaving: isSaving, failed: failed, onAnswer: onAnswer, onStop: onStop, media: { EmptyView() }
+      isSaving: isSaving, failures: failures, onAnswer: onAnswer, onStop: onStop,
+      media: { EmptyView() }
     )
   }
 }

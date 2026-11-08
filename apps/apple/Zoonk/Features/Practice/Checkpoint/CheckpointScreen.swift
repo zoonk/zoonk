@@ -174,7 +174,7 @@ struct CheckpointScreen: View {
       }
     } actions: {
       if state.failure != nil {
-        PracticeSaveError { Task { await retry() } }
+        PracticeSaveError(failures: state.saveFailures) { Task { await retry() } }
       }
 
       if feedback != nil {

@@ -319,15 +319,13 @@ struct PracticeSecondaryButton: View {
 }
 
 struct PracticeSaveError: View {
+  let failures: Int
   let retry: () -> Void
 
   var body: some View {
     HStack {
       FailureLine(
-        message: LocalizedStringResource(
-          "Your answer wasn't saved. Check your connection.", table: "Practice",
-          comment:
-            "Shown over a run's actions when an answer or the finish didn't reach the server.")
+        message: Self.message(failures: failures)
       )
       .typeStyle(.body)
 
@@ -338,6 +336,19 @@ struct PracticeSaveError: View {
       }
       .buttonStyle(.outline)
     }
+  }
+
+  static let repeatedMessage = LocalizedStringResource(
+    "Still not going through. You can come back later.", table: "Practice",
+    comment: "Second or later save failure in a row; the learner can retry or return later")
+
+  static func message(failures: Int) -> LocalizedStringResource {
+    failures > 1
+      ? repeatedMessage
+      : LocalizedStringResource(
+        "That didn't go through. Your answers are kept.", table: "Practice",
+        comment: "An answer or finish didn't reach the server; the learner's answers stay on screen"
+      )
   }
 }
 

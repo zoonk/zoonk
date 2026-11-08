@@ -62,7 +62,7 @@ private struct EssayContent: View {
   @Environment(\.dismiss) private var dismiss
   @State private var writer: EssayWriter
   @State private var finishing = false
-  @State private var finishFailed = false
+  @State private var finishFailures = 0
   @State private var confirmsLeave = false
   @State private var openCriteria: Set<String> = []
   @FocusState private var isBoxFocused: Bool
@@ -305,16 +305,20 @@ private struct EssayContent: View {
   @ViewBuilder
   private var statusLine: some View {
     Group {
-      if finishFailed {
+      if finishFailures > 0, !finishing {
         FailureLine(
-          message: LocalizedStringResource(
-            "That didn't go through. Try again in a moment.", table: "Essay",
-            comment: "Finishing the block failed"))
+          message: finishFailures > 1
+            ? PracticeSaveError.repeatedMessage
+            : LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Essay",
+              comment: "Finishing the block failed"))
       } else if writer.status == .failed {
         FailureLine(
-          message: LocalizedStringResource(
-            "That didn't go through. Your text is still here. Try again in a moment.",
-            table: "Essay", comment: "Grading failed"))
+          message: writer.saveFailures > 1
+            ? PracticeSaveError.repeatedMessage
+            : LocalizedStringResource(
+              "That didn't go through. Your text is still here. Try again in a moment.",
+              table: "Essay", comment: "Grading failed"))
       } else if writer.isWriting, writer.status == .signUpRequired {
         HelpLimitNotice(limit: .signUpRequired)
       } else if let statusNote {
@@ -330,7 +334,7 @@ private struct EssayContent: View {
   }
 
   private var statusNote: String? {
-    guard !finishFailed, writer.status != .failed else {
+    guard finishFailures == 0, writer.status != .failed else {
       return nil
     }
 
@@ -359,7 +363,6 @@ private struct EssayContent: View {
 
   private func finish() async {
     finishing = true
-    finishFailed = false
     defer { finishing = false }
     let essay = essay
 
@@ -371,10 +374,11 @@ private struct EssayContent: View {
       })
     {
     case .done:
+      finishFailures = 0
       writer.didFinish()
       dismiss()
     case .failed:
-      finishFailed = true
+      finishFailures += 1
     case .obsolete:
       break
     }
