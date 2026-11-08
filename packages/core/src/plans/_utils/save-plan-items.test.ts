@@ -182,6 +182,58 @@ describe(savePlanItems, () => {
     ]);
   });
 
+  it("keeps the size a learner tested out of while it resizes the stand-ins still to do", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const [plan, known, left] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      skillFixture(),
+      skillFixture(),
+    ]);
+
+    const [knownItem, leftItem] = await Promise.all([
+      planItemFixture({
+        lessons: 9,
+        planId: plan.id,
+        position: 0,
+        skillId: known.id,
+        status: "testedOut",
+      }),
+      planItemFixture({ lessons: 4, planId: plan.id, position: 1, skillId: left.id }),
+    ]);
+
+    const readVersion = async () => {
+      const [row] = await prisma.$queryRaw<{ version: string }[]>`
+        SELECT xmin::text AS version FROM plan_items WHERE id = ${knownItem.id}::uuid`;
+
+      return row?.version;
+    };
+
+    const before = await readVersion();
+
+    await prisma.$transaction((tx) =>
+      savePlanItems({
+        existing: [knownItem, leftItem],
+        items: [knownItem, leftItem],
+        planId: plan.id,
+        standInLessons: new Map([
+          [known.id, 1],
+          [left.id, 2],
+        ]),
+        tx,
+      }),
+    );
+
+    const saved = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: { planId: plan.id },
+    });
+
+    expect(saved.map((item) => item.lessons)).toStrictEqual([9, 2]);
+    await expect(readVersion()).resolves.toBe(before);
+  });
+
   it("writes only the rows a save changes", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });

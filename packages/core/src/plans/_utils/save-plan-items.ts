@@ -38,7 +38,8 @@ async function findLessonFinishes({
 }
 
 /**
- * Kept items keep their status, so a lesson finished while the plan was computed stays finished. A
+ * Kept items keep their status, so a lesson finished while the plan was computed stays finished,
+ * and a finished stand-in keeps its size: it records what the learner studied or tested out of. A
  * moving row goes past both its old and new positions first: Postgres checks the plan's unique
  * positions row by row.
  */
@@ -96,7 +97,7 @@ export async function savePlanItems({
         scheduled_for = v.scheduled_for,
         chapter_id = v.chapter_id,
         skill_id = v.skill_id,
-        lessons = v.lessons,
+        lessons = CASE WHEN p.status IN ('done', 'tested_out') THEN p.lessons ELSE v.lessons END,
         minutes = v.minutes,
         facts = v.facts::jsonb,
         title_snapshot = v.title_snapshot,
@@ -124,7 +125,7 @@ export async function savePlanItems({
         AND (
           (p.position, p.phase, p.scheduled_for, p.chapter_id, p.skill_id, p.lessons, p.minutes, p.facts, p.title_snapshot)
             IS DISTINCT FROM
-          (v.position, v.phase::smallint, v.scheduled_for, v.chapter_id, v.skill_id, v.lessons, v.minutes, v.facts::jsonb, v.title_snapshot)
+          (v.position, v.phase::smallint, v.scheduled_for, v.chapter_id, v.skill_id, CASE WHEN p.status IN ('done', 'tested_out') THEN p.lessons ELSE v.lessons END, v.minutes, v.facts::jsonb, v.title_snapshot)
           OR (v.set_aside AND p.status = 'todo')
           OR (v.to_do AND p.status = 'skipped')
         )`;
