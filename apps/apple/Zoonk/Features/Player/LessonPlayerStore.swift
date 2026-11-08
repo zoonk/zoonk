@@ -172,7 +172,11 @@ final class LessonPlayerStore {
       return kept.work
     }
 
-    let work = ActivityWork()
+    let work = ActivityWork { [weak self] in
+      if self?.state?.answers[stepId] == nil {
+        self?.state?.select(.draft, for: stepId)
+      }
+    }
     works[stepId] = (round, work)
     return work
   }
@@ -642,7 +646,7 @@ final class LessonPlayerStore {
   /// spoken answers (and activities graded only by the server) wait for the server.
   func check(gradeActivity: ((ActivityStepContent, ActivityAnswer) -> Bool)? = nil) async {
     guard let state, state.phase == .playing, let step = state.currentStep,
-      let answer = state.answers[step.id]
+      let answer = state.currentAnswer
     else {
       return
     }

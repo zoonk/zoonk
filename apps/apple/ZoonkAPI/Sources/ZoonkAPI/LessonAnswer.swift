@@ -13,6 +13,8 @@ public enum LessonAnswer: Codable, Hashable, Sendable {
     }
   }
 
+  /// Local work without a checkable answer; never sent to the API.
+  case draft
   case hookGuess(optionId: String)
   case check(optionId: String)
   case typedAnswer(text: String)
@@ -34,17 +36,17 @@ public enum LessonAnswer: Codable, Hashable, Sendable {
 
   /// A hook's guess is the player's alone: the server never records it.
   public var isRecorded: Bool {
-    if case .hookGuess = self {
-      return false
+    switch self {
+    case .draft, .hookGuess: false
+    default: true
     }
-
-    return true
   }
 
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     switch try container.decode(String.self, forKey: .kind) {
+    case "draft": self = .draft
     case "check": self = .check(optionId: try container.decode(String.self, forKey: .optionId))
     case "typedAnswer": self = .typedAnswer(text: try container.decode(String.self, forKey: .text))
     case "spokenAnswer":
@@ -77,6 +79,8 @@ public enum LessonAnswer: Codable, Hashable, Sendable {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {
+    case .draft:
+      try container.encode("draft", forKey: .kind)
     case .hookGuess(let optionId):
       try container.encode("hook", forKey: .kind)
       try container.encode(optionId, forKey: .optionId)

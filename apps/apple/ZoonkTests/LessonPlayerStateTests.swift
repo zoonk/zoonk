@@ -352,6 +352,22 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .feedback)
   }
 
+  func testCantWriteNowCountsAsTouchedBeforeTheRunStarts() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try step(typedAnswer), try step(explanation), try step(check(id: "check"))])
+    state.skipWriting()
+
+    state.startRun(
+      runId: "run", answers: [.init(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "explanation")
+    XCTAssertTrue(state.answers.isEmpty == false)
+    state.restoreWriting()
+    XCTAssertEqual(state.currentStep?.id, "typed")
+    XCTAssertNil(state.currentAnswer)
+  }
+
   func testCantWriteNowKeepsItsChoiceAndUndoWhenTheRunResumes() throws {
     var state = LessonPlayerState(
       lessonId: "lesson",

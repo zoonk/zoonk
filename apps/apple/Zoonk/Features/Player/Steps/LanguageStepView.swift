@@ -878,7 +878,6 @@ private struct MatchColumnsView: View {
         GridRow {
           Button {
             pickedLeft = index
-            context.select(.matchColumns(userPairs: matched, mistakes: mistakes))
           } label: {
             Text(pairs[index].left)
               .frame(maxHeight: .infinity, alignment: .topLeading)

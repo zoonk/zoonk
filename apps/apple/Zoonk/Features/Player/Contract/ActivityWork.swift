@@ -9,6 +9,11 @@ import SwiftUI
 @Observable
 final class ActivityWork {
   private var values: [String: any Sendable] = [:]
+  private let changed: () -> Void
+
+  init(changed: @escaping () -> Void = {}) {
+    self.changed = changed
+  }
 
   func value<Value>(_ key: String) -> Value? {
     values[key] as? Value
@@ -20,6 +25,7 @@ final class ActivityWork {
     }
 
     values[key] = value
+    changed()
   }
 }
 

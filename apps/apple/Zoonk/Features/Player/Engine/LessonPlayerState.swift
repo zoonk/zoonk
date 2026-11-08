@@ -121,7 +121,7 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   var currentAnswer: LessonAnswer? {
-    currentStep.flatMap { answers[$0.id] }
+    currentStep.flatMap { answers[$0.id] }.flatMap { $0 == .draft ? nil : $0 }
   }
 
   var currentResult: LessonStepResult? {
@@ -192,7 +192,7 @@ struct LessonPlayerState: Equatable, Sendable {
       return false
     }
 
-    return answers[step.id] == nil
+    return currentAnswer == nil
   }
 
   /// "I already know this" ends on the result: a learner who passed every check skips the map.
@@ -261,7 +261,7 @@ struct LessonPlayerState: Equatable, Sendable {
   /// "Explain first" on a question that comes before its explanation.
   var canExplainFirst: Bool {
     guard phase == .playing, quickCheck == nil, !isRefused, let step = currentStep,
-      step.isQuestion, answers[step.id] == nil
+      step.isQuestion, currentAnswer == nil
     else {
       return false
     }
@@ -334,7 +334,7 @@ struct LessonPlayerState: Equatable, Sendable {
       return
     }
 
-    answers[stepId] = answer
+    answers[stepId] = answer ?? .draft
   }
 
   mutating func continueLesson(now: Date = .now) {
@@ -440,6 +440,10 @@ struct LessonPlayerState: Equatable, Sendable {
 
     guard !ahead.isEmpty else {
       return
+    }
+
+    if !opening, let stepId = currentStep?.id, answers[stepId] == nil {
+      answers[stepId] = .draft
     }
 
     let restore = WritingRestore(
