@@ -99,7 +99,16 @@ struct WaitQuiz: View {
       .listRowBackground(Color.clear)
     }
     .listRowSeparator(.hidden)
-    .task(id: dealt.deck.id) { visit.show(dealt.deck, card: dealt.position, goalID: goalID) }
+    .task(id: dealt.deck.id) {
+      visit.show(dealt.deck, card: dealt.position)
+
+      if warmUps.claimShown(deckID: dealt.deck.id) {
+        UsageAnalytics.track(
+          .warmUpShown(
+            surface: visit.surface, cardCount: dealt.deck.cards.count, deckID: dealt.deck.id,
+            goalID: goalID, at: .now))
+      }
+    }
     .onChange(of: dealt.position) { focusesQuestion = true }
   }
 

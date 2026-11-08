@@ -32,7 +32,7 @@ struct WarmUpAPI: WarmUpAPIClient {
 
 /// A goal's decks of guesses for its waits, and the first card the learner hasn't guessed in each
 /// for this app session, so every later wait (placement, the time question, the first lesson) goes
-/// on from there.
+/// on from there. Each deck counts as shown once in that session, whichever wait shows it first.
 @MainActor
 @Observable
 final class WarmUpStore {
@@ -40,8 +40,9 @@ final class WarmUpStore {
   private static let deckMaxAge = Duration.seconds(24 * 60 * 60)
 
   private var unguessed: [String: Int] = [:]
-  /// Whose guesses `unguessed` counts: another learner starts each deck over.
+  /// Whose decks these are: another learner starts each deck over.
   private var owner: AuthenticatedSession?
+  @ObservationIgnored private var shown: Set<String> = []
 
   @ObservationIgnored private let api: any WarmUpAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -76,13 +77,23 @@ final class WarmUpStore {
 
   /// Two windows can deal from one deck, so a guess never sends it back.
   func guessed(card: Int, deckID: String) {
+    followSession()
+    unguessed[deckID] = max(unguessed[deckID] ?? 0, card + 1)
+  }
+
+  /// True the first time a card of the deck is on screen: Warm-Up Shown is sent then.
+  func claimShown(deckID: String) -> Bool {
+    followSession()
+    return shown.insert(deckID).inserted
+  }
+
+  private func followSession() {
     let current = cache.session.authenticatedSession
 
     if owner != current {
       unguessed = [:]
+      shown = []
       owner = current
     }
-
-    unguessed[deckID] = max(unguessed[deckID] ?? 0, card + 1)
   }
 }

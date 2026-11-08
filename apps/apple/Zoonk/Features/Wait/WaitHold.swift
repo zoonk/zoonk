@@ -28,7 +28,8 @@ final class WaitVisit {
   private(set) var page: Page?
   /// The progress pushed over the quiz; every Back pops it.
   var showsProgress = false
-  @ObservationIgnored private(set) var shownDeck: String?
+  /// A card was on this wait's screen, so once it's ready the learner gets a quiet second to finish.
+  @ObservationIgnored private(set) var showedCard = false
   @ObservationIgnored fileprivate var isTouched = false
   /// A touch ending, or the moment the wait ended: the screen moves on one quiet second later.
   @ObservationIgnored fileprivate var stirredAt = ContinuousClock.now
@@ -53,19 +54,12 @@ final class WaitVisit {
     isEngaged = true
   }
 
-  func show(_ deck: WarmUpDeck, card: Int, goalID: String?) {
+  func show(_ deck: WarmUpDeck, card: Int) {
     if dealt?.deckID != deck.id {
       deal(card, deckID: deck.id)
     }
 
-    guard shownDeck == nil else {
-      return
-    }
-
-    shownDeck = deck.id
-    UsageAnalytics.track(
-      .warmUpShown(
-        surface: surface, cardCount: deck.cards.count, deckID: deck.id, goalID: goalID, at: .now))
+    showedCard = true
   }
 
   /// Only the first pick counts: the answer shows at once.
@@ -183,7 +177,7 @@ struct WaitHold<Content: View>: View {
 
     if visit.isEngaged {
       hold()
-    } else if visit.shownDeck == nil {
+    } else if !visit.showedCard {
       moveOn()
     } else {
       visit.stirredAt = .now
