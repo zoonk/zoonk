@@ -119,7 +119,13 @@ function ReadChapterMap({
       {view === null && <RowSkeleton title={chapter.title} />}
       {view === "unreachable" && <Unreachable onRetry={onRetry} title={chapter.title} />}
       {view !== null && view !== "unreachable" && (
-        <MindMapRow actions={actions} place="finish" plus={plus} view={view} />
+        <MindMapRow
+          actions={actions}
+          onViewChange={setView}
+          place="finish"
+          plus={plus}
+          view={view}
+        />
       )}
     </section>
   );

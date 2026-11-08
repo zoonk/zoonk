@@ -1,6 +1,10 @@
 "use client";
 
-import { type GoalMindMapView, type GoalMindMapsView } from "@zoonk/core/mind-maps/contract";
+import {
+  type ChapterMindMapView,
+  type GoalMindMapView,
+  type GoalMindMapsView,
+} from "@zoonk/core/mind-maps/contract";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
@@ -13,10 +17,12 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { useServedState } from "../_utils/use-served-state";
 import { LearnPageBar } from "../shell/learn-bar";
 import { type MindMapActions } from "./mind-map-actions";
 import { MindMapRow } from "./mind-map-row";
 
+export type { MindMapLimit } from "../_components/help-limit-notice";
 export type { MindMapActions, MindMapRequestOutcome } from "./mind-map-actions";
 
 type MapGroup = { key: string; maps: GoalMindMapView[]; name: string | null };
@@ -31,13 +37,28 @@ function groupBySubject(chapters: readonly GoalMindMapView[]): MapGroup[] {
   }));
 }
 
+/** A chapter that can no longer have a map leaves the list. */
+function withMap(chapters: readonly GoalMindMapView[], next: ChapterMindMapView) {
+  return chapters.flatMap((chapter): GoalMindMapView[] => {
+    const { status } = next;
+
+    if (chapter.chapterId !== next.chapterId) {
+      return [chapter];
+    }
+
+    return status === "unavailable" ? [] : [{ ...chapter, ...next, status }];
+  });
+}
+
 function MapSection({
   actions,
   group,
+  onViewChange,
   plus,
 }: {
   actions: MindMapActions;
   group: MapGroup;
+  onViewChange: (view: ChapterMindMapView) => void;
   plus: boolean;
 }) {
   const t = useExtracted();
@@ -55,7 +76,13 @@ function MapSection({
       <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
         {group.maps.map((mindMap) => (
           <li key={mindMap.chapterId}>
-            <MindMapRow actions={actions} place="library" plus={plus} view={mindMap} />
+            <MindMapRow
+              actions={actions}
+              onViewChange={onViewChange}
+              place="library"
+              plus={plus}
+              view={mindMap}
+            />
           </li>
         ))}
       </ul>
@@ -75,13 +102,16 @@ export function MindMapsScreen({
   plus: boolean;
 }) {
   const t = useExtracted();
-  const groups = groupBySubject(mindMaps.chapters);
-  const ready = mindMaps.chapters.filter((chapter) => chapter.status === "ready").length;
+  const [chapters, setChapters] = useServedState(mindMaps.chapters);
+  const groups = groupBySubject(chapters);
+  const ready = chapters.filter((chapter) => chapter.status === "ready").length;
 
-  const locked = mindMaps.chapters.some((chapter) => chapter.status === "plusRequired");
+  const locked = chapters.some((chapter) => chapter.status === "plusRequired");
 
-  const writesLessons = mindMaps.chapters.some(
-    (chapter) => chapter.status === "available" && chapter.lessonsToWrite > 0,
+  const writesLessons = chapters.some(
+    (chapter) =>
+      chapter.lessonsToWrite > 0 &&
+      (chapter.status === "available" || chapter.status === "writingLessons"),
   );
 
   return (
@@ -126,7 +156,13 @@ export function MindMapsScreen({
 
       <DetailContent>
         {groups.map((group) => (
-          <MapSection actions={actions} group={group} key={group.key} plus={plus} />
+          <MapSection
+            actions={actions}
+            group={group}
+            key={group.key}
+            onViewChange={(next) => setChapters((current) => withMap(current, next))}
+            plus={plus}
+          />
         ))}
       </DetailContent>
     </DetailLayout>

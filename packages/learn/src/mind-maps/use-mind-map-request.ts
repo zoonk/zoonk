@@ -11,58 +11,52 @@ const WRITING_POLL_MS = 15_000;
 
 export type MindMapShown = MindMapStatus | "refused" | "unreachable";
 
-type Local = { limit?: MindMapLimit; shown: MindMapShown };
+/** What only this device knows: the server keeps no refusal, and can't say it wasn't reached. */
+type Local = { limit?: MindMapLimit; shown: "refused" | "unreachable" };
 
-function getServedKey(view: ChapterMindMapView): string {
-  return `${view.status}:${view.image?.url ?? ""}`;
-}
-
-function getShownAfterRequest(outcome: Exclude<MindMapRequestOutcome, { status: "refused" }>) {
-  if (outcome.status === "failed") {
-    return "unreachable";
-  }
-
-  return outcome.status === "unavailable" ? "failed" : outcome.status;
-}
-
-/** Follows the map from the tap until it's ready, then reads it, so the row needs no page reload. */
+/**
+ * Follows the map from the tap until it's ready, then reads it. The caller owns `view`, so what it
+ * derives from its maps (a count, a notice) changes with the row.
+ */
 export function useMindMapRequest({
   actions,
-  view: served,
+  onViewChange,
+  view,
 }: {
   actions: MindMapActions;
+  onViewChange: (view: ChapterMindMapView) => void;
   view: ChapterMindMapView;
 }) {
-  const [view, setView] = useState(served);
-  const [servedKey, setServedKey] = useState(() => getServedKey(served));
   const [local, setLocal] = useState<Local | null>(null);
+  const [localView, setLocalView] = useState(view);
   const [isPending, startTransition] = useTransition();
+  const { chapterId, status } = view;
 
-  if (getServedKey(served) !== servedKey) {
-    setServedKey(getServedKey(served));
-    setView(served);
+  if (localView !== view) {
+    setLocalView(view);
     setLocal(null);
   }
 
-  const shown = local?.shown ?? view.status;
-  const { chapterId } = view;
+  const showStatus = (next: MindMapStatus) => {
+    if (next !== status) {
+      onViewChange({ ...view, status: next });
+    }
+  };
 
   const showReady = async (): Promise<boolean> => {
     const next = await actions.read(chapterId).catch(() => null);
 
-    if (!next) {
-      return false;
+    if (next) {
+      onViewChange(next);
     }
 
-    setView(next);
-    setLocal(null);
-    return true;
+    return next !== null;
   };
 
   const poll = usePoll({
-    active: shown === "drawing" || shown === "writingLessons",
-    intervalMs: shown === "writingLessons" ? WRITING_POLL_MS : DRAWING_POLL_MS,
-    key: shown,
+    active: local === null && (status === "drawing" || status === "writingLessons"),
+    intervalMs: status === "writingLessons" ? WRITING_POLL_MS : DRAWING_POLL_MS,
+    key: status,
     onPoll: async () => {
       const next = await actions.readStatus(chapterId);
 
@@ -70,13 +64,30 @@ export function useMindMapRequest({
         throw new Error("The map couldn't be read.");
       }
 
-      if (next !== "ready" && next !== shown) {
-        setLocal({ shown: next });
+      if (next !== "ready") {
+        showStatus(next);
       }
     },
     // The server turns a run that stops reporting into `failed`; writing lessons can outlast any limit here.
     timeoutMs: Number.POSITIVE_INFINITY,
   });
+
+  const settle = async (outcome: MindMapRequestOutcome) => {
+    if (outcome.status === "refused") {
+      setLocal({ limit: outcome.limit, shown: "refused" });
+      return;
+    }
+
+    if (outcome.status === "failed" || (outcome.status === "ready" && !(await showReady()))) {
+      setLocal({ shown: "unreachable" });
+      return;
+    }
+
+    if (outcome.status !== "ready") {
+      setLocal(null);
+      showStatus(outcome.status === "unavailable" ? "failed" : outcome.status);
+    }
+  };
 
   const create = () =>
     startTransition(async () => {
@@ -84,19 +95,7 @@ export function useMindMapRequest({
         .request(chapterId)
         .catch((): MindMapRequestOutcome => ({ status: "failed" }));
 
-      if (outcome.status === "ready") {
-        if (!(await showReady())) {
-          setLocal({ shown: "unreachable" });
-        }
-
-        return;
-      }
-
-      setLocal(
-        outcome.status === "refused"
-          ? { limit: outcome.limit, shown: "refused" }
-          : { shown: getShownAfterRequest(outcome) },
-      );
+      await settle(outcome);
     });
 
   const isStuck = poll.status === "failed";
@@ -106,7 +105,6 @@ export function useMindMapRequest({
     isPending,
     limit: local?.limit ?? null,
     retry: isStuck ? poll.restart : create,
-    shown: isStuck ? "unreachable" : shown,
-    view,
+    shown: isStuck ? "unreachable" : (local?.shown ?? status),
   };
 }

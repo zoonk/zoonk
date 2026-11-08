@@ -18,6 +18,7 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components
 import { SectionLabel } from "../_components/section-label";
 import { SkillList } from "../_components/skill-list";
 import { TestOutStartRow } from "../_components/test-out-start-link";
+import { useServedState } from "../_utils/use-served-state";
 import { type MindMapActions } from "../mind-maps/mind-map-actions";
 import { MindMapRow } from "../mind-maps/mind-map-row";
 import {
@@ -38,6 +39,24 @@ type ChapterMindMap = { actions: MindMapActions; plus: boolean; view: ChapterMin
 const PRACTICE_TITLE_ID = "chapter-practice-title";
 const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
+
+function ChapterMapRow({ mindMap }: { mindMap: ChapterMindMap }) {
+  const [view, setView] = useServedState(mindMap.view);
+
+  if (view.status === "unavailable") {
+    return null;
+  }
+
+  return (
+    <MindMapRow
+      actions={mindMap.actions}
+      onViewChange={setView}
+      place="chapter"
+      plus={mindMap.plus}
+      view={view}
+    />
+  );
+}
 
 function ChapterSummary({
   renderLessonText,
@@ -155,14 +174,7 @@ function ChapterBody({
     >
       <DetailAside>
         <ChapterHeader />
-        {mindMap && mindMap.view.status !== "unavailable" && (
-          <MindMapRow
-            actions={mindMap.actions}
-            place="chapter"
-            plus={mindMap.plus}
-            view={mindMap.view}
-          />
-        )}
+        {mindMap && <ChapterMapRow mindMap={mindMap} />}
       </DetailAside>
 
       <DetailContent>

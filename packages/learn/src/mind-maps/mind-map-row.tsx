@@ -236,11 +236,13 @@ function RowAction({
 /** The same row on the chapter page, at a chapter's end and on the Mind maps page. */
 export function MindMapRow({
   actions,
+  onViewChange,
   place,
   plus,
-  view: served,
+  view,
 }: {
   actions: MindMapActions;
+  onViewChange: (view: ChapterMindMapView) => void;
   place: MindMapRowPlace;
   plus: boolean;
   view: ChapterMindMapView;
@@ -249,8 +251,8 @@ export function MindMapRow({
   const routes = useLearnRoutes();
   const titleId = useId();
   const [open, setOpen] = useState(false);
-  const request = useMindMapRequest({ actions, view: served });
-  const { create, isPending, limit, retry, shown, view } = request;
+  const request = useMindMapRequest({ actions, onViewChange, view });
+  const { create, isPending, limit, retry, shown } = request;
   const input: RowCopyInput = { place, plus, shown, view };
   const ready = shown === "ready" && view.outline !== null;
 
