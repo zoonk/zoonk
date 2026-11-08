@@ -35,7 +35,10 @@ struct MistakesScreen: View {
       let showsFixedHere = showsFixed && !isBeside
       let shown = showsFixedHere ? fixed : open
 
-      ZoonkList {
+      ZoonkList(
+        readableWidth: isBeside ? nil : PracticeLayout.readableWidth,
+        alignment: isBeside ? .center : .leading
+      ) {
         if isBeside {
           listTitle(fixed: false, counts: open.value?.counts)
         }
@@ -55,7 +58,6 @@ struct MistakesScreen: View {
 
         MistakeListSections(resource: shown, goalId: goalId, fixed: showsFixedHere)
       }
-      .readableColumn(isBeside ? .infinity : PracticeLayout.readableWidth, alignment: .leading)
       .loads(shown)
     }
 

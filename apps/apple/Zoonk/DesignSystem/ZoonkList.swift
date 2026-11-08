@@ -8,6 +8,9 @@ import SwiftUI
 /// Rows are main's `ListRowContent`, at least 44pt high, rather than a plain list's 52pt. A row that
 /// sets its own insets keeps them.
 struct ZoonkList<Content: View>: View {
+  /// A page's own column, such as practice's narrower one, in place of the 768pt one.
+  var readableWidth: CGFloat?
+  var alignment = HorizontalAlignment.center
   @ViewBuilder let content: Content
 
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -25,7 +28,8 @@ struct ZoonkList<Content: View>: View {
     .listStyle(.plain)
     .listSectionSpacing(24)
     .environment(\.defaultMinListRowHeight, 44)
-    .readableColumn(horizontalSizeClass == .regular ? 768 : .infinity)
+    .readableColumn(
+      readableWidth ?? (horizontalSizeClass == .regular ? 768 : .infinity), alignment: alignment)
   }
 }
 

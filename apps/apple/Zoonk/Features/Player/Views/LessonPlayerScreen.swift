@@ -105,7 +105,8 @@ private struct LessonPlayerContent: View {
                   store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
               )
               // The lesson's column; on iPhone Duo, the page before the hinge.
-              .lonePage(readableWidth: 680)
+              .frame(maxWidth: 680)
+              .lonePage()
               .scenePadding(.horizontal)
               .padding(.bottom, 4)
             }
