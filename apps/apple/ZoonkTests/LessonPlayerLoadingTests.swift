@@ -132,6 +132,38 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.state?.currentStep?.id, "three")
   }
 
+  func testALessonFinishedWhileTheStartFailsCanRetryCompletion() async throws {
+    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    for _ in ["one", "two"] {
+      store.select(.check(optionId: "right"))
+      await store.check()
+      store.continueLesson()
+    }
+    XCTAssertEqual(store.state?.phase, .completed)
+    XCTAssertEqual(store.state?.completion?.status, .saving)
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    await transport.release()
+    await retrying.value
+    await waitUntil { store.held.isEmpty }
+    XCTAssertEqual(store.state?.runId, "run")
+    XCTAssertEqual(store.screen, .playing)
+    XCTAssertEqual(store.state?.phase, .completed)
+    await waitUntil { store.state?.completion?.status != .saving }
+    XCTAssertNotEqual(
+      store.state?.completion?.status, .saving,
+      "LessonCompletionView shows only a spinner and a disabled Continue while saving")
+  }
+
   func testAServerCheckShowsItIsCheckingWhileTheRunStarts() async throws {
     let transport = OpeningStartTransport(holds: true)
     let store = try openingPlayer(

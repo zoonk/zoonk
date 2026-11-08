@@ -808,7 +808,10 @@ final class LessonPlayerStore {
   }
 
   private func saveCompletion() async {
-    guard await ensureRun() else { return }
+    guard await ensureRun() else {
+      state?.completionFailed()
+      return
+    }
     let identity = identity
 
     guard let runId = state?.runId, let token = identity?.bearerToken else {
