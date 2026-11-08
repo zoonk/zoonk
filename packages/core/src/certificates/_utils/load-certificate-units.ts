@@ -13,9 +13,12 @@ import {
   type CertificateUnit,
   listCertificateUnits,
 } from "./certificate-units";
-import { loadGraphSkills } from "./graph-skills";
+import { loadSkillSizes } from "./skill-sizes";
 
-export type UnitGoal = Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "userId">;
+export type UnitGoal = Pick<
+  Goal,
+  "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "userId"
+>;
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {
   items: readonly Pick<
@@ -120,7 +123,7 @@ async function loadStandInLevels(
 }
 
 async function loadPlanSkills(db: TransactionClient, input: UnitInput) {
-  const graphSkills = await loadGraphSkills(input.plan.graph, db);
+  const graphSkills = await loadSkillSizes(input);
   return { graphSkills, standInLevels: await loadStandInLevels(db, { ...input, graphSkills }) };
 }
 

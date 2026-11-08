@@ -9,7 +9,7 @@ import { countLessons } from "../../plans/_utils/stand-in-lessons";
 import { type LanguageLevelCertificateDetails } from "../certificate-contract";
 import { getLastFinishedAt, sumStudiedMinutes } from "./award-course-certificate";
 import { createCertificateCode } from "./certificate-code";
-import { loadGraphSkills } from "./graph-skills";
+import { loadSkillSizes } from "./skill-sizes";
 
 /**
  * Goals built from a learner's own material have a private course and earn no language levels.
@@ -19,10 +19,21 @@ async function loadLanguagePlans(tx: TransactionClient, planIds: readonly string
   const plans = await tx.plan.findMany({
     select: {
       goal: {
-        select: { id: true, language: true, targetLanguage: true, timezone: true, userId: true },
+        select: {
+          details: true,
+          examBlueprintId: true,
+          id: true,
+          kind: true,
+          language: true,
+          primaryCourseId: true,
+          targetLanguage: true,
+          timezone: true,
+          userId: true,
+        },
       },
       graph: true,
       id: true,
+      settings: true,
     },
     where: {
       goal: { kind: "language", primaryCourse: { visibility: "public" } },
@@ -61,7 +72,7 @@ function getLevelKey({ language, level }: { language: string; level: CefrLevel }
 }
 
 async function loadPlanLevels(tx: TransactionClient, plan: LanguagePlan): Promise<PlanLevel[]> {
-  const graphSkills = await loadGraphSkills(plan.graph, tx);
+  const graphSkills = await loadSkillSizes({ goal: plan.goal, plan });
 
   const skillIds = new Set([
     ...graphSkills.map((skill) => skill.skillId),

@@ -15,6 +15,10 @@ import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
 import { loadStrongAreas } from "./strong-areas";
 
+/**
+ * A merge moves a duplicate's lessons to its survivor, so a survivor the graph lists more than once
+ * is as big as every entry together, whichever comes first, and stays an estimate while one is.
+ */
 export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> {
   const survivorOf = await loadSkillSurvivors(graph.skills.map((skill) => skill.skillId));
   const skills = graph.skills.map((skill) => ({ ...skill, skillId: survivorOf(skill.skillId) }));
@@ -25,14 +29,15 @@ export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> 
       .filter(
         (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
       )
-      .map(({ outlined: _outlined, ...skill }) => ({
-        ...skill,
-        ...(skills
-          .filter((other) => other.skillId === skill.skillId)
-          .every((other) => other.outlined === true)
-          ? { outlined: true }
-          : {}),
-      })),
+      .map(({ outlined: _outlined, ...skill }) => {
+        const same = skills.filter((other) => other.skillId === skill.skillId);
+
+        return {
+          ...skill,
+          lessons: same.reduce((total, other) => total + other.lessons, 0),
+          ...(same.every((other) => other.outlined === true) ? { outlined: true } : {}),
+        };
+      }),
   };
 }
 

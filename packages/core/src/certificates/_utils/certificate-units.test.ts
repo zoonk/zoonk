@@ -144,13 +144,15 @@ describe(listCertificateUnits, () => {
       entry.phase === 1 && entry.kind === "lesson" ? { ...entry, skillId: "waves" } : entry,
     );
 
-    expect(
-      finished(units({ graphSkills: [{ lessons: 5, skillId: "waves" }], items })),
-    ).toStrictEqual(["course:overview", "goal"]);
+    expect(finished(units({ graphSkills: [{ size: 5, skillId: "waves" }], items }))).toStrictEqual([
+      "course:overview",
+      "goal",
+    ]);
 
-    expect(
-      finished(units({ graphSkills: [{ lessons: 4, skillId: "waves" }], items })),
-    ).toStrictEqual(["course:overview", "course:beginner"]);
+    expect(finished(units({ graphSkills: [{ size: 4, skillId: "waves" }], items }))).toStrictEqual([
+      "course:overview",
+      "course:beginner",
+    ]);
   });
 
   it("certifies a level started past its first chapter with the plan, and the next level whole", () => {

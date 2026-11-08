@@ -1,9 +1,8 @@
 import { type PlanItem, type Skill } from "@zoonk/db";
 import { CEFR_LEVELS, type CefrLevel, formatCefrScore } from "@zoonk/utils/cefr";
-import { isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
+import { type SizedSkill, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
 import { getWorkProgress, isWorkFinished } from "../../plans/_utils/work-progress";
-import { type PlanGraphSkill } from "../../plans/planner/plan-state";
 import { BAND_LEVELS } from "./skill-level-rules";
 
 const LEVELS_PER_BAND = 2;
@@ -15,8 +14,6 @@ export type LevelItem = Pick<
   PlanItem,
   "chapterId" | "completedAt" | "kind" | "lessonId" | "lessons" | "minutes" | "skillId" | "status"
 >;
-
-type GraphSkill = Pick<PlanGraphSkill, "lessons" | "plannedLessons" | "skillId">;
 
 export type PlanLevel = {
   /** Finished, every lesson in its band tagged, and at least half of its full size studied. */
@@ -61,6 +58,24 @@ function isLeftOut({
   );
 }
 
+type LevelItems = Pick<PlanLevel, "items" | "level">;
+
+/** Each CEFR level's lesson items, in plan order, each at its skill's level. */
+export function groupLevelItems({
+  items,
+  skills,
+}: {
+  items: readonly LevelItem[];
+  skills: ReadonlyMap<string, LevelSkill>;
+}): LevelItems[] {
+  const lessons = items.filter((item) => item.kind === "lesson");
+
+  return CEFR_LEVELS.map((level) => ({
+    items: lessons.filter((item) => placeSkill(skills.get(item.skillId ?? ""))?.level === level),
+    level,
+  }));
+}
+
 /**
  * Where one language goal's plan stands at each CEFR level, judged on its own: lesson items count at
  * their skill's level and every other item kind is left out. A level is earned with nothing left to
@@ -72,29 +87,26 @@ export function listPlanLevels({
   items,
   skills,
 }: {
-  graphSkills: readonly GraphSkill[];
+  graphSkills: readonly SizedSkill[];
   heldBackLessonIds?: ReadonlySet<string>;
   items: readonly LevelItem[];
   skills: ReadonlyMap<string, LevelSkill>;
 }): PlanLevel[] {
   const place = (skillId: string | null) => placeSkill(skills.get(skillId ?? ""));
-  const lessons = items.filter((item) => item.kind === "lesson");
+  const atLevel = groupLevelItems({ items, skills });
 
   const untaggedBands = new Set(
     [
-      ...lessons.map((item) => place(item.skillId)),
+      ...items.map((item) => (item.kind === "lesson" ? place(item.skillId) : null)),
       ...graphSkills.map((skill) => place(skill.skillId)),
     ].flatMap((placement) => (placement && !placement.tagged ? getBand(placement.level) : [])),
   );
 
-  const atLevel = CEFR_LEVELS.map((level) => ({
-    graph: graphSkills.filter((skill) => place(skill.skillId)?.level === level),
-    items: lessons.filter((item) => place(item.skillId)?.level === level),
-    level,
-  }));
-
-  return atLevel.map(({ graph, items: levelItems, level }, index) => {
-    const measure = measureStudied({ graphSkills: graph, items: levelItems });
+  return atLevel.map(({ items: levelItems, level }, index) => {
+    const measure = measureStudied({
+      graphSkills: graphSkills.filter((skill) => place(skill.skillId)?.level === level),
+      items: levelItems,
+    });
 
     const finished =
       !atLevel.slice(0, index + 1).some((below) => below.items.some((item) => isTodo(item))) &&
@@ -124,7 +136,7 @@ function isHalfFinished(items: readonly LevelItem[]): boolean {
  * The lowest level with lessons still to do, or the highest the plan holds once none are left, with
  * a "+" once half of that level's lessons in the plan are finished: finishing B1+ earns B1.
  */
-export function getPlanLevelLabel(levels: readonly PlanLevel[]): string | null {
+export function getPlanLevelLabel(levels: readonly LevelItems[]): string | null {
   const planned = levels.filter((entry) => entry.items.some((item) => isPlanned(item)));
 
   const current =
@@ -139,7 +151,7 @@ export function getPlanLevelLabel(levels: readonly PlanLevel[]): string | null {
 }
 
 /** A unit's can-do statements go on the highest level among its lessons. */
-export function getUnitLevels(levels: readonly PlanLevel[]): Map<string, CefrLevel> {
+export function getUnitLevels(levels: readonly LevelItems[]): Map<string, CefrLevel> {
   return new Map(
     levels.flatMap((entry) =>
       entry.items.flatMap((item) =>

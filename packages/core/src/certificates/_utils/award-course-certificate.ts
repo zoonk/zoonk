@@ -21,6 +21,8 @@ import {
 type CertificateGoal = UnitGoal & Pick<Goal, "language" | "timezone">;
 
 const GOAL_SELECT = {
+  details: true,
+  examBlueprintId: true,
   id: true,
   kind: true,
   language: true,

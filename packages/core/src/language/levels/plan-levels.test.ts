@@ -40,8 +40,8 @@ function standIn(skillId: string, size: number, status: PlanItem["status"] = "to
   return { ...lesson(skillId, { status }), chapterId: null, lessonId: null, lessons: size };
 }
 
-function graph(skillId: string, size: number, plannedLessons?: number) {
-  return { lessons: size, skillId, ...(plannedLessons === undefined ? {} : { plannedLessons }) };
+function graph(skillId: string, size: number) {
+  return { size, skillId };
 }
 
 function levels({
@@ -85,9 +85,9 @@ describe(listPlanLevels, () => {
     expect(earned(list)).toStrictEqual([...CEFR_LEVELS]);
   });
 
-  it("sizes a level by the graph: outlined lessons once written, nothing for a skill left out by choice, all of a tested-out one", () => {
+  it("sizes a level by its graph skills' full sizes, not by the items the plan holds of them", () => {
     const list = levels({
-      graphSkills: [graph("A1", 30, 6), graph("A1-chosen-out", 10, 0), graph("A2", 4, 0)],
+      graphSkills: [graph("A1", 6), graph("A1-chosen-out", 0), graph("A2", 4)],
       items: [...lessons("A1", 3), ...lessons("A2", 2), standIn("A2", 2, "testedOut")],
     });
 

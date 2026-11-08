@@ -221,6 +221,17 @@ function countAssigned(teaching: ReadonlyMap<string, string>): Map<string, numbe
   );
 }
 
+/** Each skill's written lessons, a lesson that teaches several counted for the one it's assigned. */
+export function countTaughtLessons({
+  lessons,
+  skills,
+}: {
+  lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
+  skills: readonly Pick<UnitSkill, "index" | "lessons" | "skillId">[];
+}): Map<string, number> {
+  return countAssigned(assignLessonSkills({ lessons, skills }));
+}
+
 export function getStandInLessons({
   lessons,
   skills,
@@ -228,7 +239,7 @@ export function getStandInLessons({
   lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
   skills: readonly Pick<UnitSkill, "index" | "lessons" | "outlined" | "skillId">[];
 }): Map<string, number> {
-  const taught = countAssigned(assignLessonSkills({ lessons, skills }));
+  const taught = countTaughtLessons({ lessons, skills });
 
   return new Map(
     skills.map((skill) => [

@@ -29,8 +29,10 @@ import { finishLanguageLevelTest } from "../language/level-test/finish-language-
 import { type LevelTestBank } from "../language/level-test/level-test-contract";
 import { testOutKnownPlanItems } from "../learner/_utils/test-out-known-plan-items";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { type PlanGraphSkill, parsePlanGraph } from "../plans/planner/plan-state";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
+import { claimCourseCertificate } from "./claim-course-certificate";
 
 const TIME_ZONE = "America/Sao_Paulo";
 const EARLIER = new Date("2026-10-20T15:00:00Z");
@@ -319,6 +321,34 @@ describe("language level certificates", () => {
   });
 });
 
+/** A studied A1 skill of one lesson and a tested-out one of three, then an A2 lesson. */
+function mergedSkillPlan() {
+  return italianPlan({
+    items: [
+      { skill: 0, status: "done" },
+      { skill: 1, standIn: 3, status: "testedOut" },
+      { skill: 2, unit: 1 },
+    ],
+    skills: [
+      { lessons: 1, level: "A1" },
+      { lessons: 3, level: "A1" },
+      { lessons: 1, level: "A2" },
+    ],
+  });
+}
+
+/** Merges the plan's first skill into its second, then finishes its third item. */
+async function mergeAndFinish(fixture: ItalianPlan, { replanned }: { replanned: boolean }) {
+  const [duplicate, survivor] = fixture.skills;
+  await mergeSkills({ duplicateId: duplicate?.id ?? "", survivorId: survivor?.id ?? "" });
+
+  if (replanned) {
+    await refreshGoalPlan({ goalId: fixture.goal.id });
+  }
+
+  await finishLesson(fixture, 2);
+}
+
 async function mergeIntoNewA1Skill(duplicateId: string) {
   const survivor = await skillFixture({ cefrLevel: "A1", language: "pt", level: "beginner" });
   await mergeSkills({ duplicateId, survivorId: survivor.id });
@@ -368,6 +398,25 @@ describe("a plan whose skill an admin merged", () => {
     await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A2" }]);
   });
 
+  it.each([false, true])(
+    "keeps both merged skills' sizes for a level and a course (re-planned: %s)",
+    async (replanned) => {
+      const [level, course] = await Promise.all([mergedSkillPlan(), mergedSkillPlan()]);
+
+      await asCourseGoal(course);
+      await mergeAndFinish(level, { replanned });
+      await mergeAndFinish(course, { replanned });
+
+      await expect(listLevelCertificates(level.user.id)).resolves.toMatchObject([{ key: "it:A2" }]);
+
+      mockSession(course.user.id);
+
+      await expect(claimCourseCertificate(course.goal.id)).resolves.toStrictEqual({
+        status: "notFinished",
+      });
+    },
+  );
+
   it("reads the level of the skill it merged into, not of the untagged one it replaced", async () => {
     const fixture = await italianPlan({
       items: [{ skill: 0, status: "done" }, { skill: 0 }],
@@ -378,6 +427,191 @@ describe("a plan whose skill an admin merged", () => {
 
     await prisma.skill.update({ data: { cefrLevel: null }, where: { id: duplicateId } });
     await mergeIntoNewA1Skill(duplicateId);
+    await finishLesson(fixture, 1);
+
+    await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A1" }]);
+  });
+});
+
+async function updateGraphSkill(
+  { plan, skills }: ItalianPlan,
+  { attrs, skill }: { attrs: Partial<PlanGraphSkill>; skill: number },
+) {
+  const { graph } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  const stored = parsePlanGraph(graph);
+  const skillId = skills[skill]?.id;
+
+  await prisma.plan.update({
+    data: {
+      graph: {
+        ...stored,
+        skills: stored.skills.map((entry) =>
+          entry.skillId === skillId ? { ...entry, ...attrs } : entry,
+        ),
+      },
+    },
+    where: { id: plan.id },
+  });
+}
+
+/** Library lessons of a skill in the plan's first unit that the plan holds no item for. */
+async function writeLessons(
+  { skills, units }: ItalianPlan,
+  { count, skill }: { count: number; skill: number },
+) {
+  const chapterId = units[0]?.id ?? "";
+
+  await Promise.all(
+    Array.from({ length: count }, async (_, index) => {
+      const lesson = await libraryLessonFixture({
+        homeChapterId: chapterId,
+        language: "pt",
+        targetLanguage: "it",
+      });
+
+      await Promise.all([
+        chapterLessonFixture({ chapterId, lessonId: lesson.id, position: 100 + index }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: skills[skill]?.id ?? "" }),
+      ]);
+    }),
+  );
+}
+
+/** Tests out a skill's lessons left to do the way a test-out does, without its award call. */
+function markTestedOut({ plan, skills }: ItalianPlan, skill: number) {
+  return prisma.planItem.updateMany({
+    data: { completedAt: new Date(), status: "testedOut" },
+    where: { planId: plan.id, skillId: skills[skill]?.id, status: "todo" },
+  });
+}
+
+/** The same plan as a learn goal on a public core course, its challenge won. */
+async function asCourseGoal({ goal, plan }: ItalianPlan) {
+  await Promise.all([
+    prisma.goal.update({ data: { kind: "learn" }, where: { id: goal.id } }),
+    prisma.course.update({ data: { format: "core" }, where: { id: goal.primaryCourseId ?? "" } }),
+    prisma.planItem.updateMany({
+      data: { completedAt: new Date(), status: "done" },
+      where: { kind: "boss", planId: plan.id },
+    }),
+  ]);
+}
+
+/** Six written lessons of an outlined A1 skill, a share of them studied, then an A2 lesson. */
+async function outlinedSkillPlan({ estimate, studied }: { estimate: number; studied: number }) {
+  const fixture = await italianPlan({
+    items: [
+      ...Array.from({ length: 6 }, (_, index) => ({
+        skill: 0,
+        status: index < studied ? ("done" as const) : ("todo" as const),
+      })),
+      { skill: 1, unit: 1 },
+    ],
+    skills: [
+      { lessons: estimate, level: "A1" },
+      { lessons: 1, level: "A2" },
+    ],
+  });
+
+  await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+  await markTestedOut(fixture, 0);
+  return fixture;
+}
+
+const OUTLINED_CASES = [false, true].flatMap((replanned) => [
+  { earned: true, estimate: 30, replanned, studied: 3 },
+  { earned: false, estimate: 2, replanned, studied: 2 },
+]);
+
+describe("a skill's full size", () => {
+  it.each(OUTLINED_CASES)(
+    "measures an outlined skill by its six written lessons, not its estimate of $estimate ($studied studied, re-planned: $replanned)",
+    async ({ earned, estimate, replanned, studied }) => {
+      const fixture = await outlinedSkillPlan({ estimate, studied });
+
+      if (replanned) {
+        await refreshGoalPlan({ goalId: fixture.goal.id });
+      }
+
+      await finishLesson(fixture, 6);
+
+      const certificates = await listLevelCertificates(fixture.user.id);
+
+      expect(certificates.some((row) => row.key === "it:A1")).toBe(earned);
+    },
+  );
+
+  it.each(OUTLINED_CASES)(
+    "measures a course's outlined skill by its six written lessons, not its estimate of $estimate ($studied studied, re-planned: $replanned)",
+    async ({ earned, estimate, replanned, studied }) => {
+      const fixture = await outlinedSkillPlan({ estimate, studied });
+      await asCourseGoal(fixture);
+
+      if (replanned) {
+        await refreshGoalPlan({ goalId: fixture.goal.id });
+      }
+
+      await finishLesson(fixture, 6);
+      mockSession(fixture.user.id);
+
+      await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
+        status: earned ? "ready" : "notFinished",
+      });
+    },
+  );
+
+  it("keeps a skill a dated plan trimmed to its core at its full size when the core is tested out", async () => {
+    const fixture = await italianPlan({
+      items: [
+        { skill: 0, status: "done" },
+        { skill: 0, status: "done" },
+        { skill: 1 },
+        { skill: 1 },
+      ],
+      skills: [
+        { lessons: 2, level: "A1" },
+        { lessons: 6, level: "A1" },
+      ],
+    });
+
+    await Promise.all([
+      updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 1 }),
+      writeLessons(fixture, { count: 4, skill: 1 }),
+    ]);
+
+    const knownId = fixture.skills[1]?.id ?? "";
+    const core = fixture.plan.items.filter((item) => item.skillId === knownId);
+
+    await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
+      testOutKnownPlanItems(tx, {
+        goalId: fixture.goal.id,
+        items: core.map((item) => ({ ...item, skillIds: [knownId] })),
+        knownSkillIds: new Set([knownId]),
+        testedOutAt: new Date(),
+        timeZone: TIME_ZONE,
+      }),
+    );
+
+    await expect(listLevelCertificates(fixture.user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("counts nothing for a skill in an area the learner removed from the plan", async () => {
+    const fixture = await italianPlan({
+      items: [{ skill: 0, status: "done" }, { skill: 0 }],
+      skills: [
+        { lessons: 2, level: "A1" },
+        { lessons: 10, level: "A1" },
+      ],
+    });
+
+    await updateGraphSkill(fixture, { attrs: { area: "Al bar" }, skill: 0 });
+    await updateGraphSkill(fixture, { attrs: { area: "Al lavoro" }, skill: 1 });
+
+    await prisma.plan.update({
+      data: { settings: { skippedAreas: ["Al lavoro"] } },
+      where: { id: fixture.plan.id },
+    });
+
     await finishLesson(fixture, 1);
 
     await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A1" }]);

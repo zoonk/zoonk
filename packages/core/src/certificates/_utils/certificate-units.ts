@@ -1,10 +1,10 @@
 import { type CourseLevel, type Goal, type PlanItem } from "@zoonk/db";
 import { CourseLevel as COURSE_LEVELS } from "@zoonk/db/enums";
-import { isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
+import { type SizedSkill, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
 import { areLessonsFinished, isTodo } from "../../plans/_utils/plan-end";
 import { getWorkProgress } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
-import { type PlanGraphSkill, type PlanPhase } from "../../plans/planner/plan-state";
+import { type PlanPhase } from "../../plans/planner/plan-state";
 
 const LEVEL_ORDER = Object.values(COURSE_LEVELS);
 
@@ -43,8 +43,6 @@ export type CertificateUnit = {
 
 type UnitDates = { studiesPastTarget: boolean; targetDate: Date | null };
 
-type GraphSkill = Pick<PlanGraphSkill, "lessons" | "plannedLessons" | "skillId">;
-
 function getCourseLevelKey({ courseId, level }: { courseId: string; level: CourseLevel }) {
   return `${courseId}:${level}`;
 }
@@ -57,7 +55,7 @@ function isUnitHalfStudied({
   graphSkills,
   learn,
 }: {
-  graphSkills: readonly GraphSkill[];
+  graphSkills: readonly SizedSkill[];
   learn: readonly CertifiableItem[];
 }): boolean {
   const skillIds = new Set(learn.flatMap((item) => item.skillId ?? []));
@@ -84,7 +82,7 @@ function isUnitDone({
 }: {
   challenges: readonly CertifiableItem[];
   dates: UnitDates;
-  graphSkills: readonly GraphSkill[];
+  graphSkills: readonly SizedSkill[];
   learn: readonly CertifiableItem[];
   phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
 }): boolean {
@@ -142,7 +140,7 @@ export function listCertificateUnits({
   studiesPastTarget,
 }: {
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
-  graphSkills: readonly GraphSkill[];
+  graphSkills: readonly SizedSkill[];
   heldKeys: ReadonlySet<string>;
   items: readonly CertifiableItem[];
   levelChapters: readonly LevelChapter[];
