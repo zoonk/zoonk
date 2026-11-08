@@ -11,6 +11,7 @@ import {
   toRunAnswer,
   useHeldAnswers,
 } from "./use-held-answers";
+import { useLessonClock } from "./use-lesson-clock";
 
 export function useLessonRun({
   adapters,
@@ -25,6 +26,20 @@ export function useLessonRun({
   const pendingRef = useRef(new Set<Promise<unknown>>());
   const screensRef = useRef(new Map<string, ScreenQueue>());
   const heldRef = useRef(new Map<string, HeldAnswer>());
+  const runClock = useLessonClock(adapters);
+
+  const startRun = useCallback(
+    async (input?: { runId: string }) => {
+      const outcome = await adapters.startLesson(input);
+
+      if (outcome.reason === "started") {
+        runClock(outcome);
+      }
+
+      return outcome;
+    },
+    [adapters, runClock],
+  );
 
   const ensureRun = useCallback((): Promise<StartedRun | null> => {
     if (runRef.current) {
@@ -33,7 +48,7 @@ export function useLessonRun({
 
     dispatch({ type: "runStarting" });
 
-    const run = adapters.startLesson().then((outcome) => {
+    const run = startRun().then((outcome) => {
       if (outcome.reason === "opened") {
         return null;
       }
@@ -60,7 +75,7 @@ export function useLessonRun({
 
     runRef.current = run;
     return run;
-  }, [adapters, dispatch, lesson]);
+  }, [dispatch, lesson, startRun]);
 
   const keepPending = useCallback(<T>(request: Promise<T>): Promise<T> => {
     pendingRef.current.add(request);
@@ -103,5 +118,5 @@ export function useLessonRun({
     return resendKept();
   }, [resendKept]);
 
-  return { ensureRun, flushChecks, hold, keepGrade, reopen, resendHeld };
+  return { ensureRun, flushChecks, hold, keepGrade, reopen, resendHeld, startRun };
 }

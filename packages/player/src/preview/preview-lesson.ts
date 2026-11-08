@@ -8,6 +8,7 @@ export const PREVIEW_LEARNER_ID = "preview";
 function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
   return {
     answers: [],
+    clockId: null,
     hyperdrive: { knownStepIds: [], streak: 0 },
     learnerId: PREVIEW_LEARNER_ID,
     reason: "started",

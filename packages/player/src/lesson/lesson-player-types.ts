@@ -1,3 +1,4 @@
+import { type LessonClockInput } from "@zoonk/core/lesson-player/clock-contract";
 import {
   type LessonStepAnswer,
   type LessonStepCheckResult,
@@ -50,6 +51,8 @@ export type LessonStartOutcome =
   | LessonRunRefusal
   | {
       answers: LessonRunAnswers;
+      /** Null for a lesson outside a study block: there's no clock to pause. */
+      clockId: string | null;
       hyperdrive: LessonRunHyperdrive;
       /** Whose run it is: answers not saved yet are kept on the device under this learner. */
       learnerId: string;
@@ -124,6 +127,11 @@ export type LessonPlayerAdapters = {
     stepId: string;
   }) => Promise<SpokenAnswerOutcome>;
   startLesson: (input?: { runId: string }) => Promise<LessonStartOutcome>;
+  /**
+   * Must outlive the page, since a pause goes out as it hides. Resolves `false` when the
+   * transition didn't get through, so it's sent again under the same sequence.
+   */
+  updateLessonClock?: (input: LessonClockInput) => Promise<boolean>;
 };
 
 export type LessonPlayerRoutes = {
