@@ -12,6 +12,7 @@
     "./ai": "./src/ai.ts",
     "./analytics/client": "./src/analytics/client.ts",
     "./analytics/events": "./src/analytics/events.ts",
+    "./analytics/onboarding-progress": "./src/analytics/onboarding-progress.ts",
     "./analytics/posthog-browser": "./src/analytics/posthog-browser.ts",
     "./analytics/register-shared-properties": "./src/analytics/register-shared-properties.tsx",
     "./analytics/request-platform": "./src/analytics/request-platform.ts",

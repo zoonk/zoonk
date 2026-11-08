@@ -1,21 +1,24 @@
-import { type CourseLevel } from "@zoonk/db";
+import { CourseLevel } from "@zoonk/db/enums";
+import { z } from "zod";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type GraphSkill = GoalSkillGraph["skills"][number];
 
 /** A goal's first skill and the course that teaches it, saved before its graph is written. */
-export type GoalOpeningSkill = {
-  course: { id: string; key: string; title: string };
-  skill: {
-    area: string;
-    description: string;
-    estimatedLessons: number;
-    id: string;
-    key: string;
-    level: CourseLevel;
-    name: string;
-  };
-};
+export const goalOpeningSkillSchema = z.object({
+  course: z.object({ id: z.string(), key: z.string(), title: z.string() }),
+  skill: z.object({
+    area: z.string(),
+    description: z.string(),
+    estimatedLessons: z.number(),
+    id: z.string(),
+    key: z.string(),
+    level: z.enum(CourseLevel),
+    name: z.string(),
+  }),
+});
+
+export type GoalOpeningSkill = z.infer<typeof goalOpeningSkillSchema>;
 
 /** The graph with the opening as its start, and the Library ids the opening already saved. */
 export type OpeningGraph = {

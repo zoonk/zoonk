@@ -31,7 +31,7 @@ const SETUP_ANSWERED = [
 export async function goalFixture({
   details,
   ...attrs
-}: FixtureAttrs<Goal, "details"> & Pick<Goal, "userId">) {
+}: FixtureAttrs<Goal, "details" | "openingSkill"> & Pick<Goal, "userId">) {
   return prisma.goal.create({
     data: {
       dailyMinutes: DEFAULT_DAILY_MINUTES,

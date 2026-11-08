@@ -78,8 +78,9 @@ model Goal {
   primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
   warmUpId              String?                @map("warm_up_id") @db.Uuid
   warmUp                WarmUp?                @relation(fields: [warmUpId], references: [id], onDelete: SetNull)
-  /// A learn goal's first lesson, picked before its plan so the learner can start it sooner. Only
-  /// the goal's run writes it, once; every retry and client opens this lesson.
+  /// The goal's run saves its exact opening and lesson once. Retries keep the same skill and
+  /// course even when the lesson's chapter teaches other skills.
+  openingSkill          Json?                  @map("opening_skill")
   openingLessonId       String?                @map("opening_lesson_id") @db.Uuid
   openingLesson         Lesson?                @relation(fields: [openingLessonId], references: [id], onDelete: SetNull)
   /// When the learner first pressed the plan reveal's action. Until then, resume brings the reveal

@@ -24,15 +24,17 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import * as outlineSteps from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
+import * as openingSteps from "./steps/goal-opening-steps";
+import * as progressSteps from "./steps/goal-progress-step";
 
 type SkillGraph = Awaited<ReturnType<typeof generateWholeSkillGraph>>["data"];
 type Opening = Awaited<ReturnType<typeof generateGoalOpening>>["data"];
@@ -156,8 +158,13 @@ describe("a learn goal's opening", () => {
     );
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("writes the first lesson through the learner's own start, fast, and plans from it", async () => {
     const { goal, user } = await newGoal();
+    const progress = vi.spyOn(progressSteps, "goalProgressStep");
 
     // The graph is the slower call, so the first lesson is saved by the time it's written.
     vi.mocked(generateWholeSkillGraph).mockImplementation(async () => {
@@ -212,6 +219,11 @@ describe("a learn goal's opening", () => {
       prisma.course.findFirstOrThrow({ where: { title: opening.graph.courses[0]?.title } }),
     ).resolves.toMatchObject({ outlineStatus: "completed" });
 
+    expect(progress).toHaveBeenCalledWith(
+      { entityId: goal.id, lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
+      { cache: "cold" },
+    );
+
     const firstLessonEvents = getStreamedEvents().filter(
       ({ step }) => step === "writeFirstLesson" || step === "firstLessonReady",
     );
@@ -226,6 +238,60 @@ describe("a learn goal's opening", () => {
       },
       { entityId: goal.id, lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
     ]);
+  });
+
+  it.each([
+    { cache: "cold", contentStatus: "pending", status: "start" },
+    { cache: "cold", contentStatus: "running", status: "generating" },
+    { cache: "warm", contentStatus: "completed", status: "ready" },
+  ] as const)(
+    "classifies an old $contentStatus lesson as $cache when requested",
+    async ({ cache, contentStatus, status }) => {
+      const user = await userFixture();
+
+      const lesson = await libraryLessonFixture({
+        contentRunId: "active-lesson-run",
+        contentStatus,
+        createdAt: new Date("2026-11-01"),
+      });
+
+      vi.mocked(getRun).mockReturnValue({
+        exists: Promise.resolve(true),
+        status: Promise.resolve("running"),
+      } as never);
+
+      await expect(
+        openingSteps.requestOpeningLessonStep({ lessonId: lesson.id, userId: user.id }),
+      ).resolves.toMatchObject({ cache, status });
+    },
+  );
+
+  it("saves the opening chapter before starting the graph", async () => {
+    const { goal } = await newGoal();
+    let release!: () => void;
+
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    const save = openingSteps.saveOpeningChapterStep;
+    let saving = false;
+
+    vi.spyOn(openingSteps, "saveOpeningChapterStep").mockImplementation(async (input) => {
+      saving = true;
+      await held;
+      return save(input);
+    });
+
+    const run = goalContentWorkflow({ goalId: goal.id });
+
+    try {
+      await vi.waitFor(() => expect(saving).toBe(true));
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+    } finally {
+      release();
+      await run;
+    }
   });
 
   it("opens the lesson an earlier run picked and writes the graph from its skill again", async () => {
@@ -249,7 +315,22 @@ describe("a learn goal's opening", () => {
     ]);
 
     // An earlier run saved the opening and stopped before its lesson's run started.
-    await prisma.goal.update({ data: { openingLessonId: picked.id }, where: { id: goal.id } });
+    await openingSteps.saveGoalOpeningStep({
+      goalId: goal.id,
+      lessonId: picked.id,
+      opening: {
+        course: { id: course.id, key: "immunology", title: course.title },
+        skill: {
+          area: "Immunology",
+          description: skill.description,
+          estimatedLessons: 1,
+          id: skill.id,
+          key: "identify-pathogens",
+          level: "overview",
+          name: skill.name,
+        },
+      },
+    });
 
     await goalContentWorkflow({ goalId: goal.id });
 
@@ -292,7 +373,7 @@ describe("a learn goal's opening", () => {
     ).resolves.toMatchObject({ buildFailedAt: null });
   });
 
-  it("waits for a course another run is outlining before writing the first chapter into it", async () => {
+  it("leaves a busy course to the plan without waiting on the opening", async () => {
     const { goal } = await newGoal();
     const claim = outlineSteps.claimCourseOutlineStep;
 
@@ -302,12 +383,14 @@ describe("a learn goal's opening", () => {
 
     await goalContentWorkflow({ goalId: goal.id });
 
-    expect(sleep).toHaveBeenCalledWith("15s");
-    expect(openingLessonStarts()).toHaveLength(1);
+    expect(sleep).not.toHaveBeenCalledWith("15s");
+    expect(openingLessonStarts()).toHaveLength(0);
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      openingLessonId: expect.any(String),
+      openingLessonId: null,
     });
+
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toBeNull();
   });
 
   it("leaves the first lesson to the plan when the course stays busy", async () => {
@@ -326,10 +409,7 @@ describe("a learn goal's opening", () => {
       openingLessonId: null,
     });
 
-    // The graph still starts from the saved first skill.
-    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toMatchObject({
-      name: opening.skill.name,
-    });
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toBeNull();
   });
 
   it("leaves exam and language goals to their own start", async () => {
@@ -351,5 +431,69 @@ describe("a learn goal's opening", () => {
     expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
       expect.objectContaining({ speed: "fast" }),
     ]);
+  });
+
+  it("reports readiness without waiting for other learners' replans", async () => {
+    const { goal } = await newGoal();
+    const other = await userFixture();
+    const otherGoal = await goalFixture({ userId: other.id });
+    let release!: () => void;
+
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    let otherReplanStarted = false;
+
+    const request = openingSteps.requestOpeningLessonStep;
+
+    vi.spyOn(openingSteps, "requestOpeningLessonStep").mockImplementation(async (input) => {
+      const skill = await prisma.skill.findFirstOrThrow({ where: { name: opening.skill.name } });
+
+      await prisma.plan.create({
+        data: {
+          goalId: otherGoal.id,
+          items: {
+            create: {
+              kind: "lesson",
+              phase: 0,
+              position: 0,
+              skillId: skill.id,
+              status: "todo",
+              titleSnapshot: skill.name,
+            },
+          },
+        },
+      });
+
+      return request(input);
+    });
+
+    const replan = outlineSteps.replanWaitingGoalStep;
+
+    vi.spyOn(outlineSteps, "replanWaitingGoalStep").mockImplementation(async (goalId) => {
+      if (goalId === otherGoal.id) {
+        otherReplanStarted = true;
+        await held;
+      }
+
+      return replan(goalId);
+    });
+
+    const run = goalContentWorkflow({ goalId: goal.id });
+
+    try {
+      await vi.waitFor(
+        () => {
+          expect(getStreamedEvents().map(({ step }) => step)).toContain("firstLessonReady");
+        },
+        { timeout: 5000 },
+      );
+
+      expect(otherReplanStarted).toBe(false);
+    } finally {
+      release();
+      await run;
+    }
   });
 });

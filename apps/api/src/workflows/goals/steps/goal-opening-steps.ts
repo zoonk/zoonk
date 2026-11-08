@@ -1,4 +1,5 @@
 import { type ServedSpeed, type ServiceTier } from "@zoonk/ai/provider-options";
+import { type OnboardingProgress } from "@zoonk/core/analytics/onboarding-progress";
 import {
   type CourseContentWrite,
   collectCourseContentTags,
@@ -114,15 +115,17 @@ export async function saveOpeningChapterStep({
 export async function saveGoalOpeningStep(input: {
   goalId: string;
   lessonId: string;
+  opening: GoalOpeningSkill;
 }): Promise<OpeningLesson | null> {
   "use step";
 
   return saveGoalOpening(input);
 }
 
-export type OpeningLessonRequest =
+export type OpeningLessonRequest = { cache: NonNullable<OnboardingProgress["cache"]> } & (
   | { input: LessonContentInput; status: "start" }
-  | { status: "generating" | "other" | "ready" };
+  | { status: "generating" | "other" | "ready" }
+);
 
 /** The learner's lesson start admits it, so the goal's run writes it only as their own start would. */
 export async function requestOpeningLessonStep({
@@ -143,6 +146,7 @@ export async function requestOpeningLessonStep({
 
   if (writing.status !== "start") {
     return {
+      cache: writing.status === "ready" ? "warm" : "cold",
       status:
         writing.status === "ready" || writing.status === "generating" ? writing.status : "other",
     };
@@ -151,6 +155,7 @@ export async function requestOpeningLessonStep({
   const speed: ServedSpeed = "fast";
 
   return {
+    cache: "cold",
     input: {
       analytics: { ...writing.analytics, ...analytics },
       forExam: writing.forExam,

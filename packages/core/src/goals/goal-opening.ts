@@ -1,8 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { toSlug } from "@zoonk/utils/string";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
-import { type GoalOpeningSkill } from "../library/curriculum/opening-graph";
+import { type GoalOpeningSkill, goalOpeningSkillSchema } from "../library/curriculum/opening-graph";
 import { type OnboardingFirstLesson } from "../view-models/onboarding/onboarding-contract";
 
 type OpeningLesson = { id: string; title: string };
@@ -31,8 +30,8 @@ export async function readGoalOpening(
   };
 }
 
-/** The lesson an earlier run of the goal picked, and the skill and course its chapter teaches. */
-export type SavedGoalOpening = { lesson: OpeningLesson; skill: GoalOpeningSkill | null };
+/** The lesson, skill and course an earlier run of the goal picked. */
+export type SavedGoalOpening = { lesson: OpeningLesson; skill: GoalOpeningSkill };
 
 /**
  * Internal workflow bridge: the goal's run reads what an earlier run of it saved, so a retried run
@@ -40,31 +39,7 @@ export type SavedGoalOpening = { lesson: OpeningLesson; skill: GoalOpeningSkill 
  */
 export async function readSavedGoalOpening(goalId: string): Promise<SavedGoalOpening | null> {
   const goal = await prisma.goal.findUnique({
-    select: {
-      openingLesson: {
-        select: {
-          homeChapter: {
-            select: {
-              _count: { select: { lessons: true } },
-              courses: {
-                orderBy: { createdAt: "asc" },
-                select: { area: true, course: { select: { id: true, title: true } }, level: true },
-                take: 1,
-              },
-              goalSkills: {
-                orderBy: { createdAt: "asc" },
-                select: {
-                  skill: { select: { description: true, id: true, level: true, name: true } },
-                },
-                take: 1,
-              },
-            },
-          },
-          id: true,
-          title: true,
-        },
-      },
-    },
+    select: { openingLesson: { select: { id: true, title: true } }, openingSkill: true },
     where: { id: goalId },
   });
 
@@ -74,26 +49,7 @@ export async function readSavedGoalOpening(goalId: string): Promise<SavedGoalOpe
     return null;
   }
 
-  const [placement] = lesson.homeChapter?.courses ?? [];
-  const [tagged] = lesson.homeChapter?.goalSkills ?? [];
-
-  const skill: GoalOpeningSkill | null =
-    placement && tagged
-      ? {
-          course: { ...placement.course, key: toSlug(placement.course.title) },
-          skill: {
-            area: placement.area ?? placement.course.title,
-            description: tagged.skill.description,
-            estimatedLessons: Math.max(lesson.homeChapter?._count.lessons ?? 0, 1),
-            id: tagged.skill.id,
-            key: toSlug(tagged.skill.name),
-            level: tagged.skill.level ?? placement.level,
-            name: tagged.skill.name,
-          },
-        }
-      : null;
-
-  return { lesson: { id: lesson.id, title: lesson.title }, skill };
+  return { lesson, skill: goalOpeningSkillSchema.parse(goal.openingSkill) };
 }
 
 /**
@@ -142,12 +98,14 @@ export async function findOpeningLesson({
 export async function saveGoalOpening({
   goalId,
   lessonId,
+  opening,
 }: {
   goalId: string;
   lessonId: string;
+  opening: GoalOpeningSkill;
 }): Promise<OpeningLesson | null> {
   await prisma.goal.updateMany({
-    data: { openingLessonId: lessonId },
+    data: { openingLessonId: lessonId, openingSkill: opening },
     where: { id: goalId, openingLessonId: null },
   });
 
