@@ -277,8 +277,6 @@ class LessonPlayerViewModel(
     private var acted = false
     private val workedHere = mutableSetOf<String>()
 
-    /** Screens the learner answered or cleared on this visit, which work restored from the device leaves alone. */
-    private val answeredHere = mutableSetOf<String>()
     private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
     /** By screen: a server-graded answer sent with no verdict back yet, so Check sends it again under the same attempt. */
@@ -300,7 +298,6 @@ class LessonPlayerViewModel(
         admittedRunId = null
         acted = false
         workedHere.clear()
-        answeredHere.clear()
         heldDeviceVerdicts.clear()
         unsaved.clear()
         unverdicted.clear()
@@ -393,8 +390,13 @@ class LessonPlayerViewModel(
             else -> Unit
         }
         if (action is LessonAction.SelectAnswer) {
-            answeredHere += action.stepId
             workedHere += action.stepId
+        }
+        if (action == LessonAction.ExplainFirst) {
+            mutableState.value
+                ?.currentStep
+                ?.id
+                ?.let { workedHere += it }
         }
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
         if (action == LessonAction.Continue) resendAnswers()
@@ -782,10 +784,10 @@ class LessonPlayerViewModel(
                 .orEmpty()
                 .mapValues { (_, json) ->
                     ApiJson.decodeFromString(LessonAnswer.serializer(), json)
-                }.filterKeys { it !in answeredHere }
+                }.filterKeys { it !in workedHere }
         val resumed = state.withFirstAnswer(started)
         val unanswered = { id: String -> id !in resumed.results }
-        val runAnswered = resumed.results.keys - answeredHere
+        val runAnswered = resumed.results.keys - workedHere
         return resumed.copy(
             answers = resumed.answers + answers.filterKeys(unanswered),
             revealed = revealed.filterKeys(unanswered) + resumed.revealed,

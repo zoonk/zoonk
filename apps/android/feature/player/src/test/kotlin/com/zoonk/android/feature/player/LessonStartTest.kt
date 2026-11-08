@@ -7,6 +7,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRun
@@ -124,8 +125,7 @@ class LessonStartTest {
                 playable(
                     listOf(
                         explanationStep(FIRST),
-                        com.zoonk.android.feature.activities.ActivityFixtures
-                            .step("codeRunner", id = ONE),
+                        ActivityFixtures.step("codeRunner", id = ONE),
                         checkStep(TWO),
                     ),
                 )
@@ -164,8 +164,7 @@ class LessonStartTest {
                 playable(
                     listOf(
                         explanationStep(FIRST),
-                        com.zoonk.android.feature.activities.ActivityFixtures
-                            .step("codeRunner", id = ONE),
+                        ActivityFixtures.step("codeRunner", id = ONE),
                         checkStep(TWO),
                     ),
                 )
@@ -203,8 +202,7 @@ class LessonStartTest {
                 playable(
                     listOf(
                         explanationStep(FIRST),
-                        com.zoonk.android.feature.activities.ActivityFixtures
-                            .step("codeRunner", id = ONE),
+                        ActivityFixtures.step("codeRunner", id = ONE),
                         checkStep(TWO),
                     ),
                 )
@@ -233,6 +231,85 @@ class LessonStartTest {
                 null,
                 vm.state.value
                     ?.results
+                    ?.get(ONE),
+            )
+        }
+
+    @Test fun aWorkedCanvasDoesNotRestoreAnUncheckedAnswerFromAnotherRound() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(explanationStep(FIRST), ActivityFixtures.step("codeRunner", id = ONE), checkStep(TWO)))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
+            val answer = LessonAnswer.Activity(checkNotNull(ActivityFixtures.rightAnswer("codeRunner")))
+            val saved =
+                SavedStateHandle(
+                    mapOf(
+                        "rounds" to hashMapOf(ONE to 1),
+                        "answers" to hashMapOf(ONE to ApiJson.encodeToString(LessonAnswer.serializer(), answer)),
+                    ),
+                )
+            val vm = player(null, tapped = true, saved = saved)
+            vm.open(lesson)
+            runCurrent()
+            vm.act()
+            vm.dispatch(LessonAction.Continue)
+            vm.act()
+            vm.dispatch(LessonAction.GoBack)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                0,
+                vm.state.value
+                    ?.rounds
+                    ?.get(ONE) ?: 0,
+            )
+            assertEquals(
+                null,
+                vm.state.value
+                    ?.answers
+                    ?.get(ONE),
+            )
+        }
+
+    @Test fun explainFirstKeepsItsQuestionBlankWhenTheRunArrives() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE), explanationStep(FIRST), checkStep(TWO)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.act()
+            vm.dispatch(LessonAction.ExplainFirst)
+            assertEquals(
+                FIRST,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            vm.dispatch(LessonAction.Continue)
+
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                null,
+                vm.state.value
+                    ?.results
+                    ?.get(ONE),
+            )
+            assertEquals(
+                null,
+                vm.state.value
+                    ?.answers
                     ?.get(ONE),
             )
         }
