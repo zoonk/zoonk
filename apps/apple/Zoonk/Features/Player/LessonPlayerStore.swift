@@ -42,6 +42,9 @@ final class LessonPlayerStore {
   private(set) var studySessionId: String?
   private let opening: LessonOpening?
   private var activated: Bool
+  /// Whether the learner did anything in the lesson on this visit: a run that starts after that
+  /// keeps their screen.
+  private var acted = false
   private let onOpened: @MainActor (StudyBlockOpening) -> Void
   private var starting: Task<Void, Never>?
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
@@ -263,6 +266,8 @@ final class LessonPlayerStore {
           lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
         leaveOutUnplayable(&state)
         self.state = state
+        works = [:]
+        acted = false
         openedAt = .now
         // Written content can paint before admission; server actions await the run.
         screen = .playing
@@ -288,13 +293,19 @@ final class LessonPlayerStore {
     beginStart()
   }
 
+  /// The learner's own action in the lesson; a tap that only starts the run (`activate`) isn't one.
+  private func act() {
+    acted = true
+    activate()
+  }
+
   private func beginStart() {
     guard starting == nil, let lesson, let identity else { return }
     starting = Task { await start(lesson, identity: identity) }
   }
 
   func ensureRun() async -> Bool {
-    activate()
+    act()
     await starting?.value
     return state?.runId != nil && !Task.isCancelled
   }
@@ -346,7 +357,8 @@ final class LessonPlayerStore {
       if opening != nil, let sessionId = run.sessionId { sessionStarted(sessionId) }
       self.state?.startRun(
         runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
-        startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
+        startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds,
+        keepsScreen: acted)
       for answer in heldForRun {
         hold(answer(run.runId))
       }
@@ -368,7 +380,6 @@ final class LessonPlayerStore {
 
     self.lesson = lesson
     self.state = state
-    works = [:]
     openRecap = nil
     soundsEnabled = preferences.value?.soundsEnabled ?? true
     self.challengeTeam = challengeTeam
@@ -566,13 +577,13 @@ final class LessonPlayerStore {
   }
 
   func select(_ answer: LessonAnswer?) {
-    activate()
+    act()
     guard let stepId = state?.currentStep?.id else { return }
     state?.select(answer, for: stepId)
   }
 
   func continueLesson() {
-    activate()
+    act()
     writeExampleLinesOnce()
     sendHeldAnswers()
     state?.continueLesson()
@@ -580,28 +591,30 @@ final class LessonPlayerStore {
   }
 
   func goBack() {
+    act()
     state?.goBack()
   }
 
   func explainFirst() {
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.explainFirst()
   }
 
   func knowThis() {
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.knowThis()
   }
 
   func dontKnow() {
     guard let stepId = state?.currentStep?.id else { return }
+    act()
     state?.dontKnow(stepId)
   }
 
   func skipWriting() {
-    activate()
+    act()
     choices.setChosenToday(.cantWrite, true)
     state?.skipWriting()
     finishIfCompleted()
@@ -619,6 +632,7 @@ final class LessonPlayerStore {
   }
 
   func restoreWriting() {
+    act()
     choices.setChosenToday(.cantWrite, false)
     state?.restoreWriting()
   }
@@ -632,7 +646,7 @@ final class LessonPlayerStore {
       return
     }
 
-    activate()
+    act()
     writeExampleLinesOnce()
     let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)

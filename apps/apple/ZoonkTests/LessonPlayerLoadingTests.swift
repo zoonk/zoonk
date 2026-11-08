@@ -219,6 +219,134 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(after, ["spoken in run"])
   }
 
+  func testALearnerWhoDidNothingIsResumedToTheirFurthestScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  func testACanvasWritingItsOwnStateDoesNotKeepTheScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["intro", "one", "two"], explanations: ["intro"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.work(for: "intro", round: 0).set(30, for: "revealed")
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+  }
+
+  func testAnswerInputKeepsItsScreenWhenTheRunLands() async throws {
+    let inputs: [LessonAnswer] = [
+      .typedAnswer(text: "Par"),
+      .check(optionId: "wrong"),
+      .matchColumns(userPairs: [.init(left: "chat", right: "cat")], mistakes: 1),
+    ]
+
+    for input in inputs {
+      let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+      let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+      let loading = Task { await store.load() }
+      await startRequested(transport)
+
+      store.select(input)
+      await transport.release()
+      await loading.value
+
+      XCTAssertEqual(store.state?.currentStep?.id, "one", "\(input)")
+      XCTAssertEqual(store.state?.currentAnswer, input)
+      XCTAssertEqual(store.state?.runId, "run")
+    }
+  }
+
+  func testAPendingCheckKeepsItsScreenWhenTheRunLands() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["spoken"]))
+    let store = try openingPlayer(
+      checkLesson(["spoken", "next"], spoken: ["spoken"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.select(.spokenAnswer(text: "Bonjour"))
+    let checking = Task { await store.check() }
+    await waitUntil { store.state?.phase == .checking }
+    await transport.release()
+    await loading.value
+    await checking.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "spoken")
+    XCTAssertEqual(store.state?.phase, .feedback)
+  }
+
+  func testAnAnswerGivenBeforeAFailedStartKeepsItsScreenAfterTryAgain() async throws {
+    let transport = OpeningStartTransport(
+      holds: true, failsFirstStart: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    store.select(.check(optionId: "right"))
+    await transport.release()
+    await loading.value
+    XCTAssertEqual(store.state?.run, .refused(.failed))
+
+    let retrying = Task { await store.load() }
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.count < 2, Date.now < deadline { await Task.yield() }
+    await transport.release()
+    await retrying.value
+
+    XCTAssertEqual(store.state?.runId, "run")
+    XCTAssertEqual(store.state?.currentStep?.id, "one")
+    XCTAssertEqual(store.state?.currentAnswer, .check(optionId: "right"))
+  }
+
+  /// As the recorder does with a take: it waits for the run, then the grade lands on its screen.
+  func testASpokenTakeKeepsItsScreenWhenTheRunLands() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["spoken"]))
+    let store = try openingPlayer(
+      checkLesson(["spoken", "next"], spoken: ["spoken"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    let take = Task {
+      guard await store.ensureRun() else { return }
+      store.resolveSpoken(
+        SpokenAnswerVerdict(
+          isCorrect: true, score: 1, transcript: "Bonjour", feedback: nil,
+          heard: SpokenHeard(words: [], wordsToPractice: [])), stepId: "spoken")
+    }
+    await transport.release()
+    await loading.value
+    await take.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "spoken")
+    XCTAssertEqual(store.state?.phase, .feedback)
+    XCTAssertEqual(store.state?.currentResult?.answerText, "Bonjour")
+  }
+
+  func testCanvasWorkMadeBeforeTheRunSurvivesItStarting() async throws {
+    let transport = OpeningStartTransport(holds: true)
+    let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+    let work = store.work(for: "one", round: 0)
+    work.set(["left": "right"], for: "pairs")
+
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(
+      store.work(for: "one", round: 0).value("pairs") as [String: String]?, ["left": "right"])
+  }
+
   func testReopeningALessonReusesItsFreshContent() async {
     let cache = AppCache(session: SessionStore.preview(account: nil))
     var reads = 0
@@ -320,7 +448,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
       .ready(try pictureLesson(isDrawn: true))
     }
-    let store = player(cache: cache, content: content, transport: OfflineLessonTransport())
+    let store = player(
+      cache: cache, content: content, transport: OpeningStartTransport(holds: false))
     await store.load()
     store.work(for: "check", round: try XCTUnwrap(store.state).rounds["check"] ?? 0)
       .set(["left": "right"], for: "pairs")
@@ -558,6 +687,14 @@ final class LessonPlayerLoadingTests: XCTestCase {
       activated: true)
   }
 
+  /// Right answers from an earlier sitting.
+  private func runAnswers(_ stepIds: [String]) -> String {
+    "["
+      + stepIds.map {
+        #"{"stepId":"\#($0)","isCorrect":true,"answeredAt":"2026-11-07T08:00:00.000Z"}"#
+      }.joined(separator: ",") + "]"
+  }
+
   private func startRequested(_ transport: OpeningStartTransport) async {
     let deadline = Date.now.addingTimeInterval(5)
     while await transport.count == 0, Date.now < deadline { await Task.yield() }
@@ -615,7 +752,9 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 }
 
-private func checkLesson(_ ids: [String], spoken: Set<String> = []) throws -> PlayableLesson {
+private func checkLesson(
+  _ ids: [String], spoken: Set<String> = [], explanations: Set<String> = []
+) throws -> PlayableLesson {
   let check = """
     "kind": "check", "content": {"question": "Capital of France?", "basis": null, "options": [
       {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
@@ -625,13 +764,16 @@ private func checkLesson(_ ids: [String], spoken: Set<String> = []) throws -> Pl
     "kind": "spokenAnswer", "content": {"language": "fr", "prompt": "Say hello.",
       "targetText": "Bonjour", "romanization": null, "translation": null}
     """
+  let explanation = """
+    "kind": "explanation", "content": {"title": null, "text": "Paris is the capital."}
+    """
   let steps = try ids.enumerated().map { index, id in
     try JSONDecoder().decode(
       LessonStep.self,
       from: Data(
         """
         {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0,
-         \(spoken.contains(id) ? speak : check)}
+         \(spoken.contains(id) ? speak : explanations.contains(id) ? explanation : check)}
         """.utf8))
   }
 
@@ -865,16 +1007,21 @@ private actor OpeningStartTransport: ClientTransport {
   let holds: Bool
   let opensElsewhere: Bool
   let failsFirstStart: Bool
+  let runAnswers: String
   private var gate: CheckedContinuation<Void, Never>?
   private(set) var count = 0
   private(set) var inputs: [String] = []
   /// Each check as "step in run".
   private(set) var checks: [String] = []
 
-  init(holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false) {
+  init(
+    holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false,
+    runAnswers: String = "[]"
+  ) {
     self.holds = holds
     self.opensElsewhere = opensElsewhere
     self.failsFirstStart = failsFirstStart
+    self.runAnswers = runAnswers
   }
 
   func release() {
@@ -911,7 +1058,7 @@ private actor OpeningStartTransport: ClientTransport {
     return (
       HTTPResponse(status: .created, headerFields: headers),
       HTTPBody(
-        #"{"answers":[],"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
+        #"{"answers":\#(runAnswers),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
       )
     )
   }

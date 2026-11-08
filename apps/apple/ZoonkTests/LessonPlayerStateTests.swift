@@ -252,42 +252,11 @@ final class LessonPlayerStateTests: XCTestCase {
     try answerCheck(&state, optionId: "right")
 
     state.startRun(
-      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: false, answeredAt: .now)])
+      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: false, answeredAt: .now)],
+      keepsScreen: true)
 
     XCTAssertEqual(state.currentStep?.id, "check")
     XCTAssertEqual(state.phase, .feedback)
-  }
-
-  func testResumedRunKeepsTheQuestionBeingChecked() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
-    state.continueLesson()
-    state.continueLesson()
-    state.select(.check(optionId: "right"), for: "check")
-    state.startChecking()
-
-    state.startRun(
-      runId: "run", answers: [.init(stepId: "check", isCorrect: true, answeredAt: .now)])
-
-    XCTAssertEqual(state.currentStep?.id, "check")
-    XCTAssertEqual(state.phase, .checking)
-    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
-  }
-
-  func testResumedRunAfterFailedCheckKeepsTheSelectedAnswer() throws {
-    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
-    state.continueLesson()
-    state.continueLesson()
-    state.select(.check(optionId: "right"), for: "check")
-    state.startChecking()
-    state.failChecking()
-    state.refuseRun(.failed)
-    state.retryRun()
-
-    state.startRun(
-      runId: "run", answers: [.init(stepId: "hook", isCorrect: true, answeredAt: .now)])
-
-    XCTAssertEqual(state.currentStep?.id, "check")
-    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
   }
 
   func testOptionalScreensAreLeftOut() throws {

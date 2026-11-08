@@ -601,24 +601,23 @@ struct LessonPlayerState: Equatable, Sendable {
 
   /// The run started. When it already holds answers the screen doesn't show (the learner came
   /// back to an open run), the lesson continues from them and from the answers the device still
-  /// holds (`held`), which the server doesn't have yet. Once the learner answered anything here,
-  /// their screen leads.
+  /// holds (`held`), which the server doesn't have yet. Once the learner did anything on this visit
+  /// (`keepsScreen`), their screen leads.
   mutating func startRun(
     runId: String,
     answers runAnswers: [LessonRunAnswer],
     held: [LessonRunAnswer] = [],
     startedAt: Date = .distantPast,
     hyperdrive: LessonHyperdriveStart = .none,
-    optionalStepIds: [String] = []
+    optionalStepIds: [String] = [],
+    keepsScreen: Bool = false
   ) {
-    let isUntouched = answers.isEmpty && results.isEmpty && quickCheck == nil
-
     run = .started(runId: runId)
     hyperdriveStart = hyperdrive
     carriedStepIds = Set(runAnswers.filter { $0.answeredAt < startedAt }.map(\.stepId))
     skipSteps(optionalStepIds)
 
-    guard isUntouched else {
+    guard !keepsScreen else {
       return
     }
 
