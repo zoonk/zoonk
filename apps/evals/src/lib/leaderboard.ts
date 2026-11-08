@@ -15,10 +15,10 @@ export type LeaderboardEntry = {
   averageScore: number | null;
   summary: EvalSummary;
   accuracy: number | null;
-  latencyP50: number;
-  latencyP95: number;
+  latencyP50: number | null;
+  latencyP95: number | null;
   meetsLatencyBudget: boolean | null;
-  costPer1000Runs: number;
+  costPer1000Runs: number | null;
   judgeCost: number;
   categoryScores: CategoryScoreSummary[];
   languages: LanguageSummary[];
@@ -50,15 +50,18 @@ export function getLeaderboardEntries({
         categoryScores: summarizeCategoryScores(
           result.results.map((evalResult) => evalResult.categoryScores),
         ),
-        costPer1000Runs: stats.costPer1000Runs,
+        costPer1000Runs: summary.scored === 0 ? null : stats.costPer1000Runs,
         judgeCost: stats.judgeCost,
         languages: summarizeByLanguage({ results: result.results, testCases: task.testCases }),
-        latencyP50: stats.latencyP50,
-        latencyP95: stats.latencyP95,
-        meetsLatencyBudget: meetsLatencyBudget({
-          budget: task.latencyBudget,
-          latency: { p50: stats.latencyP50, p95: stats.latencyP95 },
-        }),
+        latencyP50: summary.scored === 0 ? null : stats.latencyP50,
+        latencyP95: summary.scored === 0 ? null : stats.latencyP95,
+        meetsLatencyBudget:
+          summary.scored === 0
+            ? null
+            : meetsLatencyBudget({
+                budget: task.latencyBudget,
+                latency: { p50: stats.latencyP50, p95: stats.latencyP95 },
+              }),
         modelId: result.modelId,
         modelName: model.name,
         provider: getModelFamily(model),

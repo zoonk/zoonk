@@ -204,7 +204,7 @@ async function generateAndScore({
   prices: GatewayPrices;
   runIds: Set<string>;
   task: RegisteredTask;
-}): Promise<{ results: TaskEvalResults; spent: number }> {
+}): Promise<{ spent: number }> {
   if (fresh) {
     await Promise.all([
       removeModelOutputRuns({ modelId: model.id, runIds, taskId: task.id }),
@@ -212,7 +212,7 @@ async function generateAndScore({
     ]);
   }
 
-  const { calls, result } = await meterWork(async () => {
+  const { calls } = await meterWork(async () => {
     const generated = await generateOutputs(task, model.id);
 
     if (isPricedFromOutputs(model.kind)) {
@@ -222,7 +222,7 @@ async function generateAndScore({
     return runEval(task, model.id);
   });
 
-  return { results: result, spent: getCallsCost({ calls, prices }) };
+  return { spent: getCallsCost({ calls, prices }) };
 }
 
 async function runModel({
@@ -243,19 +243,11 @@ async function runModel({
   const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
   const run = saved ? null : await generateAndScore({ fresh, model, prices, runIds, task });
 
-  const allResults: TaskEvalResults = run?.results ??
-    (await getTaskResults(task.id, modelId)) ?? {
-      modelId,
-      outputs: [],
-      results: [],
-      taskId: task.id,
-    };
-
-  const evalResults: TaskEvalResults = {
-    ...allResults,
-    failedRuns: allResults.failedRuns?.filter((failed) => runIds.has(failed.testCaseId)),
-    outputs: allResults.outputs.filter((output) => runIds.has(output.testCaseId)),
-    results: allResults.results.filter((result) => runIds.has(result.testCase.id)),
+  const evalResults: TaskEvalResults = (await getTaskResults(task.id, modelId, runIds)) ?? {
+    modelId,
+    outputs: [],
+    results: [],
+    taskId: task.id,
   };
 
   const stats = getStatsFromResults({ evalResults, prices });

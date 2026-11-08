@@ -32,7 +32,6 @@ export const keyFlawSchema = z.object({
 });
 
 export type KeyFlaw = z.infer<typeof keyFlawSchema>;
-export type KeyFlawItem = { itemLocator: string; item: unknown };
 
 type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
@@ -159,7 +158,7 @@ export type CodeCheckResult = {
   total: number;
   problems: string[];
   judgedOutput: string;
-  keyFlawItems?: KeyFlawItem[];
+  keyFlawLocators?: string[];
 };
 
 export type TaskCodeChecks<TExpected = unknown> = (

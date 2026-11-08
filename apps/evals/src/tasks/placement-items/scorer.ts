@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type KeyFlawItem, type TaskScorer } from "@/lib/types";
+import { type TaskScorer } from "@/lib/types";
 import {
   type PlacementItemsParams,
   type PlacementSkillItems,
@@ -15,8 +15,7 @@ type PlacementItemsCase = Pick<
 >;
 
 type RoleCheck = {
-  passing: GeneratedItem[];
-  keyFlawItems: KeyFlawItem[];
+  passing: (GeneratedItem & { itemLocator: string })[];
   problems: string[];
   wanted: number;
 };
@@ -51,8 +50,7 @@ function checkRole({
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
-    keyFlawItems: passing.map(({ item, itemLocator }) => ({ item, itemLocator })),
-    passing: passing.map((entry) => entry.item),
+    passing: passing.map(({ item, itemLocator }) => ({ ...item, itemLocator })),
     problems: [
       ...(items.length === wanted ? [] : [`${label}: ${items.length} instead of ${wanted}.`]),
       ...checked.flatMap((entry) => entry.problems),
@@ -108,7 +106,7 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
       null,
       2,
     ),
-    keyFlawItems: roles.flatMap((role) => role.keyFlawItems),
+    keyFlawLocators: roles.flatMap((role) => role.passing.map((item) => item.itemLocator)),
     passed: roles.reduce((total, role) => total + Math.min(role.passing.length, role.wanted), 0),
     problems: roles.flatMap((role) => role.problems),
     total: roles.reduce((total, role) => total + role.wanted, 0),

@@ -39,11 +39,11 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
       return byScore;
     }
 
-    return b.latencyP50 - a.latencyP50;
+    return (b.latencyP50 ?? 0) - (a.latencyP50 ?? 0);
   }
 
   if (key === "costPer1000Runs" || key === "latencyP50" || key === "latencyP95") {
-    return a[key] - b[key];
+    return (a[key] ?? 0) - (b[key] ?? 0);
   }
 
   return a[key].localeCompare(b[key]);
@@ -57,8 +57,8 @@ export function sortLeaderboardEntries(
   const sign = direction === "asc" ? 1 : -1;
 
   return [...entries].toSorted((left, right) => {
-    if (key === "averageScore" && (left.averageScore === null || right.averageScore === null)) {
-      return Number(left.averageScore === null) - Number(right.averageScore === null);
+    if (left[key] === null || right[key] === null) {
+      return Number(left[key] === null) - Number(right[key] === null);
     }
 
     return sign * compareEntries(left, right, key);

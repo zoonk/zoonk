@@ -8,7 +8,6 @@ import systemPrompt from "./system-prompt.md";
 import {
   type JudgeRun,
   type KeyFlaw,
-  type KeyFlawItem,
   type ScoreCategory,
   type ScoreStep,
   type TaskScoreResult,
@@ -40,14 +39,10 @@ export async function generateScore(params: {
   prompt: string;
   output: string;
   scoreCategories?: ScoreCategory[];
-  keyFlawItems?: KeyFlawItem[];
+  keyFlawLocators?: string[];
 }): Promise<TaskScoreResult> {
-  const { expectations, prompt, output, scoreCategories, keyFlawItems } = params;
-  const instructions = keyFlawItems ? `${systemPrompt}\n\n${keyFlawsPrompt}` : systemPrompt;
-
-  const itemsSection = keyFlawItems
-    ? `**Items to check**\n${JSON.stringify(keyFlawItems, null, 2)}`
-    : "";
+  const { expectations, prompt, output, scoreCategories, keyFlawLocators } = params;
+  const instructions = keyFlawLocators ? `${systemPrompt}\n\n${keyFlawsPrompt}` : systemPrompt;
 
   const categoriesSection = scoreCategories
     ? `
@@ -68,16 +63,20 @@ export async function generateScore(params: {
     ${prompt}
 
     **Result**
-    ${output}${itemsSection ? `\n\n${itemsSection}` : ""}
+    ${output}
   `;
 
   if (scoreCategories) {
+    const keyFlawsSchema = keyFlawLocators?.length
+      ? z.array(keyFlawSchema.extend({ itemLocator: z.enum(keyFlawLocators) }))
+      : z.array(keyFlawSchema).length(0);
+
     const { output: result, usage } = await generateText({
       instructions,
       model: SCORING_JUDGE_MODEL_ID,
       output: Output.object({
-        schema: keyFlawItems
-          ? categorizedScoreSchema.extend({ keyFlaws: z.array(keyFlawSchema) })
+        schema: keyFlawLocators
+          ? categorizedScoreSchema.extend({ keyFlaws: keyFlawsSchema })
           : categorizedScoreSchema,
       }),
       prompt: evalPrompt,
@@ -91,49 +90,45 @@ export async function generateScore(params: {
     return {
       categoryScores,
       judge: getJudgeRun(usage),
-      ...resolveKeyFlaws({ items: keyFlawItems, result }),
+      ...resolveKeyFlaws({ locators: keyFlawLocators, result }),
       score: calculateScore({ categoryScores, steps: result.steps }),
       steps: result.steps,
     };
   }
 
   const { output: result, usage } = await generateText({
-    instructions,
+    instructions: systemPrompt,
     model: SCORING_JUDGE_MODEL_ID,
-    output: Output.object({
-      schema: keyFlawItems ? scoreSchema.extend({ keyFlaws: z.array(keyFlawSchema) }) : scoreSchema,
-    }),
+    output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
   });
 
   return {
     judge: getJudgeRun(usage),
-    ...resolveKeyFlaws({ items: keyFlawItems, result }),
     score: calculateScore({ steps: result.steps }),
     steps: result.steps,
   };
 }
 
 function resolveKeyFlaws({
-  items,
+  locators,
   result,
 }: {
-  items?: KeyFlawItem[];
+  locators?: string[];
   result: { steps: ScoreStep[]; keyFlaws?: KeyFlaw[] };
 }): { keyFlaws?: KeyFlaw[]; itemsScored?: number } {
-  if (!items) {
+  if (!locators) {
     return {};
   }
 
   const flaws = z.array(keyFlawSchema).parse(result.keyFlaws);
-  const locators = new Set(items.map((item) => item.itemLocator));
   const flagged = new Set(flaws.map((flaw) => flaw.itemLocator));
 
-  if (flagged.size !== flaws.length || flaws.some((flaw) => !locators.has(flaw.itemLocator))) {
-    throw new Error("Judge returned duplicate or unknown key-flaw item locators.");
+  if (flagged.size !== flaws.length) {
+    throw new Error("Judge returned duplicate key-flaw item locators.");
   }
 
-  return { itemsScored: items.length, keyFlaws: flaws };
+  return { itemsScored: locators.length, keyFlaws: flaws };
 }
 
 function getJudgeRun(usage: Parameters<typeof toTokenUsage>[0]): JudgeRun {

@@ -98,7 +98,10 @@ const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => 
   ]);
 
   const generatedOutputs = modelOutputs
-    ? combineOutputsWithTestCases({ modelOutputs, task })
+    ? combineOutputsWithTestCases({
+        modelOutputs: { ...modelOutputs, outputs: results?.outputs ?? [] },
+        task,
+      })
     : null;
 
   return { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName: task.name };

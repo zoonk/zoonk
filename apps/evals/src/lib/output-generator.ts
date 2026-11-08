@@ -1,7 +1,8 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { GatewayError } from "@ai-sdk/gateway";
 import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
 import { logError, logInfo } from "@zoonk/utils/logger";
-import { APICallError, NoObjectGeneratedError } from "ai";
+import { APICallError, NoObjectGeneratedError, RetryError } from "ai";
 import { settleWithConcurrency } from "./concurrency";
 import { type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
@@ -52,11 +53,15 @@ type FailedAttempt = {
 };
 
 function getFailureReason(error: unknown): FailureReason {
+  if (RetryError.isInstance(error)) {
+    return getFailureReason(error.lastError);
+  }
+
   if (NoObjectGeneratedError.isInstance(error)) {
     return "schema";
   }
 
-  return APICallError.isInstance(error) ? "provider" : "other";
+  return APICallError.isInstance(error) || GatewayError.isInstance(error) ? "provider" : "other";
 }
 
 function toRunCalls(billed: readonly BilledCall[]): Pick<OutputEntry, "calls" | "extraCalls"> {

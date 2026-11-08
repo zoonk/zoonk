@@ -40,7 +40,6 @@ function checkWriteListeningSetOutput(
     const item = repairItem({ item: toListeningItem(question), language, optionCount });
 
     return {
-      item,
       itemLocator: `set.questions[${index}]`,
       problems: checkItem({ item, language, optionCount }),
       question,
@@ -51,11 +50,14 @@ function checkWriteListeningSetOutput(
 
   return {
     judgedOutput: JSON.stringify(
-      { ...set, questions: passing.map((entry) => entry.question) },
+      {
+        ...set,
+        questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })),
+      },
       null,
       2,
     ),
-    keyFlawItems: passing.map(({ item, itemLocator }) => ({ item, itemLocator })),
+    keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length === 0 ? 0 : passing.length + (setProblems.length === 0 ? SET_CHECKS : 0),
     problems: [...setProblems, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,

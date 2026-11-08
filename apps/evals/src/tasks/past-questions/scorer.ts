@@ -32,11 +32,12 @@ function checkQuestions(output: string, input: ExtractPastQuestionsParams): Code
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
-    judgedOutput: JSON.stringify({ questions: passing.map((entry) => entry.question) }, null, 2),
-    keyFlawItems: passing.map(({ itemLocator, question }) => ({
-      item: question.item,
-      itemLocator,
-    })),
+    judgedOutput: JSON.stringify(
+      { questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })) },
+      null,
+      2,
+    ),
+    keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length,
     problems: checked.flatMap((entry) => entry.problems),
     total: Math.max(questions.length, 1),

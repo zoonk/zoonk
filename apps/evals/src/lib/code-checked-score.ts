@@ -45,15 +45,18 @@ export async function scoreWithCodeChecks({
   const result = await check(output);
 
   if (result.passed === 0) {
-    return createFixedScore({
-      conclusion: `No part passed the code checks. ${result.problems.join(" ")}`,
-      score: MIN_SCORE,
-    });
+    return {
+      ...createFixedScore({
+        conclusion: `No part passed the code checks. ${result.problems.join(" ")}`,
+        score: MIN_SCORE,
+      }),
+      ...(result.keyFlawLocators ? { itemsScored: 0, keyFlaws: [] } : {}),
+    };
   }
 
   const judged = await generateScore({
     expectations: getJudgeExpectations(testCase),
-    keyFlawItems: result.keyFlawItems,
+    keyFlawLocators: result.keyFlawLocators,
     output: result.judgedOutput,
     prompt: JSON.stringify(testCase.userInput, null, 2),
     scoreCategories,

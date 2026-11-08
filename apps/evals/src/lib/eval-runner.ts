@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
@@ -231,7 +231,23 @@ function combineOutputsAndResults(
 }
 
 export const getTaskResults = cache(
-  async (taskId: string, modelId: string): Promise<TaskEvalResults | null> => {
+  async (
+    taskId: string,
+    modelId: string,
+    runIds?: ReadonlySet<string>,
+  ): Promise<TaskEvalResults | null> => {
+    const task = getTaskById(taskId);
+
+    if (!task) {
+      return null;
+    }
+
+    const currentRunIds =
+      runIds ??
+      new Set(
+        getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
+      );
+
     const modelOutputs = await loadModelOutputs(taskId, modelId);
 
     if (!modelOutputs) {
@@ -240,6 +256,14 @@ export const getTaskResults = cache(
 
     const scoredResults = await loadExistingScoredResults(taskId, modelId);
 
-    return combineOutputsAndResults(taskId, modelId, modelOutputs, scoredResults);
+    return combineOutputsAndResults(
+      taskId,
+      modelId,
+      {
+        failedRuns: modelOutputs.failedRuns?.filter((run) => currentRunIds.has(run.testCaseId)),
+        outputs: modelOutputs.outputs.filter((output) => currentRunIds.has(output.testCaseId)),
+      },
+      scoredResults.filter((result) => currentRunIds.has(result.testCase.id)),
+    );
   },
 );

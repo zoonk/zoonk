@@ -17,6 +17,7 @@
     "typecheck": "next typegen && tsrs --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/gateway": "4.0.137",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
