@@ -8,6 +8,7 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { skillLevelsWorkflow } from "./skill-levels-workflow";
 
 const MAX_ATTEMPTS = 8;
+const SKILLS_PER_CALL = 40;
 const STALE_CLAIM_MS = 10 * 60 * 1000;
 
 /** Places every skill at its band's upper level, except the ones the model skips. */
@@ -97,6 +98,25 @@ describe(skillLevelsWorkflow, () => {
     await expect(skillLevelsWorkflow({ skillIds, wait: "later" })).resolves.toBe(1);
     expect(sentSkillIds()).toStrictEqual([[skipped.id]]);
     await expect(readSkills([skipped.id])).resolves.toMatchObject([{ cefrLevel: "A2" }]);
+  });
+
+  it("sends a skill two graph keys resolve to once, even where its copies would fall in two batches", async () => {
+    const skills = await Promise.all(
+      Array.from({ length: SKILLS_PER_CALL }, () =>
+        skillFixture({ level: "beginner", targetLanguage: "en" }),
+      ),
+    );
+
+    const skillIds = skills.map((skill) => skill.id);
+    const [first] = skillIds;
+
+    mockLevels();
+
+    await expect(
+      skillLevelsWorkflow({ skillIds: [...skillIds, first ?? ""], wait: "later" }),
+    ).resolves.toBe(SKILLS_PER_CALL);
+
+    expect(sentSkillIds()).toStrictEqual([skillIds]);
   });
 
   it("counts a failed call as a try and stops sending a skill whose tries reached the cap", async () => {

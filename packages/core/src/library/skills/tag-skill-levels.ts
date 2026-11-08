@@ -34,7 +34,10 @@ function chunk<T>(items: readonly T[]): T[][] {
   );
 }
 
-/** Internal workflow bridge: the skills among `skillIds` still owing a level, one call's worth each. */
+/**
+ * Internal workflow bridge: the skills among `skillIds` still owing a level, one call's worth each.
+ * Two graph keys can resolve to one skill, and one run's claims admit it in every batch it's in.
+ */
 export async function findSkillLevelBatches(
   skillIds: readonly string[],
 ): Promise<SkillLevelBatch[]> {
@@ -45,7 +48,7 @@ export async function findSkillLevelBatches(
   `;
 
   const languageOf = new Map(owed.map((skill) => [skill.id, skill.targetLanguage]));
-  const inOrder = skillIds.filter((id) => languageOf.has(id));
+  const inOrder = [...new Set(skillIds)].filter((id) => languageOf.has(id));
 
   return [...Map.groupBy(inOrder, (id) => languageOf.get(id) ?? "")].flatMap(
     ([targetLanguage, ids]) => chunk(ids).map((batch) => ({ skillIds: batch, targetLanguage })),
