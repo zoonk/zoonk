@@ -287,6 +287,9 @@ catalogs:
     sharp:
       specifier: 0.35.5
       version: 0.35.5
+    translation-resilience:
+      specifier: 0.5.0
+      version: 0.5.0
     tsx:
       specifier: 4.23.15
       version: 4.23.15
@@ -538,6 +541,9 @@ importers:
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
+      translation-resilience:
+        specifier: 'catalog:'
+        version: 0.5.0
       workflow:
         specifier: 5.4.0
         version: 5.4.0(@aws-sdk/credential-provider-web-identity@3.972.49)(@nestjs/common@12.4.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@12.4.0(@nestjs/common@12.4.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.10.0)(@swc/cli@0.8.2(@swc/core@1.15.3(@swc/helpers@0.5.24))(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3(@swc/helpers@0.5.24))(@swc/helpers@0.5.24)(confbox@0.3.2)(dotenv@18.0.9)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(next@16.4.5(@opentelemetry/api@1.10.0)(@playwright/test@1.65.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(oxc-parser@0.157.0)(react@19.3.1)(rolldown@1.2.16)(supports-color@8.1.1)(typescript@7.1.0-beta)(ws@8.22.1)
@@ -854,6 +860,9 @@ importers:
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.6)
+      translation-resilience:
+        specifier: 'catalog:'
+        version: 0.5.0
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -9024,6 +9033,9 @@ packages:
     resolution: {integrity: sha512-BcDSDW+SIGWVOns1Zm6Yg91q9AEj7eaID0QDY9oIqJD1A8dscNwMcl9Sms2DeuWCNov1X0/oXanHGYQBSLwZsg==}
     engines: {node: ^22.14.0 || >=24.0.0}
 
+  translation-resilience@0.5.0:
+    resolution: {integrity: sha512-LKlyikRXOqeVQwFiiIJnQ6SFCll/2Rsl6a19F7Mpp/QdC3+s8LV/J1Ar+oeAJOgFWCvUCfD8JcJCLsYrsbvNmw==}
+
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
 
@@ -16923,6 +16935,8 @@ snapshots:
   tr46@7.0.0:
     dependencies:
       punycode: 2.3.1
+
+  translation-resilience@0.5.0: {}
 
   trim-lines@3.0.1: {}
 

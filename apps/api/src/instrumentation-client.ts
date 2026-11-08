@@ -1,7 +1,12 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
+import { installTranslationResilience } from "translation-resilience";
 import { AUTH_BASE_PATH } from "./lib/auth-base-path";
+
+// Page translators swap React's text nodes for their own, so React's next change to that text
+// would throw or never show (facebook/react#11538).
+installTranslationResilience();
 
 if (process.env.NODE_ENV === "production") {
   init({

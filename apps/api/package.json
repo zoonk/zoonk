@@ -45,6 +45,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",
+    "translation-resilience": "catalog:",
     "workflow": "5.4.0",
     "zod": "catalog:"
   },
