@@ -1,7 +1,8 @@
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
-import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
+import { type LessonStepResult } from "../lesson-player-types";
 import { getChallengeProgress } from "./challenge-progress";
 import { finishScreens, isAtEnd } from "./lesson-end";
+import { countVerdict } from "./lesson-misses";
 import {
   canSelfCorrect,
   getExplanationsAfter,
@@ -249,24 +250,6 @@ function offerSelfCorrection({
   };
 }
 
-function getMisses({
-  counts,
-  isCorrect,
-  state,
-  step,
-}: {
-  counts: boolean;
-  isCorrect: boolean;
-  state: LessonPlayerState;
-  step: PlayableLibraryStep | undefined;
-}): LessonPlayerState["misses"] {
-  if (!counts || !step) {
-    return state.misses;
-  }
-
-  return isCorrect ? [] : [...state.misses, { skillId: step.skillId, stepId: step.id }];
-}
-
 function recordFirstVerdict(
   state: LessonPlayerState,
   { counts, result, stepId }: { counts: boolean; result: LessonStepResult; stepId: string },
@@ -311,13 +294,11 @@ export function resolveCheck(
 
   const resolved: LessonPlayerState = {
     ...checked,
+    ...(counts && step ? countVerdict(state, { isCorrect: result.isCorrect, step }) : {}),
     checkFailed: false,
-    misses: getMisses({ counts, isCorrect: result.isCorrect, state, step }),
     notice: state.notice === "selfCorrect" ? null : state.notice,
     phase: "feedback",
     queue: willRetry ? [...state.queue, stepId] : state.queue,
-    quickCheck:
-      state.quickCheck && isMiss ? { ...state.quickCheck, missed: true } : state.quickCheck,
     results: { ...state.results, [stepId]: result },
     retried: willRetry ? [...state.retried, stepId] : state.retried,
     selfCorrection: null,

@@ -3,7 +3,8 @@ import {
   type LessonPlayerState,
   getCurrentStep,
 } from "../lesson-player-state";
-import { type LessonStepResult } from "../lesson-player-types";
+import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
+import { countVerdict, takeBackMiss } from "./lesson-misses";
 
 type Confirmation = Extract<LessonPlayerAction, { type: "checkConfirmed" }>;
 
@@ -17,6 +18,7 @@ export function confirmCheck(state: LessonPlayerState, action: Confirmation): Le
       : state;
 
   const pending = state.selfCorrection;
+  const step = state.steps[action.stepId];
 
   if (
     action.result.isCorrect &&
@@ -24,10 +26,12 @@ export function confirmCheck(state: LessonPlayerState, action: Confirmation): Le
     pending.result.attemptId === action.attemptId &&
     state.notice === "selfCorrect" &&
     state.phase === "playing" &&
-    getCurrentStep(state)?.id === action.stepId
+    getCurrentStep(state)?.id === action.stepId &&
+    step
   ) {
     return {
       ...confirmed,
+      ...countVerdict(state, { isCorrect: true, step }),
       notice: null,
       phase: "feedback",
       results: { ...state.results, [action.stepId]: confirmResult(pending.result, action.result) },
@@ -37,14 +41,38 @@ export function confirmCheck(state: LessonPlayerState, action: Confirmation): Le
 
   const current = state.results[action.stepId];
 
-  if (!current || current.attemptId !== action.attemptId) {
+  if (!current || current.attemptId !== action.attemptId || !step) {
     return confirmed;
   }
 
   return {
     ...confirmed,
+    ...recountFlip({
+      isCorrect: action.result.isCorrect,
+      state,
+      step,
+      wasCorrect: current.isCorrect,
+    }),
     results: { ...state.results, [action.stepId]: confirmResult(current, action.result) },
   };
+}
+
+function recountFlip({
+  isCorrect,
+  state,
+  step,
+  wasCorrect,
+}: {
+  isCorrect: boolean;
+  state: LessonPlayerState;
+  step: PlayableLibraryStep;
+  wasCorrect: boolean;
+}) {
+  if (isCorrect === wasCorrect) {
+    return {};
+  }
+
+  return isCorrect ? takeBackMiss(state, step.id) : countVerdict(state, { isCorrect, step });
 }
 
 function confirmResult(
