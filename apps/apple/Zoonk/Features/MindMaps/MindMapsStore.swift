@@ -73,7 +73,8 @@ struct MindMapLimit: Equatable, Sendable {
   let resource: Resource
 }
 
-/// What a tap on Create or Try again got that the map's own status doesn't say.
+/// What a tap or following a run got that the map's own status doesn't say. It stands for the read
+/// it appeared over: a newer read of the map that comes through clears it.
 enum MindMapRequestFailure: Equatable, Sendable {
   case refused(MindMapLimit)
   case unreachable
@@ -90,6 +91,10 @@ enum MindMapRequest: Equatable, Sendable {
 @Observable
 final class MindMapsStore {
   private(set) var requesting: Set<String> = []
+  private(set) var failures: [String: MindMapRequestFailure] = [:]
+  /// The read count when each failure appeared; a read started after it clears it.
+  @ObservationIgnored private var failedAt: [String: Int] = [:]
+  @ObservationIgnored private var reads = 0
 
   @ObservationIgnored private let api: any MindMapsAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -117,12 +122,15 @@ final class MindMapsStore {
     let list: Resource<GoalMindMaps> = cache.resource(
       audience: .signedIn, domains: [.goals, .userProgress, .userSubscription],
       isEmpty: \.chapters.isEmpty
-    ) { session in
+    ) { [weak self] session in
       guard let session else {
         return nil
       }
 
-      return try await api.list(token: session.bearerToken, goalId: goalId)
+      let started = await self?.readStarted()
+      let read = try await api.list(token: session.bearerToken, goalId: goalId)
+      await self?.readCameThrough(started, keys: read.chapters.map { "\(goalId):\($0.chapterId)" })
+      return read
     }
 
     lists[goalId] = list
@@ -139,26 +147,34 @@ final class MindMapsStore {
     let api = api
     let map: Resource<ChapterMindMap> = cache.resource(
       audience: .signedIn, domains: [.goals, .userProgress, .userSubscription]
-    ) { session in
+    ) { [weak self] session in
       guard let session else {
         return nil
       }
 
-      return try await api.map(token: session.bearerToken, goalId: goalId, chapterId: chapterId)
+      let started = await self?.readStarted()
+      let read = try await api.map(
+        token: session.bearerToken, goalId: goalId, chapterId: chapterId)
+      await self?.readCameThrough(started, keys: [key])
+      return read
     }
 
     maps[key] = map
     return map
   }
 
-  /// What the tap got that the map's status won't say, for its row to show.
-  func create(goalId: String, chapterId: String) async -> MindMapRequestFailure? {
+  func failure(goalId: String, chapterId: String) -> MindMapRequestFailure? {
+    failures["\(goalId):\(chapterId)"]
+  }
+
+  func create(goalId: String, chapterId: String) async {
     guard !requesting.contains(chapterId) else {
-      return nil
+      return
     }
 
     requesting.insert(chapterId)
     defer { requesting.remove(chapterId) }
+    fail(nil, goalId: goalId, chapterId: chapterId)
 
     let api = api
     let started = await cache.mutate { identity in
@@ -167,13 +183,15 @@ final class MindMapsStore {
 
     switch started {
     case .done(.read):
-      return await refresh(goalId: goalId, chapterId: chapterId) ? nil : .unreachable
+      if await !refresh(goalId: goalId, chapterId: chapterId) {
+        fail(.unreachable, goalId: goalId, chapterId: chapterId)
+      }
     case .done(.refused(let limit)):
-      return .refused(limit)
+      fail(.refused(limit), goalId: goalId, chapterId: chapterId)
     case .failed:
-      return .unreachable
+      fail(.unreachable, goalId: goalId, chapterId: chapterId)
     case .obsolete:
-      return nil
+      break
     }
   }
 
@@ -182,9 +200,9 @@ final class MindMapsStore {
   /// shown of the map says where the run stands and the run is done. Leaving the screen or signing
   /// out ends it sooner, and three beats in a row whose reads don't come through end it as
   /// `unreachable`.
-  func follow(goalId: String, chapterId: String) async -> MindMapRequestFailure? {
+  func follow(goalId: String, chapterId: String) async {
     guard let session = cache.session.authenticatedSession else {
-      return nil
+      return
     }
 
     var missed = 0
@@ -205,7 +223,7 @@ final class MindMapsStore {
           missed = 0
 
           if !read.isOnItsWay, shows(read, goalId: goalId, chapterId: chapterId) {
-            return nil
+            return
           }
 
           beat = read == .writingLessons ? writingPoll : drawingPoll
@@ -216,21 +234,45 @@ final class MindMapsStore {
         missed += 1
       } catch {
         // Cancelled, or an answer reading again won't change.
-        return nil
+        return
       }
 
       if missed == 3 {
-        return Task.isCancelled ? nil : .unreachable
+        if !Task.isCancelled, cache.session.authenticatedSession == session {
+          fail(.unreachable, goalId: goalId, chapterId: chapterId)
+        }
+
+        return
       }
 
       do {
         try await Task.sleep(for: beat)
       } catch {
-        return nil
+        return
       }
     }
+  }
 
-    return nil
+  private func fail(_ failure: MindMapRequestFailure?, goalId: String, chapterId: String) {
+    let key = "\(goalId):\(chapterId)"
+    failures[key] = failure
+    failedAt[key] = failure == nil ? nil : reads
+  }
+
+  private func readStarted() -> Int {
+    reads += 1
+    return reads
+  }
+
+  private func readCameThrough(_ started: Int?, keys: [String]) {
+    guard let started else {
+      return
+    }
+
+    for key in keys where (failedAt[key] ?? started) < started {
+      failures[key] = nil
+      failedAt[key] = nil
+    }
   }
 
   /// Whether every copy of the map read so far, in the list and on its own, says `status`.

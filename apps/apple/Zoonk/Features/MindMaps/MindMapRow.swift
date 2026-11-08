@@ -20,7 +20,6 @@ struct MindMapRow: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
-  @State private var failure: MindMapRequestFailure?
 
   let goalId: String
   let map: ChapterMindMap
@@ -50,12 +49,16 @@ struct MindMapRow: View {
     }
     .announcesStatus(waitLine)
     // Read only: a map on its way when the row showed, or once a tap started it, is followed
-    // until its status changes or the connection drops.
+    // until its status changes or the connection drops; a newer read of the map starts it again.
     .task(id: map.status.isOnItsWay && failure == nil) {
       if map.status.isOnItsWay, failure == nil {
-        failure = await store.follow(goalId: goalId, chapterId: map.chapterId)
+        await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
+  }
+
+  private var failure: MindMapRequestFailure? {
+    store.failure(goalId: goalId, chapterId: map.chapterId)
   }
 
   private var row: some View {
@@ -283,10 +286,8 @@ struct MindMapRow: View {
   }
 
   private func create() {
-    failure = nil
-
     Task {
-      failure = await store.create(goalId: goalId, chapterId: map.chapterId)
+      await store.create(goalId: goalId, chapterId: map.chapterId)
     }
   }
 

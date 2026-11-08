@@ -10,10 +10,10 @@ final class MindMapsStoreTests: XCTestCase {
     let list = store.list(goalId: "goal")
     await list.load()
 
-    let failure = await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter")
 
     let calls = await api.calls
-    XCTAssertNil(failure)
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
     XCTAssertEqual(list.value?.chapters.first?.status, .ready)
     XCTAssertEqual(calls.status, 2)
     XCTAssertEqual(calls.create, 0)
@@ -27,10 +27,10 @@ final class MindMapsStoreTests: XCTestCase {
     let list = store.list(goalId: "goal")
     await list.load()
 
-    let failure = await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter")
 
     let calls = await api.calls
-    XCTAssertNil(failure)
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
     XCTAssertEqual(list.value?.chapters.first?.status, .failed)
     XCTAssertEqual(calls.status, 4)
   }
@@ -46,11 +46,52 @@ final class MindMapsStoreTests: XCTestCase {
     let list = store.list(goalId: "goal")
     await list.load()
 
-    let failure = await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter")
 
     let calls = await api.calls
-    XCTAssertEqual(failure, .unreachable)
+    XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .unreachable)
     XCTAssertEqual(calls.status, 4)
+  }
+
+  func testANewerReadClearsTheConnectionErrorSoFollowingCanStartAgain() async {
+    let api = MindMapsAPIStub(
+      server: .writingLessons,
+      statuses: [
+        .success(.writingLessons), .failure(.network), .failure(.network), .failure(.network),
+        .success(.drawing),
+      ])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await store.follow(goalId: "goal", chapterId: "chapter")
+    XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .unreachable)
+
+    await list.refresh()
+
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
+  }
+
+  func testAReadAlreadyOnItsWayKeepsTheRefusalAndANewerOneClearsIt() async {
+    let limit = MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+
+    await api.holdNextList()
+    let earlier = Task { await list.refresh() }
+    while await !api.isHoldingList {
+      await Task.yield()
+    }
+
+    await store.create(goalId: "goal", chapterId: "chapter")
+    await api.releaseList()
+    await earlier.value
+    XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .refused(limit))
+
+    await list.refresh()
+
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
   }
 
   func testAReadyMapWhoseReadFailsIsFollowedUntilTheListShowsIt() async {
@@ -60,9 +101,9 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.failLists(1)
 
-    let failure = await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter")
 
-    XCTAssertNil(failure)
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
     XCTAssertEqual(list.value?.chapters.first?.status, .ready)
   }
 
@@ -76,7 +117,7 @@ final class MindMapsStoreTests: XCTestCase {
     let list = store.list(goalId: "goal")
     await list.load()
 
-    _ = await store.follow(goalId: "goal", chapterId: "chapter")
+    await store.follow(goalId: "goal", chapterId: "chapter")
 
     let calls = await api.calls
     XCTAssertEqual(list.value?.chapters.first?.status, .ready)
@@ -99,10 +140,10 @@ final class MindMapsStoreTests: XCTestCase {
     let second = Task { await store.follow(goalId: "goal", chapterId: "chapter") }
     first.cancel()
     await api.release()
-    _ = await first.value
+    await first.value
 
-    let failure = await second.value
-    XCTAssertNil(failure)
+    await second.value
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
     XCTAssertEqual(list.value?.chapters.first?.status, .ready)
   }
 
@@ -112,10 +153,10 @@ final class MindMapsStoreTests: XCTestCase {
     let list = store.list(goalId: "goal")
     await list.load()
 
-    let failure = await store.create(goalId: "goal", chapterId: "chapter")
+    await store.create(goalId: "goal", chapterId: "chapter")
 
     let calls = await api.calls
-    XCTAssertNil(failure)
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
     XCTAssertEqual(list.value?.chapters.first?.status, .drawing)
     XCTAssertEqual(calls.create, 1)
     XCTAssertEqual(calls.status, 0)
@@ -129,9 +170,9 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.failLists(1)
 
-    let failure = await store.create(goalId: "goal", chapterId: "chapter")
+    await store.create(goalId: "goal", chapterId: "chapter")
 
-    XCTAssertEqual(failure, .unreachable)
+    XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .unreachable)
   }
 
   func testRefusedMapSaysWhatRanOut() async {
@@ -139,9 +180,9 @@ final class MindMapsStoreTests: XCTestCase {
     let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
     let store = makeStore(api: api)
 
-    let failure = await store.create(goalId: "goal", chapterId: "chapter")
+    await store.create(goalId: "goal", chapterId: "chapter")
 
-    XCTAssertEqual(failure, .refused(limit))
+    XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .refused(limit))
     let calls = await api.calls
     XCTAssertEqual(calls.status, 0)
     XCTAssertEqual(calls.list, 0)
@@ -170,6 +211,8 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private let startsAs: ChapterMindMap.Status?
   private var holdsFirstStatus: Bool
   private var held: CheckedContinuation<Void, Never>?
+  private var holdsNextList = false
+  private var heldList: CheckedContinuation<Void, Never>?
   private var listFailures = 0
 
   init(
@@ -195,8 +238,24 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     listFailures = count
   }
 
+  var isHoldingList: Bool { heldList != nil }
+
+  func holdNextList() {
+    holdsNextList = true
+  }
+
+  func releaseList() {
+    heldList?.resume()
+    heldList = nil
+  }
+
   func list(token: String, goalId: String) async throws -> GoalMindMaps {
     calls.list += 1
+
+    if holdsNextList {
+      holdsNextList = false
+      await withCheckedContinuation { heldList = $0 }
+    }
 
     if listFailures > 0 {
       listFailures -= 1
