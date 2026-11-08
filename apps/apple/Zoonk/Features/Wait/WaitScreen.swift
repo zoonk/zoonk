@@ -418,6 +418,8 @@ extension View {
           .padding(.vertical, 10)
       }
     }
+    // Its outlined buttons are see-through, so what scrolls under the bar stops at its edge.
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 }
 

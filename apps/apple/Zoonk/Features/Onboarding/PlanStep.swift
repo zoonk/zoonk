@@ -544,6 +544,8 @@ private struct PlanReveal: View {
         heroSections(goal: goal, day: day)
       }
       .safeAreaBar(edge: .bottom) { actions(day: day.value) }
+      // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
+      .scrollEdgeEffectStyle(.hard, for: .bottom)
     } secondary: {
       ZoonkList {
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
@@ -554,6 +556,8 @@ private struct PlanReveal: View {
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
       .safeAreaBar(edge: .bottom) { actions(day: day.value) }
+      // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
+      .scrollEdgeEffectStyle(.hard, for: .bottom)
       .onboardingColumn()
     }
     .loads(syllabus, day, refreshable: false)
