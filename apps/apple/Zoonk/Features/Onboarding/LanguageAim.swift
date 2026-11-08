@@ -53,12 +53,14 @@ func aimLabel(_ aim: String) -> String? {
     String(localized: "Get by on trips", table: "Onboarding", comment: "What the A2 level aims for")
   case "B1":
     String(
-      localized: "Everyday conversations", table: "Onboarding", comment: "What the B1 level aims for")
+      localized: "Everyday conversations", table: "Onboarding",
+      comment: "What the B1 level aims for")
   case "B2":
     String(
       localized: "Work or study in it", table: "Onboarding", comment: "What the B2 level aims for")
   case "C1":
-    String(localized: "Speak it fluently", table: "Onboarding", comment: "What the C1 level aims for")
+    String(
+      localized: "Speak it fluently", table: "Onboarding", comment: "What the C1 level aims for")
   default:
     nil
   }
@@ -162,7 +164,8 @@ struct AimChoicesSheet: View {
       .navigationTitle(
         Text(
           "How far do you want to go?", tableName: "Onboarding",
-          comment: "Title of the choices of a language course's aim"))
+          comment: "Title of the choices of a language course's aim")
+      )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {

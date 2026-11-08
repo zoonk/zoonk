@@ -85,7 +85,8 @@ enum AnalyticsEvent: Equatable {
   case todayViewed
   /// `position` counts from 1, the deck's first card.
   case warmUpAnswered(surface: WarmUpSurface, cardID: String, position: Int, correct: Bool)
-  case warmUpShown(surface: WarmUpSurface, cardCount: Int, deckID: String, goalID: String?, at: Date)
+  case warmUpShown(
+    surface: WarmUpSurface, cardCount: Int, deckID: String, goalID: String?, at: Date)
 
   var name: String {
     switch self {

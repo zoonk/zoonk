@@ -357,51 +357,51 @@ struct GenerationWait: Equatable, Sendable {
 
   /// The goal's run reads the goal, maybe its material, then maps its skills, for every wait on it.
   private static let goalPhases: [Phase] = [
-        Phase(
-          id: "goal",
-          label: LocalizedStringResource(
-            "Reading your goal", table: "Onboarding",
-            comment: "A step of the wait while a plan is built"),
-          isOptional: false, seconds: 8,
-          lines: [
-            LocalizedStringResource(
-              "Reading your answers…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-            LocalizedStringResource(
-              "Deciding how deep to go…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-          ]),
-        Phase(
-          id: "notice",
-          label: LocalizedStringResource(
-            "Reading your material", table: "Onboarding",
-            comment: "A step of the wait while a plan is built from the learner's own material"),
-          isOptional: true, seconds: 15,
-          lines: [
-            LocalizedStringResource(
-              "Finding the topics it covers…", table: "Onboarding",
-              comment: "What the wait is doing while it reads the learner's own material"),
-            LocalizedStringResource(
-              "Putting them in the order it teaches…", table: "Onboarding",
-              comment: "What the wait is doing while it reads the learner's own material"),
-          ]),
-        Phase(
-          id: "skills",
-          label: LocalizedStringResource(
-            "Mapping the skills it takes", table: "Onboarding",
-            comment: "A step of the wait while a plan is built"),
-          isOptional: false, seconds: 60,
-          lines: [
-            LocalizedStringResource(
-              "Listing what your goal asks for…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-            LocalizedStringResource(
-              "Putting the skills in order…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-            LocalizedStringResource(
-              "Checking nothing important is missing…", table: "Onboarding",
-              comment: "What the wait is doing while a plan is built"),
-          ]),
+    Phase(
+      id: "goal",
+      label: LocalizedStringResource(
+        "Reading your goal", table: "Onboarding",
+        comment: "A step of the wait while a plan is built"),
+      isOptional: false, seconds: 8,
+      lines: [
+        LocalizedStringResource(
+          "Reading your answers…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+        LocalizedStringResource(
+          "Deciding how deep to go…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+      ]),
+    Phase(
+      id: "notice",
+      label: LocalizedStringResource(
+        "Reading your material", table: "Onboarding",
+        comment: "A step of the wait while a plan is built from the learner's own material"),
+      isOptional: true, seconds: 15,
+      lines: [
+        LocalizedStringResource(
+          "Finding the topics it covers…", table: "Onboarding",
+          comment: "What the wait is doing while it reads the learner's own material"),
+        LocalizedStringResource(
+          "Putting them in the order it teaches…", table: "Onboarding",
+          comment: "What the wait is doing while it reads the learner's own material"),
+      ]),
+    Phase(
+      id: "skills",
+      label: LocalizedStringResource(
+        "Mapping the skills it takes", table: "Onboarding",
+        comment: "A step of the wait while a plan is built"),
+      isOptional: false, seconds: 60,
+      lines: [
+        LocalizedStringResource(
+          "Listing what your goal asks for…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+        LocalizedStringResource(
+          "Putting the skills in order…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+        LocalizedStringResource(
+          "Checking nothing important is missing…", table: "Onboarding",
+          comment: "What the wait is doing while a plan is built"),
+      ]),
   ]
 
   private static func phases(for kind: Kind) -> [Phase] {
@@ -458,7 +458,7 @@ struct GenerationWait: Equatable, Sendable {
             LocalizedStringResource(
               "Saving your plan…", table: "Onboarding",
               comment: "What the wait is doing while a plan is built"),
-          ]),
+          ])
       ]
     case .placement:
       goalPhases + [

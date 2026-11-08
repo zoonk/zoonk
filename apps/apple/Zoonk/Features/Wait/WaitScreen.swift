@@ -393,7 +393,8 @@ private struct LibraryCourseRow: View {
 
           Text(
             "A Library course fits your goal. Start it now", tableName: "Onboarding",
-            comment: "Under a Library course offered while the learner's plan is built")
+            comment: "Under a Library course offered while the learner's plan is built"
+          )
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
         }

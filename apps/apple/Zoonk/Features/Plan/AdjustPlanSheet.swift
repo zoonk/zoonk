@@ -145,7 +145,8 @@ struct AdjustPlanSheet: View {
 
         Text(
           "How far your course goes, which sets how long your plan is.", tableName: "Plan",
-          comment: "Under the levels a language course can aim for")
+          comment: "Under the levels a language course can aim for"
+        )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
         .textCase(nil)

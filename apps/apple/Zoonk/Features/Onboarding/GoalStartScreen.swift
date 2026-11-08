@@ -282,7 +282,8 @@ private struct GoalStartFlow: View {
         let value = try await onboarding.understand(goal: goal)
         // A late reply still links an attempt the learner left.
         UsageAnalytics.track(
-          .onboardingProgressed(.attemptLinked(attemptID: attempt, onboardingID: value.id), at: .now))
+          .onboardingProgressed(
+            .attemptLinked(attemptID: attempt, onboardingID: value.id), at: .now))
 
         guard !Task.isCancelled else {
           return

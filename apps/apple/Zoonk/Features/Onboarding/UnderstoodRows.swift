@@ -124,7 +124,8 @@ enum UnderstoodRows {
     // The card's aim row opens the aims it can change to, never free text that sizes nothing.
     if let languageAim = goal.languageAim.flatMap({
       try? PracticeJSON.recode($0, as: LanguageAimView.self)
-    }), let index = rows.firstIndex(where: { $0.id == "targetScore" }), !languageAim.choices.isEmpty {
+    }), let index = rows.firstIndex(where: { $0.id == "targetScore" }), !languageAim.choices.isEmpty
+    {
       rows[index].aimChoices = languageAim.choices.map(\.aim)
 
       if let aim = languageAim.aim, let label = aimLabel(aim) {

@@ -66,7 +66,8 @@ struct WaitQuiz: View {
         ForEach(Array(card.options.enumerated()), id: \.element.id) { index, option in
           AnswerOption(
             marker: index + 1, isPicked: option.id == dealt.picked, result: result(option),
-            isGuessed: true, isLocked: dealt.picked != nil, text: RichInline(text: AttributedString(option.text))
+            isGuessed: true, isLocked: dealt.picked != nil,
+            text: RichInline(text: AttributedString(option.text))
           ) {
             guess(option)
           }

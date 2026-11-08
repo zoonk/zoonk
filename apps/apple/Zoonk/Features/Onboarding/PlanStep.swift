@@ -184,7 +184,8 @@ struct PlanBuilding: View {
       readResult: readResult,
       onRunEnd: onRunEnd
     ) { run in
-      let firstLesson = run.wait.firstLesson(read: view.firstLesson.map(GenerationWait.FirstLesson.init))
+      let firstLesson = run.wait.firstLesson(
+        read: view.firstLesson.map(GenerationWait.FirstLesson.init))
       let wait = holding == nil ? run.wait : run.wait.finished
       let failure = holding == nil ? run.failure : nil
       let ready = ready(firstLesson)
@@ -194,9 +195,10 @@ struct PlanBuilding: View {
         goalID: view.goal.id,
         progressTitle: Text(title),
         ready: ready,
-        library: ready == nil ? view.libraryCourse.map {
-          WaitLibraryCourse(courseID: $0.courseId, title: $0.title)
-        } : nil
+        library: ready == nil
+          ? view.libraryCourse.map {
+            WaitLibraryCourse(courseID: $0.courseId, title: $0.title)
+          } : nil
       ) {
         if let failure {
           GenerationFailureNotice(failure: failure, isActing: run.isRestarting, act: run.retry)
@@ -464,7 +466,8 @@ struct NoticeReadingView: View {
   /// Main's `useNoticeProgress`: from the plan built toward the end over the reading's usual time.
   private func share(at date: Date) -> Double {
     let elapsed = max(0, date.timeIntervalSince(since))
-    return Self.planBuilt + (0.97 - Self.planBuilt) * (1 - exp(-elapsed / (Self.readingSeconds / 2)))
+    return Self.planBuilt + (0.97 - Self.planBuilt)
+      * (1 - exp(-elapsed / (Self.readingSeconds / 2)))
   }
 
   private var done: some View {

@@ -347,7 +347,8 @@ private func revealDay(_ isoDate: String) -> String {
     return isoDate
   }
 
-  return date.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated).month(.abbreviated).day())
+  return date.formatted(
+    Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated).month(.abbreviated).day())
 }
 
 extension RevealDay.Item {

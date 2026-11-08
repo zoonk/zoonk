@@ -207,7 +207,8 @@ private struct TodayPreparing: View {
             router.open(.goalSetup(goalId: goalID))
           } label: {
             Text(
-              "See your plan", tableName: "Today", comment: "Opens the goal's plan before its first day")
+              "See your plan", tableName: "Today",
+              comment: "Opens the goal's plan before its first day")
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)

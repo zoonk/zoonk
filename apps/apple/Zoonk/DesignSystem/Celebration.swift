@@ -97,8 +97,9 @@ private struct CountingNumber: View, Animatable {
   var body: some View {
     if count > 0 {
       Text(
-        Int(count.rounded(.up)), format: .number.sign(strategy: isSigned ? .always() : .automatic))
-        .monospacedDigit()
+        Int(count.rounded(.up)), format: .number.sign(strategy: isSigned ? .always() : .automatic)
+      )
+      .monospacedDigit()
     }
   }
 }

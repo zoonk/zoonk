@@ -332,7 +332,8 @@ struct PlacementStep: View {
     }
     .measuresWait(
       surface: "placementWait", contentKind: "curriculum", goalID: view.goal.id,
-      onboardingID: view.onboardingID)
+      onboardingID: view.onboardingID
+    )
     .taskThroughPush(id: waitRound) { await waitForQuestions() }
   }
 

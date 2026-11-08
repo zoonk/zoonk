@@ -701,7 +701,8 @@ struct LessonWaitingView: View {
     .announcesStatus(notWrittenLine)
     .measuresWait(
       surface: "lessonWait", contentKind: "lesson", isActive: writing == .writing || holding != nil,
-      goalID: learner.summary.value?.activeGoalID)
+      goalID: learner.summary.value?.activeGoalID
+    )
     .task(id: writing) {
       isLate = false
 

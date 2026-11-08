@@ -425,7 +425,9 @@ private struct StepScreen: View {
 
 extension View {
   /// Main's `OnboardingQuestionShown`: a question the learner sees, each time it comes on screen.
-  func questionShown(_ step: Components.Schemas.OnboardingStep, of view: GoalOnboarding) -> some View {
+  func questionShown(_ step: Components.Schemas.OnboardingStep, of view: GoalOnboarding)
+    -> some View
+  {
     onAppear {
       UsageAnalytics.track(
         .onboardingProgressed(

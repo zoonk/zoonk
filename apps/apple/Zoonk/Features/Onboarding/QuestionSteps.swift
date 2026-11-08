@@ -385,7 +385,8 @@ private struct ReasonQuestion: View {
       SectionFooter {
         Text(
           "Hours of study from scratch, practice included. Less if you already know some.",
-          tableName: "Onboarding", comment: "Under the reasons to learn a language, with their hours")
+          tableName: "Onboarding",
+          comment: "Under the reasons to learn a language, with their hours")
       }
     }
     .locksWhileSaving()
@@ -454,7 +455,8 @@ private struct ReasonQuestion: View {
         } else {
           Text(
             "Exam", tableName: "Onboarding",
-            comment: "Beside a language goal's reason: a certificate's plan follows its exam")
+            comment: "Beside a language goal's reason: a certificate's plan follows its exam"
+          )
           .foregroundStyle(Color(.foreground))
         }
       }
@@ -475,7 +477,8 @@ private struct ReasonQuestion: View {
 
         Text(
           "Your plan follows that exam's papers and score.", tableName: "Onboarding",
-          comment: "Under the certificate a language learner wants to pass")
+          comment: "Under the certificate a language learner wants to pass"
+        )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }

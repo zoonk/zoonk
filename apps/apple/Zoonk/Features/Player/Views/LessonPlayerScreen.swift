@@ -181,7 +181,9 @@ private struct LessonPlayerContent: View {
         store.reportFirstScene()
       }
     }
-    .onChange(of: FirstScene(shown: store.state?.currentStep != nil, phase: scenePhase), initial: true) {
+    .onChange(
+      of: FirstScene(shown: store.state?.currentStep != nil, phase: scenePhase), initial: true
+    ) {
       _, scene in
       if scene.shown, scene.phase == .active {
         store.reportFirstScene()
