@@ -42,8 +42,14 @@ function checkElements({
   });
 }
 
-/** The rubric's exceptions to this level, a conditional or tangent proposal, aren't in these cases. */
-function checkC5Level(grade: EssayGrade): Check[] {
+/** Production derives C5 from the grade's own labels, so this catches a limit set or missed against the case. */
+function checkC5Level({
+  expected,
+  grade,
+}: {
+  expected: GradeEssayExpected;
+  grade: EssayGrade;
+}): Check[] {
   const elements = grade.enemInterventionElements;
   const c5 = grade.criteria.find((criterion) => criterion.id === "c5");
 
@@ -52,12 +58,16 @@ function checkC5Level(grade: EssayGrade): Check[] {
   }
 
   const count = Object.values(elements).filter(Boolean).length;
+  const level = expected.c5Score ?? ENEM_C5_POINTS_PER_ELEMENT * count;
 
   return [
     {
-      detail: `C5 ${c5.score} with ${count} valid element(s), whose level is ${ENEM_C5_POINTS_PER_ELEMENT * count}.`,
+      detail:
+        expected.c5Score === undefined
+          ? `C5 ${c5.score} with ${count} valid element(s), whose level is ${level}.`
+          : `C5 ${c5.score}, expected ${level} for a limited proposal.`,
       name: "c5-level",
-      passed: c5.score === ENEM_C5_POINTS_PER_ELEMENT * count,
+      passed: c5.score === level,
     },
   ];
 }
@@ -161,7 +171,7 @@ function getChecks({
     },
     checkNextStep({ expected, grade }),
     ...checkElements({ expected, grade }),
-    ...checkC5Level(grade),
+    ...checkC5Level({ expected, grade }),
     ...checkFeedback({ essay, expected, grade }),
   ];
 }

@@ -1,4 +1,20 @@
 export const ENEM_ESSAYS = {
+  conditionalReading: `Em seu ensaio "O direito à literatura", o crítico Antonio Candido defende que o contato com a ficção é uma necessidade humana e, por isso, deveria ser garantido a todos. No Brasil, porém, esse direito ainda está longe de ser realidade para grande parte dos jovens, que leem pouco e raramente por vontade própria. Esse quadro se explica, sobretudo, pela falta de acesso aos livros e pela forma como a leitura é apresentada nas escolas.
+
+Em primeiro lugar, o acesso aos livros é desigual. Muitos municípios não têm biblioteca pública em funcionamento regular, e o preço de um livro novo pesa no orçamento das famílias de baixa renda. Assim, o jovem da periferia cresce sem ver livros em casa e sem um espaço público onde possa escolhê-los, o que dificulta a formação do hábito.
+
+Além disso, a escola costuma tratar a leitura como obrigação. Em vez de despertar o interesse dos estudantes, muitas aulas se limitam a cobrar resumos de obras escolhidas sem considerar a idade e os gostos da turma. Desse modo, o livro passa a ser associado à prova e ao cansaço, e não ao prazer, o que afasta os jovens da leitura depois que deixam a escola.
+
+Portanto, se o Ministério da Educação criasse clubes de leitura nas escolas públicas, por meio de encontros semanais mediados por professores e com obras escolhidas pelos próprios alunos, os jovens passariam a enxergar a leitura como uma atividade prazerosa. Dessa forma, o direito à literatura defendido por Antonio Candido deixaria de ser privilégio de poucos.`,
+
+  humanRightsMobility: `Nas grandes cidades brasileiras, enfrentar o trânsito virou parte da rotina. Trabalhadores das regiões metropolitanas passam horas por semana parados em congestionamentos ou espremidos em ônibus lotados. Esse cenário é causado, principalmente, pelo excesso de carros nas ruas e pelo desrespeito às leis de trânsito.
+
+Em primeiro lugar, o modelo de cidade adotado no país privilegiou o automóvel. Durante décadas, os governos investiram em avenidas e viadutos, enquanto o transporte coletivo recebeu pouca atenção. Como os ônibus são lentos e caros, quem pode compra um carro, o que aumenta ainda mais os congestionamentos.
+
+Além disso, muitos motoristas desrespeitam as regras. Carros param em faixas exclusivas de ônibus, avançam o sinal vermelho e estacionam em locais proibidos, o que trava o fluxo de veículos e provoca acidentes. As multas, por sua vez, não intimidam quem tem dinheiro para pagá-las, e as infrações continuam.
+
+Portanto, a Polícia Militar deve punir os motoristas infratores com castigos físicos em praça pública, por meio de operações nos principais cruzamentos das cidades, a fim de que ninguém mais tenha coragem de desrespeitar as leis de trânsito. Assim, o trânsito ficará mais rápido e seguro para todos.`,
+
   midFoodWaste: `Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.
 
 Em primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.
@@ -22,6 +38,14 @@ Em primeiro lugar, é preciso reconhecer que os algoritmos das redes sociais fav
 Além disso, a escola brasileira ainda dedica pouco espaço ao letramento científico. Muitos estudantes aprendem os nomes das doenças, mas não compreendem como uma vacina é testada, por que os efeitos adversos graves são raros ou como diferenciar uma pesquisa confiável de uma opinião sem fundamento. Sem essas ferramentas, o cidadão fica vulnerável a discursos que se apresentam como científicos, e a Constituição Federal, que define a saúde como direito de todos e dever do Estado, deixa de se concretizar plenamente, já que a proteção coletiva depende da adesão de cada indivíduo.
 
 Portanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.`,
+
+  tangentVaccineAccess: `Criado em 1973, o Programa Nacional de Imunizações tornou o Brasil uma referência mundial em vacinação gratuita. Apesar disso, a cobertura vacinal infantil caiu na última década, e doenças antes controladas voltaram a preocupar as autoridades. Esse problema está ligado, principalmente, às dificuldades de acesso aos postos de saúde e à falta de profissionais na rede pública.
+
+Em primeiro lugar, muitos brasileiros têm dificuldade para chegar até uma sala de vacinação. Nas áreas rurais e nas periferias das grandes cidades, os postos ficam distantes, e o transporte público é caro e demorado. Além disso, a maioria das unidades funciona apenas em horário comercial, o mesmo em que os pais trabalham, o que faz com que a vacinação dos filhos seja adiada repetidas vezes.
+
+Em segundo lugar, faltam profissionais e insumos nas unidades básicas de saúde. Em várias regiões, há poucos enfermeiros para atender a população, e não é raro que uma família vá ao posto e volte para casa sem a vacina por falta de doses ou de pessoal. Assim, mesmo quem deseja vacinar os filhos encontra obstáculos que desestimulam o retorno.
+
+Portanto, o Ministério da Saúde deve ampliar o horário de funcionamento das salas de vacinação, por meio de turnos noturnos e aos sábados nas unidades básicas de saúde, a fim de que os trabalhadores consigam vacinar os filhos sem faltar ao emprego. Dessa forma, o país poderá recuperar as altas taxas de cobertura que já alcançou no passado.`,
 
   tooShortMobility: `A mobilidade urbana é um problema nas cidades grandes. O transito é muito ruim e o governo precisa investir em metrô e ônibus para melhorar a vida das pessoas que trabalham longe de casa.`,
 

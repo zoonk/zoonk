@@ -8,313 +8,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "conclusion": "All 6 checks passed. Total 15 (range 13–17), expected 11–17.5.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "conclusion": "All 6 checks passed. Total 15 (range 13–17), expected 11–17.5.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "interventionElements": {
-            "action": true,
-            "agent": true,
-            "detail": true,
-            "effect": true,
-            "means": true
-          },
-          "nextStepCriteria": [
-            "c1",
-            "c2",
-            "c3",
-            "c4"
-          ],
-          "totalBand": {
-            "max": 1000,
-            "min": 840
-          },
-          "zeroReason": null
-        },
-        "id": "enem-strong-pt-1",
-        "userInput": {
-          "essay": "No início do século XX, a Revolta da Vacina, no Rio de Janeiro, mostrou como a falta de informação pode transformar uma medida de saúde pública em motivo de medo e revolta. Mais de cem anos depois, o Brasil, que construiu um dos maiores programas públicos de imunização do mundo, volta a enfrentar a queda da cobertura vacinal, agora alimentada pela desinformação que circula nas redes. Esse cenário é agravado pela lógica das plataformas digitais e pela fragilidade da educação científica no país.\n\nEm primeiro lugar, é preciso reconhecer que os algoritmos das redes sociais favorecem conteúdos que despertam emoções fortes, como o medo. Segundo o sociólogo Zygmunt Bauman, a modernidade líquida é marcada por vínculos frágeis e pela desconfiança em relação às instituições, e é justamente nesse ambiente que boatos sobre supostos efeitos colaterais ganham mais alcance do que os dados oficiais. Assim, pais que buscam orientação na internet frequentemente encontram primeiro o alarme falso, e não a explicação do especialista, o que os leva a adiar ou a recusar a vacinação dos filhos.\n\nAlém disso, a escola brasileira ainda dedica pouco espaço ao letramento científico. Muitos estudantes aprendem os nomes das doenças, mas não compreendem como uma vacina é testada, por que os efeitos adversos graves são raros ou como diferenciar uma pesquisa confiável de uma opinião sem fundamento. Sem essas ferramentas, o cidadão fica vulnerável a discursos que se apresentam como científicos, e a Constituição Federal, que define a saúde como direito de todos e dever do Estado, deixa de se concretizar plenamente, já que a proteção coletiva depende da adesão de cada indivíduo.\n\nPortanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.",
-          "language": "pt",
-          "prompt": "Tema: Desafios para combater a desinformação sobre vacinas no Brasil.\nTexto I: A cobertura vacinal infantil caiu no Brasil na última década, e doenças antes controladas voltaram a preocupar as autoridades de saúde.\nTexto II: Boatos sobre supostos riscos das vacinas circulam mais depressa em aplicativos de mensagem do que as informações oficiais.\nTexto III: Criado em 1973, o Programa Nacional de Imunizações oferece gratuitamente dezenas de vacinas e é reconhecido internacionalmente.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": {
-            "kind": "enem"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
-      "steps": [
-        {
-          "conclusion": "C5 80 with 3 valid element(s), whose level is 120.",
-          "kind": "majorErrors",
-          "score": 9.64
-        },
-        {
-          "conclusion": "C5 80 with 3 valid element(s), whose level is 120.",
-          "kind": "minorErrors",
-          "score": 9.64
-        },
-        {
-          "conclusion": "C5 80 with 3 valid element(s), whose level is 120.",
-          "kind": "potentialImprovements",
-          "score": 9.64
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "interventionElements": {
-            "action": true,
-            "agent": true,
-            "effect": true,
-            "means": false
-          },
-          "nextStepCriteria": [
-            "c2",
-            "c3",
-            "c5"
-          ],
-          "totalBand": {
-            "max": 760,
-            "min": 600
-          },
-          "zeroReason": null
-        },
-        "id": "enem-mid-missing-means-pt-1",
-        "userInput": {
-          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
-          "language": "pt",
-          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": {
-            "kind": "enem"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
-      "steps": [
-        {
-          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 320–600.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 320–600.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 320–600.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "nextStepCriteria": [
-            "c1"
-          ],
-          "totalBand": {
-            "max": 600,
-            "min": 320
-          },
-          "zeroReason": null
-        },
-        "id": "enem-weak-norm-errors-pt-1",
-        "userInput": {
-          "essay": "Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.\n\nPrimeiramente os livro são muito caro, uma pessoa pobre nao consegue comprar um livro de cinquenta reais, ai ela desiste. E tambem as biblioteca da minha cidade vive fechada ou nao tem livro novo, entao fica dificil. Concerteza se tivesse mais biblioteca os jovem ia ler mais.\n\nOutro ponto é que na escola os professor manda ler uns livro muito antigo, que ninguem entende, tipo Machado de Assis, e os aluno fica com raiva da leitura. Eu mesmo nunca terminei um livro que a escola mandou. Mais se fosse um livro que a gente gosta seria diferente, porque ai a pessoa le por vontade propria e nao por obrigação.\n\nPortanto as escolas deve criar clubes de leitura com livros que os jovens escolhe, por meio de encontros toda semana na biblioteca da escola, para que eles comece a ler por prazer e nao so pra prova. Assim o Brasil vai ter mais leitor.",
-          "language": "pt",
-          "prompt": "Tema: Caminhos para ampliar o hábito de leitura entre os jovens brasileiros.\nTexto I: Pesquisas indicam que boa parte dos brasileiros não leu nenhum livro inteiro nos últimos meses.\nTexto II: Muitos municípios não têm biblioteca pública em funcionamento regular.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": {
-            "kind": "enem"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
-      "steps": [
-        {
-          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "nextStepCriteria": [
-            "c2"
-          ],
-          "totalBand": {
-            "max": 0,
-            "min": 0
-          },
-          "zeroReason": "offTopic"
-        },
-        "id": "enem-off-topic-pt-1",
-        "userInput": {
-          "essay": "O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.\n\nEm primeiro lugar, a exposição precoce às telas afeta o desenvolvimento infantil. Crianças que passam muitas horas conectadas dormem menos, têm mais dificuldade de concentração e, muitas vezes, comparam a própria vida com imagens editadas de influenciadores, o que pode gerar ansiedade.\n\nAlém disso, o ambiente digital expõe os pequenos a riscos como o contato com desconhecidos e o acesso a conteúdos impróprios. O Estatuto da Criança e do Adolescente garante a proteção integral desse público, mas as plataformas ainda falham em verificar a idade dos usuários.\n\nPortanto, o Ministério da Educação deve incluir a educação digital no currículo escolar, por meio de aulas semanais sobre o uso consciente da internet, a fim de proteger as crianças. Além disso, as famílias devem acompanhar o que os filhos acessam.",
-          "language": "pt",
-          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": {
-            "kind": "enem"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
-      "steps": [
-        {
-          "conclusion": "All 11 checks passed. Total 680 (range 640–720), expected 600–760.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 11 checks passed. Total 680 (range 640–720), expected 600–760.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 11 checks passed. Total 680 (range 640–720), expected 600–760.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "en",
-          "interventionElements": {
-            "action": true,
-            "agent": true,
-            "effect": true,
-            "means": false
-          },
-          "nextStepCriteria": [
-            "c2",
-            "c3",
-            "c5"
-          ],
-          "totalBand": {
-            "max": 760,
-            "min": 600
-          },
-          "zeroReason": null
-        },
-        "id": "enem-mid-missing-means-feedback-en-1",
-        "userInput": {
-          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
-          "language": "en",
-          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": {
-            "kind": "enem"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
-      "steps": [
-        {
-          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "nextStepCriteria": [
-            "c2"
-          ],
-          "totalBand": {
-            "max": 0,
-            "min": 0
-          },
-          "zeroReason": "tooShort"
-        },
-        "id": "enem-too-short-pt-1",
-        "userInput": {
-          "essay": "A mobilidade urbana é um problema nas cidades grandes. O transito é muito ruim e o governo precisa investir em metrô e ônibus para melhorar a vida das pessoas que trabalham longe de casa.",
-          "language": "pt",
-          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": {
-            "kind": "enem"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "in band",
-        "predicted": "in band"
-      },
-      "steps": [
-        {
-          "conclusion": "All 6 checks passed. Total 15.5 (range 13.5–17.5), expected 11–17.5.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 15.5 (range 13.5–17.5), expected 11–17.5.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 15.5 (range 13.5–17.5), expected 11–17.5.",
+          "conclusion": "All 6 checks passed. Total 15 (range 13–17), expected 11–17.5.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -369,23 +73,23 @@
     {
       "classification": {
         "expected": "in band",
-        "predicted": "in band"
+        "predicted": "below band"
       },
       "steps": [
         {
-          "conclusion": "Feedback mentions \"250\".",
+          "conclusion": "Total 17 (range 13.4–20.6), expected 18–26. Feedback mentions \"250\".",
           "kind": "majorErrors",
-          "score": 9.43
+          "score": 8.86
         },
         {
-          "conclusion": "Feedback mentions \"250\".",
+          "conclusion": "Total 17 (range 13.4–20.6), expected 18–26. Feedback mentions \"250\".",
           "kind": "minorErrors",
-          "score": 9.43
+          "score": 8.86
         },
         {
-          "conclusion": "Feedback mentions \"250\".",
+          "conclusion": "Total 17 (range 13.4–20.6), expected 18–26. Feedback mentions \"250\".",
           "kind": "potentialImprovements",
-          "score": 9.43
+          "score": 8.86
         }
       ],
       "testCase": {
@@ -440,17 +144,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 6 checks passed. Total 1.8 (range 1.3–2.3), expected 0.8–2.6.",
+          "conclusion": "All 6 checks passed. Total 1.65 (range 1.15–2.15), expected 0.8–2.6.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 1.8 (range 1.3–2.3), expected 0.8–2.6.",
+          "conclusion": "All 6 checks passed. Total 1.65 (range 1.15–2.15), expected 0.8–2.6.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 1.8 (range 1.3–2.3), expected 0.8–2.6.",
+          "conclusion": "All 6 checks passed. Total 1.65 (range 1.15–2.15), expected 0.8–2.6.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -632,17 +336,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 6 checks passed. Total 29 (range 25.4–32.6), expected 27–33.",
+          "conclusion": "All 6 checks passed. Total 27 (range 23.4–30.6), expected 27–33.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 29 (range 25.4–32.6), expected 27–33.",
+          "conclusion": "All 6 checks passed. Total 27 (range 23.4–30.6), expected 27–33.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 29 (range 25.4–32.6), expected 27–33.",
+          "conclusion": "All 6 checks passed. Total 27 (range 23.4–30.6), expected 27–33.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -751,6 +455,454 @@
               }
             ],
             "kind": "ap"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "detail": true,
+            "effect": true,
+            "means": true
+          },
+          "nextStepCriteria": [
+            "c1",
+            "c2",
+            "c3",
+            "c4"
+          ],
+          "totalBand": {
+            "max": 1000,
+            "min": 840
+          },
+          "zeroReason": null
+        },
+        "id": "enem-strong-pt-1",
+        "userInput": {
+          "essay": "No início do século XX, a Revolta da Vacina, no Rio de Janeiro, mostrou como a falta de informação pode transformar uma medida de saúde pública em motivo de medo e revolta. Mais de cem anos depois, o Brasil, que construiu um dos maiores programas públicos de imunização do mundo, volta a enfrentar a queda da cobertura vacinal, agora alimentada pela desinformação que circula nas redes. Esse cenário é agravado pela lógica das plataformas digitais e pela fragilidade da educação científica no país.\n\nEm primeiro lugar, é preciso reconhecer que os algoritmos das redes sociais favorecem conteúdos que despertam emoções fortes, como o medo. Segundo o sociólogo Zygmunt Bauman, a modernidade líquida é marcada por vínculos frágeis e pela desconfiança em relação às instituições, e é justamente nesse ambiente que boatos sobre supostos efeitos colaterais ganham mais alcance do que os dados oficiais. Assim, pais que buscam orientação na internet frequentemente encontram primeiro o alarme falso, e não a explicação do especialista, o que os leva a adiar ou a recusar a vacinação dos filhos.\n\nAlém disso, a escola brasileira ainda dedica pouco espaço ao letramento científico. Muitos estudantes aprendem os nomes das doenças, mas não compreendem como uma vacina é testada, por que os efeitos adversos graves são raros ou como diferenciar uma pesquisa confiável de uma opinião sem fundamento. Sem essas ferramentas, o cidadão fica vulnerável a discursos que se apresentam como científicos, e a Constituição Federal, que define a saúde como direito de todos e dever do Estado, deixa de se concretizar plenamente, já que a proteção coletiva depende da adesão de cada indivíduo.\n\nPortanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.",
+          "language": "pt",
+          "prompt": "Tema: Desafios para combater a desinformação sobre vacinas no Brasil.\nTexto I: A cobertura vacinal infantil caiu no Brasil na última década, e doenças antes controladas voltaram a preocupar as autoridades de saúde.\nTexto II: Boatos sobre supostos riscos das vacinas circulam mais depressa em aplicativos de mensagem do que as informações oficiais.\nTexto III: Criado em 1973, o Programa Nacional de Imunizações oferece gratuitamente dezenas de vacinas e é reconhecido internacionalmente.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "Next step on c1, expected one of c2, c3, c5.",
+          "kind": "majorErrors",
+          "score": 9.64
+        },
+        {
+          "conclusion": "Next step on c1, expected one of c2, c3, c5.",
+          "kind": "minorErrors",
+          "score": 9.64
+        },
+        {
+          "conclusion": "Next step on c1, expected one of c2, c3, c5.",
+          "kind": "potentialImprovements",
+          "score": 9.64
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "effect": true,
+            "means": false
+          },
+          "nextStepCriteria": [
+            "c2",
+            "c3",
+            "c5"
+          ],
+          "totalBand": {
+            "max": 760,
+            "min": 600
+          },
+          "zeroReason": null
+        },
+        "id": "enem-mid-missing-means-pt-1",
+        "userInput": {
+          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 320–600.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 320–600.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 320–600.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": [
+            "c1"
+          ],
+          "totalBand": {
+            "max": 600,
+            "min": 320
+          },
+          "zeroReason": null
+        },
+        "id": "enem-weak-norm-errors-pt-1",
+        "userInput": {
+          "essay": "Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.\n\nPrimeiramente os livro são muito caro, uma pessoa pobre nao consegue comprar um livro de cinquenta reais, ai ela desiste. E tambem as biblioteca da minha cidade vive fechada ou nao tem livro novo, entao fica dificil. Concerteza se tivesse mais biblioteca os jovem ia ler mais.\n\nOutro ponto é que na escola os professor manda ler uns livro muito antigo, que ninguem entende, tipo Machado de Assis, e os aluno fica com raiva da leitura. Eu mesmo nunca terminei um livro que a escola mandou. Mais se fosse um livro que a gente gosta seria diferente, porque ai a pessoa le por vontade propria e nao por obrigação.\n\nPortanto as escolas deve criar clubes de leitura com livros que os jovens escolhe, por meio de encontros toda semana na biblioteca da escola, para que eles comece a ler por prazer e nao so pra prova. Assim o Brasil vai ter mais leitor.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para ampliar o hábito de leitura entre os jovens brasileiros.\nTexto I: Pesquisas indicam que boa parte dos brasileiros não leu nenhum livro inteiro nos últimos meses.\nTexto II: Muitos municípios não têm biblioteca pública em funcionamento regular.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": [
+            "c2"
+          ],
+          "totalBand": {
+            "max": 0,
+            "min": 0
+          },
+          "zeroReason": "offTopic"
+        },
+        "id": "enem-off-topic-pt-1",
+        "userInput": {
+          "essay": "O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.\n\nEm primeiro lugar, a exposição precoce às telas afeta o desenvolvimento infantil. Crianças que passam muitas horas conectadas dormem menos, têm mais dificuldade de concentração e, muitas vezes, comparam a própria vida com imagens editadas de influenciadores, o que pode gerar ansiedade.\n\nAlém disso, o ambiente digital expõe os pequenos a riscos como o contato com desconhecidos e o acesso a conteúdos impróprios. O Estatuto da Criança e do Adolescente garante a proteção integral desse público, mas as plataformas ainda falham em verificar a idade dos usuários.\n\nPortanto, o Ministério da Educação deve incluir a educação digital no currículo escolar, por meio de aulas semanais sobre o uso consciente da internet, a fim de proteger as crianças. Além disso, as famílias devem acompanhar o que os filhos acessam.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "Next step on c1, expected one of c2, c3, c5.",
+          "kind": "majorErrors",
+          "score": 9.64
+        },
+        {
+          "conclusion": "Next step on c1, expected one of c2, c3, c5.",
+          "kind": "minorErrors",
+          "score": 9.64
+        },
+        {
+          "conclusion": "Next step on c1, expected one of c2, c3, c5.",
+          "kind": "potentialImprovements",
+          "score": 9.64
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "en",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "effect": true,
+            "means": false
+          },
+          "nextStepCriteria": [
+            "c2",
+            "c3",
+            "c5"
+          ],
+          "totalBand": {
+            "max": 760,
+            "min": 600
+          },
+          "zeroReason": null
+        },
+        "id": "enem-mid-missing-means-feedback-en-1",
+        "userInput": {
+          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
+          "language": "en",
+          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 640–880.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 640–880.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 640–880.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "c5Score": 80,
+          "feedbackLanguage": "pt",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "effect": true,
+            "means": true
+          },
+          "nextStepCriteria": [
+            "c5"
+          ],
+          "totalBand": {
+            "max": 880,
+            "min": 640
+          },
+          "zeroReason": null
+        },
+        "id": "enem-conditional-proposal-pt-1",
+        "userInput": {
+          "essay": "Em seu ensaio \"O direito à literatura\", o crítico Antonio Candido defende que o contato com a ficção é uma necessidade humana e, por isso, deveria ser garantido a todos. No Brasil, porém, esse direito ainda está longe de ser realidade para grande parte dos jovens, que leem pouco e raramente por vontade própria. Esse quadro se explica, sobretudo, pela falta de acesso aos livros e pela forma como a leitura é apresentada nas escolas.\n\nEm primeiro lugar, o acesso aos livros é desigual. Muitos municípios não têm biblioteca pública em funcionamento regular, e o preço de um livro novo pesa no orçamento das famílias de baixa renda. Assim, o jovem da periferia cresce sem ver livros em casa e sem um espaço público onde possa escolhê-los, o que dificulta a formação do hábito.\n\nAlém disso, a escola costuma tratar a leitura como obrigação. Em vez de despertar o interesse dos estudantes, muitas aulas se limitam a cobrar resumos de obras escolhidas sem considerar a idade e os gostos da turma. Desse modo, o livro passa a ser associado à prova e ao cansaço, e não ao prazer, o que afasta os jovens da leitura depois que deixam a escola.\n\nPortanto, se o Ministério da Educação criasse clubes de leitura nas escolas públicas, por meio de encontros semanais mediados por professores e com obras escolhidas pelos próprios alunos, os jovens passariam a enxergar a leitura como uma atividade prazerosa. Dessa forma, o direito à literatura defendido por Antonio Candido deixaria de ser privilégio de poucos.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para ampliar o hábito de leitura entre os jovens brasileiros.\nTexto I: Pesquisas indicam que boa parte dos brasileiros não leu nenhum livro inteiro nos últimos meses.\nTexto II: Muitos municípios não têm biblioteca pública em funcionamento regular.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 11 checks passed. Total 520 (range 480–560), expected 320–520.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 520 (range 480–560), expected 320–520.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 520 (range 480–560), expected 320–520.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "c5Score": 40,
+          "feedbackLanguage": "pt",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "effect": true,
+            "means": true
+          },
+          "nextStepCriteria": [
+            "c2",
+            "c3",
+            "c5"
+          ],
+          "totalBand": {
+            "max": 520,
+            "min": 320
+          },
+          "zeroReason": null
+        },
+        "id": "enem-tangent-pt-1",
+        "userInput": {
+          "essay": "Criado em 1973, o Programa Nacional de Imunizações tornou o Brasil uma referência mundial em vacinação gratuita. Apesar disso, a cobertura vacinal infantil caiu na última década, e doenças antes controladas voltaram a preocupar as autoridades. Esse problema está ligado, principalmente, às dificuldades de acesso aos postos de saúde e à falta de profissionais na rede pública.\n\nEm primeiro lugar, muitos brasileiros têm dificuldade para chegar até uma sala de vacinação. Nas áreas rurais e nas periferias das grandes cidades, os postos ficam distantes, e o transporte público é caro e demorado. Além disso, a maioria das unidades funciona apenas em horário comercial, o mesmo em que os pais trabalham, o que faz com que a vacinação dos filhos seja adiada repetidas vezes.\n\nEm segundo lugar, faltam profissionais e insumos nas unidades básicas de saúde. Em várias regiões, há poucos enfermeiros para atender a população, e não é raro que uma família vá ao posto e volte para casa sem a vacina por falta de doses ou de pessoal. Assim, mesmo quem deseja vacinar os filhos encontra obstáculos que desestimulam o retorno.\n\nPortanto, o Ministério da Saúde deve ampliar o horário de funcionamento das salas de vacinação, por meio de turnos noturnos e aos sábados nas unidades básicas de saúde, a fim de que os trabalhadores consigam vacinar os filhos sem faltar ao emprego. Dessa forma, o país poderá recuperar as altas taxas de cobertura que já alcançou no passado.",
+          "language": "pt",
+          "prompt": "Tema: Desafios para combater a desinformação sobre vacinas no Brasil.\nTexto I: A cobertura vacinal infantil caiu no Brasil na última década, e doenças antes controladas voltaram a preocupar as autoridades de saúde.\nTexto II: Boatos sobre supostos riscos das vacinas circulam mais depressa em aplicativos de mensagem do que as informações oficiais.\nTexto III: Criado em 1973, o Programa Nacional de Imunizações oferece gratuitamente dezenas de vacinas e é reconhecido internacionalmente.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 440–720.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 440–720.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 440–720.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "c5Score": 0,
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": [
+            "c5"
+          ],
+          "totalBand": {
+            "max": 720,
+            "min": 440
+          },
+          "zeroReason": null
+        },
+        "id": "enem-human-rights-proposal-pt-1",
+        "userInput": {
+          "essay": "Nas grandes cidades brasileiras, enfrentar o trânsito virou parte da rotina. Trabalhadores das regiões metropolitanas passam horas por semana parados em congestionamentos ou espremidos em ônibus lotados. Esse cenário é causado, principalmente, pelo excesso de carros nas ruas e pelo desrespeito às leis de trânsito.\n\nEm primeiro lugar, o modelo de cidade adotado no país privilegiou o automóvel. Durante décadas, os governos investiram em avenidas e viadutos, enquanto o transporte coletivo recebeu pouca atenção. Como os ônibus são lentos e caros, quem pode compra um carro, o que aumenta ainda mais os congestionamentos.\n\nAlém disso, muitos motoristas desrespeitam as regras. Carros param em faixas exclusivas de ônibus, avançam o sinal vermelho e estacionam em locais proibidos, o que trava o fluxo de veículos e provoca acidentes. As multas, por sua vez, não intimidam quem tem dinheiro para pagá-las, e as infrações continuam.\n\nPortanto, a Polícia Militar deve punir os motoristas infratores com castigos físicos em praça pública, por meio de operações nos principais cruzamentos das cidades, a fim de que ninguém mais tenha coragem de desrespeitar as leis de trânsito. Assim, o trânsito ficará mais rápido e seguro para todos.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 3 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": [
+            "c2"
+          ],
+          "totalBand": {
+            "max": 0,
+            "min": 0
+          },
+          "zeroReason": "tooShort"
+        },
+        "id": "enem-too-short-pt-1",
+        "userInput": {
+          "essay": "A mobilidade urbana é um problema nas cidades grandes. O transito é muito ruim e o governo precisa investir em metrô e ônibus para melhorar a vida das pessoas que trabalham longe de casa.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
           }
         }
       }
