@@ -9,8 +9,10 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
+  lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { formatCertificateCode } from "@zoonk/utils/certificate-links";
 import {
