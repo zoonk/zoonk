@@ -22,7 +22,8 @@ Pick the one skill a learner with this goal, purpose and level studies first: th
 - It's where the whole path starts, so it builds on nothing the path teaches: a foundation, learned from what the learner already has. Start where `OWN_LEVEL` says, measured against the goal: with `none` or `none given`, from what an adult knows from everyday life; with a higher level, still at the foundations the goal depends on (a quick placement test skips what the learner already knows), but never below what their level implies.
 - The learner's schooling in `CONTEXT` sets a floor: don't give an adult what school teaches children first unless the goal is about it.
 - It teaches the goal's own subject. Never an introduction, an overview of the field, why the subject matters, its history, study tips or a general thinking skill.
-- `PURPOSE` shapes it: `overview` starts with the field's first big idea in plain words; `work` starts with what the learner's role uses first in its daily work; `careerChange` starts with the target role's first hands-on foundation; `refresh` starts with the subject's first idea at the level the learner once had; `deep` starts with the subject's first concrete ideas, its basic objects and their defining properties. For `work` and `careerChange`, the chapter's lessons teach through the cases that work brings (a supplier's invoice, a client's brief, a support ticket), so each lesson shows the idea doing a job.
+- It teaches the subject's basic objects and their defining properties, rather than assuming the learner already recognizes them. An idea those objects rest on is taught inside the lesson that uses it, never in a lesson of its own before them.
+- `PURPOSE` shapes it: `overview` starts with the field's first big idea in plain words; `work` starts with what the learner's role uses first in its daily work; `careerChange` starts with the target role's first hands-on foundation; `refresh` starts with the subject's first idea at the level the learner once had; `deep` starts with the subject's first concrete ideas. For `work` and `careerChange`, the chapter's lessons teach through the cases that work brings (a supplier's invoice, a client's brief, a support ticket), so each lesson shows the idea doing a job.
 {{#product}}
 - The goal is about using `PRODUCT`: the first skill is the first task a new user does in it to get a real result.
 {{/product}}
@@ -53,7 +54,7 @@ For `skill`:
 - `objectives`: 2 to 4 things the learner can do after it, each a short action worded in `VERB_FORM`.
 - `skillKeys`: the first skill's key.
 - `tools`: what the learner uses on their own device to practice it, only when the chapter teaches doing real work with it, such as "Spreadsheet (Google Sheets or Excel)" or "Python", with `essential` true when practicing needs it. An empty list otherwise, and always for an `overview` chapter. Never the learning app, a web browser, pen and paper or a basic calculator.
-- `lessons`: 4 to 8 lessons in study order, each relying only on earlier lessons and everyday life. Every lesson teaches one idea in about 3 minutes (2 to 5), and each teaches something the others don't. The first lesson starts the learner on the subject itself with a concrete idea they can use, never an introduction, overview or "What is X".
+- `lessons`: 4 to 8 lessons in study order, each relying only on earlier lessons and everyday life. Every lesson teaches one idea in about 3 minutes (2 to 5), and each teaches something the others don't. The first lesson starts on the subject's basic object itself, what it is and what defines it, through a concrete case, never with an idea it rests on, an introduction or a survey of what the chapter covers.
 
 For each lesson:
 
@@ -70,4 +71,4 @@ For each lesson:
 
 # Final check
 
-Before answering, verify that the skill is the right first step for this goal at this level and builds on nothing the path teaches, the course has a catalog title, the chapter tags the first skill and its first lesson starts on the subject itself, and no lesson is filler or repeats another.
+Before answering, verify that the skill is the right first step for this goal at this level and builds on nothing the path teaches, the course has a catalog title, the skill teaches the subject's basic objects rather than assuming them, the chapter tags the first skill and its first lesson starts on the basic object itself, not on an idea it rests on, and no lesson is filler or repeats another.
