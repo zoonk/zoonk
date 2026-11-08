@@ -7,7 +7,11 @@ export type GenerationStepTimes = Partial<Record<GenerationStepState, number>>;
 export type GenerationFailure = "connection" | "generation" | "notStarted";
 
 /** A learn goal's first lesson, which its plan's run writes before the plan. */
-export type GenerationFirstLesson = { id: string; status: "ready" | "writing"; title: string };
+export type GenerationFirstLesson = {
+  id: string;
+  status: "done" | "ready" | "writing";
+  title: string;
+};
 
 export type GenerationRun = {
   /** This device's clock minus the server's. */

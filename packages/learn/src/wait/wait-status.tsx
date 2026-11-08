@@ -85,6 +85,11 @@ function LessonTitle(chunks: React.ReactNode) {
 export function FirstLessonLine({ lesson }: { lesson: GenerationFirstLesson }) {
   const t = useExtracted();
 
+  // Once it's done, the wait is for the plan alone.
+  if (lesson.status === "done") {
+    return null;
+  }
+
   if (lesson.status === "ready") {
     return (
       <>

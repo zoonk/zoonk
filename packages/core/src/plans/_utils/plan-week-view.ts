@@ -151,9 +151,29 @@ export function buildWeekView(input: DaysInput): PlanView["week"] {
   };
 }
 
-/** Today and the six days after it, whatever the weekday: a week from Monday read on a Sunday holds one day ahead. */
+/**
+ * Today and the six days after it, whatever the weekday: a week from Monday read on a Sunday holds
+ * one day ahead. After today each item is listed once, on the first day it's laid out on, so a
+ * lesson split across days isn't named twice. Today keeps its own: what Today lists comes from its
+ * session, which may leave a lesson laid out today for tomorrow.
+ */
 export function buildNextDaysView(input: DaysInput): PlanDayView[] {
-  return buildPlanDays({ ...input, from: input.today });
+  const listed = new Set<string>();
+  const [today, ...ahead] = buildPlanDays({ ...input, from: input.today });
+
+  const after = ahead.map((day) => {
+    const fresh = day.items.filter((item) => item.id === null || !listed.has(item.id));
+
+    for (const item of day.items) {
+      if (item.id) {
+        listed.add(item.id);
+      }
+    }
+
+    return { ...day, items: fresh };
+  });
+
+  return today ? [today, ...after] : after;
 }
 
 export function buildFundedMocksView({

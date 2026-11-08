@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanReadItem } from "./plan-read-projection";
-import { buildWeekView } from "./plan-week-view";
+import { buildNextDaysView, buildWeekView } from "./plan-week-view";
 
 /** A Wednesday: Monday and Tuesday are behind, the rest of the week ahead. */
 const TODAY = new Date("2026-09-23T00:00:00Z");
@@ -118,6 +118,55 @@ describe(buildWeekView, () => {
     expect(days[2]?.items.map(({ title, writing }) => ({ title, writing }))).toStrictEqual([
       { title: "Stock market", writing: true },
       { title: "Percentages", writing: false },
+    ]);
+  });
+});
+
+/** A lesson laid out over `days`, as the planner saves a split one. */
+function split(id: string, days: [string, number][]): PlanReadItem {
+  return {
+    ...lesson(days[0]?.[0] ?? "", "todo"),
+    facts: {
+      days: days.map(([date, minutes]) => [date, minutes, minutes]),
+      minutes: days.reduce((total, [, minutes]) => total + minutes, 0),
+      parts: { checkpoint: 0, practice: 0, unwritten: 0, written: 30 },
+      schemaVersion: 1,
+      skillIds: [],
+    },
+    id,
+    titleSnapshot: id,
+  };
+}
+
+describe(buildNextDaysView, () => {
+  it("lists a lesson split across the days after today on the first of them only", () => {
+    const days = buildNextDaysView({
+      access: { freeUntil: null, mocksRequirePlus: false },
+      calendar: { dailyMinutes: 30, firstDay: null, lightWeeks: [], weekdayMinutes: null },
+      exam: null,
+      items: [
+        split("today-and-thursday", [
+          ["2026-09-23", 20],
+          ["2026-09-24", 10],
+        ]),
+        split("thursday", [["2026-09-24", 20]]),
+        split("friday-to-saturday", [
+          ["2026-09-25", 30],
+          ["2026-09-26", 30],
+        ]),
+      ],
+      skillAreas: new Map(),
+      startDate: MONDAY,
+      studiedDates: new Set(),
+      targetDate: null,
+      today: TODAY,
+    });
+
+    expect(days.slice(0, 4).map((day) => day.items.map((item) => item.id))).toStrictEqual([
+      ["today-and-thursday"],
+      ["today-and-thursday", "thursday"],
+      ["friday-to-saturday"],
+      [],
     ]);
   });
 });

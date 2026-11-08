@@ -117,4 +117,10 @@ describe(getFirstLesson, () => {
       ready,
     );
   });
+
+  it("keeps a lesson the learner finished done when the stream replays it as ready", () => {
+    const done = { ...writing, status: "done" as const };
+
+    expect(getFirstLesson({ read: done, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(done);
+  });
 });

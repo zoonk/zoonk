@@ -69,6 +69,27 @@ export async function hasAnswerSince(
   return later !== null;
 }
 
+/** Internal: `userId` comes from the session. */
+export async function hasFinishedLesson({
+  lessonId,
+  userId,
+}: {
+  lessonId: string;
+  userId: string;
+}): Promise<boolean> {
+  const run = await prisma.learningEvent.findFirst({
+    select: { id: true },
+    where: {
+      contentIds: { equals: lessonId, path: ["lessonId"] },
+      endedAt: { not: null },
+      kind: { in: [...LESSON_RUN_KINDS] },
+      userId,
+    },
+  });
+
+  return run !== null;
+}
+
 export async function loadStartedLessonIds({
   lessonIds,
   userId,

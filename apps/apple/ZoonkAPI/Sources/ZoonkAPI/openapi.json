@@ -80053,7 +80053,7 @@
             "items": {
               "$ref": "#/components/schemas/PlanDay"
             },
-            "description": "Today and the six days after it, in the goal's zone, whatever the weekday: the reveal's first week (`week` runs Monday to Sunday)"
+            "description": "Today and the six days after it, in the goal's zone, whatever the weekday: the reveal's first week (`week` runs Monday to Sunday). After today each item is listed once, on the first day it's laid out on, so a lesson split across days isn't repeated (a later day may then list nothing though it has time). Today's own day comes from GET /goals/{goalId}/plan-reveal/today: list the days after it without the lessons its blocks already list"
           },
           "notice": {
             "nullable": true,
@@ -87474,10 +87474,11 @@
               "status": {
                 "type": "string",
                 "enum": [
+                  "done",
                   "ready",
                   "writing"
                 ],
-                "description": "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it"
+                "description": "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again"
               },
               "title": {
                 "type": "string"
@@ -88022,7 +88023,8 @@
               "planned": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 9007199254740991
+                "maximum": 9007199254740991,
+                "description": "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks"
               }
             },
             "required": [
@@ -88436,7 +88438,8 @@
               "planned": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 9007199254740991
+                "maximum": 9007199254740991,
+                "description": "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks"
               }
             },
             "required": [

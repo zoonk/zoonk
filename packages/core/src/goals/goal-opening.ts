@@ -1,23 +1,48 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { hasFinishedLesson } from "../lesson-player/_utils/lesson-runs";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { type GoalOpeningSkill, goalOpeningSkillSchema } from "../library/curriculum/opening-graph";
 import { type OnboardingFirstLesson } from "../view-models/onboarding/onboarding-contract";
 
 type OpeningLesson = { id: string; title: string };
 
-/** Internal: authorize the goal first. A lesson no run will write again is no lesson to offer. */
-export async function readGoalOpening(
-  openingLessonId: string | null,
-): Promise<OnboardingFirstLesson | null> {
-  if (!openingLessonId) {
+function getOpeningStatus({
+  finished,
+  written,
+}: {
+  finished: boolean;
+  written: boolean;
+}): OnboardingFirstLesson["status"] {
+  if (finished) {
+    return "done";
+  }
+
+  return written ? "ready" : "writing";
+}
+
+/**
+ * Internal: authorize the goal first; `userId` is its owner's. A lesson no run will write again is
+ * no lesson to offer.
+ */
+export async function readGoalOpening({
+  lessonId,
+  userId,
+}: {
+  lessonId: string | null;
+  userId: string;
+}): Promise<OnboardingFirstLesson | null> {
+  if (!lessonId) {
     return null;
   }
 
-  const lesson = await prisma.lesson.findUnique({
-    select: { contentStatus: true, id: true, setAsideAt: true, title: true },
-    where: { id: openingLessonId },
-  });
+  const [lesson, finished] = await Promise.all([
+    prisma.lesson.findUnique({
+      select: { contentStatus: true, id: true, setAsideAt: true, title: true },
+      where: { id: lessonId },
+    }),
+    hasFinishedLesson({ lessonId, userId }),
+  ]);
 
   if (!lesson || lesson.setAsideAt) {
     return null;
@@ -25,7 +50,7 @@ export async function readGoalOpening(
 
   return {
     id: lesson.id,
-    status: lesson.contentStatus === "completed" ? "ready" : "writing",
+    status: getOpeningStatus({ finished, written: lesson.contentStatus === "completed" }),
     title: lesson.title,
   };
 }

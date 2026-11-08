@@ -178,6 +178,7 @@ export function useSchedule({
     key: JSON.stringify({ ...asked, aim, dailyMinutes: minutes }),
     paused,
     planMade,
+    scope: aim ?? "",
   });
 
   const advice = readyAnswer(timeAdvice.answer);

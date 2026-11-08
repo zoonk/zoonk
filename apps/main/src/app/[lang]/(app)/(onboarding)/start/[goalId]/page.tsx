@@ -9,6 +9,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
+import { getGoalWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
@@ -23,6 +24,7 @@ import {
   OnboardingTitle,
 } from "@zoonk/learn/onboarding/frame";
 import { StepsSkeleton } from "@zoonk/learn/onboarding/skeletons";
+import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -72,7 +74,12 @@ async function StepsContent({ params }: Props) {
     );
   }
 
-  const [result, session] = await Promise.all([getOnboarding({ goalId }), getSession()]);
+  // A deck that can't be read leaves the wait without its card until the run names one.
+  const [result, session, deck] = await Promise.all([
+    getOnboarding({ goalId }),
+    getSession(),
+    safeAsync(() => getGoalWarmUp(goalId)),
+  ]);
 
   if (result.status === "unauthorized") {
     return <StepsGate goalId={goalId} />;
@@ -112,6 +119,7 @@ async function StepsContent({ params }: Props) {
               }
             : null
         }
+        deck={deck.data ?? null}
         isGuest={Boolean(session?.user.isAnonymous)}
         onboarding={result.onboarding}
         planActions={{

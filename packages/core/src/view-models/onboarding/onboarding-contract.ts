@@ -208,8 +208,15 @@ export type OnboardingDateProblem =
   | { kind: "passed" | "today" }
   | ({ kind: "noSitting" } & NoSitting);
 
-/** A learn goal's first lesson, picked before the plan: the learner can start it once it's `ready`. */
-export type OnboardingFirstLesson = { id: string; status: "ready" | "writing"; title: string };
+/**
+ * A learn goal's first lesson, picked before the plan: the learner can start it once it's `ready`,
+ * and it's `done` once they finished it, which outranks a `ready` the run's stream reports.
+ */
+export type OnboardingFirstLesson = {
+  id: string;
+  status: "done" | "ready" | "writing";
+  title: string;
+};
 
 export type OnboardingView = {
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */

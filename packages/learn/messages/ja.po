@@ -69,6 +69,7 @@ msgstr "スキップ"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
+#: src/wait/first-lesson-row.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "完了"

@@ -44,6 +44,10 @@ function isFollowing(run: GenerationRun): boolean {
  * The run's progress from 0 to 100, drifting through the running phase. Bars given the same `since`
  * show the same value, wherever on the screen they are.
  */
+/**
+ * The bar drifts from when the running stage started, as the run reported it, so a page loaded
+ * partway through goes on from there; `since` (when the screen opened) stands in until it's known.
+ */
 export function useGenerationProgress({
   kind,
   run,
@@ -59,7 +63,7 @@ export function useGenerationProgress({
     active: isFollowing(run),
     estimatedMs: progress.activeMs,
     progress: progress.progress,
-    since,
+    since: progress.activeSince ?? since,
     target: progress.target,
   });
 }
