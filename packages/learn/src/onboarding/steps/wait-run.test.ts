@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { WAITING_RUN, getNoticeStop, getPlanWait, getRevealWait } from "./wait-run";
+import { WAITING_RUN, getFirstLesson, getNoticeStop, getPlanWait, getRevealWait } from "./wait-run";
 
 function restart() {
   return null;
@@ -95,5 +95,26 @@ describe(getRevealWait, () => {
     expect(getRevealWait(null)).toBe("building");
     expect(getRevealWait(reading)).toBe("notice");
     expect(getRevealWait(read)).toBeNull();
+  });
+});
+
+describe(getFirstLesson, () => {
+  const writing = { id: "lesson", status: "writing" as const, title: "Why birds sing at dawn" };
+  const ready = { ...writing, status: "ready" as const };
+
+  it("takes the run's word once it names the lesson, and the read's until then", () => {
+    expect(getFirstLesson({ read: null, run: WAITING_RUN })).toBeNull();
+    expect(getFirstLesson({ read: writing, run: WAITING_RUN })).toStrictEqual(writing);
+    expect(getFirstLesson({ read: null, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(ready);
+  });
+
+  it("keeps a lesson ready that either side calls ready", () => {
+    expect(getFirstLesson({ read: ready, run: { ...WAITING_RUN, firstLesson: writing } })).toBe(
+      ready,
+    );
+
+    expect(getFirstLesson({ read: writing, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(
+      ready,
+    );
   });
 });

@@ -171,6 +171,7 @@ export function useWorkflowRun({
   return {
     clockOffsetMs: state.clockOffsetMs ?? undefined,
     failure: state.failure,
+    firstLesson: state.firstLesson ?? undefined,
     retry: getRetry(),
     skillName: state.skillName ?? undefined,
     status,

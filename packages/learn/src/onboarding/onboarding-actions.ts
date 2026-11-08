@@ -177,6 +177,7 @@ export type OnboardingActions = {
 export type OnboardingRoutes = {
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: (goalId: string) => string;
+  lesson: (lessonId: string) => string;
   mock: (mockId: string) => string;
   planLink: (planId: string) => string;
   placementMock: (goalId: string) => string;

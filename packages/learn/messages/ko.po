@@ -225,11 +225,6 @@ msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "일주일간의 무료 시험 준비가 끝났어요"
 
-#: src/_components/guess-hint.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "지금 틀려 보면 나중에 더 잘 기억할 수 있어요."
-
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/plus-lock.tsx
@@ -4060,6 +4055,7 @@ msgid "This didn't start"
 msgstr "준비가 시작되지 않았어요"
 
 #: src/generation/lesson-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "레슨을 만들고 있어요"
@@ -4218,6 +4214,7 @@ msgstr "시험인지, 언어인지, 과목인지 확인하고 있어요…"
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -4361,6 +4358,7 @@ msgid "Reading your question…"
 msgstr "질문을 읽고 있어요…"
 
 #: src/generation/use-generation-copy.ts
+#: src/wait/first-lesson-row.tsx
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "짧은 설명 화면을 5개 정도 만들고 있어요"
@@ -7077,7 +7075,6 @@ msgid "Chapters you finished"
 msgstr "완료한 챕터"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/library-course-offer.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -9475,9 +9472,9 @@ msgid "How it works"
 msgstr "이용 방법"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "JHbf4S"
-msgid "A course in the Library fits your goal"
-msgstr "라이브러리에 목표에 맞는 코스가 있어요"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "목표에 맞는 라이브러리 코스가 있어요. 지금 시작하기"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9754,6 +9751,7 @@ msgstr "{document, select, notice {공고에 나온 과목과 주제, 날짜에 
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "계획이 준비됐어요"
@@ -9896,11 +9894,6 @@ msgid "Stop and see my plan"
 msgstr "멈추고 내 계획 보기"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "준비되면 언제든 시작해 보세요."
-
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "추가한 자료를 바탕으로 문제를 만들고 있어요. 자료를 읽는 데 몇 분 걸려요."
@@ -9914,6 +9907,11 @@ msgstr "목표를 이루는 데 필요한 능력을 바탕으로 문제를 만�
 msgctxt "QRwbAL"
 msgid "Your questions are ready"
 msgstr "문제가 준비됐어요"
+
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "준비되면 언제든 시작해 보세요."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -9931,6 +9929,7 @@ msgid "See it whenever you're ready."
 msgstr "준비되면 언제든 확인해 보세요."
 
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "TTJuzU"
 msgid "One last question, then you'll see it."
 msgstr "마지막 질문에 답하면 계획을 볼 수 있어요."
@@ -9991,6 +9990,16 @@ msgstr "답변은 저장되어 있어요. 질문에 모두 답했을 때 계획�
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "내 계획 보기"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "x4Kcgs"
+msgid "Your plan will be waiting when you finish."
+msgstr "레슨을 마치면 계획이 준비되어 있을 거예요."
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "z2snrT"
+msgid "Start lesson 1"
+msgstr "1번 레슨 시작하기"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"
@@ -14149,20 +14158,63 @@ msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "레슨을 만들고 있어요"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "22HeK6"
+msgid "Your first lesson"
+msgstr "첫 레슨"
+
+#: src/wait/first-lesson-row.tsx
+msgctxt "zbkRbA"
+msgid "Ready to start"
+msgstr "시작 준비 완료"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "레슨이 준비됐어요"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-quiz.tsx
+msgctxt "IUmRs3"
+msgid "Quiz while you wait"
+msgstr "기다리며 푸는 퀴즈"
+
+#: src/wait/wait-quiz.tsx
+msgctxt "LroSLM"
+msgid "Just for fun. Your answers don't count."
+msgstr "재미로 풀어 보세요. 답은 점수에 반영되지 않아요."
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "8ZwEZ-"
+msgid "Back to the quiz"
+msgstr "퀴즈로 돌아가기"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "3IyRnV"
+msgid "Play a quiz while you wait"
+msgstr "기다리는 동안 퀴즈 풀기"
+
+#: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"
 msgid "That's all for now."
 msgstr "지금은 여기까지예요."
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/wait-screen.tsx
 msgctxt "e4FgxF"
 msgid "Next guess"
 msgstr "다음 예상하기"
 
-#: src/warm-up/warm-up-card.tsx
-msgctxt "wPwGoj"
-msgid "Guess while you wait"
-msgstr "기다리는 동안 예상해 보세요"
+#: src/wait/wait-status.tsx
+msgctxt "YgBrpA"
+msgid "Your first lesson is ready"
+msgstr "첫 레슨이 준비됐어요"
+
+#: src/wait/wait-status.tsx
+msgctxt "FZtFoB"
+msgid "Writing your first lesson: <lesson>{title}</lesson>"
+msgstr "첫 레슨을 만들고 있어요: <lesson>{title}</lesson>"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"

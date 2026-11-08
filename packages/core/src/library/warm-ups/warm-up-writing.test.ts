@@ -141,6 +141,16 @@ describe("shared warm-up writing", () => {
     expect(checkWarmUpCards).toHaveBeenCalledOnce();
   });
 
+  it("writes and checks a cold deck at the learner's tier, since the learner's wait shows it", async () => {
+    const { goals, scope } = await newGoals();
+    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+
+    await writeDeck({ ...request, claim: await claimWarmUp(request) });
+
+    expect(vi.mocked(generateWarmUpCards).mock.calls[0]?.[0].serviceTier).toBe("priority");
+    expect(vi.mocked(checkWarmUpCards).mock.calls[0]?.[0].serviceTier).toBe("priority");
+  });
+
   it("reuses ready content and makes repeated links without another model call", async () => {
     const { goals, scope } = await newGoals(2);
     const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
@@ -425,7 +435,7 @@ describe("shared warm-up writing", () => {
       goal: scope.generalGoal,
       kind: "exam",
       language: "en",
-      serviceTier: undefined,
+      serviceTier: "priority",
       subjects: ["Arithmetic"],
     });
 

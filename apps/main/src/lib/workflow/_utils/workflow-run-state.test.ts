@@ -72,6 +72,28 @@ describe(workflowRunReducer, () => {
     expect(run([{ runIds: [], type: "restart" }], dealt).warmUpId).toBe("deck");
   });
 
+  it("keeps the first lesson the run writes, ready once it reports so, through a replay", () => {
+    const writing = event({
+      lessonId: "lesson",
+      lessonTitle: "Why birds sing at dawn",
+      status: "started",
+      step: "writeFirstLesson",
+    });
+
+    const ready = event({ lessonId: "lesson", status: "completed", step: "firstLessonReady" });
+    const lesson = { id: "lesson", title: "Why birds sing at dawn" };
+
+    expect(run([writing]).firstLesson).toStrictEqual({ ...lesson, status: "writing" });
+    expect(run([writing, ready]).firstLesson).toStrictEqual({ ...lesson, status: "ready" });
+
+    expect(run([writing, ready, writing]).firstLesson).toStrictEqual({
+      ...lesson,
+      status: "ready",
+    });
+
+    expect(run([writing, ready]).ready).toBe(false);
+  });
+
   it("is ready once the step that ends the kind's wait finished", () => {
     const started = run([event({ status: "started", step: "createPlan" })]);
     const finished = run([event({ status: "completed", step: "createPlan" })], started);

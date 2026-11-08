@@ -9,6 +9,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
+import { usePreloadedDeck } from "../wait/wait-deck";
 import {
   type OnboardingActions,
   type OnboardingRoutes,
@@ -31,6 +32,7 @@ import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
+import { getFirstLesson } from "./steps/wait-run";
 
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
@@ -176,6 +178,16 @@ export function OnboardingStepScreen({
   const subject = getSubject(view);
   const props = { onAnswer, pending };
 
+  usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });
+
+  const wait = {
+    firstLesson: getFirstLesson({ read: view.firstLesson, run }),
+    lessonHref: routes.lesson,
+    library: view.libraryCourse
+      ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }
+      : null,
+  };
+
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
   }
@@ -185,6 +197,7 @@ export function OnboardingStepScreen({
       return (
         <ScheduleStep
           {...props}
+          {...wait}
           // Its answers are for one date, so a date saved while it shows asks them again.
           key={view.goal.targetDate ?? "none"}
           // An exam takes its notice's day when the learner gave none.
@@ -235,17 +248,13 @@ export function OnboardingStepScreen({
     case "plan":
       return (
         <PlanReveal
+          {...wait}
           actions={actions}
           buddy={buddy}
           goal={{ kind: view.goal.kind, title: view.goal.title }}
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
           isGuest={isGuest}
-          libraryCourse={
-            view.libraryCourse
-              ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }
-              : null
-          }
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}

@@ -48,15 +48,24 @@ const WIDE_ASIDE_CLASS =
 
 const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
 
+/**
+ * Reaches past the page's own padding (the shell's, or the column's beside an aside), so its
+ * hairline runs across the page and it rests on the screen's bottom edge.
+ */
+const BOTTOM_BAR_CLASS =
+  "bg-background border-border sticky bottom-0 z-10 -mx-4 -mb-12 border-t px-4 empty:hidden pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10";
+
 export function OnboardingScreenPage({
   backHref,
   barEnd,
+  bottomBar,
   children,
   rail,
   wide,
 }: {
   backHref: string;
   barEnd: ReactNode;
+  bottomBar?: ReactNode;
   children: ReactNode;
   rail: ReactNode;
   wide: boolean;
@@ -77,6 +86,12 @@ export function OnboardingScreenPage({
         {notice}
         {children}
       </Page>
+
+      {bottomBar && (
+        <div className={BOTTOM_BAR_CLASS} data-slot="onboarding-bottom-bar">
+          {bottomBar}
+        </div>
+      )}
     </PageWithAside>
   );
 }

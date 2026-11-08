@@ -225,11 +225,6 @@ msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "La tua settimana gratuita di preparazione all’esame è finita"
 
-#: src/_components/guess-hint.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "Sbagliare ora ti aiuta a ricordare più avanti."
-
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/plus-lock.tsx
@@ -4060,6 +4055,7 @@ msgid "This didn't start"
 msgstr "La preparazione non è iniziata"
 
 #: src/generation/lesson-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "Stiamo preparando la tua lezione"
@@ -4218,6 +4214,7 @@ msgstr "Stiamo verificando se si tratta di un esame, una lingua o una materia…
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -4361,6 +4358,7 @@ msgid "Reading your question…"
 msgstr "Stiamo leggendo la tua domanda…"
 
 #: src/generation/use-generation-copy.ts
+#: src/wait/first-lesson-row.tsx
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "Stiamo preparando circa 5 brevi schermate"
@@ -7077,7 +7075,6 @@ msgid "Chapters you finished"
 msgstr "Capitoli completati"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/library-course-offer.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -9475,9 +9472,9 @@ msgid "How it works"
 msgstr "Come funziona"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "JHbf4S"
-msgid "A course in the Library fits your goal"
-msgstr "Nella Biblioteca c’è un corso adatto al tuo obiettivo"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "Un corso della Biblioteca è adatto al tuo obiettivo. Inizialo ora"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9754,6 +9751,7 @@ msgstr "{document, select, notice {Il tuo piano seguirà le materie, gli argomen
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Il tuo piano è pronto"
@@ -9896,11 +9894,6 @@ msgid "Stop and see my plan"
 msgstr "Fermati e guarda il tuo piano"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "Inizia quando vuoi."
-
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "Si basano sul materiale che hai aggiunto. Ci serve qualche minuto per leggerlo."
@@ -9914,6 +9907,11 @@ msgstr "Si basano sulle competenze necessarie per il tuo obiettivo. Di solito ci
 msgctxt "QRwbAL"
 msgid "Your questions are ready"
 msgstr "Le tue domande sono pronte"
+
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "Inizia quando vuoi."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -9931,6 +9929,7 @@ msgid "See it whenever you're ready."
 msgstr "Guardalo quando vuoi."
 
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "TTJuzU"
 msgid "One last question, then you'll see it."
 msgstr "Un’ultima domanda, poi lo vedrai."
@@ -9991,6 +9990,16 @@ msgstr "Abbiamo salvato le tue risposte. Riprova, così il piano sarà pronto qu
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "Vedi il tuo piano"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "x4Kcgs"
+msgid "Your plan will be waiting when you finish."
+msgstr "Il tuo piano ti aspetterà quando avrai finito."
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "z2snrT"
+msgid "Start lesson 1"
+msgstr "Inizia la lezione 1"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"
@@ -14149,20 +14158,63 @@ msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "Lezioni in arrivo"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "22HeK6"
+msgid "Your first lesson"
+msgstr "La tua prima lezione"
+
+#: src/wait/first-lesson-row.tsx
+msgctxt "zbkRbA"
+msgid "Ready to start"
+msgstr "Pronto per iniziare"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "La tua lezione è pronta"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-quiz.tsx
+msgctxt "IUmRs3"
+msgid "Quiz while you wait"
+msgstr "Un quiz mentre aspetti"
+
+#: src/wait/wait-quiz.tsx
+msgctxt "LroSLM"
+msgid "Just for fun. Your answers don't count."
+msgstr "Solo per divertirti. Le tue risposte non contano."
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "8ZwEZ-"
+msgid "Back to the quiz"
+msgstr "Torna al quiz"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "3IyRnV"
+msgid "Play a quiz while you wait"
+msgstr "Fai un quiz mentre aspetti"
+
+#: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"
 msgid "That's all for now."
 msgstr "Per ora è tutto."
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/wait-screen.tsx
 msgctxt "e4FgxF"
 msgid "Next guess"
 msgstr "Fai un’altra ipotesi"
 
-#: src/warm-up/warm-up-card.tsx
-msgctxt "wPwGoj"
-msgid "Guess while you wait"
-msgstr "Indovina mentre aspetti"
+#: src/wait/wait-status.tsx
+msgctxt "YgBrpA"
+msgid "Your first lesson is ready"
+msgstr "La tua prima lezione è pronta"
+
+#: src/wait/wait-status.tsx
+msgctxt "FZtFoB"
+msgid "Writing your first lesson: <lesson>{title}</lesson>"
+msgstr "Stiamo preparando la tua prima lezione: <lesson>{title}</lesson>"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"

@@ -279,7 +279,7 @@ describe("onboarding a new goal", () => {
     });
   });
 
-  it("offers a Library course that teaches the goal once every question is answered", async () => {
+  it("offers a Library course that teaches the goal once every question about it is answered", async () => {
     await useLearner();
     const subject = `Tide pools ${randomUUID().slice(0, 8)}`;
     const organization = await aiOrganizationFixture();
@@ -305,7 +305,6 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { purpose: "overview", question: "purpose" } });
     await answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } });
     await answerOnboardingQuestion({ goalId, input: { level: "none", question: "level" } });
-    await answerOnboardingQuestion({ goalId, input: { dailyMinutes: 15, question: "schedule" } });
 
     await expect(getOnboarding({ goalId })).resolves.toMatchObject({
       onboarding: {

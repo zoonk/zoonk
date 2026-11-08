@@ -225,11 +225,6 @@ msgctxt "WCwsVK"
 msgid "Your free week of exam prep is over"
 msgstr "Ücretsiz sınava hazırlık haftan bitti"
 
-#: src/_components/guess-hint.tsx
-msgctxt "CKdZQn"
-msgid "Getting it wrong now helps you remember later."
-msgstr "Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır."
-
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/plus-lock.tsx
@@ -4060,6 +4055,7 @@ msgid "This didn't start"
 msgstr "Başlatılamadı"
 
 #: src/generation/lesson-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "Dersini hazırlıyoruz"
@@ -4218,6 +4214,7 @@ msgstr "Sınav mı, dil mi yoksa konu mu olduğunu kontrol ediyoruz…"
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -4361,6 +4358,7 @@ msgid "Reading your question…"
 msgstr "Sorunu okuyoruz…"
 
 #: src/generation/use-generation-copy.ts
+#: src/wait/first-lesson-row.tsx
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "Yaklaşık 5 kısa ekran hazırlıyoruz"
@@ -7077,7 +7075,6 @@ msgid "Chapters you finished"
 msgstr "Bitirdiğin üniteler"
 
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/onboarding/library-course-offer.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -9475,9 +9472,9 @@ msgid "How it works"
 msgstr "Nasıl işler"
 
 #: src/onboarding/library-course-offer.tsx
-msgctxt "JHbf4S"
-msgid "A course in the Library fits your goal"
-msgstr "Kütüphane’de hedefine uygun bir kurs var"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "Kütüphanede hedefine uygun bir kurs var. Hemen başla"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9754,6 +9751,7 @@ msgstr "{document, select, notice {Planın ilandaki branşlara, konulara ve tari
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Planın hazır"
@@ -9896,11 +9894,6 @@ msgid "Stop and see my plan"
 msgstr "Bitir ve planını gör"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "Hazır olduğunda başlayabilirsin."
-
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "Soruları eklediğin materyale göre hazırlıyoruz. Materyali okumamız birkaç dakika sürüyor."
@@ -9914,6 +9907,11 @@ msgstr "Soruları hedefine ulaşman için gereken becerilere göre hazırlıyoru
 msgctxt "QRwbAL"
 msgid "Your questions are ready"
 msgstr "Soruların hazır"
+
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "7yADK5"
+msgid "Start them whenever you're ready."
+msgstr "Hazır olduğunda başlayabilirsin."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
@@ -9931,6 +9929,7 @@ msgid "See it whenever you're ready."
 msgstr "Hazır olduğunda planına göz atabilirsin."
 
 #: src/onboarding/steps/plan-building.tsx
+#: src/onboarding/steps/plan-wait.tsx
 msgctxt "TTJuzU"
 msgid "One last question, then you'll see it."
 msgstr "Son bir soru kaldı, sonra planını göreceksin."
@@ -9991,6 +9990,16 @@ msgstr "Cevapların kaydedildi. Soruları bitirdiğinde planın hazır olsun diy
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "Planını gör"
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "x4Kcgs"
+msgid "Your plan will be waiting when you finish."
+msgstr "Dersi bitirdiğinde planın hazır olacak."
+
+#: src/onboarding/steps/plan-wait.tsx
+msgctxt "z2snrT"
+msgid "Start lesson 1"
+msgstr "1. derse başla"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "xwLmmU"
@@ -14149,20 +14158,63 @@ msgctxt "c1J3nF"
 msgid "Lessons on the way"
 msgstr "Dersleri hazırlıyoruz"
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "22HeK6"
+msgid "Your first lesson"
+msgstr "İlk dersin"
+
+#: src/wait/first-lesson-row.tsx
+msgctxt "zbkRbA"
+msgid "Ready to start"
+msgstr "Başlamaya hazır"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "Dersin hazır"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-quiz.tsx
+msgctxt "IUmRs3"
+msgid "Quiz while you wait"
+msgstr "Beklerken bilgi yarışması"
+
+#: src/wait/wait-quiz.tsx
+msgctxt "LroSLM"
+msgid "Just for fun. Your answers don't count."
+msgstr "Sadece eğlenmek için. Cevapların hesaba katılmaz."
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "8ZwEZ-"
+msgid "Back to the quiz"
+msgstr "Bilgi yarışmasına dön"
+
+#. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
+#: src/wait/wait-screen.tsx
+msgctxt "3IyRnV"
+msgid "Play a quiz while you wait"
+msgstr "Beklerken bilgi yarışması oyna"
+
+#: src/wait/wait-screen.tsx
 msgctxt "YW_xVV"
 msgid "That's all for now."
 msgstr "Şimdilik bu kadar."
 
-#: src/warm-up/warm-up-card.tsx
+#: src/wait/wait-screen.tsx
 msgctxt "e4FgxF"
 msgid "Next guess"
 msgstr "Sıradakini tahmin et"
 
-#: src/warm-up/warm-up-card.tsx
-msgctxt "wPwGoj"
-msgid "Guess while you wait"
-msgstr "Beklerken tahmin et"
+#: src/wait/wait-status.tsx
+msgctxt "YgBrpA"
+msgid "Your first lesson is ready"
+msgstr "İlk dersin hazır"
+
+#: src/wait/wait-status.tsx
+msgctxt "FZtFoB"
+msgid "Writing your first lesson: <lesson>{title}</lesson>"
+msgstr "İlk dersini hazırlıyoruz: <lesson>{title}</lesson>"
 
 #: src/week/logbook-screen.tsx
 msgctxt "wVu1FL"
