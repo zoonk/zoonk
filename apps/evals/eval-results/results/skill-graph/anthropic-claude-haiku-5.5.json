@@ -1,0 +1,2208 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All listed topics have corresponding skills, and Direito Financeiro and Contabilidade Pública remain separate disciplines. However, summed exam weights allocate approximately 73% to budgeting, 11% to financial law and 16% to public accounting, instead of 60%, 20% and 20%. This triggers the cap of 8 for blueprint weighting errors.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The progression from classification to planning and execution is generally sensible. However, the statements skill omits direct dependencies on revenue and expenditure execution. Also, two of three phase titles name taught content—annual planning and execution/accounts—rather than just the path stage, triggering the cap of 8 for mostly topical phase titles. The budget course additionally fails the explicitly required canonical title.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The skills divide the syllabus into coherent actions with 5–10 lessons each. Broad areas receive multiple skills rather than being collapsed into single course-sized units. The supplied information does not establish a clearly under-sized or padded topic; the short total-hour estimate alone is not grounds for an exam-size penalty.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills address listed topics or relevant foundations, such as accounting recognition regimes. There are no motivational introductions, recap phases, unsupported subject areas or clearly duplicated full treatments. The separate legal, budgetary and accounting perspectives are appropriate rather than redundant aliases.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The graph is in Brazilian Portuguese, retains the notice's exact area names and targets the supplied exam subjects. However, using 'Orçamento Público' as the course title directly contradicts the required shared title 'Administração Financeira e Orçamentária'. This is one clear task-context mismatch, limiting the score to 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize classification, interpretation, relationships and analysis rather than rote memorization. This is an exam goal, so retaining tested manual reasoning is appropriate and adding AI-tool training is not required.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 16 parts passed. No course titled \"Administração Financeira e Orçamentária\". Unexpected course titled \"Orçamento Público\". Skills in \"Orçamento Público\" must be taught in \"Administração Financeira e Orçamentária\".",
+          "score": 8.3125,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5275,
+          "outputTokens": 1263,
+          "reasoningTokens": 438
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The budget course is titled 'Orçamento Público', violating the explicit requirement that its shared course be titled exactly 'Administração Financeira e Orçamentária'. Rename the existing course without adding another; retain 'Orçamento Público' as the area. The exam weights also distort the blueprint: summed skill weights are 40:6:9 rather than the required subject proportions of 12:4:4.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Most phase titles describe their content rather than distinct stages of the path. Interpreting public-sector statements lacks direct prerequisites for revenue and expenditure execution, although those concepts are needed for budgetary and financial statements. Some descriptions need greater legal precision: sources of funds do not themselves authorize additional credits, and legislative competence should distinguish federal general rules from supplementary and constitutionally permitted state or municipal legislation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make practical application more explicit in outcomes, especially identifying accounting variations from transactions and interpreting relationships between public-sector statements. Clarify the revenue-execution description by distinguishing forecast, assessment, collection and remittance rather than suggesting that revenue is realized at every stage.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - The public-budget discipline in the AL-CE notices is known as Orçamento Público, Administração Financeira e Orçamentária and AFO. Its shared course is titled exactly Administração Financeira e Orçamentária, whichever name this notice uses. Never add a second budget course under an alias.\n    - Direito Financeiro and Contabilidade Pública are different disciplines: each keeps its own course and skills. Their relationship to budgeting does not make them aliases of AFO.\n    - Every notice topic is taught in its own discipline's course. Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Administração Financeira e Orçamentária"
+            ],
+            [
+              "Direito Financeiro"
+            ],
+            [
+              "Contabilidade Pública"
+            ]
+          ],
+          "coursesByArea": {
+            "Contabilidade Pública": [
+              "Contabilidade Pública"
+            ],
+            "Direito Financeiro": [
+              "Direito Financeiro"
+            ],
+            "Orçamento Público": [
+              "Administração Financeira e Orçamentária"
+            ]
+          },
+          "noCourses": [
+            "Orçamento Público",
+            "AFO"
+          ]
+        },
+        "id": "pt-alce-budget-catalog-1-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Orçamento Público",
+                "questions": 12,
+                "topics": [
+                  "Relacionar PPA, LDO e LOA",
+                  "Analisar ciclo orçamentário e créditos adicionais",
+                  "Classificar receitas e despesas orçamentárias",
+                  "Analisar execução da receita e da despesa"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Direito Financeiro",
+                "questions": 4,
+                "topics": [
+                  "Competência legislativa em direito financeiro e normas gerais da Lei 4.320/1964"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Contabilidade Pública",
+                "questions": 4,
+                "topics": [
+                  "Variações patrimoniais e demonstrações contábeis aplicadas ao setor público"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All three disciplines and the main listed topic groups are represented in their proper courses. However, the aggregate exam weights substantially underweight Direito Financeiro and overweight AFO relative to the 12/4/4 blueprint, triggering the cap of 8. Public-sector financial-statement coverage is also incomplete: the explicitly listed statements omit the financial balance and cash-flow statement.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases have distinct stage-oriented titles and achievable milestones, and most prerequisite chains are sensible. However, reading the budget balance depends on understanding budget revenue and expenditure execution, while the financial-statements skill links only to patrimonial variations and accounting facts. Those execution skills appear earlier in the list but are not declared prerequisites. This central prerequisite omission triggers the cap of 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most AFO skills have useful topic-sized scopes and distinguish classification, execution and additional credits. However, six lessons for the general rules of Lei 4.320/1964 and six for multiple public-sector financial statements compress two broad topics that require distinct rules, structures and worked cases. Several thin broad topics trigger the cap of 7. The total estimated hours are not independently penalized.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills address notice topics or defensible foundations, such as patrimonial elements and the function of the public budget. There is no alias budget course, motivational phase, study-advice skill or clearly duplicated full topic. Direito Financeiro and Contabilidade Pública remain separate disciplines rather than being treated as AFO aliases.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The graph fits public-exam preparation, uses Brazilian Portuguese, preserves the exact subject names as areas, and uses the required canonical AFO course title. Its beginner foundations are appropriate where no prior level is supplied. The substantive coverage and weighting weaknesses are assessed separately.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize relating instruments, applying legal rules, distinguishing classifications and interpreting execution and statements. Manual classification and calculation are appropriate for the exam goal; adding AI-tool training is not required for this notice.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "15 of 16 parts passed. Administração Financeira e Orçamentária opens on \"Explicar a função do orçamento público\", which teaches none of the notice's topics; its notice topics come first. Contabilidade Pública opens on \"Reconhecer os elementos do patrimônio público\", which teaches none of the notice's topics; its notice topics come first.",
+          "score": 9.4375,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5913,
+          "outputTokens": 1339,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The exam weights do not preserve the blueprint: AFO receives 45 of 61 weight points, Direito Financeiro 6, and Contabilidade Pública 10, rather than the intended 60%/20%/20% distribution. Accounting-statement coverage names only the balance sheet, budget balance and statement of patrimonial changes, leaving the financial balance and cash-flow statement unrepresented. Six lessons each for the general rules of Lei 4.320/1964 and public-sector financial statements provide insufficient depth for those broad topics. The financial-statements skill also lacks prerequisite links to the budget-execution skills needed to interpret the budget balance.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Clarify that extraordinary credits do not require identification of funding resources in the same way as supplementary and special credits. Make the distinction between budget revenue/expenditure and patrimonial increases/decreases explicit through worked cases, rather than relying on the accounting descriptions to imply it.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - The public-budget discipline in the AL-CE notices is known as Orçamento Público, Administração Financeira e Orçamentária and AFO. Its shared course is titled exactly Administração Financeira e Orçamentária, whichever name this notice uses. Never add a second budget course under an alias.\n    - Direito Financeiro and Contabilidade Pública are different disciplines: each keeps its own course and skills. Their relationship to budgeting does not make them aliases of AFO.\n    - Every notice topic is taught in its own discipline's course. Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Administração Financeira e Orçamentária"
+            ],
+            [
+              "Direito Financeiro"
+            ],
+            [
+              "Contabilidade Pública"
+            ]
+          ],
+          "coursesByArea": {
+            "Contabilidade Pública": [
+              "Contabilidade Pública"
+            ],
+            "Direito Financeiro": [
+              "Direito Financeiro"
+            ],
+            "Administração Financeira e Orçamentária": [
+              "Administração Financeira e Orçamentária"
+            ]
+          },
+          "noCourses": [
+            "Orçamento Público",
+            "AFO"
+          ]
+        },
+        "id": "pt-alce-budget-catalog-2-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Administração Financeira e Orçamentária",
+                "questions": 12,
+                "topics": [
+                  "Relacionar PPA, LDO e LOA",
+                  "Analisar ciclo orçamentário e créditos adicionais",
+                  "Classificar receitas e despesas orçamentárias",
+                  "Analisar execução da receita e da despesa"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Direito Financeiro",
+                "questions": 4,
+                "topics": [
+                  "Competência legislativa em direito financeiro e normas gerais da Lei 4.320/1964"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Contabilidade Pública",
+                "questions": 4,
+                "topics": [
+                  "Variações patrimoniais e demonstrações contábeis aplicadas ao setor público"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All three disciplines and the four named AFO topics are represented, but the accounting statement coverage omits cash-flow and changes-in-equity statements. Exam weights also distort the blueprint: Direito Financeiro receives half the accounting weight despite both having four questions. These omissions and the weighting mismatch prevent a high coverage score.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The main progression from budget concepts to planning, classification and execution is sensible. However, interpreting budgetary and financial balances depends on revenue execution as well as expenditure execution, and only the latter is listed. Most phase titles name their contents instead of their stage, independently triggering the maximum score of 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills are reasonably bounded and receive six to ten lessons. However, interpreting the balanço orçamentário and balanço financeiro combines two independently substantial abilities in one eight-lesson skill. Their different structures, distinctions and worked cases warrant separate planning units. This localized sizing problem limits the score to 8; the total duration alone is not penalized.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The graph contains no clear filler or unsupported area. Budget principles support the listed AFO topics, and prior-year expenditure treatment belongs within expenditure execution. The legal, budgetary and accounting skills have distinct purposes; mentioning the same statute or budget context does not establish duplicated teaching.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result fits public-exam preparation and uses Brazilian Portuguese. It provides exactly one budget course titled Administração Financeira e Orçamentária, retains AFO as the notice's area name, and keeps Direito Financeiro and Contabilidade Pública as separate courses with their own skills. The foundational opening is appropriate without assuming an unsupported learner background.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize explaining relationships, classifying transactions, distinguishing legal and accounting concepts, and interpreting statements. These are appropriate exam abilities rather than unnecessary rote procedures. An AI-tool skill is not required for this exam goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "15 of 16 parts passed. AFO opens on \"Explicar o que é orçamento público e seus princípios\", which teaches none of the notice's topics; its notice topics come first.",
+          "score": 9.4375,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5727,
+          "outputTokens": 1349,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The accounting course does not include skills for the Demonstração dos Fluxos de Caixa or Demonstração das Mutações do Patrimônio Líquido, leaving the broad financial-statements topic incomplete. Skill weights total 38 for AFO, 6 for Direito Financeiro and 12 for Contabilidade Pública, which does not preserve the blueprint's 12:4:4 distribution. The budgetary/financial-balance skill also lacks a prerequisite for revenue execution, although interpreting those statements requires it.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The phase titles describe their subject matter rather than distinct stages of preparation. One accounting skill bundles interpretation of two different statements into eight lessons. The revenue-execution description omits recolhimento, and the description of prior-year expenses misleadingly suggests they are simply another destination for an already committed expense.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Separate interpretation of the budgetary and financial statements, with worked cases for their different structures and results. Clarify the conditions distinguishing restos a pagar from despesas de exercícios anteriores, and explicitly include recolhimento among revenue stages. Rename phases to indicate progression rather than repeat their contents.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - The public-budget discipline in the AL-CE notices is known as Orçamento Público, Administração Financeira e Orçamentária and AFO. Its shared course is titled exactly Administração Financeira e Orçamentária, whichever name this notice uses. Never add a second budget course under an alias.\n    - Direito Financeiro and Contabilidade Pública are different disciplines: each keeps its own course and skills. Their relationship to budgeting does not make them aliases of AFO.\n    - Every notice topic is taught in its own discipline's course. Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Administração Financeira e Orçamentária"
+            ],
+            [
+              "Direito Financeiro"
+            ],
+            [
+              "Contabilidade Pública"
+            ]
+          ],
+          "coursesByArea": {
+            "Contabilidade Pública": [
+              "Contabilidade Pública"
+            ],
+            "Direito Financeiro": [
+              "Direito Financeiro"
+            ],
+            "AFO": [
+              "Administração Financeira e Orçamentária"
+            ]
+          },
+          "noCourses": [
+            "Orçamento Público",
+            "AFO"
+          ]
+        },
+        "id": "pt-alce-budget-catalog-3-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "AFO",
+                "questions": 12,
+                "topics": [
+                  "Relacionar PPA, LDO e LOA",
+                  "Analisar ciclo orçamentário e créditos adicionais",
+                  "Classificar receitas e despesas orçamentárias",
+                  "Analisar execução da receita e da despesa"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Direito Financeiro",
+                "questions": 4,
+                "topics": [
+                  "Competência legislativa em direito financeiro e normas gerais da Lei 4.320/1964"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Contabilidade Pública",
+                "questions": 4,
+                "topics": [
+                  "Variações patrimoniais e demonstrações contábeis aplicadas ao setor público"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Both notice areas and all named topic families are represented, including Word, Excel, PowerPoint, email, file management, classification and appraisal. However, the skill weights total 40 for Informática and 13 for Arquivologia, giving archives about 25% rather than the blueprint's 33%. This triggers the cap of 8 for ignoring blueprint weights in an area.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The main sequences are sensible: desktop navigation precedes file management, spreadsheet basics precede formulas, and appraisal concepts precede retention-table application. Courses are canonical and phase titles describe stages. However, scam detection is an invented prerequisite for searching and email, creating an unnecessary gate on central computing abilities. The second milestone also claims timed exam performance that the phase does not establish.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Office and archival topics receive multiple lesson-sized allocations rather than being compressed into single course-wide skills. The total duration alone is not grounds for a penalty. However, locating files and compressing/extracting archives are independent actions bundled into one skill, reducing planning precision.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There is no duplicate course under the computing alias, no recap phase, and no substantial re-teaching. Basic Windows and archival concepts reasonably support the listed topics. However, a dedicated five-lesson skill on fraudulent sites and scams adds an internet-security topic not expressly listed and not required to learn navigation or email. This triggers the cap of 8 for one unsupported skill.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses Brazilian Portuguese, preserves the exact area names, places all computing in the single course titled Informática, and keeps Arquivologia separate. It targets everyday computing rather than programming. Nevertheless, the archival skill's conflation of classification with alphabetical/numerical filing methods weakens preparation for the specifically requested classification topic, and the standalone security unit expands the exam scope.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph includes conceptual distinctions and applied judgment, such as document values, retention decisions and spreadsheet references. Manual Office and Windows skills are appropriate because the exam tests them. No AI-tool skill is required for this exam goal, and rote memorization does not dominate the path.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 14 parts passed. Noções de Informática opens on \"Diferenciar hardware, software e sistema operacional\", which teaches none of the notice's topics; its notice topics come first. Arquivologia opens on \"Explicar arquivo, documento de arquivo e ciclo de vida documental\", which teaches none of the notice's topics; its notice topics come first.",
+          "score": 9.357142857142858,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5455,
+          "outputTokens": 1785,
+          "reasoningTokens": 940
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The archival-classification skill conflates classification by functions or subjects with alphabetical and numerical filing/ordering methods, obscuring a distinction relevant to the tested discipline. Exam weights also underrepresent Arquivologia: computing skills total 40 versus 13 for archives, rather than the notice's 10:5 ratio. Recognizing online scams is made a prerequisite for both searching and using email, although neither ability depends on mastering scam detection.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The standalone five-lesson internet-security skill expands beyond the listed navigation and email syllabus. File searching and compression/extraction are bundled into one skill despite being independently teachable actions. The second milestone promises performance 'no ritmo da prova' without skills establishing timed performance.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Separate archival classification from filing order, rebalance subject weights, and remove unnecessary prerequisite gates. Split file searching from archive compression/extraction and make the second milestone describe the actual Office and archival capabilities acquired.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - Noções de Informática and Informática name the same discipline in public-service notices. Its shared course is titled exactly Informática under either notice heading, with no second course under the alias.\n    - The notice tests everyday computing knowledge, not computer science or programming. All computing skills belong to Informática.\n    - Arquivologia is a separate discipline: archival classification and appraisal stay in its own course, even though computing also covers files and folders.\n    - Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Informática"
+            ],
+            [
+              "Arquivologia"
+            ]
+          ],
+          "coursesByArea": {
+            "Arquivologia": [
+              "Arquivologia"
+            ],
+            "Noções de Informática": [
+              "Informática"
+            ]
+          },
+          "noCourses": [
+            "Noções de Informática",
+            "Ciência da Computação"
+          ]
+        },
+        "id": "pt-computing-alias-1-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Noções de Informática",
+                "questions": 10,
+                "topics": [
+                  "Organização e gerenciamento de arquivos e pastas no Windows",
+                  "Edição de textos, planilhas e apresentações no Microsoft Office",
+                  "Navegação na internet e uso de correio eletrônico"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Arquivologia",
+                "questions": 5,
+                "topics": [
+                  "Classificação e avaliação de documentos de arquivo"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Both disciplines are present, with Word, Excel, PowerPoint, Windows file management, email, classification, and appraisal represented. However, internet searching and source evaluation do not explicitly establish browser navigation, leaving one named component insufficiently covered. This triggers the cap of 8 for a missing pillar. Computing receives more exam weight than archival studies, consistent with the blueprint's direction.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Excel formulas depend only on recognizing Windows windows and the desktop; the graph lacks the worksheet foundations needed first. It also makes formulas a prerequisite for sorting, filtering, and charts, although those operations need basic worksheet/data understanding rather than formula mastery. These are multiple prerequisite problems, triggering the cap of 7. The final timed-performance milestone is not established by the phase's listed capabilities. Course names are canonical and the broad phase progression is otherwise sensible.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most topics receive plausible multi-lesson allocations, including separate treatment of classification, retention schedules, and appraisal. Nevertheless, locating files and compressing them are distinct actions bundled into one skill, while sorting/filtering and chart creation combine different capabilities. These reduce planning precision. The seven-hour total is not itself grounds for a deduction under the exam rubric.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Explaining the document life cycle and then differentiating current, intermediate, and permanent archives would repeat much of the same introductory material. The Windows shortcuts/settings skill also includes general configuration content that the notice does not list and whose necessity for file management is not established. These two overlap/scope issues trigger the cap of 7. The remaining archival foundations are relevant prerequisites rather than filler.",
+          "score": 7,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses Brazilian Portuguese, preserves the exact area names, provides exactly one Informática course, keeps all computing in it, and maintains Arquivologia as a separate discipline. It correctly targets everyday computing rather than programming. The general Windows-configuration content is one clear expansion beyond the supplied exam scope, triggering the cap of 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Manual Office and Windows operations are appropriate because the exam explicitly tests them. The graph also includes judgment through source evaluation, fraud recognition, document classification, and appraisal. This exam goal does not require an AI-tool skill, and no AI-era-specific penalty is warranted.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 14 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6096,
+          "outputTokens": 1793,
+          "reasoningTokens": 910
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The archival-principles skill incorrectly describes organicity as keeping documents in their production order. Organicity concerns the relationships between documents and the activities that produced them; it is not chronological ordering. Browser navigation is also not explicitly taught: searching and evaluating sources does not cover that whole named requirement. Excel formulas begin without a skill establishing cells, ranges, data entry, and basic worksheet editing.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The document-life-cycle and three-ages skills substantially overlap. General Windows settings extend beyond the listed file-management scope without a stated prerequisite purpose. Several skills bundle distinct actions, especially locating files with compression, and sorting/filtering with chart creation. The final milestone promises timed question-solving without corresponding practice in the listed skills.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Correct the archival definitions, consolidate the overlapping archival foundations, and explicitly include browser and spreadsheet basics. Separate file searching from compression and distinguish spreadsheet data organization from chart creation. Incorporate worked exam questions into the relevant topic lessons and make milestones describe capabilities actually established by those lessons.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n    - Write in Brazilian Portuguese.\n    - Noções de Informática and Informática name the same discipline in public-service notices. Its shared course is titled exactly Informática under either notice heading, with no second course under the alias.\n    - The notice tests everyday computing knowledge, not computer science or programming. All computing skills belong to Informática.\n    - Arquivologia is a separate discipline: archival classification and appraisal stay in its own course, even though computing also covers files and folders.\n    - Areas retain the notice's exact subject names.\n  ",
+        "expected": {
+          "courses": [
+            [
+              "Informática"
+            ],
+            [
+              "Arquivologia"
+            ]
+          ],
+          "coursesByArea": {
+            "Arquivologia": [
+              "Arquivologia"
+            ],
+            "Informática": [
+              "Informática"
+            ]
+          },
+          "noCourses": [
+            "Noções de Informática",
+            "Ciência da Computação"
+          ]
+        },
+        "id": "pt-computing-alias-2-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Disciplinas de concurso público",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Informática",
+                "questions": 10,
+                "topics": [
+                  "Organização e gerenciamento de arquivos e pastas no Windows",
+                  "Edição de textos, planilhas e apresentações no Microsoft Office",
+                  "Navegação na internet e uso de correio eletrônico"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Arquivologia",
+                "questions": 5,
+                "topics": [
+                  "Classificação e avaliação de documentos de arquivo"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Preparação para concurso público",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named minimum pillars are represented: cells, metabolism, genetics, evolution, organism physiology, ecology and advanced mechanisms. Gene regulation, biotechnology and metabolic regulation provide genuine depth. Coverage is nevertheless uneven for learning biology broadly: organism physiology is overwhelmingly human, and plant transport and regulation are absent. Experimental design and evaluation of biological investigations are also not explicitly taught.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Cell theory is placed after 193 supporting lessons, contrary to the explicit requirement that cells precede chemistry and biomolecules. Later foundations are better interleaved, including redox before metabolism and exponential functions before population models. However, proportions come after Mendelian calculations, probability foundations are absent, renal transport lacks its membrane dependency, and hormonal metabolic regulation precedes hormone instruction. The missing foundations used by quantitative skills trigger the cap of 6. Most phase titles also describe content, triggering a separate, less restrictive cap of 8. Milestones are broadly supported.",
+          "score": 6,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 224.3-hour total is a plausible substantial learning path rather than an overview. Most skills are chapter-sized, with roughly 20–50 short lessons and time for practice and review. The allocation gives meaningful space to genetics, physiology and molecular mechanisms without hundreds of trivia-sized nodes. No clear sizing cap is triggered.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach relevant biological knowledge or supporting foundations, with no orientation, motivation, career advice or recap-only skills. Early cellular and biochemical concepts generally have distinct scopes from later mechanisms. In particular, conceptual respiration and detailed glycolysis/Krebs instruction are legitimate progression rather than demonstrated duplication.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map uses Brazilian Portuguese, action-first skill names, canonical subject courses and null exam weights appropriately for a learning goal. Its breadth and advanced content fit an adult seeking depth. The clear mismatch is beginner accessibility: substantive understanding of cells is postponed behind a sizable chemical foundation despite the requested concrete biological opening.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path emphasizes explaining mechanisms, predicting inheritance, interpreting evidence and models, and evaluating conservation rather than memorizing isolated facts or executing long routine procedures. Evolutionary evidence, statistical comparisons and ecological judgment support useful reasoning. An AI-tool skill is not mandatory for this non-career learning goal, and no rote-dominance cap is triggered.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 13031,
+          "outputTokens": 1903,
+          "reasoningTokens": 1002
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required beginner opening is not delivered: cell theory appears only after nine chemistry and biomolecule skills totaling 193 lessons. Its prerequisites allow earlier study, but the presented sequence still makes cells wait for chemistry. Quantitative foundations are also incomplete or late: Mendelian crosses require predicting proportions in phase 2, while proportions appear in phase 3 and probability rules are never explicitly taught.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several prerequisite links need repair: renal reabsorption lacks a membrane-transport prerequisite, and hormonal metabolic regulation precedes the hormone-feedback skill without an appropriate dependency. Most phase titles describe their biological content rather than the learner's stage. 'Explicar transcrição e tradução de proteínas' is technically misleading: DNA is transcribed into RNA, and RNA is translated into protein, as the description correctly explains.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Broaden the otherwise substantial coverage with plant physiology beyond photosynthesis and classification, including water transport, mineral nutrition and hormonal regulation. Add explicit biological investigation skills covering experimental controls, competing explanations and evaluation of evidence. Preserve the existing distinction between conceptual respiration and detailed metabolic pathways.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - An adult beginner wants depth, not an overview-only course: retain cells, metabolism, genetics, evolution, organism physiology, ecology and advanced biological mechanisms\n      - The first skills teach concrete biology from everyday knowledge: distinguish living things and explain cells as units of life. They must not wait for chemistry, biomolecules or enzymes\n      - Supporting skills sit near their first use, not in whole-course blocks after the opening. Chemistry remains where biological mechanisms need it: bonds and biomolecules before molecular mechanisms, energy before detailed metabolism. Do not front-load a chemistry course before the learner encounters living things or cells\n      - Early conceptual skills and later mechanistic skills have distinct scopes, rather than repeating the same skill or making an introductory skill cover advanced depth\n      - Phase milestones must be supported by the skills in that phase\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-biology-beginner-deep-1",
+        "userInput": {
+          "goal": "Aprender tudo sobre biologia",
+          "goalKind": "learn",
+          "language": "pt",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All explicitly named pillars appear: scarcity, opportunity cost, markets, algebra, calculus, statistics, microeconomics, macroeconomics, econometrics, and policy. However, the econometrics coverage jumps from a fitted line and coefficient uncertainty to difference-in-differences without explicit skills for multiple regression, omitted-variable bias and confounding, or regression diagnostics. These are substantive gaps for an in-depth economics goal, although no entire named course is missing.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The opening lists 63 mathematics lessons before scarcity, contrary to the required economics-first start. Later supporting skills are generally interleaved, but consumer choice comes before optimization without an edge, and differential-equation solving has no integration foundation. The missing-foundations cap of 6 applies. Conceptual monopoly and information analysis inherit optimization unnecessarily, discounting precedes present-value instruction, and most phase titles name activities or content rather than stages. Later correct sequencing does not erase these failures.",
+          "score": 6,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The skills are generally chapter-sized rather than trivia-sized, but 150.4 hours including practice and review is not an honest allocation for this from-scratch, deep, multi-subject path. The compression is especially apparent in the progression through calculus, differential equations, causal inference, and advanced macroeconomic models. Several demanding areas need substantially more worked applications and consolidation, not merely more topic labels.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach relevant economics or supporting quantitative knowledge. There are no orientation, motivation, career-advice, or recap skills. Early conceptual market reasoning and later formal modeling have distinguishable purposes; likewise, geometric-series mathematics and economic present-value applications need not duplicate most lessons. No clear filler or substantial overlap warrants a deduction.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map targets substantive economics learning rather than exam preparation, career training, or a lightweight overview. Its beginner economic explanations and quantitative progression fit an adult starting from scratch. Names and descriptions use US English, skill names are action-first, courses are canonical subjects, and exam weights are appropriately null. The sequencing and time-allocation failures are assessed in their respective categories.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map emphasizes explanation, prediction, policy analysis, uncertainty, and causal evidence rather than memorization. However, it provides little explicit practice in checking model assumptions or validating empirical conclusions, particularly the identification assumptions behind difference-in-differences. Those judgment skills matter even when software performs estimation. An AI-tool skill itself is not required for this learning goal.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 10530,
+          "outputTokens": 1962,
+          "reasoningTokens": 1004
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The path starts with three mathematics skills rather than economic choices and everyday markets. Formal consumer choice precedes optimization and lacks that prerequisite edge; differential-equation solving lacks an integration foundation. Conceptual monopoly and asymmetric-information analysis also inherit formal optimization prerequisites through competitive profit maximization. The 150.4-hour total is too compressed for learning economics deeply from scratch through advanced models, supporting mathematics, statistics, and econometrics. Econometrics lacks explicit multiple-regression, confounding, and model-diagnostic skills.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Most phase titles describe activities or content rather than distinct stages of progression, such as 'Learning to weigh trade-offs' and 'Reading the whole economy.' Cost-benefit analysis uses discounting before the present-value skill and does not list it as a prerequisite. Some descriptions overstate conclusions: gains from trade need qualifications, and externality remedies do not automatically 'fix' inefficient outcomes.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add applied checkpoints in which learners explain an everyday market, investigate an economic dataset, and compare policy options while checking assumptions and uncertainty. Divide the large final phase into clearer capability-based stages so progress through empirical methods and advanced economic modeling is easier to plan.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - An adult beginner wants to study economics in depth\n      - Begin with economic choices, scarcity, opportunity cost and everyday markets, rather than a separate mathematics or statistics course\n      - Retain quantitative depth: place algebra, calculus and statistics just before the economic methods that use them, rather than in a complete math block after the opening, plus microeconomics, macroeconomics, econometrics and policy\n      - Conceptual economic reasoning must not depend on formal optimization or econometrics, and advanced mathematical economic analysis must not lose its real prerequisites\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-economics-beginner-deep-1",
+        "userInput": {
+          "goal": "Learn economics in depth from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every broad blueprint area is represented, but important required content lacks an instructional home. The civil procedure skill stops at judgment, leaving liquidation and enforcement under CPC articles 509–538 uncovered. Criminal appeals do not substitute for criminal review and habeas corpus within CPP articles 574–667. The Juizados Criminais skill covers transação penal and suspensão condicional, not the remaining prescribed competence and procedural rules. These omissions trigger the cap for multiple missing pillars. No topic-frequency data supports a separate weight penalty.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases progress sensibly and prerequisite references point backward, but several dependencies are unjustified. Calculating deadlines is not a prerequisite for identifying judicial impediment or suspicion. Requiring the Internal Rules before all Corregedoria content, and then requiring Chapter II before Chapter III before Chapter XI, substitutes document order for demonstrated conceptual dependence. These multiple prerequisite errors trigger the cap of 7.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Several broad topics receive too little teaching for their distinctions and exam cases: eight three-minute lessons for the unrestricted Internal Rules, ten for criminal procedures including the jury, and twenty-two across the extensive São Paulo statutory ranges. The twelve-lesson civil procedure skill also reduces a large body of procedural rules to ordering stages. The phase estimates provide approximately three additional minutes of practice and review per lesson, which does not resolve this compression. Multiple undersized topics trigger the cap of 7.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Four skills introduce overlap or unsupported scope. The administrative-principles skill repeats principles already taught in constitutional administration without building on that skill. The general Corregedoria skill has no distinct outcome from the later chapter-specific skills. The criminal-citation skill adds general CPP evidence, whose principal provisions are outside the listed ranges. The criminal-appeals skill adds execution of decisions, also outside those ranges. These four affected skills trigger the cap of 6.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The result uses Brazilian Portuguese, consistently preserves Conhecimentos em Direito as the area, and places Lei 10.261/68 in Direito Administrativo without substituting federal legislation. However, it routes internal-law skills into a sixth course rather than the specified five-discipline allocation. Statutory identity is also insufficiently explicit in the disciplinary skill's learner-facing name and description, despite correct metadata. These are multiple task-specific fit failures, capping this category at 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map emphasizes identifying legal distinctions, applying rules, calculating tested deadlines, and recognizing procedural requirements. These are appropriate abilities for an objective legal examination. It does not emphasize unnecessary manual production or tool-replaceable procedures, and an AI-tool skill is not required for this exam goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 13 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 10375,
+          "outputTokens": 2577,
+          "reasoningTokens": 1552
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map does not fully teach the prescribed syllabus: no skill clearly covers civil liquidation and enforcement of judgments, habeas corpus and criminal review, or the broader Juizados Criminais procedure beyond negotiated dispositions. Copying complete article ranges into topic tags does not establish instructional coverage. Several substantial topics are compressed into insufficient lessons, notably the Internal Rules, criminal procedures including the jury, and the São Paulo statute. The additional Organização Judiciária course also departs from the specified five-discipline course allocation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some prerequisites impose unjustified dependencies, including civil impediment on calculating procedural deadlines and the sequential chain between different Corregedoria chapters. Administrative principles duplicate constitutional content without building on it, and the general Corregedoria skill overlaps the later chapter skills. Criminal evidence and execution are added beyond the listed CPP scope. Although the topic metadata correctly identifies Lei 10.261/68, the disciplinary-responsibility skill's name and description do not identify the São Paulo statute.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace generic chapter descriptions with concrete legal decisions learners will make, specifying the relevant provisions and distinctions. Split broad procedural and statutory skills into coherent actions with sufficient worked cases and review time. Retain the correct area label, Brazilian Portuguese, and action-first naming while making statutory identity explicit where required.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The notice lists five law disciplines and the court's internal rules under one subject, \"Conhecimentos em Direito\": that stays the area of every skill, word for word, but the skills are taught in one course per catalog discipline (Direito Penal, Direito Processual Penal, Direito Processual Civil, Direito Constitucional, Direito Administrativo), each skill in its own discipline's course, never in one course named \"Direito\" or after the notice's subject\n      - The São Paulo civil-servant statute (Lei 10.261/68) goes in Direito Administrativo, and its skills name the São Paulo statute, never a federal one\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "courses": [
+            [
+              "Direito Penal"
+            ],
+            [
+              "Direito Processual Penal",
+              "Processo Penal"
+            ],
+            [
+              "Direito Processual Civil",
+              "Processo Civil"
+            ],
+            [
+              "Direito Constitucional"
+            ],
+            [
+              "Direito Administrativo"
+            ]
+          ]
+        },
+        "id": "pt-tjsp-law-subject-one-course-per-discipline-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário (Vunesp)",
+            "notes": [
+              "Format: questões objetivas de múltipla escolha com cinco alternativas."
+            ],
+            "subjects": [
+              {
+                "group": "BLOCO II: Conhecimentos em Direito",
+                "name": "Conhecimentos em Direito",
+                "questions": 30,
+                "topics": [
+                  "1. DIREITO PENAL: Código Penal - artigos 293 a 305; 307; 308; 311-A; 312 a 317; 319 a 333; 336 e 337; 339 a 347; 357 e 359",
+                  "2. DIREITO PROCESSUAL PENAL: Código de Processo Penal - artigos 251 a 258; 261 a 267; 274; 351 a 372; 394 a 497; 531 a 538; 541 a 548; 574 a 667 e Lei n.º 9.099 de 26.09.1995 (artigos 60 a 83; 88 e 89)",
+                  "3. DIREITO PROCESSUAL CIVIL",
+                  "3.1. Código de Processo Civil - artigos 144 a 155; 188 a 275; 294 a 311 e do 318 a 538; 994 a 1026",
+                  "3.2. Lei n.º 9.099 de 26.09.1995 (artigos 3º ao 19) e",
+                  "3.3. Lei n.º 12.153 de 22/12/2009",
+                  "4. DIREITO CONSTITUCIONAL: Constituição Federal – Título II - Capítulos I, II e III; e Título III - Capítulo VII com Seções I e II; e também o artigo 92",
+                  "5. DIREITO ADMINISTRATIVO",
+                  "5.1. Estatuto dos Funcionários Públicos Civis do Estado de São Paulo (Lei n.º 10.261/68) - artigos 1º a 86; 171 a 175; 239 a 323 e",
+                  "5.2. Lei Federal n.º 8.429/92 (Lei de Improbidade Administrativa)",
+                  "6. LEGISLAÇÃO INTERNA",
+                  "6.1. Resolução TJSP nº 850/2021 (Regulamenta o teletrabalho no âmbito do Tribunal de Justiça do Estado de São Paulo e dá outras providências)",
+                  "6.2. Resolução TJSP nº 963/2025 (Dispõe sobre a governança e utilização do sistema eproc nas unidades do Poder Judiciário do Estado de São Paulo e dá outras providências)",
+                  "6.2. Lei Complementar n° 1.111/ 2010 (Institui o Plano de Cargos e Carreiras dos servidores do Tribunal de Justiça do Estado de São Paulo e dá providências correlatas)",
+                  "6.3. Regimento Interno do Tribunal de Justiça",
+                  "6.4. Normas da Corregedoria Geral da Justiça",
+                  "Tomo I – Capítulo II: Seção I – subseções I e II",
+                  "Tomo I - Capítulo III: Seções I, II, V, VI, VII",
+                  "Tomo I - Capítulo III: Seção VIII – subseções I, II e III",
+                  "Tomo I – Capítulo III: Seções IX a XIX",
+                  "Tomo I – Capítulo XI: Seções I, IV e V",
+                  "Tomo I – Capítulo XI: Seção I a VII"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All required pillars are represented: individual and collective rights, constitutional guarantees, social rights, nationality, general public-administration rules, civil servants, and the Judiciary bodies of Article 92. Nationality is expressly included in the reused social-rights skill's description. Weights are within 1–5, and the supplied blueprint provides no topic-frequency distribution that establishes a weighting violation.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The graph preserves the library prerequisite relationships, places guarantees after individual rights, and uses a canonical course title. Both milestones are supported by their phases. However, 'Lendo a Constituição com segurança' describes an activity taught in the phase rather than clearly naming its stage, triggering the phase-title cap of 9; the category therefore receives 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The principal sizing problem is repeated instruction throughout the administration area: a complete 28-lesson library skill is followed by 51 lessons of newly authored constituent skills. This triggers the cap of 7 for padding throughout an area. Four lessons for the narrow Article 92 addition are reasonable, and the total study-time estimate is not independently implausible.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Twelve newly authored administration skills repeat portions of the retained library skill, directly contradicting the requirement that new skills teach only missing abilities. Four or more overlapping skills trigger the cap of 6. Political rights, parties, military-servant provisions, and Judiciary composition also introduce scope beyond the cited constitutional provisions unless explicitly restricted.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map is in Brazilian Portuguese, uses action-first skill names, and generally targets constitutional exam questions. Nevertheless, its unrestricted descriptions include political rights and parties, military servants, and Judiciary composition beyond the supplied notice. This pattern of exam-scope mismatches triggers the cap of 7. Reusing the required library skills is appropriate; failing to distinguish their applicable portions is the problem.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize applying constitutional rules, distinguishing legal categories, and evaluating guarantees in cases rather than rote transcription or tool-replaceable procedures. This is appropriate for the objective examination. AI-tool instruction is not required for this exam goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "8 of 9 parts passed. Conhecimentos em Direito opens on \"Interpretar os princípios fundamentais da Constituição\", which teaches none of the notice's topics; its notice topics come first.",
+          "score": 9,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7673,
+          "outputTokens": 1274,
+          "reasoningTokens": 400
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The graph violates the explicit library-reuse requirement by creating 12 new skills for content already taught by camara-administracao-publica-constituicao. These include public recruitment, remuneration, accumulation of positions, stability, pensions, and other constitutional administration rules. Keeping the full 28-lesson library skill and adding 51 lessons on its constituent topics creates substantial repetition rather than filling library gaps.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The descriptions retain untested material without limiting its scope: political rights and parties fall outside Title II, Chapters I–III, and military servants fall outside the specified Sections I–II. The new Judiciary skill also promises institutional composition, which extends beyond Article 92. The first phase title describes a reading activity rather than clearly naming a stage of the path.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Preserve the reused library identities, indicate which portions apply to this notice, and remove the newly authored administration duplicates. Limit the Judiciary addition explicitly to Article 92, including its rules on seats and jurisdiction. Recalculate phase hours after removing repeated instruction, and use a clearer stage title for the opening phase.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Another exam's Direito Constitucional skills are offered as LIBRARY_SKILLS, and this notice's constitutional topic (fundamental rights and guarantees, social rights, nationality, the public administration's general rules and civil servants, and article 92 on the Judiciary's bodies) asks the same abilities: the graph reuses those library skills for them instead of writing new ones under other names\n      - It writes new skills only for what the library lacks, such as the Judiciary's bodies of article 92, and none of them teaches what a library skill teaches\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "reuse": [
+            "camara-direitos-individuais-coletivos",
+            "camara-garantias-constitucionais",
+            "camara-direitos-sociais-politicos",
+            "camara-administracao-publica-constituicao"
+          ]
+        },
+        "id": "pt-tjsp-reuses-another-exams-constitutional-skills-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário (Vunesp)",
+            "notes": [
+              "Format: questões objetivas de múltipla escolha com cinco alternativas."
+            ],
+            "subjects": [
+              {
+                "group": "BLOCO II: Conhecimentos em Direito",
+                "name": "Conhecimentos em Direito",
+                "questions": 30,
+                "topics": [
+                  "4. DIREITO CONSTITUCIONAL: Constituição Federal – Título II - Capítulos I, II e III; e Título III - Capítulo VII com Seções I e II; e também o artigo 92"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+          "goalKind": "exam",
+          "language": "pt",
+          "library": [
+            {
+              "courseTitle": "Direito Constitucional",
+              "skills": [
+                {
+                  "description": "Identificar a estrutura e as características da Constituição de 1988 e aplicar seus princípios fundamentais.",
+                  "id": "camara-constituicao-principios-fundamentais",
+                  "lessons": 24,
+                  "level": "beginner",
+                  "name": "Interpretar os princípios fundamentais da Constituição",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar direitos e deveres individuais e coletivos a situações previstas na Constituição.",
+                  "id": "camara-direitos-individuais-coletivos",
+                  "lessons": 30,
+                  "level": "beginner",
+                  "name": "Aplicar direitos individuais e coletivos",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Distinguir os entes federativos, sua autonomia e suas competências constitucionais.",
+                  "id": "camara-organizacao-federativa",
+                  "lessons": 28,
+                  "level": "beginner",
+                  "name": "Distinguir os entes e competências federativas",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Aplicar as disposições constitucionais gerais sobre administração pública e servidores civis e militares.",
+                  "id": "camara-administracao-publica-constituicao",
+                  "lessons": 28,
+                  "level": "intermediate",
+                  "name": "Aplicar disposições constitucionais sobre servidores",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Distinguir garantias constitucionais e avaliar seu cabimento em casos apresentados.",
+                  "id": "camara-garantias-constitucionais",
+                  "lessons": 26,
+                  "level": "intermediate",
+                  "name": "Distinguir garantias constitucionais fundamentais",
+                  "prerequisiteIds": [
+                    "camara-direitos-individuais-coletivos"
+                  ]
+                },
+                {
+                  "description": "Aplicar as disposições constitucionais sobre direitos sociais, nacionalidade, direitos políticos e partidos.",
+                  "id": "camara-direitos-sociais-politicos",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Aplicar direitos sociais e políticos",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Reconhecer hipóteses, procedimentos e limites constitucionais da intervenção federal.",
+                  "id": "camara-intervencao-federal",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Aplicar as regras de intervenção federal",
+                  "prerequisiteIds": [
+                    "camara-organizacao-federativa"
+                  ]
+                },
+                {
+                  "description": "Distinguir competências, atribuições, reuniões e comissões do Congresso Nacional e de suas Casas.",
+                  "id": "camara-congresso-casas-competencias",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Distinguir competências do Congresso e suas Casas",
+                  "prerequisiteIds": [
+                    "camara-constituicao-principios-fundamentais"
+                  ]
+                },
+                {
+                  "description": "Aplicar as regras constitucionais sobre imunidades, incompatibilidades e perda de mandato parlamentar.",
+                  "id": "camara-regime-constitucional-parlamentares",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar o regime constitucional dos parlamentares",
+                  "prerequisiteIds": [
+                    "camara-congresso-casas-competencias"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Both laws are represented, and improbidade is correctly reused. However, repeating the complete statute excerpt in every topic field does not establish instructional coverage. The descriptions leave important required components unaccounted for: petition rights, civil/criminal/administrative responsibility, and sindicância distinct from the disciplinary process. These are not interchangeable with identifying infractions and sanctions. This warrants the cap of 7 for multiple missing pillars. No topic-frequency data supports penalizing the relative weights.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The listed dependencies are coherent: public-service concepts precede appointment rules, duties precede disciplinary infractions, sanctions precede disciplinary proceedings, and administrative principles precede improbidade. All prerequisites appear earlier. The course is a canonical subject, the phase titles describe stages without gendered learner language, and the milestones broadly correspond to the skills assigned to each phase.",
+          "score": 10,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Several statutory areas are too compressed. Six lessons for appointment, possession and exercise leave little room for the multiple appointment routes and their conditions; six lessons for disciplinary infractions and sanctions and eight for disciplinary proceedings similarly underserve the applicable distinctions, authorities, deadlines and worked cases. The broad rights/advantages/leave skill is also too thin for its stated scope. The 24-lesson improbidade skill is more credible, but cannot offset these weaknesses. Multiple thin areas trigger the cap of 7; the total hours alone are not the basis of the penalty.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The scope includes material outside the specified statutory excerpts. Stability is bundled with the required vacância content, while a separate skill broadly teaches advantages and leave even though the selected arts. 171–175 concern férias rather than the wider leave regime. The reused agents skill also carries requisition content whose necessity is not established. Basic principles and public-service concepts can legitimately support the required laws, but these broader additions are not all justified as prerequisites. Two or three affected skills trigger the cap of 7.",
+          "score": 7,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Brazilian Portuguese, names are action-led, weights are within 1–5, and the map targets objective legal questions. It also respects the crucial distinction between the São Paulo and federal civil-servant statutes and correctly reuses national improbidade content. Nevertheless, repeatedly treating the selected statutory excerpts as a broader civil-service syllabus is a pattern of mismatch with this exam's prescribed scope, triggering the cap of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize applying legal rules, distinguishing concepts and judging cases, which are appropriate capabilities for this objective exam. Recognition of statutory duties and sanctions is legitimately tested knowledge rather than unnecessary automation-resistant busywork. An AI-tool skill is not required for this exam goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6921,
+          "outputTokens": 1986,
+          "reasoningTokens": 1034
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The statute mapping is incomplete and partly outside the prescribed article ranges. No skill clearly teaches the right of petition (arts. 239–240), the statutory rules on civil, criminal and administrative responsibility, or sindicância as distinct from disciplinary proceedings. Meanwhile, the skills on stability and on advantages and leave extend beyond the selected articles. Several substantial statutory topics receive only 5–8 three-minute lessons, insufficient for their distinctions and worked cases. The result does correctly create separate São Paulo skills, reuse no Lei 8.112 skills, and reuse the library's improbidade skill.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Give each statutory skill its precise article range rather than repeating the entire notice excerpt. Explicitly identify férias under arts. 171–175, and allocate lessons to statutory distinctions and worked multiple-choice cases. Showing lesson time separately from practice and review time would also make the estimates easier to assess.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Another exam's Direito Administrativo skills are offered as LIBRARY_SKILLS, including skills on the federal civil-servant statute (Lei 8.112/1990). This notice asks São Paulo's statute (Lei 10.261/68) instead: a state's statute is never the same skill as the federal one, so the graph writes new skills that name the São Paulo statute and reuses none of the Lei 8.112 skills for it\n      - Lei 8.429/1992 (improbidade administrativa) is national law, the same in both exams: the graph reuses the library's improbidade skill instead of writing another\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "noReuse": [
+            "camara-lei-8112-provimento",
+            "camara-lei-8112-direitos-deveres"
+          ],
+          "reuse": [
+            "camara-improbidade-administrativa"
+          ]
+        },
+        "id": "pt-tjsp-state-statute-not-federal-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário (Vunesp)",
+            "notes": [
+              "Format: questões objetivas de múltipla escolha com cinco alternativas."
+            ],
+            "subjects": [
+              {
+                "group": "BLOCO II: Conhecimentos em Direito",
+                "name": "Conhecimentos em Direito",
+                "questions": 30,
+                "topics": [
+                  "5. DIREITO ADMINISTRATIVO",
+                  "5.1. Estatuto dos Funcionários Públicos Civis do Estado de São Paulo (Lei n.º 10.261/68) - artigos 1º a 86; 171 a 175; 239 a 323 e",
+                  "5.2. Lei Federal n.º 8.429/92 (Lei de Improbidade Administrativa)"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso do Tribunal de Justiça de São Paulo, Escrevente Técnico Judiciário",
+          "goalKind": "exam",
+          "language": "pt",
+          "library": [
+            {
+              "courseTitle": "Direito Administrativo",
+              "skills": [
+                {
+                  "description": "Distinguir Estado, governo e administração pública, seus elementos, poderes e formas de organização.",
+                  "id": "camara-estado-governo-administracao",
+                  "lessons": 18,
+                  "level": "beginner",
+                  "name": "Distinguir Estado, governo e administração pública",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar princípios constitucionais e doutrinários da administração pública a situações administrativas.",
+                  "id": "camara-principios-administracao-publica",
+                  "lessons": 20,
+                  "level": "beginner",
+                  "name": "Aplicar princípios da administração pública",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Distinguir administração direta e indireta e as formas de distribuição de competências e serviços.",
+                  "id": "camara-organizacao-administrativa",
+                  "lessons": 26,
+                  "level": "beginner",
+                  "name": "Distinguir formas de organização administrativa",
+                  "prerequisiteIds": [
+                    "camara-estado-governo-administracao"
+                  ]
+                },
+                {
+                  "description": "Identificar requisitos, atributos e espécies de atos administrativos e julgar hipóteses de sua extinção, invalidação ou revogação.",
+                  "id": "camara-atos-administrativos",
+                  "lessons": 28,
+                  "level": "intermediate",
+                  "name": "Analisar atos administrativos e sua extinção",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Distinguir tipos de parecer administrativo e hipóteses de responsabilidade de seu emissor.",
+                  "id": "camara-responsabilidade-parecerista",
+                  "lessons": 12,
+                  "level": "intermediate",
+                  "name": "Julgar a responsabilidade do parecerista",
+                  "prerequisiteIds": [
+                    "camara-atos-administrativos"
+                  ]
+                },
+                {
+                  "description": "Distinguir os poderes administrativos e identificar seu exercício regular, excesso ou desvio de poder.",
+                  "id": "camara-poderes-administrativos",
+                  "lessons": 24,
+                  "level": "intermediate",
+                  "name": "Distinguir poderes administrativos e seus abusos",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Distinguir espécies de agentes, cargos, empregos e funções e aplicar as regras administrativas sobre requisição e vínculo público.",
+                  "id": "camara-agentes-vinculos-requisicao",
+                  "lessons": 20,
+                  "level": "beginner",
+                  "name": "Distinguir vínculos e requisição de agentes",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar as regras da Lei 8.112/1990 sobre provimento, vacância, movimentação e desenvolvimento funcional.",
+                  "id": "camara-lei-8112-provimento",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar regras de provimento e movimentação",
+                  "prerequisiteIds": [
+                    "camara-agentes-vinculos-requisicao"
+                  ]
+                },
+                {
+                  "description": "Aplicar as disposições da Lei 8.112/1990 sobre direitos, vantagens, licenças, deveres e proibições dos servidores federais.",
+                  "id": "camara-lei-8112-direitos-deveres",
+                  "lessons": 26,
+                  "level": "intermediate",
+                  "name": "Aplicar direitos e deveres dos servidores federais",
+                  "prerequisiteIds": [
+                    "camara-agentes-vinculos-requisicao"
+                  ]
+                },
+                {
+                  "description": "Reconhecer fontes e princípios do direito disciplinar e distinguir ilícitos, responsabilidades e sanções administrativas.",
+                  "id": "camara-ilicito-disciplinar",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Analisar ilícitos e sanções disciplinares",
+                  "prerequisiteIds": [
+                    "camara-lei-8112-direitos-deveres"
+                  ]
+                },
+                {
+                  "description": "Distinguir procedimentos disciplinares e aplicar suas etapas, garantias, prazos e possíveis resultados.",
+                  "id": "camara-procedimentos-disciplinares",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar regras dos procedimentos disciplinares",
+                  "prerequisiteIds": [
+                    "camara-ilicito-disciplinar"
+                  ]
+                },
+                {
+                  "description": "Aplicar os princípios e as regras de tramitação, decisão, recursos e revisão da Lei 9.784/1999.",
+                  "id": "camara-processo-administrativo-federal",
+                  "lessons": 22,
+                  "level": "intermediate",
+                  "name": "Aplicar a Lei do Processo Administrativo Federal",
+                  "prerequisiteIds": [
+                    "camara-atos-administrativos"
+                  ]
+                },
+                {
+                  "description": "Julgar a responsabilidade estatal por ação ou omissão, seus requisitos e causas de exclusão ou atenuação.",
+                  "id": "camara-responsabilidade-civil-estado",
+                  "lessons": 26,
+                  "level": "intermediate",
+                  "name": "Analisar a responsabilidade civil do Estado",
+                  "prerequisiteIds": [
+                    "camara-estado-governo-administracao"
+                  ]
+                },
+                {
+                  "description": "Aplicar a Lei 8.429/1992 a atos de improbidade, seus requisitos, sanções e procedimentos.",
+                  "id": "camara-improbidade-administrativa",
+                  "lessons": 24,
+                  "level": "intermediate",
+                  "name": "Julgar atos de improbidade administrativa",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Aplicar os princípios, finalidades, modalidades e hipóteses de contratação direta da Lei 14.133/2021.",
+                  "id": "camara-licitacoes-lei-14133",
+                  "lessons": 27,
+                  "level": "intermediate",
+                  "name": "Aplicar regras de licitações e contratação direta",
+                  "prerequisiteIds": [
+                    "camara-principios-administracao-publica"
+                  ]
+                },
+                {
+                  "description": "Distinguir as funções e os elementos do estudo técnico preliminar e do termo de referência no planejamento da contratação.",
+                  "id": "camara-planejamento-contratacao-etp-tr",
+                  "lessons": 21,
+                  "level": "intermediate",
+                  "name": "Analisar estudo técnico e termo de referência",
+                  "prerequisiteIds": [
+                    "camara-licitacoes-lei-14133"
+                  ]
+                },
+                {
+                  "description": "Aplicar a Lei 12.527/2011 a pedidos de informação, transparência e restrições legais de acesso.",
+                  "id": "camara-lei-acesso-informacao",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Aplicar a Lei de Acesso à Informação",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar os princípios, bases legais, direitos e regras de tratamento de dados pessoais da Lei 13.709/2018.",
+                  "id": "camara-lei-protecao-dados-pessoais",
+                  "lessons": 23,
+                  "level": "intermediate",
+                  "name": "Aplicar a Lei Geral de Proteção de Dados",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Aplicar as regras sobre características, formalização, gestão e fiscalização de contratos administrativos e atribuições do fiscal.",
+                  "id": "camara-contratos-gestao-fiscalizacao",
+                  "lessons": 27,
+                  "level": "intermediate",
+                  "name": "Analisar contratos e fiscalização contratual",
+                  "prerequisiteIds": [
+                    "camara-licitacoes-lei-14133"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All 16 notice topics are taught. Verb voices correctly remain within the existing library skill, while reported speech receives the only new skill. Weights are valid and do not contradict any supplied frequency data. Explicitly mentioning temporal and spatial reference changes would make the reported-speech coverage clearer.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Dependencies preserve the library's progression: clause analysis precedes complex syntax, and complex syntax precedes punctuation. Reported speech builds on existing syntax and verb skills. Both phases have distinct, stage-oriented titles and achievable capability milestones, and the course uses a canonical subject title.",
+          "score": 10,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The reused skills retain their substantive lesson allocations, and 15 lessons reasonably accommodate reported-speech distinctions and worked transformations. The 290 three-minute lessons account for 14.5 hours, leaving another 14.5 hours within the estimate for practice and review. No topic is clearly padded or too thin.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Every skill supports the listed Portuguese syllabus. Shared content is reused through library references rather than retaught in newly created skills; in particular, there is no duplicate coherence, agreement or verb-voice skill. No filler or unsupported area appears.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Brazilian Portuguese, skill names begin with reusable action verbs, and the map targets the supplied exam subject. It correctly treats the library as the shared foundation rather than inventing a separate advanced grammar curriculum merely because this is a higher-level examination.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize interpretation, contextual analysis, judgment and evaluation of rewrites. Manual grammatical knowledge is appropriate for this examination, and an AI-tool skill is not required for the stated goal.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6625,
+          "outputTokens": 1104,
+          "reasoningTokens": 494
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make the reported-speech description explicitly include changes to temporal and spatial references, such as hoje/naquele dia and aqui/ali, alongside tense, pronoun and punctuation changes.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same legislature's nível médio exam (Técnico Legislativo) already has Língua Portuguesa skills, offered as LIBRARY_SKILLS. This nível superior notice asks the same base (reading, text types, coherence and cohesion, spelling and accents, punctuation and crase, agreement, government, official correspondence): the graph reuses those library skills as its base\n      - It writes new skills only for what the superior notice asks beyond them, such as reported speech (discurso direto e indireto) and the verb's voices if no library skill teaches them, each building on the library skill it extends; no new skill re-teaches a library skill, such as a second coherence or agreement skill\n      - Every topic of the subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "reuse": [
+            "alce-tecnico-coerencia-coesao",
+            "alce-tecnico-ortografia-acentuacao",
+            "alce-tecnico-concordancia-nominal-verbal",
+            "alce-tecnico-regencia-crase",
+            "alce-tecnico-correspondencia-oficial"
+          ]
+        },
+        "id": "pt-alce-superior-builds-on-medio-portuguese-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso da Assembleia Legislativa do Ceará, Analista Legislativo, Administração (Cebraspe)",
+            "notes": [
+              "Format: itens de certo ou errado; cada item errado desconta um item certo."
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos gerais (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão de texto",
+                  "2 Gêneros e tipos textuais",
+                  "3 Domínio dos mecanismos de coerência e coesão textuais",
+                  "4 Domínio da ortografia oficial",
+                  "5 Emprego da acentuação gráfica",
+                  "6 Emprego dos sinais de pontuação",
+                  "7 Crase",
+                  "8 Classe de palavras",
+                  "9 Sintaxe",
+                  "10 Discurso direto e indireto",
+                  "11 Emprego de tempos e modos verbais",
+                  "12 Vozes do verbo",
+                  "13 Flexão nominal e verbal",
+                  "14 Concordância nominal e verbal",
+                  "15 Regência nominal e verbal",
+                  "16 Correspondência oficial"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Concurso da Assembleia Legislativa do Ceará, Analista Legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "library": [
+            {
+              "courseTitle": "Língua Portuguesa",
+              "skills": [
+                {
+                  "description": "Identificar informações explícitas, inferências e sentidos de palavras no contexto de textos.",
+                  "id": "alce-tecnico-compreender-textos",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Interpretar textos e inferir sentidos",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Identificar teses, argumentos, pressupostos e relações entre razões e conclusões em textos.",
+                  "id": "alce-tecnico-analisar-argumentacao",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar a argumentação em textos",
+                  "prerequisiteIds": [
+                    "alce-tecnico-compreender-textos"
+                  ]
+                },
+                {
+                  "description": "Examinar a progressão das ideias e os efeitos de referentes, conectivos e substituições na unidade do texto.",
+                  "id": "alce-tecnico-coerencia-coesao",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar coerência e coesão textuais",
+                  "prerequisiteIds": [
+                    "alce-tecnico-compreender-textos"
+                  ]
+                },
+                {
+                  "description": "Distinguir tipos e gêneros textuais por suas características, finalidades e organização.",
+                  "id": "alce-tecnico-tipos-generos-textuais",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Reconhecer tipos e gêneros textuais",
+                  "prerequisiteIds": [
+                    "alce-tecnico-compreender-textos"
+                  ]
+                },
+                {
+                  "description": "Julgar a grafia e a acentuação de palavras segundo as regras ortográficas vigentes.",
+                  "id": "alce-tecnico-ortografia-acentuacao",
+                  "lessons": 20,
+                  "level": "intermediate",
+                  "name": "Aplicar regras de ortografia e acentuação",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Analisar classes de palavras e funções sintáticas dos termos da oração para julgar construções e reescritas.",
+                  "id": "alce-tecnico-classes-termos-oracao",
+                  "lessons": 35,
+                  "level": "intermediate",
+                  "name": "Analisar classes e termos da oração",
+                  "prerequisiteIds": []
+                },
+                {
+                  "description": "Distinguir orações coordenadas e subordinadas e interpretar suas relações sintáticas e semânticas.",
+                  "id": "alce-tecnico-coordenacao-subordinacao",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Analisar coordenação e subordinação",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Julgar o emprego de tempos, modos e vozes verbais e as flexões nominais e verbais em contexto.",
+                  "id": "alce-tecnico-verbos-flexoes",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar verbos e flexões em contexto",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Aplicar as regras de concordância nominal e verbal a frases e reescritas.",
+                  "id": "alce-tecnico-concordancia-nominal-verbal",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Aplicar concordância nominal e verbal",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Julgar a regência de nomes e verbos e a ocorrência de crase em construções e reescritas.",
+                  "id": "alce-tecnico-regencia-crase",
+                  "lessons": 30,
+                  "level": "intermediate",
+                  "name": "Aplicar regência nominal, verbal e crase",
+                  "prerequisiteIds": [
+                    "alce-tecnico-classes-termos-oracao"
+                  ]
+                },
+                {
+                  "description": "Julgar o emprego e a alteração de sinais de pontuação conforme a sintaxe e os efeitos de sentido.",
+                  "id": "alce-tecnico-pontuacao-sintaxe",
+                  "lessons": 25,
+                  "level": "intermediate",
+                  "name": "Analisar pontuação e efeitos de sentido",
+                  "prerequisiteIds": [
+                    "alce-tecnico-coordenacao-subordinacao"
+                  ]
+                },
+                {
+                  "description": "Reconhecer características, padrões de linguagem e formas de tratamento da correspondência oficial.",
+                  "id": "alce-tecnico-correspondencia-oficial",
+                  "lessons": 15,
+                  "level": "intermediate",
+                  "name": "Analisar padrões de correspondência oficial",
+                  "prerequisiteIds": []
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Check-in, check-out, complaints, directions, and several operational interactions are present. However, short guest emails are entirely absent, leaving a whole required communication area uncovered and triggering the cap of 6. Recommendations are also missing. Answering/transferring calls does not explicitly teach telephone reservations, and assigning tasks or passing notices does not explicitly teach understanding colleagues' instructions. Long conversations only indirectly address brief guest small talk.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall progression from simple exchanges to harder interactions is understandable, but several central dependencies are wrong or absent, triggering the cap of 7. Reservation lookup and confirmation should prepare check-in rather than depend on it; charge explanations should support checkout; cancellation policies should precede policy-based reservation changes. The full-shift skill also lacks prerequisite links to checkout and complaint handling. 'Resolver lo inesperado' is a topic-like phase title rather than a clear stage label.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills have reasonable chapter-sized lesson counts for a language path, and spelling names is relevant rather than an alphabet detour. However, 95.7 total hours is substantially below the hundreds-of-hours scale expected for the promised progression, particularly with advanced negotiation, natural extended conversation, and independent full-shift performance. The final 22.5-hour phase compresses several ambitious capabilities, while the full-shift skill bundles much of the course. These sizing weaknesses warrant 7.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Nearly all content is relevant to hotel reception, with no motivational, historical, or standalone grammar filler. The final 'Atender un turno completo de recepción' skill nevertheless restates the accumulated reception tasks without identifying new language content, creating one overlapping skill and triggering the cap of 8. Ordinary complaint handling and more difficult negotiation can otherwise represent legitimate progression.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Spanish generally fits Mexican usage, and the action-first names and embedded grammar suit a situational language course. However, the course explicitly targets American English rather than English for London, and its endpoint is labeled advanced instead of the requested intermediate B1/B2 range. These repeated contextual and level mismatches trigger the cap of 7. The basic starting tasks are mostly relevant to reception work.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Complaint resolution, escalation, alternatives, and compensation limits develop useful interpersonal judgment rather than predominantly rote knowledge. However, this workplace-targeted graph includes no skill for directing or checking AI tools, triggering the cap of 8. Appropriate additions could teach reviewing AI-drafted guest messages or using AI role-play while checking accuracy and protecting guest information.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6938,
+          "outputTokens": 1791,
+          "reasoningTokens": 833
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map omits short guest emails and local recommendations, and does not explicitly teach taking reservations by phone or understanding colleagues' instructions. It targets 'Inglés estadounidense' despite the London context and extends into advanced skills rather than the requested A1/A2-to-B1/B2 progression. Several central dependencies are reversed or missing: confirming reservations follows check-in, explaining charges follows check-out, and cancellation policies follow changing reservations. The 95.7-hour estimate is also too optimistic for the breadth and advanced independence promised.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The final full-shift skill repeats previously taught reception tasks without specifying a distinct new language capability. 'Resolver lo inesperado' names the situations taught rather than clearly naming a progression stage. Beginner, intermediate, and advanced labels also leave the intended CEFR milestones unclear.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add guided AI-assisted speaking rehearsal and guest-message drafting, including checking factual details, tone, and confidentiality. Make brief guest small talk explicit rather than relying on advanced long conversations. Preserve the useful situational approach while calibrating study time and milestones to achievable workplace English.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish): names and descriptions in Mexican vocabulary and forms\n      - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work\n      - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet\n      - Grammar lives inside situations, not as standalone grammar skills\n      - The course is English itself, titled in Spanish (for example \"Inglés\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-language-english-hotel-1",
+        "userInput": {
+          "context": "Me voy a Londres en marzo para trabajar en la recepción de un hotel. Entiendo un poco de inglés pero me cuesta hablar.",
+          "goal": "Aprender inglés para trabajar en un hotel en Londres",
+          "goalKind": "language",
+          "language": "es",
+          "ownLevel": "basic",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named pillars are represented: cleaning, pivot tables, charts, reporting queries, Python analysis, business statistics, dashboards, and presenting findings. Journal entries, trial balances, monthly aggregation, and budget-versus-actual analysis provide accounting grounding. No missing-pillar cap applies.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall progression and stage-like phase titles are sensible, but formal statistical capabilities lack necessary foundations: stat-compare depends only on descriptive statistics, and forecast intervals appear without sampling or uncertainty foundations. This triggers the cap of 6 for omitted foundations used by formal skills. Additional missing edges include Python prerequisites for reviewing AI-generated Python code and aggregation prerequisites for py-datetime's promised period aggregation.",
+          "score": 6,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills have reasonable individual lesson counts, but several substantial areas are compressed for this learner: Python programming foundations receive eight three-minute lessons, testing receives six, forecasting with uncertainty receives six, and building an updating BI dashboard receives six. The entire 18.4-hour allocation leaves insufficient practice and review for the breadth and independent-work milestone. Several under-sized areas trigger the cap of 7.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills contribute directly to workplace analysis. There are no motivational, historical, orientation, or recap skills. Implementing aggregation in Excel, SQL, and pandas develops distinct tool capabilities rather than clearly duplicating most lessons, and the integrated project is relevant applied practice.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The path generally fits an experienced accountant who knows Excel but is new to SQL and Python. Skill names and milestones end in plain potential forms, and the learner is never addressed as あなた. However, every description violates the required polite register, creating a systematic language-fit mismatch and triggering the pattern-of-mismatches cap of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map explicitly teaches AI task specification, confidentiality decisions, code-output verification, and reviewed report drafting. KPI framing, data-quality checks, causal caution, and communication provide substantial judgment-oriented learning; rote syntax does not dominate. Verification could be stronger through accounting reconciliations and failure-case tests, but no AI-skill omission or rote-dominance cap applies.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8244,
+          "outputTokens": 1357,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Every skill description uses plain-form endings rather than the explicitly required です・ます register. The 18.4-hour estimate is also too compressed for a SQL/Python beginner to acquire the promised SQL, pandas, statistical inference, forecasting, BI, and independent project capabilities with practice. Statistical testing and forecast intervals are promised without teaching the sampling and uncertainty foundations they require.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The sql-filter name inaccurately groups ORDER BY with filtering; ORDER BY sorts results. The sql-window name promises month-on-month comparisons while its description specifies year-on-year comparisons. The regression description suggests estimating causal effects without stating the assumptions needed to support that interpretation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a recurring monthly-close dataset to connect journal entries, reconciliation, budget-versus-actual analysis, and management reporting. Give SQL/Python and BI skills explicit practice allowances, and make AI-output verification include reconciliation to trusted accounting totals rather than only checking small examples.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Japanese: descriptions use です・ます and never address the learner as あなた\n      - Data analysis for an accountant who knows Excel: cleaning data, pivot tables and charts, SQL for reports, Python or another tool for analysis, statistics for business questions, dashboards, and presenting findings to a manager, built on what accounting work already uses (仕訳, 月次決算, 予算と実績)\n      - Skill names and milestones end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ja-data-analysis-accountant-1",
+        "userInput": {
+          "context": "経理を5年やっています。Excelは使えますが、SQLやPythonは触ったことがありません。",
+          "goal": "仕事でデータ分析ができるようになりたい",
+          "goalKind": "learn",
+          "language": "ja",
+          "ownLevel": "basic",
+          "purpose": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Arrival and residence-card communication is absent. Finding a share house is also not taught: understanding a contract and house rules does not cover searching, asking about vacancies, or arranging a viewing. These are two missing guidance pillars, triggering the cap of 7. Interviews, banking, phone signup, medical visits, social conversation, and general shift communication are represented.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Kana comes first, the course is canonically titled 일본어, and the distinct phase titles describe stages rather than duplicate taught topics. However, negotiating wages and working hours depends on understanding numbers and time, yet negotiate-pay has no prerequisite path to numbers-time. This clear prerequisite omission on a central working-holiday skill triggers the cap of 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills have useful chapter-sized allocations of 15–40 lessons. However, 69.2 total hours is less than half a credible hundreds-of-hours allocation for the claimed progression from zero to independent daily-life and workplace Japanese, triggering the cap of 7. Combining bank-account opening and phone-plan signup also bundles separate actions into one planning unit.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach relevant language capabilities rather than introductions, motivation, study advice, or unrelated career content. Customer purchases and employee service are distinct perspectives, and the general social, request, and workplace skills do not clearly duplicate most of one another's lessons. No filler or substantial overlap cap is triggered.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Japanese course, kana-first opening, practical situations, and consistently can-do skill names and milestones fit the learner well. Nevertheless, all skill descriptions use 합니다체 rather than the explicitly required 해요체, creating a repeated register mismatch and triggering the cap of 7. The beginner/intermediate labels also leave the requested CEFR progression unclear.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph primarily develops live communication rather than tool-replaceable rote procedures. It includes selecting whom to ask for help, negotiating conditions, reporting problems, and agreeing on solutions. Kana and pronunciation practice are appropriate foundations for this language goal, and the mandatory AI-tool requirement for work or career graphs does not apply merely because some language situations occur at work.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6463,
+          "outputTokens": 1788,
+          "reasoningTokens": 955
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map omits arrival and residence-card procedures, and its housing skill covers contracts and rules rather than finding a share house. The 69.2-hour total substantially understates the study and practice needed to progress from no Japanese to independent housing, medical, and workplace communication.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Every skill description uses the formal ending '상태입니다' rather than the required 해요체. The wage-and-hours negotiation skill lacks a prerequisite on numbers-time, including through its prerequisite ancestry. Bank-account opening and phone-plan signup are also bundled into one skill despite being separate situations.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the A1-to-higher-level progression explicit, give the workplace situations more concrete café or convenience-store tasks, and include checking understanding or asking for repetition within high-stakes interactions. These changes would make the existing practical can-dos easier to teach and assess.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Korean in 해요체\n      - Language goal: skills are real situations with can-dos for a working holiday in Japan, such as arriving and the residence card, finding a share house, a part-time job interview, working a shift at a café or a convenience store, the bank and the phone plan, the doctor, and making friends\n      - Ordered by level from A1 (beginner), since the learner starts from zero: kana come first; grammar lives inside situations\n      - The course is Japanese itself, titled in Korean (for example \"일본어\")\n      - Skill names and milestones end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-language-japanese-working-holiday-1",
+        "userInput": {
+          "context": "내년 봄에 도쿄로 워킹홀리데이를 가요. 일본어는 히라가나도 아직 몰라요.",
+          "goal": "워킹홀리데이를 위해 일본어 배우기",
+          "goalKind": "language",
+          "language": "ko",
+          "ownLevel": "none",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Kotlin, Android Studio, Compose layouts and state, navigation, API access, local storage, testing, and store publishing are represented. AI-assisted development and reviewing generated code are entirely absent, triggering the one-missing-pillar cap of 8. The publishing skill should identify Google Play explicitly.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The main progression is workable and listed prerequisites precede their dependents. However, WorkManager is not a prerequisite for profiling, runtime permissions are not a prerequisite for encrypted local storage, and Flow is not necessary for learning separation of architectural responsibilities. These multiple invented dependencies trigger the cap of 7. 'Ekranlar ve kullanıcı akışı' and 'Veriyle çalışan uygulamalar' also name content rather than stages.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 167 three-minute lessons account for 8.35 hours, leaving only another 8.35 hours for all practice and review. That is far too little for a mobile beginner to develop the stated capabilities deeply across this extensive stack; a realistic total would exceed twice the estimate, triggering the cap of 7. Most individual skills have reasonable lesson-sized boundaries, although collections with null safety and sealed classes with generics bundle distinct learning targets.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most skills contribute directly to Android development, and there are no motivational, historical, or course-survey fillers. However, sending HTTP requests and parsing JSON substantially overlaps with fetching REST API data as currently described. The latter needs a clearer distinct application-level scope rather than repeating the request workflow, triggering the one-overlapping-skill cap of 8.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The technical path fits a Java-speaking computer engineering student learning Android, and its Turkish skill names and milestones consistently end in verb-final -mak/-mek infinitives. The first Kotlin description explicitly uses Java comparisons rather than assuming no programming knowledge. Nevertheless, the uniformly impersonal descriptions do not satisfy the explicit requirement to address the learner as 'sen', triggering the one-clear-mismatch cap of 8.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Testing, profiling, lifecycle reasoning, architectural separation, and secure storage support understanding and verification rather than mere syntax memorization. However, the explicitly required ability to direct AI coding assistants and inspect, validate, and correct generated code is missing. Traditional testing skills do not substitute for that workflow.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7381,
+          "outputTokens": 1285,
+          "reasoningTokens": 414
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map omits using AI coding assistants, including reading, checking, and testing generated code. Its 16.7-hour total is substantially too short for deep learning across Compose, asynchronous programming, networking, persistence, architecture, testing, and publishing, even with prior Java knowledge. Several prerequisite edges are unjustified: profiling requires WorkManager, secure storage requires runtime permissions, and separating architectural responsibilities requires Flow.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The descriptions never address the learner as 'sen'. Two phase titles describe their teaching content rather than stages of progress. HTTP/JSON handling and fetching REST API data also overlap without clearly separating their instructional scope.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make Google Play publishing explicit rather than referring only to uploading to a store. Frame the initial Kotlin skills consistently around differences from Java, and align capability descriptions with their names—for example, explaining lifecycle effects does not fully establish the ability to manage the lifecycle.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Mobile app development for a second-year computer engineering student who knows Java: Kotlin, Android Studio, Jetpack Compose layouts and state, navigation, calling an API, local storage, testing, publishing to Google Play, and using AI coding assistants well (reading and checking generated code)\n      - Doesn't reteach programming basics the learner knows from Java\n      - Skill names and milestones end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "tr-android-development-student-1",
+        "userInput": {
+          "context": "Bilgisayar mühendisliği 2. sınıftayım. Java biliyorum ama hiç mobil uygulama yapmadım.",
+          "goal": "Android uygulama geliştirmeyi öğrenmek",
+          "goalKind": "learn",
+          "language": "tr",
+          "ownLevel": "basic",
+          "purpose": "deep"
+        }
+      }
+    }
+  ],
+  "taskId": "skill-graph"
+}

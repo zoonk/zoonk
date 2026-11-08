@@ -2,16 +2,35 @@
   "modelId": "typesafe-ai/jev",
   "results": [
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["salesforce"],
-          "personalKeywords": ["acme"],
+          "generalKeywords": [
+            "salesforce"
+          ],
+          "personalKeywords": [
+            "acme"
+          ],
           "privateCourse": false
         },
         "id": "en-public-tool-at-company-1",
@@ -22,33 +41,70 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["excel"],
+          "generalKeywords": [
+            "excel"
+          ],
           "personalKeywords": [],
           "privateCourse": false
         },
         "id": "en-field-is-context-1",
-        "userInput": { "goal": "Excel pivot tables for nurses", "language": "en" }
+        "userInput": {
+          "goal": "Excel pivot tables for nurses",
+          "language": "en"
+        }
       }
     },
     {
-      "classification": { "expected": "true", "predicted": "true" },
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "generalKeywords": [],
-          "personalKeywords": ["northwind"],
+          "personalKeywords": [
+            "northwind"
+          ],
           "privateCourse": true
         },
         "id": "en-internal-process-1",
@@ -59,16 +115,33 @@
       }
     },
     {
-      "classification": { "expected": "true", "predicted": "true" },
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "generalKeywords": [],
-          "personalKeywords": ["payments-service"],
+          "personalKeywords": [
+            "payments-service"
+          ],
           "privateCourse": true
         },
         "id": "en-private-codebase-1",
@@ -79,16 +152,35 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["sql"],
-          "personalKeywords": ["customer database"],
+          "generalKeywords": [
+            "sql"
+          ],
+          "personalKeywords": [
+            "customer database"
+          ],
           "privateCourse": false
         },
         "id": "en-general-with-private-material-1",
@@ -99,16 +191,36 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["aws", "solutions architect"],
-          "personalKeywords": ["globex"],
+          "generalKeywords": [
+            "aws",
+            "solutions architect"
+          ],
+          "personalKeywords": [
+            "globex"
+          ],
           "privateCourse": false
         },
         "id": "en-exam-with-context-1",
@@ -119,16 +231,36 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["cell division", "mitosis"],
-          "personalKeywords": ["patel"],
+          "generalKeywords": [
+            "cell division",
+            "mitosis"
+          ],
+          "personalKeywords": [
+            "patel"
+          ],
           "privateCourse": false
         },
         "id": "en-own-notes-on-public-topic-1",
@@ -139,16 +271,33 @@
       }
     },
     {
-      "classification": { "expected": "true", "predicted": "true" },
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "generalKeywords": [],
-          "personalKeywords": ["initech"],
+          "personalKeywords": [
+            "initech"
+          ],
           "privateCourse": true
         },
         "id": "en-company-policies-1",
@@ -159,15 +308,32 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["python"],
+          "generalKeywords": [
+            "python"
+          ],
           "personalKeywords": [],
           "privateCourse": false
         },
@@ -179,16 +345,35 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["sap"],
-          "personalKeywords": ["tupiniquim"],
+          "generalKeywords": [
+            "sap"
+          ],
+          "personalKeywords": [
+            "tupiniquim"
+          ],
           "privateCourse": false
         },
         "id": "pt-public-tool-at-company-1",
@@ -199,14 +384,35 @@
       }
     },
     {
-      "classification": { "expected": "true", "predicted": "true" },
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "generalKeywords": [], "personalKeywords": ["alfa"], "privateCourse": true },
+        "expected": {
+          "generalKeywords": [],
+          "personalKeywords": [
+            "alfa"
+          ],
+          "privateCourse": true
+        },
         "id": "pt-internal-process-1",
         "userInput": {
           "goal": "Entender o fluxo interno de aprovação de compras da minha empresa, a Soluções Alfa",
@@ -215,33 +421,72 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["estatistica"],
+          "generalKeywords": [
+            "estatistica"
+          ],
           "personalKeywords": [],
           "privateCourse": false
         },
         "id": "pt-field-is-context-1",
-        "userInput": { "goal": "Estatística para enfermeiros", "language": "pt" }
+        "userInput": {
+          "goal": "Estatística para enfermeiros",
+          "language": "pt"
+        }
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["revolucao francesa"],
-          "personalKeywords": ["professora"],
+          "generalKeywords": [
+            "revolucao francesa"
+          ],
+          "personalKeywords": [
+            "professora"
+          ],
           "privateCourse": false
         },
         "id": "pt-own-notes-on-public-topic-1",
@@ -252,16 +497,33 @@
       }
     },
     {
-      "classification": { "expected": "true", "predicted": "true" },
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
           "generalKeywords": [],
-          "personalKeywords": ["gestorplus"],
+          "personalKeywords": [
+            "gestorplus"
+          ],
           "privateCourse": true
         },
         "id": "pt-internal-system-1",
@@ -272,16 +534,35 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["banco do brasil"],
-          "personalKeywords": ["noite"],
+          "generalKeywords": [
+            "banco do brasil"
+          ],
+          "personalKeywords": [
+            "noite"
+          ],
           "privateCourse": false
         },
         "id": "pt-exam-with-schedule-1",
@@ -292,22 +573,234 @@
       }
     },
     {
-      "classification": { "expected": "false", "predicted": "false" },
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "generalKeywords": ["tributario"],
-          "personalKeywords": ["mendes"],
+          "generalKeywords": [
+            "tributario"
+          ],
+          "personalKeywords": [
+            "mendes"
+          ],
           "privateCourse": false
         },
         "id": "pt-law-at-firm-1",
         "userInput": {
           "goal": "Direito tributário para o escritório onde trabalho, o Mendes & Associados",
           "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "fatturazione elettronica"
+          ],
+          "personalKeywords": [
+            "rinaldi"
+          ],
+          "privateCourse": false
+        },
+        "id": "it-public-tool-at-firm-1",
+        "userInput": {
+          "goal": "Imparare la fatturazione elettronica con lo SdI per lo studio commerciale dove lavoro, lo Studio Rinaldi",
+          "language": "it"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "共通テスト"
+          ],
+          "personalKeywords": [
+            "青葉高校"
+          ],
+          "privateCourse": false
+        },
+        "id": "ja-exam-with-school-1",
+        "userInput": {
+          "goal": "共通テストの英語リーディング対策をしたい。青葉高校の3年で、部活を引退する7月から本気でやる",
+          "language": "ja"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [],
+          "personalKeywords": [
+            "온새미로"
+          ],
+          "privateCourse": true
+        },
+        "id": "ko-own-cafe-recipes-1",
+        "userInput": {
+          "goal": "알바하는 카페 온새미로의 음료 레시피랑 마감 순서 외우고 싶어요",
+          "language": "ko"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "logo",
+            "muhasebe"
+          ],
+          "personalKeywords": [
+            "demirtas"
+          ],
+          "privateCourse": false
+        },
+        "id": "tr-public-tool-at-company-1",
+        "userInput": {
+          "goal": "Demirtaş Tekstil'de ön muhasebe yapıyorum, Logo Tiger'ı sıfırdan öğrenmek istiyorum",
+          "language": "tr"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "true",
+        "predicted": "true"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [],
+          "personalKeywords": [
+            "magpro",
+            "trans-pol"
+          ],
+          "privateCourse": true
+        },
+        "id": "pl-internal-system-1",
+        "userInput": {
+          "goal": "Ogarnąć MagPro, wewnętrzny system magazynowy, który nasz dział IT napisał tylko dla Trans-Polu",
+          "language": "pl"
         }
       }
     }

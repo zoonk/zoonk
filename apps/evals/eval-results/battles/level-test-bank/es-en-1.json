@@ -1,0 +1,241 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "openai/gpt-6.1-terra:high": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "A bank of US English passages and sentences for Mexican Spanish speakers: questions, options and translations in Mexican Spanish. Levels A1 to C1 clearly increase in difficulty.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-08T16:15:44.850Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 asks for single stated facts in very common words. B1 asks for reasons and opinions, B2 for attitude and implication in denser text, and C1 for nuanced stance, so the levels clearly increase. A2 items lean on sequence tricks (\"justo después\", \"era azul y ahora es blanco\") that feel more like puzzles than simple facts, but they remain distinguishable from A1 and B1.",
+              "score": 7.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked answers are correct and supported by the passages (table keys, Thursday at ten, café before swimming, the bike-service attitude). Distractors reuse passage words plausibly. Option lengths are mostly balanced, with some variation at C1, and no question has two defensible answers.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Questions and translations use natural Mexican Spanish (recámara, colonia, futbol), and the B2–C1 English texts are idiomatic and real-sounding. Several A1–A2 passages are unnatural as real texts (the apartment ad about past colors, the trip note with stacked actions). Ana and Leo recur across many items, reducing variety.",
+              "score": 7,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "This is a well-built bank with a clear progression from stated facts at A1 to tone and implication at C1. Speaking sentences grow cleanly (5→9→12→16→20 words), and every answer index checks out against its passage. The main weaknesses are A2 passages that feel contrived to set up distractors (a rental ad about past wall colors, an awkward trip note) and the heavy reuse of the name Ana.\n\nIn the reverse order: This is a well-built bank with a clear progression from A1 fact lookup to B2/C1 attitude and implication, with speaking sentences scaled almost exactly. Answers are consistently supported and the Mexican Spanish is apt. The main weaknesses are artificial, puzzle-like A2 passages that test sequence-tracking more than comprehension, and some repetitive names.",
+          "score": 7.55
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 2894,
+        "cacheWriteTokens": 0,
+        "inputTokens": 18112,
+        "outputTokens": 2340,
+        "reasoningTokens": 1239
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Every level is distinctly calibrated and adheres strictly to the word-count targets. The progression from simple stated facts at A1/A2 to main points/opinions at B1, implied attitudes at B2, and nuanced philosophical/critical stances at C1 is exemplary.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has one undeniably correct answer supported by the passage and three plausible distractors of uniform length that trap careless readers through text references rather than general knowledge.",
+              "score": 9.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "US English passages sound natural for both written and spoken contexts, and the learner language incorporates authentic Mexican Spanish markers like \"recámara\", \"futbol\", and \"colonia\". One minor nitpick is that A1 reading 2 and listening 1 feel slightly contrived as a list of four items/buses just to populate four options.",
+              "score": 8.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "Model A delivers the strongest CEFR calibration and item design across all levels, particularly at B2 and C1 where texts and questions genuinely test subtle tone, implication, and complex attitudes. It also uses authentic Mexican Spanish vocabulary (e.g., \"recámara\", \"colonia\", \"futbol\") and hits every word-count and situational target cleanly.\n\nIn the reverse order: Model A follows all structural constraints, word counts, and answer accuracy rules well, and uses authentic Mexican Spanish vocabulary ('recámara', 'colonia', 'futbol'). However, its early A1/A2 passages feel synthetic and puzzle-like (listing four items/places just to match the four options), and its B2/C1 listening passages read more like written essays than natural speech.",
+          "score": 9.05
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The progression from A1 to C1 is clear and well-paced, though C1 questions and options are slightly simpler and more direct than Model A's, and the C1 speaking sentence reaches 23 words (target: about 20).",
+              "score": 9.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All answer keys are accurate, options are balanced in length, and distractors effectively test comprehension against elements mentioned in the text.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Passages read and sound like authentic US English texts and voicemails, and the Spanish uses natural Mexican terms like \"departamento\", \"estacionamiento\", \"futbol\", and \"junta\".",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model C is a very strong contender with engaging, realistic passages (such as the B2 tech scam voicemail and C1 productivity app column) and natural Mexican Spanish. Its C1 options and questions are slightly less demanding than Model A's, and a couple of speaking sentences push the upper boundary of the word-count targets, though overall quality remains very high.\n\nIn the reverse order: Model C delivers an exceptional, authentic, and well-calibrated question bank from A1 to C1. Its reading and listening passages feel like genuine written and spoken US English texts, while its Mexican Spanish questions, options, and translations are completely natural. The progression in cognitive demand from simple fact retrieval at A1 to subtle irony and implication at C1 is spot-on.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Levels progress clearly from A1 to C1 according to the rubric and word-count constraints, though B2 and C1 speaking sentences rely on very similar conditional structures about a demanding job.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Each item has one clearly supported answer and plausible distractors of similar length. A2 reading 2 asks a double question in the stem, which makes the options slightly mechanical, though still unambiguous.",
+              "score": 9.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "US English and Mexican Spanish (\"rentó\", \"manejar\", \"carro\", \"celular\", \"salón\") are natural overall, but C1 listening 2 has a clumsy repetition in the question stem (\"¿Cómo habla la persona que habla...?\"), and B1–C1 speaking sentences all revolve around the same topic (jobs).",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model B meets all core requirements with well-calibrated levels and solid distractors, but it shows slightly less variety across its speaking sentences and includes an awkward phrasing error in one C1 question stem.\n\nIn the reverse order: Model B is very strong overall, with engaging higher-level passages and clear CEFR progression. It ranks just behind Model C due to minor register stiffness in a couple of early listening items and small awkwardnesses in Spanish phrasing (such as 'Cómo habla la persona que habla') and repetition of the theme of a tough job in both B2 and C1 speaking sentences.",
+          "score": 8.925
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 12338,
+        "cacheWriteTokens": 0,
+        "inputTokens": 28784,
+        "outputTokens": 1977,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1–A2 test stated facts, B1 tests opinions, reasons, and main points, and B2 introduces implied attitudes. C1 adds humorous understatement, social pressure, and retrospective tone; passage lengths and speaking complexity also fit the requested progression.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked answers are supported, with no clear competing correct options or incorrect indexes. Some distractors are conspicuously extreme, such as calling the restaurant 'impecable' or saying the delivery service has no faults, which weakens discrimination.",
+              "score": 8.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The passages use natural English, distinguish written messages from conversational audio, and cover the requested situations with Spanish questions and options. The C1 translation 'una bendición disfrazada' is an overly literal rendering that could sound more natural in Mexican Spanish.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "The stronger bank overall, with a clearer progression from basic fact retrieval to nuanced interpretation and appropriately expanding speaking sentences. Answers are consistently supported, although some distractors are easy to eliminate and one translation sounds overly literal.\n\nIn the reverse order: The stronger bank overall, with more consistently differentiated comprehension demands and close adherence to the supplied passage lengths. Its C1 questions particularly emphasize tone and implication, although a few Spanish phrasings need polishing.",
+          "score": 8.575
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The lower levels and speaking sentences progress well, but the C1 house-sale question essentially restates 'I'd do it again' and 'not ... painless'; the coffee question similarly asks for the speaker's expressed position. These remain B1–B2-style attitude tasks rather than clearly C1 tone-and-implication questions, triggering the maximum score of 5.",
+              "score": 5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The answer indexes are correct, including the apartment's $1,100 total, and each question has a clearly supported best answer. Some advanced distractors are too categorical or weakly connected to the passage, such as describing the film as ideal for thoughtless relaxation or attributing the coffee issue to its quality.",
+              "score": 8.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The bank provides varied, recognizable written and spoken formats, with generally natural Mexican Spanish questions and translations. Minor wording issues include the dental message's awkward future explanation, 'the doctor is sick that day,' and the less idiomatic Spanish question opening '¿Qué deja entender...?'",
+              "score": 8.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "A useful, varied bank with supported answers and generally natural bilingual content. It ranks lower because several C1 questions remain at the level of identifying an expressed opinion or mixed attitude rather than requiring distinctly C1 interpretation.\n\nIn the reverse order: This is a useful, natural-sounding bank with reliable answer keys and particularly effective B2 inference questions. Its principal weakness is calibration: some C1 questions can be answered through explicitly stated opinions rather than C1-level interpretation.",
+          "score": 7.1
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 18530,
+        "outputTokens": 3830,
+        "reasoningTokens": 2586
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "314c943e97e938cf",
+    "anthropic/claude-sonnet-5.5": "b532e9ea50c7aa07",
+    "openai/gpt-6.1-terra:high": "c89cf0c331352d34"
+  },
+  "swapped": true,
+  "taskId": "level-test-bank",
+  "testCaseId": "es-en-1"
+}

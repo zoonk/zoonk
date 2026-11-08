@@ -1,0 +1,636 @@
+{
+  "modelId": "google/gemini-4-argon",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional retailer, checkout experiment, release deadline, engineering implications, and impatient product manager form a credible beginner analyst assignment. It is not a quiz or meta task in disguise. However, the inconsistent clock and traffic projections weaken the realism of the operational planning.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, sensible job-specific meters, timing, and some endings; the strong choice is not always first or the most cautious. Nevertheless, the intended answer is obvious throughout: expert dialogue supplies the target, while alternatives repeatedly ignore it, use conspicuous jargon, or declare a winner from raw counts. The explicit cap for an obvious right answer at every step applies.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The three roles have distinct purposes, the product manager supplies pressure, and asking the AI is an explicit, rewarded option. No colleague or learner is named outside the permitted placeholders. However, the AI and senior analyst give materially misleading explanations and an unjustified sample-size recommendation, weakening the requirement that their help be genuinely useful.",
+          "score": 7,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific, generally kind, and praises strategies rather than intelligence. Communication corrections usually include example wording, and the exercises are short. However, several praised strategies and replacement sentences reinforce incorrect p-value interpretations or claim equality from nonsignificance. The sample-size exercise does not explain how to select a defensible target, and the final summary combines two ideas. The generic-or-judgmental feedback cap is not triggered.",
+          "score": 7,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The displayed conversion rates and approximate two-sided proportion-test p-values of 0.26, 0.59, and 0.85 are numerically consistent. Nonetheless, the result teaches incorrect interpretations of those p-values, equates nonsignificance with identical performance, and presents 3,000 observations per group as a reliable or certain threshold without valid assumptions. The uncontrolled post-launch comparison adds another unsupported inference. The explicit cap of 5 for a wrong fact taught as right applies; these repeated central errors warrant a lower score.",
+          "score": 3,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English and number formatting fit the request, and the initial explanations of hypothesis testing and the null hypothesis are accessible. The deliberately jargon-heavy option is appropriately criticized. However, '1% lift' is never distinguished from a one-percentage-point increase, and the sample target is presented without an accessible explanation of what 'reliably spot' means. This leaves a central beginner concept insufficiently explained.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6763,
+          "outputTokens": 1747,
+          "reasoningTokens": 687
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The case teaches several statistical errors as correct. It repeatedly interprets p-values as the probability that the observed gap is noise, including '59% chance the gap is noise' and '85% chance of being random luck.' The rewarded final answer claims that a nonsignificant result proves both buttons perform the same; it establishes neither equality nor that the difference is definitely random noise. The 3,000-visits-per-button target is unsupported and described as providing certainty. For a 4% baseline and a 1-percentage-point improvement, a conventional two-sided 5% test with 80% power needs approximately 6,700 visitors per group, not 3,000. The rushed ending also treats a later uncontrolled conversion rate as proof that the launch provided no improvement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The timeline is inconsistent: six hours after 9:00 a.m. is 3:00 p.m., yet messages describe the snapshot as morning data, and the claim that current traffic adds 150 visits per button by 3:30 p.m. does not match 200 visits per button over the preceding six hours. The sample-size practice asks learners to state a target without showing how to justify it. The final summary sentence combines sample-size planning and communication rather than stating one practiced idea.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the choices less telegraphed by giving competing options credible business reasons rather than repeatedly contrasting the analyst's explicit recommendation with an obviously unsupported declaration. Define the minimum worthwhile improvement in percentage points, give the assumptions behind the sample-size estimate, and frame the final recommendation as 'We did not find convincing evidence that Green improves conversion, so we will retain Blue.' Preserve a concurrent control if the ending is meant to establish the launch's effect.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A marketing or e-commerce analyst judging an A/B test before a meeting, where a colleague wants to ship now. The strong path checks whether the gap could be chance and how many visitors each version had, uses the AI or a data colleague to test significance, and explains the result in plain words. Numbers must be consistent (a small gap on a small sample shouldn't be called significant). Must not teach that a single day of data proves a winner.",
+        "id": "en-ab-test-work-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The Saturday kitchen setting, impatient neighbor, and quantum-themed appliances create a playful what-if rather than a study-planning task. The chapter's ideas determine the actions. However, the choices feel somewhat like textbook demonstrations embedded in cooking, and the exaggerated appliance behavior is not clearly distinguished from real physics.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies and the snack-success meter, and the second decision changes the ending. However, the correct option is obvious at both decisions and is always first, triggering the maximum score of 6. The final bread outcome also ignores the first choice, weakening its consequence.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "There are two unnamed companions with distinct voices: a physicist explains and a neighbor wants food quickly. However, asking either companion or an AI for help is never an available decision, despite being explicitly required. The neighbor contributes motivation rather than a clearly differentiated area of expertise.",
+          "score": 6,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific to each choice, kind, and focused on strategy rather than intelligence. Improvement notes give concrete alternative actions. Both practice activities are feasible in about five minutes, and the summary sentences address the two practiced ideas. Scientific problems in their content are assessed under accuracy.",
+          "score": 9,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The wrong-fact cap of 5 applies. Fixed Celsius increments are repeatedly taught as energy quanta, conflating temperature with energy rather than explicitly identifying an invented analogy. The light demonstration assumes ideal interference from ordinary sunlight through blind slits without the necessary setup, and closing one narrow slit does not generally remove all diffraction stripes. The midpoint targeting 180 °C is numerically inconsistent, and the perfect ending can contradict the failed oven choice.",
+          "score": 4,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "Every path has exactly two decisions, the text is in Brazilian Portuguese, and there are no formulas or promises of external success. However, 'quantizada' and 'dualidade onda-partícula' violate the explicit restriction on jargon beyond simply explained 'quantum'. The combined oven and interference demonstrations also introduce more conceptual complexity than this light overview needs.",
+          "score": 6,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4424,
+          "outputTokens": 1196,
+          "reasoningTokens": 353
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The scenario teaches misleading physics by equating energy quanta with fixed 100 °C temperature increments without clearly labeling this as an invented analogy. It also presents ordinary sunlight through blind slits as producing ideal interference fringes and claims that closing one slit eliminates the stripes, overlooking single-slit diffraction. Both strong choices are first and conspicuously correct. Endings ignore the oven decision: even the failed oven adjustment can lead to perfectly browned bread. No decision offers asking a colleague or the AI for help.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The supposedly intermediate knob position is described as halfway between 100 °C and 200 °C while targeting 180 °C. Terms such as 'quantizada' and 'dualidade onda-partícula' exceed the requested jargon limit. The neighbor supplies urgency, but their expertise is less distinct and useful than the physicist's.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a clearly framed imaginary light detector or solar device to make individual energy deliveries visible without confusing temperature with energy. A short practice activity could ask learners to distinguish what the wave pattern predicts from what an individual detection records.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A light \"E se?\" scenario in Brazilian Portuguese about energy coming in packets (quanta), for example \"E se a luz não viesse em pacotes?\" or a curious situation with a lamp, a solar panel or a camera. Two decisions per path, playful, no formulas, no jargon beyond \"quantum\" explained simply. Must be scientifically correct at an overview level (no claims that quantum effects are magic or that observation needs a conscious observer).",
+        "id": "pt-quantum-what-if-1",
+        "userInput": {
+          "chapterDescription": "A energia da luz e da matéria vem em pacotes chamados quanta.",
+          "chapterTitle": "O que é um quantum",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "skills": [
+            {
+              "description": "A energia vem em pacotes mínimos, não em qualquer quantidade.",
+              "name": "Explicar que a energia vem em pacotes"
+            },
+            {
+              "description": "A luz se comporta como onda e como partícula.",
+              "name": "Reconhecer a dualidade onda-partícula"
+            }
+          ],
+          "variant": "whatIf"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The pediatric ward, fictional hospital, imminent medication deadline, disputed weight, busy physician, and available ampoules create a credible nursing task. The main weakness is temporal realism: earlier delays do not carry through to the administration times.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices produce different replies, meter changes, and final endings, and some middle options are plausible. However, the preferred answer is obvious at every decision, especially when a distractor explicitly says to omit the volume multiplier. This triggers the maximum score of 6. Automatic colleague corrections also limit the consequences of earlier decisions.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "Three unnamed colleagues have distinct clinical roles and provide useful interventions; the AI is available for calculation checks. The first colleague is consistently feminine and the second masculine, with placeholders rather than personal names. The physician's time pressure and the technician's workflow concerns make the exchanges feel collaborative rather than purely instructional.",
+          "score": 9,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback generally praises checking and communication strategies, provides specific corrective examples, and remains kind. Practice tasks are short, and the summary covers the three intended skills. However, one note prematurely credits identification of the error's origin, and the calculation practice lacks the mg/kg regimen needed to complete it independently.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The central calculations are correct: 18 × 15 = 270 mg, 250 mg/2 mL = 125 mg/mL, and 270/125 = 2.16 mL. All unsafe choices are intercepted before administration. Nevertheless, the purported universal pediatric ceiling is an incorrect clinical generalization taught as authoritative, triggering the maximum score of 5. Offering 2.2 mL as an alternative also introduces an unexplained 275 mg dose, inconsistent with the exact 270 mg target. The success ending additionally misstates which chart value was corrected.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The learner-facing content is in Brazilian Portuguese, uses appropriate decimal commas and medication units, and fits intermediate nursing practice. Professional terminology and calculations are appropriate to this work variant, and there are no promises about employment, grades, or guaranteed learning outcomes.",
+          "score": 9,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6428,
+          "outputTokens": 1191,
+          "reasoningTokens": 314
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The pharmacist incorrectly presents 22.5 mg/kg as exceeding a universal pediatric amikacin safety ceiling. Pediatric dosing varies by regimen and clinical context; the established problem here is its mismatch with the prescribed 15 mg/kg/day. The pharmacist also treats 2.2 mL as interchangeable with 2.16 mL, although these contain 275 mg and 270 mg respectively, without specifying an authorized rounding policy. Decisions are consistently easy to identify, particularly the volume option that explicitly announces its own calculation error.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The first strong-choice feedback credits the learner with identifying the source of the prescribing error before the physician confirms it. The success ending says the weight was corrected in the chart, although the chart already recorded 18 kg. Earlier choices change the agility meter but do not affect the final administration time, which depends only on the last choice.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use plausible competing actions rather than self-disclosing mistakes, and carry earlier delays into subsequent clock updates and endings. Have the AI distinguish arithmetic verification from clinical authorization and direct preparation to the verified institutional dilution and infusion protocol. Make the dose-calculation practice self-contained by supplying the prescribed mg/kg regimen.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking. Not counting the AI assistant, the first colleague's role and every word about them is feminine and the second's masculine where Portuguese marks it (\"a farmacêutica\", \"o médico plantonista\"), since the app names them a woman and then a man.",
+        "id": "pt-nursing-dose-work-1",
+        "userInput": {
+          "chapterDescription": "Calcular e conferir doses de medicamentos por peso com segurança.",
+          "chapterTitle": "Cálculo de doses",
+          "courseTitle": "Farmacologia para enfermagem",
+          "language": "pt",
+          "level": "intermediate",
+          "skills": [
+            {
+              "description": "Calcular a dose a partir do peso do paciente.",
+              "name": "Calcular dose por peso"
+            },
+            {
+              "description": "Conferir prescrição, unidade e via antes de administrar.",
+              "name": "Conferir a prescrição"
+            },
+            {
+              "description": "Levar uma dúvida ao médico de forma clara e segura.",
+              "name": "Comunicar uma dúvida ao médico"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional coffee shop, register export, urgent purchasing deadline, and competing analyst and manager priorities create a credible junior-analyst task. However, declaring the milk order correct solely from the revenue total oversimplifies the business decision; product mix and stock also matter.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, meters, and final reporting outcomes, and the strong option is not always first. However, the right answer is obvious at every step: alternatives explicitly edit the original, discard known sales, or ignore an error already explained by the lead. The explicit cap of 6 applies.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The lead analyst and store manager have distinct expertise and priorities, use only placeholders, and speak like colleagues under pressure. Asking the AI is a real decision option, and its useful scanning and change reports support the exercise in checking automated work.",
+          "score": 9,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is kind, decision-specific, and focused on strategies rather than talent. Improvement notes provide concrete alternatives, and the practice activities are small enough for approximately five minutes. However, the final praise overstates the learner's independent verification: the lead identifies the deleted orders before the learner chooses to restore them.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The local calculations $4,850.00 − $2,480.00 = $2,370.00 and $2,370.00 + $48.00 = $2,418.00 are correct, but the underlying exact-duplicate story cannot produce these totals: the retained originals of the duplicated orders alone would already total $2,480.00. This is taught as the correct reconciliation, triggering the maximum score of 5. Additionally, the specific-rules path leaves 210 rows, whereas the shared send-ai-number reply asserts 198. These are central data-cleaning consistency failures.",
+          "score": 4,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The three-decision work case is appropriately scoped for beginners, uses English and consistent US currency formatting, and avoids career or grade promises. Most explanations are accessible, but terms such as timestamp and filtering appear without beginner explanations in the chat.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5848,
+          "outputTokens": 1260,
+          "reasoningTokens": 408
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The duplicate arithmetic is impossible as described: 200 orders copied once contribute $2,480.00, yet all 220 retained orders supposedly total only $2,370.00 before filling blanks. With no negative sales identified, the retained originals cannot total less than their duplicate copies. Branch consistency also fails: after specific-rules, 210 orders remain, but send-ai-number reports 198. The strong ending documents edits but does not communicate the limits or verification basis of the reconstructed prices.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The correct choice is conspicuous at every decision, especially after the lead explicitly identifies the AI's error. Some feedback credits the learner with checking row counts and discovering deletions when the colleague actually supplied the diagnosis. A few beginner-facing terms, including timestamp and filtering, are not explained.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use one reconciled source table to derive every branch's totals and counts. Let the learner choose how to inspect the AI's change log before a colleague reveals the error. Include a manager-facing example that distinguishes confirmed sales from prices reconstructed using the manager's account.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A first-weeks case for someone new to data analysis (a career changer in a junior analyst role): a messy spreadsheet (duplicates, blanks, inconsistent dates or names) and a manager who needs numbers soon. The strong path inspects and cleans before summarizing, uses the AI assistant to speed up the work but checks what it produced, and tells the manager about the limits of the data. Numbers must add up after cleaning.",
+        "id": "en-career-change-data-cleaning-1",
+        "userInput": {
+          "chapterDescription": "Find and fix the problems in real-world data before analyzing it.",
+          "chapterTitle": "Cleaning messy data",
+          "courseTitle": "Data analysis",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Spot duplicates, blanks and inconsistent entries.",
+              "name": "Find problems in a data set"
+            },
+            {
+              "description": "Fix or remove bad rows and say what you changed.",
+              "name": "Clean data safely"
+            },
+            {
+              "description": "Check an AI assistant's output before using it.",
+              "name": "Check what AI produced"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The ward supply decision, nursing colleague, cost pressure, deadline, and patient counts create a credible workplace situation. Statistics rather than nursing knowledge determines the intended choices, and no ending depicts patient harm. However, the hospital is not explicitly fictional, and the urgent order deadline becomes a two-week extension without consistently explaining the operational arrangement across paths.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "The strong option moves position, and choices produce different replies and meter effects. Nevertheless, the correct answer is obvious at every decision, triggering the maximum score of 6. Choosing ten more patients or canceling the trial still produces the same 260-patient trial, while choosing to buy the new dressing is overridden. Budget penalties also occur without corresponding purchases.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "Two unnamed colleagues have distinct care and procurement priorities, speak like coworkers, and challenge the learner. Asking the AI is an explicit, rewarded option. Its calculations offer useful support, but its assurances of certainty and colleagues' claims that the test proves random noise undermine the usefulness of that help.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is decision-specific, kind, and focused on strategies rather than intelligence. Communication feedback supplies example wording, and the summary separates the three practiced ideas. However, the recommended wording teaches an incorrect interpretation of the test. Practice lines also lack sufficiently concrete, bounded activities, especially for sample-size planning and the coin-flipping comparison.",
+          "score": 7,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Percentages are correct, and the reported p-values approximately match uncorrected two-proportion tests, although the initial sparse counts warrant care in test selection. The central teaching repeatedly equates nonsignificance with proven chance or equivalence, misstates p-values as probabilities of an exact observed gap, and promises certainty from a larger sample. These are wrong facts taught as right, triggering the maximum score of 5; their repetition in recommended answers and endings warrants 4.",
+          "score": 4,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English and number formats are appropriate, and hypothesis testing receives a beginner-oriented explanation. However, 'enough data to know for sure' explicitly promises a conclusive result. The sample-size recommendation omits a plain-language explanation of its assumptions and remaining uncertainty, while the p-value explanation sacrifices essential meaning rather than merely simplifying terminology.",
+          "score": 7,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6109,
+          "outputTokens": 1222,
+          "reasoningTokens": 310
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The case repeatedly teaches that a nonsignificant result proves the gap is random chance and the dressings perform the same. A p-value of 0.62 establishes neither claim, and it is not the probability of exactly a three-patient gap. The recommended communication example repeats these errors. The AI also promises that 130 patients per group will provide certainty, which no sample-size calculation guarantees. Decisions are consistently obvious, and colleagues override several selections so every path completes the same trial and retains the standard dressing.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Budget changes do not consistently follow actual spending: the final weak choice loses budget even though colleagues prevent the purchase. The setting is not explicitly identified as a fictional hospital. Practice activities are underspecified, particularly the suggestion to use coin flipping without explaining how it represents these patient outcomes. There is also a visible 'GentleGripstill' typo.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a conclusion such as 'We have not found convincing evidence that the new dressing reduces redness, so its extra cost is not justified by this trial.' Explain that the proposed sample size targets a particular improvement with stated reliability, not certainty. Give learners meaningful alternatives with different operational consequences, and make each practice activity a concrete five-minute task.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The same statistics chapter as \"en-ab-test-work\", but for a learner who works in nursing: the case happens on a hospital ward, such as a nurse manager asked whether a new fall-prevention or hand-hygiene routine really lowered a rate between two units or two months, with colleagues a nursing ward works with (a charge nurse, an infection-control nurse, a unit manager) and an AI assistant. It must still train telling a real difference from chance, sample size and explaining the result, without marketing or A/B tests, and nursing knowledge must not decide the right choices. Numbers must be realistic and consistent (a small gap on few patients isn't called significant). General to the field: a fictional hospital, no real names, no personal details, and no path ends with harm to a patient.",
+        "id": "en-statistics-field-nursing-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "field": "nursing",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The footwear promotion, Pix discount, opening deadline, inventory pressure and competing commercial priorities feel like real retail work. However, the required fictional store name is absent, and the claimed sales-target achievement is not supported by a clearly defined target consistent with the manager's request to clear all 80 pairs.",
+          "score": 7,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices produce different replies, meter changes, sales volumes and endings, and the conservative route offers a meaningful margin-versus-volume trade-off. Nevertheless, warnings and fully worked correct options make the preferred answer obvious at each stage; the nominal middle option initially depends on an exposed arithmetic error. The explicit obvious-answer cap applies.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The manager and buyer have distinct priorities, speak naturally, and use placeholders rather than personal names. Asking the AI is actionable, receives useful calculations and is explicitly valued as a strong move in the margin decision. The requested finance colleague is missing, leaving that perspective folded into purchasing.",
+          "score": 7,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is kind and decision-specific, praises calculation and communication strategies rather than intelligence, and supplies concrete corrections and better wording. Practice activities are short enough for approximately five minutes, and each summary sentence addresses one practiced mathematical idea.",
+          "score": 9,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The percentage calculations, prices, rounded margins and Brazilian currency formatting are correct; incorrect learner options are explicitly corrected rather than taught as correct. However, the first weak branch does not establish the R$ 200,00 agreement assumed by the next node. Both success paths also claim the target was met with 58 or 68 sales despite the stated ambition to clear 80 pairs. These are continuity and outcome-grounding failures, not incorrect percentage instruction.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The mathematics is appropriate for beginners, and margin is explicitly explained in the conversation. Brazilian Portuguese and local number formats are used consistently overall, with no external promises of results, employment or grades. Repeated unexplained 'OFF' labels are a small departure from fully localized, beginner-accessible wording.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7496,
+          "outputTokens": 1185,
+          "reasoningTokens": 360
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The case omits the required fictional store name and finance colleague. Decisions are heavily signposted: colleagues expose the mistakes before the learner chooses, making the preferred answer obvious at each stage. There are also continuity problems: the initial incorrect-choice branch jumps to an agreed R$ 200,00 price without establishing that agreement, and the success ending claims the target was met despite selling only 58 or 68 of the 80 pairs the manager wanted to clear.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Repeated use of the unexplained English label 'OFF' weakens the otherwise accessible Brazilian Portuguese. The categorical predictions about Procon and mandatory checkout pricing would be more professionally careful if framed as an obligation to respect the advertised offer and a risk requiring escalation, rather than guaranteed legal outcomes.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Define a measurable sales target, explicitly confirm revised prices when branches converge, and offer a genuine trade-off between margin and stock turnover without embedding an arithmetic mistake in the middle option. Let the finance colleague help assess that trade-off while retaining the useful AI calculation checks.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case in Brazilian Portuguese for a learner who works in retail: a store (a fictional name) deciding a promotion or a price change, where successive percentages and the margin decide what's right (for example \"aumentar 20% e dar 20% de desconto\" doesn't return to the original price, and a discount on the sale price eats the margin faster than it seems). Colleagues a store works with (the store manager, the buyer, the finance person) and an AI assistant that checks calculations when asked. Every number in reais is right and consistent across panels, messages and endings, written the Brazilian way (R$ 1.234,56). General to the field, with no real company.",
+        "id": "pt-porcentagem-field-retail-1",
+        "userInput": {
+          "chapterDescription": "Aumentos, descontos e margens aplicados em sequência no comércio.",
+          "chapterTitle": "Porcentagem no dia a dia",
+          "courseTitle": "Matemática financeira",
+          "field": "retail",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "name": "Aumentos e descontos sucessivos"
+            },
+            {
+              "description": "Calcular a margem de lucro sobre o preço de venda.",
+              "name": "Calcular a margem"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    }
+  ],
+  "taskId": "challenge-case"
+}

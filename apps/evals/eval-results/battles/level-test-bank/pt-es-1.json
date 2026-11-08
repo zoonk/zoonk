@@ -1,0 +1,243 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 10,
+      "problems": [
+        "A2 reading: the text has 46 words, over 45."
+      ],
+      "total": 11
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "openai/gpt-6.1-terra:high": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "A bank of Mexican Spanish passages and sentences (Mexican vocabulary and forms like \"ustedes\", \"departamento\", \"celular\", never \"vosotros\") for Brazilian learners: questions, options and translations in Brazilian Portuguese. Portuguese and Spanish are close, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-08T16:10:52.685Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 asks for one stated fact in simple words, B1 targets the main point, a reason or an evaluation, and B2/C1 move to implied criticism and nuanced stance. Speaking sentences grow cleanly from 4 to about 21 words with complex structures. The A2 items lean on 'what happened right after' sequence details that are somewhat tricky for A2.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked answers are correct and supported by the passages. Distractors reuse passage details, which traps careless readers. At A1, 'plátanos' requires real knowledge rather than a cognate guess. B1 job option 'Sentiu preocupação com programas' is literally true, though it is not the main idea, and C1 options vary somewhat in length.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Natural Mexican Spanish throughout: camión, celular, rentar, boletos, bancas, junta. Contexts are varied, with no brands or real people. The Portuguese question 'o taller da tia' leaves a Spanish word untranslated, and 'Le llamo' is a minor stylistic oddity.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "This is a well-built bank: every answer index checks out against its passage, and difficulty rises clearly from single price and location facts at A1 to inference about tone and stance at C1. Mexican vocabulary is used consistently. The main flaws are a Spanish word ('taller') left in a Portuguese question and some A2 items that rely on sequence-tracking detail.\n\nIn the reverse order: This is a well-built bank: every marked answer checks out against its passage, and difficulty rises clearly from A1 price lookup to C1 tone and implication. Speaking lengths follow the targets. Minor flaws: the B1 main-idea item has true-detail distractors, A2 relies mostly on sequence or detail tracking, and a C1 question leaves the Spanish word \"taller\" untranslated.",
+          "score": 8
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 2894,
+        "cacheWriteTokens": 0,
+        "inputTokens": 19604,
+        "outputTokens": 2710,
+        "reasoningTokens": 1567
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking prompts scale smoothly from A1 to C1, hitting every word count target and testing the exact cognitive skill required at each level (from simple stated facts at A1 to nuanced implication and tone at C1).",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has one undeniably correct answer supported by the text, paired with plausible distractors of uniform length that prevent cognate matching.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Uses authentic Mexican Spanish vocabulary ('refri', 'camión', 'departamento', 'juntas', 'colonia', 'banquetas', 'bocina', 'nomás') and natural Brazilian Portuguese throughout, with realistic registers for both reading and listening.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model A delivers an exceptional bank of items that strictly adheres to all word count targets, CEFR level progressions, and linguistic constraints. Its Mexican Spanish is rich and authentic across both written and spoken registers, and its Brazilian Portuguese questions and distractors are carefully constructed so learners cannot rely on cognate guessing.\n\nIn the reverse order: Model A delivers a well-calibrated bank from A1 to C1 that adheres to all word-count targets, situation prompts, and CEFR skill progressions. It integrates authentic Mexican Spanish vocabulary naturally and avoids cognate giveaways for Brazilian learners by using non-cognates like 'regalos/presentes', 'jueves/quinta-feira', and 'camión/ônibus' at the lower levels.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "While the cognitive progression and C1 nuances are strong, six passages at A2 and B1 fall short of the required minimum word counts (e.g., A2 Reading 2 is 24 words instead of 25-45, B1 Listening 1 is 42 words instead of 45-65), and some A2/B1 questions can be answered by matching surface words ('hotel', 'tacos').",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All answer keys are accurate, options are well-balanced in length, and distractors are plausible while remaining clearly incorrect.",
+              "score": 8.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Authentic Mexican Spanish ('camión', 'departamento', 'recámaras', 'cerro', 'colonia', 'jitomates', 'chamba') and natural Brazilian Portuguese across all items and registers.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model B features very natural Mexican Spanish and well-crafted questions, especially at the higher levels, but it frequently misses the specified word count ranges at A2 and B1. Additionally, some lower-level items allow learners to match identical words between Spanish and Portuguese.\n\nIn the reverse order: Model B features strong Mexican Spanish flavor, well-written C1 passages, and accurate answer keys across all 20 questions. It ranks slightly behind Model A because several A1 and A2 items rely on transparent Spanish-Portuguese cognates ('hotel', 'agua/luz', 'futbol') that a Brazilian learner can match without deeper comprehension.",
+          "score": 8.675
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Word counts and question types generally align with CEFR expectations, though A1 passages feel overly mechanical and A2 Reading 2 requires inference ('when will the water return?') rather than a simple stated fact.",
+              "score": 8.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Each question has one clear, defensible answer with well-matched option lengths and solid distractors that avoid simple cognate guessing.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "In C1 Listening 2, the Portuguese question leaves the Spanish noun 'taller' untranslated ('assumir o taller da tia'), which triggers the language cap. Furthermore, the Spanish lacks Mexican flavor and listening passages like A1 Listening 1 and B2 Listening 2 sound artificial rather than like real speech.",
+              "score": 5.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "Model C respects word counts and builds solid distractors, but its passages read like artificial textbook exercises rather than authentic Mexican Spanish communication. It also leaves an untranslated Spanish word ('taller') in a C1 Portuguese question.\n\nIn the reverse order: Model C has well-structured questions and solid CEFR progression, especially in its B1-C1 distractors, but it leaves the Spanish word 'taller' untranslated in the Portuguese question for C1 Listening 2. Its Mexican Spanish is also noticeably more neutral and less regionally idiomatic than Models A and B, and its speaking sentences recycle the same few topics.",
+          "score": 7.925
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 29798,
+        "outputTokens": 3322,
+        "reasoningTokens": 1322
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The progression is clear, particularly from B1 reasons and stated opinions to B2 inference and C1 qualified judgments and irony. Speaking also increases appropriately in complexity, but the A2 travel passage and both A2 listening passages exceed their specified word ranges.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The marked answers are supported, with no clearly competing correct options. Contrasting times, prices, sequences, and interpretations generally requires comprehension rather than simply selecting an option containing a transparent cognate.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Mexican forms such as “refri,” “recámaras,” “camión,” and “te marco” fit the situations naturally. Written and spoken genres are convincingly differentiated, and the Brazilian Portuguese questions and translations are accurate and idiomatic.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "The stronger bank overall: questions generally progress from factual retrieval to interpreting attitudes, irony, and understatement, with well-supported answers. Mexican Spanish and Brazilian Portuguese are consistently natural, although several A2 passages exceed the requested lengths.\n\nIn the reverse order: É o banco mais consistente: as perguntas avançam de fatos simples para razões, atitudes e interpretações de linguagem figurada. Também oferece melhor proteção contra respostas por cognatos, embora alguns textos ultrapassem ligeiramente os tamanhos solicitados.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Most levels and speaking structures progress appropriately. However, the C1 remote-work question asks for a balanced position explicitly stated in the passage rather than C1-level tone or nuanced implication, triggering the maximum score of 5 for a clearly misleveled question.",
+              "score": 5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Answer indexes are correct and the intended answers are generally unambiguous. However, items such as A1 “plaza” → “praça” and A2 “Primero jugamos futbol” → “Jogam futebol” allow the transparent word-matching shortcuts the task specifically seeks to prevent.",
+              "score": 7,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The bank generally uses natural Mexican Spanish and appropriate Brazilian Portuguese across varied written and spoken situations. The C1 translation weakens the past counterfactual “De haber sabido” into “Se eu soubesse” rather than “Se eu tivesse sabido,” and “Fazem uma comida com tacos” is awkward Portuguese.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "A useful bank with accurate answer indexes, varied situations, and convincing Mexican Spanish. It falls behind on upper-level question calibration, protection against cognate-based shortcuts, and the fidelity of the final speaking translation.\n\nIn the reverse order: O banco é utilizável, com respostas bem fundamentadas e espanhol mexicano convincente, mas a exigência interpretativa não se mantém em todos os itens C1. Algumas respostas também ficam excessivamente acessíveis por correspondências entre cognatos.",
+          "score": 6.45
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 19774,
+        "outputTokens": 4165,
+        "reasoningTokens": 2855
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "f219bcf3529d05aa",
+    "anthropic/claude-sonnet-5.5": "a383d07d1486e72e",
+    "openai/gpt-6.1-terra:high": "c3453e5f17b9f2f1"
+  },
+  "swapped": true,
+  "taskId": "level-test-bank",
+  "testCaseId": "pt-es-1"
+}

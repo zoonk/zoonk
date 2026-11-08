@@ -1,0 +1,2034 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names substantial, accurate course content, and the outcomes are observable abilities in a sensible progression. However, the outcomes devote substantial space to early spreadsheet work while omitting charts and drawing conclusions. The copy also misses the requested news-statistics application and gives limited coverage of workplace applications beyond sales reports.",
+          "score": 7,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The copy makes a proportionate course promise without guaranteeing employment, credentials, scores, or professional qualification. It contains no inflated mastery claims or statements about duration, pricing, or access.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with a recognizable result and uses accessible beginner-level language. All outcomes start with base-form verbs and describe concrete tasks. However, the cleaning outcome combines two actions, and the final outcome includes an avoidable qualifier rather than presenting only the ability.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three items identify recognizable, distinct groups: office workers, students, and small business owners. They are specific labels rather than vague invitations or descriptions of course activities.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is natural US English, with accessible descriptions and audience labels. It avoids the prohibited educational openers and hype.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2783,
+          "outputTokens": 906,
+          "reasoningTokens": 341
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outcomes underrepresent the course's range: they cover spreadsheet tasks, cleaning, averages, and AI checks, but omit making charts and drawing conclusions. Everyday relevance includes budgeting, but not interpreting statistics in the news; workplace relevance does not extend clearly to marketing or operations.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The cleaning outcome combines two actions rather than presenting one clear ability. The AI-checking outcome adds an unnecessary 'before sharing them' qualifier and focuses on numbers rather than also checking the assistant's conclusions.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Broaden the four outcomes by consolidating early spreadsheet tasks and making room for communicating findings through charts and conclusions. Frame missing-data work as handling missing values appropriately rather than simply filling blank cells.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Names concrete parts of data analysis: organizing and cleaning data, summaries, charts, drawing conclusions, checking AI's analysis\n      - Uses at work (reports, decisions, marketing, operations) and everyday life (personal finances, reading statistics in the news) without promising a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "tech",
+            "business",
+            "math"
+          ]
+        },
+        "id": "en-data-analysis-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Organize raw numbers into tables you can sort, filter and sum.",
+              "level": "beginner",
+              "title": "Spreadsheets for analysis"
+            },
+            {
+              "description": "Fix duplicates, blanks and inconsistent formats before trusting a result.",
+              "level": "beginner",
+              "title": "Cleaning messy data"
+            },
+            {
+              "description": "Summarize a column with the right average and see how much values vary.",
+              "level": "beginner",
+              "title": "Averages and spread"
+            },
+            {
+              "description": "Pick the chart that fits the question and avoid misleading scales.",
+              "level": "beginner",
+              "title": "Charts that tell the truth"
+            },
+            {
+              "description": "Ask an AI assistant for an analysis and verify its numbers and claims.",
+              "level": "beginner",
+              "title": "Checking AI's analysis"
+            }
+          ],
+          "courseTitle": "Data analysis",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description is unmistakably about Star Wars and covers the saga, mythology, world-building, filmmaking innovations, and franchise expansion. The outcomes progress from the central story to its wider universe, but omit its influence on filmmaking and offer a weakly observable final ability.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no inflated achievement claims, guarantees, duration statements, or access promises. The uses are cultural, personal, and educational; the film-student audience does not imply career preparation.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with a concrete base-form action and uses familiar words. However, “Spot hero's journey beats” introduces terminology this beginner course teaches rather than expressing the ability in everyday language, triggering the cap of 8 for one unfamiliar-word outcome. “Follow the story” is also less concrete than the other actions.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three labels identify distinct, recognizable audiences: fans interested in the story's origins, film students interested in effects, and parents sharing the saga with children. None is a vague catchall or a sentence describing course activities.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy uses natural US English throughout. The description and audience are plainly phrased, with no banned educational openers or hype. The outcome terminology issue is assessed under the promise category.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "3 of 4 parts passed. outcomes items over 8 words: Describe a planet, species or gadget from the films.",
+          "score": 7.75,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2796,
+          "outputTokens": 764,
+          "reasoningTokens": 204
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "“Hero's journey beats” uses storytelling terminology that an overview-level visitor may not know. The outcomes also underrepresent the course's coverage of filmmaking and cultural influence, while “Follow the story into series, games and books” leaves the learner's observable ability unclear.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the outcomes more accessible and representative: replace storytelling jargon with familiar language, connect the world-building outcome to what makes the galaxy convincing, and include an ability about Star Wars' influence on later movies or franchises.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Pop culture: personal, creative, social and cultural uses (discussion, criticism, fan communities, understanding references, storytelling), never careers or jobs\n      - Specific to Star Wars (its saga, characters, world-building, influence on film and franchises), not generic film copy\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "culture",
+            "arts"
+          ]
+        },
+        "id": "en-star-wars-overview-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "How the Skywalker story unfolds across three trilogies.",
+              "level": "overview",
+              "title": "A saga in nine episodes"
+            },
+            {
+              "description": "The old myths George Lucas borrowed to build his story.",
+              "level": "overview",
+              "title": "Myth and the hero's journey"
+            },
+            {
+              "description": "Planets, species and technology that make the world feel lived-in.",
+              "level": "overview",
+              "title": "Building a galaxy"
+            },
+            {
+              "description": "How the films pushed special effects and sound design forward.",
+              "level": "overview",
+              "title": "Effects that changed movies"
+            },
+            {
+              "description": "Series, games and books that grew the story and its fans.",
+              "level": "overview",
+              "title": "From films to a franchise"
+            }
+          ],
+          "courseTitle": "Star Wars",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description accurately covers binding agreements, important clauses, court responses, and everyday contracts without presenting the course as limited to its initial chapters. The outcomes show a coherent progression from recognizing binding contracts to reviewing risks, anticipating court responses, and seeking professional help.",
+          "score": 9,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The copy frames the course around reading and evaluating contracts, not practicing law or advising clients. The explicit lawyer-review outcome reinforces that boundary. There are no inflated claims or promises about credentials, careers, timing, pricing, or access.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with a concrete, familiar action: spotting important clauses before signing. However, the third outcome uses \"remedies\" and \"breach,\" terms this beginner course teaches, triggering the cap of 8 for one jargon-heavy outcome. The final outcome's \"Know when\" is also less observable than an action such as identifying contracts needing review.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three labels identify recognizable, distinct situations: first-time renters, freelancers handling client agreements, and people accepting online terms without reading. They are specific audience labels rather than descriptions of course activities.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy uses natural US English, with accessible description and audience wording. It contains no prohibited educational boilerplate or hype. The outcome terminology is assessed under promise rather than penalized again here.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "3 of 4 parts passed. outcomes items over 8 words: Spot risky clauses in a lease or app terms.",
+          "score": 7.75,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2731,
+          "outputTokens": 778,
+          "reasoningTokens": 229
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The third outcome uses the unexplained legal terms \"remedies\" and \"breach,\" which a beginner may not know. \"Tell what courts usually award when someone breaks a contract\" would communicate the ability more plainly.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the final outcome more observable by replacing \"Know when a contract needs a lawyer's review\" with \"Identify contracts that need a lawyer's review.\"",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Regulated profession: the course helps someone understand contracts, read them carefully and know when to ask a lawyer; nothing says or implies giving legal advice, representing clients, drafting binding contracts for others or replacing law school or a lawyer\n      - Audience examples like freelancers, small business owners, tenants or students preparing for law school fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "law"
+          ]
+        },
+        "id": "en-contract-law-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Offer, acceptance, consideration and when a promise becomes enforceable.",
+              "level": "beginner",
+              "title": "What makes a contract binding"
+            },
+            {
+              "description": "Common clauses such as termination, liability limits and automatic renewals.",
+              "level": "beginner",
+              "title": "Reading the fine print"
+            },
+            {
+              "description": "Breach, remedies and what courts usually award.",
+              "level": "beginner",
+              "title": "When contracts go wrong"
+            },
+            {
+              "description": "Leases, job offers, app terms and freelance agreements.",
+              "level": "beginner",
+              "title": "Contracts you sign every day"
+            }
+          ],
+          "courseTitle": "Contract law",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description identifies pharmacology and names relevant coverage: medicine action, doses, administration routes, interactions, adverse effects and antibiotics. It also signals coverage beyond the initial chapters. The outcomes are observable abilities, progressing from a medicine’s journey through the body to interactions and antibiotic resistance, rather than generic learning claims.",
+          "score": 9,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The page presents an educational course about medicines, not a qualification to prescribe, diagnose, treat patients or select their doses. Safer personal medicine use and conversations with healthcare professionals are appropriate everyday applications. There are no inflated mastery claims or promises about credentials, employment, timing, prices or access.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise starts with the infinitive “Explicar” and gives a recognizable result in plain language. All outcomes also start with infinitives. However, “via” in the second outcome is a technical term taught by this beginner course rather than wording a new visitor can reliably recognize. This triggers the cap of 8 for one unfamiliar-word outcome.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three labels identify distinct, recognizable entry points: beginning health students, people curious about medicine action, and daily medicine users. They are concise Brazilian Portuguese labels, not descriptions of course activities or vague invitations to everyone.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The prose and audience labels are in Brazilian Portuguese, without hype or banned learning-oriented openers. However, the description’s “mecanismos de classes de remédios mais complexas” is stiff and jargon-heavy for this introductory audience. The cap of 8 for a few such phrasings applies.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "3 of 4 parts passed. outcomes items over 8 words: Prever como a via muda o efeito do remédio.",
+          "score": 7.75,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2845,
+          "outputTokens": 1019,
+          "reasoningTokens": 407
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The outcome “Prever como a via muda o efeito do remédio” uses “via” as unexplained terminology for beginners. The description’s “mecanismos de classes de remédios mais complexas” is also technical and awkward, making the broader course coverage harder to grasp.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "An outcome connected explicitly to reading a package insert or preparing questions for a pharmacist would make the course’s everyday usefulness more visible while preserving its educational scope.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, including audience nouns and roles\n      - Regulated field: frames the course as understanding and study of how medicines act, never as qualifying anyone to prescribe, diagnose, treat or choose doses for patients; nursing or pharmacy students, caregivers and curious people fit\n      - Everyday use such as reading a package insert (bula) or talking with a doctor is welcome\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "health",
+            "science"
+          ]
+        },
+        "id": "pt-farmacologia-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Receptores, enzimas e o caminho de um remédio da absorção à eliminação.",
+              "level": "beginner",
+              "title": "Como os remédios agem no corpo"
+            },
+            {
+              "description": "Por que a mesma substância muda de efeito pela boca, na veia ou na pele.",
+              "level": "beginner",
+              "title": "Doses e vias de administração"
+            },
+            {
+              "description": "Quando dois remédios, ou um remédio e um alimento, se atrapalham.",
+              "level": "beginner",
+              "title": "Interações e efeitos adversos"
+            },
+            {
+              "description": "Como os antibióticos funcionam e por que o uso errado cria bactérias resistentes.",
+              "level": "beginner",
+              "title": "Antibióticos e resistência"
+            }
+          ],
+          "courseTitle": "Farmacologia",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description accurately covers scarcity in plain words, prices, banking, interest, inflation and government. The outcomes progress from individual choices to public policy. However, commerce and workplace applications are absent, and the coverage largely reproduces the first chapter band. Predicting price movements also exceeds the clearly supported introductory ability.",
+          "score": 7,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no employment, credential, salary, access or professional-practice claims. However, the unqualified promise to predict price rises and falls overstates what introductory economic reasoning reliably enables; it should be framed as explaining influences on prices.",
+          "score": 8,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with an infinitive and gives recognizable everyday results involving installments and salary purchasing power. All outcomes also begin with infinitives and avoid specialist terminology. “Custo escondido” is less precise and immediately recognizable than naming what a person gives up when making a choice.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three items identify recognizable situations or groups: people managing a budget, secondary-school and ENEM students, and prospective car borrowers. They are concise labels rather than course-activity descriptions, and their situations are sufficiently distinct.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The visitor-facing copy uses natural Brazilian Portuguese, with familiar references to the feira, bank statements, salary and ENEM. The description and audience avoid unnecessary jargon, banned learning-process phrasing and hype.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2835,
+          "outputTokens": 905,
+          "reasoningTokens": 316
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The page omits commerce entirely and provides no explicit workplace use, despite both being required. Its coverage closely follows the existing chapters rather than communicating the broader course range.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "“Prever a subida ou a queda de preços” suggests a forecasting ability broader than the introductory coverage supports. Explaining why prices change would be a more accurate, observable outcome.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make opportunity cost more concrete by describing what someone gives up when choosing, rather than calling it a “custo escondido.” Preserve the useful connections to budgeting, credit and government decisions while broadening the page’s scope.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Names the big ideas of economics (escassez, preços, juros, inflação, papel do governo, comércio) in plain words; Brazilian examples are welcome\n      - Includes everyday uses (orçamento pessoal, entender notícias, decidir sobre crédito) next to work and civic ones, with no promise of a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "economics"
+          ]
+        },
+        "id": "pt-economia-overview-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Por que toda escolha tem um custo e como isso explica decisões do dia a dia.",
+              "level": "overview",
+              "title": "Escassez e escolhas"
+            },
+            {
+              "description": "Como os preços sobem e descem conforme o que se quer e o que existe.",
+              "level": "overview",
+              "title": "Preços, oferta e demanda"
+            },
+            {
+              "description": "O que os bancos fazem com o seu dinheiro e por que os juros mudam tudo.",
+              "level": "overview",
+              "title": "Dinheiro, bancos e juros"
+            },
+            {
+              "description": "Por que o mesmo salário compra menos com o tempo e quem controla isso.",
+              "level": "overview",
+              "title": "Inflação e poder de compra"
+            },
+            {
+              "description": "Impostos, gastos públicos e dívida, e como afetam o país.",
+              "level": "overview",
+              "title": "O papel do governo"
+            }
+          ],
+          "courseTitle": "Economia",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names genuine chapter content, and the outcomes describe observable actions. However, the four outcomes closely reproduce the four beginner chapters without showing the whole course's range. American English and the United States are unsupported restrictions on a course titled simply Inglês.",
+          "score": 7,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no promises of fluency, qualifications, employment or guaranteed achievement, and no duration, price or access claims. Communicating with greater confidence is a reasonable educational aim.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with an infinitive and recognizable practical actions. The outcomes likewise use infinitive constructions and accessible language, describing things a beginner can recognize rather than technical concepts or abstract learning processes.",
+          "score": 9,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three labels identify distinct, recognizable groups: travelers, professionals serving foreign customers and beginners. They are concise audience labels rather than descriptions of course activities. The unsupported US restriction is accounted for under course fit.",
+          "score": 9,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy uses natural Brazilian Portuguese with familiar vocabulary and no banned learning-process phrasing or hype. Check-in is an established expression in Brazilian travel contexts, not a wrong-language field.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2768,
+          "outputTokens": 890,
+          "reasoningTokens": 359
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The description and all four outcomes stay within the beginner chapters already supplied, rather than presenting the whole course's progression toward confident communication. The copy also introduces American English and a US-specific travel audience without support from the course title or chapters, unnecessarily narrowing the course.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Replace the opening definition of American English with a direct description of the course's practical scope. Keep an introductory outcome, then show broader abilities in conversations, travel, study, work or culture. Use English generally unless a regional focus is established.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese; the course is English itself, for Brazilian learners\n      - Focuses on communicating in real situations (conversas, viagens, estudo, trabalho, cultura), from first conversations to confident use\n      - Never promises fluency, a certificate, an exam score or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-ingles-language-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Dizer quem você é, de onde vem e o que faz.",
+              "level": "beginner",
+              "title": "Apresentações"
+            },
+            {
+              "description": "Fazer check-in, pedir informações e resolver problemas simples.",
+              "level": "beginner",
+              "title": "No aeroporto e no hotel"
+            },
+            {
+              "description": "Ler um cardápio, pedir e pagar em um restaurante.",
+              "level": "beginner",
+              "title": "Pedindo comida"
+            },
+            {
+              "description": "Falar sobre o seu dia, marcar compromissos e combinar horários.",
+              "level": "beginner",
+              "title": "Rotina e horários"
+            }
+          ],
+          "courseTitle": "Inglês",
+          "language": "pt",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description specifically covers quantum physics, supporting math and everyday devices rather than merely summarizing the first overview chapters. The outcomes progress from light and measurement to graphs and changing states. However, none delivers the concrete device explanation foregrounded in the promise, and \"Spot the limits\" leaves the observable ability underspecified.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no guarantees of grades, qualifications, employment or timed achievement, no access or pricing claims, and no inflated mastery language. The device explanations promised are consistent with the supplied course content.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with the base-form action \"Explain\" and names recognizable everyday devices. Most outcomes avoid equations and calculus terminology. However, \"quantum states\" is unexplained field terminology used as an outcome's main object, triggering the cap of 8 for one inaccessible outcome. The measurement outcome is also less concrete than it could be.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three items offer recognizable entry points through lack of prior physics study, curiosity about lasers and school preparation. They are short and reasonably distinct, but the requested science-communication use is absent.",
+          "score": 8,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is in natural US English and avoids the explicitly banned promotional verbs and phrases. However, the description presents an unexplained technical inventory, particularly entanglement, scientific notation and vectors, rather than consistently using plain language for this beginner audience. The cap of 8 for jargon-heavy phrasing applies.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4018,
+          "outputTokens": 1066,
+          "reasoningTokens": 424
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final outcome, \"Track how quantum states change over time,\" makes a technical concept the main learner ability without translating it into an everyday result. This fails the explicit requirement that outcomes speak to someone who has never studied physics.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The description includes an unexplained inventory of terms such as entanglement, scientific notation and vectors. \"Spot the limits\" is also less concrete than explaining what measurements can and cannot reveal. The audience covers school and curiosity but does not represent the requested science-communication use.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Align an outcome with the promise about everyday devices—for example, explaining where LED colors come from. Make the light outcome explicitly about the same light showing wave-like and particle-like behavior, rather than potentially suggesting two separate kinds of light.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The course starts from scratch: the promise and the outcomes are for a visitor who has never studied physics. They say what the learner will be able to explain or do about real things (why atoms don't collapse, where the colors of LEDs and neon signs come from, how light can act as a wave and as a particle, what's inside a phone's chip or a laser) in everyday words\n      - Regression: an earlier promise was \"Use mathematical models and experimental data to explain quantum probabilities and trace how quantum effects appear in real devices\", with outcomes like \"Apply wave functions and the Schrödinger equation to reason about probabilities and energy levels\". Mathematical models, wave functions, named equations, derivatives and integrals in the promise or as an outcome's main words fail this case\n      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (working with very large and very small numbers, reading a graph), not as a list of calculus terms\n      - School, curiosity and science communication uses; no promise of a grade or a career\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "science"
+          ]
+        },
+        "id": "en-quantum-physics-from-scratch-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "How small atoms are, and why things that small play by different rules.",
+              "level": "overview",
+              "title": "A very small world"
+            },
+            {
+              "description": "Light spreads like a wave and arrives in packets. Both are true.",
+              "level": "overview",
+              "title": "Light: wave or particle?"
+            },
+            {
+              "description": "What an atom is made of, why it doesn't collapse and where colors come from.",
+              "level": "overview",
+              "title": "Inside the atom"
+            },
+            {
+              "description": "Why you can't know everything about a particle at once, and what measuring does.",
+              "level": "overview",
+              "title": "Uncertainty"
+            },
+            {
+              "description": "Two particles that share one story, however far apart they are.",
+              "level": "overview",
+              "title": "Entanglement"
+            },
+            {
+              "description": "The quantum physics inside chips, LEDs and lasers.",
+              "level": "overview",
+              "title": "Quantum in your phone"
+            },
+            {
+              "description": "Fractions as divisions and percents as fractions of 100.",
+              "level": "beginner",
+              "title": "Fractions and percentages"
+            },
+            {
+              "description": "Solving for an unknown by keeping both sides balanced.",
+              "level": "beginner",
+              "title": "Linear equations"
+            },
+            {
+              "description": "Functions as machines, and the graphs that show them.",
+              "level": "beginner",
+              "title": "Functions and graphs"
+            },
+            {
+              "description": "Use input-and-output rules to describe settings and results in simple quantum experiments.",
+              "level": "beginner",
+              "title": "Inputs and outputs in quantum experiments"
+            },
+            {
+              "description": "Use input-output rules to calibrate instrument settings and recognize limits in detector response.",
+              "level": "beginner",
+              "title": "Calibration and response functions"
+            },
+            {
+              "description": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
+              "level": "beginner",
+              "title": "Reading quantum experiment plots"
+            },
+            {
+              "description": "Use slopes to describe how quickly experimental quantities change, and judge when a rate estimate is reliable.",
+              "level": "beginner",
+              "title": "Rates in detector data"
+            },
+            {
+              "description": "Read slopes against experimental settings to judge instrument response and physical relationships, rather than counts changing over time.",
+              "level": "beginner",
+              "title": "Sensitivity in quantum experiments"
+            },
+            {
+              "description": "Powers of ten and the notation physics uses for atoms and stars alike.",
+              "level": "beginner",
+              "title": "Exponents and scientific notation"
+            },
+            {
+              "description": "Compare measurements written in different forms of scientific notation, including values that are close, rounded or uncertain.",
+              "level": "beginner",
+              "title": "Comparing measured values"
+            },
+            {
+              "description": "Use scientific notation in longer calculations and check whether the resulting scale and units make sense.",
+              "level": "beginner",
+              "title": "Multi-factor calculations with scientific notation"
+            },
+            {
+              "description": "Use powers of ten to compare the lengths, times, energies, and quantities that appear in quantum experiments.",
+              "level": "beginner",
+              "title": "Powers of ten in physical scales"
+            },
+            {
+              "description": "Calculate and judge results expressed in scientific notation without losing track of units or measurement precision.",
+              "level": "beginner",
+              "title": "Calculating with scientific notation"
+            },
+            {
+              "description": "Quantities with a size and a direction, like velocity and force.",
+              "level": "beginner",
+              "title": "Vectors"
+            },
+            {
+              "description": "Describe arrows precisely with coordinates and components, including directions in three dimensions.",
+              "level": "beginner",
+              "title": "Vectors in coordinates"
+            },
+            {
+              "description": "Use vector length, direction, and alignment to prepare for describing quantum states without repeating vector resultants.",
+              "level": "beginner",
+              "title": "Vector alignment and projections"
+            },
+            {
+              "description": "Add vectors by their components to handle longer paths and three-dimensional directions.",
+              "level": "beginner",
+              "title": "Resultants from vector components"
+            },
+            {
+              "description": "How fast things change, at any instant.",
+              "level": "intermediate",
+              "title": "Derivatives"
+            },
+            {
+              "description": "Use instantaneous rates to track how quantum states change, even when a measurement probability stays constant.",
+              "level": "intermediate",
+              "title": "Instantaneous quantum dynamics"
+            },
+            {
+              "description": "Use instantaneous rates to analyze a quantum system whose external controls change over time, from energy shifts to transitions between changing states.",
+              "level": "intermediate",
+              "title": "Rates under changing quantum controls"
+            },
+            {
+              "description": "Apply the power rule to polynomial and inverse-power models of quantum potentials and wavefunctions.",
+              "level": "intermediate",
+              "title": "Quantum potentials and wavefunction curvature"
+            },
+            {
+              "description": "Use power-rule derivatives to connect quantum energy curves to motion, responses, level spacing, and the number of available states.",
+              "level": "intermediate",
+              "title": "Energy-band motion and spectral slopes"
+            },
+            {
+              "description": "Adding up tiny pieces to get a whole.",
+              "level": "intermediate",
+              "title": "Integrals"
+            },
+            {
+              "description": "Newton's laws and the energy that never disappears.",
+              "level": "intermediate",
+              "title": "Motion and forces"
+            }
+          ],
+          "courseTitle": "Quantum physics from scratch",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names genuine course content and reaches beyond the introductory chapters to technology and quantum computing. All four outcomes are observable and supported by the chapters, but their concentration on calculations and graph reading underrepresents the course's explanatory range, particularly atoms, light, and everyday quantum technology.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no inflated mastery claims, guaranteed academic or career results, or claims about duration, pricing, credentials, or access. The promised abilities are plausible for the supplied course.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise starts with the correct infinitive and offers a recognizable result involving lasers, LEDs, and phone chips. However, at least two outcomes rely on concepts a complete beginner would not already know: wavelength and probabilities of quantum measurement results. This triggers the maximum score of 7. The method clause “usando potências de dez” also violates the requirement for standalone, glanceable actions.",
+          "score": 7,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three items identify distinct, recognizable groups: atom-curious visitors, secondary-school students reviewing physics, and adults returning to mathematics. They are short labels rather than course-activity sentences, and all have a credible connection to the supplied content.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is generally natural Brazilian Portuguese, with no hype or banned learning-process phrasing. The description nevertheless uses unexplained technical vocabulary, particularly “emaranhamento,” despite the beginner-facing plain-language requirement. Its final “Ela” also makes the reference unnecessarily unclear. The technical phrasing keeps this category at 8.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "3 of 4 parts passed. audience items over 6 words: Estudantes do ensino médio em revisão de física.",
+          "score": 7.75,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4187,
+          "outputTokens": 991,
+          "reasoningTokens": 282
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outcomes do not consistently serve someone who has never studied physics. “Calcular o comprimento de onda” and “Calcular probabilidades de resultados de medições quânticas” require unfamiliar concepts without identifying an everyday result. “Comparar tamanhos microscópicos usando potências de dez” also adds a method clause, explicitly disallowed by this case. Together, the outcomes emphasize mathematical procedures rather than recognizable explanations about atoms, light, and technology.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The description introduces “emaranhamento” without a plain-language explanation, and its final “Ela” has an unclear antecedent. The first outcome's “sem tirar conclusões erradas” is an unnecessary qualification rather than a sharper statement of the ability.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the concrete technology-focused promise. Rebalance the outcomes around explaining familiar phenomena, such as why atoms do not collapse or where an LED's colors come from, while retaining one plainly worded mathematical ability. Simplify the description's technical terminology and explicitly name physics in its final sentence.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, natural and informal (\"você\"), not translated from English\n      - The course starts \"do zero\": the promise and the outcomes are for a visitor who never studied physics. They say what the learner will be able to explain or do about real things (por que o átomo não desaba, de onde vêm as cores de um LED ou de um letreiro de neon, como a luz pode ser onda e partícula, o que tem de quântico num celular ou num laser) in everyday words\n      - Regression: an earlier promise was \"Você poderá acompanhar as ideias centrais da física quântica e relacioná-las à matemática e a tecnologias do cotidiano\". A promise built on abstract verbs (\"acompanhar as ideias centrais\", \"relacionar\"), an opener like \"Você poderá\" before the outcome, or outcomes centered on \"função de onda\" or \"equação de Schrödinger\" fail this case\n      - Regression: an earlier outcome was \"Usar potências de dez, unidades, equações e gráficos para fazer contas com grandezas muito pequenas\", too dense for the page. Outcomes that list tools or topics, or add a clause on how or why, fail this case\n      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (fazer contas com números muito grandes e muito pequenos, ler um gráfico), not as a list of calculus terms\n      - School, curiosity and science communication uses; no promise of a grade or a career\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "science"
+          ]
+        },
+        "id": "pt-fisica-quantica-do-zero-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Quão pequenos são os átomos, e por que coisas tão pequenas seguem outras regras.",
+              "level": "overview",
+              "title": "Um mundo muito pequeno"
+            },
+            {
+              "description": "A luz se espalha como onda e chega em pacotes. As duas coisas são verdade.",
+              "level": "overview",
+              "title": "Luz: onda ou partícula?"
+            },
+            {
+              "description": "Do que um átomo é feito, por que ele não colapsa e de onde vêm as cores.",
+              "level": "overview",
+              "title": "Dentro do átomo"
+            },
+            {
+              "description": "O estado fundamental impede o colapso do átomo, mas energia suficiente pode arrancar um elétron.",
+              "level": "overview",
+              "title": "Quando um átomo perde um elétron"
+            },
+            {
+              "description": "A energia de um fóton permite encontrar o comprimento de sua onda de luz.",
+              "level": "overview",
+              "title": "Da energia do fóton ao comprimento de onda"
+            },
+            {
+              "description": "Por que não dá para saber tudo sobre uma partícula ao mesmo tempo, e o que a medição faz.",
+              "level": "overview",
+              "title": "Incerteza"
+            },
+            {
+              "description": "Duas partículas que compartilham uma história, por mais longe que estejam.",
+              "level": "overview",
+              "title": "Emaranhamento"
+            },
+            {
+              "description": "A física quântica dentro de chips, LEDs e lasers.",
+              "level": "overview",
+              "title": "O quântico no seu celular"
+            },
+            {
+              "description": "Frações como divisões e porcentagens como frações de 100.",
+              "level": "beginner",
+              "title": "Frações e porcentagens"
+            },
+            {
+              "description": "Achar uma incógnita mantendo os dois lados em equilíbrio.",
+              "level": "beginner",
+              "title": "Equações do primeiro grau"
+            },
+            {
+              "description": "Funções como máquinas, e os gráficos que as mostram.",
+              "level": "beginner",
+              "title": "Funções e gráficos"
+            },
+            {
+              "description": "Funções podem ter entradas permitidas, regras por trechos e relações com outras funções; essas escolhas ajudam a descrever situações físicas sem perder o sentido dos números.",
+              "level": "beginner",
+              "title": "Regras, domínios e composições"
+            },
+            {
+              "description": "Modelos de função ajudam a reconhecer como uma grandeza depende de outra antes de estudar fenômenos quânticos em detalhe.",
+              "level": "beginner",
+              "title": "Famílias de funções em modelos físicos"
+            },
+            {
+              "description": "Gráficos com curvas, trechos e várias séries exigem atenção à escala e à legenda antes de tirar conclusões sobre os valores.",
+              "level": "beginner",
+              "title": "Leitura de curvas e escalas"
+            },
+            {
+              "description": "A taxa de variação permite comparar mudanças em trechos de uma curva e em dados medidos, mesmo quando a inclinação não é sempre a mesma.",
+              "level": "beginner",
+              "title": "Taxas em curvas e medições"
+            },
+            {
+              "description": "Diferenças entre valores revelam como a taxa de variação se comporta em modelos que não têm inclinação constante.",
+              "level": "beginner",
+              "title": "Variações em modelos não lineares"
+            },
+            {
+              "description": "Potências de dez e a notação que a física usa tanto para átomos quanto para estrelas.",
+              "level": "beginner",
+              "title": "Potências e notação científica"
+            },
+            {
+              "description": "Potências de dez ajudam a comparar tamanhos extremos e a manter as unidades corretas em cálculos sobre o mundo microscópico.",
+              "level": "beginner",
+              "title": "Escalas microscópicas e conversão de unidades"
+            },
+            {
+              "description": "Grandezas com tamanho e direção, como velocidade e força.",
+              "level": "beginner",
+              "title": "Vetores"
+            },
+            {
+              "description": "A rapidez com que as coisas mudam, em qualquer instante.",
+              "level": "intermediate",
+              "title": "Derivadas"
+            },
+            {
+              "description": "Somar pedaços minúsculos para chegar ao todo.",
+              "level": "intermediate",
+              "title": "Integrais"
+            },
+            {
+              "description": "As leis de Newton e a energia que nunca desaparece.",
+              "level": "intermediate",
+              "title": "Movimento e forças"
+            },
+            {
+              "description": "O que todas as ondas têm em comum, do som à luz.",
+              "level": "intermediate",
+              "title": "Ondas"
+            },
+            {
+              "description": "Cargas, campos e a descoberta de que a luz é eletromagnética.",
+              "level": "intermediate",
+              "title": "Eletricidade e magnetismo"
+            },
+            {
+              "description": "A função de onda e as probabilidades que ela guarda.",
+              "level": "advanced",
+              "title": "A função de onda"
+            },
+            {
+              "description": "A equação por trás de cada nível de energia.",
+              "level": "advanced",
+              "title": "A equação de Schrödinger"
+            },
+            {
+              "description": "Uma propriedade sem par no cotidiano: só para cima ou para baixo.",
+              "level": "advanced",
+              "title": "Spin"
+            },
+            {
+              "description": "Qubits, emaranhamento e os experimentos que encerraram um debate.",
+              "level": "advanced",
+              "title": "Emaranhamento e computação quântica"
+            }
+          ],
+          "courseTitle": "Física quântica do zero",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description correctly identifies all four exam areas and the essay, and the outcomes name observable skills grounded in the chapters. However, the promise restricts the offering to mathematics and sciences, and the outcomes remain concentrated on the first band rather than showing the whole course's range. There is no reading, humanities or essay-writing outcome.",
+          "score": 6,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The copy frames the course as preparation without guaranteeing a score, admission or approval. The audience's desire for a public-university place is not a promise of admission. There are no inflated mastery claims, prices, durations or access conditions.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens directly with the infinitive “Resolver” and a recognizable exam ability, avoiding the abstract regression language and “Você poderá.” All outcomes also begin with infinitives and use familiar school vocabulary. However, “Resolver regras de três” does not naturally express the ability; solving a concrete map or scale problem would be clearer.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three items are recognizable labels covering a school stage, an admissions goal and a return-to-study situation. They are not course-activity sentences or vague “anyone interested” labels. Their possible overlap does not make them interchangeable.",
+          "score": 9,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The description and audience use clear Brazilian Portuguese, address the learner as “você,” and avoid hype, technical jargon and banned learning-oriented phrases. The wording is accessible to a high-school student.",
+          "score": 9,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4346,
+          "outputTokens": 996,
+          "reasoningTokens": 366
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The promise and outcomes present a narrower course than the full ENEM preparation required. The promise names only mathematics and sciences, while three outcomes concern calculations and the fourth concerns waves. Reading, humanities and essay writing are absent from the abilities offered. Naming all four areas and the essay in the description does not fix this mismatch.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "“Resolver regras de três em mapas e plantas” is awkward: students solve problems using the rule of three, rather than solve the rule itself. “Calcular distâncias em mapas e plantas” would express a clearer ability.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the description more course-centered by replacing the opening explanation of ENEM admissions with concrete examples of what students will prepare to do across the exam.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, natural and informal (\"você\"), in a high school student's words\n      - Exam preparation: the promise opens with what the student will be able to do on the Enem (resolver as questões que mais caem, ler gráficos e textos da prova, escrever a redação que a prova pede), framed as preparation. Never a score, a pass, a place at a university or \"aprovação\"\n      - Regression: an earlier promise was \"Você poderá aplicar conteúdos de diferentes áreas e critérios da redação para resolver questões e planejar suas respostas no ENEM\". A promise built on abstract terms (\"aplicar conteúdos de diferentes áreas\", \"critérios da redação\", \"competências avaliadas\") or an opener like \"Você poderá\" before the outcome fails this case\n      - CHAPTERS are only the first band (math, data, waves, reading, ecology): the copy covers the whole exam, its four areas and the redação\n      - Don't judge how the exam's name is capitalized\n      - Categories don't matter for exam courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-exam-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Descontos, aumentos e juros: a matemática que o ENEM cobra em quase toda edição.",
+              "level": "beginner",
+              "title": "Porcentagem"
+            },
+            {
+              "description": "Trata cadeias maiores de reajustes percentuais e mostra como conferir a base e o efeito de cada etapa.",
+              "level": "beginner",
+              "title": "Cadeias de reajustes percentuais"
+            },
+            {
+              "description": "Calcula o valor a pagar quando descontos dependem de regras da oferta, além da porcentagem anunciada.",
+              "level": "beginner",
+              "title": "Preço final em ofertas com condições"
+            },
+            {
+              "description": "Interpreta o desconto real de promoções por quantidade quando a compra não é exatamente um único grupo de itens iguais.",
+              "level": "beginner",
+              "title": "Desconto real em compras por quantidade"
+            },
+            {
+              "description": "Você usa a forma decimal de percentuais menos imediatos para interpretar quantidades e resolver questões do ENEM.",
+              "level": "beginner",
+              "title": "Percentuais além dos casos inteiros"
+            },
+            {
+              "description": "Usa fatores percentuais em situações nas quais é preciso reconhecer a base da variação antes de multiplicar.",
+              "level": "beginner",
+              "title": "Fatores percentuais em valores compostos"
+            },
+            {
+              "description": "Proporções, regra de três e escalas.",
+              "level": "beginner",
+              "title": "Razão e proporção"
+            },
+            {
+              "description": "Amplia a regra de três para situações em que as grandezas variam em sentidos opostos ou dependem de mais de dois fatores.",
+              "level": "beginner",
+              "title": "Proporcionalidade inversa e composta"
+            },
+            {
+              "description": "Aplique a regra de três a mapas, plantas e modelos, observando quando a escala afeta comprimentos, áreas e volumes de maneiras diferentes.",
+              "level": "beginner",
+              "title": "Escalas em mapas, plantas e maquetes"
+            },
+            {
+              "description": "Partilhas e rateios em que a razão define quanto cabe a cada pessoa ou grupo, inclusive quando há parcelas fixas ou itens indivisíveis.",
+              "level": "beginner",
+              "title": "Partilhas e rateios proporcionais"
+            },
+            {
+              "description": "Use proporções para interpretar concentrações e resolver mudanças em misturas, sem confundir a quantidade de ingrediente com a quantidade total.",
+              "level": "beginner",
+              "title": "Concentrações e transformações de misturas"
+            },
+            {
+              "description": "Funções do 1º e do 2º grau em situações do dia a dia.",
+              "level": "intermediate",
+              "title": "Funções"
+            },
+            {
+              "description": "Usa modelos lineares para interpretar tarifas, comparar alternativas e reconhecer onde uma regra deixa de valer.",
+              "level": "intermediate",
+              "title": "Modelos lineares em tarifas e faixas"
+            },
+            {
+              "description": "Aplica o vértice da parábola a problemas de máximo e mínimo com restrições, unidades e dados apresentados de diferentes formas.",
+              "level": "intermediate",
+              "title": "Otimização quadrática com restrições"
+            },
+            {
+              "description": "Médias e os gráficos que o ENEM usa em tantas questões.",
+              "level": "intermediate",
+              "title": "Estatística"
+            },
+            {
+              "description": "Amplia o uso das medidas de tendência central em situações com pesos, frequências e conjuntos de dados diferentes.",
+              "level": "intermediate",
+              "title": "Medidas centrais em conjuntos de dados"
+            },
+            {
+              "description": "Trabalha comparações mais difíceis em gráficos, distinguindo mudanças reais de efeitos da apresentação dos dados.",
+              "level": "intermediate",
+              "title": "Comparações e distorções em gráficos"
+            },
+            {
+              "description": "Usa dados de biodiversidade para aprofundar a leitura de tabelas e gráficos e distinguir grupos de seres vivos.",
+              "level": "intermediate",
+              "title": "Dados de biodiversidade e classificação"
+            },
+            {
+              "description": "Amplia a leitura de gráficos para painéis e textos que combinam dados, imagens e palavras, incluindo representações da propagação de ondas.",
+              "level": "intermediate",
+              "title": "Painéis visuais e representações de ondas"
+            },
+            {
+              "description": "Leitura de distribuições em tabelas e gráficos, com atenção ao total usado em cada comparação.",
+              "level": "intermediate",
+              "title": "Leitura de distribuições estatísticas"
+            },
+            {
+              "description": "Aprofunda a propagação das ondas por meio de fenômenos que aparecem em sons, luz e cordas vibrantes, com foco na interpretação de situações e afirmações típicas do ENEM.",
+              "level": "intermediate",
+              "title": "Interações e padrões na propagação de ondas"
+            },
+            {
+              "description": "Aplica a propagação de ondas a situações de acústica, distinguindo mudanças de velocidade, intensidade e energia.",
+              "level": "intermediate",
+              "title": "Energia e trajetórias na propagação do som"
+            },
+            {
+              "description": "Aplique a propagação de ondas à formação de imagens, à transmissão de sinais e ao estudo do interior da Terra.",
+              "level": "intermediate",
+              "title": "Trajetórias de ondas em materiais e exames"
+            },
+            {
+              "description": "Trabalha a leitura conjunta de palavras, imagens e sequências em gêneros que exigem atenção ao contexto, ao enquadramento e à circulação do texto.",
+              "level": "intermediate",
+              "title": "Sentido e contexto em gêneros multimodais"
+            },
+            {
+              "description": "Palavras, imagens e elementos gráficos dividem a construção do sentido em anúncios, campanhas, tirinhas e infográficos.",
+              "level": "intermediate",
+              "title": "Leitura de textos multimodais"
+            },
+            {
+              "description": "Relacione palavras, símbolos e disposição visual em documentos e serviços do cotidiano.",
+              "level": "intermediate",
+              "title": "Documentos e serviços em textos multimodais"
+            },
+            {
+              "description": "Cadeias alimentares, ciclos e o impacto humano nos ecossistemas.",
+              "level": "intermediate",
+              "title": "Ecologia"
+            },
+            {
+              "description": "Examina para onde vai a energia que não chega ao consumidor seguinte e como as relações alimentares alteram o fluxo de energia.",
+              "level": "intermediate",
+              "title": "Ecologia: Destinos da energia nas teias alimentares"
+            },
+            {
+              "description": "Aplica dados de eficiência, unidades e caminhos alimentares para resolver estimativas de energia além de uma cadeia simples.",
+              "level": "intermediate",
+              "title": "Ecologia: Estimativas de energia em teias alimentares"
+            },
+            {
+              "description": "Corrente, tensão e resistência em circuitos simples.",
+              "level": "intermediate",
+              "title": "Eletricidade"
+            }
+          ],
+          "courseTitle": "ENEM",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description identifies substantive harmonic techniques, and the outcomes progress logically from spelling seventh chords through secondary dominants and modulation to reharmonization. Together they convey an appropriate range for advanced music theory. However, “secondary chords” is an ambiguous substitute for “secondary dominants” and weakens the description's subject accuracy.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The copy makes proportionate skill claims and frames the course around songwriting, arranging, and playing. It contains no career framing, inflated mastery claims, guarantees, or statements about duration, pricing, or access.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens directly with recognizable musical results, and its terminology suits an audience that already plays and reads music. All outcomes use English base-form verbs and observable actions. However, the second and fourth outcomes add purpose clauses, contrary to the requirement for single-action phrases without how-or-why clauses.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "Songwriters, pianists, and arrangers are recognizable, distinct audience labels. Each includes a specific musical interest or situation without becoming a sentence about course activities or implying professional qualification.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy consistently uses natural US English, with no banned learning-process language or hype. The description and audience labels are readable at the stated level. The terminology issue is assessed under subject fit rather than treated as a separate style failure.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2871,
+          "outputTokens": 1030,
+          "reasoningTokens": 498
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description calls secondary dominants “secondary chords,” an ambiguous term that does not accurately identify the supplied topic. Two outcomes append purpose clauses—“to lead into any chord” and “to change its mood”—rather than keeping each outcome to the requested single-action phrase.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Level-appropriate, not dumbed down: the title names an advanced level and the chapters start at intermediate, so the visitor already plays and reads music. Terms that visitor uses (chords, keys, scales, seventh chords, modulation) are fine and shouldn't be replaced by vaguer words; the promise still opens with a concrete result (reharmonize a song, change key without a jolt, write richer chord progressions)\n      - Hobby and creative uses (playing, songwriting, arranging, playing in a band), never careers or jobs\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "arts"
+          ]
+        },
+        "id": "en-advanced-music-theory-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Build and spell the four common seventh chords and hear where each one wants to go.",
+              "level": "intermediate",
+              "title": "Seventh chords in every key"
+            },
+            {
+              "description": "Borrow a dominant chord to lean toward any chord in the key.",
+              "level": "intermediate",
+              "title": "Secondary dominants"
+            },
+            {
+              "description": "Mix chords from the parallel minor into a major song for color.",
+              "level": "intermediate",
+              "title": "Borrowed chords"
+            },
+            {
+              "description": "Move a song to a new key through a pivot chord or a sudden shift.",
+              "level": "advanced",
+              "title": "Changing key"
+            },
+            {
+              "description": "Connect chords so each voice moves as little as it can.",
+              "level": "advanced",
+              "title": "Voice leading"
+            },
+            {
+              "description": "Keep a melody and change the chords under it to change its mood.",
+              "level": "advanced",
+              "title": "Reharmonizing a melody"
+            }
+          ],
+          "courseTitle": "Advanced music theory",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description accurately names the supplied beginner topics, and the outcomes are observable abilities in a sensible sequence. However, the page stops at the chapters already written. Neither investments nor pensions appears anywhere, so it fails the explicit requirement to represent the whole personal-finance course.",
+          "score": 6,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no guaranteed returns, savings, qualifications, specific product recommendations or inflated expertise claims. Preparing one's own 730 is not inherently a professional-practice claim. However, the required framing about knowing when to consult a financial adviser, commercialista or CAF is entirely absent.",
+          "score": 8,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise and every outcome correctly begin with an infinitive and use familiar Italian financial language. The promise describes an everyday benefit, but “Mettere ordine nei tuoi soldi” is less specific than the concrete abilities below it. The financing outcome also combines comparison and selection rather than presenting one focused action.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three labels identify distinct, recognizable situations: receiving a first payslip, wanting more orderly finances, and evaluating financing. They are concise audience labels rather than descriptions of course activities.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is natural Italian overall, uses informal address through “tuoi,” and contains no formal “Lei,” English instructional phrasing, banned learning openers or hype. The description and audience use accessible everyday language.",
+          "score": 9,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3022,
+          "outputTokens": 1102,
+          "reasoningTokens": 496
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The page presents only the existing chapter band: investments and pensions are absent from both the description and the outcomes, despite being required parts of the whole-course scope. It also never explains when to seek help from a consulente finanziario, commercialista or CAF, omitting the required professional-support framing.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The promise gives a recognizable but broad benefit rather than a sharply defined ability. “Confrontare finanziamenti e scegliere il meno caro” combines two actions and presents price as the sole selection criterion.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the promise more specific about an everyday money decision. For borrowing, emphasize comparing total costs and checking whether repayments fit the budget rather than simply choosing the cheapest financing.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Italian, \"tu\" wherever the copy speaks to the visitor (never \"Lei\"), not translated from English\n      - The promise and the outcomes start with the infinitive (\"Leggere la busta paga…\", \"Scegliere…\"), never an imperative (\"Leggi…\", \"Risparmia…\")\n      - Names the main areas of personal finance in plain words (budget, risparmio, prestiti e rate, tasse, investimenti e pensione) with Italian examples such as the busta paga, the TFR, the 730, a conto corrente, a fondo pensione or acquisti a rate; amounts, if any, in euro written the Italian way (1.000 €). Penalize dollars, credit scores, 401(k) or other US defaults\n      - Regulated field: frames the course as understanding everyday money decisions and knowing when to ask a consulente finanziario, a commercialista or a CAF; never recommends specific investments or products and never promises returns or savings\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "economics",
+            "business"
+          ]
+        },
+        "id": "it-finanza-personale-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Lordo, netto, trattenute e TFR: dove vanno i soldi prima di arrivare sul conto.",
+              "level": "beginner",
+              "title": "Leggere la busta paga"
+            },
+            {
+              "description": "Dividere entrate e spese del mese e trovare dove si può risparmiare.",
+              "level": "beginner",
+              "title": "Un budget che regge"
+            },
+            {
+              "description": "Quanto mettere da parte per una caldaia da cambiare o una multa, e dove tenerlo.",
+              "level": "beginner",
+              "title": "Il fondo per gli imprevisti"
+            },
+            {
+              "description": "TAN, TAEG e interessi: cosa guardare prima di firmare un finanziamento.",
+              "level": "beginner",
+              "title": "Prestiti e acquisti a rate"
+            },
+            {
+              "description": "Detrazioni, scontrini parlanti e rimborsi: come funziona la dichiarazione dei redditi per chi ha una busta paga.",
+              "level": "beginner",
+              "title": "Tasse e 730"
+            }
+          ],
+          "courseTitle": "Finanza personale",
+          "language": "it"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names substantive nutrition content, and the outcomes span label reading, dietary balance, meal planning and salt reduction. This is specific to the course and presents its everyday-eating purpose. However, the nutritional-shortfall outcome is less clearly bounded than the others, and the requested Japanese food grounding remains generic.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The course is framed around everyday eating, without promises of weight loss, professional qualification, diagnosis or treatment. The health-check audience label does not itself imply medical practice. There are no inflated claims or claims about duration, price or access.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens directly with recognizable everyday abilities rather than a definition or course process. It and all four outcomes use plain potential forms, familiar vocabulary and no commands. The outcomes describe actions rather than topic lists. The promise combines two abilities but remains clear and natural.",
+          "score": 9,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three items are recognizable labels for distinct situations: an employee concerned about health-check results, a parent considering children's meals, and a health-conscious label reader. They are neither course-activity sentences nor generic 'anyone interested' labels.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The Japanese is natural, with です・ます in the description and suitable short phrases elsewhere. There is no stiff keigo, direct あなた address, banned educational phrasing, hype or punctuation at the ends of list items.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "3 of 4 parts passed. The description has 0 sentences; it needs 1 to 3.",
+          "score": 7.75,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3157,
+          "outputTokens": 1018,
+          "reasoningTokens": 420
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Japanese everyday-food grounding is thin: the copy mentions Japanese salt intake but gives no concrete examples such as みそ汁 or 定食, and uses the broader 食品表示 rather than 栄養成分表示. Also, 「食事で足りない栄養素を見つけられる」 leaves the basis and scope of identifying nutritional shortfalls unclear.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use 栄養成分表示 consistently and anchor one example in an everyday Japanese meal. Make the nutritional-shortfall outcome more bounded, such as identifying missing food groups in a day's meals.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Japanese: sentences in the description use です・ます without stiff keigo (no いただけます or ございます copy) and never address the visitor as あなた\n      - The promise and the outcomes read as abilities the learner will have, in plain form or ～できる (「栄養成分表示から食塩相当量を読み取れる」), never a command (「～しよう」「～してください」); list items don't end with 「。」\n      - Never uses 学ぶ, 学べる, 入門, 基礎から or 徹底ガイド\n      - Uses Japanese everyday food: コンビニ弁当, 定食, 給食, みそ汁, the 栄養成分表示 or the 食事バランスガイド. Penalize American defaults (MyPlate, the Nutrition Facts label, ounces, US portion sizes)\n      - Health: frames the course as understanding everyday eating; nothing implies it qualifies anyone as a 管理栄養士 or 栄養士, diagnoses, treats or plans diets for an illness, or promises weight loss; saying to ask a 医師 or 管理栄養士 about a specific condition is fine\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "health",
+            "science"
+          ]
+        },
+        "id": "ja-eiyogaku-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "炭水化物・たんぱく質・脂質が、体の中でそれぞれどんな働きをしているか。",
+              "level": "beginner",
+              "title": "三大栄養素"
+            },
+            {
+              "description": "少しの量で体の調子を整える栄養素と、日本人に不足しがちなもの。",
+              "level": "beginner",
+              "title": "ビタミンとミネラル"
+            },
+            {
+              "description": "パッケージの表示から、エネルギーや食塩相当量を読み取るコツ。",
+              "level": "beginner",
+              "title": "栄養成分表示を読む"
+            },
+            {
+              "description": "主食・主菜・副菜をそろえて、無理なくバランスをとる方法。",
+              "level": "beginner",
+              "title": "一日の食事の組み立て"
+            },
+            {
+              "description": "みそ汁や漬物、外食で塩分が多くなりやすい理由と、減らす工夫。",
+              "level": "beginner",
+              "title": "塩分と日本の食卓"
+            }
+          ],
+          "courseTitle": "栄養学",
+          "language": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names real historical periods and explicitly covers the entire exam through modern history. The outcomes are observable and course-specific, but their collective range remains concentrated on the earliest periods. The unrestricted final era-identification outcome does not adequately show progression through Joseon, the colonial period, and contemporary history.",
+          "score": 7,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There is no promise of passing, obtaining a grade or certificate, or receiving an employment benefit. The employment-related audience label describes a learner's motivation rather than a guaranteed result. No duration, pricing, access, or inflated mastery claims appear.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with a recognizable task on the exam's own questions: identifying an era from photographs and historical sources. The surrounding copy establishes exam preparation. The promise and every outcome end in an ability form, use accessible wording, and describe concrete actions rather than commands or abstract understanding.",
+          "score": 10,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The three short labels identify distinct groups: high-school candidates, workers needing a Korean-history qualification for employment, and people whose curiosity comes from historical dramas. They are recognizable roles or situations, not course-activity sentences or vague labels.",
+          "score": 10,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is natural Korean, and all description sentences use 해요체. There are no commands, stiff formal endings, hype, or prohibited learning-oriented stock phrases. A modest editorial improvement would be to replace the generic opening definition with a more direct statement of the course's exam coverage.",
+          "score": 9,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3071,
+          "outputTokens": 1217,
+          "reasoningTokens": 609
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outcomes do not demonstrate the whole course's range. Three focus on prehistory, the Three Kingdoms, and Unified Silla/Balhae; the fourth adds era identification without extending that range. Although the description correctly includes Joseon and modern history, the abilities list still reads mainly like a summary of the first chapter band.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Replace one early-period outcome with an observable ability involving later history, and consider adding chronological ordering to complement source-based era identification. The description could also open directly with the exam scope rather than a general definition of Korean history.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Korean: sentences in the description use 해요체, never 반말 or stiff 하십시오체 copy\n      - The promise and the outcomes read as abilities the learner will have, ending in ～할 수 있어요 or ～할 수 있다 (～하기 also fits a list item), never a command (～하세요, ～해 보세요, ～하자)\n      - Exam preparation: the promise opens with what the candidate will do on the 한국사능력검정시험's own questions (사료나 사진 자료를 보고 시대와 사건 찾기, 사건을 시대 순서로 놓기), framed as preparation. Never promises a 급수, 합격 or a 공무원 시험 benefit\n      - CHAPTERS are only the first band (선사 시대 to 고려): the copy covers the whole exam, from 선사 시대 through 조선, 근대, 일제 강점기 and 현대사\n      - Categories don't matter for exam courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-hanguksa-exam-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "유물로 구석기·신석기·청동기 시대를 구분하는 법과 고조선의 건국, 8조법.",
+              "level": "beginner",
+              "title": "선사 시대와 고조선"
+            },
+            {
+              "description": "고구려·백제·신라가 차례로 전성기를 맞은 과정과 각 나라를 대표하는 왕.",
+              "level": "beginner",
+              "title": "삼국의 성장과 경쟁"
+            },
+            {
+              "description": "통일 신라와 발해의 정치, 그리고 시험에 자주 나오는 문화유산.",
+              "level": "beginner",
+              "title": "남북국 시대"
+            },
+            {
+              "description": "후삼국 통일부터 거란·몽골과의 전쟁까지 고려사의 큰 흐름.",
+              "level": "beginner",
+              "title": "고려의 정치와 대외 관계"
+            },
+            {
+              "description": "사료와 사진 자료를 보고 어느 시대 이야기인지 찾아내는 방법.",
+              "level": "beginner",
+              "title": "자료 보고 시대 찾기"
+            }
+          ],
+          "courseTitle": "한국사능력검정시험",
+          "language": "ko"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description names relevant subject matter, and all four outcomes are observable German-language abilities grounded in the supplied chapters. However, the outcomes remain entirely within those initial chapters, and the promise likewise covers only café and train transactions. The whole-course progression is asserted as “ileri seviyeye kadar” rather than demonstrated through broader abilities.",
+          "score": 7,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no promises of fluency, certification, employment, admission or other guaranteed results, and no duration, pricing or access claims. Advanced-level coverage is presented as course scope, not a guaranteed learner achievement; the supplied beginner band does not establish that this scope is false.",
+          "score": 10,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise immediately presents recognizable real-life actions in plain language. Every outcome is concrete and accessible to a beginner, with no unexplained terminology or abstract learning verbs. The promise and all outcomes end in Turkish infinitives rather than imperatives.",
+          "score": 10,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "Prospective movers and travelers are recognizable, distinct situations for using German. The beginner label is less useful: it identifies a starting level and desire to begin rather than a real communication context. The items otherwise function as short labels rather than course-activity sentences.",
+          "score": 8,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is Turkish, uses no formal “siz” address, and avoids jargon and overt hype. However, “Sıfırdan Almanca başlamak isteyenler” is an unnatural construction, and the description reads somewhat like a textbook definition followed by a generic usefulness statement rather than natural course-page copy.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2911,
+          "outputTokens": 990,
+          "reasoningTokens": 331
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outcomes reproduce only the first beginner band: introductions, café transactions, appointments and station announcements. They do not show progression toward confident communication in broader study, work or personal situations. The description's claim of coverage through advanced levels does not make that wider course range concrete.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "“Sıfırdan Almanca başlamak isteyenler” is awkward Turkish; “Almancaya sıfırdan başlamak isteyenler” would be natural. The description also spends space defining German and stating its general usefulness rather than explaining what this particular course enables.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the generic beginner audience label with a recognizable communication situation, such as studying in a German-speaking country. Broaden the promise and later outcomes beyond beginner errands while retaining their concrete, verb-final phrasing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Turkish, \"sen\" wherever the copy speaks to the visitor (never \"siz\"); the course is German itself, for Turkish speakers\n      - The promise and the outcomes are verb-final phrases, as Turkish learning goals are written (\"Kafede Almanca sipariş vermek\", \"…sipariş verebilmek\"), never an imperative (\"Sipariş ver\", \"Konuş\")\n      - Focuses on communicating in real situations where German is spoken (travel, Erasmus or a university in Germany, Austria or Switzerland, work, friends and family there), from first conversations to confident use\n      - Never promises fluency, a Goethe-Zertifikat or TestDaF result, a visa or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "tr-almanca-language-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Adını, nereli olduğunu ve ne iş yaptığını söylemek.",
+              "level": "beginner",
+              "title": "Tanışma"
+            },
+            {
+              "description": "Sipariş vermek, fiyat sormak ve hesabı ödemek.",
+              "level": "beginner",
+              "title": "Kafede ve fırında"
+            },
+            {
+              "description": "Saati sormak, doktordan randevu almak ve bir buluşma ayarlamak.",
+              "level": "beginner",
+              "title": "Saatler ve randevular"
+            },
+            {
+              "description": "Bilet almak, doğru peronu bulmak ve gecikme anonslarını anlamak.",
+              "level": "beginner",
+              "title": "Tren istasyonunda"
+            }
+          ],
+          "courseTitle": "Almanca",
+          "language": "tr",
+          "targetLanguage": "de"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The description identifies relevant employment-law areas and extends beyond the supplied opening chapters to pay, employee protection and employer duties. The outcomes progress sensibly from contract distinctions to leave and termination. However, the final paperwork outcome is underspecified and does not distinguish receiving or checking a świadectwo pracy from preparing employer-issued documents. The contractor audience terminology also weakens subject accuracy.",
+          "score": 8,
+          "label": "Fit and specificity",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "There are no guarantees, inflated expertise claims, access claims or statements that the course qualifies someone to advise clients or represent them. Checking one's own employment situation is not itself a professional-practice claim, so the cap of 6 is not triggered. Nevertheless, the task explicitly requires knowing when to seek a lawyer or the PIP, and this safeguard is absent.",
+          "score": 8,
+          "label": "Honest claims",
+          "weight": 25
+        },
+        {
+          "categoryId": "promise",
+          "reasoning": "The promise opens with the concrete, imperfective infinitive “Sprawdzać” and uses familiar workplace language appropriate for beginners. The outcomes are mostly observable, readable actions without unfamiliar technical terms. However, “Przygotować” violates the required imperfective aspect, and “komplet dokumentów” makes the final ability less clear than the preceding outcomes. No technical-promise or imperative cap is triggered.",
+          "score": 8,
+          "label": "Plain, outcome-first promise",
+          "weight": 20
+        },
+        {
+          "categoryId": "audience",
+          "reasoning": "The first two items identify recognizable work situations, but “Ciekawi, jak działa prawo pracy” is a generic interest label rather than a distinct audience. “Pracownicy na umowie zleceniu” is also misleading terminology in a course teaching the difference between employment and civil-law contracts. Only one item is clearly vague, so the multiple-vague-item caps are not triggered.",
+          "score": 8,
+          "label": "Audience",
+          "weight": 10
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The copy is in Polish, uses informal singular address consistently and avoids hype or foreign legal defaults. Most phrasing is natural and accessible. However, “od podstaw” is a basics-style formulation covered by the prohibition on such wording, triggering the cap of 8. The description's wording that law specifies “chorobę” is also less natural and precise than referring to sickness absence or sick pay.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3063,
+          "outputTokens": 1605,
+          "reasoningTokens": 770
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The page omits the required guidance on when to ask a radca prawny, an adwokat or the PIP. It does not claim to qualify learners to practise law, but its promise of checking legal compliance needs that professional-help boundary. Calling people on an umowa zlecenie “pracownicy” also blurs the employee-versus-contractor distinction central to this course.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "“Przygotować” is perfective, contrary to the requirement that skill outcomes use imperfective infinitives; “Przygotowywać” would satisfy it. “Komplet dokumentów na koniec pracy” leaves the intended documents and learner responsibility unclear. The audience label “Ciekawi, jak działa prawo pracy” is broad rather than a distinctive role or situation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Name the Kodeks pracy and świadectwo pracy where useful to make the Polish legal setting more explicit. Present the broader coverage directly rather than as something “kolejne poziomy obejmą”, and replace the broad curiosity-based audience item with a distinct group such as kadry i płace or first-time employers.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Polish, \"ty\" wherever the copy speaks to the visitor (never \"Pan\", \"Pani\" or \"Państwo\")\n      - The promise and the outcomes start with the infinitive, imperfective for a skill (\"Liczyć…\", \"Rozpoznawać…\"), never an imperative (\"Policz…\", \"Sprawdź…\")\n      - Uses Polish labor law and work situations: the Kodeks pracy, umowa o pracę versus umowa zlecenie, urlop, L4, the świadectwo pracy, the PIP. Penalize US at-will employment, dollars or Brazilian defaults (CLT, FGTS)\n      - Regulated profession: frames the course as understanding one's rights and duties at work and knowing when to ask a radca prawny, an adwokat or the PIP; nothing says or implies giving legal advice, representing anyone in court or replacing a lawyer or law school\n      - Audience examples like people on their first job, small business owners hiring their first employee, HR and payroll staff (kadry i płace) or law students fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "law"
+          ]
+        },
+        "id": "pl-prawo-pracy-beginner-1",
+        "userInput": {
+          "chapters": [
+            {
+              "description": "Czym się różnią umowa o pracę, umowa zlecenie i umowa o dzieło i co z tego wynika dla pracownika.",
+              "level": "beginner",
+              "title": "Umowa o pracę czy zlecenie?"
+            },
+            {
+              "description": "Ile wolno pracować w tygodniu i kiedy należy się dodatek za nadgodziny.",
+              "level": "beginner",
+              "title": "Czas pracy i nadgodziny"
+            },
+            {
+              "description": "Ile dni urlopu przysługuje pracownikowi, jak je liczyć i ile wynosi wynagrodzenie za czas choroby.",
+              "level": "beginner",
+              "title": "Urlop i L4"
+            },
+            {
+              "description": "Okresy wypowiedzenia, rozwiązanie umowy za porozumieniem stron i dokumenty na koniec pracy.",
+              "level": "beginner",
+              "title": "Wypowiedzenie i świadectwo pracy"
+            }
+          ],
+          "courseTitle": "Prawo pracy",
+          "language": "pl"
+        }
+      }
+    }
+  ],
+  "taskId": "course-details"
+}

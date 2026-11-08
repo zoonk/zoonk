@@ -3,36 +3,146 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "options": 5 },
+        "expected": {
+          "options": 5
+        },
         "id": "pt-enem-1",
-        "userInput": { "board": "Inep", "exam": "Enem", "today": "2026-10-07" }
+        "userInput": {
+          "board": "Inep",
+          "exam": "Enem",
+          "today": "2026-10-07"
+        }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "options": 4 },
+        "expected": {
+          "options": 4
+        },
+        "id": "pt-oab-1a-fase-1",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "options": 5
+        },
+        "id": "pt-fuvest-1a-fase-1",
+        "userInput": {
+          "board": "Fuvest",
+          "exam": "Fuvest, 1ª fase",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "options": 4
+        },
         "id": "en-sat-1",
-        "userInput": { "board": "College Board", "exam": "SAT", "today": "2026-10-07" }
+        "userInput": {
+          "board": "College Board",
+          "exam": "SAT",
+          "today": "2026-10-07"
+        }
       }
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "options": 5 },
+        "expected": {
+          "options": 5
+        },
         "id": "en-sqe1-1",
         "userInput": {
           "board": "SRA",

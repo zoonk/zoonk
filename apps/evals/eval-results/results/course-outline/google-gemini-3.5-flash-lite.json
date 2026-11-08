@@ -1,0 +1,2374 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four required keys appear on chapters, but the chapter tagged quantum-probabilities teaches calculating outcome chances rather than explaining why the outcomes cannot be understood as merely unknown fixed values. The hidden-instructions discussion occurs in another chapter without that key and is scientifically overstated. This leaves one required skill without adequate instruction on its tagged chapter, triggering the maximum of 8. Quantum states, no-signaling, and Bell tests otherwise have identifiable instructional coverage.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The progression from wave behavior and quantization to states and probabilities, then Bell tests and signaling limits, and finally applications is coherent. Lessons generally build on preceding content or the explicitly supplied prior learning. No concrete prerequisite-order failure is evident.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Lessons mostly contain one idea with one or two closely related action skills, observable verb-first can-do lines, and appropriate three-to-four-minute estimates. However, several titles are noncanonical or theatrical, and every chapter is shorter than the usual chapter range. These reduce navigability and chapter development without making lesson size consistently unsuitable.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Two entire lessons repeat skills explicitly taught elsewhere: describing measurement-induced state changes and describing entanglement. These are substantive duplication rather than necessary new instruction, triggering the cap of 8 for two filler lessons. The rest largely addresses substantive concepts rather than overviews or recaps.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The result uses US English, has four big-idea chapters, and contains no formulas, equations, code, or mathematical notation. Most content fits an adult overview. However, the probability lesson centers on calculation and precise mathematical chances rather than the requested conceptual explanation, constituting one level mismatch and triggering the cap of 8.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The outline emphasizes explanation, comparison, interpreting experiments, and evaluating claims rather than memorization or lengthy manual procedures. A conceptual quantum-physics overview does not need dedicated work-with-AI lessons, and its single simple calculation task does not amount to rote procedural dominance.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3754,
+          "outputTokens": 1415,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outline explicitly reteaches two prohibited skills: measurement-induced changes in “The collapse of possibilities” and entanglement in “Spooky connections at a distance.” It also names chapters after measurement and entanglement, directly violating the exclusions. Several explanations undermine scientific accuracy: Bell tests exclude local hidden-variable explanations under their assumptions, not all hidden variables or all preexisting properties; double-slit interference does not establish a literal trajectory through both slits; and collapse is presented as an interpretation-independent physical fact. The required explanation of quantum probabilities is replaced largely by calculating chances.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several titles favor theatrical language over searchable concepts, notably “Spooky connections at a distance” and “Tunneling through solid walls.” All chapters contain only three lessons, below the usual four-to-twelve range, although individual lesson durations are appropriate. The technology descriptions also overgeneralize: qubits do not simply deliver computational advantages by processing all possibilities simultaneously, and quantum sensors are not universally the most accurate measuring tools.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make quantum states explicitly connect possible outcomes with their chances, and replace probability calculation with a plain-language explanatory or prediction-checking task. Use the space freed by removing repeated material to distinguish local hidden instructions from the broader interpretations Bell tests leave open. For no-signaling, emphasize that learners cannot control individual outcomes and must compare records through ordinary communication to reveal correlations.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Overview for a curious adult, in plain words with no formulas, covering the required skills\n      - The learners already learn the TAUGHT_ELSEWHERE skills (the uncertainty principle, how measuring changes a quantum system, describing entanglement) in lessons from another course: no lesson teaches them again, even under another name (no \"Quantum measurement\" or \"What entanglement is\" lesson), and no chapter is named after them\n      - A chapter next to those topics covers only what's still missing (such as Bell tests or why entanglement can't send messages)\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-quantum-overview-taught-elsewhere-1",
+        "userInput": {
+          "courseTitle": "Quantum physics",
+          "language": "en",
+          "level": "overview",
+          "requiredSkills": [
+            {
+              "description": "Describe a quantum state as the full list of possible outcomes and their chances.",
+              "key": "quantum-states",
+              "name": "Describe quantum states"
+            },
+            {
+              "description": "Explain why quantum outcomes are chances, not hidden fixed values.",
+              "key": "quantum-probabilities",
+              "name": "Explain quantum probabilities"
+            },
+            {
+              "description": "Explain why entangled particles can't be used to send a message faster than light.",
+              "key": "no-signaling",
+              "name": "Distinguish entanglement from instant messaging"
+            },
+            {
+              "description": "Say what Bell tests check and what their results showed.",
+              "key": "bell-tests",
+              "name": "Interpret the purpose of Bell tests"
+            }
+          ],
+          "taughtElsewhere": [
+            "Explain the uncertainty principle",
+            "Explain how measuring changes a quantum system",
+            "Describe entanglement"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All requested pillars are explicitly represented: quantization, wave-particle duality, uncertainty, superposition, measurement, atoms and chemistry, entanglement, and modern applications. No required skill list was supplied, and uncoveredSkillKeys is empty. The factual problems are identified separately rather than treated as absent topics.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence builds coherently from light and matter waves to superposition and measurement, atomic structure, entanglement, and applications. Atomic transitions precede lasers, and superposition and entanglement precede quantum computing. No clear prerequisite-order violation triggers a cap.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Lessons are consistently estimated at three minutes and generally contain one idea and one action-based skill. However, noncanonical titles recur across chapters, the first lesson's scope does not support its can-do line, and the outline largely offers textbook topic capsules rather than the requested short stories. Some recognition outcomes also lack a concrete demonstration task.",
+          "score": 7,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no overview, recap, motivational, historical warm-up, or other filler chapters. The two photon lessons have distinguishable intended outcomes—duality and energy-frequency relationships—even though their descriptions need clearer differentiation. No definite filler cap is triggered.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The five chapters satisfy the overview chapter limit. The text uses US English, contains no formulas, equations, code, or notation in learner-facing fields, and presents foundational and advanced topics at a broadly accessible conceptual level. It is not personalized to an individual learner.",
+          "score": 10,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The band emphasizes explaining mechanisms, interpreting probabilities, and comparing concepts rather than memorizing notation or performing lengthy manual procedures. This conceptual physics overview does not require AI-tool lessons, so their absence does not trigger a cap.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3881,
+          "outputTokens": 1612,
+          "reasoningTokens": 723
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several factual claims materially undermine trust. Entanglement is described as an action on one particle instantly affecting another; the later no-signaling lesson does not repair that misleading causal framing. Bell tests rule out local hidden-variable explanations under their assumptions, not all hidden instructions. Environmental interaction is presented as definitively selecting one reality, conflating decoherence with resolution of the measurement problem. Quantum cryptography is incorrectly called unhackable, with intrusion supposedly revealed instantly; its security depends on protocols, statistical checks, and implementation assumptions. The exclusion-principle description also misstates the rule: identical fermions cannot occupy the same quantum state; quantum states themselves are not the objects being excluded.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Many lesson titles are not canonical or readily searchable, including 'Spooky links across space,' 'Testing reality,' and 'The rule against crowding.' The first lesson promises an explanation of wave-particle duality, but its description covers only light's discrete energy packets. The laser description emphasizes simultaneous emission rather than stimulated emission and coherence. The qubit description risks suggesting that quantum computing simply tries many calculation paths at once, without explaining the role of interference.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Turn the largely textbook-style topic sequence into short, concrete stories while retaining searchable titles: use an observed interference pattern, an atom's distinctive light, or a realistic quantum-key-distribution scenario to anchor each idea. Replace 'Recognize' and 'Identify where intuition fails' outcomes with specific explanations or comparisons learners can demonstrate. Make the distinction between the first light lesson and the later photon-energy lesson explicit.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Overview for a curious adult: 3 to 6 chapters, plain words, no formulas, equations or notation\n      - Big ideas, judged by category rather than by any one example: the quantum foundations (quantization, wave-particle duality, uncertainty, superposition and measurement), what quantum physics says about atoms and matter, entanglement, and at least one modern application of quantum effects (a technology people use, or quantum computing)\n      - Lessons are short stories about one idea each, not a textbook sequence\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-quantum-physics-overview-1",
+        "userInput": {
+          "courseTitle": "Quantum physics",
+          "language": "en",
+          "level": "overview"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Scarcity, choices, incentives, markets, trade and some behavioral decision-making are covered. However, the real-economy macroeconomic area—output, growth and unemployment—is absent, triggering the whole-area cap of 6. Commercial banking is also missing, and public finances are only partially addressed. No required skill list was supplied, so empty skillKeys alone are not a coverage failure.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "Choices precede markets, market failures follow markets, and international trade builds on earlier exchange concepts. However, the monetary chapter starts with inflation and interest-rate policy before establishing money and credit, and financial contagion appears without a banking foundation. These prerequisite weaknesses across several lessons warrant the cap of 8.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Every chapter has four lessons, estimates are three or four minutes, and most lessons have one action-based skill and a focused scope. Weaknesses include several metaphorical rather than canonical titles, one unobservable can-do, misalignment within the supply lesson, and an umbrella lesson combining financial contagion with supply-chain and capital-market integration.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The lessons teach substantive economic concepts rather than introductions, recaps, study advice or course navigation. Domestic voluntary exchange and international comparative advantage have distinct scopes, so their relationship does not constitute duplication.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The outline has five chapters, uses Brazilian Portuguese, and presents both foundational and more advanced ideas at a conceptual overview level. There are no formulas, equations, code or mathematical notation in the learner-facing fields.",
+          "score": 10,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The course emphasizes explaining mechanisms, interpreting effects and evaluating trade-offs rather than rote procedures. Nevertheless, economic analysis is affected by AI, and there is no lesson involving framing an AI task, reviewing its output or detecting its mistakes. The no-work-with-AI cap of 8 applies.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4463,
+          "outputTokens": 1126,
+          "reasoningTokens": 294
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Core coverage is incomplete: output, economic growth and unemployment are not taught, and central banks do not substitute for explaining commercial banks and financial intermediation. Public finances receive only limited treatment through taxes and a reference to fiscal discipline. Several explanations also overgeneralize: public goods do not necessarily require state provision, streets are not invariably non-excludable, and the inflation lesson presents monetary expansion as the origin without acknowledging other causes.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several titles favor metaphors over searchable concepts, such as “O ponto de encontro entre oferta e demanda” and “A engrenagem da economia globalizada.” The price-control can-do begins with the unobservable “Compreender.” The supply lesson's can-do concerns ease of production, while its description and skill concern responses to selling prices. The final lesson bundles financial contagion, supply chains and capital flows into four minutes.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Rebalance the existing five chapters to include the missing foundations. Introduce money, banking and credit before monetary-policy transmission and financial contagion. Use conditional language for economic mechanisms, align each lesson's scope with its can-do, and include a short activity checking an AI-generated economic explanation for unsupported causal claims.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview: 3 to 6 chapters of big ideas in plain words, no formulas or equations\n      - Big ideas, judged by category rather than by any one example: scarcity and choices; markets and prices; the financial system (money, banks and credit); core ideas of macroeconomics such as output, growth, inflation, unemployment and public finances; trade with other countries; and how people actually decide. Brazilian examples are welcome\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-economia-overview-1",
+        "userInput": {
+          "courseTitle": "Economia",
+          "language": "pt",
+          "level": "overview"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Motion, force diagrams, friction, energy, momentum, rotation, and oscillations receive substantive coverage, and every required skill key is tagged on a relevant chapter. However, circular-motion dynamics are absent, and near-Earth gravity does not substitute for universal gravitation and orbits. The omission of the entire gravity-and-orbits area triggers the cap of 6. Newton's first law is also not explicitly taught.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The overall progression is coherent: kinematics precedes forces, forces precede energy and momentum, and rotation and oscillations follow their main prerequisites. Vector components precede projectiles and inclined-plane problems, and rotational inertia precedes rotational dynamics. No clearly misplaced central chapter or pattern of lessons requiring later instruction is evident.",
+          "score": 9,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters contain four to eight lessons, all estimated at three to five minutes. Titles are generally searchable, descriptions identify scope, and can-do lines and skills use action verbs. Nevertheless, several scopes are overly broad for beginners at those durations, especially constant-and-variable-force work, elastic-and-inelastic collision solving, and graphical-and-numerical vector arithmetic. The several-umbrella-lessons cap of 8 applies. A few titles also name material absent from their descriptions and outcomes.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The lessons teach substantive mechanics rather than orientation, motivation, review, or study advice. Reusing conservation of energy in oscillations is a distinct application, not redundant filler. No concrete filler or duplicative lesson is evident.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text uses US English and largely accessible explanations for standard introductory mechanics. Technical vocabulary is appropriate to the concepts being taught. No Lagrangian or Hamiltonian mechanics or explicitly excessive calculus-based derivations appear. The six-chapter count is not a restriction for this beginner band.",
+          "score": 9,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Graph interpretation, free-body diagrams, conservation principles, and conceptual distinctions support durable understanding. However, outcomes lean heavily toward calculating quantities, with little explicit estimation, model selection, assumption checking, or verification of results. Manual procedures are not sufficiently specified to establish that rote work dominates. Foundational mechanics does not require a dedicated AI lesson merely to satisfy this category.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5351,
+          "outputTokens": 1174,
+          "reasoningTokens": 295
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The band omits circular-motion dynamics and the gravity-and-orbits area: angular variables and near-Earth free fall do not teach centripetal acceleration, centripetal force, universal gravitation, or orbital motion. Newton's first law and inertia also lack explicit instruction. All five required skill keys are appropriately tagged, but those tags do not remedy the missing foundations.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several lessons promise more than their short duration supports, particularly calculating work for both constant and variable forces in four minutes and solving both elastic and inelastic collisions in five minutes. Some titles overpromise their stated scope: 'Rolling motion and angular momentum' has no angular-momentum outcome, and 'Torque and rotational statics' does not specify rotational equilibrium. The pendulum lesson should state the small-angle condition for its standard period model.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add observable outcomes for choosing a system, checking when conservation laws apply, estimating answers, and checking units or limiting cases. Explicitly introduce the spring force law before spring-energy calculations, and narrow broad calculation lessons to a clearly bounded beginner example.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Beginner band of classical mechanics: describing motion (position, velocity, acceleration, vectors), Newton's laws and free-body diagrams, friction, circular motion, work and energy and its conservation, momentum and collisions, rotation and torque, gravity and orbits, oscillations and simple harmonic motion\n      - Every required skill key must be tagged on the chapter that teaches it: describe-motion, newtons-laws, energy-conservation, momentum, simple-harmonic-motion\n      - Calculus-based derivations can appear only as far as a beginner band needs; Lagrangian and Hamiltonian mechanics belong to later bands\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-classical-mechanics-beginner-required-1",
+        "userInput": {
+          "courseTitle": "Classical mechanics",
+          "language": "en",
+          "level": "beginner",
+          "requiredSkills": [
+            {
+              "description": "Use position, velocity and acceleration to describe how things move.",
+              "key": "describe-motion",
+              "name": "Describe motion with vectors"
+            },
+            {
+              "description": "Predict motion from the forces acting on an object.",
+              "key": "newtons-laws",
+              "name": "Apply Newton's laws"
+            },
+            {
+              "description": "Track kinetic and potential energy as an object moves.",
+              "key": "energy-conservation",
+              "name": "Use conservation of energy"
+            },
+            {
+              "description": "Use momentum to predict what happens in collisions.",
+              "key": "momentum",
+              "name": "Solve collisions with momentum"
+            },
+            {
+              "description": "Describe springs and pendulums with periodic motion.",
+              "key": "simple-harmonic-motion",
+              "name": "Model simple harmonic motion"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Variable types, frequency tables, charts, central tendency, spread, probability, distributions, and introductory inference are present. However, the entire sampling-and-bias area and the relationships-between-variables area are absent, including correlation versus causation. Positional measures beyond central tendency are also absent. Lessons do not explicitly establish hands-on spreadsheet work with real data. Missing whole areas triggers the maximum score of 6; the breadth of omissions warrants 5. No required skill-key list was supplied, so empty chapter tags are not independently penalized.",
+          "score": 5,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The progression from data organization through charts, summaries, probability, and inference is mostly coherent. However, 'Distribuição normal' explicitly requires standardized scores before 'Escore Z e padronização' teaches them. Inference also begins with calculating confidence intervals without a preceding foundation in sampling and sample-to-sample variability. These prerequisite gaps limit the score to 8.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Titles are generally searchable, descriptions identify scope, can-do lines begin with observable action verbs, and skills are expressed as actions. Most lessons have a focused shape. Several are nevertheless compressed: simple and weighted means share three minutes, normal probabilities introduce the distribution while using standardization, and confidence-interval calculation receives four minutes without supporting lessons on its ingredients. These oversized instructional promises trigger the cap of 8. The two three-lesson chapters are not inherently failures because the chapter-size guidance is qualified.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no recap, career, study-tip, or clearly duplicative lessons. However, 'Introdução à probabilidade' uses the explicitly discouraged introduction-style chapter framing, limiting this category to 8. Its actual lessons teach substantive probability skills, so the issue is localized rather than a broader filler pattern.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The learner-facing content is in Brazilian Portuguese, and the outline avoids the explicitly out-of-band collection of separate hypothesis-test procedures. Most topics are appropriate for beginners. The inference chapter nevertheless asks learners to calculate confidence intervals rather than providing a well-grounded first look, and some explanations rely on unexplained technical language such as Bernoulli trials and quadratic dispersion. This creates a localized beginner-accessibility mismatch.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "There are useful judgment-oriented lessons on choosing central measures, interpreting trends, and interpreting p-values. However, no lesson involves working with AI or checking AI-generated analyses and charts, triggering the explicit cap of 8. The calculation-heavy emphasis also leaves limited room for framing questions, checking assumptions, or validating outputs, although long rote manual procedures are not sufficiently explicit to trigger the separate cap of 7.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4991,
+          "outputTokens": 1315,
+          "reasoningTokens": 364
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The band omits sampling and bias, relationships between variables including correlation versus causation, and positional measures such as quartiles and percentiles. No lesson explicitly provides practical spreadsheet work with real data or checks AI-generated analyses and charts. These omissions materially weaken the required beginner curriculum. The normal-distribution lesson also requires standardized scores before the lesson that teaches them.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some lessons promise too much for their allotted time, particularly calculating normal probabilities and confidence intervals without establishing the necessary concepts. The standard-deviation description risks confusing it with mean absolute deviation, while the confidence-interval description needs more careful uncertainty language. The chapter title 'Introdução à probabilidade' uses the introductory framing discouraged by the rubric.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a small real dataset throughout the band, with explicit spreadsheet activities and interpretation checks. Prioritize choosing and interpreting statistical summaries over accumulating calculation procedures. Teach standardization before normal-probability calculations, and make inference an accessible first encounter with estimation, uncertainty, and evidence.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of statistics, judged by category rather than by any one example: describing data (types of variables, tables and charts, center, spread and position), probability and distributions at a beginner level, sampling and bias, relationships between variables (correlation is not causation), and a first look at inference (estimation and hypothesis testing)\n      - Level fit: inference stays at a beginner's first look; several separate test procedures (t tests for different designs, ANOVA, chi-square) go past the band and are a level-fit error\n      - Practical work with spreadsheets and real data should appear, and a field AI is changing should include checking analyses and charts made with AI tools\n      - Formulas may appear where the idea needs them, explained in everyday words\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "planilha|excel|sheets|calc"
+        },
+        "id": "pt-estatistica-beginner-1",
+        "userInput": {
+          "courseTitle": "Estatística",
+          "language": "pt",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Research, problem framing, information architecture, visual design, prototyping, and testing are present. However, the whole product-team collaboration area is absent, triggering the maximum score of 6 for a missing area. Interaction design is underdeveloped beyond navigation and component appearance. No REQUIRED_SKILLS list was supplied, so empty chapter skillKeys do not independently establish missing required skills.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence builds coherently from research to framing, ideas and structure, low-fidelity prototypes, and testing. Lessons generally follow their prerequisites. Teaching detailed visual design after testing low-fidelity prototypes is defensible and does not itself constitute a misplaced central chapter.",
+          "score": 9,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Titles are mostly searchable, descriptions identify concrete scope, can-do lines begin with action verbs, and skills generally name actions. However, scope-to-outcome mismatches recur across chapters: question-writing instruction promises interview conduction, a four-minute architecture lesson promises organizing an application or site, and a narrow accessibility lesson promises accessible interactive elements generally. This recurring umbrella-outcome pattern warrants the maximum of 7. Five three-lesson chapters also fall below the usual chapter size.",
+          "score": 7,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most lessons teach distinct practical moves, with no overview, career, recap, or duplicated distinction lessons. 'Introdução a design systems' uses an explicitly discouraged introductory framing, although its component-creation description is substantive. The issue is localized rather than a pattern of filler.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text is Brazilian Portuguese and generally approachable for beginners. Descriptions explain concrete activities without assuming an earlier UX band, and common industry terms are usually accompanied by plain-language explanations. The outline is shared rather than personalized. The six-chapter count does not invoke the overview-specific restriction because this is a beginner band.",
+          "score": 9,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The band emphasizes durable skills such as gathering evidence, framing problems, prioritizing, and evaluating usability. An explicit AI lesson teaches directing tools to generate drafts, so the no-AI-lesson cap does not apply. However, reviewing AI output is merely listed as a skill: the description and can-do line do not establish how learners will detect mistakes or judge suggestions against evidence.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4497,
+          "outputTokens": 1518,
+          "reasoningTokens": 640
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The band omits working with a product team entirely: no lesson teaches collaboration with product managers and developers, feasibility discussions, or communicating design decisions. Interaction design is also inadequately covered: connecting screens and styling components do not teach interaction states, feedback, or error recovery.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several short lessons promise broader abilities than their scope supports, especially organizing an entire application's information architecture and conducting an interview when only question formulation is taught. Five chapters contain only three lessons, below the usual four-to-twelve range. 'Formulaçã de declarações de problema' contains a typo, and the typography lesson does not explicitly teach typography in its description or skills. Requiring usability testing 'em silêncio' is overly absolute; neutral clarification can be appropriate without coaching participants.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the AI lesson explicitly teach checking generated layouts and content against user evidence, accessibility, and invented assumptions; reviewing output currently appears only as a skill label. Add basic participant selection and consent to research instruction. Replace 'Introdução a design systems' with an action-focused title matching its practical component-creation scope.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of UX design for career changers: research, problem framing, information architecture, interaction, visual design, prototyping, testing and the work with a product team\n      - No two lessons of a chapter teach the same distinction: \"a need is not a product goal\", \"a goal is not a solution\" and \"a solution is not a result\" belong in one lesson; \"a symptom is not a problem\" and \"a symptom is not its cause\" too. Each lesson has its own move: a new idea, a procedure, a harder case or applying earlier ideas together\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "figma|figjam|penpot"
+        },
+        "id": "pt-ux-beginner-distinct-lessons-1",
+        "userInput": {
+          "courseTitle": "Design de UX",
+          "language": "pt",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Variables, types, conditionals, loops, functions, collections, modules, files, and exceptions are covered. However, entire required areas—virtual environments, basic testing, and a small real program—are absent, triggering the at-most-6 cap. Packages are not actually taught by the module lessons, and strings receive only superficial treatment. No required skill list was supplied, so empty skillKeys are not independently a failure.",
+          "score": 5,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The overall progression from data to control flow, collections, functions, and files is workable. Several lesson-level prerequisites are weak: user-input conversion precedes input instruction, collection-based for loops precede collection instruction, and importing learners' own modules precedes organizing code into files. These localized ordering issues warrant the at-most-8 cap, but do not make the entire band unstudyable.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters consistently contain five lessons, estimated at three or four minutes, with mostly focused scopes, verb-first observable can-do lines, and action-based skills. The debugging lesson is too broad for three minutes because it promises detecting and correcting both syntax and logic errors. A few titles, especially 'Control avanzado de bucles', obscure the specific mechanism learners would search for.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "All lessons teach identifiable programming actions. 'Primeros pasos en la consola interactiva' is an actual execution-and-calculation lesson rather than an orientation. There are no filler chapters, recaps, motivational lessons, or substantial duplicates.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The content is generally appropriate for beginners and uses Spanish compatible with Mexico, including 'archivos', without Spain-specific vocabulary. It is shared-course content rather than personalized instruction. Some phrasing is unnecessarily technical for learners starting from zero, such as 'encapsular' and 'fugas de recursos del sistema', and the initial console lesson assumes access to a working Python session without teaching how to reach it.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "There are no work-with-AI lessons, triggering the at-most-8 cap. The outline never teaches task specification for an assistant, generated-code review, or finding an AI-generated bug. Clear variable names, modular functions, and a debugging lesson provide some durable skills, but checking results and explaining reasoning receive little explicit attention. The foundational syntax lessons do not by themselves establish rote memorization.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4887,
+          "outputTokens": 1281,
+          "reasoningTokens": 400
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The band omits virtual environments, basic testing, package installation/use, and a small real program. Strings receive type recognition and conversion but no meaningful text-processing instruction. There are also no lessons on describing tasks to AI, reviewing generated code, or finding bugs in AI output, despite the explicit requirement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some prerequisites are weakly ordered: conversion uses user-entered text before input is taught, and for loops operate on collections before their introduction. The three-minute debugging lesson bundles syntax and logic errors while describing only error messages, which do not generally reveal logic errors. The tuple lesson misleadingly describes immutable values rather than an immutable collection structure.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a clear path from opening Python to saving and running a script. Make the debugging outcomes more concrete by separating traceback interpretation from checking incorrect results. Use more searchable titles such as 'Control de bucles con break y continue' instead of 'Control avanzado de bucles'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish as written in Mexico (not Spain Spanish), for example \"computadora\" and \"archivo\", never \"ordenador\" or \"fichero\"\n      - Beginner band of Python programming: running Python and the tools to write it, variables and types, strings, conditionals, loops, functions, lists, dictionaries and other collections, reading and writing files, errors and exceptions, modules and packages, virtual environments, basic testing, and a small real program\n      - Programming is a field AI is changing: lessons must include working with AI assistants (describing a task, reading and reviewing generated code, finding the bug in AI code) and favor concepts and debugging over memorizing syntax\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "python"
+        },
+        "id": "es-python-beginner-1",
+        "userInput": {
+          "courseTitle": "Programación en Python",
+          "language": "es",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "There is exactly one chapter with eight lessons, but its skillKeys is empty and uncoveredSkillKeys explicitly contains the required key. The missing-skill cap therefore applies. Coverage also substantially misses the requested interview continuation: motivation for the job and questions for the interviewer are absent, while strengths and problem-solving are displaced by advanced technical qualifications and corporate crises.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "No clear internal prerequisite inversion is evident. Present perfect is introduced before subsequent professional narratives, and the final writing task follows the professional topics it draws upon. The existing chapter supplies simple-past experience narration. The major problems concern scope and level rather than demonstrably teaching prerequisites after their use.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "All lessons have titles, descriptions, action-first can-do lines, durations and action-based skills. However, several three-minute lessons are umbrellas: leadership combines coordination, delegation and performance monitoring; career transitions combines development goals and changing fields; the final lesson promises a complete market-aligned qualifications summary. The cap of 8 for several umbrella lessons applies.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The career-history lesson substantially revisits narrating prior employment, and the certifications lesson revisits the existing education and professional-training scope. The final profiles-and-CVs lesson shifts into job-search summary production rather than extending interview exchanges. These are concrete duplication and filler concerns, triggering the cap for two or three problematic lessons; interview practice itself is not treated as filler.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text is in Brazilian Portuguese, but the chapter explicitly targets an advanced trajectory, complex multidisciplinary projects, technical qualifications, corporate crises and management methodologies. These are repeated mismatches for the requested A1–A2 continuation. The opening lesson is organized around present-perfect grammar and time markers rather than an interview situation, directly conflicting with the situation-based requirement. The cap for several level mismatches applies, and their pervasive nature warrants 6.",
+          "score": 6,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Spoken interview English does not require an AI-tool lesson under this rubric. Most proposed activities concern communicating experience, goals and decisions rather than lengthy manual procedures or rote syntax drills. The single grammar-focused lesson does not establish a pattern of rote procedures dominating the chapter.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3200,
+          "outputTokens": 1330,
+          "reasoningTokens": 470
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The chapter does not deliver the requested beginner interview continuation. It omits the required chapter tag and explicitly lists 'descrever-experiencia' as uncovered. Most lessons instead target advanced corporate communication, including complex projects, crises and leadership. It also starts with a grammar-focused lesson, repeats existing professional-history and qualifications content, and omits important interview situations such as explaining why the learner wants the job and asking the interviewer questions.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several lessons bundle substantial tasks into three minutes, particularly leadership, career transitions and producing a complete international qualifications summary. Although the can-do lines start with action verbs, their broad outcomes do not clearly delimit what a learner can accomplish in one short lesson.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use short, observable interview exchanges with sample A1–A2 English phrases. Give each lesson one bounded outcome, such as naming a strength with one example, explaining interest in a role, or asking one question about the team. Retain the single-chapter, eight-lesson structure and Brazilian Portuguese presentation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - This is a continuation, not a band: the course already teaches the EXTEND_SKILLS skill in the listed chapter, and the answer must be exactly one new chapter for it, tagged with its key, with about 8 lessons. Judge coverage, order and level fit on that one chapter, not on a whole band\n      - The new chapter continues where the listed lessons stop, at a beginner (A1 to A2) English level, for Portuguese speakers: new interview situations and language (such as talking about strengths, a problem solved at work, why they want the job, questions to ask the interviewer), repeating none of the listed lessons, even under another name\n      - Its title is its own scope in Brazilian Portuguese, never \"Candidaturas e entrevistas\" or a \"Parte 2\", \"Mais…\" or \"Avançado\" variant of it, and it doesn't repeat any title in OTHER_LEVEL_CHAPTERS\n      - Lessons stay situations with English the learner says or understands, not grammar lectures\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-ingles-beginner-extend-interview-1",
+        "userInput": {
+          "courseTitle": "Inglês",
+          "extendSkills": [
+            {
+              "chapters": [
+                {
+                  "lessons": [
+                    "Passado simples para experiência profissional",
+                    "Formação acadêmica e profissional",
+                    "Tarefas e responsabilidades anteriores",
+                    "Perguntas comportamentais de entrevista",
+                    "Marcadores de tempo na experiência profissional"
+                  ],
+                  "title": "Candidaturas e entrevistas"
+                }
+              ],
+              "description": "Falar sobre empregos anteriores, formação e responsabilidades em inglês.",
+              "key": "descrever-experiencia",
+              "lessons": 8,
+              "name": "Descrever experiência profissional"
+            }
+          ],
+          "language": "pt",
+          "level": "beginner",
+          "otherLevelChapters": [
+            "Primeiras conversas",
+            "Apresentações e dados pessoais",
+            "Candidaturas e entrevistas",
+            "Comunicação cotidiana no trabalho"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All required chapter-level skill tags are present and supported by relevant lessons. Fractions, decimals, percentages, proportions, graphs, central-tendency measures, plane geometry, and affine functions receive substantive coverage. However, whole-number foundations, powers and roots, algebraic expressions, linear equations, and explicit measurement-unit instruction are missing. These omissions span multiple foundational pillars and materially weaken a canonical beginner band.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "Much of the middle sequence is sensible, including fractions before percentages and graph reading before statistics. However, decimal algorithms appear before number and arithmetic foundations, area calculations assume measurement and squared-unit understanding, and affine functions assume algebra and coordinate plotting that are never established. This is a pattern of prerequisite gaps, triggering the cap of 7.",
+          "score": 7,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Every chapter has four lessons, and titles, descriptions, action-first can-do lines, and action-based skills are generally usable. Nevertheless, several lessons bundle too much for their allotted time: fraction addition/subtraction with both equal and unequal denominators, fraction multiplication/division, simple and weighted means, and multiple perimeter/area procedures. This pattern across chapters triggers the cap of 7. Some descriptions and skill lists also fail to reflect the full can-do scope.",
+          "score": 7,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The lessons teach substantive mathematical skills rather than course introductions, motivational material, recaps, exam tricks, or study advice. The statistics comparison lesson adds judgment rather than merely repeating calculations, and the function lessons distinguish identification, graphing, constructing a rule, and application.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The language is Brazilian Portuguese, examples are broadly applicable, and there is no learner-specific or ENEM-specific tailoring. No quadratic functions, trigonometry, or advanced analytic geometry are introduced; basic affine-function graphing belongs in the requested scope. However, the opening decimal algorithms and later unexplained algebraic and coordinate terminology assume prior knowledge incompatible with a from-zero learner. These repeated entry-level mismatches trigger the cap of 7.",
+          "score": 7,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Interpreting trends, choosing an appropriate statistical summary, and modeling costs support durable reasoning skills. However, many lessons emphasize executing calculations without explicit estimation or checking, and the data-analysis component includes no practice reviewing AI-generated analysis. The absence of work-with-AI practice in that component triggers the cap of 8; the meaningful interpretation lessons keep this from being a predominantly rote outline.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5893,
+          "outputTokens": 1276,
+          "reasoningTokens": 344
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outline omits substantial required foundations: whole-number arithmetic, powers and roots, algebraic expressions, linear equations, and explicit instruction in measurement and units. It begins with decimal algorithms and later introduces function coefficients, formulas, and Cartesian graphs without teaching their prerequisites. All six required skill keys are correctly attached to relevant chapters, but this does not compensate for the missing foundations of a from-zero course.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several lessons compress distinct procedures into short sessions, especially simple and weighted means in three minutes and perimeter plus area of rectangles and squares in three minutes. Some lesson metadata understates the promised scope: the fraction multiplication/division description mentions only multiplication, and the parallelogram/trapezoid lesson lists only calculating trapezoid area as a skill. The first chapter's title promises operations with real numbers, while its lessons principally teach decimal arithmetic.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add explicit estimation, reasonableness checks, and explanations of why procedures work. Proportional-reasoning lessons should include deciding whether direct or inverse proportionality actually applies. The data-analysis component could also include checking an AI-generated statistical summary for calculation or interpretation errors.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of a canonical mathematics course from zero, judged by category rather than by any one example: numbers and operations (whole numbers, fractions, decimals, powers and roots), proportional reasoning (ratio, proportion, percentages), first algebra (expressions, linear equations, first-degree functions), measurement and plane geometry, and reading data (charts, tables, basic statistics)\n      - Level fit: content past a from-zero beginner band (quadratic functions, trigonometry, analytic geometry) is a level-fit error\n      - Every required skill key must be tagged on the chapter that teaches it: porcentagem, razao-proporcao, leitura-graficos, estatistica-basica, geometria-plana, funcao-afim\n      - Shared by all learners: exam-specific tricks for ENEM don't belong in a canonical course outline\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-matematica-beginner-enem-skills-1",
+        "userInput": {
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "level": "beginner",
+          "requiredSkills": [
+            {
+              "description": "Calcular aumentos, descontos e partes de um todo.",
+              "key": "porcentagem",
+              "name": "Calcular porcentagens"
+            },
+            {
+              "description": "Comparar grandezas e resolver regras de três.",
+              "key": "razao-proporcao",
+              "name": "Resolver problemas de proporção"
+            },
+            {
+              "description": "Tirar conclusões de gráficos e tabelas.",
+              "key": "leitura-graficos",
+              "name": "Interpretar gráficos e tabelas"
+            },
+            {
+              "description": "Resumir dados com média, mediana e moda.",
+              "key": "estatistica-basica",
+              "name": "Calcular média, mediana e moda"
+            },
+            {
+              "description": "Calcular áreas e perímetros de figuras planas.",
+              "key": "geometria-plana",
+              "name": "Calcular áreas de figuras planas"
+            },
+            {
+              "description": "Modelar situações com funções do primeiro grau.",
+              "key": "funcao-afim",
+              "name": "Usar funções do primeiro grau"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All required keys are tagged on relevant chapters, and segmentation, clustering, overlap, and limitations receive some explicit coverage. However, acoustic and language models, word error rate, CTC, attention, transducers, and speaker embeddings are not named or otherwise concretely taught. These omissions span multiple mandatory pillars; broad references to architectures and model families do not establish coverage.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence progresses coherently from traditional ASR to end-to-end models, then diarization and multimodal audio models. Within chapters, mechanisms precede limitations or comparisons. No explicit prerequisite inversion is evident.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Durations fall within 2–5 minutes, titles are searchable, and skills and can-do lines generally begin with action verbs. Nevertheless, every chapter contains only two broad lessons. Covering the principal end-to-end families in four minutes and multimodal model functioning in another four-minute lesson leaves umbrella scopes rather than focused learning units. This pattern across chapters triggers the cap of 7.",
+          "score": 7,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The lessons address relevant architectures, mechanisms, comparisons, or limitations. There are no orientation, recap, career, or study-tip units, and no clearly duplicative lessons. Foundational titles alone do not make these substantive topics filler.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text is natural Brazilian Portuguese and remains conceptual rather than job-task-oriented. However, multiple chapters stay at a broad foundational overview instead of specifying intermediate mechanisms and distinctions. This repeated level mismatch warrants the cap of 7. The outline is shared rather than personalized.",
+          "score": 7,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The outline emphasizes understanding, comparison, limitations, and judgment rather than rote procedures. However, it includes no concrete lesson in reviewing AI-generated transcripts, checking speaker assignments, or finding errors in model outputs. General statements about evaluating capabilities do not establish work-with-AI instruction, so the cap of 8 applies. Such exercises could be completed on paper.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3541,
+          "outputTokens": 1060,
+          "reasoningTokens": 270
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outline tags all four required skills, but does not establish the required substantive coverage. Acoustic models, language models, word error rate, CTC, attention, transducers, and speaker embeddings are absent. Generic architecture and comparison lessons cannot substitute for these explicitly required mechanisms. Across chapters, two broad lessons provide insufficiently defined intermediate-level instruction.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several can-do lines lack a specific observable target, particularly evaluating model 'capacity and behavior' or identifying 'operational restrictions.' Diarization wording also risks conflating assigning speaker labels to time segments with separating voices into audio streams; that distinction should be explicit.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add short, focused lessons on the missing mechanisms, paper-based interpretation of word error rate, and evaluation of sample transcripts and speaker assignments. Use justified certo/errado judgments to make conceptual distinctions assessable without tools, while keeping the shared outline suitable for all learners.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate band of a shared speech recognition and transcription course; the learners who need the required skills prepare for a public-service exam answered on paper (certo/errado items), so WITHOUT_TOOLS is yes\n      - Every required skill is tagged on a chapter that teaches it the way such an exam asks it: how automatic speech recognition works and where it fails (acoustic and language models, word error rate), what end-to-end models change (CTC, attention, transducers), what multimodal audio LLMs do differently, how speaker diarization works (segmentation, speaker embeddings, clustering, overlap) and its limits, with no tools on those chapters\n      - The band may still have practice chapters with tools for other learners, but no required skill is tagged only on one, and none of the required skills is taught as a job task (choosing replay ranges, editing audio)\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-fala-intermediate-written-exam-1",
+        "userInput": {
+          "courseTitle": "Reconhecimento de Fala e Transcrição",
+          "language": "pt",
+          "level": "intermediate",
+          "requiredSkills": [
+            {
+              "description": "Explicar como um sistema de reconhecimento automático de fala converte áudio em texto e onde erra.",
+              "key": "asr",
+              "name": "Explicar o reconhecimento automático de fala"
+            },
+            {
+              "description": "Distinguir modelos de fala de ponta a ponta das arquiteturas em etapas.",
+              "key": "end-to-end",
+              "name": "Comparar modelos de fala end-to-end"
+            },
+            {
+              "description": "Avaliar o que LLMs multimodais de áudio nativo fazem e seus limites.",
+              "key": "multimodal",
+              "name": "Avaliar LLMs multimodais de áudio"
+            },
+            {
+              "description": "Explicar como a diarização identifica e separa falantes e onde falha.",
+              "key": "diarizacao",
+              "name": "Explicar a diarização de falantes"
+            }
+          ],
+          "withoutTools": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All three required keys are tagged on chapters that genuinely teach them, and the empty uncoveredSkillKeys is justified. Reporting verbs, endorsement, reference, hedging, and stance inference receive substantive coverage. However, news reports and institutional texts are not explicitly developed as reading contexts; generic articles, reports, and informative texts do not establish coverage of these two named pillars. Academic texts appear explicitly in the reduced-clause lesson. The two missing named contexts trigger the cap of 7.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The opening progression from reference to attribution to authorial stance is coherent, and most lessons progress sensibly within their chapters. However, the final chapter introduces thesis-and-argument structure after the third chapter already requires inference of implicit theses through dispersed argumentative evidence. That central reading foundation belongs before the synthesis task, triggering the cap of 8 for a misplaced central component.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Each chapter contains five lessons, all estimated at 3–5 minutes, with generally searchable titles, action-first can-do lines, and action-based skills. Several lessons nevertheless compress distinct mechanisms or substantial tasks: mixed and inverted conditionals in three minutes, reduced clauses together with ellipsis in four, and synthesis plus English discursive-answer composition in five. These multiple umbrella lessons trigger the cap of 8.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most lessons teach identifiable reading mechanisms rather than introductory or recap material. However, the connective lesson explicitly reviews previously encountered material, and the question-solving and discursive-examination lessons drift into examination strategies and overlap with earlier interpretation or synthesis work. These isolated review and strategy lessons warrant the cap of 8, rather than treating the entire final chapter as filler.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The prose is Brazilian Portuguese, and much of the reference, attribution, and stance instruction suits B1–B2 reading. Nevertheless, quotation-mark recognition directly contradicts the required depth, while mixed/inverted conditionals and repeated emphasis on advanced, high-level examination preparation shift parts of the band beyond its stated focus. More importantly, 'concurso' appears in a lesson title and chapter description despite an explicit prohibition. The English discursive-writing lesson further departs from the specified shared reading use case.",
+          "score": 6,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The band emphasizes durable judgment: resolving reference ambiguity, separating sources from authorial endorsement, evaluating certainty, and detecting distorted interpretations. Rote syntax memorization does not dominate. However, its text-analysis and writing coverage contains no lesson on reviewing AI-generated interpretations or finding unsupported attribution, inference, or summaries. The absence of work-with-AI instruction in these AI-affected activities triggers the cap of 8; such checking could use supplied outputs without requiring learner tools.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6269,
+          "outputTokens": 1493,
+          "reasoningTokens": 510
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result violates explicit restrictions: a lesson title contains 'concurso', and the final chapter description contains 'concurso público'. The attribution chapter includes a lesson explicitly teaching recognition of quotation marks, which the expectations prohibit at this depth. The final lesson also introduces English-language discursive answers for legislative examinations, although the supplied essay requirement does not establish an English-writing requirement. This shifts a shared reading band toward unsupported exam-specific preparation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Argument structure is taught after learners are expected to infer implicit theses from dispersed argumentative clues. Several short lessons have compressed scopes, particularly mixed and inverted conditionals, reduced clauses and ellipsis, and composing discursive answers. Some lesson metadata is imprecise: the first pronoun lesson promises possessive-reference work that its description does not mention.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Anchor the required skills explicitly in news reports, institutional documents, and academic passages. Extend evidence-based right-or-wrong judgments beyond attribution to reference and authorial stance, asking learners to identify the textual evidence and explain any distortion. Keep additional grammar and vocabulary lessons tied to these reading decisions rather than advanced examination preparation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate band of a shared English course whose required skills are needed by candidates of the exam in EXAMS, who read English texts at B1 to B2 and judge statements about them as right or wrong\n      - The chapters that teach the required skills are written at that depth: lessons on reading news reports, institutional and academic texts (whose claim a sentence is, whether the author endorses or only reports it, hedges and reporting verbs, reference across sentences, inference and the author's stance), never on recognizing quotation marks, who said a one-line sentence or everyday scenes\n      - No title, description or objective names the exam, its board or its notice (\"Câmara dos Deputados\", \"Cebraspe\", \"concurso\", \"edital\")\n      - Every required skill is tagged on a chapter without tools\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-ingles-intermediate-exam-reading-1",
+        "userInput": {
+          "courseTitle": "Língua inglesa",
+          "exams": [
+            {
+              "name": "Concurso Câmara dos Deputados, Analista Legislativo - Registro e Redação",
+              "style": "trueFalse: Itens julgados CERTO ou ERRADO. essay: Duas questões discursivas sobre conhecimentos específicos, com até 20 linhas cada."
+            }
+          ],
+          "language": "pt",
+          "level": "intermediate",
+          "requiredSkills": [
+            {
+              "description": "Distinguir, em textos em inglês, o que o autor afirma do que ele atribui a outras fontes.",
+              "key": "atribuicao",
+              "name": "Identificar a quem pertence uma afirmação"
+            },
+            {
+              "description": "Inferir a posição do autor a partir de escolhas de palavras e ressalvas.",
+              "key": "posicao-autor",
+              "name": "Inferir a posição do autor de um texto"
+            },
+            {
+              "description": "Reconhecer a que se referem pronomes e expressões ao longo de um texto.",
+              "key": "referencia",
+              "name": "Reconhecer o referente de pronomes e expressões"
+            }
+          ],
+          "withoutTools": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six main subject areas appear, and all four required skill keys are attached to relevant chapters; uncoveredSkillKeys is correctly empty. However, coverage within those areas is incomplete: smooth ER functions are absent from the protein-focused organelle lesson, and important summary-specific targets such as shared ribosomes, osmotic tonicity reasoning, and pump exchange counts are not explicit. The matching and animal–plant exercise outcomes are better represented than the red-cell explanation.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence follows the material: cellular theory, cell types, membrane structure and transport, organelles, animal–plant comparison, and nucleus. Membrane structure precedes transport, and organelle teaching precedes the structural comparison. No prerequisite-order failure is evident.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Every lesson has a searchable title, scope description, verb-first observable can-do, action-based skills, and a two-to-five-minute estimate. However, active transport and vesicular transport are compressed into one lesson, the first two chapters are shorter than the usual four-lesson minimum, and repeated broad skill pairs do little to delimit individual lesson scope. The lysosome–vacuole title also misstates the grouping's scope.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no overview, recap, study-tip, or redundant lessons. The brief historical component belongs to the supplied theory-cellular material rather than serving as an unrelated warm-up. Each lesson addresses substantive course content.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The three-chapter band is compact, written in Brazilian Portuguese, and appropriate to the supplied first-year high-school summary. It avoids university-level expansion, the explicitly excluded topics, and personal tailoring. Revisiting foundations is appropriate here because those foundations are expressly required by the material.",
+          "score": 10,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The lessons emphasize explaining mechanisms, distinguishing cell types, and relating structures to functions rather than lengthy rote procedures. This school-biology task does not require AI-tool instruction, and adding it would unnecessarily expand the supplied material.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4396,
+          "outputTokens": 1391,
+          "reasoningTokens": 501
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outline covers the main topics but does not fully preserve the supplied summary's instructional scope. Most importantly, the endoplasmic-reticulum lesson focuses on protein synthesis and secretion without covering smooth ER lipid synthesis and detoxification. The membrane lessons also leave important test-facing targets unspecified: hypotonic/hypertonic reasoning about a red cell in distilled water and the sodium–potassium pump's three-out/two-in exchange. These omissions reduce confidence that the outline teaches the exact material needed for the test.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The title 'Lisossomos e vacúolos na digestão celular' misleadingly groups both organelles under digestion, although the description correctly distinguishes their functions. Several skill lists repeat essentially identical actions rather than identifying lesson-specific capabilities. The first two chapters contain only two and three lessons, respectively, while the active-and-vesicular transport lesson compresses distinct mechanisms into four minutes.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the supplied exercise outcomes explicit: justify classification of a cell without an organized nucleus, explain red-cell rupture using hypotonic and hypertonic, match the four named organelles to their functions, and state two animal–plant differences. Explicitly highlight ribosomes in both procariontes and eucariontes. Separate the sodium–potassium pump from vesicular transport, and use more precise lesson-specific skills without adding topics beyond the summary.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A private course built from one first-year high-school student's own class summary (MATERIAL) for a test on Friday: the outline teaches exactly that summary, in its order and at its depth, with its terms (teoria celular, procariontes e eucariontes, membrana e transportes com osmose e bomba de sódio e potássio, organelas e suas funções, célula animal e vegetal, núcleo)\n      - Nothing beyond the material except what one of its ideas needs: no glycocalyx, secondary active transport, respiratory chain, endosymbiosis, nuclear lamina or nuclear pore transport, and no cell division, which the summary says isn't on the test\n      - The summary's exam-style exercises (procarionte ou eucarionte, a red cell in distilled water, matching organelles to functions, animal vs plant differences) are reflected in what lessons prepare the learner to do\n      - The band is small, like the summary: a few chapters, not a whole university course\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-biologia-material-class-test-1",
+        "userInput": {
+          "courseTitle": "Biologia celular",
+          "language": "pt",
+          "level": "intermediate",
+          "material": "<page ref=\"S1\" of=\"Resumo para a prova\">\nBiologia 1º ano B - Prof.ª Juliana - Resumo para a prova de sexta (9/10): A CÉLULA\n1. Teoria celular: todos os seres vivos são formados por células (vírus são acelulares). A célula é a menor unidade estrutural e funcional. Toda célula vem de outra preexistente (Virchow). Hooke (1665) observou cortiça.\n2. Procariontes (bactérias e arqueas): sem núcleo organizado (nucleoide), sem organelas membranosas, têm ribossomos, membrana e parede. Eucariontes: núcleo com carioteca e organelas membranosas. CAI NA PROVA: ribossomos existem nos dois!\n3. Membrana plasmática: mosaico fluido (Singer e Nicolson, 1972), bicamada de fosfolipídios com proteínas, permeabilidade seletiva. Passivo (sem ATP): difusão simples, facilitada, osmose (água vai do hipotônico para o hipertônico). Ativo (com ATP): bomba de sódio e potássio (3 Na+ para fora, 2 K+ para dentro). Endocitose (fagocitose, pinocitose) e exocitose.\n4. Organelas: mitocôndria (respiração celular, ATP, DNA próprio); cloroplasto (fotossíntese, só plantas e algas, DNA próprio); ribossomo (síntese de proteínas); RE rugoso (proteínas) e liso (lipídios, desintoxicação); complexo golgiense (modifica, empacota, secreta; acrossomo); lisossomo (digestão intracelular); vacúolo central (vegetal); centríolos (divisão nas animais).\n5. Animal x vegetal: vegetal tem parede de celulose, cloroplastos, vacúolo central grande, geralmente sem centríolos; animal sem parede, sem cloroplastos, com centríolos.\n6. Núcleo: carioteca com poros, cromatina (DNA + proteínas), nucléolo (forma ribossomos).\nExercícios (estilo da prova): 1) Célula com parede, ribossomos e sem núcleo organizado: procarionte ou eucarionte? Justifique. 2) Por que uma hemácia em água destilada pode se romper? Use hipotônico e hipertônico. 3) Relacione mitocôndria, lisossomo, complexo golgiense, ribossomo com digestão, secreção, ATP, proteínas. 4) Duas diferenças entre célula animal e vegetal.\nObs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (mitose fica para o próximo bimestre).\n</page>",
+          "requiredSkills": [
+            {
+              "description": "Aplicar os postulados da teoria celular.",
+              "key": "teoria-celular",
+              "name": "Aplicar a teoria celular"
+            },
+            {
+              "description": "Distinguir células procariontes e eucariontes pela organização.",
+              "key": "procariontes",
+              "name": "Diferenciar procariontes e eucariontes"
+            },
+            {
+              "description": "Explicar o transporte passivo e ativo pela membrana, incluindo a osmose.",
+              "key": "membrana",
+              "name": "Explicar os transportes pela membrana"
+            },
+            {
+              "description": "Relacionar cada organela à sua função.",
+              "key": "organelas",
+              "name": "Relacionar organelas e funções"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five required skills are absent: multimodal interpretation, wave propagation, atomic models, productive systems and labor relations, and cultural identities. Five extension skills also lack chapters. The uncovered list explicitly acknowledges these omissions. Only periodic properties are addressed, leaving whole requested areas absent and triggering the maximum score of 6; the scale of the omissions warrants a substantially lower score.",
+          "score": 2,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "Within the material actually supplied, shielding precedes effective nuclear charge, followed by ionization, electron affinity, and configuration-based explanations. The listed prior chapters already establish the necessary chemistry background. There is no identifiable prerequisite inversion; missing content and repetition are assessed separately.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The chapter contains six three-minute lessons, each with an action-first can-do statement and an action-based skill. Most lessons have a suitably narrow concept. However, 'complex polyelectronic atoms' and calculation of effective nuclear charge are insufficiently bounded for the promised duration, and the latter can-do does not match its explanatory description closely enough.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Repetition is pervasive: the supplied earlier chapter already teaches shielding and effective nuclear charge, successive ionization energies, electron affinity, sublevel stability and periodic exceptions, and metallic character. Labels such as 'advanced' and 'fine variations' do not establish distinct new instruction. This is a pattern of duplicated lessons, triggering the maximum score of 6.",
+          "score": 6,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The language is Brazilian Portuguese and the material is shared rather than personalized. However, the intermediate-band requirement explicitly calls for building on earlier bands without repeating them, and nearly the entire chapter revisits listed prior instruction. These repeated mismatches trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The lessons primarily emphasize explanation, comparison, interpretation, and justification rather than lengthy manual procedures or memorization. This chemistry topic does not require an explicit work-with-AI lesson under the rubric. A useful additional emphasis would be checking the assumptions behind effective-charge calculations, but there is no meaningful pattern of obsolete procedural instruction.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6020,
+          "outputTokens": 1084,
+          "reasoningTokens": 244
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result is substantially incomplete: none of the five required skills is taught, and five of the six EXTEND_SKILLS skills receive no new chapter. The sole chapter also repeats the supplied prior lessons on shielding, effective nuclear charge, successive ionization energies, electron affinity, sublevel stability, and metallic character, rather than providing the required continuation. Entire requested areas are absent. The chapter does maintain area consistency, uses Brazilian Portuguese, and avoids naming the exam.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The sublevel-stability description attributes stability to 'totally or partially filled' orbitals too broadly; the relevant exceptional stability concerns particular configurations, especially half-filled and filled subshells. The effective-nuclear-charge lesson promises calculation without specifying a shielding approximation or model, while its description primarily promises conceptual explanation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "For the chemistry continuation, use genuinely new applications of previously learned trends and define bounded comparisons that fit three minutes. Align each can-do statement with the actual lesson scope, and include checks on the assumptions and limitations of any effective-charge estimate.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate band of a shared ENEM course, from a real run (10 Oct 2026) that put Portuguese text lessons, math chart lessons and physics wave lessons in one chapter (\"Painéis visuais e representações de ondas\") and joined Linguagens with Ciências Humanas in another\n      - Every chapter's tagged skills share one area (each skill's `area`), and every lesson of a chapter belongs to that area: no text or map lessons in a chapter tagged with a math or physics skill\n      - Each EXTEND_SKILLS skill gets one new chapter that continues its listed chapters without repeating their lessons\n      - No title, description or objective names the exam (\"ENEM\")\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-intermediate-one-area-per-chapter-1",
+        "userInput": {
+          "courseTitle": "ENEM",
+          "exams": [
+            {
+              "name": "ENEM",
+              "style": "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente."
+            }
+          ],
+          "extendSkills": [
+            {
+              "area": "Ciências da Natureza",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Raio atômico e posição periódica",
+                    "Energia de ionização e eletronegatividade",
+                    "Ligação iônica e propriedades",
+                    "Ligações covalentes e metálicas"
+                  ],
+                  "title": "Propriedades periódicas e ligações"
+                },
+                {
+                  "lessons": [
+                    "Grupos, períodos e elétrons externos",
+                    "Raio atômico e raio iônico",
+                    "Tendências da energia de ionização",
+                    "Eletronegatividade na tabela periódica"
+                  ],
+                  "title": "Tendências e comparações periódicas"
+                },
+                {
+                  "lessons": [
+                    "Blindagem eletrônica e carga nuclear efetiva",
+                    "Energias de ionização sucessivas",
+                    "Afinidade eletrônica",
+                    "Estabilidade de subníveis e exceções periódicas",
+                    "Caráter metálico na tabela periódica",
+                    "Reatividade dos metais alcalinos",
+                    "Reatividade dos halogênios",
+                    "Caráter ácido e básico de óxidos",
+                    "Polarizabilidade de íons",
+                    "Tendências nos metais de transição"
+                  ],
+                  "title": "Exceções e reatividade na tabela periódica"
+                }
+              ],
+              "description": "Usar a organização periódica para comparar características e propriedades dos elementos.",
+              "key": "01a122ed-b691-70ed-bd88-151e261d77fa",
+              "lessons": 6,
+              "name": "Comparar propriedades periódicas"
+            },
+            {
+              "area": "Ciências da Natureza",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Raio atômico e posição periódica",
+                    "Energia de ionização e eletronegatividade",
+                    "Ligação iônica e propriedades",
+                    "Ligações covalentes e metálicas"
+                  ],
+                  "title": "Propriedades periódicas e ligações"
+                },
+                {
+                  "lessons": [
+                    "Geometria molecular e repulsão eletrônica",
+                    "Pares não ligantes e forma molecular",
+                    "Polaridade molecular e simetria",
+                    "Forças de dispersão e polarizabilidade",
+                    "Interações dipolo-dipolo",
+                    "Ligações de hidrogênio entre moléculas",
+                    "Forças intermoleculares e temperatura de ebulição",
+                    "Viscosidade e tensão superficial",
+                    "Sólidos cristalinos e amorfos",
+                    "Polimorfismo cristalino"
+                  ],
+                  "title": "Forma molecular e organização das partículas"
+                }
+              ],
+              "description": "Distinguir ligações iônicas, covalentes e metálicas",
+              "key": "01a12220-bb3f-70cc-be04-8e001d907327",
+              "lessons": 10,
+              "name": "Relacionar ligações e propriedades"
+            },
+            {
+              "area": "Matemática",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Leitura de gráficos"
+                  ],
+                  "title": "Estatística"
+                },
+                {
+                  "lessons": [
+                    "Eixos truncados",
+                    "Valores absolutos e proporções",
+                    "Gráficos acumulados",
+                    "Gráficos com dois eixos verticais",
+                    "Séries indexadas",
+                    "Pictogramas e proporção visual"
+                  ],
+                  "title": "Comparações e distorções em gráficos"
+                },
+                {
+                  "lessons": [
+                    "Tabelas de características biológicas",
+                    "Bactérias, arqueias e eucariontes",
+                    "Diversidade dos eucariontes",
+                    "Grupos de plantas",
+                    "Grupos de animais",
+                    "Cladogramas e parentesco",
+                    "Mapas de calor",
+                    "Gráficos de dispersão",
+                    "Diagrama de caixa",
+                    "Barras de erro em gráficos"
+                  ],
+                  "title": "Dados de biodiversidade e classificação"
+                }
+              ],
+              "description": "Leia o título, os eixos e as unidades antes dos números, e só então compare o que a questão pede.",
+              "key": "588e45be-560f-86b2-824c-bb3c0479f598",
+              "lessons": 10,
+              "name": "Ler gráficos e tabelas"
+            },
+            {
+              "area": "Linguagens",
+              "chapters": [
+                {
+                  "lessons": [
+                    "Variação regional, social e situacional",
+                    "Norma-padrão e preconceito linguístico",
+                    "Escolha lexical e posicionamento",
+                    "Marcas lexicais de avaliação"
+                  ],
+                  "title": "Variação linguística e escolhas lexicais"
+                },
+                {
+                  "lessons": [
+                    "Alternância de registro",
+                    "Escrita digital e situação de uso",
+                    "Oralidade representada na escrita",
+                    "Variação geracional",
+                    "Contato entre variedades regionais",
+                    "Linguagem de grupos e pertencimento",
+                    "Empréstimos linguísticos",
+                    "Línguas indígenas e português brasileiro",
+                    "Variedades linguísticas na ficção",
+                    "Variação linguística e registro formal"
+                  ],
+                  "title": "Língua em contato e situações de uso"
+                }
+              ],
+              "description": "Identificar variedades da língua portuguesa e explicar sua relação com grupos e situações de uso.",
+              "key": "01a122ed-ade1-7368-91ad-a81e1c90aff0",
+              "lessons": 10,
+              "name": "Reconhecer variação linguística"
+            },
+            {
+              "area": "Ciências Humanas",
+              "chapters": [
+                {
+                  "lessons": [
+                    "A Primeira República"
+                  ],
+                  "title": "Brasil República"
+                },
+                {
+                  "lessons": [
+                    "Os limites da alternância presidencial",
+                    "Interesses de São Paulo e Minas Gerais",
+                    "A Primeira República",
+                    "A Reação Republicana de 1922",
+                    "A disputa pela sucessão de 1930",
+                    "Aliança Liberal e ruptura de 1930"
+                  ],
+                  "title": "Acordos e rupturas das oligarquias"
+                },
+                {
+                  "lessons": [
+                    "Federalismo e poder estadual",
+                    "Limites do direito ao voto",
+                    "Clientelismo e apoio político",
+                    "Voto aberto e pressão sobre eleitores",
+                    "Fraudes na apuração",
+                    "Verificação de poderes e degola",
+                    "A cadeia de apoio da política dos governadores",
+                    "Convênio de Taubaté e sustentação dos preços",
+                    "Custos públicos da valorização do café",
+                    "Fontes eleitorais e alcance do controle oligárquico"
+                  ],
+                  "title": "Engrenagens do domínio oligárquico"
+                }
+              ],
+              "description": "De 1894 a 1930, as elites de São Paulo e Minas Gerais dominaram a presidência, muitas vezes se alternando.",
+              "key": "c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb",
+              "lessons": 10,
+              "name": "Explicar a política do café com leite"
+            },
+            {
+              "area": "Redação",
+              "chapters": [
+                {
+                  "lessons": [
+                    "As cinco competências"
+                  ],
+                  "title": "Redação"
+                },
+                {
+                  "lessons": [
+                    "Desvios de norma na competência I",
+                    "Recorte temático na competência II",
+                    "Sustentação argumentativa na competência III",
+                    "Relações de sentido na competência IV",
+                    "Elementos da intervenção na competência V",
+                    "Problemas simultâneos em um trecho"
+                  ],
+                  "title": "Diagnóstico das competências da redação"
+                },
+                {
+                  "lessons": [
+                    "Recorrência de desvios na competência I",
+                    "Variação linguística e registro formal",
+                    "Repertório produtivo na competência II",
+                    "Uso dos textos motivadores",
+                    "Sustentação argumentativa na competência III",
+                    "Desenvolvimento de exemplos",
+                    "Ambiguidade na referência",
+                    "Conectivos e relações efetivas",
+                    "Elementos da intervenção na competência V",
+                    "Direitos humanos na proposta de intervenção"
+                  ],
+                  "title": "Calibração das competências da redação"
+                }
+              ],
+              "description": "A redação vale cinco competências, de 0 a 200 cada: norma culta, tema, argumentação, coesão e proposta de intervenção.",
+              "key": "5dbcc48f-5cf6-8de9-88af-5ff186e54f50",
+              "lessons": 10,
+              "name": "Conhecer as cinco competências da redação"
+            }
+          ],
+          "language": "pt",
+          "level": "intermediate",
+          "otherLevelChapters": [
+            "Porcentagem",
+            "Funções",
+            "Cadeias de reajustes percentuais",
+            "Modelos lineares em tarifas e faixas",
+            "Otimização quadrática com restrições",
+            "Preço final em ofertas com condições",
+            "Estatística",
+            "Desconto real em compras por quantidade",
+            "Percentuais além dos casos inteiros",
+            "Medidas centrais em conjuntos de dados",
+            "Fatores percentuais em valores compostos",
+            "Comparações e distorções em gráficos",
+            "Razão e proporção",
+            "Dados de biodiversidade e classificação",
+            "Ecologia",
+            "Proporcionalidade inversa e composta",
+            "Escalas em mapas, plantas e maquetes",
+            "Ecologia: Destinos da energia nas teias alimentares",
+            "Ecologia: Estimativas de energia em teias alimentares",
+            "Eletricidade",
+            "Eletricidade: Tensões e falhas em circuitos série",
+            "Lei de Ohm em gráficos e circuitos",
+            "Brasil República",
+            "Brasil República: Conflitos e queda do Estado Novo",
+            "Acordos e rupturas das oligarquias",
+            "Engrenagens do domínio oligárquico",
+            "Interpretação de texto",
+            "Inferência, coesão e vozes textuais",
+            "Foco textual e pertinência do repertório",
+            "Uso crítico de repertório na argumentação",
+            "Inferências em argumentos e vozes do texto",
+            "Redação",
+            "Coerência e escolhas no fechamento da redação",
+            "Proposta de intervenção detalhada",
+            "Diagnóstico das competências da redação",
+            "Calibração das competências da redação",
+            "Medidas e movimento",
+            "Precisão de medidas e chances em experimentos",
+            "Unidades em situações e gráficos físicos",
+            "Escalas e unidades em medidas especializadas",
+            "Propriedades periódicas e ligações",
+            "Tendências e comparações periódicas",
+            "Exceções e reatividade na tabela periódica",
+            "Forma molecular e organização das partículas",
+            "Variação linguística e escolhas lexicais",
+            "Língua em contato e situações de uso",
+            "Recursos linguísticos e efeitos de sentido",
+            "Nomeação e enquadramento lexical",
+            "Decisão entre alternativas"
+          ],
+          "requiredSkills": [
+            {
+              "area": "Linguagens",
+              "description": "Relacionar palavras, imagens e outros recursos para interpretar textos de diferentes gêneros.",
+              "key": "01a1221f-40fc-77ad-a11d-d8a466e14767",
+              "name": "Interpretar textos multimodais"
+            },
+            {
+              "area": "Ciências da Natureza",
+              "description": "Relacionar frequência, comprimento de onda e velocidade à propagação de oscilações e ondas.",
+              "key": "01a122ed-b690-7ea1-9fb6-54fea3ff6c5d",
+              "name": "Analisar a propagação de ondas"
+            },
+            {
+              "area": "Ciências da Natureza",
+              "description": "Usar modelos atômicos e partículas subatômicas para explicar a constituição da matéria.",
+              "key": "01a122ed-b690-7fcc-ac2b-e84e1fa28d64",
+              "name": "Interpretar modelos atômicos"
+            },
+            {
+              "area": "Ciências Humanas",
+              "description": "Comparar a produção agrária e outras formas de organização do trabalho segundo a propriedade, a técnica e as relações sociais.",
+              "key": "01a122ed-ade3-73bd-bf80-6754435d94ab",
+              "name": "Comparar sistemas produtivos e relações de trabalho"
+            },
+            {
+              "area": "Ciências Humanas",
+              "description": "Relacionar identidades culturais, costumes e formas de convivência às condições históricas em que se formam.",
+              "key": "01a122ed-ade1-73b4-a3ab-d158ba1de158",
+              "name": "Analisar a formação de identidades culturais"
+            }
+          ],
+          "withoutTools": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Data entry, visual formatting, formulas, relative and absolute references, SUM, AVERAGE, sorting, filtering, charts, and printing are covered. IF, lookup functions, Excel tables, pivot tables, and sharing are absent. These omissions leave substantial required areas uncovered, warranting a score of 6. No required skill-key list was supplied, so empty chapter skillKeys are not independently treated as missing required skills.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence builds coherently from entering and formatting data to formulas, functions, absolute references, data organization, and charts. Formula copying precedes absolute references appropriately, and lessons generally rely only on previously introduced operations. Printing could be more useful after formatting, but its early placement does not create an actual prerequisite failure.",
+          "score": 9,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most lessons have searchable titles, scoped one-sentence descriptions, observable can-do lines, and one or two action-based skills suitable for short lessons. However, the standalone F4 and AutoSUM lessons are fragments that could be merged with their underlying operations, and two chapters have only three lessons. These several sizing weaknesses support the cap of 8.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no course-overview, motivational, recap, review, or career lessons. Lessons consistently teach concrete spreadsheet operations. The shortcut lessons are thin, but introduce distinct operations rather than clearly duplicating an entire explanation; their principal weakness is granularity rather than filler.",
+          "score": 9,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The technical content is broadly beginner-appropriate and does not address the learner as あなた or personalize the shared outline. However, descriptions consistently violate the explicit です・ます requirement, and skills consistently fail the required potential-form endings. Objectives and can-do lines mostly satisfy that requirement. Japanese office localization is also weak beyond mentions of sales, tax, and Japanese yen. The systematic explicit language violations justify 6.",
+          "score": 6,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "There is useful conceptual material on calculation order, references, and formula-error correction. Nevertheless, most lessons center on executing commands, entering functions, and changing presentation, with little estimation, validation, or problem framing. There is no work-with-AI lesson, triggering the cap of 8, and the predominance of procedural instruction supports the lower cap of 7.",
+          "score": 7,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6505,
+          "outputTokens": 1149,
+          "reasoningTokens": 263
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The band omits IF, XLOOKUP or VLOOKUP, Excel tables, pivot tables, and workbook sharing—five explicitly required topics. It also systematically violates the Japanese wording requirements: chapter and lesson descriptions use plain forms instead of です・ます, and lesson skills end in dictionary forms such as 入力する rather than potential forms such as 入力できる. Japanese office context is limited, with no concrete 経費精算 or 勤怠表 examples.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Standalone lessons for the F4 shortcut and AutoSUM are thin relative to their neighboring lessons and could be integrated into meaningful tasks. Two chapters contain only three lessons, below the usual four-to-twelve range. The column-width lesson calls ### an error without distinguishing a display limitation from a formula error.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a short task in which learners request an Excel formula from AI and verify its references and results against manually checked examples. Strengthen practical judgment through checking totals, choosing suitable chart types, and validating office calculations rather than focusing mainly on executing commands.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Japanese: descriptions use です・ます without stiff keigo and never address the learner as あなた\n      - Beginner band of Excel for office work in Japan: entering and formatting data, formulas and cell references, SUM, AVERAGE, IF and XLOOKUP or VLOOKUP, sorting and filtering, tables, charts, pivot tables, printing and sharing a workbook, with Japanese office examples (売上表, 経費精算, 勤怠表, amounts in 円)\n      - Objectives, can-do lines and skills end in the plain potential form (計算できる, 作れる, ～できる), never as an order (～しよう, ～してください) or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "excel"
+        },
+        "id": "ja-excel-beginner-1",
+        "userInput": {
+          "courseTitle": "Excel",
+          "language": "ja",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The single correctly titled chapter covers all three named pillars, tags every required skill on relevant content, and leaves uncoveredSkillKeys empty. However, the caching-call coverage is weakened by the incorrect suggestion that revalidateTag updates profiles and the classification of refresh as cache invalidation.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The lessons progress sensibly from enabling Cache Components to declaring cached functions, then from configuring proxy.ts to migration, and finally from profile-based revalidation to choosing among the caching calls. Earlier course chapters supply the underlying project, routing, and data-fetching prerequisites.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "All six lessons fit the requested two-to-five-minute range, have focused scopes, and include recognizable titles, one-sentence descriptions, observable verb-first can-do lines, and action-based skills. Comparing three closely related calls is a reasonable single lesson.",
+          "score": 9,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no overview, recap, motivational, or other filler lessons. Configuring proxy.ts and migrating existing middleware are distinct tasks, and the outline does not reteach the earlier project setup, routing, or general data-fetching chapters.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The content uses US English and fits an intermediate release-update band without personalization or foundational repetition. However, four lessons lack the explicitly required release attribution within their own text.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The final lesson emphasizes choosing an API rather than merely reproducing syntax, and the procedures are short rather than excessive. Nevertheless, this programming band contains no work-with-AI lesson, triggering the maximum score of 8.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2858,
+          "outputTokens": 1186,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The caching API descriptions blur important distinctions. revalidateTag uses a cacheLife profile to control revalidation behavior; it does not update cache profiles. Also, refresh refreshes the client router rather than invalidating cached data, so describing all three calls as cache invalidation APIs is misleading.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Only the first and last lessons explicitly mention Next.js 16. The other four rely on the chapter title rather than saying which release brings their feature, as required.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a short activity reviewing an AI-generated mutation handler: identify an inappropriate caching call, choose the correct replacement, and check the expected freshness behavior. This would strengthen judgment and verification without repeating earlier data-fetching lessons.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Exactly one chapter, titled \"What's new in Next.js 16\", teaching only what the new release adds: Cache Components, the proxy file that replaces middleware, and the new caching calls\n      - Every required skill key is tagged on that chapter: cache-components, proxy, cache-apis\n      - No lesson teaches again what OTHER_LEVEL_CHAPTERS already teaches (project setup, routing, data fetching), and lessons say which release brings each feature\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-whats-new-chapter-1",
+        "userInput": {
+          "courseTitle": "Next.js",
+          "language": "en",
+          "level": "intermediate",
+          "otherLevelChapters": [
+            "Create and run a Next.js project",
+            "Pages, layouts and navigation",
+            "Fetch and cache data"
+          ],
+          "requiredSkills": [
+            {
+              "description": "Turn on Cache Components and mark cached functions with use cache.",
+              "key": "cache-components",
+              "name": "Cache pages with Cache Components"
+            },
+            {
+              "description": "Move request-time logic from middleware.ts to proxy.ts.",
+              "key": "proxy",
+              "name": "Run code before requests with proxy.ts"
+            },
+            {
+              "description": "Choose between revalidateTag with a cacheLife profile, updateTag and refresh.",
+              "key": "cache-apis",
+              "name": "Refresh cached data after a change"
+            }
+          ],
+          "whatsNew": "What's new in Next.js 16"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Tables and charts, center and spread, probability, normal distributions, correlation, estimation, and hypothesis testing are represented. However, data types are not taught, and the sampling lesson does not explicitly teach bias. These two missing foundational components trigger the maximum score of 7. No REQUIRED_SKILLS list was supplied, so empty chapter tags alone do not establish additional missing required skills.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The overall sequence is coherent: descriptive statistics precede relationships, probability precedes distributions, and distributions precede statistical inference. Within chapters, scatterplots precede correlation and regression, and hypotheses precede p-value decisions. Regression before probability is not inherently misplaced. Some local prerequisite scaffolding, especially for regression equations and sampling distributions, could be clearer, but there is no clear misplaced central chapter.",
+          "score": 9,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters have appropriate lesson counts, searchable titles, and mostly concrete can-do lines. Nevertheless, compressed lessons recur across chapters: quartiles, interquartile range, and boxplots in three minutes; least-squares fitting with slope and intercept in four; and binomial probabilities, mean, and variance in three. This cross-chapter pattern triggers the maximum score of 7. All lesson skills also violate the required ability-statement ending, and several use unobservable understanding verbs.",
+          "score": 6,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The lessons teach substantive statistical content without course overviews, motivational warm-ups, recap chapters, or clear duplication. Titles such as '확률의 기초' and '정규분포의 이해' introduce actual calculation or interpretation skills rather than filler.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "Descriptions and can-do lines generally use natural 해요체 and recognizable Korean examples. However, all skill statements disregard the explicitly required '~할 수 있어요' form. The beginner band also moves rapidly into least-squares estimation, Bayesian updating, probability density functions, and distribution calculations without sufficient plain-language scaffolding. Statistical misstatements about standardization and hypothesis-test conclusions further undermine beginner suitability. Explicit 원 amounts and 통계청 examples are absent.",
+          "score": 6,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Interpretation, relationship assessment, sampling design, and hypothesis formulation provide useful judgment skills. However, there is no lesson on working with AI or checking AI-generated analysis, triggering the maximum score of 8. Calculation receives considerably more attention than checking assumptions, detecting bias, evaluating causal claims, or auditing generated conclusions, although rote procedures do not clearly dominate enough to trigger the lower cap.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5401,
+          "outputTokens": 1215,
+          "reasoningTokens": 278
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required data-types foundation and explicit treatment of sampling bias are missing. Every lesson skill uses a nominal ending such as '계산하기' rather than the required '~할 수 있어요'. Several statements risk teaching misconceptions: a p-value does not justify accepting the null hypothesis; standardizing scores does not by itself make their distribution normal; and the central limit theorem is a theorem about sampling distributions, not the distribution itself. Computational lessons also repeatedly exceed a realistic beginner 2–5-minute scope.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The localization includes Korean settings and 수능 scores, but no explicit amounts in 원 or 통계청 data. The mode-and-range can-do line misleadingly groups the mode with measures of spread. Some skills, such as understanding a curve or grasping a concept, are not observable actions, and the prediction lesson lists checking residuals without describing that scope.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a short lesson on auditing an AI-generated statistical interpretation, including misleading causal claims and unsupported conclusions. Prioritize interpreting results and checking assumptions over introducing additional calculation procedures, and make beginner examples explicitly distinguish correlation from causation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Korean in 해요체, never 합니다체 or 반말\n      - Beginner band of statistics: types of data, tables and charts, center and spread, probability, the normal distribution, sampling and bias, correlation, and a first look at estimation and hypothesis tests, with Korean examples (amounts in 원, 통계청 data, 수능 scores)\n      - Objectives, can-do lines and skills end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "엑셀|excel|스프레드시트|sheets|계산기"
+        },
+        "id": "ko-statistics-beginner-1",
+        "userInput": {
+          "courseTitle": "통계학",
+          "language": "ko",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Budgeting, saving, emergency funds, credit cards, installments, inflation, deposits, and basic investment risk appear. However, BES, investment funds, salary taxes, loan interest, and explicit real returns are missing. These omissions leave entire required areas uncovered, triggering the at-most-6 cap. No required skill-key list was supplied, so empty chapter tags are not independently treated as missing skills.",
+          "score": 5,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The sequence builds coherently from income and expenses to saving, credit-card obligations, and investing. Emergency-fund sizing follows expense identification, installment planning follows budgeting, and investment comparisons follow inflation. No concrete prerequisite-order failure is evident.",
+          "score": 10,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "All lessons have titles, scoped descriptions, can-do lines, estimated durations of three or four minutes, and two action-form skills. Most lessons are appropriately narrow. However, three chapters are shorter than the usual range, and some skills exceed what their lesson describes: the inflation lesson promises calculation and purchasing-power protection while its can-do only promises explanation. Risk assessment and diversification also receive limited room in one three-minute lesson.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no course-overview, recap, motivational, historical warm-up, or other filler lessons. Statement reading and repayment management serve distinct practical purposes. The investment lessons teach substantive beginner concepts rather than merely announcing the subject.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The outline is predominantly understandable Turkish, remains shared rather than personalized, and consistently ends objectives, can-do lines, and skills with infinitive verbs. Nevertheless, the explicit 'sen' address and TL amounts are entirely absent. The projection wording is unnecessarily technical, and the transfer-fee and credit-card-interest wording risks misleading beginners. These are several meaningful fit and clarity failures.",
+          "score": 7,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The lessons emphasize useful judgment through needs-versus-wants classification, budgeting, borrowing consequences, and risk comparison rather than rote memorization. However, this financial-planning and analysis outline includes no work-with-AI task, such as checking an AI-generated budget or detecting incorrect interest assumptions, triggering the at-most-8 cap.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3879,
+          "outputTokens": 1125,
+          "reasoningTokens": 264
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several required foundations are absent: BES, investment funds, salary taxes, loan interest, and explicit inflation-adjusted real returns. The outline contains no TL-denominated examples and never addresses the learner as 'sen'. Financial wording also needs correction: FAST and havale are not inherently free, and paying only the credit-card minimum on time can incur contractual interest without constituting late payment.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Three chapters contain only three lessons, below the usual four-to-twelve range. Some skills overstate the lesson's stated scope: explaining purchasing-power erosion does not itself teach calculating inflation effects or preserving purchasing power. 'Vadiden' is a typo, and 'Giderleri projeksiyonla hesaba katmak' is awkward jargon for beginners.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use short, observable tasks with TL amounts, such as comparing net deposit returns with inflation and checking a credit offer's total repayment. Explain that the 50/30/20 allocation is adjustable rather than universally affordable. Add a task in which the learner checks an AI-generated budget for arithmetic errors, omitted expenses, and unsuitable assumptions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Beginner band of personal finance in Turkey: a monthly budget, saving, an emergency fund, inflation and real returns, credit cards, installments (taksit) and loan interest, deposit accounts, BES, funds and the basics of investing, taxes on a salary, with amounts in TL\n      - Objectives, can-do lines and skills end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "excel|tablo|sheets|hesap"
+        },
+        "id": "tr-personal-finance-beginner-1",
+        "userInput": {
+          "courseTitle": "Kişisel finans",
+          "language": "tr",
+          "level": "beginner"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The outline covers the requested product workflow: starting an app, pages and layouts, navigation, fetching data, forms, and deployment. However, practical Client Component fundamentals are missing: learners distinguish component environments but never explicitly learn to create a client boundary and implement basic interaction before using a React hook. This is one missing foundational pillar, limiting coverage to 8. No required skill list was supplied, so empty skillKeys alone do not establish missing required skills.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The overall progression from a running page to deployment is sensible. Nevertheless, several later tasks depend on untaught prerequisites: useTransition requires practical client-component and hook knowledge, revalidatePath assumes a cache model, and repository-based deployment assumes learners have created and pushed a Git repository. This is a pattern of prerequisite gaps, triggering the cap of 7.",
+          "score": 7,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Every lesson supplies a title, one-sentence description, action-first can-do line, duration, and skills; most focus on a useful task. Several scopes are too broad for their allocation, particularly setting up an environment plus scaffolding in three minutes and reading/updating query parameters for both filtering and pagination in four minutes. Some titles overpromise their scope, and “Understand React Server Components” is not an observable generic action. Several umbrella lessons limit this category to 8.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no overview, history, recap, or career chapters, and almost every lesson advances the app. “Introduction to Server Actions” nevertheless uses an explicitly discouraged introductory framing; its actual form-processing task should be the title. This is an isolated weakness rather than a pattern of filler.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text is US English and uses the App Router, but it is not consistently written from zero. React elements, async/await, hooks, Suspense boundaries, mutations, cache revalidation, and Git repositories are used without enough beginner scaffolding. These are several level mismatches, limiting the score to 7. Release naming also violates the request to reserve version references for release-dependent features.",
+          "score": 7,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Validation, choosing component environments, and checking production builds provide some useful judgment and verification skills. However, there is no lesson on working with AI, such as specifying a change, reviewing generated code, or finding an incorrect API assumption. Programming is an AI-affected field, so the explicit cap of 8 applies.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5059,
+          "outputTokens": 1346,
+          "reasoningTokens": 409
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The outline assumes beginner prerequisites it does not teach: React component basics, implementing client-side interaction with hooks, and creating the Git repository used for deployment. Cache revalidation also appears without an earlier explanation of what is cached. The chapter “Dynamic routes and search parameters” is named as a topic collection rather than a learner accomplishment, contrary to the product-course requirement.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Next.js 16 is named repeatedly for ordinary setup and deployment rather than release-dependent features. “Shared layouts and templates” promises templates that its scope never teaches, while “Custom not-found and error handling” covers only missing routes. “Introduction to Server Actions” uses an explicitly discouraged title. Several three- or four-minute lessons bundle substantial work, especially environment setup and reading/updating query parameters for filters and pagination.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a small exercise in reviewing and correcting AI-generated Next.js code. Make current conventions explicit where mistakes are likely, especially awaiting page params and searchParams. Strengthen observable checks by having learners render fetched records, verify a submitted change appears, and test the deployed app. Preserve the strong opening sequence, which gets the learner's own page running immediately.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A product course: chapters are tasks done with Next.js (start an app, build pages and layouts, link them, fetch and show data, handle forms, deploy), named for what the learner gets done, never a tour of features or a concept tree (\"Rendering strategies\", \"The Next.js architecture\")\n      - The first lessons of the first chapter end with the learner's own app running and showing a page they made\n      - Written for Next.js 16 with its current conventions (the App Router), naming a release only where a feature depends on it and then saying which releases have it; most titles and descriptions name no release\n      - No \"What is Next.js\", course overview or history chapter\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "next|node|editor|terminal"
+        },
+        "id": "en-product-nextjs-beginner-1",
+        "userInput": {
+          "courseTitle": "Next.js",
+          "language": "en",
+          "level": "beginner",
+          "product": {
+            "brand": "Vercel",
+            "name": "Next.js",
+            "release": {
+              "name": "Next.js 16",
+              "releasedOn": "2025-10-21"
+            }
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Setup, calls and messages, photography, and app management are covered. Battery is a wholly missing area, triggering the maximum score of 6. Passcode and Face ID provide security foundations but do not substitute for meaningful privacy and security coverage. No required skill list was supplied, so empty chapter skillKeys are not independently penalized.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "Most chapters build sensibly from setup and navigation to everyday tasks. However, the initial setup sequence places Apple Account sign-in before Face ID and passcode setup, and reverses the usual Face ID/passcode order. These misplaced onboarding lessons undermine following the phone's actual setup flow and warrant the cap of 8 for several misplaced lessons.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapters contain five or six lessons, and most lessons have searchable titles, action-first can-do lines, and one to three closely linked skills. Weak spots include a standalone camera-opening fragment, an organization lesson that only teaches browsing, and an update-completion promise that is unreliable within four minutes. The overall lesson structure remains usable.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most lessons produce practical outcomes, with no recap or overview chapters. 'Settings app layout' is nevertheless an orientation lesson whose outcome is merely browsing categories, rather than accomplishing a meaningful phone task. It should be embedded in a concrete task instead.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The output uses US English, applies to a shared beginner audience, and includes no unsupported iPhone 13 features. Its first lessons perform real actions on the phone. However, setup assumes an existing Apple account without teaching account creation, leaving a from-zero beginner gap. Some unnecessary technical language also weakens accessibility.",
+          "score": 8,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Basic operation of an iPhone 13 does not require AI lessons, and adding Apple Intelligence would violate the device constraint. The manual actions taught are necessary device-use skills rather than rote work that AI should replace. No category-specific weakness is evident.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5847,
+          "outputTokens": 1175,
+          "reasoningTokens": 366
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Battery care and management are entirely absent. Privacy and security receive only initial passcode and Face ID setup, leaving substantive tasks such as controlling app permissions and locating a lost phone untaught. The dedicated settings-personalization chapter, beginning with browsing Settings categories, also conflicts with the explicit requirement to avoid a settings-menu tour.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The setup lessons do not follow the usual onboarding sequence: Face ID and passcode setup precede Apple Account sign-in, rather than following it. Some lesson promises exceed their scope: viewing albums does not teach photo organization, and completing an iOS update cannot reliably fit into four minutes. The claim that Dark Mode reduces eye strain is too unconditional.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Provide an account-creation path for learners without an Apple account, replace technical wording such as 'biometric authentication' with everyday language, and combine merely opening the Camera app with taking a first photo. Reframe customization around concrete needs, such as making text easier to read, rather than browsing preferences.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A product course for one older model: chapters are tasks done on an iPhone 13 (set it up, calls and messages, the camera, apps, privacy and security, battery), never a tour of the settings menu\n      - The first lessons of the first chapter end with something real done on the phone\n      - Nothing the iPhone 13 can't do: no Dynamic Island, Action button, Camera Control, always-on display or Apple Intelligence\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "iphone"
+        },
+        "id": "en-product-iphone-13-pinned-beginner-1",
+        "userInput": {
+          "courseTitle": "iPhone 13",
+          "language": "en",
+          "level": "beginner",
+          "product": {
+            "brand": "Apple",
+            "name": "iPhone",
+            "release": {
+              "name": "iPhone 13",
+              "releasedOn": "2021-09-24"
+            }
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Issues, projects, cycles and workflow are covered, and both required migration keys are attached to lessons that actually teach them in the same chapter. However, triage is absent; general prioritization does not teach handling incoming work through Linear's triage process. The missing named pillar caps coverage at 8.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "order",
+          "reasoning": "The overall progression from creating issues and projects to managing work and migrating Jira data is sensible. Within migration, however, executing the import precedes status mapping. Mapping should inform the import rather than first appear after execution; the sequence also lacks a final verification step.",
+          "score": 8,
+          "label": "Order",
+          "weight": 15
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Lessons consistently specify three to five minutes, searchable titles, one-sentence descriptions, verb-first observable can-do statements and action-based skills. The main weakness is combining labeling and effort estimation into one four-minute lesson despite their different purposes. Two chapters also fall below the usual four-lesson minimum, though neither is structurally unusable.",
+          "score": 8,
+          "label": "Lesson granularity",
+          "weight": 20
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The outline contains practical tasks rather than overview, recap or motivational lessons. Despite the generic 'Primeiros passos' chapter title, its lessons create an account, a team, issues and a project. Views, shortcuts and notifications provide distinct usable capabilities rather than repeating earlier content.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelFit",
+          "reasoning": "The text is natural Brazilian Portuguese and starts with account and team creation before introducing routine work management. Product terminology is used in concrete task contexts, no release is named, and the outline is suitable for a shared beginner band rather than tailored to one learner.",
+          "score": 9,
+          "label": "Level & language fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Prioritization, estimation and migration mapping provide some judgment-oriented learning, and the outline is not dominated by rote memorization. However, AI increasingly affects issue drafting and work planning, and there is no lesson on working with or evaluating AI output. The applicable no-work-with-AI cap is 8; migration-result validation would also strengthen this category.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4006,
+          "outputTokens": 1089,
+          "reasoningTokens": 304
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Triage is missing despite being an explicitly named course pillar. The migration sequence also has learners execute the import before mapping statuses, placing an important preparation step after the operation it should inform. Both required Jira skills are genuinely covered and tagged together in one tutorial-sized chapter.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The migration description promises to preserve information without teaching checks that would substantiate that promise; 'synchronize' also blurs the distinction between status mapping and ongoing synchronization. The labels-and-estimates lesson combines two distinct mechanisms. Two chapters contain only three lessons, below the usual four-to-twelve range, although they remain coherent.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a practical triage lesson, prepare status mappings before executing the import, and finish migration with checks of representative issues, projects, owners and statuses. Separate labeling from effort estimation. Include a small exercise reviewing an AI-generated issue description or proposed prioritization against the team's actual requirements.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A product with no releases: no title, description or objective names a version\n      - The two required skills are the size of a tutorial (moving a team's work over from Jira): they sit together in one chapter, not spread over several\n      - Chapters are tasks done in Linear (issues, projects, cycles, the team's workflow, triage), and the first lessons end with real work in it\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "tool": "linear"
+        },
+        "id": "pt-product-linear-jira-import-1",
+        "userInput": {
+          "courseTitle": "Linear",
+          "language": "pt",
+          "level": "beginner",
+          "product": {
+            "brand": "Linear",
+            "name": "Linear",
+            "release": null
+          },
+          "requiredSkills": [
+            {
+              "description": "Trazer as issues, os projetos e os responsáveis do Jira para o Linear.",
+              "key": "jira-import",
+              "name": "Importar issues do Jira"
+            },
+            {
+              "description": "Ligar cada status do Jira a um status do fluxo do time no Linear.",
+              "key": "jira-statuses",
+              "name": "Mapear status do Jira para o Linear"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "course-outline"
+}

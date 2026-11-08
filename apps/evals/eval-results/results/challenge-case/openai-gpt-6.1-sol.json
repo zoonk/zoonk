@@ -314,6 +314,322 @@
           "variant": "work"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional hospital, approaching medication time, occupied physician, conflicting records, prescription correction and documented delay create a credible nursing workflow. The calculation is used to resolve a workplace problem rather than presented as an isolated quiz.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices produce different replies, meter changes and resolved, pending or blocked endings. The final time jump is consistent. However, the best answer is conspicuous at every decision, including the final contrast between checking the current prescription and circulating a cancelled copy. The explicit maximum of 6 applies.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The supervisor and physician have distinct responsibilities and give useful, realistic responses. Consulting the AI is actionable, independently checked and appropriately limited to calculation support. No colleague or learner is named. The first colleague is consistently feminine, and the second masculine wherever Portuguese marks gender.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific, kind and focused on checking and communication strategies. Practice activities are short, and summary sentences each communicate a clear lesson. Most communication feedback includes usable wording, but the 'defer' example only instructs the learner to calculate and compare rather than demonstrating a better message.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The calculations are correct: 24 × 25 = 600 mg/dose, 750 ÷ 24 = 31,25 mg/kg/dose, and the discrepancy is 150 mg. The eight-minute jump from 14h28 to 14h36 and six-minute delay are consistent. No mL quantity is asserted without a concentration. Unsafe proposals are stopped before preparation or administration, and the successful path requires prescriber clarification, an updated prescription and final checks.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "Learner-facing content is in Brazilian Portuguese with appropriate local number formatting and intermediate nursing terminology. The explanation distinguishes mg/kg/dose from a daily dose, and the case clearly limits AI authority without making unsupported promises.",
+          "score": 9,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6337,
+          "outputTokens": 971,
+          "reasoningTokens": 238
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The preferred answer is obvious at every decision: it explicitly performs the necessary checks, while alternatives defer checks, communicate vaguely, or use an unresolved or cancelled prescription. Branches have real consequences, but the choices offer little meaningful judgment under pressure. This triggers the decisions category's maximum score of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The feedback for 'defer' identifies a communication improvement but gives a calculation instruction rather than an example of better wording to send to the physician.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Add plausible competing approaches that require prioritization without compromising safety, rather than consistently contrasting complete checking with visibly incomplete practice. A verified preparation concentration and a corresponding mL calculation would also extend the case's practical usefulness.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking. Not counting the AI assistant, the first colleague's role and every word about them is feminine and the second's masculine where Portuguese marks it (\"a farmacêutica\", \"o médico plantonista\"), since the app names them a woman and then a man.",
+        "id": "pt-nursing-dose-work-1",
+        "userInput": {
+          "chapterDescription": "Calcular e conferir doses de medicamentos por peso com segurança.",
+          "chapterTitle": "Cálculo de doses",
+          "courseTitle": "Farmacologia para enfermagem",
+          "language": "pt",
+          "level": "intermediate",
+          "skills": [
+            {
+              "description": "Calcular a dose a partir do peso do paciente.",
+              "name": "Calcular dose por peso"
+            },
+            {
+              "description": "Conferir prescrição, unidade e via antes de administrar.",
+              "name": "Conferir a prescrição"
+            },
+            {
+              "description": "Levar uma dúvida ao médico de forma clara e segura.",
+              "name": "Comunicar uma dúvida ao médico"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "A fictional hospital, discharge-teaching problem, 3 p.m. deadline, and competing demands on staff time create a credible nursing quality-improvement task. The numbers and collection period are plausible. However, the requested ward setting remains implicit rather than concretely established.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, recommendation strength, staff time, and endings; the six-week jump supplies updated counts. Closing an inconclusive pilot is a legitimate resource-conscious middle option, so the right answer is not obvious at every decision. Nevertheless, most other choices are strongly cued and contrast sound reasoning with conspicuous overclaiming, limiting realistic judgment practice.",
+          "score": 8,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The nurse manager supplies deadline and resource pressure, the nurse educator reviews interpretation and protects professional practice, and the AI provides useful calculations. Asking for help is an explicit, valued choice, with human review of AI advice. Colleagues are identified through roles and placeholders, and the learner is unnamed.",
+          "score": 9,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific, kind, and focused on strategies rather than intelligence. Communication corrections include usable replacement wording, and the summary captures the practiced statistical ideas. The sample-size practice is less self-contained: it asks learners to name the required number without providing a planning tool or enough guidance to make that a dependable five-minute exercise.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The percentages and cumulative counts are consistent. A conventional two-sided comparison of proportions gives approximately 25% for the initial data and 0.47% for the completed data, matching the stated approximations. About 300 per group plausibly provides 80% power to detect a rise from 70% to 80% under a conventional 5% threshold. The result correctly distinguishes inconclusive evidence from equivalence, and all paths preserve safe care and review before changes.",
+          "score": 9,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English is accessible, hypothesis testing is explained conversationally, and the scenario avoids formulas, marketing terminology, and clinical-knowledge-dependent answers. However, the repeatedly referenced 'agreed test rule' is never stated, and sample-size learning largely consists of following an existing plan rather than learning how the required number is chosen.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6200,
+          "outputTokens": 1278,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The hospital setting is credible but never clearly anchored to a particular nursing ward. Several decisions are heavily signposted: colleagues explain the preferred reasoning immediately before choices that repeat it, while weak options repeatedly ignore uncertainty or claim proof.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give the learner a supported sample-size planning decision rather than only a choice to finish a predetermined sample. State the agreed evidence threshold in beginner-friendly language. Make the sample-size practice self-contained by supplying planning assumptions or a simple lookup so it can reliably be completed in about five minutes.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The same statistics chapter as \"en-ab-test-work\", but for a learner who works in nursing: the case happens on a hospital ward, such as a nurse manager asked whether a new fall-prevention or hand-hygiene routine really lowered a rate between two units or two months, with colleagues a nursing ward works with (a charge nurse, an infection-control nurse, a unit manager) and an AI assistant. It must still train telling a real difference from chance, sample size and explaining the result, without marketing or A/B tests, and nursing knowledge must not decide the right choices. Numbers must be realistic and consistent (a small gap on few patients isn't called significant). General to the field: a fictional hospital, no real names, no personal details, and no path ends with harm to a patient.",
+        "id": "en-statistics-field-nursing-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "field": "nursing",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional store, merchandise, price-label approval process, checkout preview, realistic monetary amounts, and 14h30 deadline create a credible retail task. The manager applies practical pressure, and the mathematics directly supports the work.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, meters, and endings, and recovery from an initial mistake is possible. However, every decision clearly signals the correct answer, triggering the explicit cap of 6. The delay branches also lack updated operational numbers or review findings after their time jumps.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The manager and pricing analyst have distinct priorities, use colleague-like language, and remain unnamed. Asking the AI is a genuine, valued option with useful answers that receive human verification. However, the specified buyer and finance roles are absent.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is specific, kind, and focused on strategies such as checking percentage bases and investigating discrepancies. Improvement notes give actionable alternatives and suitable wording for communication. Both skill practices fit approximately five minutes, and the summaries reinforce the practiced ideas.",
+          "score": 10,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All calculations and monetary amounts are consistent: R$ 240,00 increased by 25% becomes R$ 300,00; discounts of 20% and 10% produce R$ 240,00 and R$ 270,00, with margins of 25% and approximately 33,33%. The R$ 252,00 estimate is explicitly treated as an error rather than taught as correct. Exceptions require manager authorization.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The learner-facing content is in Brazilian Portuguese with appropriate monetary formatting. Successive percentages and margin are explained in the chat at a beginner-friendly level, and the case makes no promises about results, employment, or grades.",
+          "score": 10,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5692,
+          "outputTokens": 1051,
+          "reasoningTokens": 333
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The correct choice is obvious at every decision. The opening contrasts an explicitly incorrect subtraction with checking the calculations; later choices contrast a verified, target-compliant offer with knowingly missing the target or delaying unnecessarily. Although branches have consequences, this triggers the decisions category's maximum score of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The team includes a manager and pricing analyst, but not the buyer and finance colleague specified in the expectations. Both 20-minute time jumps end without showing an updated clock, remaining deadline, or new findings from the review.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the trade-off less predetermined by offering plausible discounts whose margin implications the learner must establish before receiving the full calculation. Give the buyer and finance colleague distinct contributions, and show the updated deadline status after a review.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case in Brazilian Portuguese for a learner who works in retail: a store (a fictional name) deciding a promotion or a price change, where successive percentages and the margin decide what's right (for example \"aumentar 20% e dar 20% de desconto\" doesn't return to the original price, and a discount on the sale price eats the margin faster than it seems). Colleagues a store works with (the store manager, the buyer, the finance person) and an AI assistant that checks calculations when asked. Every number in reais is right and consistent across panels, messages and endings, written the Brazilian way (R$ 1.234,56). General to the field, with no real company.",
+        "id": "pt-porcentagem-field-retail-1",
+        "userInput": {
+          "chapterDescription": "Aumentos, descontos e margens aplicados em sequência no comércio.",
+          "chapterTitle": "Porcentagem no dia a dia",
+          "courseTitle": "Matemática financeira",
+          "field": "retail",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "name": "Aumentos e descontos sucessivos"
+            },
+            {
+              "description": "Calcular a margem de lucro sobre o preço de venda.",
+              "name": "Calcular a margem"
+            }
+          ],
+          "variant": "work"
+        }
+      }
     }
   ],
   "taskId": "challenge-case"

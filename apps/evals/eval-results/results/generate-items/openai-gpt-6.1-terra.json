@@ -5,29 +5,29 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "The scientific explanations and scoring criteria are accurate. Inhibition reduces activity by 50% at 1 mM substrate and approximately 18.4% at 10 mM, supporting—but not proving—competitive inhibition. The high-substrate prediction is correct for the proposed mechanism. The heat-exposure experiment appropriately tests persistent activity loss using matched assay conditions and an unheated control.",
+          "reasoning": "The controlled pH comparison is correct, and the rate decrease is 40 − 10 = 30 µmol/min. The temperature and pH mechanisms are scientifically sound. Reduced proportional inhibition at higher substrate concentration is consistent with competitive inhibition, as cautiously stated. The cooling experiment and expected recovery appropriately test reversibility. No factual-error cap applies.",
           "score": 10,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The rubric provides clear, independently scorable criteria, and the sample outline explains the expected reasoning. However, the first key point bundles several ideas rather than presenting each as an independently checkable statement. Distractor and short-answer accepted-wording requirements do not apply to this essay item.",
+          "reasoning": "The rubric provides clear, independently scored requirements, and the sample outline supports them accurately. However, the molecular-mechanism key point combines temperature and pH rather than expressing each as a separately checkable idea. Distractor and misconception-label requirements are not applicable to this essay item.",
           "score": 8,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "This is a credible AP Biology experimental free-response question with lettered parts, appropriate task verbs, quantitative evidence, and an experimental-design task. Its eight one-point scoring rows specify what earns credit and total eight points, within the required range. There is no identifiable evidence of copying a real College Board question.",
+          "reasoning": "This is a plausible AP Biology experimental free-response question with lettered parts, appropriate task verbs, data interpretation, molecular explanation, and experimental design. Its eight one-point scoring rows specify what earns credit and total eight points, within the explicitly permitted range. There is no identifiable copying or near-copying of a real question.",
           "score": 10,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The English-language question appropriately assesses intermediate enzyme biology through data interpretation, mechanistic explanation, prediction, and controlled experimental design. It covers temperature, pH, and inhibitors without repetitive tasks. A useful refinement would be to assess the high-temperature shape–activity mechanism explicitly rather than leaving it in the supporting key points.",
-          "score": 9,
+          "reasoning": "The question directly assesses temperature, pH, and inhibitor effects on enzyme activity using experimental data. Its parts vary the cognitive work through controlled comparison, calculation, molecular explanation, evidence-based identification, and experimental design. The language and intermediate difficulty fit the supplied values.",
+          "score": 10,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -44,20 +44,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2905,
-          "outputTokens": 854,
-          "reasoningTokens": 285
+          "inputTokens": 2780,
+          "outputTokens": 1302,
+          "reasoningTokens": 763
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The first key point combines three independently checkable ideas: the observed temperature optimum, reduced molecular motion at low temperature, and structural disruption at high temperature. Split these into separate key points to satisfy the requirement for atomic essay-grading criteria. The rubric itself is appropriately granular.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The second key point bundles temperature and pH mechanisms into one broad statement rather than providing independently checkable ideas. This is a minor grading-usability issue because the rubric correctly scores the two mechanisms separately.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "The temperature portion could assess the shape–activity connection more directly by asking students to explain how heat-induced structural changes could cause the persistent activity loss predicted in part (d). Currently, that mechanism appears in the key points but is not explicitly assessed.",
+          "conclusion": "Strengthen the sample response for part (c) with the calculated inhibition percentages: 75% at 2 mM substrate versus approximately 39% at 20 mM. This would demonstrate explicitly how the data support competitive inhibition.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -85,29 +89,29 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "The general claims about digital services and access barriers are defensible, and the competency descriptions are substantially accurate. However, assigning two points to every competency supplies an incorrect scoring scheme for this task; all five values must be null. There is no objective answer key to evaluate for this essay.",
-          "score": 7,
+          "reasoning": "The supporting texts contain no identifiable factual errors, and the fictional everyday scenario makes no unsupported statistical or legal claims. The rubric accurately summarizes ENEM's five competencies, with every row's points set to null as required. An open-ended essay appropriately has no uniquely keyed answer.",
+          "score": 10,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The rubric and key points provide useful grading guidance, and distractor requirements do not apply to an essay. However, the intervention key point combines several independently assessable requirements. Splitting those requirements would make evaluation and feedback more precise.",
+          "reasoning": "The key points and outline provide relevant guidance, but several key points are not independently checkable single ideas. In particular, the intervention checklist should separate agent, action, means, purpose, detail, and respect for human rights. Paragraph articulation and formal language should also be assessed separately. Distractor requirements do not apply to this essay.",
           "score": 8,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The Brazilian social theme, short motivating texts, formal dissertative-argumentative command, human-rights requirement and 30-line limit fit ENEM redação. Nevertheless, the unsupported two-point rubric rows fail the required scoring format, keeping this category at most 7. The support texts also weakly establish the theme's focus on older people.",
-          "score": 7,
+          "reasoning": "The result fits the task-specific ENEM essay format: a socially relevant Brazilian theme, two short motivating texts, the standard formal dissertative-argumentative command, a human-rights-respecting intervention, a 30-line limit, and the five-competency rubric. Multiple-choice options are correctly absent.",
+          "score": 10,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The single intermediate-level essay directly requires a thesis, developed arguments, sociocultural repertoire, coherence and an intervention proposal. Learner-facing content is in Portuguese, and the task requires substantive writing rather than recall. With only one requested item, cross-item variety is not applicable.",
-          "score": 9,
+          "reasoning": "The single prompt directly exercises thesis construction, argument development, productive use of repertoire, cohesion, and intervention planning rather than factual recall. Its accessible but substantive topic suits intermediate learners, and the learner-facing material is in Brazilian Portuguese. Variety across multiple questions is not applicable to the requested single essay.",
+          "score": 10,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -124,24 +128,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2463,
-          "outputTokens": 767,
-          "reasoningTokens": 216
+          "inputTokens": 2582,
+          "outputTokens": 774,
+          "reasoningTokens": 249
         }
       },
       "steps": [
         {
-          "conclusion": "All five rubric rows assign points: 2, directly violating the requirement that every row's points be null. This introduces an unsupported scoring scheme despite correctly identifying ENEM's five competencies.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "The motivating texts provide little grounding for the elderly-specific theme: Wesley's age is unspecified, and Texto II discusses digital access generally. Also, the final key point bundles intervention feasibility, completeness, relevance and respect for human rights rather than making each independently checkable.",
+          "conclusion": "Several key points combine independently assessable requirements. The intervention point bundles five components and respect for human rights; another combines paragraph organization with formal language. This makes partial achievement harder to evaluate consistently.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "The sample outline could demonstrate how a specific piece of sociocultural knowledge supports an argument, instead of merely recommending relevant repertoire.",
+          "conclusion": "Make the sample outline more instructive by illustrating one relevant sociocultural reference and its connection to an argument, while clearly presenting it as one possible approach rather than a required answer.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -170,103 +174,29 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculations confirm all three unique keyed answers: 1.5 × (40/60) × 30 × $0.24 = $7.20; (0.200 − 0.150) × 12 × 30 × $0.20 = $3.60; and ($12.96/$0.18)/(4 × 30) × 1,000 = 600 W. The worked explanations are accurate, and the refrigerator operating assumptions are explicit.",
+          "reasoning": "Independent calculations give 240 × 1.20 × 0.85 = 244.80; 276 ÷ (0.80 × 1.15) = 300; and a cumulative factor of 1.25 × 0.80 × 1.10 = 1.10, requiring a discount of 1 − 1/1.10 ≈ 9.09%. Each item has exactly one defensible correct option, correctly keyed.",
           "score": 10,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor has a specific misconception label and feedback identifying the mistaken operation or interpretation. Recomputing each stated mistake produces its option value. The traps cover time and power conversions, omitted operating days, confusing total cost with savings, and confusing cost or daily energy with power.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Each item has a short everyday support text, a clear command, and five concise options with exactly one correct answer. Household heating, refrigerator replacement, and appliance electricity costs provide appropriate ENEM-style applied contexts. Option wording does not reveal the answers.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All three questions require applying household electricity relationships rather than recalling definitions. They vary the task through direct cost calculation, comparison of operating costs, and reverse calculation of power. The set provides an appropriate difficulty spread and is entirely in English.",
-          "score": 10,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3117,
-          "outputTokens": 980,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
-        "id": "en-enem-natural-sciences-electricity-consumption-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
-            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
-            "name": "Household electricity consumption"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "Each item has exactly one correct answer and the key matches it: 240 × 1,25 × 0,80 × 0,95 = 228; 198 ÷ (1,10 × 0,80) = 225; and (1 ÷ 0,72 − 1) × 100 ≈ 38,9%. The worked solutions and other mathematical claims are accurate.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor follows from a specific, realistic mistake, and recomputing those mistakes produces the listed values. Labels identify the errors, and reasons explain omitted changes, incorrect bases, or incorrect reversal operations without referring to option positions. The explanation for “42,9%” is valid but could show the recovery calculation explicitly.",
+          "reasoning": "All distractors correspond to specific, reproducible mistakes, including combining signed rates, omitting a change, reversing signs instead of dividing by factors, and using the wrong base. The stated mistakes produce their associated values, and feedback explains the errors without positional references. Showing 15/115 × 100 explicitly would make the otherwise valid explanation for 13,04% easier to follow.",
           "score": 9,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The items use concise everyday contexts, clear commands, and five comparable numeric options with one correct answer, consistent with ENEM-style mathematics. However, none includes the explicitly required town. The omission weakens compliance with the requested setting, although the questions themselves remain realistic.",
-          "score": 8,
+          "reasoning": "Each item uses a short, plausible everyday context, a clear command, and five concise options with one correct answer, consistent with the requested ENEM format. Different people and towns appear in every item. CAST membership cannot be verified because no CAST list was supplied.",
+          "score": 10,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "All three items require applying successive percentage changes rather than recalling definitions. They vary both context and operation: calculating a final price after three changes, recovering an original price, and finding the percentage increase needed to reverse successive decreases. This provides a useful difficulty progression, and all learner-facing content is in Brazilian Portuguese.",
-          "score": 10,
+          "reasoning": "All three items require applying successive percentage changes rather than recalling definitions. They vary the mathematical demand: calculate a final price, recover an original price, and determine a compensating discount after three changes. Difficulty progresses appropriately, and all learner-facing content is in Portuguese. Broader everyday contexts would add variety beyond the shared retail-price setting.",
+          "score": 9,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -283,20 +213,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3227,
-          "outputTokens": 898,
-          "reasoningTokens": 319
+          "inputTokens": 3325,
+          "outputTokens": 922,
+          "reasoningTokens": 370
         }
       },
       "steps": [
         {
-          "conclusion": "All three items omit the required town, so the requirement to use a different person and town in each item is not satisfied. The people are distinct, but CAST was not supplied in the grading inputs, so their membership cannot be verified.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The feedback for “42,9%” could make the connection to that value more explicit by showing that the incorrectly assumed 30% decrease leads to 1 ÷ 0,70 − 1 ≈ 42,9%. Its existing diagnosis of the mistake is correct.",
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make the feedback for 13,04% more transparent by showing the mistaken calculation 15/115 × 100. For broader contextual variety, one retail-price scenario could be replaced with a salary, service fee, or consumption scenario.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -326,105 +260,29 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "All three keys are defensible and correct. The lawful discretionary authorization may be revoked prospectively, with no acquired right implicated. Illegality calls for annulment rather than revocation. Article 54 bars administrative annulment of the beneficial federal act after five years under the stated good-faith circumstances and absence of a timely challenge. The single-payment scenario does not invoke the special starting rule for continuous financial effects.",
+          "reasoning": "All three keys are uniquely correct. Item 1 has shortfalls of 5, 10, 25, 30 and 22, so Viagem 4 is correct. Item 2 has discounts of 50%, approximately 26.7%, 10%, 60% and 10%, so Garrafa térmica is correct. Item 3 totals R$ 170 and R$ 200, giving R$ 30 more. The stated correct-answer calculations are accurate.",
           "score": 10,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The false item contains one realistic trap: substituting revocation for annulment when an act is illegal. Its misconception label identifies that confusion, and its explanation clearly contrasts legality review with discretionary withdrawal. The true items also explain the governing rules in accessible language.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Each item presents one assertion for a true-or-false judgment, using concise legal scenarios consistent with Cebraspe-style questions. The false assertion uses a plausible concept swap rather than an implausible claim. The progression from ordinary revocation to the statutory annulment deadline fits the requested intermediate setting.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The set is entirely in English and requires applying rules to distinct situations: revocation of a lawful authorization, treatment of an illegal license, and expiration of the annulment period. Difficulty varies appropriately. Coverage could be strengthened by directly testing annulment's retroactive effects rather than mentioning them only in the explanation.",
-          "score": 9,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2297,
-          "outputTokens": 806,
-          "reasoningTokens": 313
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Assess annulment's generally retroactive effects directly in an assertion; currently, this part of the requested skill appears only in feedback.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Cebraspe-style true/false items in US English on annulment and revocation of administrative acts in Brazilian administrative law: the administration must annul its own illegal acts and may revoke lawful ones for reasons of convenience or opportunity, respecting acquired rights (STF Precedent 473; Law 9.784/1999, arts. 53 and 54). False items must hide one realistic trap, such as swapping annulment and revocation, saying revocation reaches illegal acts or that only the courts can annul. Check the legal accuracy of every statement.",
-        "id": "en-cebraspe-annulment-revocation-administrative-acts-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "Cebraspe (concurso público)",
-            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
-          },
-          "format": "trueFalse",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Tell when Brazilian public administration must annul an administrative act and when it may revoke it, and what effects each has.",
-            "name": "Annulment and revocation of administrative acts"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "All three questions have exactly one defensible answer and correct keys. Independently calculated results are 2×7 + 3×5 + 1×6 = R$35; (80−52) + (65−43) = 50 kg; and (125−100)/100 = 25%. The worked explanations agree with these results.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor has a specific, understandable mistake and feedback explaining it. Recomputing the stated mistakes produces the offered values: for example, adding quantities and unit prices gives 24, subtracting the remaining food amounts gives 6, and using the final planting total as the percentage denominator gives 20%. However, several traps concern arithmetic operations or percentage concepts rather than the explicitly requested table-reading mistakes.",
-          "score": 8,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The items use Brazilian Portuguese, everyday settings, short support texts, command-only questions, and five unlabeled answer options. All tables are correctly placed in context as pipe tables. However, the set does not consistently fit the specified beginner level: the shopping item requires multiple products and a sum, and the planting item requires aggregation followed by a percentage calculation.",
+          "reasoning": "Most distractors correspond to identifiable mistakes and explain them clearly; item 3 is particularly strong, with every wrong amount reproducible. However, the rounding mistake described for Mochila does not unambiguously produce that selection: recomputing the bottle's discount using the rounded initial price gives 68%, whereas only changing the denominator gives 48%. The cap of 7 applies because the named procedure does not reliably lead to its option.",
           "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items use plausible Brazilian everyday situations, short support texts, clear commands, five unlabeled answer options and one correct answer each. Tables are in context rather than in the commands. The main weakness is level calibration: percentage comparisons and weighted revenue calculations do not meet the specified beginner, one-step expectation.",
+          "score": 8,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The questions require application rather than recall and vary their situations and operations. Nevertheless, they omit comparisons across years and identifying the largest change entirely. Much of the challenge comes from multiplication, aggregation, and percentage calculation rather than the requested beginner skill of reading and comparing table entries and changes.",
-          "score": 6,
+          "reasoning": "All items require using table data, are written in Portuguese and vary their situations and operations. However, items 2 and 3 shift much of the challenge toward percentage calculation and multi-step financial arithmetic rather than beginner table reading. The set also omits the requested comparison across years. These are meaningful fit weaknesses despite the useful variety.",
+          "score": 7,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -441,22 +299,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3311,
-          "outputTokens": 847,
-          "reasoningTokens": 254
+          "inputTokens": 3555,
+          "outputTokens": 953,
+          "reasoningTokens": 272
         }
       },
       "steps": [
         {
-          "conclusion": "The set misses the requested comparison focus: no item compares years or asks which row has the largest change. Instead, it tests purchase totals, remaining stock, and aggregate percentage increase. Several distractors also rely on arithmetic-operation mistakes rather than the specified row/column misreadings or confusion between totals and changes. The percentage item introduces additional prerequisite knowledge beyond beginner table reading.",
+          "conclusion": "The set exceeds the requested beginner level: item 2 requires calculating and comparing percentage discounts, while item 3 requires several price–quantity multiplications and a comparison of totals. These add substantial arithmetic demands beyond basic table reading.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Make the contexts more consequential by connecting the requested comparison to a practical decision, such as identifying which location experienced the greatest increase and should receive additional resources.",
+          "conclusion": "The Mochila distractor has ambiguous feedback. Rounding the bottle's initial price to R$ 100 and recalculating its discount gives 68%, which would not make Mochila correct. Obtaining 48% requires retaining the original R$ 48 discount while changing only the denominator, an unstated and rather contrived mistake.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Include a straightforward comparison between named years, which is absent from the set. Replace the ambiguous rounding distractor with a clearly reproducible row or column misreading, and keep the arithmetic light enough that reading the table remains the main challenge.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -484,29 +346,115 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculation gives x = 11 for item 1, 12 visits for item 2, and x = −1/3 with 2x + 3 = 7/3 for item 3. Each item has exactly one correct option, its key is correct, and the worked explanations are accurate.",
+          "reasoning": "Both supplied questions have exactly one defensible answer, and both keys are correct. 'A gente' and 'junto' support an inclusive, collaborative effect in item 1. Preserving the nonstandard agreement is appropriate for the speech-documentation project in item 2. The explanations make no material factual errors or unjustified claims about regional usage.",
           "score": 10,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor has a specific, realistic misconception and explanatory feedback. Reproducing the stated mistakes gives the listed values, including 13.6 from discounting the joining fee and 19/3 from incorrectly expanding −3(x + 1). No misconception is generic or numerically inconsistent.",
-          "score": 10,
+          "reasoning": "Labels identify specific mistakes, and the feedback generally explains why each interpretation fails. However, several distractors are implausible, particularly the solitary search and technical-catalog interpretations in item 1 and the proposed replacement with 'eles' in item 2. The explicit cap of 7 for several implausible distractors applies.",
+          "score": 7,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The questions use concise, precise English, direct commands, and four short numerical options. The standalone equation, plan-comparison context, and requested expression after solving a fractional equation are all credible Digital SAT Math formats.",
-          "score": 10,
+          "reasoning": "The items use everyday support texts, clear commands, five options, and one correct answer, consistent with basic ENEM structure. Nevertheless, neither supplies the specifically required multiline exchange or poem, and several transparently unsupported alternatives make the assessment less convincing as intermediate ENEM practice. The set therefore falls short of the requested exam setting, warranting the cap of 7.",
+          "score": 7,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "All three items require applying linear-equation skills, with useful variation across parentheses, a contextual equation, and fractions followed by expression evaluation. However, item 2 shifts its distractor emphasis toward percentage interpretation and omitted costs rather than the explicitly requested algebra-error families.",
+          "reasoning": "Both questions require contextual application rather than definition recall, remain in Portuguese, and avoid presenting nonstandard speech as inherently wrong. They address distinct tasks: identifying an interpersonal effect and deciding how to preserve variation in a transcription. However, supplying only two items limits the requested coverage, and the straightforward contrasts provide little intermediate-level challenge.",
           "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 3 parts passed. Item 3: Its words point at a picture (a scene, a diagram, a map or an illustration), but it shows none: give it an `image` whose `prompt` describes that picture with every label and detail the words use.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2954,
+          "outputTokens": 909,
+          "reasoningTokens": 264
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result provides only two of the three requested items. Neither context contains the required exchange or poem of at least two lines: each quotes just one speaker’s sentence. These are explicit failures of the requested quantity and support-text structure.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors are too easy to dismiss rather than representing realistic misunderstandings of linguistic variation. In item 1, working alone directly contradicts 'junto', and technical catalog language has no textual support. In item 2, replacing 'nós' with 'eles' is a strained interpretation of 'vai'. These options weaken discrimination at the requested intermediate level.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use the missing third item to introduce verse or a contrasting communicative situation requiring a more demanding adequacy judgment. Replace the weakest distractors with plausible overgeneralizations about standard language and institutional settings, while retaining the specific explanatory feedback.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Linguagens items in Brazilian Portuguese on linguistic variation in transcribed speech or verse: each item quotes a short exchange or poem of two or more lines in `context` and asks about the effect or adequacy of a variety, never judging it as wrong. Quoted lines use plain text or quotation marks, never italics or bold opened on one line and closed on another (the app reads each line on its own, so the marks would show). Every item needs 5 options, and distractors come from treating a variety as an error or ignoring the situation.",
+        "id": "pt-enem-linguagens-falas-transcritas-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Reconhecer marcas de variação linguística em falas transcritas e explicar seu efeito de sentido e sua adequação à situação.",
+            "example": "Na fala «a gente se reunia toda sexta», «a gente» marca um registro informal, adequado a uma conversa entre vizinhos.",
+            "name": "Variação linguística em falas transcritas"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keyed answers are supported and uniquely defensible. The library notice permits withdrawal after returning the first book or reporting its loss; the campaign promotes recirculating usable clothing; and the meeting message proposes online access to address a participation barrier. No factual error or incorrect key triggers a correctness cap.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most feedback identifies useful mistakes, including confusing reservation with withdrawal, overlooking an exception, and interpreting a figurative expression literally. However, the explanation for item 1's final option does not account for its invented no-reservation condition, and item 2's final explanation only partially accounts for its option. Item 3 also includes a weakly grounded lack-of-interest distractor. The mismatch between stated mistakes and their options triggers the cap of 7.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items broadly follow ENEM presentation: short Spanish support texts, Portuguese commands and explanations, everyday situations, and five alternatives with one correct answer. However, conspicuously absolute distractors make some choices easier to eliminate than their intended reading demands warrant. The third text's generic description as a message also gives it a less concrete communicative setting than the library notice and clothing campaign.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The situations and targeted expressions vary, and these are contextual reading questions rather than text-free drills. Nevertheless, the central skill constraint is not met: transparent vocabulary and contextual clues let a Portuguese reader reach the answers without resolving the intended Spanish expressions. This is especially clear in items 2 and 3, where the exchange vocabulary and the final online-participation sentence independently reveal the keys. Correct language allocation does not compensate for that explicit task-fit failure.",
+          "score": 6,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -523,19 +471,366 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2780,
-          "outputTokens": 809,
-          "reasoningTokens": 333
+          "inputTokens": 3454,
+          "outputTokens": 1187,
+          "reasoningTokens": 393
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Item 2's distractors target discount interpretation and omitted joining fees rather than the requested sign errors, incorrect distribution, or stopping one step early. They are mathematically valid distractors, but less aligned with the specified practice focus.",
-          "kind": "minorErrors",
-          "score": 8
+          "conclusion": "The set fails the central requirement that answering depend on Spanish that cannot be inferred from Portuguese cognates. Item 2 reveals the clothing-exchange purpose through transparent clues such as “punto de intercambio” and “en buen estado.” Item 3 effectively supplies its answer through “conexión en línea, participaríamos más personas,” without requiring understanding of the structures named in the command. Item 1 also relies heavily on transparent reservation, withdrawal and exception vocabulary rather than a decisive nontransparent expression.",
+          "kind": "majorErrors",
+          "score": 6
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Some distractors are insufficiently grounded in specific misreadings. Item 1's final option introduces not having made a reservation, which its explanation about reversing “hasta que” does not explain. Item 2's final option changes exchanging clothes into separating all clothes; ignoring “en buen estado” explains only part of that change. Item 3's lack-of-interest option has little textual basis. Absolute wording such as “sem exceções,” “qualquer reunião” and “sempre” also makes elimination easier.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make a different nontransparent Spanish expression decisive in each item, and remove redundant cognate-rich clues that independently reveal the answer. Build distractors around identifiable alternative readings of those expressions, with feedback explaining the entire mistaken reading. Give the third text a clearer communicative setting, such as a workplace forum comment, and use more balanced alternatives.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style foreign language items for a Brazilian learner who chose Spanish: each item's support text is in Spanish (a notice, a chronicle, a website, an ad, a song, a comic strip or another real genre), while the command, the 5 options and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill. The answer must depend on words or structures of the Spanish text that a Portuguese reader can't infer from cognates, so a reader who knows only Portuguese can't pick it from the look-alike words or from the options alone, and the command never translates the words that settle it. Distractors come from real misreadings (a false friend, a cognate taken at face value, a detail read in isolation). The three texts differ in genre and situation and turn on different expressions. Check every key against the Spanish text.",
+        "id": "pt-enem-espanhol-interpretacao-multiple-choice-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+            "name": "Interpretar vocabulário e estruturas de textos em espanhol"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three items have exactly one correct answer, correctly keyed. Item 1 costs 1.5 × (40/60) × 30 × $0.80 = $24. Item 2 saves [1.2 × 1.5 − 0.8 × 0.75] × 20 × $0.25 = $6. Item 3 permits floor[($10 − $3)/(1.1 × $0.25)] = 25 days. The worked explanations are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor matches its stated mistake when recomputed. For example, treating 45 minutes as 0.45 hour produces $7.20 savings in item 2; treating both times as hundredths of an hour produces a maximum of 42 days in item 3. Labels identify specific mistakes, and feedback explains the incorrect operation or omission rather than merely repeating the correct answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item follows the requested ENEM structure: a short everyday support text, a clear command, and five concise options with one correct answer. The assumptions make the electricity calculations well-defined, and option wording does not reveal the key. Naming the unspecified appliances in items 2 and 3 would further strengthen the household context.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set directly assesses household energy and cost calculations through three distinct tasks: calculating a bill, comparing replacement savings, and finding a budget-constrained maximum. Difficulty progresses through additional reasoning rather than repeated identical calculations. All learner-facing text is in English.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3270,
+          "outputTokens": 768,
+          "reasoningTokens": 227
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Name plausible household appliances in items 2 and 3 instead of using only their power ratings. This would make the everyday settings more concrete without changing the calculations.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
+        "id": "en-enem-natural-sciences-electricity-consumption-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
+            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
+            "name": "Household electricity consumption"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are legally correct and unambiguous. Efficiency cannot authorize direct contracting outside legally permitted circumstances. Personally promotional institutional advertising violates impersonality and article 37, paragraph 1, of the Constitution. Article 7, paragraph 2, of the Access to Information Law guarantees access to the nonrestricted portion when only part of a document is protected. The explanations accurately state these rules.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false item contains one realistic misconception: treating efficiency as permission to disregard legal procurement requirements. Its label identifies that mistake precisely, and its explanation directly corrects it. The true-item explanations also clarify the relevant distinctions: public-interest communication versus personal promotion, and partial disclosure versus withholding an entire document.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item presents a concise hypothetical situation followed by one assertion suitable for a Cebraspe Certo/Errado judgment. The false assertion uses a credible principle-conflict trap rather than an arbitrary falsehood. The wording, public-administration settings, and legal distinctions fit Brazilian public-service examinations.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set is entirely in Portuguese and applies constitutional administrative principles to three distinct situations: procurement, institutional advertising, and access to information. It tests application rather than isolated definitions. The difficulty progression could be stronger because the item labeled hard explicitly supplies the fact needed to resolve the disclosure question.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2308,
+          "outputTokens": 759,
+          "reasoningTokens": 259
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Strengthen the difficulty progression by making the hardest item require more inference. Its context already supplies the decisive fact that the protected information can be separated, making the judgment relatively straightforward.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in Brazilian Portuguese on the principles of public administration (legalidade, impessoalidade, moralidade, publicidade, eficiência) under article 37 of the Brazilian Constitution. False items must hide one realistic trap. Check the legal accuracy of every statement.",
+        "id": "pt-cebraspe-principios-administracao-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+            "name": "Princípios da administração pública (LIMPE)"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are defensible and legally accurate. The unlawful appointment requires annulment with procedural safeguards; revocation does not erase lawful past effects; and Article 54’s five-year limit applies to the favorable, good-faith grant, with no timely administrative challenge. The one-time payment avoids ambiguity about continuing payments. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false item contains one realistic trap: attributing retroactive effects to revocation. Its label identifies that precise mistake, and its explanation directly corrects it while addressing convenience, opportunity, and acquired rights. Feedback on the true items clearly explains the applicable rules.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Each item presents a concise hypothetical followed by one assertion judged true or false. The false assertion uses a plausible doctrinal trap appropriate to Cebraspe. The situations and legal vocabulary fit an intermediate Brazilian administrative-law assessment in English.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set requires application across three distinct situations: an unlawful appointment, revocation of a lawful authorization, and expiration of annulment authority. It varies the legal issue and difficulty and stays entirely in English. Explicitly contrasting the ordinary temporal effects of annulment and revocation would make the effects coverage more complete.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2328,
+          "outputTokens": 765,
+          "reasoningTokens": 290
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The feedback could explicitly contrast revocation’s prospective effects with annulment’s ordinarily retroactive effects, while noting applicable protections. This would strengthen coverage of the skill’s effects component.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in US English on annulment and revocation of administrative acts in Brazilian administrative law: the administration must annul its own illegal acts and may revoke lawful ones for reasons of convenience or opportunity, respecting acquired rights (STF Precedent 473; Law 9.784/1999, arts. 53 and 54). False items must hide one realistic trap, such as swapping annulment and revocation, saying revocation reaches illegal acts or that only the courts can annul. Check the legal accuracy of every statement.",
+        "id": "en-cebraspe-annulment-revocation-administrative-acts-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Tell when Brazilian public administration must annul an administrative act and when it may revoke it, and what effects each has.",
+            "name": "Annulment and revocation of administrative acts"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation gives x = 44, 8 rental hours, and k = 1. Each matches its key and is the only correct option. The worked explanations are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor follows from its stated mistake. For example, incomplete distribution produces 52; omitting the discount produces 7.2 hours; applying the discount to the hourly rate produces 36 hours; and omitting the denominator 4 produces k = 5/2. Labels identify specific mistakes, and feedback explains what went wrong rather than merely supplying the correct answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All three items use concise, precise English, one direct question, and four numeric options. Equation solving, a rental-cost model, and finding a constant from a supplied solution are plausible Digital SAT Math tasks. No option-length or confidence cues reveal the answers.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set requires calculation rather than recall and varies the application: solving a fractional equation, forming and solving a cost equation, and substituting a known solution to find a constant. All remain within one-variable linear-equation work and use English throughout. The only small weakness is the calibration of the displayed difficulty labels, not the substantive skill coverage or variety.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2840,
+          "outputTokens": 1112,
+          "reasoningTokens": 613
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The difficulty labels are questionable: the item marked hard requires straightforward substitution and division, whereas the item marked easy requires distributing a fraction and collecting variable terms on both sides.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Recalibrate the easy and hard labels to reflect the actual algebraic demands. The questions themselves can remain unchanged.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "Digital SAT Math multiple-choice items in English on solving linear equations in one variable. Four options each, with distractors from sign errors, distributing incorrectly or stopping one step early.",
@@ -561,28 +856,466 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent solution supports all three keys. In item 1, 'a gente' includes participants and 'né' seeks agreement; in item 2, the requests adapt to different interlocutors; in item 3, the speech communicates a collective demand despite departures from the standard norm. Each item has exactly one defensible answer, and the explanations contain no factual or linguistic error.",
-          "score": 10,
+          "reasoning": "Both supplied keys and solution expressions are correct at the default values: the total rises from 550 to 635, giving 15.5% when rounded, and increasing a reduced price from 80% to 110% of its original value requires 37.5%. However, item 1 permits impossible fractional customer counts in generated versions, such as 310 × 1.25 = 387.5. This violates the explicit range-sensibility requirement and constitutes a factual/domain error in one item, limiting the score to 7.",
+          "score": 7,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Labels generally identify specific mistakes, and the feedback explains why each interpretation fails in context rather than merely repeating the key. However, several distractors are implausible, especially the invented rejection in item 1, the question-versus-assertion alternative in item 2, and the claim that 'queremos' makes speech written in item 3. The explicit cap of 7 for several implausible distractors applies.",
-          "score": 7,
+          "reasoning": "All four mistake expressions represent realistic percent-change errors and match their labels and explanations. At the default values they produce 15%, 21.25%, 30%, and 137.5%, respectively. The feedback explains the incorrect base or the confusion between a final-value percentage and a percentage increase.",
+          "score": 10,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The items have everyday settings, clear commands, five options, and one correct answer, consistent with basic ENEM structure. However, every item misses the specifically required multiline exchange-or-poem support text, and quotations are italicized rather than presented in plain text or quotation marks. Weak alternatives and the conspicuously qualified correct answer in item 3 further reduce exam realism. The set falls short of the requested ENEM-style setting.",
+          "reasoning": "The supplied questions use concise commercial contexts, direct numeric-response commands, and explicit rounding instructions appropriate for Digital SAT Math. Neither requires multiple-choice options because student-produced responses are permitted. The wording and mathematical demands otherwise fit the exam.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Both items require applying percent change rather than recalling a definition, and they test meaningfully different structures: combining changes across groups and finding an increase from a reduced base. Everything is in English. However, the requested three-item set is incomplete, reducing its practice breadth; the two supplied items also concentrate on multistep applications rather than providing a broader intermediate-level progression.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 3 parts passed. Item 1: Variable new_tickets is outside its range.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3021,
+          "outputTokens": 932,
+          "reasoningTokens": 346
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Only 2 of the requested 3 items were supplied. Also, item 1's variable ranges do not keep every generated version sensible: 310 weekday customers increasing by 25% produces 387.5 customers, an impossible exact customer count.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Use the missing third item for a direct percent-decrease calculation from an original and a new value. This would complement the weighted-total and reverse-percentage problems and broaden the difficulty range.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math student-produced-response items in English on percent change, stored as math data. The variable ranges must keep every new version sensible, the solution expression must compute the answer and the common mistakes must be real (for example dividing by the new value instead of the original).",
+        "id": "en-sat-math-percent-change-numeric-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Compute the percent increase or decrease between an original and a new value.",
+            "name": "Percent change"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation gives 5/12, 10/17, and 23/50 for the default questions, matching the supplied numerical keys. The solution expressions and worked steps are mathematically sound, and all permitted combinations describe feasible situations with positive answers. However, some generated fractions cannot fit the grid exactly, and zero tolerance excludes their grid-length decimal approximations. This is a substantive numeric-answer validation failure, rather than a wrong algebraic key.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All six expressions implement recognizable mistakes, and their labels and reasons accurately explain those mistakes in plain English. However, several permitted parameter combinations make a purported mistake produce the correct answer, including unchanged totals in item 2 and equal-sized groups in item 3. Conditional feedback safeguards are needed.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The English contexts and direct numeric-response questions are plausible digital SAT items, and none asks students to round. Nevertheless, the generated answer ranges and exact-only decimal scoring do not consistently support actual SAT answer entry. Because some generated items cannot be answered within the exam's entry constraints under the specified scoring, the set falls below the realism cap of 7.",
           "score": 6,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "All items are in Portuguese and require contextual interpretation rather than definition recall. They address conversational inclusion, adaptation to interlocutors, and the legitimacy of nonstandard speech in public participation. The situations and commands differ meaningfully, so the duplicate-question cap does not apply. Nevertheless, the supposed hard item offers little additional reasoning demand, and collective-reference interpretation receives repeated emphasis.",
+          "reasoning": "All three questions require calculating fractions of a whole rather than recalling definitions. They vary the task through a nested subgroup fraction, a changing collection, and a weighted combination of subgroup fractions. The first and third share ratio reasoning but ask meaningfully different calculations. The set stays within the requested skill, uses English throughout, and offers increasing complexity.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3993,
+          "outputTokens": 1222,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The variable ranges and zero-tolerance scoring do not guarantee grid-in-compatible answers. In item 1, weekday_ratio=5, weekend_ratio=6, morning_ratio=6, and afternoon_ratio=5 give 36/121, which exceeds the digital SAT's five-character positive-answer limit and has no terminating decimal. Item 3 can similarly produce 61/121. Grid-length decimal approximations cannot satisfy the specified zero tolerance. Even the default answers 5/12 and 10/17 require support for decimal approximations when students choose decimal entry.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some common-mistake expressions become correct within the allowed ranges. In item 2, keeping the original denominator gives the correct answer whenever added equals removed. In item 3, taking an unweighted average is correct whenever juniors equals seniors. These cases need safeguards so correct responses are not assigned misconception feedback.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Represent solutions as exact fractions internally, show simplified fractions in the worked answers, and implement SAT-compatible decimal acceptance. Validate generated combinations for answer-entry length and suppress misconception expressions that coincide with the correct answer.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math student-produced-response (grid-in) items in English whose answers are fractions such as 2/3 or 5/8, stored as math data. The answer box takes a fraction or a decimal, so no question asks to round, the answer for every combination of the variable ranges is a positive value that fits a grid-in, and the common mistakes are real (inverting the fraction, using the part instead of the remainder).",
+        "id": "en-sat-math-grid-in-fraction-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing.",
+            "entry": {
+              "kind": "fraction",
+              "places": null
+            }
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Find a part of a whole as a fraction from a word problem or a ratio.",
+            "name": "Fractions of a whole"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The empty items list exactly matches the task-specific expectation. There are no questions, keys, or factual claims to introduce errors.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "No items are required, so no distractors, misconception labels, or feedback are missing.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The result correctly avoids inventing numeric-response Words in Context questions that would not fit Digital SAT Reading and Writing.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Returning no items respects the explicit expectation that this vocabulary-in-context skill has no suitable numeric-answer problem.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1823,
+          "outputTokens": 298,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "No items: \"Words in Context\" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).",
+        "id": "en-sat-words-in-context-numeric-none-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "entry": {
+              "kind": "fraction",
+              "places": null
+            },
+            "name": "Digital SAT",
+            "optionCount": 4,
+            "style": "Reading and Writing: short passages, each with one question and 4 options (A to D). Math: a short context or equation with 4 options, or a student-produced numeric response typed into a grid."
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Choose the word or phrase that most precisely fits the meaning of a short passage.",
+            "name": "Words in Context"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation confirms every key and numerical claim. The balls meet at 2.5 s and 43.75 m with velocities −5 and +5 m/s; their landing times are 5 and 6 s. The graph gives distance 80/3 m and displacement 4 m. The vehicle separation peaks at 100 m, and the actual catch occurs at 12.5 s; incorrectly extending acceleration gives 5 + 5√2 s. Every item has exactly one defensible correct-option set.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All three distractors represent specific, realistic mistakes, with matching labels and corrective explanations. Equal acceleration does not imply equal flight times; omitting the negative-displacement interval produces exactly 12 m; extending the acceleration phase produces exactly 5 + 5√2 s. The feedback identifies the relevant mistake rather than merely declaring the option wrong.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four-option, select-all structure, independent statements, SI units, and concise wording fit the requested exam format. However, the graph item includes a direct sign-change reading and an elementary area-cancellation statement, falling short of the explicitly required multistep JEE Advanced level. The set therefore does not consistently meet the named exam's difficulty standard, warranting the cap of 7.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applying one-dimensional kinematics rather than recalling definitions. They cover vertical motion under gravity, piecewise velocity-time graph interpretation, and acceleration followed by constant-speed pursuit. Although relative motion appears twice, the setups and required reasoning differ materially. The set stays within the requested skill and is entirely in English.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3331,
+          "outputTokens": 1091,
+          "reasoningTokens": 448
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The graph item's direction-reversal statement is answered directly by counting sign changes, contrary to the explicit requirement that no statement follow from a single graph reading. Its equal-position statement also requires only a simple cancellation of two triangular areas. These options weaken the required JEE Advanced difficulty, although the other two items combine multiple kinematic ideas.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Show the graph's distance calculation explicitly: the four successive intervals contribute 8, 20/3, 8, and 4 m, totaling 80/3 m. Giving the intermediate zero-crossing times would make this explanation more useful for learners.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 18 m, 56 m and 200 m, matching the keys and worked expressions. Across all allowed combinations, item 1 has integer return time launch_speed/4; item 2 has integer extra_speed/2; and item 3 has even initial and intermediate speeds, making its distance an integer. All answers remain non-negative, both reversals in item 3 occur within their respective intervals, and each question has one defensible answer. Expressions use bare variable names, and no rounding is requested.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All six common-mistake expressions reproduce their stated mistakes: neglecting elevator acceleration, using the stationary-platform return time, measuring the entire pursuit, substituting maximum separation, taking displacement magnitude, and omitting opposite-direction travel. Each reason identifies what the learner did incorrectly rather than merely restating the answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions are concise English numerical-answer physics items with SI units and exact integer answers. Each requires multiple connected ideas: relative acceleration followed by platform displacement, maximum separation followed by catch-up timing, or two-stage motion with direction reversals. They meet the specified JEE Advanced task structure rather than relying on single-formula substitution.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applying straight-line constant-acceleration kinematics. The set varies the physical situation and reasoning demand across an accelerating elevator, a pursuit, and a reversing vehicle, while asking for distinct distance quantities. The questions are entirely in English and do not duplicate the same calculation pattern.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3853,
+          "outputTokens": 1058,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In item 3, explicitly give the second reversal time, duration - initial_speed / acceleration after the acceleration switches. This would make the equal-distance argument easier to follow without changing the correct solution.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced numerical-answer physics items in English on straight-line kinematics whose answer is a non-negative whole number for every combination of the variable ranges, stored as math data. Every expression (the solution, each step's and each common mistake's) names variables bare, the stated answer is the solution's, and no question asks to round. Difficulty matches JEE Advanced's own numerical questions, not a textbook's: each problem needs several steps that combine at least two ideas (two stages of a motion, a relative motion set up and then solved).",
+        "id": "en-jee-advanced-kinematics-integer-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "entry": {
+              "kind": "integer",
+              "places": null
+            }
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Describe straight-line motion with displacement, velocity and constant acceleration, and solve problems with the equations of motion.",
+            "name": "Kinematics in one dimension"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 40[(10−2)/2−2] = 80 g, 168×2 + 106(5−2) = 654 g, and 72(3×8−2×11) = 144 g. Each matches its key and worked steps. Across every allowed variable combination, component amounts remain positive and the answers remain whole numbers. The stated chemistry supports unique answers.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All six mistake expressions implement the errors named by their labels: ignoring residual acid, assigning all consumed acid to MgO, including newly formed carbonate as original carbonate, using a 1:1 bicarbonate decomposition ratio, missing the two Fe atoms in Fe₂O₃, and interchanging oxide amounts. Each reason explains the relevant correction rather than merely supplying the answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "These are plausible JEE Main numerical chemistry problems with concise experimental descriptions, sufficient data, conventional units, and direct numerical commands. Answers are stored as math data, and no rounding instructions appear. The reaction assumptions are explicit enough for exam-style stoichiometric calculation.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Every item requires applying reaction ratios and molar masses, and all content is in English. Back-titration with hydrogen measurement, thermal decomposition followed by acid treatment, and oxide reduction provide distinct applications. However, all three remain two-component mixture reconstructions asking for mass, limiting variety in what learners calculate and the breadth of advanced challenge.",
           "score": 8,
           "label": "Skill fit & variety",
           "weight": 20
@@ -600,31 +1333,778 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3363,
-          "outputTokens": 1042,
-          "reasoningTokens": 283
+          "inputTokens": 3649,
+          "outputTokens": 1230,
+          "reasoningTokens": 665
         }
       },
       "steps": [
         {
-          "conclusion": "None of the three contexts supplies the required exchange or poem quoted over two or more lines. Items 1 and 3 contain single-paragraph monologues, while item 2 embeds two separate requests in one paragraph. The quotations also use italic Markdown rather than the requested plain text or quotation marks. No emphasis delimiter actually spans multiple lines, but the required support-text structure is missing throughout.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Several distractors are weak or implausible: item 1 invents an earlier rejection of the proposal, item 2 treats an explicit question as an assertion, and item 3 suggests that 'queremos' makes recorded speech necessarily written. These sometimes test unsupported inference rather than a realistic misconception about linguistic variation. In item 3, the correct option is also noticeably longer and more qualified than the alternatives, making it easier to identify without analyzing the speech.",
+          "conclusion": "Variety is somewhat narrow: all three items reconstruct a two-component mixture and ask for an original mass. The reaction setups differ, but the set offers limited variation in the requested quantity and advanced-level challenge.",
           "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace one mixture-mass problem with a limiting-reagent or sequential-reaction problem asking for product amount or particle count. Preserve physically valid variable combinations and exact whole-number answers.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Main-style chemistry numerical items in English whose answer is a whole number for every combination of the variable ranges (for example moles, or a count of particles in a stated unit), stored as math data, with no rounding instruction in the question and real common mistakes.",
+        "id": "en-jee-main-mole-concept-integer-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Main",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "entry": {
+              "kind": "integer",
+              "places": null
+            }
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Compute amounts of substance from masses, molar masses and reaction ratios.",
+            "name": "Mole concept and stoichiometry"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three answers are correct and uniquely determined: 80 × 0.75 = 60; 150 × 0.80 = 120; and 89.90 × 0.88 = 79.112, which rounds to 79.11. The worked expressions agree with these results. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The mistakes are realistic and accurately labeled. Reporting the discount gives 20, 30, and 10.79; adding the percentage gives 100 in the first item; subtracting the percentage as reais gives 130 and 77.90 in the other items. Each reason identifies the mistaken operation or confusion rather than merely stating the correct answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The shirt, backpack, and online-book purchases are realistic Brazilian everyday settings, with clear Portuguese and prices in reais. However, the third item's fractional-cent calculation and explicit rounding requirement weaken its fit to beginner, one-step practice.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Every item requires calculating a final discounted price, and the learner-facing content is in Portuguese. Nevertheless, the first two items test the same operation through essentially identical prompts, triggering the explicit maximum score of 7. The third adds numerical complexity rather than meaningful task variety.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3075,
+          "outputTokens": 953,
+          "reasoningTokens": 409
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first two questions test the same calculation in the same way, changing mainly the product and numbers. This triggers the explicit Skill fit & variety cap of 7.",
+          "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Make the difficulty progression substantive: the item labeled hard still permits a straightforward collective-reference reading. A stronger final item could require comparing the effect or adequacy of two varieties in the same public situation. Preserve the contextualized explanations and nonjudgmental treatment of speakers while making the alternatives more closely matched.",
+          "conclusion": "The third question is less suitable for beginner, one-step practice: applying 12% to R$ 89.90 produces fractions of a cent and requires an additional rounding operation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use beginner-friendly amounts and percentages that yield exact cent values, and vary how the purchase information is presented rather than repeating the same context-and-question template.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "ENEM-style Linguagens items in Brazilian Portuguese on linguistic variation in transcribed speech or verse: each item quotes a short exchange or poem of two or more lines in `context` and asks about the effect or adequacy of a variety, never judging it as wrong. Quoted lines use plain text or quotation marks, never italics or bold opened on one line and closed on another (the app reads each line on its own, so the marks would show). Every item needs 5 options, and distractors come from treating a variety as an error or ignoring the situation.",
-        "id": "pt-enem-linguagens-falas-transcritas-1",
+        "expectations": "Everyday numeric practice in Brazilian Portuguese about the final price after a discount, for beginners, stored as math data. Situations should be everyday purchases in reais, with one step each.",
+        "id": "pt-desconto-preco-final-numeric-1",
+        "userInput": {
+          "count": 3,
+          "format": "numeric",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Calcular quanto se paga por um produto depois de um desconto percentual.",
+            "example": "Uma camiseta de R$ 80 com 25% de desconto sai por R$ 60.",
+            "name": "Preço final com desconto"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The independently derived answers match the keys in the intended aerobic cellular-respiration setting: mitochondria produce most ATP from glucose, ATP supplies usable energy, glucose carbon enters released carbon dioxide, and oxygen limitation reduces aerobic ATP production. The sample answers contain no factual errors.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "These are explanation items, so empty accepted-answer lists are appropriate, and distractor requirements do not apply. Most key points are independently checkable, but Item 2 bundles glucose breakdown and the release of glucose-derived carbon as carbon dioxide into one point, weakening partial-credit grading.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All three items resemble teacher-written 10th-grade biology questions: brief contexts, direct commands, one- or two-sentence responses, and concise marking points. The carbon-tracing situation is explained without requiring advanced terminology.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Items 2 and 3 require distinct predictions and explanations about carbon fate and oxygen availability. The set stays within cellular respiration and uses English throughout. Item 1, however, mainly tests recall of a location and ATP's function; its muscle-cell context does not meaningfully affect the reasoning required.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2218,
+          "outputTokens": 919,
+          "reasoningTokens": 429
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Item 2 combines two checkable ideas in one key point: glucose is broken down, and carbon from glucose is released as carbon dioxide. These should be separate grading points.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make Item 1 require application rather than simply naming mitochondria and stating ATP's function—for example, ask why highly active muscle cells benefit from having many mitochondria.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Short constructed-response items for a 10th-grade biology unit test in English on cellular respiration. Key points must be checkable one at a time (for example \"glucose is broken down\", \"oxygen is used\", \"energy is stored as ATP\"), and accepted answers only apply to short answers.",
+        "id": "en-school-biology-cellular-respiration-typed-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "High school biology unit test",
+            "style": "Short constructed-response questions from a 10th-grade biology unit test: one or two sentences each, graded by key ideas."
+          },
+          "format": "typed",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Explain how cells release energy from glucose using oxygen, and where it happens.",
+            "name": "Cellular respiration"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The membrane and cytoplasm answers are scientifically sound at this level, and genetic material does carry inherited instructions. However, item 3's wording also permits the nucleus as the structure storing those instructions in a eukaryotic cell. The key does not accommodate or distinguish that defensible response, triggering the cap of 7 for one ambiguous question.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Each item has two independently checkable key points, matching its two linked requested parts. No hidden location, technical term, or additional detail is required. Empty accepted-answer lists are appropriate because these are short explanations rather than term-only responses. There are no distractors or misconception labels to evaluate.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items resemble short Brazilian sixth-grade science test questions. Each uses a direct instruction, explicitly limits the response to one or two sentences, and requests no more than two linked parts. The language and scientific vocabulary fit the stated school level.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set covers all three requested cell components and is written in Portuguese. Nevertheless, all three use essentially the same identification-plus-function pattern. Most can be answered through recall, and item 2's context already states that the reactions are necessary for life. The division context in item 3 does not require interpreting or predicting an outcome. The recall and repetition triggers cap this category at 7.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2416,
+          "outputTokens": 913,
+          "reasoningTokens": 331
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Item 3 does not uniquely elicit its keyed answer: asking which cell part stores inherited instructions also permits 'nucleus' for a eukaryotic cell, whereas the key requires genetic material. In addition, most items test identification and recalled functions rather than application or explanation; item 2 even supplies the importance of the reactions in its context.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make item 3 distinguish genetic material from its location. Increase variety by asking learners to predict a simple consequence, such as what happens when the membrane cannot regulate substances, while retaining the one-or-two-sentence limit and independently checkable key points.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Short written-answer items in Brazilian Portuguese for a 6th-grade science test on the parts of a cell. Each question is one direct instruction that says what to write and how long (for example \"Em uma ou duas frases, diga...\"), asks one thing or two linked parts at most (a thing and what it does, an effect and its reason), and never stacks several questions (\"o que, onde e por quê\") or uses a vague \"explique com suas palavras\": a learner can tell from the question alone what a right answer states. There is one key point (at most three) for each part the question asks for, each a single idea, never a hidden detail, place or term.",
+        "id": "pt-school-ciencias-partes-da-celula-typed-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Prova de ciências do 6º ano",
+            "style": "Questões discursivas curtas, respondidas em uma ou duas frases e corrigidas por ideias-chave."
+          },
+          "format": "typed",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Reconhecer a membrana, o citoplasma e o material genético de uma célula e dizer o papel de cada um.",
+            "name": "Partes da célula"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Item 1 has a scientific target/key mismatch: reducing heat loss changes the energy reaching or remaining in the water, rather than necessarily making its measured value more accurate. This triggers the cap of 7 for one faulty question. Item 2 correctly reduces the relative effect of timing uncertainty by timing multiple oscillations, and item 3 gives a defensible cautious response to an anomalous reading. Multiple valid suggestions are appropriate under the task-specific short-answer expectations.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The explanation items correctly leave acceptedAnswers empty, and their key points generally separate the proposed action from its justification. However, item 1's key does not describe what every sound answer to its question must do: valid temperature-measurement improvements need not reduce heat loss. This would cause sound responses to be rejected. Items 2 and 3 use suitably broad, independently checkable criteria.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The practical contexts, command words, short responses and scientific level are broadly credible for GCSE Combined Science. Nevertheless, item 1's restrictive marking would not support the specified acceptance of any valid answer, and the instruction structure is less direct than requested. The set otherwise resembles realistic school assessment material.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require application rather than definition recall. They cover thermal measurement, pendulum timing and checking an anomalous electrical reading, testing accuracy, repeatability and trustworthiness through distinct situations. The set is entirely in English and stays within the intended practical-investigation skill.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2485,
+          "outputTokens": 1148,
+          "reasoningTokens": 462
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Item 1 confuses increasing the energy transferred to the water with measuring that energy more accurately. Reducing heat loss is relevant to estimating the energy released by the fuel, but does not inherently improve the accuracy of a measurement of energy transferred to the water. Its key also excludes valid answers to the actual question, such as checking thermometer calibration or stirring before measuring temperature, because it requires every answer to reduce energy loss.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The questions do not consistently use the requested single, length-bearing instruction. Items 1 and 2 split the change and explanation across two instructions, while item 3 opens with a yes/no question before instructing the learner to give a decision and check. These remain understandable, but the requested construction would be more direct.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The third sample answer could explain how the repeat measurements would inform the decision—for example, whether they consistently cluster near 0.20–0.21 A or also produce higher readings. This would model interpreting a check rather than merely performing one.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Short-answer items in English for GCSE Combined Science on improving a practical investigation. Each question asks what the learner would do or check (a change that makes results more accurate or repeatable, a check before trusting a reading) as one direct instruction with its length (\"In one or two sentences, suggest...\"), asking one thing or two linked parts (a change and its reason) without giving the answer away. Many different answers are sound, so each key point states what every sound answer does (for example \"names a change that reduces random error in the readings\") and never one technique among several (\"repeats each measurement three times and takes the mean\") that another sound answer could replace; the sample answer is one sound answer among those the key points accept.",
+        "id": "en-gcse-science-improve-practical-typed-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "GCSE Combined Science",
+            "style": "Structured questions with short written answers (a word, a value or one or two sentences per part) using command words such as state, describe and suggest, marked against a mark scheme that accepts any valid answer."
+          },
+          "format": "typed",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Suggest how to make a practical investigation's results more accurate or repeatable, and decide whether a reading can be trusted.",
+            "name": "Improving a practical investigation"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each item has exactly one defensible correct answer, and all keys are correct: give specific behavior-effect-action feedback to Darius, speak privately with Rosa soon after the line clears, and ask Kevin to remove the boxes. No factual errors or competing correct answers were found.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors represent recognizable management mistakes, including judging attitude, giving vague directions, postponing feedback, correcting someone publicly, and delaying corrective action. Each label identifies the relevant mistake, and each explanation tells the learner why that particular option fails.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Customer assistance, checkout delays, and delivery boxes obstructing an aisle are credible retail situations. The language is accessible to beginners, and the feedback choices fit everyday store-management decisions. No setting-realism cap is triggered.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three English multiple-choice items require application rather than definition recall. They cover distinct aspects of the skill: constructing complete feedback, choosing timely delivery, and specifying an observable next action. However, the difficulty spread is weak, and the item labeled 'hard' is arguably the simplest.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2804,
+          "outputTokens": 933,
+          "reasoningTokens": 437
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The difficulty labels do not reflect the actual demands: the 'hard' Kevin item asks only for an obvious corrective action, while the 'easy' Darius item requires evaluating behavior, effect, and next action together. The set provides limited progression in challenge.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Create a modest increase in difficulty by making the final item compare plausible feedback statements that each omit a different element, while retaining beginner-friendly language and exactly one complete answer.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Workplace multiple-choice items in English for a retail store manager learning to give specific, behavior-based feedback. Situations must be realistic store situations; wrong options should be common manager mistakes such as vague praise, judging personality instead of behavior or waiting weeks to give feedback.",
+        "id": "en-work-behavior-feedback-retail-1",
+        "userInput": {
+          "count": 3,
+          "field": "retail store management",
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Give feedback that names a specific behavior, its effect and what to do next, soon after it happens.",
+            "name": "Giving specific, behavior-based feedback"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three answers are correct. Eight-hour intervals after 7h give 15h and 23h. At 18h, two hours remain until 20h, so the supplied medication-specific instruction requires skipping the missed dose without doubling. Lip swelling with breathing difficulty warrants immediate emergency assistance, and 192 is the correct SAMU number in Brazil. No factual-error cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The spoken explanations appropriately leave acceptedAnswers empty, and the sample answers provide clear models. However, item 2 combines three independently assessable instructions into one key point, contrary to the requirement that each key point contain one checkable idea. There are no distractors or misconception labels requiring additional checks.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The health-unit and telephone scenarios are plausible for nursing technicians. The patient-facing language is natural Brazilian Portuguese, the instructions are accessible to beginners, and every expected response can comfortably be spoken in under a minute.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The items require application and explanation rather than definition recall, with distinct tasks involving scheduled doses, a missed dose, and recognition of an emergency. They stay within the requested field and language. Coverage is slightly incomplete because no item asks the learner to communicate an actual prescribed dose quantity.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2276,
+          "outputTokens": 792,
+          "reasoningTokens": 256
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The first key point in item 2 bundles three separately checkable actions: skip the missed dose, take the next dose at 20h, and do not double the quantity. These should be separate key points so a grader can distinguish partial from complete answers.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Include a concrete prescribed quantity in one scenario and ask the learner to explain it to the patient. The set practices timing, missed-dose precautions, and emergency escalation, but not communicating how much medicine to take.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Spoken-answer items in Brazilian Portuguese for nursing technicians practicing how to explain to a patient how to take a prescribed medicine safely. Answers must be possible aloud in under a minute, key points must be checkable ideas (dose, timing, what to avoid, when to call for help) and nothing may contradict standard patient-safety guidance.",
+        "id": "pt-work-enfermagem-orientacao-medicamento-spoken-1",
+        "userInput": {
+          "count": 3,
+          "field": "enfermagem",
+          "format": "spoken",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Orientar o paciente, em palavras simples, sobre dose, horário, cuidados e sinais de alerta de um medicamento prescrito.",
+            "name": "Orientar o paciente sobre o uso seguro de medicamentos"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 10/40 × 100 = 25%, 40/200 × 100 = 20% decrease, and 12/80 × 100 = 15% increase. Each item has exactly one correct option, the keys and worked explanations agree, and no clinical or patient-safety claims introduce factual problems.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor reflects an identifiable, realistic mistake, and its explanation identifies that mistake. Dividing by the new values gives 20%, 25%, and approximately 13.0%; reporting the new value as a percentage of the original gives 125%, 80%, and 115%. The numerical-change and reversed-direction distractors are also correctly explained.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Supply counting and recording fluid amounts are plausible nursing-workplace activities. The questions use concise US English, require no nursing knowledge, and contain no unsafe clinical implications. Options are comparable in length and do not reveal the answers through wording.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require calculating percent change rather than recalling a definition, and the arithmetic is accessible to beginners. However, items 1 and 3 test inventory increases in essentially the same way, triggering the explicit cap of 7. The set includes a decrease but offers little variation in the requested reasoning or actual difficulty.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2759,
+          "outputTokens": 861,
+          "reasoningTokens": 316
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Items 1 and 3 both ask learners to calculate a supply-cart inventory increase using the same method. Changing towels to gloves and adding direction labels provides limited variety, triggering the skill-fit cap of 7.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Replace one inventory-increase item with a comparison of two percent changes to broaden the practice while keeping the arithmetic beginner-friendly. Specifying what fluid is being measured in item 2 would also make its nursing context more concrete.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Everyday multiple-choice practice in US English on percent change, set in a nurse's everyday work (a patient's weight, fluid intake, a ward's number of falls or beds from one month to the next), shared by every learner who works in nursing. The questions still test percent change: someone with the skill answers them without any nursing knowledge, and no answer depends on a clinical fact. Distractors come from real slips such as dividing by the new value or reporting the change instead of the percent. The math must be right, and nothing may contradict standard patient safety.",
+        "id": "en-field-nursing-percent-change-1",
+        "userInput": {
+          "count": 3,
+          "field": "nursing",
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Compute the percent increase or decrease between an original and a new value.",
+            "name": "Percent change"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 10% × 1.800 = 180, 25% × 1.200 = 300, and 15% × 800 = 120. Each question has exactly one correct option and the correct key. The worked explanations are accurate, and the agreed percentages do not assert legal rules.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The labels are specific, and every stated mistaken calculation produces its associated option. However, several distractors are weakly grounded: both substitutions of a R$ 1.000,00 base introduce an absent amount, and choosing 5% instead of 10% or 10% instead of 25% is not tied to a clear calculation process. This triggers the cap of 7 for several implausible distractors. The decimal-place error in question 1 and incomplete decomposition in question 3 are stronger.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions describe plausible law-office situations involving agreed fees, document-copying expenses, and an installment payment. They use accessible Brazilian Portuguese and Brazilian currency formatting. All necessary information is supplied, no legal knowledge is required, and the options do not reveal the answers through length or confidence.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Every question requires calculating a percentage rather than recalling a definition, and the numerical choices introduce modest difficulty variation while remaining beginner-friendly. Nevertheless, all three ask for the same direct calculation in the same way, including two closely related fee scenarios. The explicit repetition cap therefore limits this category to 7.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2892,
+          "outputTokens": 878,
+          "reasoningTokens": 200
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All three questions use the same task structure: a stated percentage of a stated amount, followed by a request for that amount. Changing the rates and names provides some numerical variety but little variety in what learners do, triggering the skill-fit cap of 7.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several distractors have weakly motivated error paths. In particular, R$ 250,00 and R$ 150,00 assume a R$ 1.000,00 base that never appears in their contexts. Other choices simply substitute a different percentage without establishing a convincing calculation slip. The explanations reproduce these values correctly, but some appear reverse-engineered rather than diagnostic.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Keep the accessible Portuguese and correct arithmetic, but vary the task by asking learners to check a proposed calculation or identify a correctly calculated charge. Add a fine or court-cost situation, and build distractors around decimal-place errors, incomplete percentage decomposition, or confusion between amounts actually supplied in the context.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Everyday multiple-choice practice in Brazilian Portuguese on finding a percentage of an amount, set in the everyday work of a law office (honorários de 20% sobre o valor da causa, multa de 2% sobre uma parcela, custas), shared by every learner who works in law. The questions still test the percentage: someone with the skill answers them without legal knowledge, and no answer depends on a legal rule. Amounts in reais written the Brazilian way (R$ 1.234,56), the math right and distractors from real slips (moving the decimal point, taking the percentage of the wrong amount).",
+        "id": "pt-field-law-percentage-1",
+        "userInput": {
+          "count": 3,
+          "field": "law",
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Calcular quanto é uma porcentagem de um valor.",
+            "example": "20% de R$ 5.000,00 são R$ 1.000,00.",
+            "name": "Porcentagem de um valor"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are uniquely correct: the rice purchases cost R$ 96,00 and R$ 90,00; the speeds are 40 and 45 km/h, giving travel times of 180 and 160 minutes; and the dilution requires a final volume of 1,000 mL, hence 200 mL of additional water. However, the rice distractor explanation contains one numerical error: 2 × 12 − 18 equals 6, not its associated answer of 12. This triggers the cap of 7 for one question with a factual error.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most labels identify specific mistakes, and their explanations reproduce the associated values, including using 60 km instead of 120 km and confusing final water volume with added water. The R$ 12,00 option fails the required reconstruction check: its stated mistake produces R$ 6,00. This explicitly caps the category at 7. The speed item also uses two similar dimensional-confusion traps, limiting diagnostic variety.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions use plausible everyday support texts, clear commands, and five alternatives with one correct answer, consistent with ENEM-style mathematics. Since each command asks for a value, numerical alternatives are appropriate and do not give away an intermediate rate. The main weakness is beginner accessibility: even the easy item involves several operations and mixed mass units rather than the expected one-step entry point.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The rice and travel questions require meaningful ratio comparisons rather than recall, and the set varies contexts while remaining in Portuguese. The dilution item applies a target proportion but does not directly assess comparing competing ratios to decide which option is more advantageous. Difficulty varies, although the set lacks a simple introductory comparison.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3465,
+          "outputTokens": 1095,
+          "reasoningTokens": 400
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The rice item's R$ 12,00 distractor has an incorrect explanation: comparing two R$ 12,00 packages with one R$ 18,00 package gives a difference of R$ 6,00, not R$ 12,00. The feedback therefore attributes a calculation to the learner that cannot produce the selected answer.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The set lacks a genuinely one-step beginner item: even the easy question requires comparing rates or package counts and then calculating total savings. The dilution question exercises proportional reasoning but is less aligned with comparing ratios to choose the more advantageous option.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the easy item a direct best-buy comparison with choice-only alternatives. Replace one of the speed item's two unit-confusion distractors with a verified time-conversion mistake to broaden diagnostic coverage.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Mathematics placement items in Brazilian Portuguese on comparing quantities by ratios (best buy, price per unit, speed), written the way ENEM asks them: a short support text and a command with 5 options. When the learner must work out a unit price or rate to choose, the options name only the choices (\"O pacote de 6\") and never print the computed values next to them (\"O pacote de 6, a R$ 2,00 cada\"): an option that shows the worked result gives the answer away and must be penalized under realism and skill fit. Questions asking for the value itself list candidate values. Even the easy item reads like an easy ENEM question, not a primary-school exercise.",
+        "id": "pt-enem-placement-razoes-sem-resultado-nas-alternativas-1",
         "userInput": {
           "count": 3,
           "examFormat": {
@@ -634,11 +2114,252 @@
           },
           "format": "multipleChoice",
           "language": "pt",
-          "level": "intermediate",
+          "level": "beginner",
           "skill": {
-            "description": "Reconhecer marcas de variação linguística em falas transcritas e explicar seu efeito de sentido e sua adequação à situação.",
-            "example": "Na fala «a gente se reunia toda sexta», «a gente» marca um registro informal, adequado a uma conversa entre vizinhos.",
-            "name": "Variação linguística em falas transcritas"
+            "description": "Comparar grandezas por meio de razões, como preço por unidade, velocidade ou densidade, para decidir qual opção é mais vantajosa.",
+            "example": "6 maçãs por R$ 12,00 saem a R$ 2,00 cada; 4 por R$ 10,00 saem a R$ 2,50 cada.",
+            "name": "Comparar grandezas por razões"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are uniquely correct. The dried-fruit unit prices are $0.30, $0.25, $0.28, and $0.29 per ounce. The cereal unit prices differ by $0.05 per ounce. The rice prices after the applicable coupon are $2.40, $2.20, $2.00, and $1.95 per pound. The numerical explanations are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors identify specific, realistic mistakes, and their explanations distinguish total price from unit price or identify an omitted operation. The cereal mistakes produce the stated values, and incorrectly applying the coupon to the 2-pound rice bag would make it appear cheapest at $1.70 per pound. The unsupported $5 budget used to explain the 16-ounce dried-fruit choice is the main weakness.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The grocery situations and US English are natural, and all better-buy options name only packages without revealing computed unit prices. However, two of the three questions require multi-operation reasoning beyond the expressly requested beginner, one-step setting, making the set insufficiently matched to that level.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Every item requires applying unit-price reasoning rather than recalling a definition. The set varies between identifying the lowest unit price, calculating per-unit savings, and comparing prices after a discount. The coupon meaningfully changes the comparison task, so the two package-selection questions are not simply duplicates. All content is in the requested language.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3004,
+          "outputTokens": 969,
+          "reasoningTokens": 361
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The difficulty exceeds the requested beginner, one-step level in two items. The cereal question requires calculating two unit prices and then their difference; the rice question adds coupon subtraction before calculating and comparing unit prices.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The dried-fruit item's 16-ounce distractor is explained by an invented $5 spending limit. Because no budget appears in the situation, this is a weaker diagnostic of a realistic unit-price misconception than the other distractors.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "For beginner accessibility, initially compare two packages rather than four. Preserve variety through different everyday products and offers without adding coupon arithmetic or asking for differences between unit prices.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Everyday multiple-choice items in US English on choosing the better deal by unit price. When a question asks which option is the better buy, the options name only the choices (\"The 12-ounce jar\") and never print the unit prices or other worked-out values next to them (\"The 12-ounce jar, at $0.25 per ounce\"): options that show the computed result give the answer away and must be penalized under realism and skill fit. Reasons explain the computation instead. Distractors come from real slips such as comparing total prices or dividing the wrong way.",
+        "id": "en-best-buy-unit-price-no-worked-options-1",
+        "userInput": {
+          "count": 3,
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Compare unit prices to decide which package or offer is the better buy.",
+            "example": "A 12-ounce jar for $3.00 costs $0.25 per ounce; an 18-ounce jar for $4.14 costs $0.23.",
+            "name": "Comparing unit prices"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Solving from the image specifications gives cell wall for item 1, chloroplast for item 2, and nucleus followed by vacuole for item 3. Each matches its key and has exactly one defensible answer. The scientific descriptions and feedback are accurate for a simplified school diagram.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The labels name specific confusions, and the explanations contrast the selected structure with the relevant visual feature. However, several distractors are weak: an external wall is contrasted with a nucleus or vacuole, and a green internal chloroplast is contrasted with the cell wall. The chloroplast item omits the expected mitochondrion confusion. The cap of 7 for several implausible distractors applies.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The concise Portuguese wording, simple classroom contexts, and short, parallel options fit the specifically requested school multiple-choice setting. The tasks remain accessible to beginners, including the modest increase to identifying two labels in the final item. No answer is signaled by option length or confidence.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require reading an image, collectively cover the four requested structures, use null visual fields, and avoid answer-revealing labels. However, items 1 and 2 repeat the same single-arrow identification task with identical question wording, triggering the cap of 7 for testing the same thing the same way. Item 3 introduces paired identification but omits the required explicit reference to “a figura.”",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3146,
+          "outputTokens": 813,
+          "reasoningTokens": 201
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Items 1 and 2 test identification in exactly the same way, limiting variety. Several distractors contrast an outer boundary with clearly internal structures rather than closely confusable structures, and the chloroplast item omits the specifically expected mitochondrion distractor.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Item 3 does not explicitly refer to “a figura,” as required, although its reference to labels A and B makes the intended connection understandable.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Vary the diagram-reading operation, for example by asking learners to choose the label corresponding to a named structure. Include a visually distinguishable mitochondrion in the chloroplast diagram and use it as a distractor to test a realistic confusion.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "School multiple-choice items in Brazilian Portuguese on telling plant cell organelles apart in a cell diagram. The skill is reading a diagram, so every question shows one as an `image` whose prompt describes the cell with every structure and label the answer depends on (for example a plant cell with a numbered arrow on one organelle), and whose question refers to \"a figura\" without describing what it shows. The picture never gives the answer away: no label names the structure the question asks for. A question with an image has `visual` null. Distractors are organelles students confuse (chloroplast and mitochondrion, cell wall and membrane, vacuole and nucleus).",
+        "id": "pt-celula-vegetal-figure-image-1",
+        "userInput": {
+          "count": 3,
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Identificar, num esquema de célula vegetal, a parede celular, o cloroplasto, o vacúolo e o núcleo.",
+            "name": "Identificar organelas num esquema de célula vegetal"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The three keyed answers are uniquely correct: -7°F is colder than -4°F; ascending order is -9, -5, -2, -1; and -2.04°F has the smallest distance from zero. However, Item 3's claim that choosing the smallest last digit produces -2.14°F is factually false. This one-question factual error triggers the maximum score of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most feedback explicitly identifies sign errors or reversed comparisons and explains the relevant relationship. However, Item 3's last-digit mistake does not produce its associated option, triggering the cap of 7. The 'overlooks a number' explanation is also less diagnostic than a specific place-value misconception.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The freezer scenario is natural, wording is concise US English, and options do not reveal answers through length. The second scenario is merely someone writing numbers, and hundredth-degree temperature comparisons introduce extra complexity for the beginner setting. These are localized weaknesses rather than a broadly unsuitable set.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applying negative-number comparison rather than recalling definitions. They vary the task across identifying the colder value, ordering four values, and selecting the value closest to zero. All images are null, every question is self-contained in words, and none refers to an absent picture.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2744,
+          "outputTokens": 854,
+          "reasoningTokens": 216
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Item 3 contains a demonstrably incorrect distractor explanation: comparing only the last digit and choosing the smallest would select -2.1°F, whose last digit is 1, not the stated option -2.14°F, whose last digit is 4. This feedback teaches an inaccurate account of the learner's mistake.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Item 2's context is a bare number-ordering exercise rather than a meaningful everyday situation. Item 3 adds decimal-place comparison through hundredths, increasing the prerequisite burden for a beginner negative-number exercise. Some distractor labels describe a local reversal or an overlooked option without identifying the underlying comparison misconception.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace Item 3's unsupported last-digit explanation with a distractor generated by a reproducible comparison mistake. Ground Item 2 in practical values, such as below-ground floor levels, and use simpler temperatures to vary difficulty through the ordering task rather than additional decimal prerequisites.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Everyday multiple-choice items in US English on comparing and ordering negative numbers, a skill that needs no picture: every question has `image` null and asks in words, a table or a chart, and none points at a picture it doesn't show.",
+        "id": "en-no-figure-needed-image-null-1",
+        "userInput": {
+          "count": 3,
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Compare and order negative numbers, such as temperatures below zero.",
+            "name": "Ordering negative numbers"
           }
         }
       }

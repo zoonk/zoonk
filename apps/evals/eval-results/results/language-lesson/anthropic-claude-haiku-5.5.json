@@ -1,0 +1,1318 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The target sentences and translations are generally grammatical and accurate, but the false '-ed' pronunciation rule triggers the maximum score of 5. The incorrect claim about the position of 'included' and the overly categorical question-formation advice further weaken instructional accuracy.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The rent/income note correctly addresses Portuguese 'renda', and the respellings avoid 'rr' and added syllables. However, the false pronunciation guidance for 'included' directly undermines instruction on a difficult ending, and the initial-r articulation cue is contradictory. Guidance on 'th' and vowel length is missing. No added-syllable respelling cap is triggered.",
+          "score": 6,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and short questions directly support asking about rent, a deposit, and included utilities at A2. The list is focused rather than padded. Known vocabulary such as 'the apartment' and 'How much' is reused in context rather than taught again as new vocabulary.",
+          "score": 9,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The blanks have clear correct answers, distractors do not duplicate their answers, and the speaking prompts establish relevant moments in Portuguese. However, participle selection does not directly test the tip's question-order pattern. The writing guidance also conflicts with its valid indirect-question answer, and common explicit wording such as 'Is water included in the rent?' is absent from the accepted writing examples.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Portuguese is concise and generally natural for Brazilian learners. Target-language fields remain in English, questions retain question marks, and there are no decorative sentence-final periods in the sentence pairs. Each summary line identifies a useful question the learner can now ask.",
+          "score": 9,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3359,
+          "outputTokens": 1198,
+          "reasoningTokens": 441
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The pronunciation rule for 'included' is false: its '-ed' is pronounced /ɪd/, adding a syllable after /d/, not merely a final 'd'. This also contradicts the supplied three-syllable respelling. The explanation incorrectly says 'included' is at the end of 'Is water included in the rent?'. The general tip overstates English question rules: questions need not begin with a verb, and statement-order questions can naturally express confirmation or surprise.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The practice only partly tests the advertised question-order pattern: the second blank tests participle selection instead. The writing key points require direct-question order, although the third accepted answer correctly uses indirect-question order. The initial-r instruction is also confusing because 'encoste' suggests contact while the same instruction says not to touch the roof of the mouth.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add practical Brazilian-specific guidance for 'th' in 'the' and the long vowel in 'included'. Replace the initial-r instruction with an unambiguous tongue-position cue. Align the practice blanks with question formation, and distinguish direct from indirect questions in the writing guidance.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, A2, renting an apartment in Toronto. Words like \"the rent\", \"the deposit\", \"utilities\" or \"the lease\"; \"rent\" is \"aluguel\", and a note should catch that Portuguese \"renda\" means income. Tips should target sounds Portuguese speakers struggle with (English \"r\" at the start of a word, \"th\", final consonants, vowel length). Respellings are readable by a Brazilian (no \"rr\" for an English \"r\"). \"Deposit\" and \"utilities\" aren't in the known words, but \"apartment\" is and must not be taught again.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "knownWords": [
+            "the apartment",
+            "the bedroom",
+            "the kitchen",
+            "How much"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Perguntar quanto é o aluguel e o que está incluído",
+          "lessonDescription": "Pergunte o valor do aluguel, da caução e das contas antes de visitar",
+          "lessonTitle": "Perguntando sobre o aluguel",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The English sentences are grammatical and appropriate to US English, and the translations fit the home-location context. However, the explicit instruction to stress “UP” in “upstairs” is false for the normal pronunciation taught here, triggering the maximum score of 5 for a false rule. The downstairs respelling also places primary stress incorrectly.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The result preserves “th,” avoids “rr,” and does not visibly add syllables, so the added-syllable cap is not triggered. It also provides useful Portuguese comparisons and a warning against a final extra vowel in “stairs.” Nevertheless, the th guidance fails to distinguish voiced “the” from voiceless “bathroom,” tips are missing for other phrases containing “the,” and the single English “r” receives no articulation guidance. Incorrect stress further weakens the pronunciation support.",
+          "score": 6,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and short sentences are well suited to an A1 learner finding rooms in a new home. Known vocabulary is reused rather than presented again as new words. However, the expected “next to” relationship is absent, leaving the learner with only floor-based location answers.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The tip and both practice blanks consistently exercise the position and use of “is.” Each blank has one correct option, and distractors are plausible without duplicating the answers. Speaking prompts fit the situation. The writing activity is less precise: it requests politeness without consistently requiring or explaining it, and its accepted answers do not cover common combinations of the polite opening and contraction.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Brazilian Portuguese is generally natural and concise, target-language fields remain in English, and each summary line describes a usable expression. However, declarative target sentences and translations repeatedly retain final periods, contrary to the explicit word-tile requirement; this also occurs in the tip examples.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3331,
+          "outputTokens": 1126,
+          "reasoningTokens": 340
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The pronunciation guidance teaches incorrect stress: “upstairs” normally has primary stress on “stairs,” but “ÁP-stérz” and its tip explicitly emphasize “UP.” “DAUN-stérz” similarly misrepresents the usual stress of “downstairs.” The bathroom tip describes voiceless /th/ without distinguishing the voiced sound in “the,” and the other phrases containing “the” have no pronunciation tips.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Declarative sentences and their translations contain prohibited final periods, including a tip example. The lesson omits the expected “next to” language, limiting location answers to upstairs/downstairs. The writing task requests a polite question but accepts bare questions and omits common polite variants such as “Excuse me, where's the bathroom?”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add Brazilian-specific guidance for the single English “r” used in the respellings, and explain how to avoid adding a vowel after the final consonant in “bedroom.” Make the writing key points explicitly accommodate “Where's,” which is already an accepted answer.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, A1, finding places in a new home (\"Where is the bathroom?\", \"the bedroom\", \"upstairs\", \"next to\"). Words with \"th\" (\"the bathroom\", \"the third floor\") keep \"th\" in their respelling (\"BÉTH-rum\"), never \"f\", \"d\" or \"t\" (\"BÉ-frum\" teaches the mistake), and their tips say how to make the sound. Every respelling agrees with its tip. Respellings are readable by a Brazilian (no \"rr\" for an English \"r\") and add no vowel the word doesn't have.",
+        "id": "pt-en-a1-th-sounds-1",
+        "userInput": {
+          "knownWords": [
+            "the house",
+            "the kitchen",
+            "Where is"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Perguntar e dizer onde ficam os cômodos de uma casa",
+          "lessonDescription": "Pergunte onde fica o banheiro e entenda a resposta",
+          "lessonTitle": "Onde fica o banheiro?",
+          "level": "A1",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Conhecer a casa nova",
+            "Perguntar onde ficam as coisas"
+          ],
+          "unitTitle": "Uma casa nova"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The English requests and their translations are generally correct. However, the blanket description of English 'ow' is false, and the explanation of 'please' presents end placement as a rule despite other natural positions. The false-rule cap of 5 applies.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The supplied 'ri-PIT', 'ri-FREIZ', and 'SLOU-li' preserve syllable counts, so the added-syllable cap is not triggered. The rephrase tip gives useful English-r articulation guidance, and the catch note addresses a real meaning difference. However, the slowly tip targets an invented insertion location instead of the Brazilian tendency to add a vowel before 'sl'; repeat lacks clearly connected r guidance, and 'THAT' relies on English spelling rather than Portuguese-readable respelling.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The lesson directly teaches repetition, reformulation, and slower speech in an interview. It does not reteach known words or assign learners a profession. Its range is nevertheless basic for B1 and omits the expected understanding-check move, 'Let me make sure I understood'.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The central 'Could you + base verb' pattern is coherent, and the practice options yield exactly one correct answer. Speaking prompts establish relevant interview moments in Portuguese. The writing answer set is correct but narrow: common responses such as 'Could you say the last question again, please?' are not covered.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Portuguese is generally natural and concise, language fields are appropriately separated, and each summary line describes one usable request. However, 'I didn't catch that, sorry.' and its translation retain decorative final periods in tile-bound sentence fields, contrary to the explicit style requirement.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3423,
+          "outputTokens": 1185,
+          "reasoningTokens": 438
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Pronunciation and placement explanations overgeneralize: English 'ow' does not always represent the sound in 'slowly' (compare 'how'), and 'please' is not restricted to the end of a request. These should be described as features of the examples, not general rules.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The pronunciation support does not adequately address Brazilian learners' difficulties with initial clusters: the 'slowly' tip warns against a vowel between 'l' and 'o', rather than before 'sl'. The English-r guidance is not connected to 'repeat', and 'THAT' is not a Portuguese-readable respelling. One sentence and its translation retain prohibited final periods. Writing answers omit common alternatives using 'say ... again'.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a B1 confirmation move such as 'Let me make sure I understood', with a general interview example and a speaking prompt. Scope sound and word-order explanations to the actual examples, and broaden accepted writing answers without changing the focused modal-verb practice.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, B1, in a job interview, asking the interviewer to repeat, rephrase or slow down (\"Could you repeat that?\", \"Could you rephrase the question?\", \"more slowly\", \"Let me make sure I understood\"). Respellings have exactly the word's syllables and never the vowel Brazilians add: \"repeat\" is \"ri-PIT\", \"rephrase\" is \"ri-FREIZ\", \"slowly\" is \"SLOU-li\", \"question\" is \"CUÉS-tchan\", never \"i-ri-PIT\", \"a-ri-FREIZ\" or \"is-LOU-li\". Words starting with an English \"r\" get a tip on making it. B1 sentences fit a real interview, not A1 greetings. The lesson is shared by learners of every field: the learner's own lines never give them a job or field (\"my experience in sales\"), only general ones (\"my most recent role\").",
+        "id": "pt-en-b1-interview-repeat-1",
+        "userInput": {
+          "knownWords": [
+            "Good morning",
+            "Nice to meet you",
+            "I work with data"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Pedir para o entrevistador repetir, reformular ou falar mais devagar",
+          "lessonDescription": "Peça para repetir ou reformular uma pergunta sem perder a confiança",
+          "lessonTitle": "Pedidos de repetição e reformulação",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Apresentar sua trajetória em uma entrevista",
+            "Pedir esclarecimentos durante a entrevista",
+            "Falar de um projeto e seus resultados"
+          ],
+          "unitTitle": "Entrevista de emprego em inglês"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The false claim that the Portuguese equivalent of 'position' has initial stress triggers the maximum score of 5 for a false rule. The note requiring 'myself' after 'introduce' is also overgeneralized and misexplains 'introduce me'. Most English sentences and their translations are otherwise grammatical and suitable.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The th articulation tip and the comparison between English '-ing' and Portuguese infinitives are useful. However, the invented Portuguese stress contrast for 'position' actively misleads learners. Respellings such as 'pe-ZI-shen' rely on English spelling conventions, 'in-tro-DIUS' does not accurately guide the usual US pronunciation, and the 'interviewer' tip does not explain its final r sound. No clear added-syllable trigger is present.",
+          "score": 6,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The lesson correctly teaches 'Thanks for having me' rather than presenting familiar greetings as new vocabulary, and it assigns no profession or field to the learner. However, most remaining vocabulary labels the situation or offers to introduce oneself instead of enabling a B1 candidate's actual introduction. One of only three sentences is an interviewer-side question, and no candidate sentence supplies the substantive, general background opening the expectations call for.",
+          "score": 6,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both multiple-choice blanks have exactly one correct supplied option and plausible incorrect verb forms. The tip, examples, and practice consistently exercise 'thanks for + -ing'. Writing answers are grammatical and include common 'Thanks'/'Thank you' and contracted/uncontracted variants. Speaking prompts establish understandable moments in Portuguese.",
+          "score": 9,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Portuguese instructions are generally natural and concise, and target-language fields do not mix in Portuguese. Main sentence tiles correctly omit final periods and preserve question marks. However, tip examples and writing answers still use decorative final periods, contrary to the target-sentence requirement. Summary lines describe expressions rather than consistently stating learner abilities.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3267,
+          "outputTokens": 1303,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson contains false language explanations: Portuguese 'posição' is not stressed on its first syllable, and 'introduce' does not obligatorily take 'myself'; 'introduce me' means to introduce the speaker. It also underdelivers on the interview-opening goal: learners practice thanking and offering to introduce themselves, but never actually give a substantive, field-neutral introduction.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Pronunciation guidance is inconsistently usable by Brazilian readers, and the explanation of the final sound in 'interviewer' neglects the US English r. Tip examples and writing answers retain decorative final periods. The summary also includes an interviewer-side question rather than prioritizing what the candidate can now say.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the focused 'thanks for + -ing' practice, but expand the opening with useful B1 chunks such as 'my most recent role' and 'walk you through'. Model a short, field-neutral self-introduction and give a speaking prompt that elicits it.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, B1, opening a job interview by greeting and introducing themselves. At B1 the learner already says \"Good morning\", \"My name is\" and \"Nice to meet you\": none of those is taught as a new word. The words are what a B1 candidate still needs in the first minute (\"Thanks for having me\", \"I've been working as\", \"my most recent role\", \"walk you through\"), and the sentences sound like a real interview opening, up to about 12 words. The lesson is shared by learners of every field: the learner's own lines never give them a job or field, only general ones.",
+        "id": "pt-en-b1-interview-opening-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Cumprimentar o entrevistador e se apresentar no início da entrevista",
+          "lessonDescription": "Comece a entrevista com uma apresentação curta e segura",
+          "lessonTitle": "Cumprimentos e apresentações na entrevista",
+          "level": "B1–B2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Abrir a entrevista com confiança",
+            "Pedir esclarecimentos durante a entrevista",
+            "Falar da sua função atual"
+          ],
+          "unitTitle": "Abertura e esclarecimentos na entrevista"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The target sentences are grammatical US English and their translations are generally accurate. However, the claim that “how long” does not ask about size is false, as are the unrestricted auxiliary-inversion rule and the claimed fixed position of Portuguese “há três dias.” The explicit false-rule cap applies.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson makes useful Portuguese–English comparisons about “estar com febre,” present-tense Portuguese versus English present perfect, and avoiding an extra vowel after “since.” No respelling clearly adds a syllable, so the syllable cap does not apply. However, English r production is not explained, and “rrau” is an awkward respelling alongside an instruction not to use a strong Portuguese r.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and sentences directly support explaining symptoms and their duration at a doctor's appointment. Headache, fever, cough, dizziness, and duration expressions are useful priorities, and the longer coordinated sentence is appropriate for B1. Known words are not retaught as vocabulary items.",
+          "score": 9,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both blanks have exactly one correct answer and plausible distractors, and the Portuguese speaking prompts establish realistic medical interactions. However, the writing answer “since last night” changes the requested “desde ontem,” and the tip explicitly teaches “have had” while including a waiting example with a different construction.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The Portuguese is mostly natural and target-language fields remain in English. However, declarative target sentences and translations repeatedly include prohibited final periods. The summary describes expressions rather than consistently stating individual learner capabilities, and its last line combines two learning outcomes.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3260,
+          "outputTokens": 1152,
+          "reasoningTokens": 438
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several explanations state false rules: “how long” can ask about physical length, not only duration; English questions do not always invert an auxiliary (for example, subject questions); and Portuguese “há três dias” need not appear at the end. These overgeneralizations undermine otherwise correct English examples.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The writing answers accept “since last night” for “desde ontem,” changing the requested starting point. Declarative sentences and their translations repeatedly retain final periods despite the word-tile requirement. The pronunciation guidance does not explain how to produce the English r in words such as “fever” and “for.”",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Explicitly contrast “I'm sick since Monday” with “I've been sick since Monday.” Keep the tip's stated scope consistent with its examples: “We've been waiting” illustrates present perfect continuous rather than “have had.” Rewrite the summary as separate can-do statements and use wording that clearly indicates the symptoms are continuing.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, B1, at the doctor. Words for describing symptoms and how long they've lasted (\"a sore throat\", \"a fever\", \"for three days\", \"since Monday\"). The tip should plausibly cover \"for\" versus \"since\" with the present perfect, a classic mistake for Portuguese speakers (\"I'm sick since Monday\"). Sentences can be longer than at A2 but stay natural.",
+        "id": "pt-en-b1-doctor-1",
+        "userInput": {
+          "knownWords": [
+            "the doctor",
+            "I feel",
+            "the pharmacy"
+          ],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Explicar ao médico o que você está sentindo e desde quando",
+          "lessonDescription": "Descreva sintomas e há quanto tempo eles começaram",
+          "lessonTitle": "Explicando seus sintomas",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Marcar uma consulta",
+            "Explicar sintomas",
+            "Entender as instruções do remédio"
+          ],
+          "unitTitle": "No médico e na farmácia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The target sentences and translations are generally correct Brazilian Portuguese, but the explicit prohibition on 'Quero água' is false and triggers the maximum score of 5. The blanket rule about 'qu' before 'e' is also false: words such as 'cinquenta' retain the 'w' sound. Final 'r' sounding like 'h' is a regional realization, not a universal Brazilian rule.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson makes useful English–Portuguese comparisons and marks stress with capitals. However, English readers may pronounce 'ew' as in 'yew', and 'KOHNG' encourages a consonant rather than just nasalization. Referring to French nasal vowels does not give an English-speaking beginner a useful production strategy. The tapped 'r' in 'quero' and 'prato' also needs guidance. No respelling clearly adds a syllable, so the syllable-addition cap does not apply.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short sentences support ordering chicken, ordering a drink, and requesting the bill at A1. Brazilian vocabulary is used, and neither known word is retaught. However, the lesson entirely misses asking for the menu, an explicit part of the lesson description, and does not introduce the high-priority word 'o cardápio'.",
+          "score": 7,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The article-gender blank has exactly one correct option among those offered, and the speaking prompts establish appropriate restaurant moments in English. However, the practice reinforces a tip built around a false article requirement. The writing answers include a statement despite the request for a question and omit common correct question variants using 'você' or 'poderia'.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is concise and natural, target-language fields remain in Portuguese, and explanatory quotations are appropriately separated from target content. Tile sentences and translations omit decorative final punctuation while questions retain question marks. Each summary line describes one thing the learner can say.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3185,
+          "outputTokens": 1257,
+          "reasoningTokens": 438
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The central teaching rule falsely rejects 'Quero água', which is natural Brazilian Portuguese; articles are not obligatory after 'quero'. The pronunciation claim that 'qu' before 'e' always sounds like 'k' is also false, although it is correct in 'quero'. These explicit false rules trigger the accuracy cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The lesson omits 'o cardápio' and any way to ask for the menu, despite that being part of the requested situation. Pronunciation guidance includes an unhelpful French comparison, 'ew' for 'eu', and 'KOHNG' for 'conta', which can encourage an unwanted consonant. The writing task requests a question but accepts the statement 'Quero a conta, por favor.'",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Teach article gender without implying that every ordered item needs an article. Add a short menu request, use English-based guidance for nasal vowels and the tapped 'r', and qualify regional final-'r' pronunciation. Expand accepted writing answers to include common question variants such as 'Você pode trazer a conta, por favor?'",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese, A1, ordering at a restaurant. Brazilian words and forms (\"o cardápio\", \"a conta\", \"Eu quero...\", \"Por favor\"), not European Portuguese (\"a ementa\"). Tips should target sounds English speakers get wrong (nasal \"ão\", the \"r\" in \"carro\" sounding like \"h\", open and closed vowels). Respellings use English spelling habits (\"kar-DAH-pee-oo\").",
+        "id": "en-pt-a1-restaurant-1",
+        "userInput": {
+          "knownWords": [
+            "Olá",
+            "Obrigado"
+          ],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Order a dish and ask for the bill",
+          "lessonDescription": "Ask for the menu, order and ask for the bill politely",
+          "lessonTitle": "Ordering and paying",
+          "level": "A1",
+          "targetLanguage": "pt",
+          "unitCanDos": [
+            "Ask for a table",
+            "Order food and drinks",
+            "Ask for the bill"
+          ],
+          "unitTitle": "At a restaurant"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The target sentences and translations are generally correct and use appropriate Mexican vocabulary. However, the false claim about English 'deposit' stress triggers the maximum score of 5 for a false explanation. The statements that the price follows 'es' also misdescribe the displayed questions, and the geographic characterization of alquiler is misleading.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson offers useful English-speaker guidance on the initial Spanish trill, pure vowels, and Spanish v. However, 'een-kloo-EE-doh' adds a syllable to the usual pronunciation of incluido, triggering the respelling cap of 5. The incorrect English stress comparison further weakens pair-specific instruction, and the tapped r in servicios receives no guidance.",
+          "score": 5,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short, everyday questions directly support asking about rent, the deposit, utilities, and included electricity in Mexico City. Vocabulary is appropriately limited and Mexican, and neither known item is reintroduced as a vocabulary entry. The impersonal questions work naturally with a landlord without requiring an explicit usted.",
+          "score": 9,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both practice blanks have one correct option, and the distractors are generally plausible and distinct from the answers. However, the tip focuses on verb-number agreement while the second exercise tests adjective gender agreement, so practice does not consistently test the stated pattern. Writing answers omit common correct alternatives using cuesta, and speaking prompts give a communicative goal without much real-world setup.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "English instructions are mostly concise and natural, target-language fields remain in Spanish, and questions retain appropriate punctuation without decorative sentence endings. However, the final summary line combines two separate abilities, contrary to the one-ability-per-line requirement, and 'asks the deposit' is awkward English.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3356,
+          "outputTokens": 1101,
+          "reasoningTokens": 364
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The pronunciation guidance incorrectly contrasts Spanish depósito with English 'DEposit': English 'deposit' is stressed on its second syllable. The respelling 'een-kloo-EE-doh' teaches incluido with an extra syllable instead of its usual three-syllable pronunciation. These errors undermine the lesson's language-pair guidance.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The central tip teaches verb-number agreement, but the second practice item tests adjective agreement instead. The explanations for '¿Cuánto es...?' incorrectly describe the price as following 'es'; the amount is represented by the preceding 'cuánto'. The final summary line combines two abilities rather than stating one.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add guidance for the tapped r in servicios, broaden accepted writing answers to include common formulations with 'cuánto cuesta', and make speaking prompts more situational by explicitly placing the learner in a conversation with the landlord. Describe alquiler as also used outside Spain rather than presenting it as mostly Spanish usage.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish, A2, renting an apartment in Mexico City. Mexican vocabulary: \"el departamento\", \"la renta\", \"el depósito\", \"los servicios\"; \"ustedes\" for a group, never \"vosotros\", and a lesson aimed at a landlord would use \"usted\". Spain forms like \"el piso\", \"el alquiler\", \"la fianza\" or \"los gastos\" as the main word are wrong for this variant. Tips should target sounds English speakers get wrong (the tapped \"r\", pure vowels, \"ll\").",
+        "id": "en-es-a2-renting-1",
+        "userInput": {
+          "knownWords": [
+            "la casa",
+            "¿Cuánto cuesta?"
+          ],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Ask about the rent, the deposit and the bills for an apartment",
+          "lessonDescription": "Ask what the rent is and what the deposit and bills are",
+          "lessonTitle": "Asking about the rent",
+          "level": "A2",
+          "targetLanguage": "es",
+          "unitCanDos": [
+            "Call about an apartment",
+            "Ask what's included",
+            "Arrange a viewing"
+          ],
+          "unitTitle": "Renting an apartment in Mexico City"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Spanish questions and statements are generally grammatical and natural for Mexico, and all doctor questions correctly use usted. However, the claim that English “what hurts” needs no extra word in Spanish is false as presented: the taught question includes “le” to identify the person experiencing pain. This false explanation triggers the maximum score of 5. The writing section also inaccurately treats “desde ayer” and “desde hace un día” as equivalent.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The pronunciation guidance addresses genuine US English transfer issues: avoiding the English “may” diphthong, pronouncing silent h correctly, and using the American English “butter” tap as a reference. Respellings are readable to English speakers, mark stress, and do not add syllables. Notes also usefully contrast English duration expressions and Spanish present-tense constructions.",
+          "score": 9,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "Vocabulary and sentence length suit A2 and directly address pain, duration, and medication. The formal register is maintained throughout, and there is no padded vocabulary list. Coverage is incomplete for the stated answering can-do, however: learners see the medication question without learning an affirmative or negative answer. Writing to the office is also less directly aligned than answering the doctor in person.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The practice blank has one correct answer, but it tests agreement rather than the tip’s duration pattern. The question example does not itself demonstrate “desde hace,” and the writing key accepts “for one day” for a prompt requiring “since yesterday.” The speaking prompt does establish a real moment in English, but the central pattern alignment and writing-answer precision need correction.",
+          "score": 6,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Learner-facing English is mostly concise, and target-language fields remain Spanish-only. However, declarative sentences and their translations repeatedly include prohibited final periods, including the tip examples. “Since when does it hurt?” is unnatural medical English; “How long has it been hurting?” would be more idiomatic. Summary lines describe language functions and sometimes combine multiple outcomes rather than each stating one thing the learner can now say.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3317,
+          "outputTokens": 1439,
+          "reasoningTokens": 608
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation of “¿Qué le duele?” incorrectly says English “what hurts” needs no extra word in Spanish, despite the required patient-reference pronoun “le” in the taught question. The practice tests singular agreement with “duele,” not the tip’s “desde hace” duration pattern. The writing answers also treat “since yesterday” and “for one day” as interchangeable, although they do not necessarily describe the same duration.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Declarative target sentences and translations retain final periods, contrary to the word-tile requirement. “Since when does it hurt?” is awkward US English for this medical question. The lesson teaches the medication question but supplies no patient response to it. Summary lines mostly describe questions rather than stating one thing the learner can now say.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add short medication responses such as “No tomo ningún medicamento” and “Tomo paracetamol.” Make the practice directly test “desde hace” versus “desde,” and use a writing prompt that simulates answering the doctor during the consultation. Preserve the consistently appropriate usted register.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor's questions use \"usted\" (\"¿Qué le duele?\", \"¿Desde cuándo le duele?\", \"¿Toma algún medicamento?\"), never \"tú\" (\"¿Qué te duele?\", \"¿Tomas algún medicamento?\"), in the sentences, tip examples, practice and writing answers. Mexican vocabulary and natural A2 sentences.",
+        "id": "en-es-a2-doctor-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Understand and answer the doctor's questions about your symptoms",
+          "lessonDescription": "Answer what the doctor asks: what hurts, since when, and whether you take any medicine",
+          "lessonTitle": "Answering the doctor's questions",
+          "level": "A2",
+          "targetLanguage": "es",
+          "unitCanDos": [
+            "Book an appointment",
+            "Explain your symptoms",
+            "Understand the doctor's instructions"
+          ],
+          "unitTitle": "At the doctor"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The German sentences and translations are generally correct, and formal address is consistently maintained. However, the claim that German requires an expressed person with 'passen' is false. The writing checklist also misstates infinitive placement for its own subordinate-clause example. The false-rule cap limits this category to 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "Useful English-specific support includes German 'w' versus English 'v', the contrast with American 'r', the 'Termin' false friend, and modal-verb word order. However, the claim about English speakers omitting a person invents a German requirement, and 'tee' in the respelling of 'Besichtigung' encourages the wrong vowel length. No clear extra-syllable cap is triggered.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and core sentences directly support requesting a viewing, proposing a time, and accepting it. All address to the unfamiliar landlord uses 'Sie' or 'Ihnen', never 'du'. The main weakness is that two writing models introduce indirect-question or infinitive constructions more complex than the lesson's otherwise straightforward A2 material.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The practice blank has one correct answer, the speaking prompts establish realistic moments in English, and the writing answers are grammatical and polite. However, the central tip includes a false requirement, the writing checklist does not accurately describe all model answers, and several sentence distractors are implausible alternatives. The sole practice item tests agreement but not the person distinction emphasized by the tip.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is readable and concise, target-language fields remain German, and each summary line identifies a usable communicative action. However, the declarative sentence pair and declarative tip example retain decorative final periods, contrary to the explicit word-tile convention. The question listed under words also omits its question mark.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3191,
+          "outputTokens": 1167,
+          "reasoningTokens": 383
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The tip falsely says German requires the person with 'passen'; 'Das passt' and 'Der Termin passt' are valid without one. The result even gives 'Das passt' earlier. The writing checklist also incorrectly requires 'besichtigen' at the end of the question or clause: in its first model answer, the subordinate clause correctly ends with 'besichtigen kann'. These explanations can teach incorrect grammar.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Declarative sentences and their translations retain final periods despite the word-tile requirement. Some sentence distractors, such as 'Miete', 'Euro', and 'Zimmer' for the scheduling question, are weak grammatical alternatives. Two writing models introduce structures more complex than the short A2 language taught in the lesson.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Explain explicitly that 'Ihnen' is the polite form used with an unfamiliar landlord. Add practice choosing between 'Ihnen' and 'mir', rather than testing only verb agreement. Refine the pronunciation of 'Besichtigung': English 'tee' suggests a long vowel, whereas its unstressed 'ti' has a short vowel.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning German, A2, calling a landlord in Berlin to arrange a viewing. The landlord and the caller don't know each other, so both use \"Sie\" (\"Passt Ihnen Dienstag um 14 Uhr?\", \"Kann ich die Wohnung sehen?\"), never \"du\" (\"Passt dir Dienstag?\"), in the sentences, tip examples, practice and writing answers.",
+        "id": "en-de-a2-viewing-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Ask the landlord if you can see the apartment and agree on a time",
+          "lessonDescription": "Call the landlord, ask to see the apartment and set a day and time",
+          "lessonTitle": "Arranging a viewing",
+          "level": "A2",
+          "targetLanguage": "de",
+          "unitCanDos": [
+            "Call about an apartment",
+            "Ask what's included",
+            "Arrange a viewing"
+          ],
+          "unitTitle": "Renting an apartment in Berlin"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The claim that 'dei' is required before plural nouns is false, triggering the maximum score of 5. The blanket prohibition on 'ho male' is also inaccurate. The main sentences and translations are otherwise sound, and doctor questions consistently use formal Lei forms.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "English-specific sound comparisons and explanations of formal address, present versus present perfect, and 'da' versus 'for' provide useful tailoring. Respellings are readable for English speakers and add no syllables. However, the repeated categorical contrast between English pain expressions and Italian 'ho male' gives learners a misleading comparison.",
+          "score": 8,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and short sentences fit an A2 doctor's visit, and the formal register is maintained throughout. The lesson covers understanding all three question types, but productive work focuses on pain location: there is no modeled patient answer about medicine and little practice answering duration questions.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both blanks have one correct answer and directly test the tip's singular/plural agreement pattern. The speaking prompt establishes a realistic moment in English, and both writing answers are correct. However, the writing key points do not accommodate the accepted 'Ho mal di testa' variant.",
+          "score": 8,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is generally natural and concise, and target-language fields remain in Italian. However, declarative tip examples and their translations have prohibited final periods. Most summary lines report what questions mean rather than stating what the learner can now say.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3243,
+          "outputTokens": 993,
+          "reasoningTokens": 343
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson teaches false rules: 'dei' is not required before a plural noun ('Prende farmaci?' is correct), and the categorical rejection of 'ho male' overlooks valid expressions such as 'ho male alla schiena'. These claims can make learners reject correct Italian. All doctor questions correctly maintain the formal Lei register.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The writing key points require 'mi' and 'fa', although the accepted answer 'Ho mal di testa' uses neither. Tip-example sentences and translations retain decorative final periods. Most summary lines describe understanding questions rather than stating something the learner can now say.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a short patient response about taking medicine and practice answering a duration question. This would better support the complete can-do instead of concentrating productive practice on naming what hurts.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Italian, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor's questions use \"Lei\" (\"Da quando Le fa male la testa?\", \"Prende delle medicine?\"), never \"tu\" (\"Da quando ti fa male?\", \"Prendi medicine?\"), in the sentences, tip examples, practice and writing answers.",
+        "id": "en-it-a2-doctor-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Understand and answer the doctor's questions about your symptoms",
+          "lessonDescription": "Answer what the doctor asks: what hurts, since when, and whether you take any medicine",
+          "lessonTitle": "Answering the doctor's questions",
+          "level": "A2",
+          "targetLanguage": "it",
+          "unitCanDos": [
+            "Book an appointment",
+            "Explain your symptoms",
+            "Understand the doctor's instructions"
+          ],
+          "unitTitle": "At the doctor"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Polish sentences and writing answers are grammatical, and the translations preserve their meanings. However, the instruction to end 'gardło' with a 'w' sound is false: its ending is pronounced approximately 'dwo', including the final vowel. This triggers the maximum score of 5 for a false language instruction.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "Several explanations genuinely help English speakers: omitted English-style 'it', the body part as grammatical subject, and Polish 'ł' compared with English 'w'. Respellings avoid IPA and do not add syllables. However, the incorrect final-sound instruction for 'gardło' undermines the pronunciation support, and the gender-specific use of 'pani' needs explanation for English-speaking learners.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The material is short, medically relevant, and appropriate for A2. All actual doctor questions are impersonal or polite; 'bierzesz' occurs only as a distractor, not as a modeled doctor question. Nevertheless, answering about medicine is not taught, and the duration response appears only in writing without preparation for 'od wtorku'. These gaps limit the exact can-do.",
+          "score": 7,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The practice blank has exactly one correct answer and plausible incorrect alternatives. The speaking prompt creates an appropriate moment in English, and both supplied writing answers are correct. However, the 'boli/bolą' contrast receives only singular practice, 'Gdzie boli?' does not demonstrate the stated body-part agreement pattern clearly, and the writing task introduces an untaught duration construction. Common correct word orders such as 'Mnie boli gardło od wtorku' are not covered.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is generally concise and natural, and target-language fields contain Polish rather than English. However, the main translation 'My throat hurts.' and declarative tip examples retain prohibited final periods. Most summary lines explain questions the doctor asks instead of stating something the learner can now say.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3277,
+          "outputTokens": 1303,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The pronunciation tip for 'gardło' incorrectly tells learners to end the word with a 'w' sound; the word ends with the vowel 'o', with 'ł' pronounced like 'w' before it. Coverage of the can-do is also incomplete: the lesson teaches the medicine question but no patient answer, and introduces answering 'since when' only in an unscaffolded writing task.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Decorative final periods appear in the translation 'My throat hurts.' and in tip example sentences and translations. Three summary lines describe what the doctor asks rather than what the learner can now say. The explanation of 'pani' does not clarify that it addresses a woman.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Teach short patient responses about duration and medicine before testing them. Add a plural-body-part practice item to exercise the 'boli/bolą' contrast, accept natural alternative word orders in writing, and show the corresponding polite question with 'pan'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Polish, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor is polite: \"Pan\" or \"Pani\" (\"Co Panu dolega?\", \"Czy przyjmuje Pani jakieś leki?\") or an impersonal question (\"Od kiedy boli głowa?\"), never \"ty\" (\"Co cię boli?\", \"Czy bierzesz leki?\"), in the sentences, tip examples, practice and writing answers.",
+        "id": "en-pl-a2-doctor-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Understand and answer the doctor's questions about your symptoms",
+          "lessonDescription": "Answer what the doctor asks: what hurts, since when, and whether you take any medicine",
+          "lessonTitle": "Answering the doctor's questions",
+          "level": "A2",
+          "targetLanguage": "pl",
+          "unitCanDos": [
+            "Book an appointment",
+            "Explain your symptoms",
+            "Understand the doctor's instructions"
+          ],
+          "unitTitle": "At the doctor"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Most English examples and translations are natural and accurate, but the categorical FULL-not-TIME stress instruction is false. The explanation of Spanish question formation is also incorrect, and 'You work?' is not categorically invalid English. These false rules trigger the maximum score of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "Useful Spanish-specific guidance addresses initial s-plus-consonant clusters, sh versus ch, English r, and occupation articles. However, the requested v/b contrast and actual/actually false-friend guidance are missing. Fully capitalized respellings do not clearly mark relative stress, and 'WERK' does not adequately guide a Spanish reader toward the English vowel. No respelling clearly adds a syllable, so the syllable-addition cap is not triggered.",
+          "score": 6,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary and short sentences fit A2 workplace introductions and cover occupation, workplace, full-time employment, shifts, and start times without reteaching the known words. However, occupation and schedule models rely heavily on third-person statements or questions rather than directly modeling the learner's own introduction. Workplace information appears in an example but receives little active practice.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The occupation blank has two valid answers: 'as' identifies the occupation, while 'for' identifies the employer. Its generic instruction supplies no meaning constraint that excludes 'for'. Some vocabulary distractors are unrelated rather than plausible confusions. Writing answers are correct but omit common variants, and only one speaking prompt is supplied. The remaining time-preposition practice and workplace speaking scenario are useful.",
+          "score": 5,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Learner-facing text is generally concise, natural Mexican Spanish, and target-language fields remain in English. However, declarative target sentences and translations repeatedly include final periods, directly violating the word-tile convention. Summary lines explain expressions instead of explicitly stating what the learner can now say.",
+          "score": 6,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3453,
+          "outputTokens": 1018,
+          "reasoningTokens": 237
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The pronunciation tip incorrectly insists that 'full-time' stresses FULL rather than TIME; standard US pronunciation stresses TIME. The question explanation also falsely says Spanish changes word order through the question mark and categorically rejects 'You work?' despite its valid conversational uses. The first practice blank is ambiguous: both 'She works as a cook' and 'She works for a cook' are grammatical, with different meanings.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The requested English v/b distinction and 'actually' versus 'actualmente' false-friend guidance are absent. Declarative sentences and their translations retain final periods despite the word-tile requirement. Respelling capitalization does not consistently distinguish stressed syllables. Writing answers omit common correct variants such as 'I work full-time and start at 9 a.m.'",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add a first-person model that combines occupation, workplace, and schedule, followed by a realistic speaking prompt for introducing yourself to a new coworker. Make the summaries explicitly describe what the learner can now say, rather than explaining what each expression means.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Mexican Spanish speaker learning US English, A2, talking about their job. Words like \"I work as\", \"a nurse\", \"a shift\", \"full-time\". Tips for Spanish speakers (the English \"v\" and \"b\", the \"sh\" sound, adding \"e\" before \"s\" + consonant as in \"estudent\"), notes for false friends (\"actually\" is not \"actualmente\"). All learner-language text in Mexican Spanish.",
+        "id": "es-en-a2-work-1",
+        "userInput": {
+          "knownWords": [
+            "I am",
+            "my name is"
+          ],
+          "learnerLanguage": "es",
+          "lessonCanDo": "Decir a qué te dedicas y qué horario tienes",
+          "lessonDescription": "Explica en qué trabajas, dónde y en qué horario",
+          "lessonTitle": "Hablar de tu trabajo",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Presentarte en el trabajo",
+            "Hablar de tu trabajo",
+            "Pedir ayuda a un compañero"
+          ],
+          "unitTitle": "Tu primera semana en el trabajo"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The sentences are grammatical, and sentence translations repeat them exactly. However, the word definition for 'study' gives the wrong sense for 'The study is about sleep': learning about a subject rather than a piece of research. This triggers the wrong-translation cap of 5. The noun note does not repair the definition field. The definition of 'important' also fails to preserve its adjective meaning cleanly.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson appropriately follows the English-only task requirements rather than making cross-language comparisons. Pronunciation tips identify concrete stress and weak-vowel issues and explain how to pronounce them. Respellings contain no IPA or added syllables, and null tips and notes are used appropriately.",
+          "score": 9,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary is frequent and generally useful for academic reading, and the sentences are short enough for A1–A2. However, the isolated bank example has little academic relevance, and the lesson primarily practices a grammar construction rather than recognizing familiar words in a short passage. No known words are repeated because the supplied list is empty.",
+          "score": 7,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The tip, examples, and practice consistently demonstrate 'it is' plus adjective plus infinitive, and the blank has one correct answer. The writing prompt provides information to paraphrase rather than a sentence to copy. Weaknesses include implausible sentence distractors, a writing checklist that conflicts with an accepted 'that'-clause answer, and a speaking prompt without a real situational setup.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The prose is concise, natural English throughout. Sentence and example translations are exact repetitions, and their tile fields omit final periods while explanatory fields use normal punctuation. Summary lines each identify a distinct meaning or function expressed by the lesson sentences.",
+          "score": 9,
+          "label": "Language and style",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2803,
+          "outputTokens": 1159,
+          "reasoningTokens": 406
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The definition of 'study' teaches the verb meaning, but its first sentence uses the noun meaning, a piece of research. The note supplies that distinction, but the definition itself still fails to give the meaning needed in that passage. 'Important' is also defined as a thing rather than as an adjective describing something that matters.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The bank example does not establish an academic context or supply the general idea it illustrates. Several sentence distractors, such as 'cooks', 'yesterday', and 'bought', are too implausible to offer useful discrimination. The writing key points require 'to' plus a verb, although one accepted answer instead uses a grammatical 'that' clause. The speaking prompt requests a sentence without setting up a real moment.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a short, connected academic passage so learners can recognize these words and infer their meanings from nearby information. Keep the existing grammar practice, but add a directly stated detail question. Align writing key points with every accepted answer structure.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An IELTS candidate reads the app in English and prepares in English, so the lesson is in English only and nothing is translated. Each word's `translation` is a short plain-English definition of its meaning in an academic passage, the way a learner's dictionary writes it, and never the word itself or a form of it (the lesson that failed had \"need\" defined as \"need\" and \"grow\" as \"grow\"). Sentence `translation` fields repeat the sentence exactly. Explanations, tips and notes never compare with \"your language\" or another language: tips name a sound English learners commonly get wrong, or are null; notes name a usage trap or a word often confused with it, or are null. The writing prompt gives the information to write in other words, never a sentence to copy. Sentences fit a short academic passage at A1–A2.",
+        "id": "en-en-a1-ielts-frequent-words-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Recognize familiar words to understand a short academic passage",
+          "lessonDescription": "Common words carry much of the meaning in short academic passages.",
+          "lessonTitle": "Frequent words in short passages",
+          "level": "A1–A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Recognize frequent English words in short passages",
+            "Use nearby words to choose a familiar word’s meaning",
+            "Find details stated directly in a passage"
+          ],
+          "unitTitle": "Words in short passages"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The target sentences are grammatical, and sentence translations repeat them exactly. However, the explanation of 'turn on the fan' falsely describes the object's position. The explicit cap for a false rule therefore limits this category to 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The English-to-English setup is respected: definitions are short English explanations that do not contain the defined word, and sentence translations are repetitions. The pronunciation tips give relevant physical cues for aspiration and voicing without inventing difficulties associated with 'your language'. The uppercase pronunciation forms introduce no extra syllables or IPA.",
+          "score": 9,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The small vocabulary set and short everyday sentences generally fit A1–A2 and the initial-consonant can-do. However, 'a pat of butter' introduces a different meaning from the taught verb 'pat', making that example less useful for this beginner lesson. Several explanations emphasize unrelated grammar instead of the listening contrast.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both blank exercises test meaning rather than asking learners to identify a written sound, and each includes the paired word as a distractor. All three main sentences also include their counterpart among the distractors. The speaking prompt establishes a real situation. However, the writing assessment explicitly checks visible f/v spelling, and its answer list omits common valid requests using 'a fan' or 'Please bring'.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is generally concise and accessible, with no unwanted translation into another language. Nevertheless, declarative target sentences and their translations consistently retain prohibited final periods, including the tip examples. The first two summary lines state pronunciation facts rather than things the learner can now say.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2795,
+          "outputTokens": 1066,
+          "reasoningTokens": 333
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation of 'Please turn on the fan' incorrectly says that 'the fan' sits in the middle of the phrasal verb. It follows 'turn on'; 'Please turn the fan on' would demonstrate the claimed placement. This false grammatical explanation triggers the Accuracy cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Declarative sentences and their repeated translations retain final periods, contrary to the word-tile requirement. Two summary lines describe sound contrasts rather than what the learner can now say. The butter example introduces an untaught meaning of 'pat', and the writing key point explicitly rewards spelling 'f, not v', shifting assessment toward visible spelling rather than the intended meaning-based contrast.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a contextualized example of 'pat' with its taught meaning, such as 'Please pat the dog gently'. Keep sentence explanations focused on how context distinguishes the paired words. Expand accepted writing answers to include common alternatives such as 'Can you bring a fan to my apartment?' and 'Please bring a fan to my apartment'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An IELTS candidate reads the app in English and learns to hear words that differ in their first consonant (\"pat\" and \"bat\", \"pin\" and \"bin\"). Nothing is translated: words get short plain-English definitions that never contain the word, and sentence `translation` fields repeat the sentence. The lesson is about hearing a sound, which writing can't test: a written word gives its spelling away, so practice never asks about a sound or letter in writing (\"The first sound in pat is ___\" with options \"p\", \"t\", \"b\" fails). Practice tests the contrast through meaning instead: a sentence where only one word of the pair fits (\"He hit the ball with a ___\": \"bat\", with \"pat\" as a wrong option). Each sentence uses one word of a pair, and its distractors include the other word of that pair, so hearing the sentence and building it tests the sound. Tips say how to make each sound, without claims about \"your language\".",
+        "id": "en-en-a1-ielts-consonant-contrasts-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Tell apart words that start with different consonants.",
+          "lessonDescription": "Initial consonant contrasts help you distinguish words such as “pat” and “bat” before the rest of a phrase unfolds.",
+          "lessonTitle": "Initial consonant contrasts",
+          "level": "A1–A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Distinguish consonant and vowel sounds that change a word",
+            "Use endings, clusters and stress to identify spoken words"
+          ],
+          "unitTitle": "Hearing the sounds in words"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The core sentences are natural spoken Cantonese in traditional characters, and their Jyutping is appropriate. However, the repeated rule that 個 applies to 'most foods' is false and triggers the explicit maximum of 5 for a false rule. 'YOW' for jiu3 additionally teaches the wrong vowel sequence.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The initial-ng explanation uses English 'sing' effectively, and the classifier discussion compares Cantonese with English. However, 'YOW' is misleading for 要, and there is no guidance on producing Cantonese tones or avoiding English stress-based pronunciation. No respelling clearly adds a syllable, so the added-syllable cap does not apply.",
+          "score": 6,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The compact vocabulary and short sentences closely match the A1 task: ordering milk tea and pineapple buns and asking prices. There is no vocabulary padding or known-word repetition. Including 唔該 would make the lesson more useful for the actual restaurant interaction.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The classifier tip, examples, and blank exercise align, and the blank has one clear correct answer. The English speaking prompts establish realistic moments. However, the third writing answer does not express the requested order, only a price inquiry, so not every accepted answer fulfills the prompt.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is generally concise and natural, and target-language fields contain no English contamination. However, both declarative sentence translations and the practice template have decorative final periods. Several English notes and explanations do not mark Cantonese quotations, and the last summary line states a grammar rule rather than a communicative achievement.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3285,
+          "outputTokens": 948,
+          "reasoningTokens": 242
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The repeated claim that 個 is the measure word for 'most foods' teaches a false generalization: it works for these buns, but food classifiers depend on the item or serving. The respelling 'YOW' also misrepresents 要 (jiu3). The third accepted writing answer only asks the combined price rather than expressing the requested order.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "There is no pronunciation guidance on Cantonese tones, despite the explicit expectation. Declarative sentence translations and the practice template retain prohibited final periods. Several English explanations leave quoted Cantonese unmarked, and the final summary item describes grammar rather than something the learner can now say.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add 唔該 for a polite, practical restaurant exchange, with Jyutping and English-speaker pronunciation guidance. Keep the classifier explanation specific to cups of drinks and individual buns, and make every accepted writing response perform both ordering and price-checking.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Cantonese (not Mandarin), A1, ordering at a Hong Kong cha chaan teng. Every Cantonese word and sentence is spoken Cantonese written in traditional characters, with Cantonese-only words where Cantonese uses them (\"唔該\", \"係\", \"嘅\", \"咩\", \"喺\", \"幾多錢\"), never Mandarin wording (\"谢谢\", \"是\", \"的\", \"什么\", \"在\", \"多少钱\") or simplified characters. Romanization is Jyutping with tone numbers (\"m4 goi1\"), never pinyin. Tips name Cantonese sounds and tones English speakers get wrong.",
+        "id": "en-yue-a1-ordering-1",
+        "userInput": {
+          "knownWords": [],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Order a drink and a dish and ask how much it costs",
+          "lessonDescription": "Order milk tea and a pineapple bun, and ask for the price",
+          "lessonTitle": "Ordering at a cha chaan teng",
+          "level": "A1",
+          "targetLanguage": "yue",
+          "unitCanDos": [
+            "Order food and drinks",
+            "Ask how much something costs"
+          ],
+          "unitTitle": "Eating out in Hong Kong"
+        }
+      }
+    }
+  ],
+  "taskId": "language-lesson"
+}

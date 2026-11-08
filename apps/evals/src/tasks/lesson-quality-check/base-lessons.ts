@@ -626,8 +626,7 @@ const RECORDED = {
             { isCorrect: false, text: "−8 °C" },
           ],
           question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-          reveal:
-            "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+          reveal: "It shows 2 °C.",
           visual: null,
         },
         {
@@ -655,7 +654,7 @@ const RECORDED = {
           visual: null,
         },
         {
-          basis: null,
+          basis: { quote: "A rise always moves **up** the thermometer.", screen: 2 },
           context: null,
           correctReason: "You start at {start} °C and move {rise} degrees up.",
           image: null,
@@ -708,7 +707,7 @@ const RECORDED = {
         },
         {
           acceptedAnswers: [],
-          basis: null,
+          basis: { quote: "From −3 °C, going up 3 degrees takes you to zero.", screen: 2 },
           context: null,
           keyPoints: ["Going up 3 degrees reaches zero", "The last 2 degrees go above zero"],
           kind: "typedAnswer",

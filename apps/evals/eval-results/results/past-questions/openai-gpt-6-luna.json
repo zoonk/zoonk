@@ -1,0 +1,271 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "Both keys are correct and match the supplied paper. For question 141, 1.10 × 0.90 = 0.99, so B, “1% menor,” is correct. For question 144, (300 − 250) ÷ 250 = 20%, so C is correct.",
+          "score": 10,
+          "label": "Right answers",
+          "weight": 30
+        },
+        {
+          "categoryId": "selection",
+          "reasoning": "Exactly the expected questions are included: 141 is tagged with skill 1 and 144 with skill 2. Question 142 is correctly excluded because its chart is unavailable, and question 143 is excluded because area is not a listed skill.",
+          "score": 10,
+          "label": "Which questions",
+          "weight": 25
+        },
+        {
+          "categoryId": "feedback",
+          "reasoning": "Every option has mathematically sound explanatory feedback in Portuguese, and the correct answers are justified with calculations. No restatement-only or generic-misconception cap is triggered. However, two explanations do not directly address the learner, and the 50% misconception in question 144 obscures the distinction between an increase in reais and an increase in percent. The 20% reduction label in question 141 also omits the sign error described in its explanation.",
+          "score": 8,
+          "label": "Feedback on every option",
+          "weight": 25
+        },
+        {
+          "categoryId": "citation",
+          "reasoning": "Both citations identify Enem 2022, the second day, and the correct question number in Portuguese. Question 141 retains its complete source credit, including the URL, access date, and “(adaptado).”",
+          "score": 10,
+          "label": "Citation and credit",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3070,
+          "outputTokens": 701,
+          "reasoningTokens": 136
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Question 144's explanations for 5% and 50% do not address the learner as “você,” unlike the other explanations. The 50% feedback also does not clearly identify the likely mistake: treating the R$ 50 increase as a 50% increase without dividing by the initial price.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the misconception labels more precise: for question 144's 50%, distinguish an absolute increase from a percentage increase; for question 141's 20% reduction, explicitly identify treating the increase as another discount, as the explanation already does.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Two questions in Brazilian Portuguese: 141 (successive percentages, key B, \"1% menor\") tagged with skill 1, and 144 (percent change, key C, 20%) tagged with skill 2. Question 142 needs a chart and 143 tests area, which isn't a listed skill, so both are left out. Question 141 keeps its credit line (\"Disponível em: ... (adaptado).\") in its support text. Citations name Enem 2022, the second day and the number.",
+        "id": "pt-enem-style-percentages-1",
+        "userInput": {
+          "exam": "Enem",
+          "format": "multipleChoice",
+          "language": "pt",
+          "optionCount": 5,
+          "paper": {
+            "text": "ENEM 2022 – 2º DIA – CADERNO AZUL (trecho)\nQUESTÃO 141\nUma loja de eletrodomésticos reajustou o preço de uma geladeira em 10% em janeiro. Em março,\nfez uma promoção e deu desconto de 10% sobre o preço de fevereiro.\nDisponível em: www.economia.exemplo.br. Acesso em: 12 abr. 2022 (adaptado).\nEm relação ao preço antes do reajuste, o preço na promoção ficou\nA igual.\nB 1% menor.\nC 1% maior.\nD 10% menor.\nE 20% menor.\nQUESTÃO 142\nObserve o gráfico, que mostra o consumo mensal de energia de uma residência ao longo de 2021.\nEm qual mês o consumo foi maior?\nA Janeiro.\nB Março.\nC Julho.\nD Outubro.\nE Dezembro.\nQUESTÃO 143\nUm terreno retangular mede 12 m por 25 m. Qual é a área do terreno?\nA 37 m².\nB 74 m².\nC 150 m².\nD 300 m².\nE 600 m².\nQUESTÃO 144\nUm produto que custava R$ 250,00 passou a custar R$ 300,00. O aumento percentual no\npreço foi de\nA 5%.\nB 16,7%.\nC 20%.\nD 50%.\nE 83,3%.\nGABARITO – 2º DIA – CADERNO AZUL\n141 B 142 C 143 D 144 C",
+            "title": "Enem 2022 – 2º dia – Caderno Azul"
+          },
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "name": "Aumentos e descontos percentuais sucessivos"
+            },
+            {
+              "description": "Calcular a variação percentual entre um valor inicial e um final.",
+              "name": "Variação percentual"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All three keys are legally defensible and match the supplied answer key: 41 true, 42 false, and 43 true.",
+          "score": 10,
+          "label": "Right answers",
+          "weight": 30
+        },
+        {
+          "categoryId": "selection",
+          "reasoning": "The result includes exactly items 41–43, all aligned with the listed administrative-principles skill, and correctly excludes item 44 because its required figure is unavailable. Each included item carries the shared support text.",
+          "score": 10,
+          "label": "Which questions",
+          "weight": 25
+        },
+        {
+          "categoryId": "feedback",
+          "reasoning": "The explanations are legally accurate, use Brazilian Portuguese, and address the learner as 'Você'. Item 41 identifies personal favoritism, and item 42 clearly explains the public-law/private-law distinction with a specific, neutral misconception label. Item 43 explains effectiveness correctly but leaves the effectiveness-versus-validity trap implicit.",
+          "score": 8,
+          "label": "Feedback on every option",
+          "weight": 25
+        },
+        {
+          "categoryId": "citation",
+          "reasoning": "Every citation identifies Cebraspe, TRT 8ª Região, Técnico Judiciário, 2022, and the original item number. The supplied support text has no separate author or source credit line that was lost.",
+          "score": 10,
+          "label": "Citation and credit",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2363,
+          "outputTokens": 623,
+          "reasoningTokens": 198
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Item 43 correctly explains publicity as a condition of effectiveness, but does not explicitly name the trap: confusing an act's effectiveness with its validity. The expectations require true-or-false feedback to identify the trap.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Three true-or-false items in Brazilian Portuguese, each with the shared support text as its context: 41 true (favoring a friend breaks impessoalidade), 42 false (legalidade means the administration may only do what the law allows; the trap swaps it for the private-law rule) and 43 true (publicity is a condition for the act to take effect). Item 44 depends on a figure the text doesn't carry, so it's left out. Check the legal accuracy of every reason. Citations name Cebraspe, the exam and the item number.",
+        "id": "pt-cebraspe-style-principios-1",
+        "userInput": {
+          "exam": "Cebraspe, TRT 8ª Região, Técnico Judiciário",
+          "format": "trueFalse",
+          "language": "pt",
+          "paper": {
+            "text": "CEBRASPE – TRT 8ª REGIÃO – 2022 – TÉCNICO JUDICIÁRIO (trecho)\nTexto para os itens de 41 a 44\nUm servidor público, ao analisar pedido de licença de um colega, decidiu favorecê-lo por\nserem amigos de longa data, concedendo o benefício sem observar os requisitos previstos em lei.\nCom base na situação hipotética acima, julgue os itens a seguir, acerca dos princípios da\nadministração pública.\n41 A conduta do servidor violou o princípio da impessoalidade.\n42 O princípio da legalidade permite ao servidor fazer tudo o que a lei não proíbe.\n43 A publicidade dos atos administrativos é requisito de eficácia desses atos.\n44 O organograma apresentado na figura mostra que o setor de pessoal está subordinado à\ndiretoria-geral.\nGABARITO PRELIMINAR: 41 C 42 E 43 C 44 C",
+            "title": "Cebraspe – TRT 8ª Região – 2022"
+          },
+          "skills": [
+            {
+              "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+              "name": "Princípios da administração pública (LIMPE)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "Both keyed answers match the paper and independent calculation: 18.50 × 36 = $666.00 for question 12, and 3 × 4.25 + 2 × 6.80 = $26.35 for question 14. Both are option B.",
+          "score": 10,
+          "label": "Right answers",
+          "weight": 30
+        },
+        {
+          "categoryId": "selection",
+          "reasoning": "The result includes exactly questions 12 and 14, correctly tagged with skills 1 and 2 respectively. Question 13 is appropriately excluded because its required table is missing. Options are copied accurately without their letters.",
+          "score": 10,
+          "label": "Which questions",
+          "weight": 25
+        },
+        {
+          "categoryId": "feedback",
+          "reasoning": "Every option has accurate, learner-directed feedback in US English. Correct options explain the calculation, and each distractor identifies a concrete mistake that produces its value. Misconception labels are specific, neutral, and concise.",
+          "score": 10,
+          "label": "Feedback on every option",
+          "weight": 25
+        },
+        {
+          "categoryId": "citation",
+          "reasoning": "Each citation identifies the State Merit System Clerical Exam, the year 2024, and the original question number. There are no support-text credit lines to preserve.",
+          "score": 10,
+          "label": "Citation and credit",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2538,
+          "outputTokens": 418,
+          "reasoningTokens": 33
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Two questions in US English: 12 (key B, $666.00, from 18.50 × 36) tagged with skill 1, and 14 (key B, $26.35, from 3 × 4.25 + 2 × 6.80) tagged with skill 2. Question 13 needs a table the text doesn't carry, so it's left out. Options are copied without their letters. Wrong options' misconceptions are real slips such as adding instead of multiplying or counting only one kind of item. Citations name the clerical exam, 2024 and the number.",
+        "id": "en-clerical-exam-money-1",
+        "userInput": {
+          "exam": "State Merit System, Clerical Exam",
+          "format": "multipleChoice",
+          "language": "en",
+          "optionCount": 4,
+          "paper": {
+            "text": "STATE MERIT SYSTEM – CLERICAL EXAM – 2024 RELEASED ITEMS\nQuestion 12\nA clerk earns $18.50 per hour and works 36 hours in a week. How much does the clerk earn\nthat week before taxes?\n(A) $54.50\n(B) $666.00\n(C) $684.50\n(D) $740.00\nQuestion 13\nUse the table below to answer the question.\nIn which month were the most boxes of paper ordered?\n(A) January\n(B) February\n(C) March\n(D) April\nQuestion 14\nAn office bought 3 boxes of pens at $4.25 each and 2 reams of paper at $6.80 each. What\nwas the total cost?\n(A) $11.05\n(B) $26.35\n(C) $22.10\n(D) $12.75\nANSWER KEY: 12-B, 13-C, 14-B",
+            "title": "State Merit System – Clerical Exam – 2024 released items"
+          },
+          "skills": [
+            {
+              "description": "Multiply amounts of money with decimals, such as an hourly wage by hours worked.",
+              "name": "Multiply decimals in money problems"
+            },
+            {
+              "description": "Find the total cost of several items bought in different quantities.",
+              "name": "Total cost of several items"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "past-questions"
+}

@@ -1,0 +1,791 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fixed",
+          "reasoning": "The correction removes the silent h comparison and uses the strong r in “rato”, explicitly qualified as carioca—a suitable reference for /x/. It conveys a rough, back-produced sound and retains ха (kha), consistent with the audioText and readingAid. The colloquial throat wording could be made anatomically more precise, but the original problem is resolved without a substantive new error.",
+          "score": 9,
+          "label": "Problem fixed right",
+          "weight": 70
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The rewritten cue is concise, accessible Brazilian Portuguese. It uses a familiar Brazilian accent reference and explicitly presents the audio syllable ха with its romanization kha.",
+          "score": 10,
+          "label": "Learner's language and style",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2258,
+          "outputTokens": 549,
+          "reasoningTokens": 239
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "For greater articulatory precision, replace “raspando o fundo da garganta” with “um som áspero produzido no fundo da boca”. This locates /x/ more precisely while retaining the useful Rio-accent comparison.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The rewritten х card drops the silent h of \"hora\" and describes /x/ as a rough sound made at the back of the mouth, compared with the strong r Brazilians say in \"rato\" or \"carro\" in accents such as Rio's, or said to be absent from Portuguese with what differs; it still shows ха (kha). In Brazilian Portuguese.",
+        "id": "pt-ru-silent-h-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "lesson": {
+            "canDo": "Leia e pronuncie в (v), н (n), р (r), с (s), у (u), х (kh), а (a), к (k), м (m) e о (o).",
+            "description": "Com estas letras, você já consegue ler сон (son), que significa “sono”.",
+            "intro": [
+              {
+                "text": "No russo impresso, leia uma letra por vez, da esquerda para a direita. As letras não se ligam umas às outras.",
+                "title": "Leia da esquerda para a direita"
+              },
+              {
+                "text": "Algumas letras lembram letras latinas, mas têm outro som: В (v) parece B, Н (n) parece H e Р (r) parece P. Confie no som de cada cartão, não no desenho.",
+                "title": "Não confie só no formato"
+              }
+            ],
+            "letters": [
+              {
+                "audioText": "ва",
+                "forms": [],
+                "pronunciation": "Como o v de “vida”; você ouvirá o som em ва (va).",
+                "readingAid": "v",
+                "symbol": "в"
+              },
+              {
+                "audioText": "на",
+                "forms": [],
+                "pronunciation": "Como o n de “nada”; você ouvirá o som em на (na).",
+                "readingAid": "n",
+                "symbol": "н"
+              },
+              {
+                "audioText": "ра",
+                "forms": [],
+                "pronunciation": "Parecido com o r de “caro”, mas com a ponta da língua batendo várias vezes, um r rolado; você ouvirá o som em ра (ra).",
+                "readingAid": "r",
+                "symbol": "р"
+              },
+              {
+                "audioText": "са",
+                "forms": [],
+                "pronunciation": "Como o s de “sapo”; você ouvirá o som em са (sa).",
+                "readingAid": "s",
+                "symbol": "с"
+              },
+              {
+                "audioText": "у",
+                "forms": [],
+                "pronunciation": "Como o u de “uva”, curto e sem deslizar.",
+                "readingAid": "u",
+                "symbol": "у"
+              },
+              {
+                "audioText": "ха",
+                "forms": [],
+                "pronunciation": "Não há esse som no português brasileiro padrão; faça uma fricção no fundo da boca, mais atrás que o h de “hora”. Você ouvirá o som em ха (kha).",
+                "readingAid": "kh",
+                "symbol": "х"
+              },
+              {
+                "audioText": "а",
+                "forms": [],
+                "pronunciation": "Como o a de “pá”; numa sílaba sem força, fica mais breve e fraco.",
+                "readingAid": "a",
+                "symbol": "а"
+              },
+              {
+                "audioText": "ка",
+                "forms": [],
+                "pronunciation": "Como o c de “casa”; você ouvirá o som em ка (ka).",
+                "readingAid": "k",
+                "symbol": "к"
+              },
+              {
+                "audioText": "ма",
+                "forms": [],
+                "pronunciation": "Como o m de “mala”; você ouvirá o som em ма (ma).",
+                "readingAid": "m",
+                "symbol": "м"
+              },
+              {
+                "audioText": "о",
+                "forms": [],
+                "pronunciation": "Como o ô de “avô” quando a sílaba é forte; numa sílaba sem força, soa quase como a.",
+                "readingAid": "o",
+                "symbol": "о"
+              }
+            ],
+            "summary": [
+              "Leia as letras russas da esquerda para a direita, uma por vez, pelo som de cada cartão.",
+              "Várias letras parecem latinas, mas têm outro som: в é v, н é n, р é r, у é u e х é kh. Juntando с, о e н, você lê сон (son), “sono”."
+            ],
+            "title": "Suas primeiras letras russas"
+          },
+          "problems": [
+            {
+              "problem": "The cue for х places its sound \"mais atrás que o h de “hora”\", but the h of \"hora\" is silent in Portuguese, so it gives the learner no sound to start from. Fix: Describe /x/ as a rough sound at the back of the mouth and compare it with a Portuguese sound that has it, such as the strong r of \"rato\" in a Rio accent, still showing ха (kha).",
+              "screen": 7
+            }
+          ],
+          "targetLanguage": "ru"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fixed",
+          "reasoning": "Screen 6 correctly replaces “book” with “food” and specifies spread rather than rounded lips, providing the requested cue for /ɯ/. The symbol ㅡ, audioText 으, and romanization eu remain consistent. No cap applies.",
+          "score": 10,
+          "label": "Problem fixed right",
+          "weight": 70
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The cue uses plain US English and includes 으 (eu), matching the audio syllable. However, “still showing” carries editorial wording into the learner-facing text instead of naturally introducing what the learner will hear. No language cap applies.",
+          "score": 8,
+          "label": "Learner's language and style",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2180,
+          "outputTokens": 485,
+          "reasoningTokens": 179
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "“Still showing 으 (eu)” sounds like an editing instruction rather than natural learner-facing guidance.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Replace “still showing 으 (eu)” with “you’ll hear it as 으 (eu)” to connect the syllable and romanization explicitly to the audio.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The rewritten ㅡ card describes a high back unrounded vowel: the oo of \"food\" (not the lax vowel of \"book\") said with spread, unrounded lips, and it still shows 으 (eu). In US English.",
+        "id": "en-ko-book-vowel-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "lesson": {
+            "canDo": "Read and say ㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ, ㄱ, ㄴ, ㅁ, and ㅅ.",
+            "description": "Read simple syllable blocks such as 가, 나, 마, and 사.",
+            "intro": [
+              {
+                "text": "Korean letters join into square syllable blocks. Start with a consonant and vowel together: ㄱ (g) + ㅏ (a) makes 가 (ga).",
+                "title": "Read in blocks"
+              },
+              {
+                "text": "Read each block from left to right or from top to bottom. Vowels like ㅏ (a) sit beside a consonant, while vowels like ㅗ (o) sit below it; ㅇ (ng) is a silent placeholder at the start of a block.",
+                "title": "Find the vowel"
+              }
+            ],
+            "letters": [
+              {
+                "audioText": "아",
+                "forms": [],
+                "pronunciation": "Like the a in “father,” short and pure; you’ll hear it as 아 (a).",
+                "readingAid": "a",
+                "symbol": "ㅏ"
+              },
+              {
+                "audioText": "어",
+                "forms": [],
+                "pronunciation": "Closest to the u in “cup,” but keep it pure without the English glide; you’ll hear it as 어 (eo).",
+                "readingAid": "eo",
+                "symbol": "ㅓ"
+              },
+              {
+                "audioText": "오",
+                "forms": [],
+                "pronunciation": "Like the vowel in “go,” but hold it steady without the English glide; you’ll hear it as 오 (o).",
+                "readingAid": "o",
+                "symbol": "ㅗ"
+              },
+              {
+                "audioText": "우",
+                "forms": [],
+                "pronunciation": "Like the oo in “food,” held steady; you’ll hear it as 우 (u).",
+                "readingAid": "u",
+                "symbol": "ㅜ"
+              },
+              {
+                "audioText": "으",
+                "forms": [],
+                "pronunciation": "Like the oo in “book,” but with your lips unrounded; you’ll hear it as 으 (eu).",
+                "readingAid": "eu",
+                "symbol": "ㅡ"
+              },
+              {
+                "audioText": "이",
+                "forms": [],
+                "pronunciation": "Like the ee in “see,” held steady; you’ll hear it as 이 (i).",
+                "readingAid": "i",
+                "symbol": "ㅣ"
+              },
+              {
+                "audioText": "가",
+                "forms": [],
+                "pronunciation": "Between English k and g, with no puff of air; it can sound more voiced between voiced sounds. You’ll hear it as 가 (ga).",
+                "readingAid": "g",
+                "symbol": "ㄱ"
+              },
+              {
+                "audioText": "나",
+                "forms": [],
+                "pronunciation": "Like the n in “no”; you’ll hear it as 나 (na).",
+                "readingAid": "n",
+                "symbol": "ㄴ"
+              },
+              {
+                "audioText": "마",
+                "forms": [],
+                "pronunciation": "Like the m in “mom”; you’ll hear it as 마 (ma).",
+                "readingAid": "m",
+                "symbol": "ㅁ"
+              },
+              {
+                "audioText": "사",
+                "forms": [],
+                "pronunciation": "Like the s in “sun”; before ㅣ it sounds closer to English sh. You’ll hear it as 사 (sa).",
+                "readingAid": "s",
+                "symbol": "ㅅ"
+              }
+            ],
+            "summary": [
+              "Korean letters combine into syllable blocks, read from left to right and top to bottom.",
+              "The six vowels each have a steady sound, and ㄱ, ㄴ, ㅁ, and ㅅ give you consonants to build simple blocks."
+            ],
+            "title": "Your First Hangul Letters"
+          },
+          "problems": [
+            {
+              "problem": "The cue compares ㅡ with the oo of \"book\", a lower, lax vowel, while ㅡ is the high back unrounded vowel /ɯ/. Fix: Compare it with the oo of \"food\" said with the lips spread instead of rounded, still showing 으 (eu).",
+              "screen": 6
+            }
+          ],
+          "targetLanguage": "ko"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fixed",
+          "reasoning": "The update corrects both the title and text of screen 0 to say Russian print is read from left to right, preserving the instruction to read one letter at a time. It makes no changes to the other intro screen or any letter card.",
+          "score": 10,
+          "label": "Problem fixed right",
+          "weight": 70
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The rewritten title and text are clear, natural Brazilian Portuguese with straightforward learner-facing instructions. No sound cue is rewritten, so the syllable and romanization requirement does not apply to this change.",
+          "score": 10,
+          "label": "Learner's language and style",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2132,
+          "outputTokens": 287,
+          "reasoningTokens": 42
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The rewritten first intro screen says Russian print is read from left to right, one letter at a time; the other intro screen and every letter card stay as they were. In Brazilian Portuguese.",
+        "id": "pt-ru-intro-direction-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "lesson": {
+            "canDo": "Leia e pronuncie в (v), н (n), р (r), с (s), у (u), х (kh), а (a), к (k), м (m) e о (o).",
+            "description": "Com estas letras, você já consegue ler сон (son), que significa “sono”.",
+            "intro": [
+              {
+                "text": "No russo impresso, leia uma letra por vez, da direita para a esquerda. As letras não se ligam umas às outras.",
+                "title": "Leia da direita para a esquerda"
+              },
+              {
+                "text": "Algumas letras lembram letras latinas, mas têm outro som: В (v) parece B, Н (n) parece H e Р (r) parece P. Confie no som de cada cartão, não no desenho.",
+                "title": "Não confie só no formato"
+              }
+            ],
+            "letters": [
+              {
+                "audioText": "ва",
+                "forms": [],
+                "pronunciation": "Como o v de “vida”; você ouvirá o som em ва (va).",
+                "readingAid": "v",
+                "symbol": "в"
+              },
+              {
+                "audioText": "на",
+                "forms": [],
+                "pronunciation": "Como o n de “nada”; você ouvirá o som em на (na).",
+                "readingAid": "n",
+                "symbol": "н"
+              },
+              {
+                "audioText": "ра",
+                "forms": [],
+                "pronunciation": "Parecido com o r de “caro”, mas com a ponta da língua batendo várias vezes, um r rolado; você ouvirá o som em ра (ra).",
+                "readingAid": "r",
+                "symbol": "р"
+              },
+              {
+                "audioText": "са",
+                "forms": [],
+                "pronunciation": "Como o s de “sapo”; você ouvirá o som em са (sa).",
+                "readingAid": "s",
+                "symbol": "с"
+              },
+              {
+                "audioText": "у",
+                "forms": [],
+                "pronunciation": "Como o u de “uva”, curto e sem deslizar.",
+                "readingAid": "u",
+                "symbol": "у"
+              },
+              {
+                "audioText": "ха",
+                "forms": [],
+                "pronunciation": "Parecido com o r de “rato”, mas mais áspero, raspando no fundo da boca; você ouvirá o som em ха (kha).",
+                "readingAid": "kh",
+                "symbol": "х"
+              },
+              {
+                "audioText": "а",
+                "forms": [],
+                "pronunciation": "Como o a de “pá”; numa sílaba sem força, fica mais breve e fraco.",
+                "readingAid": "a",
+                "symbol": "а"
+              },
+              {
+                "audioText": "ка",
+                "forms": [],
+                "pronunciation": "Como o c de “casa”; você ouvirá o som em ка (ka).",
+                "readingAid": "k",
+                "symbol": "к"
+              },
+              {
+                "audioText": "ма",
+                "forms": [],
+                "pronunciation": "Como o m de “mala”; você ouvirá o som em ма (ma).",
+                "readingAid": "m",
+                "symbol": "м"
+              },
+              {
+                "audioText": "о",
+                "forms": [],
+                "pronunciation": "Como o ô de “avô” quando a sílaba é forte; numa sílaba sem força, soa quase como a.",
+                "readingAid": "o",
+                "symbol": "о"
+              }
+            ],
+            "summary": [
+              "Leia as letras russas da esquerda para a direita, uma por vez, pelo som de cada cartão.",
+              "Várias letras parecem latinas, mas têm outro som: в é v, н é n, р é r, у é u e х é kh. Juntando с, о e н, você lê сон (son), “sono”."
+            ],
+            "title": "Suas primeiras letras russas"
+          },
+          "problems": [
+            {
+              "problem": "The screen says Russian is read from right to left, but Russian is read from left to right. Fix: Say each line is read from left to right.",
+              "screen": 0
+            }
+          ],
+          "targetLanguage": "ru"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fixed",
+          "reasoning": "The can-do line lists exactly the ten taught letters, replacing ㅎ with ㅅ. The other returned lesson fields are unchanged, and no letter-card changes are supplied.",
+          "score": 10,
+          "label": "Problem fixed right",
+          "weight": 70
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The corrected line is clear, natural US English and preserves the straightforward learner-facing style. No pronunciation cues were rewritten, so the existing syllable and romanization pairings remain unchanged.",
+          "score": 10,
+          "label": "Learner's language and style",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2216,
+          "outputTokens": 282,
+          "reasoningTokens": 53
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The can-do line lists the ten letters the lesson teaches, with ㅅ and without ㅎ; every letter card stays as it was. In US English.",
+        "id": "en-ko-untaught-letter-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "lesson": {
+            "canDo": "Read and say ㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ, ㄱ, ㄴ, ㅁ, and ㅎ.",
+            "description": "Read simple syllable blocks such as 가, 나, 마, and 사.",
+            "intro": [
+              {
+                "text": "Korean letters join into square syllable blocks. Start with a consonant and vowel together: ㄱ (g) + ㅏ (a) makes 가 (ga).",
+                "title": "Read in blocks"
+              },
+              {
+                "text": "Read each block from left to right or from top to bottom. Vowels like ㅏ (a) sit beside a consonant, while vowels like ㅗ (o) sit below it; ㅇ (ng) is a silent placeholder at the start of a block.",
+                "title": "Find the vowel"
+              }
+            ],
+            "letters": [
+              {
+                "audioText": "아",
+                "forms": [],
+                "pronunciation": "Like the a in “father,” short and pure; you’ll hear it as 아 (a).",
+                "readingAid": "a",
+                "symbol": "ㅏ"
+              },
+              {
+                "audioText": "어",
+                "forms": [],
+                "pronunciation": "Closest to the u in “cup,” but keep it pure without the English glide; you’ll hear it as 어 (eo).",
+                "readingAid": "eo",
+                "symbol": "ㅓ"
+              },
+              {
+                "audioText": "오",
+                "forms": [],
+                "pronunciation": "Like the vowel in “go,” but hold it steady without the English glide; you’ll hear it as 오 (o).",
+                "readingAid": "o",
+                "symbol": "ㅗ"
+              },
+              {
+                "audioText": "우",
+                "forms": [],
+                "pronunciation": "Like the oo in “food,” held steady; you’ll hear it as 우 (u).",
+                "readingAid": "u",
+                "symbol": "ㅜ"
+              },
+              {
+                "audioText": "으",
+                "forms": [],
+                "pronunciation": "English has no exact match: say “oo” with your lips unrounded and your tongue pulled back; you’ll hear it as 으 (eu).",
+                "readingAid": "eu",
+                "symbol": "ㅡ"
+              },
+              {
+                "audioText": "이",
+                "forms": [],
+                "pronunciation": "Like the ee in “see,” held steady; you’ll hear it as 이 (i).",
+                "readingAid": "i",
+                "symbol": "ㅣ"
+              },
+              {
+                "audioText": "가",
+                "forms": [],
+                "pronunciation": "Between English k and g, with no puff of air; it can sound more voiced between voiced sounds. You’ll hear it as 가 (ga).",
+                "readingAid": "g",
+                "symbol": "ㄱ"
+              },
+              {
+                "audioText": "나",
+                "forms": [],
+                "pronunciation": "Like the n in “no”; you’ll hear it as 나 (na).",
+                "readingAid": "n",
+                "symbol": "ㄴ"
+              },
+              {
+                "audioText": "마",
+                "forms": [],
+                "pronunciation": "Like the m in “mom”; you’ll hear it as 마 (ma).",
+                "readingAid": "m",
+                "symbol": "ㅁ"
+              },
+              {
+                "audioText": "사",
+                "forms": [],
+                "pronunciation": "Like the s in “sun”; before ㅣ it sounds closer to English sh. You’ll hear it as 사 (sa).",
+                "readingAid": "s",
+                "symbol": "ㅅ"
+              }
+            ],
+            "summary": [
+              "Korean letters combine into syllable blocks, read from left to right and top to bottom.",
+              "The six vowels each have a steady sound, and ㄱ, ㄴ, ㅁ, and ㅅ give you consonants to build simple blocks."
+            ],
+            "title": "Your First Hangul Letters"
+          },
+          "problems": [
+            {
+              "problem": "The can-do line lists ㅎ, which the lesson never teaches, and leaves out ㅅ, which it does. Fix: List ㅅ instead of ㅎ.",
+              "screen": null
+            }
+          ],
+          "targetLanguage": "ko"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fixed",
+          "reasoning": "Screen 7 correctly changes the romanization of х from h to kh. It agrees with ха (kha) in the cue and preserves the matching audioText ха. The sound cue remains unchanged, as expressly permitted.",
+          "score": 10,
+          "label": "Problem fixed right",
+          "weight": 70
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The cue uses plain Brazilian Portuguese, compares the sound with the r in “rato” while explaining the difference, and explicitly shows the audio syllable ха with its romanization kha.",
+          "score": 10,
+          "label": "Learner's language and style",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2150,
+          "outputTokens": 237,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The х card is romanized kh, the standard transliteration that its cue's ха (kha) already shows; its sound cue may stay as it was. In Brazilian Portuguese.",
+        "id": "pt-ru-h-romanization-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "lesson": {
+            "canDo": "Leia e pronuncie в (v), н (n), р (r), с (s), у (u), х (kh), а (a), к (k), м (m) e о (o).",
+            "description": "Com estas letras, você já consegue ler сон (son), que significa “sono”.",
+            "intro": [
+              {
+                "text": "No russo impresso, leia uma letra por vez, da esquerda para a direita. As letras não se ligam umas às outras.",
+                "title": "Leia da esquerda para a direita"
+              },
+              {
+                "text": "Algumas letras lembram letras latinas, mas têm outro som: В (v) parece B, Н (n) parece H e Р (r) parece P. Confie no som de cada cartão, não no desenho.",
+                "title": "Não confie só no formato"
+              }
+            ],
+            "letters": [
+              {
+                "audioText": "ва",
+                "forms": [],
+                "pronunciation": "Como o v de “vida”; você ouvirá o som em ва (va).",
+                "readingAid": "v",
+                "symbol": "в"
+              },
+              {
+                "audioText": "на",
+                "forms": [],
+                "pronunciation": "Como o n de “nada”; você ouvirá o som em на (na).",
+                "readingAid": "n",
+                "symbol": "н"
+              },
+              {
+                "audioText": "ра",
+                "forms": [],
+                "pronunciation": "Parecido com o r de “caro”, mas com a ponta da língua batendo várias vezes, um r rolado; você ouvirá o som em ра (ra).",
+                "readingAid": "r",
+                "symbol": "р"
+              },
+              {
+                "audioText": "са",
+                "forms": [],
+                "pronunciation": "Como o s de “sapo”; você ouvirá o som em са (sa).",
+                "readingAid": "s",
+                "symbol": "с"
+              },
+              {
+                "audioText": "у",
+                "forms": [],
+                "pronunciation": "Como o u de “uva”, curto e sem deslizar.",
+                "readingAid": "u",
+                "symbol": "у"
+              },
+              {
+                "audioText": "ха",
+                "forms": [],
+                "pronunciation": "Parecido com o r de “rato”, mas mais áspero, raspando no fundo da boca; você ouvirá o som em ха (kha).",
+                "readingAid": "h",
+                "symbol": "х"
+              },
+              {
+                "audioText": "а",
+                "forms": [],
+                "pronunciation": "Como o a de “pá”; numa sílaba sem força, fica mais breve e fraco.",
+                "readingAid": "a",
+                "symbol": "а"
+              },
+              {
+                "audioText": "ка",
+                "forms": [],
+                "pronunciation": "Como o c de “casa”; você ouvirá o som em ка (ka).",
+                "readingAid": "k",
+                "symbol": "к"
+              },
+              {
+                "audioText": "ма",
+                "forms": [],
+                "pronunciation": "Como o m de “mala”; você ouvirá o som em ма (ma).",
+                "readingAid": "m",
+                "symbol": "м"
+              },
+              {
+                "audioText": "о",
+                "forms": [],
+                "pronunciation": "Como o ô de “avô” quando a sílaba é forte; numa sílaba sem força, soa quase como a.",
+                "readingAid": "o",
+                "symbol": "о"
+              }
+            ],
+            "summary": [
+              "Leia as letras russas da esquerda para a direita, uma por vez, pelo som de cada cartão.",
+              "Várias letras parecem latinas, mas têm outro som: в é v, н é n, р é r, у é u e х é kh. Juntando с, о e н, você lê сон (son), “sono”."
+            ],
+            "title": "Suas primeiras letras russas"
+          },
+          "problems": [
+            {
+              "problem": "х is romanized as h, but its standard transliteration is kh, as its cue already shows. Fix: Romanize it as kh.",
+              "screen": 7
+            }
+          ],
+          "targetLanguage": "ru"
+        }
+      }
+    }
+  ],
+  "taskId": "alphabet-lesson-fix"
+}

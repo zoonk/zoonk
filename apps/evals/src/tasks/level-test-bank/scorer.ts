@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type GenerateLevelTestBankSchema,
   LEVEL_TEST_PASSAGE_WORDS,
@@ -63,7 +63,7 @@ function getSpeakingProblems(bank: GenerateLevelTestBankSchema): string[] {
   ).map((level) => `${level} doesn't have exactly one sentence to say.`);
 }
 
-function checkLevelTestBank(output: string): CodeCheckResult {
+export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
   const bank = JSON.parse(output) as GenerateLevelTestBankSchema;
 
   const groups = TEST_LEVELS.flatMap((level) =>
@@ -78,11 +78,11 @@ function checkLevelTestBank(output: string): CodeCheckResult {
     problems: parts.flat(),
     total: parts.length,
   };
-}
+};
 
 export const scoreLevelTestBank: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: checkLevelTestBank,
+    check: (value) => checkLevelTestBank({ output: value, testCase }),
     output,
     scoreCategories: LEVEL_TEST_BANK_SCORE_CATEGORIES,
     testCase,

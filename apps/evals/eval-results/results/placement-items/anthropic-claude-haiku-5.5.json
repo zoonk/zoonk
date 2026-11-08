@@ -5,37 +5,37 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "The supplied questions and sample answers are correct. Two successive 10% increases produce 1.10 × 1.10 = 1.21, a 21% increase. The table's only consecutive-day decrease is Tuesday to Wednesday, from 46 to 38 kg, a drop of 8 kg. At equal operating time, reducing power from 5,000 W to 3,500 W reduces electrical energy consumption because E = Pt. No wrong-key, multiple-answer, or factual-error cap is triggered.",
-          "score": 10,
+          "reasoning": "Multiple questions contain factual errors, triggering the cap of 5. The armed-participant question incorrectly removes protection from the whole assembly instead of distinguishing the isolated armed individual from peaceful participants. The rectification question treats fifteen days of silence as sufficient, whereas Law 9.507/1997 requires more than fifteen days. The final question correctly rejects an abstract challenge but incorrectly explains that mandado de segurança always requires an already-applied act, ignoring preventive relief against a concrete threat. Another explanation implies availability for collection claims, contrary to STF Súmula 269. The first assembly question also fails to establish that the two meetings would actually interfere, making its categorical prohibition insufficiently grounded.",
+          "score": 4,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The percentage response clearly addresses the realistic mistake of adding successive rates, and the table key identifies comparison with the wrong baseline. However, all multiple-choice items are absent, so none of the requested distractors, misconception labels, or option-specific explanations is supplied. Empty accepted-answer lists do not document alternative correct wordings, and several key points bundle or duplicate ideas rather than providing independent grading checks. There are no existing generic misconception labels or implausible distractors that trigger their specific caps.",
+          "reasoning": "Most labels identify specific mistakes, and many explanations directly address them. However, several distractors are implausible, including notice curing every irregularity, assembly rights lasting until arrest, and mandado de segurança being restricted to judges. This triggers the cap of 7. The first-notification distractor conflicts with the stated facts rather than cleanly testing its labeled misconception. Feedback on supposedly public academic records merely repeats the prior-request requirement instead of correcting the privacy misconception. Some feedback also teaches incorrect legal rules.",
           "score": 7,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The contexts are in Brazilian Portuguese and the table is correctly placed in context as a GFM pipe table. Nevertheless, the set contains no five-option ENEM questions at all. The table item is a straightforward elementary subtraction exercise, and the electricity item is a simple qualitative prompt rather than an intermediate contextual calculation. The set would look out of place as the requested ENEM placement assessment, triggering the at-most-7 cap; the complete omission of its exam-format component warrants 6.",
-          "score": 6,
+          "reasoning": "The questions generally use recognizable Brazilian administrative and civic situations, and no named exam imposes a particular format. Nevertheless, several options sound artificial rather than like credible learner judgments. The course-enrollment scenario awkwardly describes cancellation after the learner has already completed and passed the course, without explaining the practical consequence. The assembly stem also explicitly supplies the authorization rule instead of letting the learner apply it. These weaknesses reduce assessment realism without making the entire set unusable.",
+          "score": 8,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The percentage and table questions apply their respective skills rather than merely asking for definitions, and the learner-facing material is in the requested language. The electricity question remains related to its skill but never requires calculating energy or cost, substantially under-testing the specified intermediate competency. With only one question per skill, the requested within-skill variety and paired situations are also absent. The specific recall and same-way repetition caps are not triggered, but coverage and variety remain materially incomplete.",
-          "score": 7,
+          "reasoning": "The questions mostly require application and cover distinct constitutional issues, but they breach the central novelty requirement. Both assembly items return to the prohibited public-square meeting situation, and the second habeas-data item again concerns obtaining one's own institutional records. Changing the legal obstacle does not satisfy the instruction against reusing those situations. English misconception labels also violate the entirely Portuguese requirement. The two questions within each skill generally test different issues, but that does not cure the prohibited reuse.",
+          "score": 6,
           "label": "Skill fit & variety",
           "weight": 20
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "3 of 6 parts passed. Aumentos e descontos percentuais sucessivos, quick 1: The question is empty. Aumentos e descontos percentuais sucessivos, quick 1: Has 0 correct options instead of 1. Leitura de dados em tabelas, quick 1: The question is empty. Consumo de energia elétrica em casa, quick 1: The question is empty.",
-          "score": 5.5,
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -44,34 +44,134 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2731,
-          "outputTokens": 924,
-          "reasoningTokens": 191
+          "inputTokens": 5287,
+          "outputTokens": 1414,
+          "reasoningTokens": 516
         }
       },
       "steps": [
         {
-          "conclusion": "All three required multiple-choice questions are missing: every quick array is empty. This removes half the requested assessment, including all five-option ENEM items and their diagnostic distractors. The electricity question also avoids the skill's required energy and cost calculations, testing only a qualitative relationship.",
+          "conclusion": "The set violates the explicit situation-reuse restriction: both assembly questions again use meetings in public squares, and the second habeas-data question reuses access to one's own records, despite changing the procedural obstacle. There are also material legal errors. One armed participant does not automatically strip the entire peaceful assembly of constitutional protection. For habeas-data rectification, the statutory silence threshold is more than fifteen days, not merely fifteen. The mandado-de-segurança explanations also misleadingly require an already-applied act, overlooking preventive relief, and imply that the remedy can serve as a collection action.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Every acceptedAnswers list is empty, leaving common correct formulations undocumented. Some key points combine separately checkable claims, and the percentage item redundantly assesses the same explanation in multiple key points. The table question reads more like an elementary classroom exercise than an ENEM item.",
+          "conclusion": "All misconception labels are in English despite the requested Portuguese-only output. Several distractors are weak or internally inconsistent: the first assembly question offers priority through first notification even though the other group has already notified the authorities. Other choices invent unlikely rules, such as assembly protection ending only upon arrest. The school-records feedback does not explain that personal academic records are not freely accessible to everyone.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Remove the unused gas-heater alternative from the electricity context; it introduces a comparison that the question never asks the learner to make.",
+          "conclusion": "Use genuinely unused settings and vary the legal decisions required. State facts that establish actual interference between competing meetings rather than assuming that sharing a square necessarily frustrates the earlier meeting. Replace artificial distractors with plausible confusions, and make each explanation directly correct its option's misconception. For mandado de segurança, distinguish abstract review, a concrete threat supporting preventive relief, and an already completed unlawful act.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).",
+        "id": "pt-constitutional-mock-avoids-used-situations-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Aplicar o direito de reunião (art. 5º, XVI) a situações concretas: aviso prévio, autorização, armas, local.",
+              "level": "intermediate",
+              "name": "Direito de reunião",
+              "usedSituations": [
+                "Moradores de um bairro marcaram uma reunião pacífica em uma praça pública, sem armas, e avisaram a prefeitura com antecedência.",
+                "Um grupo quer se reunir em praça pública sem pedir autorização ao poder público."
+              ]
+            },
+            {
+              "description": "Reconhecer quando cabe habeas data (art. 5º, LXXII) e distingui-lo do mandado de segurança.",
+              "level": "intermediate",
+              "name": "Habeas data",
+              "usedSituations": [
+                "Uma pessoa pediu ao órgão público acesso aos próprios dados cadastrais e teve o pedido negado."
+              ]
+            },
+            {
+              "description": "Reconhecer quando cabe mandado de segurança (art. 5º, LXIX) e seus requisitos.",
+              "level": "intermediate",
+              "name": "Mandado de segurança"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm all six unique keyed answers: R$ 1,980; 20%; Semana 3, with a 16-liter difference; 12.5%; R$ 33; and 30 minutes. The worked explanations agree with these results, and the numerical distractor calculations are reproducible. No incorrect-key, ambiguity, or factual-error cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors represent specific mistakes, such as canceling successive percentages, comparing totals instead of differences, using the final-value denominator, and failing to convert units. Feedback generally explains the mistaken operation, not merely the correct answer. The isolated weaknesses are the implausible spontaneous-reversal explanation for 0% and the nondiagnostic first-row explanation for Semana 1. The set does not broadly exhibit generic labels or mismatched numerical explanations.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All questions provide short everyday contexts, clear commands, five alternatives, and one correct answer. The tables are correctly placed in context as GFM pipe tables, and the set broadly resembles accessible ENEM mathematics and physics items. However, the percentage-change table question does not meet the explicit beginner, one-step level expectation, and some commands are more conversational than the requested formal exam style. The set-wide out-of-place cap is not triggered.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions require application rather than recall, are written in Portuguese, and use different situations and requested quantities within each pair without revealing each other's answers. Successive-price calculation versus reversing an increase, and energy cost versus equal-consumption duration, provide useful variety. The main weakness is that the second beginner table item introduces substantial percentage arithmetic, weakening its diagnostic focus on table reading. Neither the recall nor repeated-task cap applies.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5439,
+          "outputTokens": 1083,
+          "reasoningTokens": 396
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The second table-reading question exceeds the specified beginner level: calculating percentage change requires subtraction, choosing the initial-value denominator, and converting to a percentage. This makes placement depend substantially on percentage-calculation proficiency rather than beginner table reading.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Two distractors have weak diagnostic grounding: the academy question attributes 0% to believing an increase reverses itself, and the juice-table question attributes Semana 1 merely to reading the first row. Neither identifies a convincing skill-specific reasoning error. Most other distractors and explanations are precise and reproducible.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use more formal, precise ENEM-style commands where appropriate. For example, replace 'Quanto o chuveiro custa por mês' with a question explicitly asking for the monthly cost of the electrical energy consumed.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row). Each question tests only its own skill, and a skill's two questions use different situations, ask different things and never give away each other's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
         "id": "pt-enem-placement-three-skills-1",
         "userInput": {
-          "quickCount": 1,
-          "typedCount": 1,
+          "quickCount": 2,
+          "typedCount": 0,
           "examFormat": {
             "name": "ENEM",
             "optionCount": 5,
@@ -103,29 +203,29 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent solutions give x = 17, 150 texts, a 25% increase in orders, an $8 fixed rental fee, and a $185 increase per additional credit; these answers are correct. The milk price fell by 20%, and a 25% increase from $3.20 does restore $4.00. Although the sample answer explains this distinction, the first grading point says the shopper is wrong when the direct question asks about the valid increase. This is one wrong-key item, triggering the cap of 7.",
-          "score": 7,
+          "reasoning": "Independent calculation confirms every key: 30,9%; 27,0%; R$ 1.200.000.000,00; 1,02 bilhão as the largest amount; R$ 238,51; and Juazeiro do Norte, with R$ 2.152,88 versus R$ 1.971,84. However, two questions contain erroneous mathematical explanations. Omitting multiplication by 100 leaves 0,27, not 2,7, and the billion-conversion feedback miscounts the zeros in both the correct amount and the distractor. These errors in two questions trigger the maximum score of 5.",
+          "score": 5,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Several distractor explanations lack a valid connection to their options, triggering the cap of 7. Failing to distribute the 3 to the constant would yield x = 9, not x = 7; the proposed errors for x = 3 also do not establish that answer. The explanation for 80% describes 300/240 = 125%, whereas 80% naturally comes from 240/300. Other feedback, such as dividing the change by the new value to obtain 20%, is specific and useful. Empty accepted-answer lists, compound key points, and an unnecessarily prescribed solution order further weaken typed-response grading.",
-          "score": 7,
+          "reasoning": "Many distractors are well grounded and reproduce their stated mistakes, including dividing by the other regions, using only urban older residents, and prematurely rounding the population. However, the 2,7% distractor does not follow from its explanation. In the largest-budget question, confusing billions with 100 million does not make 102 million larger than 980 million; similarly, confusing billions with millions does not make R$ 1.020.000 the maximum. The equal-per-capita option merely attributes the answer to assuming equality without calculation, offering no specific diagnostic mistake. Multiple failures trigger the cap of 7, and the breadth of weak diagnostic feedback warrants 6.",
+          "score": 6,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The multiple-choice items generally use concise contexts, direct questions, and four options consistent with Digital SAT Math. However, every typed item requests prose explanations, and one also requires writing an equation. These are not Digital SAT student-produced numeric responses, so a substantial portion of the set would look and score out of place. The stated cap of 7 applies.",
+          "reasoning": "All questions have contextual support, a command, five alternatives, and one correct key. Most follow a usable ENEM-style structure. The final question is less authentic: it duplicates one municipality across differently structured alternatives and includes an unsupported equality choice rather than a coherent numerical comparison set. Repeated omission of cents from expanded monetary amounts also violates the explicitly requested Brazilian money format. These weaknesses keep the set at 7.",
           "score": 7,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The questions use the requested skills rather than simply asking for definitions, remain in English, and give each skill a different typed situation from its multiple-choice situation. The linear-model pair covers both intercept and slope, and the percent pair changes from growth to a price reduction and reversal. Difficulty coverage is relatively narrow: the equation items are straightforward, and the item labeled hard adds more ambiguity than mathematical challenge.",
-          "score": 8,
+          "reasoning": "The questions generally require applying the assigned skills, remain in Portuguese, and do not disclose each other's answers. Percentage items vary which quantities must be combined, and per-capita items progress from calculation to comparison. However, both large-number items remain in the same municipal-budget setting despite the requirement for different situations. The final per-capita item also allows selection of a municipality without demonstrating decimal rounding, so coverage of that skill is incomplete.",
+          "score": 7,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -142,34 +242,509 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3990,
-          "outputTokens": 1216,
-          "reasoningTokens": 431
+          "inputTokens": 5321,
+          "outputTokens": 1849,
+          "reasoningTokens": 1028
         }
       },
       "steps": [
         {
-          "conclusion": "The percent-change typed question has a contradictory grading key: the answer to the actual question is yes, since $3.20 × 1.25 = $4.00, but the first key point requires saying the shopper is wrong. Several distractor explanations do not explain their selected values, particularly x = 7, x = 3, and 80%. All three typed items require written explanations rather than Digital SAT student-produced numeric answers, and none supplies accepted answers.",
+          "conclusion": "Two explanations contain mathematical errors: forgetting to multiply 0,27 by 100 does not produce 2,7%, and 1,2 bilhão has eight zeros after 12, not nine. Several largest-value distractors are not justified by their stated mistakes. Expanded monetary amounts such as R$ 1.200.000 also omit the required decimal cents. All six keyed answers are nevertheless correct.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The equation-solving key unnecessarily requires subtracting the fixed fee before dividing, excluding other valid solution sequences. Some key points combine multiple independently checkable ideas, while the linear-model key repeats the per-credit interpretation and requires discussion of the fixed fee even though the question does not ask for it.",
+          "conclusion": "The final question mixes municipality names with explanatory assertions and repeats Campina Grande in two alternatives, weakening the ENEM-style option set. Both large-number questions use municipal-budget situations, falling short of the requested contextual variety.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Broaden the difficulty range with a more demanding equation involving fractions or parentheses on both sides. Keep each grading point focused on one requested idea, and distinguish essential mathematical reasoning from optional explanatory detail.",
+          "conclusion": "Rebuild comparison distractors by checking whether each stated misconception actually makes that alternative the learner's choice. Use parallel numerical alternatives for the final per-capita question, including rounded amounts, and move one large-number question to a different setting, such as population estimates.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.",
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes). Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, and a skill's two questions use different situations and never give away each other's answer.",
+        "id": "pt-enem-placement-large-numbers-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular que porcentagem uma parte representa de um total na casa dos milhares ou dos milhões.",
+              "level": "intermediate",
+              "name": "Porcentagem de uma parte em um total grande"
+            },
+            {
+              "description": "Ler, escrever e comparar números na casa dos milhões e dos bilhões, como populações e orçamentos públicos.",
+              "level": "beginner",
+              "name": "Leitura e comparação de números grandes"
+            },
+            {
+              "description": "Calcular valores por pessoa, como gasto ou consumo per capita, dividindo um total grande pela população e arredondando o resultado.",
+              "level": "intermediate",
+              "name": "Valores per capita com decimais"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Both keyed answers are independently defensible as the unique best choices among the supplied options; no sound competing strategy is marked wrong. Question 1 appropriately favors a brief comparison followed by moving on. Question 2 appropriately prioritizes quick questions and then more approachable difficult ones. Its arithmetic is correct: 6 × 2 = 12 minutes, leaving 28, while 15 × 6 = 90 minutes exceeds the available 40. No clear factual or key error triggers a cap.",
+          "score": 9,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most labels identify recognizable mistakes, and feedback usually explains the opportunity cost clearly. However, several distractors—especially Question 2's extreme time-allocation choices—are insufficiently plausible for the stated level, triggering the cap of 7. Question 1's leave-blank label also substitutes fear of guessing for the option's expressed belief that difficult questions are not worth attempting.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Both questions use Portuguese support texts, exam-taking situations, clear commands, and five options, matching the requested setting and basic format. However, both correct answers are conspicuously longer and more comprehensive than their competitors, while several alternatives are exaggerated enough to make the set feel unlike a credible ENEM-style assessment. The out-of-place option construction warrants the cap of 7.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions require applying strategies during an exam, not recalling definitions or handling exam-day procedures. They vary between a single-question decision and whole-exam time allocation, and all content is in Portuguese. However, neither actually requires evaluating close alternatives: Question 1 merely identifies comparing them as a good strategy. Consequently, the set assesses time management substantially better than the other half of the specified skill.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3192,
+          "outputTokens": 1060,
+          "reasoningTokens": 352
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several distractors are too transparently inferior to support a useful intermediate-level placement assessment. In Question 2, abandoning all quick questions, spending 40 minutes on six questions estimated to take 12 minutes, and allocating 90 minutes of work to a 40-minute window make the answer unusually easy to identify. Both correct options also stand out as the longest, most comprehensive plans.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Question 1's leave-blank option says difficult questions are not worth attempting, but its misconception label attributes a belief that leaving blanks is safer than guessing. Those are different mistakes. Its feedback should address the stated cost-benefit judgment, rather than primarily correcting an unstated fear of penalties.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make one question genuinely assess choosing between close alternatives by providing their competing interpretations and evidence from the question. Keep the other focused on time allocation, with similarly sized options representing plausible but less effective plans.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for one ENEM test-taking skill: two ENEM-style multiple-choice questions, both set in a situation during the exam, each asking how to handle a question in the exam, with one best option and wrong options that are tempting but worse strategies, never a sound strategy marked wrong because another one is listed as right. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.",
+        "id": "pt-enem-placement-test-taking-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Decidir entre alternativas próximas e administrar o tempo de uma questão difícil durante a prova.",
+              "level": "intermediate",
+              "name": "Decidir entre alternativas e administrar o tempo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All four keyed answers are uniquely supported by their respective texts: reducing river waste; delaying recycling until an emergency; expanding the archive through community contributions with deferred uploads; and the impossibility of attending the specified festival activities without changing rooms. The 30% transcription figure is interpreted correctly. No wrong-key, multiple-answer, or demonstrable factual-error cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Many explanations identify useful errors, including ignoring negation, reversing “antes de que,” and confusing total recordings with transcribed recordings. However, the battery question’s labels about concession and causation do not produce the associated claims that recycling becomes cheap. Some other distractors merely invent an authority or admission restriction. The explicit cap for a label or reason that does not explain its option applies.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The set supplies four short Spanish support texts, five alternatives per question, and one correct answer each. However, the festival item functions primarily as a scheduling puzzle, with the answer expressed as an unmatched “no combination” alternative rather than an interpretation of Spanish discourse. Its mixed-language framing and repeated untranslated labels also make it unlike polished ENEM material. The cap for a set that looks out of place in the named exam applies.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The environmental questions exercise negation and temporal interpretation, while the archive question integrates cultural preservation and technology. Each skill receives two different texts. Nevertheless, the festival task bypasses Spanish comprehension through label and room matching, violating a central task-specific requirement. Untranslated Spanish in commands, options, and feedback also violates the required language distribution. Coverage of textual function and intermediate-level cultural interpretation remains limited.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4324,
+          "outputTokens": 1152,
+          "reasoningTokens": 379
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The festival question can be answered by matching the Spanish activity labels repeated in the Portuguese command to their rows and comparing room names, without understanding Spanish. This violates the explicit requirement that Spanish comprehension be necessary. The command, alternatives, and explanations also retain untranslated words such as “charla,” “proyección,” “taller de animación,” and “reciclaje,” contrary to the required Brazilian Portuguese framing.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some misconception labels do not explain their alternatives. In the battery question, treating “aunque” as causal does not explain changing “costoso” into “barato”; likewise, the alleged concessive-clause mistake does not explain inventing an emergency-induced price reduction. Several distractors introduce unsupported actors or restrictions rather than identifiable Spanish misreadings. The passages also contain weak causal links: limited transcription does not explain requesting more recordings, and emergency-driven recycling does not clearly explain preventive collection campaigns.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace the festival row-matching task with an interpretation of a Spanish description of a cultural activity, keeping all framing in Portuguese. Revise distractors around identifiable lexical, temporal, or referential misunderstandings and ensure each label explains the actual error. Broaden the first skill’s coverage by including communicative purpose rather than relying mainly on paraphrasing explicit statements.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as \"apenas\", \"exquisito\" or \"embarazada\", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has two ENEM-style multiple-choice questions with 5 options; a skill's two questions use different texts.",
+        "id": "pt-enem-placement-spanish-option-1",
+        "userInput": {
+          "quickCount": 2,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+              "level": "intermediate",
+              "name": "Interpretar vocabulário e estruturas de textos em espanhol"
+            },
+            {
+              "description": "Usar o espanhol para obter informações e conhecer tecnologias e culturas em textos de diferentes fontes.",
+              "level": "intermediate",
+              "name": "Usar o espanhol para acessar informações e culturas"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The nine intended Certo/Errado judgments are defensible in their stated contexts, including the five-year federal annulment deadline and prospective effects of revocation. However, the first police-power explanation incorrectly makes statutory authorization and urgency cumulative conditions for autoexecutoriedade. Either express legal authorization or an urgent situation can justify direct execution. This factual error in one question's feedback triggers the maximum score of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All four false items target recognizable learner mistakes: confusing publicity with impersonality, swapping annulment and revocation, treating illegality as eliminating the annulment deadline, and confusing discretion with arbitrariness. Their labels identify those mistakes specifically, and the explanations describe why the reasoning fails rather than merely announcing the correct judgment.",
+          "score": 9,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The output consistently uses assertions judged Certo or Errado, with no multiple-choice substitution. Municipal and federal administrative situations are plausible, and the false assertions use recognizable Cebraspe traps involving swapped concepts and absolute claims. Five true and four false statements satisfy the requested approximate balance. The contextualized presentation remains compatible with the named exam.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions are in Brazilian Portuguese and generally require applying each designated skill to a concrete situation. However, the first two annulment/revocation questions repeat the same mechanism-and-temporal-effects comparison, including directly opposing claims about revocation's retroactivity. This both reduces variety and breaches the task-specific independence requirement; the repeated testing triggers the maximum score of 7. The nominally hard moralidade item also offers limited additional challenge.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4236,
+          "outputTokens": 2209,
+          "reasoningTokens": 1529
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The autoexecutoriedade explanation states an incorrect cumulative requirement: direct administrative enforcement is available when expressly authorized by law OR when urgency justifies it, not only when legal authorization AND urgency or health risk coexist. Also, the first two annulment/revocation items explicitly oppose retroactive and prospective effects of revocation. The true item supplies the rule that resolves the false item's trap, violating the requirement that statements not settle one another's judgment.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Difficulty calibration is uneven. The expensive, undisclosed gift immediately before a procurement makes the moralidade judgment straightforward despite its 'hard' label. The set therefore provides less intermediate-level discrimination than the labels suggest.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a genuinely more demanding ethical scenario for the harder principles item. In the final police-power item, explicitly establish statutory authorization for the daily fine and distinguish the compulsory character of coercibilidade from exigibilidade's use of indirect enforcement measures.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill has three Cebraspe-style assertions judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, a skill's three statements test different points of it and never settle each other's judgment, and about half of all statements are true.",
+        "id": "pt-cebraspe-placement-true-false-1",
+        "userInput": {
+          "quickCount": 3,
+          "typedCount": 0,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "language": "pt",
+          "quickFormat": "trueFalse",
+          "skills": [
+            {
+              "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+              "level": "intermediate",
+              "name": "Princípios da administração pública (LIMPE)"
+            },
+            {
+              "description": "Distinguir quando a administração deve anular um ato administrativo e quando pode revogá-lo, e os efeitos de cada um.",
+              "level": "intermediate",
+              "name": "Anulação e revogação de atos administrativos"
+            },
+            {
+              "description": "Reconhecer o poder de polícia, seus atributos e limites, em situações da administração pública.",
+              "level": "intermediate",
+              "name": "Poder de polícia"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm all four keys: 1.20 × 0.90 − 1 = 8%; 1.20 × 0.90 × 1.05 − 1 = 13.4%; 1.2 × 0.25 × 30 × 0.80 = R$ 7.20; and 0.09 × 4 × 30 × 0.80 = R$ 8.64. Each has one defensible correct option. However, two questions contain scientifically inaccurate feedback identifying watts as being used as kilowatt-hours. Their oversized distractors actually result from omitting conversion from W to kW before multiplying by hours. Because factual accuracy applies to explanations as well as keys, the two-question factual-error cap of 5 applies.",
+          "score": 5,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors reproduce specific mistakes accurately, including adding percentage rates, ignoring the final increase, converting 15 minutes to 0.15 hour, and calculating one lamp's cost instead of savings. Feedback generally explains these mistakes clearly. However, the two oversized electricity distractors misidentify the unit error as using W as kWh rather than kW, so their stated diagnoses do not accurately describe the calculations producing those options. This triggers the cap of 7 for inaccurate misconception explanations. Cancellation of unequal percentage rates is also a comparatively weak trap.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All four items have short everyday contexts, direct commands, five options, and one correct answer, broadly matching ENEM's format. Their calculation demands are plausible. The lamp replacement context is less polished than an exam item because it says both lamps are used after one replaces the other, rather than explicitly comparing equal usage before and after replacement. Overall, the set does not look substantially out of place in ENEM.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The result supplies exactly two multiple-choice questions per skill, no typed questions, and Portuguese throughout. All questions require applying the intended skills. Nevertheless, the mango and microwave items repeat their respective USED_SITUATIONS with substituted details, directly violating the novelty requirement. Both percentage items also ask for net percentage change through successive multiplication; adding a third adjustment changes difficulty but not what is asked. The same-task repetition triggers the cap of 7, and the additional prohibited situation reuse warrants 6.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4383,
+          "outputTokens": 1524,
+          "reasoningTokens": 696
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Two questions reuse prohibited situations: the mango question repeats a product-price increase followed by a next-month discount, and the microwave question repeats an appliance used daily for a month with changed equipment and numbers. The two percentage questions also ask for the same net percentage change using essentially the same method. Additionally, feedback in both electricity questions incorrectly describes treating watts as kilowatt-hours; the intended mistake is treating watts as kilowatts.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The cancellation distractor is weak because the stated increase and discount are visibly unequal. The lamp context says both lamps remain lit after describing a replacement, making the intended comparison of alternative usage scenarios unnecessarily ambiguous.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "For the R$ 0,86 distractor, show that the mistaken tariff produces R$ 0,864, rounded to R$ 0,86. This would make the feedback's numerical derivation fully explicit.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Mock exam questions in Brazilian Portuguese for two ENEM skills: exactly two ENEM-style multiple-choice questions per skill (short support text, a command, 5 options, distractors from typical mistakes) and no typed questions. Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question uses one of them again with other names, places or numbers, and a skill's two new questions differ from each other in situation and in what they ask. Each question tests only its own skill and reads like a real ENEM question at its level. The math must be right.",
+        "id": "pt-enem-mock-quick-only-1",
+        "userInput": {
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickCount": 2,
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos",
+              "usedSituations": [
+                "Uma loja aumentou o preço de um produto em 10% e, no mês seguinte, deu 10% de desconto."
+              ]
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa",
+              "usedSituations": [
+                "Um chuveiro elétrico de 5.500 W é usado 30 minutos por dia durante um mês."
+              ]
+            }
+          ],
+          "typedCount": 0
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm x = 18, an initial amount of $120, a 12% bill increase, a 0% overall pay change, a $60 fixed fee, and gas consumption of 0.05 gallon per mile. Each question has one defensible keyed answer. However, the successive-change question contains a false numerical implication in its feedback: reversing the raise produces a 40% decrease, not the offered 5% decrease. This factual error in one question triggers the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors reflect specific, reproducible mistakes, and their feedback explains the error clearly. However, the stated mistake for the 5% decrease option does not produce that value, triggering the cap of 7. The car-model question also uses two substantively equivalent unit-reversal distractors.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions use concise equations or realistic contexts, direct questions, and four options, consistent with Digital SAT Math. Wording is plain US English, and correct choices are not conspicuously longer or more confident than distractors. No exam-realism cap is triggered.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three skills receive two application questions. Linear equations vary between symbolic solving and a contextual fractional equation; percent change varies between a direct increase and successive changes; linear models test the intercept and a negative slope in different settings. The questions remain within their respective mathematical skills and provide a reasonable difficulty spread. No same-method repetition cap is triggered.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4458,
+          "outputTokens": 1143,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The feedback for the '5% decrease' option in the successive-percent-change question is mathematically inconsistent. Treating the 25% raise as a decrease gives $20 × 0.80 × 0.75 = $12, a 40% decrease—not 5%. All six keyed answers are otherwise uniquely correct.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Two distractors in the car-model question mean essentially the same thing: traveling 0.05 miles per gallon used. Their overlapping misconceptions reduce the diagnostic value of the options.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Consider using successive percentage changes with a nonzero net result. This would require learners to calculate the final percent change, rather than recognize that the pay returns to its original value.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three Digital SAT skills, each with two SAT-style multiple-choice questions (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value). The math must be right. Each question tests only its own skill, and a skill's two questions use different situations and ask different things.",
         "id": "en-sat-placement-three-skills-1",
         "userInput": {
-          "quickCount": 1,
-          "typedCount": 1,
+          "quickCount": 2,
+          "typedCount": 0,
           "examFormat": {
             "name": "Digital SAT Math",
             "optionCount": 4,
@@ -201,29 +776,29 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "The mitochondria answer is appropriate for a eukaryotic cell, and the moderate-warming explanation is sound. However, the unspecified enzyme does not support a unique temperature prediction, and the seedling question does not distinguish healthy growth from dark-induced elongation. Light is an energy source, not a raw material, so the photosynthesis stem also needs correction. Two or more questions have factual or answer-defensibility problems, triggering the maximum score of 5.",
+          "reasoning": "The intended keys are generally sound: mitochondria, increased oxygen demand during exercise, light-dependent sugar production, atmospheric carbon dioxide, and fastest salivary enzyme activity at 37°C. However, the dark-closet item's 'carry out well' wording permits a competing interpretation because darkness can substantially reduce water transport through reduced transpiration. Separately, the final enzyme feedback presents irreversible unfolding and protein composition as universal enzyme properties; some proteins can refold, and catalytic RNA also exists. These problems affect two questions, triggering the maximum score of 5.",
           "score": 5,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Most distractors have specific labels and explanations that identify the mistaken reasoning, especially the photosynthesis input/output reversals. Several enzyme alternatives are less plausible learner misconceptions. All acceptedAnswers arrays are empty; sample answers do not establish the range of acceptable correct wording. Multiple typed criteria combine ideas, such as bringing in oxygen and removing carbon dioxide, and some criteria repeat the same light–sugar relationship. These weaknesses prevent reliable point-by-point grading. The several weak distractors warrant the maximum-7 cap.",
+          "reasoning": "Most labels identify specific misconceptions, and many explanations directly contrast the mistaken idea with the biology. However, several distractors are insufficiently realistic, notably exercise-driven fat storage using extra air and the claim that no enzyme works at 37°C. The heated-starch feedback does not explain the actual mistake: the learner overlooked that starch was added only after cooling. The water-source feedback should explicitly say that water molecules contain no carbon rather than referring to 'its carbon.' The several weak distractors trigger the maximum score of 7.",
           "score": 7,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "Jogging and gardening provide accessible everyday settings, and the language is generally suitable for beginners. However, all three multiple-choice items are abstract textbook questions rather than realistic everyday situations, making a substantial portion of the set out of place under the no-exam expectation and triggering the maximum-7 cap. The unusually long correct enzyme option also provides an answer cue.",
-          "score": 7,
+          "reasoning": "The exercise, houseplant, classroom growing, and simple enzyme experiments are recognizable beginner biology settings, and the language is US English. No named-exam conventions are required. Some wording is less accessible than ideal, particularly the unexplained 'active site,' and the longer, more qualified correct answers in two items provide test-taking cues. These are weaknesses without making the entire set out of place.",
+          "score": 8,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The output provides exactly one multiple-choice and one typed question per skill, stays in English, and generally keeps each question within its assigned biology topic. The typed items ask learners to explain or predict. Nevertheless, the location and photosynthesis-input questions are direct recall, enzyme coverage omits pH entirely, and cellular respiration never explicitly checks energy storage as ATP. The set therefore only partially diagnoses the supplied skills.",
-          "score": 8,
+          "reasoning": "Each skill receives two multiple-choice questions, and most items ask learners to predict or diagnose rather than simply recite information. The respiration pair asks about different aspects, and the enzyme pair distinguishes temperature-dependent speed from damage after heating. Nevertheless, the first respiration question is direct recall, the dark-closet question requires adjacent knowledge of root uptake and water transport to reject its distractors, and neither enzyme question assesses pH. Photosynthesis oxygen release is also unassessed. These limit skill isolation and diagnostic coverage.",
+          "score": 7,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -240,34 +815,34 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3573,
-          "outputTokens": 1106,
-          "reasoningTokens": 284
+          "inputTokens": 4237,
+          "outputTokens": 1572,
+          "reasoningTokens": 781
         }
       },
       "steps": [
         {
-          "conclusion": "Several questions need scientific qualification. The enzyme experiment cannot reliably key 37°C as best or 90°C as disabling without identifying the enzyme or specifying its temperature response; some starch-digesting enzymes tolerate high temperatures. The seedling question makes 'bigger' ambiguous: dark-grown seedlings can elongate using seed reserves, so the light-grown seedlings are not necessarily taller after a week. The photosynthesis multiple-choice question also incorrectly groups light energy with raw materials. All three typed items lack accepted-answer guidance, and several key points combine separately checkable ideas.",
+          "conclusion": "The dark-closet question does not securely have one defensible answer: darkness also reduces transpiration-driven water transport, so asking which process can no longer happen 'well' leaves the water-transport option arguable. The final enzyme explanation also overgeneralizes: heat denaturation is not universally irreversible, and not all enzymes are proteins.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Some enzyme distractors are weakly grounded in realistic beginner mistakes, particularly becoming bigger or turning into a better substance. The correct enzyme option is conspicuously longer than the alternatives. The enzyme typed rubric requires an explanation of the 5°C tube even though the question explicitly asks only for the best tube and what happens at 90°C. The respiration feedback overgeneralizes by ruling out the cell membrane without specifying a eukaryotic cell.",
+          "conclusion": "Some distractors are weak, especially muscles using extra air to store fat and 37°C being too cold for any enzyme. The feedback for heat breaking down starch misses the decisive evidence that starch was added after heating. Correct options in the exercise and final enzyme questions are noticeably longer and more explanatory than their distractors.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use short everyday situations for the multiple-choice items rather than mostly textbook recall. Add a pH comparison within the enzyme skill and explicitly assess ATP in cellular respiration. Replace 'bigger' with a clearly defined outcome, specify a familiar enzyme with a stated temperature response, split typed criteria into individual ideas, and supply acceptable paraphrases for each.",
+          "conclusion": "Replace one temperature-focused enzyme question with a simple pH comparison. Make the respiration-location question require application rather than naming an organelle. Rewrite the dark-closet item around sugar production without requiring knowledge of water transport, and consider assessing oxygen release in the photosynthesis pair.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets one multiple-choice question with a misconception behind every wrong option and one typed question whose key points can be checked one at a time (for cellular respiration, for example: glucose is broken down, oxygen is used, energy is stored as ATP). Each question tests only its own skill.",
+        "expectations": "Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets two multiple-choice questions with a misconception behind every wrong option, in different situations and asking different things (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). Each question tests only its own skill.",
         "id": "en-biology-placement-no-exam-1",
         "userInput": {
-          "quickCount": 1,
-          "typedCount": 1,
+          "quickCount": 2,
+          "typedCount": 0,
           "language": "en",
           "quickFormat": "multipleChoice",
           "skills": [

@@ -1,0 +1,244 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "openai/gpt-6.1-terra:high": {
+      "passed": 9,
+      "problems": [
+        "A1 listening: the text has 26 words, over 25.",
+        "B1 reading: the text has 77 words, over 75."
+      ],
+      "total": 11
+    }
+  },
+  "expectations": "A bank of French passages and sentences as written and spoken in France for Brazilian learners: questions, options and translations in Brazilian Portuguese. French and Portuguese share many words, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-08T16:10:48.986Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 asks one stated fact in very common words, A2 asks for simple ordering and stated facts, B1 asks for reasons and opinions, B2 for implied critique and attitude, and C1 for nuanced tone shifts. Speaking lengths fit each level well. The B1 class passage runs slightly long, and the A2 order-tracking questions edge toward detail matching.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Answer indexes are correct, and the B2 and C1 distractors are well crafted, with no cognate giveaways. In the B1 job item, the options about training, talking daily and helpful colleagues are all true, so 'main idea' leaves some room for argument. Option lengths are generally balanced.",
+              "score": 7.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The French is natural and correctly set in France (euros, car, mairie, cabinet dentaire). The listening texts read like voicemails and spoken accounts, and the Portuguese is natural Brazilian. Situations vary and contain no brands. One minor flaw: the capitalization in 'Bonjour, Depuis' is wrong.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "This is a well-built bank with a clear progression: A1 has simple fact lookups, B2 and C1 test attitude and implication, and speaking grows from 5 to about 20 words. The main weakness is the B1 work 'main idea' item, whose distractors are all true details from the passage. That makes the answer depend on interpretation rather than being clearly unique.\n\nIn the reverse order: Model C delivers a well-built bank with a clear progression from single-fact A1 items to implication and tone at C1. Speaking sentences grow from 5 to about 19 words, and the marked answers check out against the passages. Minor weaknesses are some word-matchable B1 items and repetitive public-square themes at B2 and C1.",
+          "score": 7.825
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 2894,
+        "cacheWriteTokens": 0,
+        "inputTokens": 19658,
+        "outputTokens": 2662,
+        "reasoningTokens": 1532
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking sentences hit every word-count target and progress smoothly from simple stated facts at A1 to pragmatic implication, irony, and register shifts at C1.",
+              "score": 9.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has a single defensible answer supported by the text, while distractors reuse details from the passage to trap careless readers and prevent cognate matching.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Both French and Brazilian Portuguese are completely natural, and listening passages feature authentic spoken markers; only the B2 and C1 speaking sentences share the same opening structure ('Si j'avais...').",
+              "score": 9.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B delivers an exceptional question bank with natural French across registers, idiomatic Brazilian Portuguese, and a clear progression from A1 to C1. All distractors are grounded in the passages to prevent cognate guessing, and listening scripts genuinely sound like spoken messages and radio interviews.\n\nIn the reverse order: Model B delivers the best overall bank, with authentic, varied French texts and idiomatic Brazilian Portuguese questions and options. Its C1 texts and questions are genuinely sophisticated, testing tone and register shift without relying on cognate matching.",
+          "score": 9.675
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "CEFR levels are calibrated with precision, moving from direct factual retrieval at A1/A2 to main ideas at B1, speaker attitude and pragmatic purpose at B2, and understatement and metaphor at C1.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All answer keys are accurate, options are matched in length and structure, and distractors require genuine comprehension rather than cognate spotting.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Written and spoken French registers and Brazilian Portuguese phrasing are idiomatic throughout, with only minor repetition in the speaking bank ('avec ma sœur' in both A1 and A2, and 'Si j'avais' in both B2 and C1).",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model A is nearly indistinguishable in quality from the top output, featuring sharp C1 inference questions, well-balanced options, and authentic French and Brazilian Portuguese. It places just behind Model B only because of minor repetition in the speaking sentences.\n\nIn the reverse order: Model A is strong overall, with natural French and Brazilian Portuguese and unambiguous answers, but it includes an A1 item where the target word ('pizza') is identical in both languages and a B1 question that tests a stated detail rather than a main point or overall opinion.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The progression across levels works well overall, though B2 listening 1 tests a straightforward contrast rather than deeper B2 nuance, and two A2 items use the exact same chronological-order question format.",
+              "score": 8.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Each question has one clear, text-supported answer and balanced distractors, though the permutation-style options in A2 feel mechanical.",
+              "score": 9.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Both languages are correct and natural, but several listening passages (such as B1 listening 2, B2 listening 2, and both C1 listening items) read like written monologues rather than authentic spoken messages or interviews.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "Model C is accurate and grammatically sound, with valid single-answer questions and appropriate word counts. However, several listening passages read like written essays rather than natural speech, and A2 relies repetitively on three-part chronological ordering questions.\n\nIn the reverse order: Model C has the cleanest cognate avoidance at A1 and very well-calibrated C1 items, though its A1 passages feel slightly list-like and repetitive compared to Model B. All answers are unambiguous and well-supported.",
+          "score": 8.725
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 31080,
+        "outputTokens": 3348,
+        "reasoningTokens": 1678
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1–A2 test stated facts, B1 tests main messages, reasons and stated opinions, and B2–C1 introduce implied attitudes, irony and nuanced judgments. Speaking sentences increase appropriately in length and structural complexity.",
+              "score": 8.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All marked answers are supported and uniquely appropriate to their questions. Distractors use competing details effectively, including alternative times and participants, while shared vocabulary across options helps prevent cognate-only selection.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "French passages fit their written or spoken settings, and questions, options and translations use Brazilian Portuguese. Situations are varied, with convincing conversational phrasing and nuanced advanced texts.",
+              "score": 8.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "The bank consistently matches the requested situations and progression, with supported answers and natural French and Brazilian Portuguese. Its distractors generally prevent learners from identifying the answer through a single recognizable cognate.\n\nIn the reverse order: Também oferece um banco forte, com respostas claras e bom trabalho de inferência nos níveis avançados, especialmente nas questões C1 sobre profissão e mudança de vida. Pequenas imprecisões nas traduções e alguns desvios de extensão o deixam ligeiramente atrás.",
+          "score": 8.675
+        },
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "The levels progress clearly from factual retrieval to reasons, inferred attitudes and nuanced interpretation. The C1 question about the speaker's change of register is particularly well targeted, and speaking sentences develop appropriately across levels.",
+              "score": 8.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The answer indexes are correct, and each question has one clearly supported answer. However, matching “sandwichs” to the only option containing “sanduíches” can solve the A2 weekend item without interpreting “d'abord,” violating the requirement against cognate-based guessing.",
+              "score": 8.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The French is natural across messages, notices, commentary and spoken accounts, with appropriate Brazilian Portuguese learner-facing fields. The bank covers the requested situations with varied settings and no identifiable real people or brands.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "This is also a strong, well-calibrated bank, especially in its advanced questions about criticism, implication and register. It ranks slightly lower because the A2 weekend question allows a recognizable cognate to reveal the correct option without understanding the activity sequence.\n\nIn the reverse order: O banco apresenta boa progressão, respostas sustentadas pelos textos e francês natural, com situações variadas. Fica ligeiramente à frente pela fidelidade das traduções e pela construção das questões B1, que geralmente exigem compreender uma relação causal ou uma mensagem global.",
+          "score": 8.625
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 19964,
+        "outputTokens": 4530,
+        "reasoningTokens": 3279
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "c607114cc81b50b6",
+    "anthropic/claude-sonnet-5.5": "37c4636a88ad8523",
+    "openai/gpt-6.1-terra:high": "b169f357f2e2b9f2"
+  },
+  "swapped": true,
+  "taskId": "level-test-bank",
+  "testCaseId": "pt-fr-1"
+}

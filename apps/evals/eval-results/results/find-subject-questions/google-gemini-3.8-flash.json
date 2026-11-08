@@ -3,40 +3,29 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "counts": {}, "status": "any" },
-        "id": "pt-camara-registro-redacao-1",
-        "userInput": {
-          "board": "Cebraspe",
-          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
-          "subjects": [
-            "Língua Portuguesa",
-            "Língua Inglesa",
-            "Noções de Direito Administrativo e Administração Pública",
-            "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
-            "Tecnologia da Informação e Dados",
-            "Linguística",
-            "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
-            "Processo Legislativo e Regimento Interno da Câmara dos Deputados",
-            "Ciência Política"
-          ],
-          "today": "2026-10-06",
-          "total": 180
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
         }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": { "counts": { "20": 8 }, "status": "found" },
+        "expected": {
+          "counts": {
+            "20": 8
+          },
+          "status": "found"
+        },
         "id": "pt-oab-1a-fase-1",
         "userInput": {
           "board": "FGV",
@@ -70,8 +59,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Missed the published distribution", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "Missed the published distribution", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published distribution",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed the published distribution",
+          "kind": "minorErrors",
+          "score": 8
+        },
         {
           "conclusion": "Missed the published distribution",
           "kind": "potentialImprovements",
@@ -79,7 +76,10 @@
         }
       ],
       "testCase": {
-        "expected": { "counts": {}, "status": "found" },
+        "expected": {
+          "counts": {},
+          "status": "found"
+        },
         "id": "pt-oab-1a-fase-without-ethics-1",
         "userInput": {
           "board": "FGV",
@@ -112,12 +112,70 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "counts": {}, "status": "unknown" },
+        "expected": {
+          "counts": {},
+          "status": "any"
+        },
+        "id": "pt-camara-registro-redacao-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+          "subjects": [
+            "Língua Portuguesa",
+            "Língua Inglesa",
+            "Noções de Direito Administrativo e Administração Pública",
+            "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+            "Tecnologia da Informação e Dados",
+            "Linguística",
+            "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
+            "Processo Legislativo e Regimento Interno da Câmara dos Deputados",
+            "Ciência Política"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "counts": {},
+          "status": "unknown"
+        },
         "id": "pt-cgu-2026-new-board-and-syllabus-1",
         "userInput": {
           "board": "Cebraspe",
@@ -145,17 +203,40 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "counts": { "1": 25, "2": 25, "3": 25 }, "status": "found" },
+        "expected": {
+          "counts": {
+            "1": 25,
+            "2": 25,
+            "3": 25
+          },
+          "status": "found"
+        },
         "id": "en-jee-main-paper-1-1",
         "userInput": {
           "board": "NTA",
           "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
-          "subjects": ["Physics", "Chemistry", "Mathematics"],
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Mathematics"
+          ],
           "today": "2026-10-06",
           "total": 75
         }
@@ -163,17 +244,40 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "counts": { "1": 45, "2": 45, "3": 90 }, "status": "found" },
+        "expected": {
+          "counts": {
+            "1": 45,
+            "2": 45,
+            "3": 90
+          },
+          "status": "found"
+        },
         "id": "en-neet-ug-1",
         "userInput": {
           "board": "NTA",
           "exam": "NEET (UG)",
-          "subjects": ["Physics", "Chemistry", "Biology (Botany and Zoology)"],
+          "subjects": [
+            "Physics",
+            "Chemistry",
+            "Biology (Botany and Zoology)"
+          ],
           "today": "2026-10-06",
           "total": 180
         }

@@ -1,0 +1,676 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5:high",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "Most levels progress appropriately: A1 retrieves basic facts, A2 handles simple sequences and arrangements, B1 asks about reasons and stated opinions, and B2 includes attitude and indirect purpose. Speaking sentences grow from five words to approximately twenty, with increasing grammatical complexity. However, the C1 machine-translation question can be answered by directly matching the final two explicit statements, making it a stated-opinion task rather than C1 interpretation. The explicit wrong-level cap therefore limits this category to 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "The marked answers generally match their passages, and most questions distinguish one best answer. However, the A1 bus announcement states that the number 12 leaves at 9:15 and that the next one leaves at 9:45. Because the question asks only when the number 12 bus leaves, both options are supported. This triggers the cap of 4 for two defensible answers. Uneven option lengths and a few weak distractors are additional smaller weaknesses.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Passages and speaking sentences are in English, while questions, options, and translations are in Brazilian Portuguese; no wrong-language cap applies. English usage is broadly natural and compatible with US English. Listening items generally sound like announcements, messages, or conversational speech, and situations vary substantially without brands, identifiable real people, or stereotypes. The Portuguese is mostly natural, although '12 horas da tarde' is an awkward way to express noon.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5279,
+          "outputTokens": 1203,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The A1 bus question is ambiguous: the announcement gives departures for the number 12 bus at both 9:15 and 9:45, but the question does not specify the first departure. Both listed times are defensible, triggering the answers cap of 4. The C1 machine-translation question asks for an explicitly stated opinion and concern, rather than interpreting nuanced tone or implication; this is clearly below the required C1 question level, triggering the calibration cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are weak: the B2 bike-lane question introduces a parking-space problem absent from the passage. Option lengths are uneven in the C1 office question, where the correct answer is substantially longer than the alternatives. The Portuguese option '12 horas da tarde' is awkward; 'meio-dia' would be more natural.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Specify 'o primeiro ônibus anunciado' in the A1 bus question. For the C1 translation passage, ask what the apparently polished English implies about the difficulty of detecting consequential errors, rather than asking learners to repeat the speaker's stated position. Make distractors comparable in length and base them on plausible misreadings of passage details.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for Brazilian learners: questions, options and translations in Brazilian Portuguese. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-en-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test stated facts, while B1 appropriately targets reasons, main points, and opinions. B2 includes attitude and inference. Speaking grows from five words to approximately twenty-one, with increasingly complex structures. However, the C1 machine-translation item tests an explicit opinion rather than nuanced tone or implication, and the restaurant verdict is also largely explicit. These questions are clearly below the required C1 demand, triggering the cap of 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "All marked indexes identify the best-supported answer, and no question has two clearly defensible answers to its actual wording. The questions require passage information rather than general knowledge. The weakness is distractor quality: the A1 milk item has nonparallel, weak alternatives, and some advanced items contrast a detailed correct summary with obviously contradicted extremes. Several correct options are noticeably longer than their distractors.",
+          "score": 8,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The bank consistently uses Brazilian Portuguese, including você, ônibus, a gente, and colloquial speech forms. Questions, options, and translations are in English, with no wrong-language fields. Situations are varied, and most listening passages sound like messages or interviews. Minor weaknesses include the artificial opening 'Bom dia! Café.', awkward English such as 'a cheap rent' and 'she has no rush to return,' and the gender mismatch between 'Obrigado' and the schedule question's feminine options.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5334,
+          "outputTokens": 993,
+          "reasoningTokens": 318
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The upper-level calibration is inconsistent. The C1 machine-translation question asks for an explicitly stated opinion, and the C1 restaurant question largely asks learners to paraphrase an explicit verdict. Neither clearly requires C1-level interpretation of tone and implication, and both overlap substantially with the B2 attitude questions. This triggers the calibration score cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are too easy to eliminate or uneven in length. For example, the A1 bring-milk question mixes objects with 'Dinner at 8 p.m.' and 'Buying bread'; several advanced questions use bluntly contradicted alternatives. There are also small language issues: 'Bom dia! Café.' reads awkwardly, 'a cheap rent' and 'she has no rush to return' are unnatural English, and the B2 schedule options call the writer 'she' despite the Portuguese sign-off 'Obrigado.'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Retain the strong speaking-length progression, but revise the C1 passages and questions to require interpretation of understatement, competing perspectives, or unstated implications. Make distractors reflect plausible misreadings, keep their lengths and grammatical forms parallel, and polish the few unnatural phrases.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Brazilian Portuguese passages and sentences (Brazilian words and forms, \"você\", not European Portuguese) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-pt-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test appropriate stated facts, while B1 questions appropriately target reasons, main points, and stated opinions. B2 introduces attitudes and implied criticism. Speaking sentences increase convincingly in length and grammatical complexity. However, multiple C1 questions remain explicit-opinion or summary tasks: the restaurant verdict and career-change stance are directly stated, and the heritage answer closely paraphrases the ending. These are clearly below the required C1 tone-and-implication demand, so the explicit cap of 5 applies.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "The answer indexes consistently identify the intended, passage-supported options, and no question has two clearly defensible listed answers. Options are generally comparable in length and require passage information. The meeting item's p.m. designation is not explicit in “às quatro,” although it is contextually reasonable. Several distractors are weak because they answer a different question or rely on obviously incidental details. No ambiguity or incorrect-index cap is triggered.",
+          "score": 8,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Passages and speaking sentences use natural Brazilian Portuguese, including você, a gente, and idiomatic conversational phrasing. Reading texts resemble notices, messages, and commentary; listening texts generally sound spoken. Questions, options, and translations are in US English, and the bank covers varied situations without clear prohibited brand or real-person references. The principal weakness is the unnatural appointment question, which should ask “When” rather than “What.” No wrong-language cap applies.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5314,
+          "outputTokens": 1160,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "C1 comprehension is consistently undercalibrated. The restaurant question asks for a verdict explicitly supplied in the final sentence, and the career-change question retrieves directly stated opinions about regret and heroism. The heritage question likewise repeats an explicit contrast rather than requiring C1-level interpretation. These questions overlap substantially with B1–B2 demands, triggering the calibration cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The A1 meeting message says only “às quatro,” leaving the marked answer's p.m. designation assumed rather than established. The A2 question “What is Marcos's dentist appointment now?” is awkward English; “When is Marcos's dentist appointment now?” would be natural.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make distractors more consistently plausible and responsive to the question. For example, the A2 soccer question asks what happened after playing, but several alternatives describe companions, future plans, or earlier events. Some B1 reason distractors similarly use incidental details that offer little competition to the correct explanation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Brazilian Portuguese passages and sentences (Brazilian words and forms, \"você\", not European Portuguese) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-pt-second-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 questions retrieve single facts, A2 handles simple sequences and arrangements, and B1 generally targets main points, reasons, and stated opinions. B2 includes appropriate attitude and implication tasks. Speaking grows from seven words to approximately twenty with a complex conditional. However, the C1 detox item tests a directly stated opinion rather than C1-level tone or implication, triggering the maximum score of 5 for a clearly misleveled question. Other C1 passages also overlap substantially with B2 difficulty.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most marked answers are supported and correctly indexed. However, the B1 email's keyed summary introduces 'harder than expected,' which the passage does not establish; it instead describes anticipated difficulty followed by support and reassurance. The alternatives do not provide a fully supported main-point answer. This triggers the maximum score of 4 for a wrong marked answer or no fully correct option. Some distractors elsewhere are implausibly extreme, and some correct options stand out by length.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Spanish passages and speaking sentences generally sound natural and use appropriate Mexican vocabulary, including 'camión,' 'departamento,' 'recámaras,' 'celular,' and 'la neta,' without vosotros forms. Questions, options, and translations are in US English. Reading formats and spoken-message formats are suitable, and situations vary without brands, identifiable real people, or stereotypes. No wrong-language cap applies. The restaurant review's description of the table filling up 'around us' is a concrete naturalness problem, but the bank is otherwise linguistically strong.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5301,
+          "outputTokens": 1050,
+          "reasoningTokens": 365
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The B1 email's marked answer says the first week was 'harder than expected,' but Rubén says he initially expected difficulty and then received help and felt calmer. No option fully and accurately summarizes the email. Upper-level calibration also fails: the C1 detox question asks for an explicitly stated position, essentially paraphrasing the final two sentences, rather than testing tone or implication in nuanced text.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are too easily dismissed, particularly the B2 technology options about saving money and using devices only in emergencies. Its correct option is also noticeably longer than the alternatives. In the restaurant review, 'aunque la mesa se llenó a nuestro alrededor' is awkward: the intended meaning appears to be that the restaurant or surrounding tables filled up.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the remaining C1 material more consistently demanding, especially the restaurant review and café-owner anecdote, by introducing subtler qualifications or competing interpretations that require close listening or reading. Preserve the useful variety of everyday situations and the gradual increase in speaking-sentence length and grammatical complexity.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Mexican Spanish passages and sentences (Mexican vocabulary and forms like \"ustedes\", \"departamento\", \"celular\", never \"vosotros\") for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-es-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "The lower levels generally fit their intended tasks, and speaking sentences grow from six words to approximately twenty-three with more complex structures. However, the C1 restaurant question merely retrieves an explicit recommendation, and the C1 translation question retrieves an explicitly stated position from relatively straightforward speech. These are clearly below the required C1 tone-and-implication demands, triggering the maximum score of 5. The B2 transport-plan question also primarily asks for a stated main point rather than an inference.",
+          "score": 4,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most indexes identify a supported answer, but the marked running-club answer says the location and time changed so more people could participate. The passage explicitly attributes the location change to construction and only the time change to participation. This inaccurate marked answer triggers the maximum score of 4. Answer robustness is further weakened by cognate shortcuts, such as 'Domingo' and the apartment option closely mirroring 'cerca del metro' and 'incluye agua'. Some advanced distractors are easily rejected because they make extreme claims rather than plausible misinterpretations.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Spanish is generally natural and recognizably Mexican, with 'camión', 'departamento', 'recámaras', 'celular', 'nomás', and 'platicar'; there is no 'vosotros'. Situations and written versus spoken formats are reasonably varied. However, the Portuguese technology question and options retain Spanish 'bocinas'/'bocina' rather than Brazilian Portuguese 'caixas de som'/'caixa de som'. These learner-facing fields are not fully in the requested language, applying the maximum score of 5. The cooking message also has an unresolved free-versus-paid inconsistency that reduces its natural coherence.",
+          "score": 5,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5481,
+          "outputTokens": 1245,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several higher-level questions are substantially under-calibrated: the C1 restaurant and translation-technology questions ask for explicitly stated opinions rather than nuanced tone or implication. The B1 running-club answer incorrectly attributes both changes to increasing participation, although construction caused the location change. Cognate-based shortcuts also remain, notably the A1 'Domingo' item and the A2 apartment item.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some Portuguese fields retain Spanish vocabulary, including 'bocinas' and 'bocina' instead of 'caixas de som'. The cooking message says the first day was free but then describes paying for that Saturday without explaining the sequence. The C1 bookstore answer expands a difficult first winter into difficult 'first years', which the passage does not establish. Several distractors are conspicuously extreme or unsupported.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make advanced questions depend on interpreting qualifications, irony, or implications rather than restating conclusions. Use distractors with comparable length and credibility, and test whether Brazilian learners can select answers through shared vocabulary alone. Preserve the useful progression in speaking-sentence length and the generally natural Mexican vocabulary.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Mexican Spanish passages and sentences (Mexican vocabulary and forms like \"ustedes\", \"departamento\", \"celular\", never \"vosotros\") for Brazilian learners: questions, options and translations in Brazilian Portuguese. Portuguese and Spanish are close, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-es-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test accessible stated information, and B1 appropriately includes reasons, main points, and opinions. Speaking grows from five simple words to a roughly twenty-word sentence with inversion and an idiom. However, B2 Dana tests essentially the same stated-positive-opinion-with-reservations task as B1 Diego. The C1 translator question also retrieves a fairly explicit position rather than testing C1 tone or implication. These question-level mismatches trigger the maximum score of 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most answer indexes are correct and most questions have a clear supported answer. However, none of the thermostat options accurately expresses the supported conclusion: the marked answer turns one anecdote into an unsupported universal condition about smart devices and adjustments. This triggers the maximum score of 4 for a question with no supported correct answer. Several extreme distractors also weaken answer discrimination.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "English passages and speaking sentences are generally natural US English, while questions, options, and translations use appropriate Spanish, including Mexican usage such as 'recámara,' 'renta,' and 'botanas.' Situations are varied, and there is no identifiable brand, real-person, or stereotype issue. No wrong-language cap applies. Naturalness is reduced by distractor-heavy beginner audio messages and the restaurant review's contradictory opening.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "10 of 11 parts passed. A1 listening: the text has 26 words, over 25.",
+          "score": 9.181818181818182,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5434,
+          "outputTokens": 1011,
+          "reasoningTokens": 371
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The thermostat question has no fully supported answer: the marked option claims that a smart device saves energy only if people stop adjusting it, whereas Gloria's story supports only the narrower point that habits can undermine savings. Several questions also fall below their assigned levels: B2 Dana largely tests a stated opinion, much like B1 Diego, and C1 translators asks for an explicitly expressed position rather than nuanced tone or implication.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors are conspicuously extreme rather than plausible, such as replacing a thermostat every winter or machines already doing all translation work. The restaurant review opens by saying the restaurant was not what reviews promised, then immediately confirms both things those reviews described. Some beginner listening passages sound constructed to include distractors rather than like natural messages, especially 'The park is Sunday.'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the thermostat answer with a passage-supported statement about habits undermining potential savings. Make higher-level questions depend on interpreting reservations, irony, or implications rather than retrieving stated opinions. Preserve the strong speaking progression while revising distractors and smoothing the less natural passages.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for Mexican Spanish speakers: questions, options and translations in Mexican Spanish. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "es-en-1",
+        "userInput": {
+          "learnerLanguage": "es",
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test suitable stated facts, B1 includes reasons and main points, and speaking sentences increase from approximately seven to twenty-three words with more complex grammar. However, the C1 restoration and career-change questions can be answered by paraphrasing explicit statements, rather than interpreting nuanced tone or implication. Their question demands are clearly below the required C1 level, triggering the maximum score of 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most marked answers are supported and option lengths are generally comparable. However, the B2 meeting-time passage supports both the marked reluctant-acceptance answer and concern about the early train: it specifically raises the unreliable 6:45 train as a problem for commuters. The broad question about the writer's feelings does not clearly exclude that concern, triggering the cap of 4 for two defensible answers. Some other distractors are insufficiently competitive, particularly annual-rent options in a question that explicitly asks for monthly rent.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "French accents and tu/vous usage are generally correct, and questions, options, and translations are in English. Situations are varied, with recognizable notices, personal messages, commentary, and reviews. There is no wrong-language field. Nevertheless, 'visiter mon oncle' is not the natural France-French expression for visiting a relative, 'cancelled' misses the requested US spelling, and a few listening passages sound constructed around answer choices rather than fully natural speech.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "10 of 11 parts passed. A2 listening: the text has 41 words, over 40.",
+          "score": 9.181818181818182,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5477,
+          "outputTokens": 1196,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several C1 questions test explicitly stated opinions rather than tone or implication. The restoration question directly paraphrases the speaker's declared position, and the career-change question repeats the explicit willingness to choose again with savings. These do not clearly advance beyond B1–B2 comprehension. The B2 meeting-time question also has two defensible options: reluctant acceptance and concern about the early train's punctuality.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The A2 speaking sentence uses 'visiter mon oncle'; 'rendre visite à mon oncle' is the natural expression in France. One question uses British-style 'cancelled' rather than US 'canceled.' The renovation question names Claire even though the passage never identifies its writer. Some distractors are weak: the rental question already specifies monthly rent, making the annual-rent options easy to eliminate without reading.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Clarify what 'ce choix' refers to in the C1 speaking sentence so learners can understand the contrast without inventing context. Make the café audio message less transparently constructed around distractors: listing both places where the speakers will not meet sounds more like an exercise than an ordinary message.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of French passages and sentences as written and spoken in France (correct accents, \"vous\" and \"tu\" used as French speakers would) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-fr-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "fr"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test stated facts, and B1 generally tests reasons, opinions, or main points. Speaking sentences increase from roughly seven words to twenty-five, with progressively more complex structures. However, the C1 urban-tree item merely asks learners to recover an explicitly stated position, a B1-style task. The B2 fitness-app item similarly keys a near-paraphrase of an explicit sentence. The clearly misleveled questions trigger the maximum score of 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most indexes identify a uniquely supported answer, and shared vocabulary across many options helps limit cognate-only selection. However, the final C1 listening passage does not establish that the narrator still wants his father's recognition. Continued questioning by the father and the narrator's persistence do not demonstrate that wish. The keyed option is therefore not fully supported, while the alternatives also lack support, triggering the maximum score of 4. Some distractors additionally fail plausibility, such as non-bus answers to a question explicitly asking which bus.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The passages and speaking sentences are generally natural French suitable for France, while questions, options, and translations are in Brazilian Portuguese. Written and spoken formats are recognizable, situations vary, and there are no evident brands, identifiable real people, or stereotypes. No wrong-language cap applies. Minor naturalness problems include the compressed dinner/fridge sentence and the awkward Portuguese wording about prioritizing 'transporte perdido'; these keep the language quality below the top range.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5695,
+          "outputTokens": 1189,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Some questions are clearly below their assigned level. The C1 urban-tree question asks for an explicitly stated opinion rather than nuanced tone or implication; the B2 fitness-app answer closely reproduces an explicit statement rather than requiring B2 interpretation. The final C1 listening answer also introduces an unsupported desire for the father's recognition. None of its options fully captures what the passage establishes, triggering the answer-quality cap.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are too easily eliminated without understanding the passage: the A1 question asking which bus to take includes the metro and walking. A few formulations are awkward, notably 'Le dîner est à 19 h, dans le frigo' and the Portuguese option 'O transporte perdido pelos moradores deveria vir antes das obras planejadas.'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Preserve the generally useful speaking-length progression and varied situations. Strengthen upper-level questions by making interpretation of concessions, indirect criticism, or competing viewpoints necessary. In the final listening passage, either add evidence of the narrator's wish for recognition or replace the keyed option with a conclusion the existing passage supports.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of French passages and sentences as written and spoken in France for Brazilian learners: questions, options and translations in Brazilian Portuguese. French and Portuguese share many words, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-fr-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "fr"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 questions generally retrieve single stated facts, A2 adds sequencing or combined facts, and B1 mostly asks for main points, reasons, or opinions. Speaking length increases appropriately from five to twenty words. However, the C1 bike-lane answer closely repeats the explicit opening endorsement and closing judgment, without requiring C1-level interpretation of tone or implication. Its demand is not clearly above the B2 attitude questions. This clearly misleveled question triggers the maximum score of 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most marked indexes identify supported answers, but two items trigger the maximum score of 4. The A2 question asking what happened 'after going to the market' admits both the movie visit and the evening meeting with Julia. The C1 bank item's marked answer adds an unsupported absence of regret, despite 'Ob es richtig war, weiß ich bis heute nicht hundertprozentig'; the other options also fail to represent the passage. Additionally, several beginner distractors are implausible because they answer a different kind of question.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "German passages and speaking sentences, with English questions, options, and translations, match the requested language pairing. Noun capitalization and formal/informal address are generally correct, and situations and text formats vary without brands or stereotypes. No wrong-language cap applies. Nevertheless, some phrasing is unidiomatic or unclear for Germany, notably 'Der Bus ist spät,' 'die Verpackung ist ein Wahnsinn,' and the subscription-pausing explanation. The C1 speaking translation also changes the time reference of the final hypothetical. These are concrete language weaknesses rather than pervasive failures.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5281,
+          "outputTokens": 1065,
+          "reasoningTokens": 304
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Answer reliability and upper-level calibration have material failures. In the A2 market question, both going to the movies and meeting Julia happened after the market; the question does not specify the next activity. In the C1 bank question, the marked option claims the speaker is not sorry she left, although she explicitly remains uncertain whether leaving was right. No option accurately captures her mixed feelings. The C1 bike-lane question also tests an explicitly stated stance rather than C1-level tone or implication.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors are easily eliminated without understanding the German: the A1 platform question offers a time, and the A1 meeting-place question offers statements about lateness. Some German is awkward for Germany, including 'Der Bus ist spät' and 'bevor wir es sonst zu spät merken.' The meal-kit speaker's explanation that she had to pause the subscription because she failed to remember in time is unclear. The C1 speaking translation shifts the final present hypothetical ('das wäre kein Weltuntergang') into a past hypothetical.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Ask what the A2 speaker did immediately after the market, and rewrite the C1 bank answer to preserve uncertainty and qualified nostalgia. Make advanced questions depend on interpreting rhetorical choices, qualifications, or implications rather than repeating explicit conclusions. Keep distractors in the same semantic category and give the German dialogue and English translations a final idiomatic review.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of German passages and sentences as written and spoken in Germany (correct capitalization of nouns, \"Sie\" and \"du\" used as German speakers would) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-de-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "de"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test appropriately simple stated facts, and B1 tests main points, reasons, and stated opinions. Speaking sentences increase from five words to 21 words with conditional inversion at C1. However, the C1 restaurant and machine-translation questions require only explicit-summary comprehension, not C1 tone or implication. These clearly misleveled questions trigger the maximum score of 5, despite stronger C1 items about performative busyness and the bakery.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Every marked answer is supported by its passage, and no question has two clearly defensible answers or lacks a supported answer. Answers depend on passage content rather than general knowledge. The principal weaknesses are distractor plausibility and length balance: the B1 running-club answer is much longer and more comprehensive than its alternatives, while the restaurant distractor invents a wine-list update date that has little textual basis. No answer-validity cap is triggered.",
+          "score": 8,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The bank generally uses natural US English, German questions and options, varied situations, and recognizable written and spoken genres. There are no brands, identifiable real people, or stereotypes. Nevertheless, 'Mom' in a German question and 'zur Praxis anrufen' need localization or grammatical correction. The C1 translation omits the possibility expressed by 'might' and renders figurative cost unnaturally. The machine-translation listening passage also switches from host introduction to guest speech without a clear handoff. No field is wholly in the wrong language, so the language cap is not triggered.",
+          "score": 7,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5252,
+          "outputTokens": 922,
+          "reasoningTokens": 258
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Some C1 questions do not test C1-level interpretation. The restaurant question can be answered by paraphrasing the explicit closing sentences, and the machine-translation question repeats the speaker's stated use of rough drafts and uncertainty about saving time. Neither requires interpreting tone or implication, so the calibration cap applies.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are weak or conspicuously shorter than the correct answer, particularly in the B1 running-club question. The C1 speaking translation drops the uncertainty in 'might' and translates the metaphorical cost of early mornings awkwardly. 'Wo ist Mom jetzt?' and 'zur Praxis anrufen' are not natural standard German as used in Germany.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the weaker C1 questions depend on unstated implications or rhetorical tone rather than explicit summaries. Balance option lengths and use distractors based on plausible misreadings. Revise the C1 speaking translation to preserve both the metaphorical personal cost and the speaker's uncertainty.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for German speakers: questions, options and translations in German as used in Germany. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "de-en-1",
+        "userInput": {
+          "learnerLanguage": "de",
+          "targetLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "level-test-bank"
+}

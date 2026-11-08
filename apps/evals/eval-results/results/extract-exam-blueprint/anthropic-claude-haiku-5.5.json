@@ -1,0 +1,328 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/13 (read 12). passages found 31/32. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"scoring\",\"method\":\"itemResponseTheory\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "majorErrors",
+          "score": 8.990384615384615
+        },
+        {
+          "conclusion": "Facts kept 9/13 (read 12). passages found 31/32. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"scoring\",\"method\":\"itemResponseTheory\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "minorErrors",
+          "score": 8.990384615384615
+        },
+        {
+          "conclusion": "Facts kept 9/13 (read 12). passages found 31/32. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"scoring\",\"method\":\"itemResponseTheory\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "potentialImprovements",
+          "score": 8.990384615384615
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 7/9 (read 9). passages found 29/29. problems left 0. missing: {\"kind\":\"section\",\"minutes\":300,\"questions\":80}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "majorErrors",
+          "score": 9.288888888888888
+        },
+        {
+          "conclusion": "Facts kept 7/9 (read 9). passages found 29/29. problems left 0. missing: {\"kind\":\"section\",\"minutes\":300,\"questions\":80}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "minorErrors",
+          "score": 9.288888888888888
+        },
+        {
+          "conclusion": "Facts kept 7/9 (read 9). passages found 29/29. problems left 0. missing: {\"kind\":\"section\",\"minutes\":300,\"questions\":80}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "potentialImprovements",
+          "score": 9.288888888888888
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "raw"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "date": "2026-06-01",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-08",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-06",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-10-18",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-12-03",
+              "dateKind": "results",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "oab-47-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 5/8 (read 7). passages found 19/19. problems left 0. missing: {\"kind\":\"timeLimit\",\"minutes\":134}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}; {\"date\":\"2027-02-19\",\"dateKind\":\"registrationEnd\",\"kind\":\"date\"}",
+          "kind": "majorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Facts kept 5/8 (read 7). passages found 19/19. problems left 0. missing: {\"kind\":\"timeLimit\",\"minutes\":134}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}; {\"date\":\"2027-02-19\",\"dateKind\":\"registrationEnd\",\"kind\":\"date\"}",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Facts kept 5/8 (read 7). passages found 19/19. problems left 0. missing: {\"kind\":\"timeLimit\",\"minutes\":134}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}; {\"date\":\"2027-02-19\",\"dateKind\":\"registrationEnd\",\"kind\":\"date\"}",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 98
+            },
+            {
+              "kind": "section",
+              "minutes": 64,
+              "questions": 54
+            },
+            {
+              "kind": "section",
+              "minutes": 70,
+              "questions": 44
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 134
+            },
+            {
+              "kind": "breakAfter",
+              "minutes": 10
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-03-06",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-02-19",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "sat-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "SAT Test Structure",
+              "url": "https://satsuite.collegeboard.org/sat/whats-on-the-test/structure"
+            },
+            {
+              "title": "SAT Suite Test Dates and Deadlines",
+              "url": "https://satsuite.collegeboard.org/sat/dates-deadlines"
+            }
+          ],
+          "exam": "SAT"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/7 (read 6). passages found 22/22. problems left 1. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"kind\":\"tools\",\"mentions\":\"calculator\"}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 8.628571428571428
+        },
+        {
+          "conclusion": "Facts kept 4/7 (read 6). passages found 22/22. problems left 1. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"kind\":\"tools\",\"mentions\":\"calculator\"}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 8.628571428571428
+        },
+        {
+          "conclusion": "Facts kept 4/7 (read 6). passages found 22/22. problems left 1. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"kind\":\"tools\",\"mentions\":\"calculator\"}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 8.628571428571428
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 48
+            },
+            {
+              "kind": "section",
+              "minutes": 100,
+              "questions": 42
+            },
+            {
+              "kind": "section",
+              "minutes": 90,
+              "questions": 6
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 190
+            },
+            {
+              "kind": "tools",
+              "mentions": "calculator"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-05-10",
+              "dateKind": "exam",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "ap-calculus-ab-2027-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "AP Calculus AB: About the Exam",
+              "url": "https://apstudents.collegeboard.org/courses/ap-calculus-ab/assessment"
+            },
+            {
+              "title": "2027 AP Exam Dates",
+              "url": "https://apstudents.collegeboard.org/exam-dates"
+            }
+          ],
+          "exam": "AP Calculus AB 2027"
+        }
+      }
+    }
+  ],
+  "taskId": "extract-exam-blueprint"
+}

@@ -3,12 +3,29 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "range": { "max": 900, "min": 700 } },
+        "expected": {
+          "range": {
+            "max": 900,
+            "min": 700
+          }
+        },
         "id": "pt-enem-medicina-ufmg-1",
         "userInput": {
           "course": "Medicina",
@@ -21,8 +38,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Missed the published cut-off", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "Missed the published cut-off", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published cut-off",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed the published cut-off",
+          "kind": "minorErrors",
+          "score": 8
+        },
         {
           "conclusion": "Missed the published cut-off",
           "kind": "potentialImprovements",
@@ -30,7 +55,12 @@
         }
       ],
       "testCase": {
-        "expected": { "range": { "max": 900, "min": 550 } },
+        "expected": {
+          "range": {
+            "max": 900,
+            "min": 550
+          }
+        },
         "id": "pt-enem-direito-ufpe-1",
         "userInput": {
           "course": "Direito",
@@ -43,12 +73,26 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "range": null },
+        "expected": {
+          "range": null
+        },
         "id": "pt-enem-instituicao-inexistente-1",
         "userInput": {
           "course": "Direito",
@@ -61,12 +105,29 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "range": { "max": 120, "min": 40 } },
+        "expected": {
+          "range": {
+            "max": 120,
+            "min": 40
+          }
+        },
         "id": "pt-concurso-pf-agente-1",
         "userInput": {
           "course": null,
@@ -79,8 +140,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Missed the published cut-off", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "Missed the published cut-off", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published cut-off",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed the published cut-off",
+          "kind": "minorErrors",
+          "score": 8
+        },
         {
           "conclusion": "Missed the published cut-off",
           "kind": "potentialImprovements",
@@ -88,7 +157,13 @@
         }
       ],
       "testCase": {
-        "expected": { "maxScore": 10, "range": { "max": 10, "min": 5 } },
+        "expected": {
+          "maxScore": 10,
+          "range": {
+            "max": 10,
+            "min": 5
+          }
+        },
         "id": "pt-concurso-tjsp-escrevente-1",
         "userInput": {
           "course": null,
@@ -101,12 +176,26 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "range": null },
+        "expected": {
+          "range": null
+        },
         "id": "en-position-made-up-exam-1",
         "userInput": {
           "course": null,
