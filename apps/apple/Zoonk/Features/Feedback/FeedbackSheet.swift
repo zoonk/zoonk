@@ -73,7 +73,7 @@ extension FeedbackFormStore: Identifiable {
   ) {
     self.init(
       api: api, context: context,
-      defaultEmail: learner.summary.value?.identity.isAnonymous ?? true
+      defaultEmail: learner.summary.value?.identity.isAnonymous == true
         ? nil : session.account?.user.email,
       token: session.authenticatedSession?.bearerToken)
   }
