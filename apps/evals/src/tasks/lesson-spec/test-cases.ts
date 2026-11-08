@@ -1382,7 +1382,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
       - Checks are planned like that exam's items: at least two have the learner judge a statement right or wrong, each brief giving the statement and its verdict
-      - At least one statement to judge is right, and it's one candidates are tempted to reject, not an obvious truth (a regression: production's plan, 8 Nov 2026, planned three statements to judge and made all three wrong, "Gabarito: Errado; distrator: Certo", as did 47 of 48 such checks that day, so a candidate could answer "Errado" without reading)
+      - The statements to judge include both verdicts, with at most one more of either (two: one right and one wrong); each right one is a statement candidates are tempted to reject, not an obvious truth (a regression: production's plan, 8 Nov 2026, planned three statements to judge and made all three wrong, "Gabarito: Errado; distrator: Certo", as did 47 of 48 such checks that day, so a candidate could answer "Errado" without reading; all right would be the same flaw)
 
       ${SHARED_EXPECTATIONS}
     `,
