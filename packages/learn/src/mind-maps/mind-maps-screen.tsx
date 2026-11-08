@@ -37,7 +37,6 @@ function groupBySubject(chapters: readonly GoalMindMapView[]): MapGroup[] {
   }));
 }
 
-/** A chapter that can no longer have a map leaves the list. */
 function withMap(chapters: readonly GoalMindMapView[], next: ChapterMindMapView) {
   return chapters.flatMap((chapter): GoalMindMapView[] => {
     const { status } = next;

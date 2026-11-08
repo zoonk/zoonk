@@ -11,7 +11,6 @@ enum class LimitTier { Guest, Free, Plus }
 
 enum class LimitPeriod { Day, Month, Total }
 
-/** What ran out: each has main's own words for it. */
 enum class LimitSubject { Help, Lessons, MindMaps, Outlines, Calls }
 
 sealed interface Limit {

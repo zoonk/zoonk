@@ -154,7 +154,6 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-/** Shows the chapter a lesson finished where the lesson ends; the app gives it its mind map. */
 typealias FinishedChapterSlot = @Composable (FinishedChapter) -> Unit
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */

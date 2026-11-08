@@ -256,10 +256,6 @@ internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName
         it.naming
     }
 
-/**
- * What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the
- * day's moment once saved, and the chapter it finished with its mind map.
- */
 @Composable
 fun LessonCompletionView(
     state: LessonPlayerState,

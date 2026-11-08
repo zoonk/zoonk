@@ -305,7 +305,6 @@ private fun SubjectDetails(
     }
 }
 
-/** Opens this subject's group on the Mind maps page, beside its Chapters heading. */
 @Composable
 private fun MindMapsLink(onClick: () -> Unit) {
     TextButton(onClick = onClick, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_lan) }) {

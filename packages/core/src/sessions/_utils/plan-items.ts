@@ -91,11 +91,7 @@ export async function moveLostCheckpoint(
 
 export type CheckedLanguageGoal = { id: string };
 
-export type CompletedLessonItems = {
-  languageGoals: CheckedLanguageGoal[];
-  /** For `finishLessonChapters`, which settles the chapters they finished. */
-  planItemIds: string[];
-};
+export type CompletedLessonItems = { languageGoals: CheckedLanguageGoal[]; planItemIds: string[] };
 
 /** Completes all owned plan occurrences of the lesson; scheduleLessonCanDos must run after commit for returned language goals. */
 export async function completeLessonPlanItems(
