@@ -91,7 +91,7 @@ export function WaitScreen({
     surface,
   });
 
-  const view = useWaitView({ hasQuiz: quiz !== null, hold, questionRef });
+  const view = useWaitView({ aside, hasQuiz: quiz !== null, hold, questionRef });
   const picked = typeof quiz?.pickedId === "string";
   const slotShown = Boolean(quiz) && (view.view === "progress" || picked);
 

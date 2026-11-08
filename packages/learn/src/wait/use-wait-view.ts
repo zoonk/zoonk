@@ -12,6 +12,9 @@ export type WaitView = "progress" | "quiz";
  */
 const HISTORY_KEY = "zoonkWaitProgress";
 
+/** From here the host shows the progress in its aside beside the quiz, so there's no switch. */
+const WIDE_QUERY = "(min-width: 72rem)";
+
 /** Wide hosts show the progress in their aside, so the strip that opens it isn't drawn there. */
 export const WAIT_NARROW_ONLY_CLASS = "min-[72rem]:hidden";
 
@@ -51,6 +54,12 @@ function pushProgressEntry(entryId: string) {
   }
 }
 
+function subscribeToWidth(onChange: () => void) {
+  const query = globalThis.matchMedia(WIDE_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
 /**
  * Only the learner's own switches move focus: opening the progress focuses its heading, going back
  * focuses the strip, or the question where no strip is drawn. A resize or a card arriving doesn't.
@@ -88,15 +97,34 @@ function useSwitchFocus({
   return { contentRef, statusRef };
 }
 
+function getView({
+  chosen,
+  hasQuiz,
+  wide,
+}: {
+  chosen: WaitView;
+  hasQuiz: boolean;
+  wide: boolean;
+}): WaitView {
+  if (!hasQuiz) {
+    return "progress";
+  }
+
+  return wide ? "quiz" : chosen;
+}
+
 /**
  * The quiz is the default view. A screen that first showed without a card stays on the progress when
- * one arrives, so the page never changes under the learner; its bar offers the quiz instead.
+ * one arrives, so the page never changes under the learner; its bar offers the quiz instead. A wide
+ * host always shows the quiz, with the progress in its aside.
  */
 export function useWaitView({
+  aside,
   hasQuiz,
   hold,
   questionRef,
 }: {
+  aside: boolean;
   hasQuiz: boolean;
   hold: ReadyHoldControl;
   questionRef: WaitQuizRefs["questionRef"];
@@ -111,8 +139,14 @@ export function useWaitView({
     () => false,
   );
 
+  const wide = useSyncExternalStore(
+    subscribeToWidth,
+    () => globalThis.matchMedia(WIDE_QUERY).matches,
+    () => false,
+  );
+
   const chosen: WaitView = opened ? "progress" : base;
-  const view: WaitView = hasQuiz ? chosen : "progress";
+  const view = getView({ chosen, hasQuiz, wide: aside && wide });
   const { contentRef, statusRef } = useSwitchFocus({ chosen, questionRef, view });
 
   const openProgress = () => {
