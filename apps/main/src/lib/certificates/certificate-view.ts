@@ -22,7 +22,7 @@ import {
 import { type TextRun } from "./shaped-text";
 
 /** A course's route has a station per topic, labelled with its level on a level's certificate. */
-export type CertificateGraph = { label: string | null; stations: number };
+type CertificateGraph = { label: string | null; stations: number };
 
 type CommonView = {
   date: string;

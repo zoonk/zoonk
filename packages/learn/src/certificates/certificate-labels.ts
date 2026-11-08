@@ -19,7 +19,6 @@ export function roundStudyMinutes(minutes: number): number {
     : Math.round(minutes / MINUTES_PER_HOUR) * MINUTES_PER_HOUR;
 }
 
-/** The level a certificate certifies, with the CEFR levels a language course's covers. */
 export function useCertificateLevel() {
   const t = useExtracted();
   const levelName = useLevelName();

@@ -1,5 +1,5 @@
 import { CERTIFICATE_COLORS } from "./certificate-palette";
-import { type CertificateView, type CertificateGraph as Graph } from "./certificate-view";
+import { type CertificateView } from "./certificate-view";
 
 const ROUTE = {
   /** Past this many stations they shrink, so a long course's dots don't touch. */
@@ -68,15 +68,20 @@ function RouteLabel({ label, spec }: { label: string; spec: RouteSpec }) {
 }
 
 /** The topics in order as stations along the route; on a certificate all of it is done. */
-function CertificateRoute({
-  graph,
+export function CertificateGraph({
+  route,
+  scale,
   showLabels,
-  spec,
+  view,
 }: {
-  graph: Graph;
+  route: RouteSpec;
+  scale: number;
   showLabels: boolean;
-  spec: RouteSpec;
+  view: CertificateView;
 }) {
+  const { graph } = view;
+  const spec = scaleRoute(route, scale);
+
   const { end, middle, pad, station, stations } = getRouteGeometry({
     spec,
     stations: graph.stations,
@@ -164,22 +169,5 @@ function Dot({
         width,
       }}
     />
-  );
-}
-
-/** A course's route through its topics. */
-export function CertificateGraph({
-  route,
-  scale,
-  showLabels,
-  view,
-}: {
-  route: RouteSpec;
-  scale: number;
-  showLabels: boolean;
-  view: CertificateView;
-}) {
-  return (
-    <CertificateRoute graph={view.graph} showLabels={showLabels} spec={scaleRoute(route, scale)} />
   );
 }
