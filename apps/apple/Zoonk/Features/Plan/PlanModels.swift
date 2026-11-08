@@ -231,8 +231,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let goalId: String
   /// A language goal's level the course goes up to and the aims to change it to; nil for others.
   let languageAim: LanguageAimView?
-  /// Today and the six days after it, whatever the weekday: the reveal's first week.
-  let nextDays: [RevealDay]
   let notice: Notice?
   /// Nil until the plan is computed.
   let numbers: Numbers?
@@ -416,6 +414,21 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
 }
 
 /// A day of the plan's first week, with the lessons laid out on it.
+/// The reveal's Today and first week, composed in core so each lesson shows once: drawn as given.
+struct PlanRevealRead: Decodable, Equatable, Sendable {
+  struct Week: Decodable, Equatable, Sendable {
+    let days: Int
+    let minutes: Int
+  }
+
+  let today: StudyDay
+  /// What `today` lists, in minutes.
+  let minutes: Int
+  /// The days after today.
+  let nextDays: [RevealDay]
+  let week: Week
+}
+
 struct RevealDay: Decodable, Equatable, Identifiable, Sendable {
   struct Item: Decodable, Equatable, Sendable {
     enum Kind: String, Decodable, Sendable {

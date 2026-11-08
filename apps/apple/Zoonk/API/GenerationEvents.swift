@@ -1,5 +1,6 @@
 import Foundation
 import OpenAPIRuntime
+import Synchronization
 
 struct GenerationEvent: Decodable, Hashable, Sendable {
   let at: Date?
@@ -11,6 +12,9 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   let status: String
   let step: String
   let warmUpID: String?
+  /// This device's clock minus the server's, from the `Date` of the stream connection that brought
+  /// the event: the step's `at` on this device is `at` plus this.
+  var clockOffset: TimeInterval?
 
   private enum CodingKeys: String, CodingKey {
     case at
@@ -27,7 +31,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
   init(
     at: Date? = nil, entityID: String? = nil, lessonID: String? = nil, lessonTitle: String? = nil,
     reason: String? = nil, skillName: String? = nil, status: String, step: String,
-    warmUpID: String? = nil
+    warmUpID: String? = nil, clockOffset: TimeInterval? = nil
   ) {
     self.at = at
     self.entityID = entityID
@@ -38,6 +42,7 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
     self.status = status
     self.step = step
     self.warmUpID = warmUpID
+    self.clockOffset = clockOffset
   }
 
   init(from decoder: any Decoder) throws {
@@ -214,10 +219,12 @@ extension APIClientFactory {
     received: inout Int,
     _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
   ) async throws -> StreamEnd {
-    for try await event in try await openGenerationEvents(
+    let (events, clockOffset) = try await openGenerationEvents(
       id: run, token: token, startIndex: received)
-    {
+
+    for try await var event in events {
       received += 1
+      event.clockOffset = clockOffset
 
       if event.status == "error" || event.step == "workflowError" {
         return .stopped
@@ -274,20 +281,26 @@ extension APIClientFactory {
     }
   }
 
+  /// The connection's events, and this device's clock minus the server's, from the response's
+  /// `Date` as web takes it: a replay brings old steps, so their times can't tell the clocks apart.
   private func openGenerationEvents(
     id: String,
     token: String?,
     startIndex: Int
-  ) async throws -> some AsyncSequence<GenerationEvent, any Error> {
-    let output = try await makeStreamingClient(token: token).streamGenerationEvents(
+  ) async throws -> (some AsyncSequence<GenerationEvent, any Error>, TimeInterval?) {
+    let clockOffset = Mutex<TimeInterval?>(nil)
+    let output = try await makeStreamingClient(
+      token: token, serverClock: { offset in clockOffset.withLock { $0 = offset } }
+    ).streamGenerationEvents(
       path: .init(generationId: id),
       query: .init(startIndex: startIndex))
 
     switch output {
     case .ok(let response):
-      return try response.body.textEventStream
+      let events = try response.body.textEventStream
         .asDecodedServerSentEventsWithJSONData(of: GenerationEvent.self)
         .compactMap { $0.data }
+      return (events, clockOffset.withLock { $0 })
     case .notFound:
       throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented:

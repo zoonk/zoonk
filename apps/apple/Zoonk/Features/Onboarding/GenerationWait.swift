@@ -69,8 +69,7 @@ struct GenerationWait: Equatable, Sendable {
     var movedAt: Date
     var share: Double
     var target: Double
-    /// The running stage's start, as the run reported it: it's put on this device's clock as it's
-    /// drawn, since the clocks' difference is known better as live steps come.
+    /// The running stage's start, as the run reported it, put on this device's clock as it's drawn.
     var stageStart: Date?
   }
 
@@ -78,8 +77,7 @@ struct GenerationWait: Equatable, Sendable {
   private(set) var phases: [Phase]
   private(set) var isDone = false
   private(set) var firstLesson: FirstLesson?
-  /// This device's clock minus the server's: a replayed event arrives long after its time, so the
-  /// smallest gap is the closest to the clocks' difference.
+  /// This device's clock minus the server's, as the stream's connection said.
   private(set) var clockOffset: TimeInterval?
   private var drift: Drift
 
@@ -205,9 +203,8 @@ struct GenerationWait: Equatable, Sendable {
   }
 
   mutating func apply(_ event: GenerationEvent, receivedAt: Date = .now) {
-    if let at = event.at {
-      let gap = receivedAt.timeIntervalSince(at)
-      clockOffset = min(clockOffset ?? gap, gap)
+    if let offset = event.clockOffset {
+      clockOffset = offset
     }
 
     recordFirstLesson(event)

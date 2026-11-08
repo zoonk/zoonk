@@ -525,7 +525,7 @@ struct OnboardingAPI: Sendable {
   }
 
   /// The goal's first day as Today will show it; nil while its plan isn't ready to show.
-  func revealToday(goalID: String, token: String) async throws -> StudyDay? {
+  func revealToday(goalID: String, token: String) async throws -> PlanRevealRead? {
     let output = try await clients.perform(token: token) { client in
       try await client.getPlanRevealToday(
         path: .init(goalId: goalID), query: .init(timeZone: TimeZone.current.identifier))
@@ -533,7 +533,7 @@ struct OnboardingAPI: Sendable {
 
     switch output {
     case .ok(let response):
-      return try StudyJSON.recode(try response.body.json, as: StudyDay.self)
+      return try StudyJSON.recode(try response.body.json, as: PlanRevealRead.self)
     case .unauthorized:
       throw APIError.unauthorized
     case .notFound, .conflict:

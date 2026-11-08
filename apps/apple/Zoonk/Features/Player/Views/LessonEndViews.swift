@@ -643,7 +643,7 @@ struct LessonWaitingView: View {
         let shown = holding == nil && writing == .writing ? progress : progress.finished
 
         WaitScreen(
-          deckID: warmUpID, goalID: goalID, progressTitle: title,
+          deck: WaitDeck(id: warmUpID), goalID: goalID, progressTitle: title,
           ready: holding.map { holding in
             WaitReady(
               label: Text(

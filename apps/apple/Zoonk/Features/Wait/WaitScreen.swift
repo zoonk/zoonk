@@ -16,21 +16,27 @@ struct WaitLibraryCourse {
   let title: String
 }
 
+/// A wait's quiz deck: the one to deal from once it's ready, or one still on its way.
+struct WaitDeck: Equatable {
+  var id: String?
+  var isComing = false
+}
+
 /// The deck a wait deals from and the card on show, worked out once per render.
 struct WaitDeal {
   let deck: Resource<WarmUpDeck>?
   let dealt: DealtCard?
-  /// A card is there, or the deck is still being read: either keeps the quiz's place, so the page
-  /// doesn't change once it comes.
+  /// A card is there, or one is on its way or being read: each keeps the quiz's place, with the
+  /// card's shapes until it comes. A deck that stops coming turns the page to the progress.
   let hasCard: Bool
 
   @MainActor
-  init(deckID: String?, visit: WaitVisit, warmUps: WarmUpStore) {
-    deck = deckID.map(warmUps.deck(id:))
+  init(deck: WaitDeck, visit: WaitVisit, warmUps: WarmUpStore) {
+    self.deck = deck.id.map(warmUps.deck(id:))
     dealt = visit.dealtCard(
-      deck: deck?.value, firstUnguessed: deckID.map(warmUps.firstUnguessed(deckID:)) ?? 0)
-    let isReading = deck.map { $0.state == .idle || $0.state == .loading } ?? false
-    hasCard = dealt != nil || isReading
+      deck: self.deck?.value, firstUnguessed: deck.id.map(warmUps.firstUnguessed(deckID:)) ?? 0)
+    let isReading = self.deck.map { $0.state == .idle || $0.state == .loading } ?? false
+    hasCard = dealt != nil || isReading || deck.isComing
   }
 
   @MainActor
@@ -41,10 +47,11 @@ struct WaitDeal {
 
 /// Main's `WaitScreen`, one screen for every wait: a status strip and a quiz on the page, the work's
 /// progress pushed from the strip, so Back and the edge swipe return to the same card and guess. A
-/// page that opened with no card shows the progress and offers the quiz in its bar once one comes.
+/// page that opened with no card on its way shows the progress and offers the quiz in its bar once
+/// one comes.
 /// In onboarding's wide layout the progress sits in the aside above the plan so far, with no strip.
 struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
-  let deckID: String?
+  let deck: WaitDeck
   var goalID: String?
   /// Names the pushed progress for Back and VoiceOver.
   let progressTitle: Text
@@ -61,7 +68,7 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
   @Environment(\.onboardingAside) private var onboardingAside
 
   var body: some View {
-    let deal = WaitDeal(deckID: deckID, visit: visit, warmUps: warmUps)
+    let deal = WaitDeal(deck: deck, visit: visit, warmUps: warmUps)
     let page = deal.page(visit)
 
     Group {
@@ -219,7 +226,7 @@ struct WaitHeading: View {
   }
 }
 
-/// The card's shapes while the deck is read.
+/// The card's shapes while the deck is written or read.
 private struct WaitQuizPlaceholder: View {
   var body: some View {
     Section {
@@ -418,7 +425,7 @@ extension View {
 
 extension WaitScreen where Extra == EmptyView {
   init(
-    deckID: String?,
+    deck: WaitDeck,
     goalID: String? = nil,
     progressTitle: Text,
     ready: WaitReady? = nil,
@@ -427,7 +434,7 @@ extension WaitScreen where Extra == EmptyView {
     @ViewBuilder progress: @escaping () -> Progress
   ) {
     self.init(
-      deckID: deckID, goalID: goalID, progressTitle: progressTitle, ready: ready,
+      deck: deck, goalID: goalID, progressTitle: progressTitle, ready: ready,
       library: library, status: status, progress: progress, extra: { EmptyView() })
   }
 }

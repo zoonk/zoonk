@@ -130,7 +130,7 @@ struct ScheduleQuestion: View {
         reconnect: gate.failed ? gate.restart : nil)
     } notice: { holding in
       NoticeReadingView(
-        document: examDocument, lastEdition: false, generationID: view.generationId,
+        document: examDocument, lastEdition: false, deck: onboarding.waitDeck(for: view),
         goalID: view.goal.id, next: .timeQuestion, holding: holding,
         reconnect: gate.failed ? gate.restart : nil)
     } ready: {

@@ -573,7 +573,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   @State private var since = Date.now
 
   var body: some View {
-    let deal = WaitDeal(deckID: deckID, visit: visit, warmUps: warmUps)
+    let deal = WaitDeal(deck: WaitDeck(id: deckID), visit: visit, warmUps: warmUps)
     let ready = held.map { held in
       WaitReady(
         label: Text(

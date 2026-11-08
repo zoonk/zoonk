@@ -250,7 +250,7 @@ private struct GoalSteps: View {
   /// While the learner answers, so the quiz is there as soon as a wait opens.
   private func preloadDeck() async {
     guard let generationID = view.generationId,
-      let deckID = await onboarding.warmUpID(generationID: generationID)
+      let deckID = await onboarding.followDeck(generationID: generationID)
     else {
       return
     }

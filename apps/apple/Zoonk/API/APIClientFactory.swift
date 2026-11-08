@@ -44,14 +44,19 @@ struct APIClientFactory {
     makeClient(token: token, transport: transport, sendingNull: keys, body: body)
   }
 
-  /// Also for a write slower than the one-minute cap, such as grading an essay.
-  func makeStreamingClient(token: String? = nil) -> Client {
-    makeClient(token: token, transport: streamingTransport)
+  /// Also for a write slower than the one-minute cap, such as grading an essay. `serverClock` hears
+  /// this device's clock minus the server's, from the response's `Date`.
+  func makeStreamingClient(
+    token: String? = nil, serverClock: (@Sendable (TimeInterval) -> Void)? = nil
+  ) -> Client {
+    makeClient(
+      token: token, transport: streamingTransport,
+      extra: serverClock.map { [ServerClockMiddleware(heard: $0)] } ?? [])
   }
 
   private func makeClient(
     token: String?, transport: any ClientTransport, sendingNull keys: [String] = [],
-    body: Data? = nil
+    body: Data? = nil, extra: [any ClientMiddleware] = []
   ) -> Client {
     Client(
       serverURL: serverURL,
@@ -59,7 +64,7 @@ struct APIClientFactory {
       transport: transport,
       middlewares: [APIRequestMiddleware(token: token)]
         + (keys.isEmpty ? [] : [ExplicitNullMiddleware(keys: keys)])
-        + (body.map { [JSONBodyMiddleware(body: $0)] } ?? []))
+        + (body.map { [JSONBodyMiddleware(body: $0)] } ?? []) + extra)
   }
 
   private static func sessionConfiguration() -> URLSessionConfiguration {
