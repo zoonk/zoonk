@@ -54,7 +54,7 @@ export async function completePlanItem(
 ) {
   const checked = await tx.planItem.updateManyAndReturn({
     data: { completedAt: now, status: "done" },
-    select: { kind: true, lessonId: true, phase: true, planId: true },
+    select: { id: true, kind: true, lessonId: true, phase: true, planId: true },
     where: { id: planItemId, plan: { goal: { userId } }, status: "todo" },
   });
 
@@ -100,7 +100,7 @@ export async function completeLessonPlanItems(
 ): Promise<CheckedLanguageGoal[]> {
   const checked = await tx.planItem.updateManyAndReturn({
     data: { completedAt: now, status: "done" },
-    select: { kind: true, lessonId: true, phase: true, planId: true },
+    select: { id: true, kind: true, lessonId: true, phase: true, planId: true },
     where: { lessonId, plan: { goal: { userId } }, status: "todo" },
   });
 

@@ -8,7 +8,7 @@ import { type PlanPhase } from "../../plans/planner/plan-state";
 
 const LEVEL_ORDER = Object.values(COURSE_LEVELS);
 
-const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam"]);
+export const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam"]);
 
 export type CertifiableItem = Pick<
   PlanItem,

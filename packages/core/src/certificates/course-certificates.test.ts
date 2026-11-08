@@ -21,7 +21,7 @@ import {
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
 import { startCourseWithPlan } from "../goals/_test-utils/start-course-with-plan";
@@ -31,6 +31,7 @@ import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { celebrateProgress } from "../milestones/celebrate-progress";
+import { loadPlanScope } from "../plans/_utils/plan-scope";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { completeLessonPlanItems, completePlanItem } from "../sessions/_utils/plan-items";
@@ -40,6 +41,12 @@ import { claimCourseCertificate } from "./claim-course-certificate";
 import { getPublicCertificate } from "./get-public-certificate";
 import { listCurrentUserCertificates } from "./list-certificates";
 import { markCertificateShown } from "./mark-certificate-shown";
+import type * as PlanScope from "../plans/_utils/plan-scope";
+
+vi.mock("../plans/_utils/plan-scope", async (importOriginal) => {
+  const actual = await importOriginal<typeof PlanScope>();
+  return { ...actual, loadPlanScope: vi.fn(actual.loadPlanScope) };
+});
 
 const TIME_ZONE = "America/Sao_Paulo";
 
@@ -1001,9 +1008,10 @@ function getSharedStatus(index: number): PlanItem["status"] {
 
 /**
  * Two beginner lessons (one studied, one tested out) and six intermediate ones, two studied, that
- * also teach the beginner skill; the beginner challenge is won and the intermediate one isn't.
+ * also teach the beginner skill unless `shared` is false; the beginner challenge is won and the
+ * intermediate one isn't.
  */
-async function sharedLevelsPlan() {
+async function sharedLevelsPlan({ shared = true }: { shared?: boolean } = {}) {
   const [user, course, beginner, intermediate, basics, advanced] = await Promise.all([
     userFixture(),
     courseFixture({ format: "core", isPublished: true, visibility: "public" }),
@@ -1029,7 +1037,9 @@ async function sharedLevelsPlan() {
 
       await Promise.all([
         chapterLessonFixture({ chapterId, lessonId: lesson.id, position: index }),
-        lessonSkillFixture({ lessonId: lesson.id, skillId: basics.id }),
+        ...(index < 2 || shared
+          ? [lessonSkillFixture({ lessonId: lesson.id, skillId: basics.id })]
+          : []),
         ...(index < 2 ? [] : [lessonSkillFixture({ lessonId: lesson.id, skillId: advanced.id })]),
       ]);
 
@@ -1110,6 +1120,16 @@ describe("a course level, its skills where its course teaches them", () => {
     await finishWithItem(user.id, { id: "", lessonId: lessons[4]?.id ?? null });
 
     await expect(listCourseKeys(user.id)).resolves.toStrictEqual([`${course.id}:beginner`]);
+  });
+
+  it("reads no course scope for a later lesson that can't change a finished level", async () => {
+    const { course, lessons, user } = await sharedLevelsPlan({ shared: false });
+    await certificateFixture({ key: `${course.id}:beginner`, userId: user.id });
+    vi.mocked(loadPlanScope).mockClear();
+
+    await finishWithItem(user.id, { id: "", lessonId: lessons[4]?.id ?? null });
+
+    expect(loadPlanScope).not.toHaveBeenCalled();
   });
 
   it("still waits for a level's own lesson and challenge whatever a later level credits it", async () => {
