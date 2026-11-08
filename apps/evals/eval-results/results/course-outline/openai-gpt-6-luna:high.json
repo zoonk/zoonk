@@ -48,7 +48,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
+          "reasoning": "All 5 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -342,7 +342,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 10 parts passed the code checks.",
+          "reasoning": "All 11 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -734,7 +734,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -849,7 +849,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 13 parts passed the code checks.",
+          "reasoning": "All 14 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -970,7 +970,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 7 parts passed the code checks.",
+          "reasoning": "All 8 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1082,7 +1082,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 13 parts passed the code checks.",
+          "reasoning": "All 14 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1195,7 +1195,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1307,8 +1307,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 7 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "7 of 8 parts passed. No chapter teaches 4 required skill(s): 588e45be-560f-86b2-824c-bb3c0479f598, 01a122ed-ade1-7368-91ad-a81e1c90aff0, c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb, 5dbcc48f-5cf6-8de9-88af-5ff186e54f50.",
+          "score": 8.875,
           "weight": 30
         }
       ],
@@ -1811,7 +1811,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -2307,7 +2307,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
+          "reasoning": "All 9 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }

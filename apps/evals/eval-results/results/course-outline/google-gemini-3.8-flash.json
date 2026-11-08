@@ -48,7 +48,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
+          "reasoning": "All 5 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -342,7 +342,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
+          "reasoning": "All 9 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -734,7 +734,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -849,7 +849,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -970,7 +970,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
+          "reasoning": "All 6 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1082,7 +1082,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1195,7 +1195,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
+          "reasoning": "All 4 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1399,7 +1399,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1895,7 +1895,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }

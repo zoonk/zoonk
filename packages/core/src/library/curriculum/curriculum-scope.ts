@@ -13,7 +13,7 @@ export type CurriculumScope = {
 
 /**
  * Private content can't spread its cost, so it takes the cheapest model that keeps quality. On the
- * 8 Nov 2026 evals Luna beat Gemini 3.8 Flash on course outlines (8.88 to 8.71), skill graphs (8.53
+ * 8 Nov 2026 evals Luna beat Gemini 3.8 Flash on course outlines (8.86 to 8.72), skill graphs (8.53
  * to 8.44) and challenges (8.34 to 7.36) at a sixth to a ninth of its cost; read side by side, its
  * graphs fell behind Terra's on career-change and from-zero goals.
  */

@@ -48,7 +48,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
+          "reasoning": "All 5 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -342,7 +342,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -734,8 +734,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "1 of 2 parts passed. No chapter teaches 1 required skill(s): descrever-experiencia.",
+          "score": 5.5,
           "weight": 30
         }
       ],
@@ -849,7 +849,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
+          "reasoning": "All 9 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -970,7 +970,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
+          "reasoning": "All 5 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1082,7 +1082,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1195,7 +1195,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
+          "reasoning": "All 4 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1307,8 +1307,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "1 of 2 parts passed. No chapter teaches 10 required skill(s): 01a1221f-40fc-77ad-a11d-d8a466e14767, 01a122ed-b690-7ea1-9fb6-54fea3ff6c5d, 01a122ed-b690-7fcc-ac2b-e84e1fa28d64, 01a122ed-ade3-73bd-bf80-6754435d94ab, 01a122ed-ade1-73b4-a3ab-d158ba1de158, 01a12220-bb3f-70cc-be04-8e001d907327, 588e45be-560f-86b2-824c-bb3c0479f598, 01a122ed-ade1-7368-91ad-a81e1c90aff0, c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb, 5dbcc48f-5cf6-8de9-88af-5ff186e54f50.",
+          "score": 5.5,
           "weight": 30
         }
       ],
@@ -1811,7 +1811,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
+          "reasoning": "All 2 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -2307,7 +2307,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
+          "reasoning": "All 6 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
