@@ -45,6 +45,7 @@ const GOAL_STEPS = {
   joinRunningGoal: "join",
   readExamNotice: "notice",
   understandGoal: "goal",
+  warmUpFailed: "aside",
   warmUpReady: "aside",
   writeFirstLesson: "aside",
 } as const;
@@ -130,6 +131,7 @@ const courseOutline = {
     readExamNotice: "skills",
     saveSkills: "plan",
     understandGoal: "skills",
+    warmUpFailed: "aside",
     warmUpReady: "aside",
     writeFirstLesson: "aside",
   },

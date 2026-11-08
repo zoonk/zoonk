@@ -3,6 +3,7 @@ import { type generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-
 import { type WarmUp, prisma } from "@zoonk/db";
 import { type CurriculumScope } from "../curriculum/curriculum-scope";
 import { examStructureSchema } from "../exams/blueprint-contract";
+import { type GoalWarmUp } from "./warm-up-contract";
 import { getWarmUpKey } from "./warm-up-key";
 
 export type WarmUpInput = Pick<
@@ -37,8 +38,10 @@ export async function claimWarmUp({
     return { status: "none" };
   }
 
-  if (goal.warmUpId) {
-    return { id: goal.warmUpId, status: "ready" };
+  const linked = await readWarmUpState(goal.warmUpId);
+
+  if (linked?.status === "ready") {
+    return { id: linked.id, status: "ready" };
   }
 
   const identityKey = getWarmUpKey({ ...scope, kind: goal.kind });
@@ -57,13 +60,16 @@ export async function claimWarmUp({
   const stored = await prisma.warmUp.findUniqueOrThrow({ where: { languageIdentity } });
 
   if (stored.status === "ready") {
-    await linkReadyWarmUp({ goalId, id: stored.id });
+    await linkWarmUp({ goalId, id: stored.id });
     return { id: stored.id, status: "ready" };
   }
 
   if (stored.status === "failed") {
     return { status: "none" };
   }
+
+  // Linked while it's written, so the goal's waits know a deck is on its way.
+  await linkWarmUp({ goalId, id: stored.id });
 
   const claimed = await prisma.warmUp.updateMany({
     data: { claimedAt: new Date(), runId: workflowRunId },
@@ -104,8 +110,30 @@ export async function claimWarmUp({
   };
 }
 
-async function linkReadyWarmUp({ goalId, id }: { goalId: string; id: string }): Promise<void> {
-  await prisma.goal.updateMany({ data: { warmUpId: id }, where: { id: goalId, warmUpId: null } });
+/** A goal keeps its first ready deck; until it has one, it follows the deck claimed for it. */
+async function linkWarmUp({ goalId, id }: { goalId: string; id: string }): Promise<void> {
+  await prisma.goal.updateMany({
+    data: { warmUpId: id },
+    where: { OR: [{ warmUpId: null }, { warmUp: { status: { not: "ready" } } }], id: goalId },
+  });
+}
+
+/** Internal: a goal's deck as its waits see it: on its way, ready, or none once it failed. */
+export async function readWarmUpState(warmUpId: string | null): Promise<GoalWarmUp | null> {
+  if (!warmUpId) {
+    return null;
+  }
+
+  const deck = await prisma.warmUp.findUnique({
+    select: { id: true, status: true },
+    where: { id: warmUpId },
+  });
+
+  if (!deck || deck.status === "failed") {
+    return null;
+  }
+
+  return { id: deck.id, status: deck.status };
 }
 
 export async function readWarmUpStatus({
@@ -118,7 +146,7 @@ export async function readWarmUpStatus({
   const deck = await prisma.warmUp.findUnique({ where: { id } });
 
   if (deck?.status === "ready") {
-    await linkReadyWarmUp({ goalId, id });
+    await linkWarmUp({ goalId, id });
   }
 
   return { status: deck?.status ?? "missing" };

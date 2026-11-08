@@ -18,7 +18,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
-import { studyDayResponseSchema } from "../src/lib/openapi/schemas/study-day";
+import { planRevealTodayResponseSchema } from "../src/lib/openapi/schemas/study-day";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
@@ -254,9 +254,10 @@ test.describe("Today API", () => {
     expect([gated.status(), reveal.status(), theirs.status()]).toStrictEqual([409, 200, 404]);
     await expect(gated.json()).resolves.toMatchObject({ error: { code: "PLAN_NOT_READY" } });
 
-    const day = studyDayResponseSchema.parse(await reveal.json());
+    const { minutes, today: day } = planRevealTodayResponseSchema.parse(await reveal.json());
     expect(day.status).toBe("unstarted");
     expect(day.blocks.map((block) => block.lessonId)).toContain(lesson.id);
+    expect(minutes).toBe(day.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0));
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
     await prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } });

@@ -9,3 +9,6 @@ export const warmUpDeckSchema = z
 export type WarmUpDeck = z.infer<typeof warmUpDeckSchema>;
 
 export type WarmUpCard = WarmUpDeck["cards"][number];
+
+/** A goal's deck while its waits can still use it: `writing` once a run claimed it, then `ready`. */
+export type GoalWarmUp = { id: string; status: "ready" | "writing" };

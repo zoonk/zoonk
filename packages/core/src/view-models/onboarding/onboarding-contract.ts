@@ -12,6 +12,7 @@ import {
   type LanguageAimView,
   type OnboardingLanguageAim,
 } from "../../language/aims/language-aims";
+import { type GoalWarmUp } from "../../library/warm-ups/warm-up-contract";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { type PlanReadiness } from "../../plans/time-advice-contract";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
@@ -250,6 +251,12 @@ export type OnboardingView = {
   steps: OnboardingStep[];
   /** The daily times the time question offers, `recommendedMinutes` among them. */
   timeChoices: { minutes: number; split: DaySplit | null }[];
+  /**
+   * The goal's deck for its waits: `writing` once a run claimed it, so a wait opens on the quiz with
+   * its card still coming, and `ready` once its cards can be read. Null when none is coming (a
+   * private goal, a failed deck), so a wait opens on its progress.
+   */
+  warmUp: GoalWarmUp | null;
 };
 
 const nullableAnswer = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH).nullable();

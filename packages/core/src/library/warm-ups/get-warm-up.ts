@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { getSession } from "../../users/get-session";
 import { type WarmUpDeck, warmUpDeckSchema } from "./warm-up-contract";
 
@@ -36,12 +35,4 @@ export async function getWarmUp(warmUpId: string): Promise<WarmUpResult> {
 
   const deck = await readReadyWarmUp(warmUpId.toLowerCase());
   return deck ? { deck, status: "ready" } : { status: "notFound" };
-}
-
-/** The learner's goal's deck once it's ready, read with a page so its wait draws the card at once. */
-export async function getGoalWarmUp(goalId: string): Promise<WarmUpDeck | null> {
-  const owned = await findOwnedGoal(goalId);
-  const warmUpId = owned.status === "ready" ? owned.goal.warmUpId : null;
-
-  return warmUpId ? readReadyWarmUp(warmUpId) : null;
 }

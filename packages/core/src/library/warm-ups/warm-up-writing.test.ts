@@ -9,7 +9,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { checkWarmUp } from "./check-warm-up";
-import { type WarmUpClaim, claimWarmUp, failWarmUp, readWarmUpStatus } from "./claim-warm-up";
+import {
+  type WarmUpClaim,
+  claimWarmUp,
+  failWarmUp,
+  readWarmUpState,
+  readWarmUpStatus,
+} from "./claim-warm-up";
 import { saveWarmUp } from "./save-warm-up";
 import { warmUpDeckSchema } from "./warm-up-contract";
 import { getWarmUpKey } from "./warm-up-key";
@@ -102,6 +108,11 @@ async function writeDeck({
   return saveWarmUp({ checked, goalId, id: claim.id, workflowRunId, written });
 }
 
+async function goalWarmUp(goalId: string) {
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+  return readWarmUpState(goal.warmUpId);
+}
+
 describe("shared warm-up writing", () => {
   beforeEach(() => {
     vi.mocked(generateWarmUpCards).mockResolvedValue(result({ cards: rawCards() }));
@@ -150,7 +161,7 @@ describe("shared warm-up writing", () => {
     ).toHaveLength(1);
   });
 
-  it("admits one writer for simultaneous goals, then links both when they observe ready", async () => {
+  it("admits one writer for simultaneous goals, and links both to the deck it writes", async () => {
     const { goals, scope } = await newGoals(2);
     const first = goals[0]!;
     const second = goals[1]!;
@@ -165,8 +176,8 @@ describe("shared warm-up writing", () => {
     expect(claims.map(({ status }) => status).toSorted()).toStrictEqual(["claimed", "following"]);
 
     await expect(
-      prisma.warmUp.count({ where: { goals: { some: { id: first.id } } } }),
-    ).resolves.toBe(0);
+      prisma.warmUp.findMany({ where: { goals: { some: { id: { in: [first.id, second.id] } } } } }),
+    ).resolves.toMatchObject([{ status: "writing" }]);
 
     const owner = claims.findIndex(({ status }) => status === "claimed");
     const id = await writeDeck({ ...requests[owner]!, claim: claims[owner]! });
@@ -323,6 +334,21 @@ describe("shared warm-up writing", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it("tells a goal's waits its deck is on its way from the claim, and ready once saved", async () => {
+    const { goals, scope } = await newGoals(2);
+    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+    const claim = await claimWarmUp(request);
+    const following = { ...request, goalId: goals[1]!.id, workflowRunId: crypto.randomUUID() };
+    await claimWarmUp(following);
+
+    const id = "id" in claim ? claim.id : "";
+    await expect(goalWarmUp(request.goalId)).resolves.toStrictEqual({ id, status: "writing" });
+    await expect(goalWarmUp(following.goalId)).resolves.toStrictEqual({ id, status: "writing" });
+
+    await writeDeck({ ...request, claim });
+    await expect(goalWarmUp(request.goalId)).resolves.toStrictEqual({ id, status: "ready" });
+  });
+
   it("records failed content and never pays for the key again", async () => {
     const { goals, scope } = await newGoals(2);
     const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
@@ -338,9 +364,8 @@ describe("shared warm-up writing", () => {
     expect(generateWarmUpCards).toHaveBeenCalledOnce();
     expect(checkWarmUpCards).toHaveBeenCalledOnce();
 
-    await expect(
-      prisma.goal.findUniqueOrThrow({ where: { id: request.goalId } }),
-    ).resolves.toMatchObject({ warmUpId: null });
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: request.goalId } });
+    await expect(readWarmUpState(goal.warmUpId)).resolves.toBeNull();
   });
 
   it("gives a private scope nothing", async () => {

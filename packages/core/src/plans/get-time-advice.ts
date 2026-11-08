@@ -3,6 +3,7 @@ import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
 import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budget";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
+import { getCourseFinish } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
@@ -21,7 +22,6 @@ import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { applyPlanOperations } from "./planner/plan-operations";
 import { type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
-import { hasCompleteSkillCoverage } from "./planner/skill-minutes";
 import {
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
@@ -242,10 +242,7 @@ export async function getPlanTimeAdvice({
   return {
     advice: {
       coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
-      endDate:
-        !targetDate && end && hasCompleteSkillCoverage(computed.built.skillMinutes)
-          ? toIsoDate(end)
-          : null,
+      endDate: getCourseFinish(computed),
       fullCourseEndDate: fullCourse
         ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
         : null,

@@ -1,7 +1,7 @@
 "use client";
 
 import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-contract";
-import { type DayView } from "@zoonk/core/sessions/day-view";
+import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -25,7 +25,6 @@ import {
 } from "../../_components/page";
 import { isoDateToUtc } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
-import { usePlanScreen } from "../../plan/plan-context";
 import { BlockMark } from "../../session/block-mark";
 import { type DayStep } from "../../session/session-types";
 import { useBlockTitle } from "../../session/use-block-copy";
@@ -127,15 +126,16 @@ function useFormatDay() {
 }
 
 /** Today's own day, in Today's order: what the learner finished, then where they go on. */
-export function RevealToday({ session }: { session: DayView | null }) {
+export function RevealToday({ reveal }: { reveal: PlanRevealDays | null }) {
   const t = useExtracted();
+  const session = reveal?.today;
   const formatDay = useFormatDay();
   const formatDuration = useFormatDuration();
   const catchUp = new Set(session?.catchUp?.positions);
   const label = useStepLabel((step) => catchUp.has(step.position));
   const next = session?.blocks.find((block) => block.position === session.nextPosition);
 
-  if (!session || session.blocks.length === 0) {
+  if (!reveal || !session || session.blocks.length === 0) {
     return null;
   }
 
@@ -150,7 +150,7 @@ export function RevealToday({ session }: { session: DayView | null }) {
       <PageSectionHeader>
         <PageSectionTitle id="reveal-today">{t("Today")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${formatDay(session.localDate)} · ${formatDuration(session.minutes.planned)}`}
+          {`${formatDay(session.localDate)} · ${formatDuration(reveal.minutes)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 
@@ -224,46 +224,25 @@ function WeekDayRow({
   );
 }
 
-/** A day with time but nothing laid out is past the plan's end, so it isn't listed. */
-function isListed(day: PlanDayView): boolean {
-  return day.items.length > 0 || day.minutes === 0;
-}
-
-/** The days after today, without the lessons Today already lists: each lesson shows once. */
-function getDaysAhead({ days, today }: { days: readonly PlanDayView[]; today: DayView | null }) {
-  const listed = new Set(today?.blocks.flatMap((block) => block.lessonId ?? []));
-
-  return days
-    .slice(1)
-    .map((day) => ({
-      ...day,
-      items: day.items.filter((item) => !item.lessonId || !listed.has(item.lessonId)),
-    }))
-    .filter((day) => isListed(day));
-}
-
-export function RevealWeek({ today }: { today: DayView | null }) {
+/** The six days after today, composed with Today by core so each lesson shows once. */
+export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const { plan } = usePlanScreen();
   const formatDay = useFormatDay();
-  const studied = plan.nextDays.filter((day) => day.items.length > 0);
-  const ahead = getDaysAhead({ days: plan.nextDays, today });
+  const ahead = reveal?.nextDays ?? [];
   const dates = ahead.map((day) => formatDay(isoDateToUtc(day.date)));
   const dateWidth = Math.max(0, ...dates.map((date) => date.length));
 
-  if (!ahead.some((day) => day.items.length > 0)) {
+  if (!reveal || !ahead.some((day) => day.items.length > 0)) {
     return null;
   }
-
-  const minutes = studied.reduce((total, day) => total + day.minutes, 0);
 
   return (
     <PageSection aria-labelledby="reveal-week">
       <PageSectionHeader>
         <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${t("{days, plural, one {# day} other {# days}}", { days: studied.length })} · ${formatDuration(minutes)}`}
+          {`${t("{days, plural, one {# day} other {# days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 

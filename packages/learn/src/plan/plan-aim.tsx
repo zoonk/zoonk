@@ -12,30 +12,27 @@ import { usePreviewBase } from "./use-plan-preview";
 import { useTappedChoice } from "./use-tapped-choice";
 
 /**
- * Each other aim is dated by previewing its change, as the editor's other changes are, so its date
- * is the plan's end once it's applied. Asked as the editor opens and after each change, never on
- * loading the page: each one plans the goal again. A plan with a date ends on it whatever the aim,
- * so it dates none, as the time question doesn't.
+ * Each aim is dated by previewing its change, as the editor's other changes are, by the one rule the
+ * time question follows too (`finishDate`). Asked as the editor opens and after each change, never
+ * on loading the page: each one plans the goal again.
  */
-function useOtherAimEnds({ dated }: { dated: boolean }) {
+function useAimFinishes() {
   const { actions, plan } = usePlanScreen();
   const base = usePreviewBase();
 
   const { ask, ends } = useAimEnds(async (aim) => {
     const preview = await actions.preview([{ aim, kind: "setAim" }]);
-    return preview?.effect?.endDateAfter ?? null;
+    return preview?.finishDate ?? null;
   });
 
-  const askOthers = useEffectEvent((revision: object) => {
-    const { languageAim } = plan;
-
-    if (revision === base && languageAim && !dated) {
-      ask(languageAim.choices.flatMap((item) => (item.aim === languageAim.aim ? [] : [item.aim])));
+  const askAll = useEffectEvent((revision: object) => {
+    if (revision === base && plan.languageAim) {
+      ask(plan.languageAim.choices.map((item) => item.aim));
     }
   });
 
   useEffect(() => {
-    askOthers(base);
+    askAll(base);
   }, [base]);
 
   return ends;
@@ -50,14 +47,11 @@ export function PlanAim() {
   const { change, failed, isPending } = usePlanChange();
   const languageAim = plan.languageAim;
   const choice = useTappedChoice(languageAim?.aim ?? null);
-  const dated = plan.schedule.targetDate !== null;
-  const ends = useOtherAimEnds({ dated });
+  const ends = useAimFinishes();
 
   if (!languageAim || languageAim.choices.length === 0) {
     return null;
   }
-
-  const currentEnd = dated ? null : plan.estimate.endDate;
 
   return (
     <section aria-labelledby={labelId} className="flex flex-col gap-2">
@@ -77,10 +71,7 @@ export function PlanAim() {
         }}
         options={languageAim.choices.map((item) => ({
           aim: item.aim,
-          detail: words.left({
-            endDate: item.aim === languageAim.aim ? currentEnd : (ends[item.aim] ?? null),
-            hours: item.hours,
-          }),
+          detail: words.left({ endDate: ends[item.aim] ?? null, hours: item.hours }),
         }))}
         pending={isPending}
         value={choice.shown}

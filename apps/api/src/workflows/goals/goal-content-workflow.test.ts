@@ -29,7 +29,7 @@ import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
 import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
-import { claimWarmUp } from "@zoonk/core/library/warm-ups/claim";
+import { claimWarmUp, readWarmUpState } from "@zoonk/core/library/warm-ups/claim";
 import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { getNoticeWaitState } from "@zoonk/core/plans/notice-wait";
@@ -606,10 +606,16 @@ describe(goalContentWorkflow, () => {
       }
 
       const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-      const events = getStreamedEvents().filter(({ step }) => step === "warmUpReady");
+
+      const events = getStreamedEvents().filter(
+        ({ step }) => step === "warmUpReady" || step === "warmUpFailed",
+      );
+
       expect(close).toHaveBeenCalledOnce();
 
-      expect(Boolean(stored.warmUpId)).toBe(outcome === "ready");
+      await expect(readWarmUpState(stored.warmUpId)).resolves.toStrictEqual(
+        outcome === "ready" ? { id: stored.warmUpId, status: "ready" } : null,
+      );
 
       expect(events).toStrictEqual(
         outcome === "ready"
@@ -621,7 +627,7 @@ describe(goalContentWorkflow, () => {
                 warmUpId: stored.warmUpId,
               },
             ]
-          : [],
+          : [{ entityId: goal.id, status: "completed", step: "warmUpFailed" }],
       );
 
       expect(
@@ -764,10 +770,16 @@ describe(goalContentWorkflow, () => {
     ).toHaveLength(29);
 
     expect(generateWarmUpCards).not.toHaveBeenCalled();
-    expect(getStreamedEvents().filter(({ step }) => step === "warmUpReady")).toStrictEqual([]);
 
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      warmUpId: null,
+    expect(
+      getStreamedEvents().filter(({ step }) => step === "warmUpReady" || step === "warmUpFailed"),
+    ).toStrictEqual([{ entityId: goal.id, status: "completed", step: "warmUpFailed" }]);
+
+    const followed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    await expect(readWarmUpState(followed.warmUpId)).resolves.toStrictEqual({
+      id: claim.id,
+      status: "writing",
     });
 
     await expect(

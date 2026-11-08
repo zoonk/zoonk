@@ -9,7 +9,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
-import { usePreloadedDeck } from "../wait/wait-deck";
+import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
 import {
   type OnboardingActions,
   type OnboardingRoutes,
@@ -145,7 +145,16 @@ function QuestionStepScreen({
   }
 }
 
-export function OnboardingStepScreen({
+/** The goal's deck as this read reports it reaches every wait the screen opens. */
+export function OnboardingStepScreen(props: Parameters<typeof StepScreen>[0]) {
+  return (
+    <ClaimedDeckProvider warmUp={props.view.warmUp}>
+      <StepScreen {...props} />
+    </ClaimedDeckProvider>
+  );
+}
+
+function StepScreen({
   actions,
   buddy,
   isGuest,

@@ -60,35 +60,41 @@ export async function prepareWarmUp({
     return;
   }
 
-  if (claim.status === "following") {
-    const result = await repeatUntil({
-      done: ({ status }) => status !== "writing",
-      run: () => readWarmUpStatusStep({ goalId, id: claim.id }),
-      times: 30,
-      wait: () => sleep("2s"),
-    });
+  const warmUpId = await getDeck({ claim, context, goalId, scope });
 
-    if (result.status === "ready") {
-      await goalProgressStep({
-        entityId: goalId,
-        status: "completed",
-        step: "warmUpReady",
-        warmUpId: claim.id,
-      });
-    }
+  // A wait shows the quiz's skeleton while the goal's deck is claimed, so it hears either way.
+  await goalProgressStep(
+    warmUpId
+      ? { entityId: goalId, status: "completed", step: "warmUpReady", warmUpId }
+      : { entityId: goalId, status: "completed", step: "warmUpFailed" },
+  );
+}
 
-    return;
+async function getDeck({
+  claim,
+  context,
+  goalId,
+  scope,
+}: {
+  claim: Exclude<WarmUpClaim, { status: "none" }>;
+  context: GoalRunContext;
+  goalId: string;
+  scope: CurriculumScope;
+}): Promise<string | null> {
+  if (claim.status === "ready") {
+    return claim.id;
   }
 
-  const warmUpId =
-    claim.status === "ready" ? claim.id : await writeDeck({ claim, context, goalId, scope });
-
-  if (warmUpId) {
-    await goalProgressStep({
-      entityId: goalId,
-      status: "completed",
-      step: "warmUpReady",
-      warmUpId,
-    });
+  if (claim.status === "claimed") {
+    return writeDeck({ claim, context, goalId, scope });
   }
+
+  const followed = await repeatUntil({
+    done: ({ status }) => status !== "writing",
+    run: () => readWarmUpStatusStep({ goalId, id: claim.id }),
+    times: 30,
+    wait: () => sleep("2s"),
+  });
+
+  return followed.status === "ready" ? claim.id : null;
 }

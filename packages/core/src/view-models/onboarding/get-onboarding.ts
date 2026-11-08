@@ -19,6 +19,7 @@ import { getQuickTestMinutes } from "../../language/level-test/level-test-contra
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { readWarmUpState } from "../../library/warm-ups/claim-warm-up";
 import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
 import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
@@ -219,14 +220,16 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson] = await Promise.all([
-    findLearningProfileView(userId),
-    findActiveGoalId(userId),
-    findOnboardingGoalIds(goal),
-    findExamNotice({ details, goal, goalDate, today }),
-    readPlanReadiness({ goalId: goal.id, userId }),
-    readGoalOpening({ lessonId: goal.openingLessonId, userId }),
-  ]);
+  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp] =
+    await Promise.all([
+      findLearningProfileView(userId),
+      findActiveGoalId(userId),
+      findOnboardingGoalIds(goal),
+      findExamNotice({ details, goal, goalDate, today }),
+      readPlanReadiness({ goalId: goal.id, userId }),
+      readGoalOpening({ lessonId: goal.openingLessonId, userId }),
+      readWarmUpState(goal.warmUpId),
+    ]);
 
   const [earlierGoals, [view]] = await Promise.all([
     prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
@@ -315,6 +318,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
             place: Math.max(0, goalIds.indexOf(goal.id)),
           }),
         })),
+      warmUp,
     },
     status: "ready",
   };

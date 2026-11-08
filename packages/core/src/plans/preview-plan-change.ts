@@ -1,6 +1,7 @@
 import "server-only";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { computeChange } from "./_utils/compute-change";
+import { getCourseFinish } from "./_utils/course-finish";
 import { foldChangeAreas } from "./_utils/fold-part-areas";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations, loadGraphPartAreas } from "./_utils/part-areas";
@@ -18,6 +19,7 @@ export type PlanChangePreviewResult =
 const BUILDING: PlanChangePreview = {
   effect: null,
   feasibility: null,
+  finishDate: null,
   ready: false,
   unchanged: false,
 };
@@ -73,6 +75,7 @@ export async function previewPlanChange({
           fits,
           measure,
         },
+        finishDate: getCourseFinish(computed),
         ready: true,
         unchanged,
       },

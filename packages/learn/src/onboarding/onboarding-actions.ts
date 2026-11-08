@@ -12,7 +12,6 @@ import {
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type DayView } from "@zoonk/core/sessions/day-view";
 import {
   type OnboardingAnswerInput,
   type OnboardingDraftEdit,
@@ -20,6 +19,7 @@ import {
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
 import { type ItemPictureData } from "../questions/item-picture";
 
@@ -135,7 +135,12 @@ export type PlacementMockOutcome = {
 };
 
 /** `today` is the day Today will show, null until it can be read. */
-export type RevealedPlan = { plan: PlanView; syllabus: SyllabusView | null; today: DayView | null };
+export type RevealedPlan = {
+  plan: PlanView;
+  /** The reveal's Today and first week; null while Today can't be read. */
+  reveal: PlanRevealDays | null;
+  syllabus: SyllabusView | null;
+};
 
 export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "failed" };
 
