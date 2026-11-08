@@ -169,16 +169,8 @@ private struct WaitProgressPush<Progress: View, Extra: View>: ViewModifier {
         .environment(visit)
       }
       .loads(deal.deck.map { [$0] } ?? [], refreshable: false)
-      // A wait opened on its own hears its run's deck a moment after it shows.
-      .onChange(of: deal.hasCard, initial: true) { _, hasCard in
-        if hasCard {
-          visit.open(hasCard: true)
-        }
-      }
-      .task {
-        try? await Task.sleep(for: .seconds(1))
-        visit.open(hasCard: deal.hasCard)
-      }
+      // A deck that comes after this is offered in the bar, never swapped in under the learner.
+      .onAppear { visit.open(hasCard: deal.hasCard) }
   }
 }
 
