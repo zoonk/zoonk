@@ -469,6 +469,14 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Das hat nicht geklappt. Versuch es gleich noch einmal."
 
 #: src/_components/save-error.tsx
+#: src/feedback/feedback-form-dialog.tsx
+#: src/feedback/report-problem-item.tsx
+#: src/journey/journey-menu.tsx
+msgctxt "feedback.Hf_X9X"
+msgid "Report a problem"
+msgstr "Problem melden"
+
+#: src/_components/save-error.tsx
 msgctxt "71Gfs0"
 msgid "Still not going through. You can come back later."
 msgstr "Das klappt immer noch nicht. Du kannst später wiederkommen."
@@ -3842,13 +3850,6 @@ msgstr "Kurze Erklärung · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
-msgctxt "feedback.Hf_X9X"
-msgid "Report a problem"
-msgstr "Problem melden"
-
-#: src/feedback/feedback-form-dialog.tsx
-#: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
 msgstr "Feedback senden"
@@ -3873,6 +3874,11 @@ msgctxt "feedback.IVDs_9"
 msgid "Your email, for our reply"
 msgstr "Deine E-Mail-Adresse für unsere Antwort"
 
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.hBQCdX"
+msgid "Your email, if you'd like a reply"
+msgstr "Deine E-Mail-Adresse, falls du eine Antwort möchtest"
+
 #. An example email address in an empty field. Adapt it to the language.
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.OiSL94"
@@ -3883,6 +3889,11 @@ msgstr "meineemail@gmail.com"
 msgctxt "feedback.Xx0WZV"
 msgid "Send message"
 msgstr "Nachricht senden"
+
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.f7aJd1"
+msgid "I couldn't save my answers."
+msgstr "Ich konnte meine Antworten nicht speichern."
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.T7Ry38"
