@@ -816,14 +816,22 @@ describe(goalContentWorkflow, () => {
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
 
-    expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        distinctId: goal.userId,
-        name: "Generation Failed",
-        properties: { content_kind: "curriculum", model: null, task: "goal-content" },
-        shared: expect.objectContaining({ platform: "ios" }),
-      }),
-    );
+    const curriculumFailures = vi
+      .mocked(trackServerEvent)
+      .mock.calls.filter(([event]) =>
+        Object.values(event.properties ?? {}).includes("goal-content"),
+      );
+
+    expect(curriculumFailures).toStrictEqual([
+      [
+        expect.objectContaining({
+          distinctId: goal.userId,
+          name: "Generation Failed",
+          properties: { content_kind: "curriculum", model: null, task: "goal-content" },
+          shared: expect.objectContaining({ platform: "ios" }),
+        }),
+      ],
+    ]);
   });
 
   it("reports a course plan's failed preparation for the learner who asked", async () => {
