@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -290,25 +291,26 @@ fun SaveErrorText(
     failures: Int,
     onRetry: (() -> Unit)? = null,
     onReport: () -> Unit,
+    firstFailureMessage: String = stringResource(R.string.practice_save_error),
+    retryLabel: String = stringResource(R.string.practice_try_again),
+    liveRegion: LiveRegionMode = LiveRegionMode.Polite,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.practice_save_error),
-                modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
+                text = if (failures > 1) stringResource(R.string.practice_save_error_repeat) else firstFailureMessage,
+                modifier = Modifier.weight(1f, fill = false).semantics { this.liveRegion = liveRegion },
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
+                style = textStyle,
             )
-            onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+            onRetry?.let { TextButton(onClick = it) { Text(retryLabel) } }
         }
-        if (failures > 1) SaveFailureReportButton(onReport)
-    }
-}
-
-@Composable
-fun SaveFailureReportButton(onReport: () -> Unit) {
-    TextButton(onClick = onReport, leadingIcon = { ButtonIcon(R.drawable.ic_flag) }) {
-        Text(stringResource(R.string.feedback_report_problem))
+        if (failures > 1) {
+            TextButton(onClick = onReport, leadingIcon = { ButtonIcon(R.drawable.ic_flag) }) {
+                Text(stringResource(R.string.feedback_report_problem))
+            }
+        }
     }
 }
 

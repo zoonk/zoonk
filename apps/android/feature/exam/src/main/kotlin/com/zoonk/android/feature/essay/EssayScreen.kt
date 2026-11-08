@@ -81,7 +81,6 @@ import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
-import com.zoonk.android.feature.practice.SaveFailureReportButton
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionTitle
@@ -630,22 +629,13 @@ internal fun EssayGradeSteps(
                         }
                         if (pages || shown == count - 1) {
                             if (finishFailures > 0 && !finishing) {
-                                Text(
-                                    stringResource(
-                                        if (finishFailures >
-                                            1
-                                        ) {
-                                            R.string.practice_save_error_repeat
-                                        } else {
-                                            R.string.essay_finish_failed
-                                        },
-                                    ),
-                                    Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                SaveErrorText(
+                                    failures = finishFailures,
+                                    firstFailureMessage = stringResource(R.string.essay_finish_failed),
+                                    liveRegion = LiveRegionMode.Assertive,
+                                    onReport = onReportSaveFailure,
                                 )
                             }
-                            if (finishFailures > 1 && !finishing) SaveFailureReportButton(onReportSaveFailure)
                             if (!tooShort && !beside) {
                                 TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
                                     Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)

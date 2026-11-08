@@ -90,7 +90,7 @@ import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
-import com.zoonk.android.feature.practice.SaveFailureReportButton
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ReachedFacts
@@ -288,8 +288,15 @@ private fun WordStep(
             },
             bottomBar = {
                 TaskActionBar {
-                    if (round.finishFailures > 0 && !round.pending) SaveFailed(round.finishFailures, onRetry = model::finish)
-                    if (round.finishFailures > 1 && !round.pending) SaveFailureReportButton(onReportSaveFailure)
+                    if (round.finishFailures > 0 && !round.pending) {
+                        SaveErrorText(
+                            failures = round.finishFailures,
+                            firstFailureMessage = stringResource(R.string.pronunciation_save_failed),
+                            onRetry = model::finish,
+                            retryLabel = stringResource(R.string.pronunciation_save_retry),
+                            onReport = onReportSaveFailure,
+                        )
+                    }
                     WordActions(round, step, model, status, tapRecord)
                 }
             },
@@ -647,22 +654,6 @@ private fun WordActions(
                 enabled = !round.pending,
             )
         }
-    }
-}
-
-@Composable
-private fun SaveFailed(
-    failures: Int,
-    onRetry: () -> Unit,
-) {
-    Row(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.pronunciation_save_failed),
-            Modifier.weight(1f, fill = false),
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        TextButton(onClick = onRetry) { Text(stringResource(R.string.pronunciation_save_retry)) }
     }
 }
 

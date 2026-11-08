@@ -3,7 +3,6 @@ package com.zoonk.android.feature.feedback
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiClients
@@ -100,12 +99,12 @@ class FeedbackViewModel(
 
     /** [accountEmail] is the signed-in account's; without one the learner types it. */
     fun canSend(accountEmail: String?): Boolean {
-        val email = (accountEmail ?: typedEmail).trim()
+        val email = typedEmail.trim()
         val validEmail =
-            if (email.isEmpty()) {
-                target.reportType == FeedbackSubmissionContext.ReportType.SAVE_FAILURE
-            } else {
-                PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
+            when {
+                accountEmail != null -> accountEmail.isNotBlank()
+                email.isEmpty() -> target.reportType == FeedbackSubmissionContext.ReportType.SAVE_FAILURE
+                else -> email.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+"))
             }
         return status != FeedbackStatus.Sending && message.isNotBlank() && validEmail
     }

@@ -47,7 +47,7 @@ import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.count
-import com.zoonk.android.feature.practice.SaveFailureReportButton
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
@@ -311,22 +311,15 @@ fun LessonCompletionView(
                 )
 
                 if (completion.status == CompletionStatus.Failed) {
-                    Text(
-                        stringResource(
-                            if (completion.saveFailures >
-                                1
-                            ) {
-                                R.string.practice_save_error_repeat
-                            } else {
-                                R.string.player_save_failed
-                            },
-                        ),
-                        color = MaterialTheme.colorScheme.error,
+                    SaveErrorText(
+                        failures = completion.saveFailures,
+                        firstFailureMessage = stringResource(R.string.player_save_failed),
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        onReport = onReportSaveFailure,
                     )
                 }
                 if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }
-            if (completion.status == CompletionStatus.Failed && completion.saveFailures > 1) SaveFailureReportButton(onReportSaveFailure)
             val result = completion.result
             if (completion.status == CompletionStatus.Saved && result != null) {
                 val moment = buddy.momentBuddy()

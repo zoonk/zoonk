@@ -111,6 +111,23 @@ class FeedbackViewModelTest {
         }
 
     @Test
+    fun anAccountEmailWithAnApostropheCanSendFeedback() {
+        val form = FeedbackViewModel(sender, FeedbackTarget("support"))
+        form.onMessageChange("The timer skips a second.")
+
+        assertTrue(form.canSend("o'brien@example.com"))
+    }
+
+    @Test
+    fun aTypedEmailWithAnApostropheCanSendFeedback() {
+        val form = FeedbackViewModel(sender, FeedbackTarget("support"))
+        form.onMessageChange("The timer skips a second.")
+        form.onEmailChange("o'brien@example.com")
+
+        assertTrue(form.canSend(null))
+    }
+
+    @Test
     fun aSaveReportStillNeedsAMessage() {
         val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.")
         form.onMessageChange(" ")

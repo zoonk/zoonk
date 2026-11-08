@@ -54,7 +54,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
-import com.zoonk.android.feature.practice.SaveFailureReportButton
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
@@ -417,14 +417,12 @@ internal fun ColumnScope.PlacementQuestion(
         },
     ) {
         if (saveFailures > 0 && !pending) {
-            Text(
-                stringResource(if (saveFailures > 1) R.string.practice_save_error_repeat else R.string.onboarding_placement_answer_failed),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
+            SaveErrorText(
+                failures = saveFailures,
+                firstFailureMessage = stringResource(R.string.onboarding_placement_answer_failed),
+                onReport = onReportSaveFailure,
             )
         }
-        if (saveFailures > 1 && !pending) SaveFailureReportButton(onReportSaveFailure)
         BesideOrAbove(
             start = {
                 OutlinedButton(
