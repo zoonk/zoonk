@@ -17,9 +17,13 @@ An eval's job is to find the cheapest model that matches a higher tier's quality
 - Never test one model alone. Run the task on models from different families (at least OpenAI, Anthropic and Google), picked from the AI Gateway's current catalog.
 - Work from the bottom up. Start with each family's cheapest model and move one tier up only when the one below isn't good enough. For OpenAI, that's Luna, then Terra, then Sol, then Astra.
 - First say what matters most for this task: quality when it needs the best output, cost when keeping spend down comes first, or latency when speed is critical. Then pick the best balance.
+- Private content serves one learner and can't spread its cost, so it takes the cheapest model that keeps good quality. Shared content is reused, so it can afford a pricier model when quality needs it.
 - When a cheaper model reaches the same or very similar quality, use it. It's usually faster too.
 - Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected.
+- Compare models by their measured cost per run on the task, never by per-token price: models spend very different token counts on the same input.
+- Read the outputs, don't just trust the scores: always the leading models' outputs and every case where they differ. When a score doesn't hold up, fix the eval (case, scorer or rubric) before choosing.
 - A model's labels tend to favor its own family. When hand labels decide between models, label blind with two families, then read the outputs where the leading models differ.
+- The comment beside a model says why it was chosen: the eval evidence and any judgment beyond the scores.
 
 ## Regression cases
 
