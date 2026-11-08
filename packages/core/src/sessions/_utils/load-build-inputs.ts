@@ -9,45 +9,32 @@ import {
   type AlphabetIntro,
   loadAlphabetIntro,
 } from "../../library/language/alphabet/alphabet-intro";
-import { LEARN_KINDS, isWritingItem } from "../../plans/planner/plan-item-rules";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { type BlockDrill } from "../block-payload";
-import { getFreshStart } from "../fresh-start";
-import { getPracticeShare } from "../practice-share";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { loadDayCapsules } from "./day-capsules";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
-import { getUnwrittenMinutesOn, pickDayLessons } from "./day-lessons";
+import { pickDayLessons } from "./day-lessons";
 import { loadDayPlan } from "./day-plan";
+import {
+  getDayFreshStart,
+  getDayPracticeShare,
+  getDayWritingMinutes,
+  getPlanTestSkillIds,
+} from "./day-plan-facts";
 import { findPlannedReview } from "./day-review";
 import { getExamPrepAccess } from "./exam-access";
 import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { loadMistakeDrills } from "./load-mistake-drills";
-import { loadUpcomingLessons } from "./load-plan-lessons";
+import { loadDayPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
 import { loadReviewsAndClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
-import { getPracticeWeights, getTestSkillIds } from "./review-skills";
+import { getPracticeWeights } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
-import { type SessionPlanItem } from "./session-plan-item";
-
-function isNewPhase(items: readonly SessionPlanItem[]): boolean {
-  const phase = items.find(
-    (item) => LEARN_KINDS.has(item.kind) && item.status === "todo" && !isWritingItem(item),
-  )?.phase;
-
-  return (
-    phase !== undefined &&
-    phase > 0 &&
-    items.every((item) => item.phase !== phase || item.status === "todo")
-  );
-}
-
-function getPlanProgress(items: readonly SessionPlanItem[]): number {
-  return items.filter((item) => item.status !== "todo").length / Math.max(1, items.length);
-}
 
 /** Checkpoint questions must stay out of drills; a correct checkpoint answer fixes their mistake too. */
 function withoutCheckpointItems({
@@ -82,25 +69,6 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
       title: alphabet.title,
     },
   ];
-}
-
-function getDayFreshStart({
-  plan,
-  today,
-}: {
-  plan: Pick<
-    Awaited<ReturnType<typeof loadDayPlan>>,
-    "isFirstDay" | "items" | "lastStudyDate" | "planStart"
-  >;
-  today: Date;
-}) {
-  return getFreshStart({
-    isFirstDay: plan.isFirstDay,
-    isNewPhase: isNewPhase(plan.items),
-    lastStudyDate: plan.lastStudyDate,
-    startDate: plan.planStart,
-    today,
-  });
 }
 
 function toReviewInput({
@@ -151,24 +119,18 @@ async function withWeakestReview({
   return capsules.length > 0 ? { ...input, capsules, weakestReview: true } : input;
 }
 
-function getPlanTestSkillIds(plan: Awaited<ReturnType<typeof loadDayPlan>>): string[] {
-  return getTestSkillIds({
-    graph: plan.graph,
-    planSkillIds: plan.skills.map((skill) => skill.id),
-    settings: plan.settings,
-  });
-}
+type SessionBuildContext = BuildContext & {
+  /** A day retaining blocks is not empty and must not get a weakest-topic fallback review. */
+  keepsBlocks?: boolean;
+  /** Look ahead past retained lessons rather than letting them consume new-lesson slots. */
+  keptLessonIds?: ReadonlySet<string>;
+  selection?: SelectedDayPlan;
+  dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
+};
 
 /** Loads day inputs without persisting a session; selected plans and supplied facts must remain the caller's chosen state. */
 export async function loadSessionBuildInput(
-  context: BuildContext & {
-    /** A day retaining blocks is not empty and must not get a weakest-topic fallback review. */
-    keepsBlocks?: boolean;
-    /** Look ahead past retained lessons rather than letting them consume new-lesson slots. */
-    keptLessonIds?: ReadonlySet<string>;
-    selection?: SelectedDayPlan;
-    dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
-  },
+  context: SessionBuildContext,
 ): Promise<SessionBuildInput> {
   const { goal, keepsBlocks = false, keptLessonIds, localDate, now, timeZone, userId } = context;
 
@@ -180,7 +142,7 @@ export async function loadSessionBuildInput(
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
 
-  const { heldSkillIds, learnItems } = pickDayLessons({
+  const { heldSkillIds, learnItems, fillItems, reservedItems } = pickDayLessons({
     awaitingOutlines,
     goal,
     heldDay: context.selection !== undefined,
@@ -194,7 +156,7 @@ export async function loadSessionBuildInput(
   const review = toReviewInput({ context, field, netScored, plan });
 
   const [
-    planLessons,
+    { lessons: planLessons, fillLessons },
     alphabet,
     { capsules: dueCapsules, claims },
     dueDrills,
@@ -202,7 +164,13 @@ export async function loadSessionBuildInput(
     weekly,
     produce,
   ] = await Promise.all([
-    loadUpcomingLessons({ dayMinutes, items: learnItems, keptLessonIds }),
+    loadDayPlanLessons({
+      dayMinutes,
+      fillItems,
+      keptLessonIds,
+      learnItems,
+      paceFactor: parsePlanSettings(plan.settings).pace?.factor,
+    }),
     loadAlphabetIntro({ goal, userId }),
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
@@ -300,24 +268,30 @@ export async function loadSessionBuildInput(
     dailyMinutes: dayMinutes,
     drills,
     examTrialEnded: access.trialEnded,
+    fillLessons: markLessonsAroundChallenges({
+      checkpoints: boss.checkpoints,
+      items: plan.items,
+      lessons: fillLessons,
+      today: localDate,
+    }),
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lessons,
     netScored,
     placementItemIds,
     practice,
-    practiceShare: getPracticeShare({
-      daysToExam: getDaysToExam({ targetDate: goal.targetDate, today: localDate }),
-      planProgress: getPlanProgress(plan.items),
-    }),
+    practiceShare: getDayPracticeShare({ goal, items: plan.items, today: localDate }),
     produce,
     reinforcement: boss.reinforcement,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay?.key ?? null,
     topics: getPlanTopics(plan.graph),
-    writingMinutes: awaitingOutlines
-      ? getUnwrittenMinutesOn({ items: plan.items, today: localDate })
-      : 0,
+    writingMinutes: getDayWritingMinutes({
+      checkpoints: boss.checkpoints,
+      items: plan.items,
+      reservedItems,
+      today: localDate,
+    }),
   };
 
   return keepsBlocks ? input : withWeakestReview({ input, review });

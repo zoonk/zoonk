@@ -101,7 +101,7 @@ describe("work earlier days left in a plan that studies a base another way", () 
         : [],
     );
 
-    expect(nucleusDays).toStrictEqual(["2026-10-16", "2026-10-16"]);
+    expect(nucleusDays).toStrictEqual(["2026-10-15", "2026-10-16"]);
 
     const settled = buildPlan(
       chooseBases({

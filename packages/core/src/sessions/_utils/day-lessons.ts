@@ -44,13 +44,14 @@ export function getUnwrittenMinutesOn({
   return items
     .filter((item) => item.status === "todo" && isStandIn(item))
     .reduce((sum, item) => {
-      const days = readSelectedItemFacts(item.facts)?.days;
+      const facts = readSelectedItemFacts(item.facts);
+      const days = facts?.days;
 
       if (days) {
-        return sum + (days.find(([day]) => day === date)?.[1] ?? 0);
+        return sum + (days.find(([day]) => day === date)?.[2] ?? 0);
       }
 
-      return isDue({ item, today }) ? sum + (item.minutes ?? 0) : sum;
+      return isDue({ item, today }) ? sum + (facts?.parts.unwritten ?? 0) : sum;
     }, 0);
 }
 
@@ -106,7 +107,9 @@ function listHeldAreas<TItem extends DayItem>({
 function listOpenLessons<TItem extends DayItem>({
   items,
   prerequisites,
+  includeUnwritten = false,
 }: {
+  includeUnwritten?: boolean;
   items: readonly TItem[];
   prerequisites: ReadonlyMap<string, readonly string[]>;
 }): TItem[] {
@@ -116,7 +119,13 @@ function listOpenLessons<TItem extends DayItem>({
   return items.filter((item) => {
     if (hasUnwrittenSkill(item)) {
       waiting.add(item.skillId);
-      return false;
+
+      return (
+        includeUnwritten &&
+        !(prerequisites.get(item.skillId ?? "") ?? []).some(
+          (skillId) => waiting.has(skillId) && !written.has(skillId),
+        )
+      );
     }
 
     const blocked = (prerequisites.get(item.skillId ?? "") ?? []).some(
@@ -247,6 +256,10 @@ export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "
   };
 
   return {
+    fillItems: listOpenLessons({
+      items: day.items,
+      prerequisites: plan.prerequisites ?? new Map(),
+    }),
     heldSkillIds: listHeldSkillIds(day),
     learnItems: heldDay
       ? listOpenLessons({
@@ -254,5 +267,10 @@ export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "
           prerequisites: plan.prerequisites ?? new Map(),
         }).filter((item) => isAllocatedOn({ item, today: localDate }))
       : pickDayLessonItems({ ...day, prerequisites: plan.prerequisites }),
+    reservedItems: listOpenLessons({
+      includeUnwritten: true,
+      items: day.items,
+      prerequisites: plan.prerequisites ?? new Map(),
+    }).filter((item) => isStandIn(item) && isAllocatedOn({ item, today: localDate })),
   };
 }

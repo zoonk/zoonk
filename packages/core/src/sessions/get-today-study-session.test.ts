@@ -124,6 +124,7 @@ describe(getTodayStudySession, () => {
     expect(session.minutes).toStrictEqual({
       dailyGoal: 45,
       done: 0,
+      left: session.minutes.planned,
       planned: session.minutes.planned,
     });
 

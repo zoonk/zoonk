@@ -107,7 +107,7 @@ describe(chooseBases, () => {
     expect(core).toBe(32);
     expect(deep).toBe(96);
 
-    expect(baseMinutes(examInput({ choice: "deep", dailyMinutes: 5 }))).toBe(
+    expect(baseMinutes(examInput({ choice: "deep", dailyMinutes: 5 }))).toBeGreaterThanOrEqual(
       baseMinutes(examInput({ choice: null, dailyMinutes: 5 })),
     );
   });

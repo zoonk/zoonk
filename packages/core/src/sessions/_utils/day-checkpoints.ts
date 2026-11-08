@@ -29,6 +29,7 @@ export async function loadDayBosses({
     items: plan.items,
     listeningSkillIds: plan.listeningSkillIds,
     movedEvents: parsePlanSettings(plan.settings).movedEvents,
+    paceFactor: parsePlanSettings(plan.settings).pace?.factor,
     phases: plan.phases,
     readSubscription,
     skills: plan.skills,

@@ -761,7 +761,7 @@ private func dayJSON(
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
     "lessonsComing":false,"lessonsToPrepare":false,
-    "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"planned":15},
+    "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"left":15,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null,
@@ -808,7 +808,7 @@ private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment
     """
     {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
     "blocks":[\(blockJSON(position: 0, kind: "learn", status: "completed", id: blockID, lessonID: "l0", planItemID: nil, checkpoint: nil)),\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil))],
-    "sessionId":"s1","goalId":null,"finishedChapterId":null,
+    "sessionId":"s1","goalId":null,"finishedChapterId":null,"deferredLessonsCount":0,"minutes":{"dailyGoal":30,"done":10,"left":20,"planned":30},
     "next":{"block":\(blockJSON(position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil, checkpoint: nil)),"opensInPlayer":false,"target":{"kind":"block","blockId":"b1"}},
     "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
     "nextBlockId":\(json(nextBlockID)),"reached":null,"sessionCompleted":\(nextBlockID == nil),

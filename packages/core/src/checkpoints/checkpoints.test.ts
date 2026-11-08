@@ -280,15 +280,18 @@ describe("phase checkpoint (boss)", () => {
 
     const learn = tomorrow.session.blocks.filter((candidate) => candidate.kind === "learn");
 
-    expect(learn.map((candidate) => [candidate.lessonId, candidate.reinforcement])).toStrictEqual([
+    expect(
+      learn
+        .filter((candidate) => candidate.reinforcement)
+        .map((candidate) => [candidate.lessonId, candidate.reinforcement]),
+    ).toStrictEqual([
       [lessons[0]?.id, true],
       [lessons[1]?.id, true],
     ]);
 
-    expect(tomorrow.session.blocks.at(-1)).toMatchObject({
-      checkpoint: { kind: "boss", rematch: true },
-      kind: "checkpoint",
-    });
+    expect(
+      tomorrow.session.blocks.find((candidate) => candidate.checkpoint?.rematch),
+    ).toMatchObject({ checkpoint: { kind: "boss", rematch: true }, kind: "checkpoint" });
   });
 
   it("judges a duel on the questions it can still ask when one was removed", async () => {
@@ -415,15 +418,18 @@ describe("phase checkpoint (boss)", () => {
 
     const learn = tomorrow.session.blocks.filter((block) => block.kind === "learn");
 
-    expect(learn.map((block) => [block.lessonId, block.reinforcement])).toStrictEqual([
+    expect(
+      learn
+        .filter((block) => block.reinforcement)
+        .map((block) => [block.lessonId, block.reinforcement]),
+    ).toStrictEqual([
       [lessons[0]?.id, true],
       [lessons[1]?.id, true],
     ]);
 
-    expect(tomorrow.session.blocks.at(-1)).toMatchObject({
-      checkpoint: { kind: "boss", rematch: true },
-      kind: "checkpoint",
-    });
+    expect(
+      tomorrow.session.blocks.find((candidate) => candidate.checkpoint?.rematch),
+    ).toMatchObject({ checkpoint: { kind: "boss", rematch: true }, kind: "checkpoint" });
 
     expect(tomorrow.session.localDate).toStrictEqual(new Date(SESSION_TODAY.getTime() + DAY_MS));
 
@@ -677,7 +683,10 @@ describe(getWeeklyChallenge, () => {
       status: "ready",
     });
 
-    const block = today.status === "ready" ? today.session.blocks.at(-1) : undefined;
+    const block =
+      today.status === "ready"
+        ? today.session.blocks.find((candidate) => candidate.checkpoint?.mock)
+        : undefined;
 
     expect(block).toMatchObject({
       checkpoint: { kind: "weekly", mock: true, timeLimitMinutes: 27 },

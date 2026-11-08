@@ -9,7 +9,7 @@ import {
   getPlannedMinutes,
 } from "./plan-days";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
-import { type ExamWindow, findExamWindow, getLearnDayShare, getLearningShare } from "./plan-phases";
+import { type ExamWindow, findExamWindow, getDayLearningShare } from "./plan-phases";
 import { getPlanStart } from "./plan-run-days";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 
@@ -29,14 +29,17 @@ export function getKeptMinutes({
 
   const { practiceBias } = input.settings;
 
-  const share = window
-    ? getLearningShare({ phaseKind: window.kind, practiceBias })
-    : getLearnDayShare({
-        date: item.scheduledFor,
-        hasMocks: input.goal.kind === "exam",
-        practiceBias,
-        start: getPlanStart(input),
-      });
+  const share = getDayLearningShare({
+    date: item.scheduledFor,
+    open:
+      window?.kind !== "finalStretch" &&
+      (input.goal.targetDate === null ||
+        item.scheduledFor === null ||
+        item.scheduledFor < input.goal.targetDate),
+    phaseKind: window?.kind ?? "learn",
+    practiceBias,
+    start: getPlanStart(input),
+  });
 
   const isFullMock = window?.kind === "finalStretch";
 

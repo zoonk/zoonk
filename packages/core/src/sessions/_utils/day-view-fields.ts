@@ -3,10 +3,10 @@ import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
-import { getSessionMinutesDone } from "../daily-goal";
 import { getExtraTime } from "../extra-time";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
+import { getSessionMinutes } from "../session-minutes";
 import { type DayBlockInput } from "./day-block-view";
 import { getDayLessons } from "./empty-day";
 import { type ExamPrepAccess } from "./exam-access";
@@ -82,7 +82,6 @@ export function toDayViewFields({
     trialEnded: examAccess.trialEnded,
   });
 
-  const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
   return {
@@ -107,7 +106,12 @@ export function toDayViewFields({
     lessonsComing: lessons.lessonsComing,
     lessonsToPrepare: lessons.lessonsToPrepare,
     localDate: session.localDate,
-    minutes: { dailyGoal: dayMinutes, done: minutesDone, planned: session.plannedMinutes },
+    minutes: getSessionMinutes({
+      blocks: session.blocks,
+      dailyGoal: dayMinutes,
+      planned: session.plannedMinutes,
+      reserved: lessonRoom,
+    }),
     nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     plusLessons,

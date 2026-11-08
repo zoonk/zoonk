@@ -55,6 +55,8 @@ const blockPayloadSchema = z.object({
   checkpointAnswers: z
     .array(z.object({ attemptId: uuidSchema(), itemId: uuidSchema() }))
     .default([]),
+  creditedMinutes: z.number().nonnegative().optional(),
+  deferredLessonsCount: z.number().int().nonnegative().default(0),
   drills: z.array(drillSchema).default([]),
   /** The retained locked calls whose freed time this once-only entitlement replacement filled. */
   entitlementReplacementFor: z.array(uuidSchema()).default([]),

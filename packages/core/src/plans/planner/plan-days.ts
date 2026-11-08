@@ -12,7 +12,7 @@ import {
   getStudyMinutes,
   toIsoDate,
 } from "./plan-calendar";
-import { type ExamWindow, findExamWindow, getLearnDayShare, getLearningShare } from "./plan-phases";
+import { type ExamWindow, findExamWindow, getDayLearningShare } from "./plan-phases";
 import { type PlanSettings, type PracticeBias } from "./plan-state";
 import { getBossKey } from "./plan-units";
 import { type DayShape, type FixedEvent } from "./schedule-units";
@@ -79,11 +79,13 @@ export function createLearnDays({
   mockMinutes = null,
   practiceBias,
   start,
+  planStart = start,
   targetDate,
 }: CalendarInput & {
   eventWeekday: number;
   mockMinutes?: number | null;
   start: Date;
+  planStart?: Date;
   targetDate: Date | null;
 }): (date: Date) => DayShape {
   const firstCheckpoint = addDays(start, DAY_OF_SECOND_WEEK);
@@ -102,7 +104,7 @@ export function createLearnDays({
       minutes: open ? getStudyMinutes({ calendar, date }) : 0,
       open,
       phase: null,
-      share: getLearnDayShare({ date, hasMocks: mockMinutes !== null, practiceBias, start }),
+      share: getDayLearningShare({ date, open, practiceBias, start: planStart }),
     };
   };
 }
@@ -290,7 +292,13 @@ export function createExamDays({
       minutes,
       open: window.kind !== "finalStretch",
       phase,
-      share: getLearningShare({ phaseKind: window.kind, practiceBias }),
+      share: getDayLearningShare({
+        date,
+        open: window.kind !== "finalStretch",
+        phaseKind: window.kind,
+        practiceBias,
+        start: rules.planStart ?? firstDay,
+      }),
     };
   };
 }
