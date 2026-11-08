@@ -22,11 +22,11 @@ function isListed(
 
 type ListedRow = { number: ReturnType<ChapterNumbering>; planPosition: number };
 
-/** Subjects as their pages list them, each by chapter number; chapters in no subject last. */
+/** As the syllabus numbers chapters, each subject's or the course's by number; the rest last. */
 function toSyllabusPlace({ number, planPosition }: ListedRow): [number, number] {
-  return number.subjectOrder === null
+  return number.syllabusOrder === null
     ? [Number.MAX_SAFE_INTEGER, planPosition]
-    : [number.subjectOrder, number.position];
+    : [number.syllabusOrder, number.position];
 }
 
 function compareBySyllabus(first: ListedRow, second: ListedRow): number {

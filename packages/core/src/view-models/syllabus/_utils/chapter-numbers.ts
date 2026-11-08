@@ -8,8 +8,11 @@ import { readSyllabusInput } from "./read-syllabus-input";
 type ChapterNumber = {
   position: number;
   subject: { key: string; name: string } | null;
-  /** The subject's place in the syllabus, which orders subject pages; null without one. */
-  subjectOrder: number | null;
+  /**
+   * Where the numbering that set `position` sits in the syllabus: a subject's place, as subject
+   * pages are ordered, with the course after every subject; null when only the plan numbers it.
+   */
+  syllabusOrder: number | null;
 };
 
 /** Falls back to planPosition when no subject or course numbers the chapter. */
@@ -53,7 +56,7 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
               {
                 position: chapter.position,
                 subject: { key: subject.key, name: subject.shortName },
-                subjectOrder,
+                syllabusOrder: subjectOrder,
               },
             ] as const,
           ]
@@ -63,10 +66,14 @@ export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering
 
   const numbers = new Map(entries.toReversed());
 
-  return ({ chapterId, planPosition }) =>
-    numbers.get(chapterId) ?? {
-      position: courseNumbers.get(chapterId) ?? planPosition,
-      subject: null,
-      subjectOrder: null,
-    };
+  return ({ chapterId, planPosition }) => {
+    const courseNumber = courseNumbers.get(chapterId);
+
+    return (
+      numbers.get(chapterId) ??
+      (courseNumber === undefined
+        ? { position: planPosition, subject: null, syllabusOrder: null }
+        : { position: courseNumber, subject: null, syllabusOrder: subjects.length })
+    );
+  };
 }

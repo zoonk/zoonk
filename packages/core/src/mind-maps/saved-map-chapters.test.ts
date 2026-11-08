@@ -14,6 +14,7 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { courseGoalFixture, signedInCourseGoal } from "../view-models/_test-utils/course-goal";
+import { getChapterView } from "../view-models/chapter/get-chapter-view";
 import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
 import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
@@ -241,6 +242,36 @@ describe("mind maps read from the saved plan", () => {
       ["Língua Portuguesa", 2, "Coesão"],
       ["Direito Constitucional", 1, "A Constituição"],
     ]);
+  });
+
+  it("lists a course plan's chapters as the course numbers them, as the chapter page does", async () => {
+    const { chapters, goal, items } = await signedInCourseGoal();
+
+    const moveItems = (toPosition: (index: number) => number) =>
+      Promise.all(
+        items.map((item, index) =>
+          prisma.planItem.update({ data: { position: toPosition(index) }, where: { id: item.id } }),
+        ),
+      );
+
+    await moveItems((index) => 100 + index);
+    await moveItems((index) => (index + 2) % 4);
+
+    const mindMaps = await readyMindMaps(goal.id);
+    const listed = mindMaps.chapters.map(({ chapterId, position }) => [chapterId, position]);
+
+    expect(listed).toStrictEqual(chapters.map((chapter, index) => [chapter.id, index + 1]));
+
+    const pages = await Promise.all(
+      chapters.map((chapter) => getChapterView({ chapterId: chapter.id })),
+    );
+
+    expect(
+      pages.map((page, index) => [
+        chapters[index]?.id,
+        page.status === "ready" ? page.chapter.chapter.position : null,
+      ]),
+    ).toStrictEqual(listed);
   });
 
   it("keeps a chapter the plan files a lesson under only by the lesson's home", async () => {
