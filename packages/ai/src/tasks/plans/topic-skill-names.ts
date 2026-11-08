@@ -11,9 +11,10 @@ import { getVerbForm } from "../_utils/verb-form";
 import systemPrompt from "./topic-skill-names.prompt.md";
 
 /**
- * The learner waits on the buddy's card (3 s p50, 6 s p95). On 10 cases (8 Nov 2026), Luna at
- * minimal reasoning and Haiku 5.5 without reasoning each scored 10.00, at $0.1114/1k in 1.71/2.89 s
- * and $0.1246/1k in 1.57/2.30 s; Flash Lite cost $0.3576/1k.
+ * The learner waits on the buddy's card (3 s p50, 6 s p95). On 10 cases (8 Nov 2026), Luna and
+ * Haiku 5.5, both at minimal reasoning as the chain sends it, each scored 10.00, at $0.1114/1k in
+ * 1.71/2.89 s and $0.1324/1k in 1.80/2.65 s; Flash Lite cost $0.3576/1k and named a Japanese skill
+ * in the plain form instead of the potential one.
  */
 const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "minimal";
