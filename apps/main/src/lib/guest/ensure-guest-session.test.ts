@@ -103,7 +103,11 @@ describe("ensureGuestSession", () => {
   });
 
   it("changes nothing for a session the browser already holds", async () => {
-    auth.getSession.mockResolvedValue({ data: { user: { id: "learner-l" } }, error: null });
+    auth.getSession.mockResolvedValue({
+      data: { session: { token: "token-l" }, user: { id: "learner-l" } },
+      error: null,
+    });
+
     const ensureGuestSession = await loadHelper();
 
     await expect(ensureGuestSession()).resolves.toStrictEqual({

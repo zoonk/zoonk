@@ -1,49 +1,37 @@
 type WorkflowAuthHeaders = { Authorization?: string };
 
-let listening = false;
-let token: Promise<string | undefined> | undefined;
+let token: string | undefined;
+let pending: ReturnType<typeof readBrowserSession> | undefined;
 
-/** Only this tab's sign-ins and sign-outs can leave the kept token stale: other tabs reload on them. */
-async function loadAuthClient() {
-  const auth = await import("@zoonk/auth/client");
+/**
+ * Every browser read of the session goes through here, so API calls send the token of the session
+ * the page saw last, such as a guest's made after the old session ended.
+ */
+export async function readBrowserSession() {
+  const { authClient } = await import("@zoonk/auth/client");
+  const session = await authClient.getSession();
 
-  if (!listening) {
-    listening = true;
-
-    auth.authClient.$store.listen("$sessionSignal", () => {
-      token = undefined;
-    });
+  if (!session.error) {
+    token = session.data?.session.token;
   }
 
-  return auth.authClient;
-}
-
-function forget(read: Promise<string | undefined>) {
-  if (token === read) {
-    token = undefined;
-  }
+  return session;
 }
 
 /**
  * A bearer token, since cross-origin cookies are unreliable for previews, custom domains and remote
- * devices. It's read once and kept: Better Auth limits session reads per network, and screens that
- * ask the API every few seconds would use that limit up. The auth client loads on the first call, so
- * pages that never call the API don't ship it.
+ * devices. It's kept from the last session read: Better Auth limits session reads per network, and
+ * screens that ask the API every few seconds would use that limit up. The auth client loads on the
+ * first call, so pages that never call the API don't ship it.
  */
 export async function getWorkflowAuthHeaders(): Promise<WorkflowAuthHeaders> {
-  const client = await loadAuthClient();
-  token ??= client.getSession().then(({ data }) => data?.session.token);
-  const read = token;
+  if (!token) {
+    pending ??= readBrowserSession().finally(() => {
+      pending = undefined;
+    });
 
-  const value = await read.catch((error: unknown) => {
-    forget(read);
-    throw error;
-  });
-
-  if (!value) {
-    forget(read);
-    return {};
+    await pending;
   }
 
-  return { Authorization: `Bearer ${value}` };
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }

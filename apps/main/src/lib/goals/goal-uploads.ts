@@ -7,7 +7,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getSourceUploadFolder } from "@zoonk/utils/user-blobs";
 import { postFromBrowser } from "../api/browser-api";
-import { getWorkflowAuthHeaders } from "../workflow/auth-headers";
+import { getWorkflowAuthHeaders, readBrowserSession } from "../workflow/auth-headers";
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_UNPROCESSABLE = 422;
@@ -74,17 +74,15 @@ export async function attachGoalFile({
 }: AttachGoal & { file: File; language: string }): Promise<AttachOutcome> {
   // The auth and Blob clients load with the first file, so the screens with a paperclip don't
   // ship them (Blob's brings a JWT library along).
-  const { data: clients, error: loadError } = await safeAsync(() =>
-    Promise.all([import("@zoonk/auth/client"), import("@vercel/blob/client")]),
+  const { data: loaded, error: loadError } = await safeAsync(() =>
+    Promise.all([readBrowserSession(), import("@vercel/blob/client")]),
   );
 
   if (loadError) {
     return { status: "failed" };
   }
 
-  const [auth, { uploadPresigned }] = clients;
-
-  const { data: session } = await auth.authClient.getSession();
+  const [{ data: session }, { uploadPresigned }] = loaded;
 
   if (!session || session.user.isAnonymous) {
     return { status: "signInRequired" };

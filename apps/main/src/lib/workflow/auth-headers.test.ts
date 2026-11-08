@@ -2,33 +2,18 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 type SessionRead = { data: { session: { token: string } } | null; error: unknown };
 
-const auth = vi.hoisted(() => ({
-  getSession: vi.fn<() => Promise<SessionRead>>(),
-  sessionChanged: () => {},
-}));
+const auth = vi.hoisted(() => ({ getSession: vi.fn<() => Promise<SessionRead>>() }));
 
-// Better Auth's client needs its server to read a session. Like its store, the fake calls a new
-// listener at once.
-vi.mock("@zoonk/auth/client", () => ({
-  authClient: {
-    $store: {
-      listen: (_signal: string, listener: () => void) => {
-        auth.sessionChanged = listener;
-        listener();
-      },
-    },
-    getSession: auth.getSession,
-  },
-}));
+// Better Auth's client needs its server to read a session.
+vi.mock("@zoonk/auth/client", () => ({ authClient: { getSession: auth.getSession } }));
 
 function session(token: string): SessionRead {
   return { data: { session: { token } }, error: null };
 }
 
-async function loadHelper() {
+async function loadHelpers() {
   vi.resetModules();
-  const { getWorkflowAuthHeaders } = await import("./auth-headers");
-  return getWorkflowAuthHeaders;
+  return import("./auth-headers");
 }
 
 describe("getWorkflowAuthHeaders", () => {
@@ -38,7 +23,7 @@ describe("getWorkflowAuthHeaders", () => {
 
   it("reads the session once for all of a page's calls, so polling can't use up the session read limit", async () => {
     auth.getSession.mockResolvedValue(session("token-1"));
-    const getHeaders = await loadHelper();
+    const { getWorkflowAuthHeaders: getHeaders } = await loadHelpers();
 
     const headers = [...(await Promise.all([getHeaders(), getHeaders()])), await getHeaders()];
 
@@ -58,7 +43,7 @@ describe("getWorkflowAuthHeaders", () => {
       .mockResolvedValueOnce({ data: null, error: null })
       .mockResolvedValue(session("token-1"));
 
-    const getHeaders = await loadHelper();
+    const { getWorkflowAuthHeaders: getHeaders } = await loadHelpers();
 
     await expect(getHeaders()).resolves.toStrictEqual({});
     await expect(getHeaders()).rejects.toThrow("Failed to fetch");
@@ -69,12 +54,24 @@ describe("getWorkflowAuthHeaders", () => {
     expect(auth.getSession).toHaveBeenCalledTimes(4);
   });
 
-  it("reads the new session after a sign-in or sign-out in this tab", async () => {
-    auth.getSession.mockResolvedValueOnce(session("lost")).mockResolvedValue(session("guest"));
-    const getHeaders = await loadHelper();
+  it("sends the session the page read last, such as a guest's made after the old one ended", async () => {
+    auth.getSession
+      .mockResolvedValueOnce(session("ended"))
+      .mockResolvedValueOnce({ data: null, error: { status: 429 } })
+      .mockResolvedValueOnce({ data: null, error: null })
+      .mockResolvedValueOnce(session("guest"))
+      .mockResolvedValueOnce(session("guest-2"));
 
-    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer lost" });
-    auth.sessionChanged();
+    const { getWorkflowAuthHeaders: getHeaders, readBrowserSession } = await loadHelpers();
+
+    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer ended" });
+    await readBrowserSession();
+    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer ended" });
+    await readBrowserSession();
     await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer guest" });
+    await readBrowserSession();
+    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer guest-2" });
+
+    expect(auth.getSession).toHaveBeenCalledTimes(5);
   });
 });
