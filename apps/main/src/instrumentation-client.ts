@@ -5,6 +5,12 @@ import { noteNavigationStart } from "@/lib/session/tap-answer";
 import { waitForSharedProperties } from "@zoonk/core/analytics/posthog-browser";
 import { initBotId } from "botid/client/core";
 import { type RouterTransitionType } from "next";
+import { installTranslationResilience } from "translation-resilience";
+
+// Page translators swap React's text nodes for their own, so React's next change to that text
+// would throw or never show (facebook/react#11538). Eager, because Edge's translator and Google
+// Translate's extension don't mark the page before they start.
+installTranslationResilience({ eager: true });
 
 if (process.env.NODE_ENV === "production") {
   startSentryAfterPageLoad();
