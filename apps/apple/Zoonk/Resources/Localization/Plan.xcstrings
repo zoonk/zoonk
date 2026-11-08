@@ -12650,24 +12650,6 @@
     "Also in %lld exams" : {
       "comment" : "Marks a subject on one exam's plan that the learner's other exams also test",
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Also in %lld exam"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Also in %lld exams"
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "variations" : {
             "plural" : {
@@ -12681,6 +12663,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Auch in %lld Prüfungen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Also in %lld exam"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Also in %lld exams"
                 }
               }
             }
@@ -12767,12 +12767,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Także na %lld egzaminie"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -12783,6 +12777,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Także na %lld egzaminach"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Także na %lld egzaminie"
                 }
               },
               "other" : {
@@ -16457,6 +16457,242 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Temel bilgiler"
+          }
+        }
+      }
+    },
+    "Estimated listening level: %@" : {
+      "comment" : "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätztes Level im Hören: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel estimado de escucha: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau estimé en écoute : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello stimato di ascolto: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リスニングの推定レベル：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "듣기 수준 추정치: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany poziom słuchania: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível estimado de escuta: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini dinleme seviyesi: %@"
+          }
+        }
+      }
+    },
+    "Estimated reading level: %@" : {
+      "comment" : "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätztes Level im Lesen: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel estimado de lectura: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau estimé en lecture : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello stimato di lettura: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リーディングの推定レベル：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽기 수준 추정치: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany poziom czytania: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível estimado de leitura: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini okuma seviyesi: %@"
+          }
+        }
+      }
+    },
+    "Estimated speaking level: %@" : {
+      "comment" : "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätztes Level im Sprechen: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel estimado de expresión oral: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau estimé en expression orale : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello stimato nella parte orale: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スピーキングの推定レベル：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말하기 수준 추정치: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany poziom mówienia: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível estimado de conversação: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini konuşma seviyesi: %@"
+          }
+        }
+      }
+    },
+    "Estimated writing level: %@" : {
+      "comment" : "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätztes Level im Schreiben: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel estimado de expresión escrita: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau estimé en expression écrite : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello stimato di scrittura: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライティングの推定レベル：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "쓰기 수준 추정치: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany poziom pisania: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível estimado de escrita: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini yazma seviyesi: %@"
           }
         }
       }
@@ -25265,6 +25501,65 @@
         }
       }
     },
+    "Practice estimates" : {
+      "comment" : "Heads each language skill's level, estimated from the learner's answers to set how hard practice is",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätzte Level fürs Üben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveles estimados para la práctica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveaux estimés pour l’entraînement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livelli stimati per le esercitazioni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習用の推定レベル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연습 수준 추정치"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowane poziomy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Níveis estimados para a prática"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini beceri seviyeleri"
+          }
+        }
+      }
+    },
     "Practice stays in each exam's style." : {
       "comment" : "On one exam's plan, after saying which topics it shares with other exams",
       "localizations" : {
@@ -28990,6 +29285,65 @@
         }
       }
     },
+    "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan." : {
+      "comment" : "Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Einschätzungen bestimmen, wie schwer die Übungen sind. Für Zertifikate zählen die abgeschlossenen Lektionen in deinem Plan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estas estimaciones sirven para ajustar la dificultad de la práctica. Los certificados dependen de las lecciones que completes en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces estimations servent à adapter la difficulté de l’entraînement. Les certificats dépendent des leçons terminées dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Queste stime servono a regolare la difficoltà degli esercizi. I certificati si basano sulle lezioni completate nel tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推定レベルをもとに練習の難しさを調整します。証明書は、学習計画で終えたレッスンに応じて取得できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 추정치에 맞춰 연습 난이도를 정해요. 인증서는 계획에서 완료한 레슨을 기준으로 발급돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te szacunki określają poziom trudności ćwiczeń. Certyfikaty zależą od lekcji ukończonych w twoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essas estimativas ajudam a definir a dificuldade da prática. Os certificados dependem das aulas concluídas no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu tahminler alıştırmaların zorluk düzeyini belirler. Sertifikalar planında tamamladığın derslere göre verilir."
+          }
+        }
+      }
+    },
     "This chapter isn't in your plan" : {
       "comment" : "Shown for a chapter that isn't in the learner's plan",
       "localizations" : {
@@ -29996,24 +30350,6 @@
     "Topics shared with your %lld other exams count for every exam that has them, so you study them once." : {
       "comment" : "On one exam's plan, when the learner has several other exams that test some of the same topics",
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Topics shared with your %lld other exam count for both exams, so you study them once."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Topics shared with your %lld other exams count for every exam that has them, so you study them once."
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "variations" : {
             "plural" : {
@@ -30027,6 +30363,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Themen, die auch in deinen %lld anderen Prüfungen vorkommen, zählen für alle Prüfungen, in denen sie geprüft werden. Du lernst sie also nur einmal."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Topics shared with your %lld other exam count for both exams, so you study them once."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Topics shared with your %lld other exams count for every exam that has them, so you study them once."
                 }
               }
             }
@@ -30113,12 +30467,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tematów wspólnych z twoim %lld innym egzaminem uczysz się tylko raz na oba egzaminy."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -30129,6 +30477,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Tematów wspólnych z twoimi %lld innymi egzaminami uczysz się tylko raz na wszystkie egzaminy, które je obejmują."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tematów wspólnych z twoim %lld innym egzaminem uczysz się tylko raz na oba egzaminy."
                 }
               },
               "other" : {

@@ -1557,61 +1557,61 @@
         }
       }
     },
-    "Comes when every skill you practice reaches the next level" : {
+    "Comes when you finish a level, studying at least half of it" : {
       "comment" : "Under a language goal on the empty certificates page: when it earns one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bekommst es, sobald alle Fähigkeiten, die du übst, das nächste Level erreichen"
+            "value" : "Erhältst du, wenn du ein Level abschließt und mindestens die Hälfte der Lektionen bearbeitet hast"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo recibes cuando todas las habilidades que practicas alcanzan el siguiente nivel"
+            "value" : "Lo obtienes al completar un nivel si estudiaste al menos la mitad de sus lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu l’obtiens quand chaque compétence que tu travailles atteint le niveau suivant"
+            "value" : "Tu l’obtiens en terminant un niveau dont tu as étudié au moins la moitié des leçons"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo ottieni quando passi al livello successivo in tutte le abilità che alleni"
+            "value" : "Lo ottieni quando completi un livello, dopo averne studiato almeno metà"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "練習しているすべてのスキルが次のレベルに進むと取得できます"
+            "value" : "レベルのレッスンを半分以上学習し、そのレベルを終えると取得できます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요"
+            "value" : "레벨의 레슨을 절반 이상 학습하고 해당 레벨을 완료하면 받을 수 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otrzymasz go, gdy osiągniesz kolejny poziom w każdej ćwiczonej umiejętności"
+            "value" : "Otrzymasz go po ukończeniu poziomu, jeśli przerobisz co najmniej połowę jego lekcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você recebe quando todas as habilidades que pratica chegam ao próximo nível"
+            "value" : "Você recebe ao concluir um nível, com pelo menos metade das aulas estudadas"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın"
+            "value" : "Bir seviyeyi derslerinin en az yarısını çalışarak tamamladığında verilir"
           }
         }
       }
@@ -5314,6 +5314,65 @@
         }
       }
     },
+    "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons." : {
+      "comment" : "How a language level certificate is earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk stellt dieses Zertifikat aus, wenn jemand ein Level abschließt und dabei mindestens die Hälfte der zugehörigen Lektionen bearbeitet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk emite este certificado cuando una persona completa un nivel y estudia al menos la mitad de sus lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk délivre ce certificat quand tu termines un niveau après avoir étudié au moins la moitié de ses leçons."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk rilascia questo certificato a chi completa un livello studiando almeno la metà delle lezioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkは、レッスンの半分以上を学習してレベルを修了した方に、この証明書を発行します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk는 학습자가 한 레벨의 레슨을 절반 이상 공부하고 그 레벨을 완료하면 이 인증서를 발급해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk wydaje ten certyfikat po ukończeniu poziomu i przerobieniu co najmniej połowy jego lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk emite este certificado quando alguém conclui um nível após estudar pelo menos metade das aulas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk, bir seviyedeki derslerin en az yarısını çalışıp seviyeyi tamamlayanlara bu sertifikayı verir."
+          }
+        }
+      }
+    },
     "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it." : {
       "comment" : "How a certificate for a course's level is earned",
       "localizations" : {
@@ -5428,65 +5487,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoonk bu sertifikayı, öğrenci bir kursun planındaki tüm dersleri çalışarak veya testlerini geçerek tamamladığında ve plandaki tüm meydan okumaları kazandığında verir."
-          }
-        }
-      }
-    },
-    "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached %@." : {
-      "comment" : "How a language level certificate is earned; the argument is a CEFR band, such as B2",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk bewertet jede Fähigkeit (Lesen, Hören, Sprechen, Schreiben) anhand der Antworten in Lektionen und Übungen. Ein Level ist abgeschlossen, wenn alle Fähigkeiten, die durch diese Antworten höher eingestuft wurden, das nächste Level erreichen. Dieses Zertifikat wurde daher ausgestellt, als jede davon %@ erreicht hatte."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk mide cada habilidad (lectura, escucha, expresión oral, expresión escrita) a partir de las respuestas de cada persona en las lecciones y las prácticas. Un nivel se completa cuando todas las habilidades que mejoraron con esas respuestas alcanzan el siguiente nivel, así que este certificado se emitió cuando cada una llegó a %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk évalue chaque compétence (lecture, écoute, expression orale, expression écrite) à partir des réponses données pendant les leçons et les entraînements. Un niveau est terminé lorsque toutes les compétences qui ont progressé grâce à ces réponses atteignent le niveau suivant. Ce certificat a donc été délivré lorsque chacune d’elles a atteint le niveau %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk misura ogni abilità (lettura, ascolto, parlato, scrittura) in base alle risposte date durante le lezioni e le esercitazioni. Un livello è completo quando tutte le abilità migliorate con quelle risposte raggiungono il livello successivo. Questo certificato è stato quindi rilasciato quando ciascuna ha raggiunto %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkは、レッスンや練習での回答から、各スキル（リーディング、リスニング、スピーキング、ライティング）を測定します。回答を通じて伸びたスキルがすべて次のレベルに達すると、学習中のレベルを修了したことになります。この証明書は、それらのスキルがすべて%@に達した時点で発行されました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk는 학습자가 레슨과 연습에서 한 답변을 바탕으로 각 스킬(읽기, 듣기, 말하기, 쓰기)을 측정해요. 답변을 통해 레벨이 오른 스킬이 모두 다음 레벨에 도달하면 현재 레벨을 완료한 것으로 봐요. 이 인증서는 해당 스킬이 모두 %@에 도달했을 때 발급됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk ocenia każdą umiejętność (czytanie, słuchanie, mówienie, pisanie) na podstawie odpowiedzi w lekcjach i ćwiczeniach. Poziom jest ukończony, gdy każda umiejętność, której poziom wzrósł dzięki tym odpowiedziom, osiągnie kolejny poziom. Ten certyfikat wydano więc, gdy każda z nich osiągnęła poziom %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk mede cada habilidade (leitura, escuta, conversação e escrita) com base nas respostas de quem estuda nas aulas e na prática. Um nível é concluído quando todas as habilidades que avançaram com essas respostas chegam ao nível seguinte. Por isso, este certificado foi emitido quando cada uma delas chegou a %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk, her beceriyi (okuma, dinleme, konuşma, yazma) öğrencinin derslerde ve alıştırmalarda verdiği cevaplara göre ölçer. Bu cevaplarla seviyesi yükselen tüm beceriler bir sonraki seviyeye ulaştığında seviye tamamlanır; bu sertifika da bu becerilerin her biri %@ seviyesine ulaştığında verildi."
           }
         }
       }
