@@ -168,6 +168,7 @@
     "./verdict-label": "./src/_components/verdict-label.tsx",
     "./visual": "./src/visuals/lesson-visual.tsx",
     "./wait": "./src/wait/wait-screen.tsx",
+    "./wait/deck": "./src/wait/wait-deck.tsx",
     "./wait/hold": "./src/wait/use-ready-hold.ts",
     "./wait/lesson-status": "./src/wait/lesson-wait-status.tsx",
     "./rich-text": "./src/rich-text/rich-text-blocks.tsx",
