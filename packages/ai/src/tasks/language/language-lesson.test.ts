@@ -38,6 +38,15 @@ describe(generateLanguageLesson, () => {
     vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({}));
   });
 
+  it("sends fast speed to the gateway on the same writer model", async () => {
+    await generateLanguageLesson({ ...LESSON, speed: "fast" });
+
+    expect(vi.mocked(generateText).mock.calls[0]?.[0]).toMatchObject({
+      model: "openai/gpt-6.1-terra",
+      providerOptions: { gateway: { speed: "fast" } },
+    });
+  });
+
   it("adds the respelling rules of the learner's own language only", async () => {
     const portuguese = await generateLanguageLesson(LESSON);
 

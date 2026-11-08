@@ -27,7 +27,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
-import { getRun, start } from "workflow/api";
+import { getRun } from "workflow/api";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
@@ -118,7 +118,7 @@ function openingLessonStarts() {
   return getStartMock()
     .mock.calls.filter(([workflow]) => workflow === lessonContentWorkflow)
     .map(([, args]) => (args as [Record<string, unknown>])[0])
-    .filter((input) => input.speed === "fast");
+    .filter((input) => input.wait === "learner" && !input.planGoalId);
 }
 
 describe("a learn goal's opening", () => {
@@ -192,7 +192,7 @@ describe("a learn goal's opening", () => {
     expect(openingLessonStarts()).toHaveLength(starts);
   });
 
-  it("writes the first lesson through the learner's own start, fast, and plans from it", async () => {
+  it("writes the first lesson through the learner's own start and plans from it", async () => {
     const { goal, user } = await newGoal();
     const progress = vi.spyOn(progressSteps, "goalProgressStep");
 
@@ -218,7 +218,6 @@ describe("a learn goal's opening", () => {
         analytics: expect.objectContaining({ distinctId: user.id }),
         forExam: false,
         lessonId: lesson.id,
-        speed: "fast",
         wait: "learner",
       },
     ]);
@@ -551,9 +550,7 @@ describe("a learn goal's opening", () => {
 
     expect(generateGoalOpening).not.toHaveBeenCalled();
 
-    expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
-      expect.objectContaining({ speed: "fast" }),
-    ]);
+    expect(openingLessonStarts()).toStrictEqual([]);
   });
 
   it("reports readiness without waiting for other learners' replans", async () => {

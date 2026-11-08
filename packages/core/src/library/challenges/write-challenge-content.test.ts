@@ -60,7 +60,12 @@ describe(writeChallengeLessonContent, () => {
     vi.mocked(generateChallengeCase).mockResolvedValue(written(writtenChallengeCaseFixture()));
 
     await expect(
-      writeChallengeLessonContent({ lessonId, serviceTier: "flex", workflowRunId }),
+      writeChallengeLessonContent({
+        lessonId,
+        serviceTier: "priority",
+        speed: "fast",
+        workflowRunId,
+      }),
     ).resolves.toStrictEqual({ status: "published" });
 
     expect(generateChallengeCase).toHaveBeenCalledWith(
@@ -68,8 +73,9 @@ describe(writeChallengeLessonContent, () => {
         chapterTitle: "A/B tests",
         level: "beginner",
         problems: [],
-        serviceTier: "flex",
+        serviceTier: "priority",
         skills: [{ description: null, name: "Judge whether a gap is chance" }],
+        speed: "fast",
         variant: "work",
       }),
     );
@@ -101,9 +107,14 @@ describe(writeChallengeLessonContent, () => {
       .mockResolvedValueOnce(written(brokenCase()))
       .mockResolvedValueOnce(written(writtenChallengeCaseFixture()));
 
-    await expect(writeChallengeLessonContent({ lessonId, workflowRunId })).resolves.toStrictEqual({
-      status: "published",
-    });
+    await expect(
+      writeChallengeLessonContent({ lessonId, speed: "fast", workflowRunId }),
+    ).resolves.toStrictEqual({ status: "published" });
+
+    expect(vi.mocked(generateChallengeCase).mock.calls.map(([call]) => call.speed)).toStrictEqual([
+      "fast",
+      undefined,
+    ]);
 
     expect(vi.mocked(generateChallengeCase).mock.calls[1]?.[0].problems).toContain(
       "startNodeId: The case must start with a decision",

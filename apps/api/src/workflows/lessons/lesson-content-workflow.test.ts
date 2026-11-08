@@ -89,6 +89,22 @@ describe(lessonContentWorkflow, () => {
     );
   });
 
+  it.each(["learn", "exam", "language"] as const)(
+    "writes a %s goal's first lesson fast",
+    async (kind) => {
+      const { goal, lesson } = await plannedLesson();
+      await prisma.goal.update({ data: { kind }, where: { id: goal.id } });
+
+      await lessonContentWorkflow({
+        analytics: { goalId: goal.id },
+        lessonId: lesson.id,
+        wait: "learner",
+      });
+
+      expect(writeLessonDraft).toHaveBeenCalledWith(expect.objectContaining({ speed: "fast" }));
+    },
+  );
+
   it("checks a parent's stale placement manifest before taking any generation claim", async () => {
     const { goal, item, lesson } = await plannedLesson();
 
