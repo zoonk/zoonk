@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type GoalOpeningPin, pinGraphToOpening } from "./opening-graph";
+import { type GoalOpeningSkill, keepOpeningFirst } from "./opening-graph";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type GraphSkill = GoalSkillGraph["skills"][number];
@@ -19,92 +19,88 @@ function skill(attrs: Partial<GraphSkill> & Pick<GraphSkill, "key" | "name">): G
   };
 }
 
-const graph: GoalSkillGraph = {
-  courses: [
-    { key: "biology", levels: ["beginner"], title: "Biology" },
-    { key: "immunology", levels: ["beginner"], title: "Immunology" },
-  ],
-  estimatedHours: 10,
-  phases: [
-    { estimatedHours: 5, milestone: "", title: "First steps" },
-    { estimatedHours: 5, milestone: "", title: "Going further" },
-  ],
-  skills: [
-    skill({ course: "biology", key: "cells", name: "Describe what a cell is" }),
-    skill({ key: "pathogens", name: "Identify pathogens", prerequisites: ["cells"] }),
-    skill({ key: "antigens", name: "Explain antigens", phase: 2, prerequisites: ["pathogens"] }),
-  ],
-};
-
-const pin: GoalOpeningPin = {
-  course: { id: "course-id", key: "immuno", levels: ["overview"], title: "immunology" },
+const opening: GoalOpeningSkill = {
+  course: { id: "course-id", key: "immunology", title: "Immunology" },
   skill: {
-    ...skill({ area: "Germs", course: "immuno", key: "pathogens", name: "Identify pathogens!" }),
-    libraryId: "skill-id",
+    area: "Germs",
+    description: "Tell a pathogen from a harmless microbe.",
+    estimatedLessons: 4,
+    id: "skill-id",
+    key: "pathogens",
+    level: "beginner",
+    name: "Identify pathogens",
   },
 };
 
-describe(pinGraphToOpening, () => {
-  it("starts the graph with the saved opening in place of the graph's own copy", () => {
-    const pinned = pinGraphToOpening({ graph, pin });
+describe(keepOpeningFirst, () => {
+  it("holds the graph's first skill to the opening as saved", () => {
+    const graph: GoalSkillGraph = {
+      courses: [{ key: "immunology", levels: ["beginner"], title: "Immunology" }],
+      estimatedHours: 10,
+      phases: [
+        { estimatedHours: 5, milestone: "", title: "First steps" },
+        { estimatedHours: 5, milestone: "", title: "Going further" },
+      ],
+      skills: [
+        skill({ key: "antigens", name: "Explain antigens", prerequisites: ["pathogens"] }),
+        skill({
+          estimatedLessons: 6,
+          key: "pathogens",
+          name: "Spot pathogens",
+          phase: 2,
+          prerequisites: ["antigens"],
+        }),
+      ],
+    };
 
-    expect(
-      pinned.graph.skills.map(({ key, phase, prerequisites }) => [key, phase, prerequisites]),
-    ).toStrictEqual([
-      ["pathogens", 1, []],
-      ["cells", 1, []],
-      ["antigens", 2, ["pathogens"]],
-    ]);
+    const kept = keepOpeningFirst({ graph, opening });
 
-    expect(pinned.graph.skills[0]).toMatchObject({
-      area: "Immunology",
-      course: "immunology",
-      libraryId: "skill-id",
-      name: "Identify pathogens!",
-    });
-
-    expect(pinned.graph.courses).toStrictEqual([
-      { key: "immunology", levels: ["beginner", "overview"], title: "Immunology" },
-      { key: "biology", levels: ["beginner"], title: "Biology" },
-    ]);
-
-    expect(pinned.courseIdsByKey).toStrictEqual({ immunology: "course-id" });
-    expect(pinned.idsByKey).toStrictEqual({ pathogens: "skill-id" });
-  });
-
-  it("adds the opening's course and keeps its key apart from an unrelated skill's", () => {
-    const pinned = pinGraphToOpening({
-      graph,
-      pin: {
-        ...pin,
-        course: { ...pin.course, key: "biology", title: "Virology" },
-        skill: { ...pin.skill, key: "cells", name: "Spot a virus" },
+    expect(kept.graph.skills).toStrictEqual([
+      {
+        area: "Immunology",
+        course: "immunology",
+        description: "Tell a pathogen from a harmless microbe.",
+        estimatedLessons: 6,
+        examWeight: null,
+        key: "pathogens",
+        level: "beginner",
+        libraryId: "skill-id",
+        name: "Identify pathogens",
+        outcome: false,
+        phase: 1,
+        prerequisites: [],
+        topics: [],
       },
-    });
-
-    expect(pinned.graph.skills.map((item) => item.key)).toStrictEqual([
-      "cells-opening",
-      "cells",
-      "pathogens",
-      "antigens",
+      graph.skills[0],
     ]);
 
-    expect(pinned.graph.courses.map((course) => course.key)).toStrictEqual([
-      "biology-opening",
-      "biology",
-      "immunology",
-    ]);
-
-    expect(pinned.idsByKey).toStrictEqual({ "cells-opening": "skill-id" });
+    expect(kept.graph.courses).toStrictEqual(graph.courses);
+    expect(kept.courseIdsByKey).toStrictEqual({ immunology: "course-id" });
+    expect(kept.idsByKey).toStrictEqual({ pathogens: "skill-id" });
   });
 
-  it("gives the same graph when pinned again, as after the twins merge", () => {
-    const once = pinGraphToOpening({ graph, pin });
-    expect(pinGraphToOpening({ graph: once.graph, pin })).toStrictEqual(once);
+  it("adds the opening and its course when the graph left them out", () => {
+    const graph: GoalSkillGraph = {
+      courses: [{ key: "biology", levels: ["beginner"], title: "Biology" }],
+      estimatedHours: 5,
+      phases: [{ estimatedHours: 5, milestone: "", title: "First steps" }],
+      skills: [skill({ course: "biology", key: "cells", name: "Describe a cell" })],
+    };
+
+    const kept = keepOpeningFirst({ graph, opening });
+
+    expect(kept.graph.skills.map((item) => [item.key, item.area, item.course])).toStrictEqual([
+      ["pathogens", "Germs", "immunology"],
+      ["cells", "Immunology", "biology"],
+    ]);
+
+    expect(kept.graph.courses.map((course) => course.key)).toStrictEqual(["immunology", "biology"]);
   });
 
   it("leaves a graph alone when there's no opening", () => {
-    expect(pinGraphToOpening({ graph, pin: null })).toStrictEqual({
+    const graph: GoalSkillGraph = { courses: [], estimatedHours: 0, phases: [], skills: [] };
+
+    expect(keepOpeningFirst({ graph, opening: null })).toStrictEqual({
       courseIdsByKey: {},
       graph,
       idsByKey: {},

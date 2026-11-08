@@ -9,10 +9,7 @@ import {
   toGoalCourses,
 } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import {
-  type GoalOpeningPin,
-  pinGraphToOpening,
-} from "@zoonk/core/library/curriculum/opening-graph";
+import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { updateCoursesBehind } from "../products/product-releases";
@@ -226,7 +223,7 @@ async function prepareCurriculum({
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
-  opening: Promise<GoalOpeningPin | null>;
+  opening: Promise<GoalOpeningSkill | null>;
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
@@ -234,15 +231,8 @@ async function prepareCurriculum({
   const reused = rebuild ? null : await reuseCurriculumStep({ inputs, scope });
 
   if (reused) {
-    const pinned = pinGraphToOpening({ graph: reused.graph, pin: await opening });
     await goalProgressStep({ entityId: inputs.goal.id, status: "started", step: "saveSkills" });
-
-    return toReused({
-      ...reused,
-      courseIdsByKey: { ...reused.courseIdsByKey, ...pinned.courseIdsByKey },
-      graph: pinned.graph,
-      idsByKey: { ...reused.idsByKey, ...pinned.idsByKey },
-    });
+    return toReused(reused);
   }
 
   const built = pinStartedCourse({
@@ -275,15 +265,15 @@ async function prepareCurriculum({
 export async function buildCurriculum({
   context,
   inputs,
-  opening = Promise.resolve(null),
+  opening,
   rebuild,
   researchId,
   scope,
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
-  /** The learner's first skill and course, which the graph keeps as its start. */
-  opening?: Promise<GoalOpeningPin | null>;
+  /** The learner's first skill, which the graph reads and starts with. */
+  opening?: Promise<GoalOpeningSkill | null>;
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
@@ -293,7 +283,7 @@ export async function buildCurriculum({
   const { built, reused, saved, skillIds } = await prepareCurriculum({
     context,
     inputs,
-    opening,
+    opening: opening ?? Promise.resolve(null),
     rebuild,
     researchId,
     scope,

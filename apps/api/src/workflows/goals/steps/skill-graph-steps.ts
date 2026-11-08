@@ -6,6 +6,7 @@ import {
 } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { findExamLibrary } from "@zoonk/core/library/curriculum/exam-library-skills";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
+import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope, getScopeModel } from "@zoonk/core/library/curriculum/scope";
 import {
   isSharedExamGraph,
@@ -21,13 +22,27 @@ import { type GoalStreamStep } from "./goal-progress-step";
 
 type GraphCallParams = Omit<SkillGraphParams, "findLibrarySkills" | "onSkillNamed">;
 
+function toFirstSkill(opening: GoalOpeningSkill): GraphCallParams["firstSkill"] {
+  const { course, skill } = opening;
+
+  return {
+    course: { key: course.key, title: course.title },
+    description: skill.description,
+    key: skill.key,
+    level: skill.level,
+    name: skill.name,
+  };
+}
+
 export async function prepareSkillGraphStep({
   analytics,
+  firstSkill,
   inputs,
   scope,
   workflowRunId,
 }: {
   analytics?: ContentAnalytics;
+  firstSkill?: GoalOpeningSkill | null;
   inputs: GoalCurriculumInputs;
   scope: CurriculumScope;
   workflowRunId: string;
@@ -48,6 +63,7 @@ export async function prepareSkillGraphStep({
     params: {
       ...toScopedGraphPrompt({ inputs, scope }),
       analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+      firstSkill: firstSkill && toFirstSkill(firstSkill),
       librarySkills: Boolean(examBlueprintId),
       serviceTier: chooseServiceTier({ wait: "learner" }),
     } satisfies GraphCallParams,

@@ -1,8 +1,8 @@
 import { needsCoverageCheck } from "@zoonk/core/library/curriculum/add-coverage-skills";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import {
-  type GoalOpeningPin,
-  pinGraphToOpening,
+  type GoalOpeningSkill,
+  keepOpeningFirst,
 } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { loadGoalReferences } from "./goal-content-inputs";
@@ -20,12 +20,13 @@ export async function buildGraph({
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
-  opening: Promise<GoalOpeningPin | null>;
+  /** The learner's first skill, which the graph reads and starts with. */
+  opening: Promise<GoalOpeningSkill | null>;
   researchId?: string | null;
   scope: CurriculumScope;
 }) {
-  const [built, references, pin] = await Promise.all([
-    buildGoalSkillGraph({ ...context, inputs, scope }),
+  const [built, references, first] = await Promise.all([
+    opening.then((firstSkill) => buildGoalSkillGraph({ ...context, firstSkill, inputs, scope })),
     loadGoalReferences({ inputs, researchId }),
     opening,
   ]);
@@ -36,18 +37,11 @@ export async function buildGraph({
     ? await checkGraphCoverageStep({ ...context, graph: built.graph, inputs, references, scope })
     : built;
 
-  // Pinned before the twins are merged, so a near copy of the opening merges into it, and again
-  // after, so it stays the start whatever the merge gave it.
-  const merged = await mergeSkillTwinsStep({
-    ...context,
-    graph: pinGraphToOpening({ graph: covered.graph, pin }).graph,
-    scope,
-  });
+  const merged = await mergeSkillTwinsStep({ ...context, graph: covered.graph, scope });
+  const kept = keepOpeningFirst({ graph: merged, opening: first });
+  const courseIdsByKey = { ...built.courseIdsByKey, ...kept.courseIdsByKey };
 
-  const pinned = pinGraphToOpening({ graph: merged, pin });
-  const courseIdsByKey = { ...built.courseIdsByKey, ...pinned.courseIdsByKey };
-
-  return { ...built, courseIdsByKey, graph: pinned.graph, savedSkillIds: pinned.idsByKey };
+  return { ...built, courseIdsByKey, graph: kept.graph, savedSkillIds: kept.idsByKey };
 }
 
 export type BuiltGraph = Omit<Awaited<ReturnType<typeof buildGraph>>, "savedSkillIds"> & {
