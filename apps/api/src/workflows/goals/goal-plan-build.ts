@@ -53,6 +53,7 @@ async function buildScopedPlan({
 
   const curriculum = await buildCurriculum({
     context,
+    followUp: input.followUp,
     inputs,
     opening: rebuild
       ? readSavedGoalOpeningStep(input.goalId).then((saved) => saved?.skill ?? null)

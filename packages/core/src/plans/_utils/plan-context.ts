@@ -26,7 +26,6 @@ export type PlanContext = {
   plan: Pick<
     Plan,
     | "buildFailedAt"
-    | "generatedAt"
     | "coveredShare"
     | "estimateHours"
     | "id"
@@ -141,7 +140,6 @@ export async function loadPlanContext({
       buildFailedAt: plan.buildFailedAt,
       coveredShare: plan.coveredShare,
       estimateHours: plan.estimateHours,
-      generatedAt: plan.generatedAt,
       id: plan.id,
       inputVersion: plan.inputVersion,
       inputsKey: plan.inputsKey,
