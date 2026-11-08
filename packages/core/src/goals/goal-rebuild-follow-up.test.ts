@@ -165,9 +165,9 @@ describe("a goal rebuild's owed work", () => {
 
     await finishGoalRebuild({ ...input, failed: true, generationId: "current-run" });
 
-    await expect(
-      prisma.followUp.findUniqueOrThrow({ where: { id: old.id } }),
-    ).resolves.toMatchObject({ input: { goalId: goal.id }, revision: 1 });
+    const newer = await prisma.followUp.findUniqueOrThrow({ where: { id: old.id } });
+    expect(newer.revision).toBe(1);
+    expect(newer.input).toStrictEqual({ goalId: goal.id });
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
