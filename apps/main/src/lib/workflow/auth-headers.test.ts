@@ -54,6 +54,23 @@ describe("getWorkflowAuthHeaders", () => {
     expect(auth.getSession).toHaveBeenCalledTimes(4);
   });
 
+  it("shares a read in flight, so a guest's first write can't reuse an answer from before the guest", async () => {
+    const firstRead = Promise.withResolvers<SessionRead>();
+    auth.getSession.mockReturnValueOnce(firstRead.promise).mockResolvedValue(session("guest"));
+    const { getWorkflowAuthHeaders: getHeaders, readBrowserSession } = await loadHelpers();
+
+    const pollHeaders = getHeaders();
+    const guestCheck = readBrowserSession();
+    await vi.waitFor(() => expect(auth.getSession).toHaveBeenCalledOnce());
+    firstRead.resolve({ data: null, error: null });
+
+    await expect(guestCheck).resolves.toStrictEqual({ data: null, error: null });
+    await expect(pollHeaders).resolves.toStrictEqual({});
+    await expect(getHeaders()).resolves.toStrictEqual({ Authorization: "Bearer guest" });
+
+    expect(auth.getSession).toHaveBeenCalledTimes(2);
+  });
+
   it("sends the session the page read last, such as a guest's made after the old one ended", async () => {
     auth.getSession
       .mockResolvedValueOnce(session("ended"))
