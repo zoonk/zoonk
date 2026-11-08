@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { type CourseLevel, type PlanItem } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
+import { type CountedLesson, type UnwrittenLessons } from "../../plans/_utils/half-studied";
 import { type CertifiableItem, type LevelChapter, listCertificateUnits } from "./certificate-units";
 
 const COURSE = "course";
@@ -23,7 +25,7 @@ function lesson({
     chapterId,
     completedAt: status === "todo" ? null : AFTER,
     kind: "lesson",
-    lessonId: null,
+    lessonId: chapterId ? randomUUID() : null,
     lessons: null,
     level,
     minutes: 5,
@@ -59,31 +61,40 @@ const TWO_LEVELS = {
 function units({
   chapters = TWO_LEVELS.chapters,
   goal = GOAL,
-  graphSkills = [],
   heldKeys = [],
   items = TWO_LEVELS.items,
+  leftOut = [],
   levelCourseId = COURSE,
+  missing = [],
   phases = [{}, {}],
   studiesPastTarget = false,
 }: {
   chapters?: LevelChapter[];
   goal?: Parameters<typeof listCertificateUnits>[0]["goal"];
-  graphSkills?: Parameters<typeof listCertificateUnits>[0]["graphSkills"];
   heldKeys?: string[];
   items?: CertifiableItem[];
+  /** Written lessons the plan doesn't hold. */
+  leftOut?: CountedLesson[];
   levelCourseId?: string | null;
+  missing?: UnwrittenLessons[];
   phases?: { challengeLeftOut?: boolean }[];
   studiesPastTarget?: boolean;
 } = {}) {
+  const held = items.flatMap((entry) =>
+    entry.lessonId
+      ? [{ lessonId: entry.lessonId, skillIds: entry.skillId ? [entry.skillId] : [] }]
+      : [],
+  );
+
   return listCertificateUnits({
     goal,
-    graphSkills,
     heldKeys: new Set(heldKeys),
     items,
     levelChapters: chapters,
     levelCourseId,
     phases,
     planCreatedAt: PLAN_CREATED_AT,
+    scope: { graphSkillIds: [], lessons: [...held, ...leftOut], unwritten: missing },
     studiesPastTarget,
   });
 }
@@ -139,17 +150,24 @@ describe(listCertificateUnits, () => {
     expect(finished(units({ items: allTestedOut }))).toStrictEqual([]);
   });
 
-  it("needs half of its skills' full size studied, not half of what the plan kept", () => {
+  it("needs half of its skills' lessons studied, written or not, not half of what the plan kept", () => {
     const items = TWO_LEVELS.items.map((entry) =>
       entry.phase === 1 && entry.kind === "lesson" ? { ...entry, skillId: "waves" } : entry,
     );
 
-    expect(finished(units({ graphSkills: [{ size: 5, skillId: "waves" }], items }))).toStrictEqual([
+    const leftOut = Array.from({ length: 3 }, () => ({
+      lessonId: randomUUID(),
+      skillIds: ["waves"],
+    }));
+
+    expect(finished(units({ items, leftOut }))).toStrictEqual(["course:overview", "goal"]);
+
+    expect(finished(units({ items, missing: [{ lessons: 3, skillId: "waves" }] }))).toStrictEqual([
       "course:overview",
       "goal",
     ]);
 
-    expect(finished(units({ graphSkills: [{ size: 4, skillId: "waves" }], items }))).toStrictEqual([
+    expect(finished(units({ items, missing: [{ lessons: 2, skillId: "waves" }] }))).toStrictEqual([
       "course:overview",
       "course:beginner",
     ]);

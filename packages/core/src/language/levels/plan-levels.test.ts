@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type PlanItem } from "@zoonk/db";
 import { CEFR_LEVELS, type CefrLevel } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
+import { type CountedLesson, type UnwrittenLessons } from "../../plans/_utils/half-studied";
 import {
   type LevelItem,
   type LevelSkill,
@@ -12,7 +13,6 @@ import {
 
 const SKILLS = new Map<string, LevelSkill>([
   ...CEFR_LEVELS.map((level): [string, LevelSkill] => [level, { cefrLevel: level, level: null }]),
-  ["A1-chosen-out", { cefrLevel: "A1", level: "beginner" }],
   ["A-untagged", { cefrLevel: null, level: "beginner" }],
   ["B-untagged", { cefrLevel: null, level: "intermediate" }],
 ]);
@@ -40,20 +40,45 @@ function standIn(skillId: string, size: number, status: PlanItem["status"] = "to
   return { ...lesson(skillId, { status }), chapterId: null, lessonId: null, lessons: size };
 }
 
-function graph(skillId: string, size: number) {
-  return { size, skillId };
+/** Written lessons the plan doesn't hold, each teaching these skills. */
+function written(skillIds: string[], count: number): CountedLesson[] {
+  return Array.from({ length: count }, () => ({ lessonId: randomUUID(), skillIds }));
 }
 
+function unwritten(skillId: string, count: number): UnwrittenLessons {
+  return { lessons: count, skillId };
+}
+
+/** The plan counts each item's lesson at the item's skill unless `lessons` says what it teaches. */
 function levels({
-  graphSkills,
   heldBackLessonIds,
   items,
+  missing = [],
+  taught = [],
 }: {
-  graphSkills: ReturnType<typeof graph>[];
   heldBackLessonIds?: Set<string>;
   items: LevelItem[];
+  missing?: UnwrittenLessons[];
+  taught?: CountedLesson[];
 }) {
-  return listPlanLevels({ graphSkills, heldBackLessonIds, items, skills: SKILLS });
+  const taughtIds = new Set(taught.map((entry) => entry.lessonId));
+
+  const held = items.flatMap((item) =>
+    item.kind === "lesson" && item.lessonId && !taughtIds.has(item.lessonId)
+      ? [{ lessonId: item.lessonId, skillIds: item.skillId ? [item.skillId] : [] }]
+      : [],
+  );
+
+  return listPlanLevels({
+    heldBackLessonIds,
+    items,
+    scope: {
+      graphSkillIds: [...new Set(items.flatMap((item) => item.skillId ?? []))],
+      lessons: [...taught, ...held],
+      unwritten: missing,
+    },
+    skills: SKILLS,
+  });
 }
 
 function earned(list: ReturnType<typeof levels>): CefrLevel[] {
@@ -67,8 +92,8 @@ function at(list: ReturnType<typeof levels>, level: CefrLevel) {
 describe(listPlanLevels, () => {
   it("earns nothing for a dated plan that finished the third of each skill it kept", () => {
     const list = levels({
-      graphSkills: [graph("A1", 30), graph("A2", 30), graph("B1", 24)],
       items: [...lessons("A1", 10), ...lessons("A2", 10)],
+      missing: [unwritten("A1", 20), unwritten("A2", 20), unwritten("B1", 24)],
     });
 
     expect(earned(list)).toStrictEqual([]);
@@ -78,44 +103,54 @@ describe(listPlanLevels, () => {
 
   it("earns every level, C2 included, for a plan with two thirds of each studied", () => {
     const list = levels({
-      graphSkills: CEFR_LEVELS.map((level) => graph(level, 30)),
       items: CEFR_LEVELS.flatMap((level) => lessons(level, 20)),
+      missing: CEFR_LEVELS.map((level) => unwritten(level, 10)),
     });
 
     expect(earned(list)).toStrictEqual([...CEFR_LEVELS]);
   });
 
-  it("sizes a level by its graph skills' full sizes, not by the items the plan holds of them", () => {
+  it("sizes a level by its written lessons and what its skills lack, not by the items it holds", () => {
     const list = levels({
-      graphSkills: [graph("A1", 6), graph("A1-chosen-out", 0), graph("A2", 4)],
       items: [...lessons("A1", 3), ...lessons("A2", 2), standIn("A2", 2, "testedOut")],
+      missing: [unwritten("A2", 2)],
+      taught: written(["A1"], 3),
     });
 
     expect(at(list, "A1")).toMatchObject({ earned: true, size: 6, studied: 3 });
     expect(at(list, "A2")).toMatchObject({ earned: true, size: 4, studied: 2 });
   });
 
-  it("never sizes a skill below the lessons the plan holds for it", () => {
+  it("counts a lesson that teaches two levels once, at the lower one, whichever skill holds it", () => {
+    const filedA1 = lessons("A1", 4, { status: "testedOut" });
+    const filedA2 = lessons("A2", 4);
+
     const list = levels({
-      graphSkills: [graph("A1", 2)],
-      items: [...lessons("A1", 1), standIn("A1", 3, "testedOut")],
+      items: [...filedA1, ...filedA2],
+      taught: [...filedA1, ...filedA2].map((item) => ({
+        lessonId: item.lessonId ?? "",
+        skillIds: ["A1", "A2"],
+      })),
     });
 
-    expect(at(list, "A1")).toMatchObject({ earned: false, size: 4, studied: 1 });
+    expect(at(list, "A1")).toMatchObject({ earned: true, size: 8, studied: 4 });
+    expect(at(list, "A1")?.items).toHaveLength(8);
+    expect(at(list, "A2")).toMatchObject({ earned: false, items: [], size: 0 });
   });
 
-  it("measures a skill the graph doesn't hold by its own items, tested-out stand-ins at their size", () => {
-    const list = levels({
-      graphSkills: [],
-      items: [...lessons("A1", 2), standIn("A1", 3, "testedOut")],
-    });
+  it("leaves a lesson untagged only while an untagged skill could put it lower", () => {
+    const item = lesson("A2");
 
-    expect(at(list, "A1")).toMatchObject({ earned: false, size: 5, studied: 2 });
+    const level = (skillIds: string[]) =>
+      levels({ items: [item], taught: [{ lessonId: item.lessonId ?? "", skillIds }] });
+
+    expect(earned(level(["A2", "B-untagged"]))).toStrictEqual(["A2"]);
+    expect(earned(level(["A2", "A-untagged"]))).toStrictEqual([]);
+    expect(at(level(["A2", "A-untagged"]), "A1")?.items).toStrictEqual([item]);
   });
 
   it("holds a level and every one above it while a lesson at or below it is left to do", () => {
     const list = levels({
-      graphSkills: [graph("A1", 2), graph("A2", 2)],
       items: [...lessons("A1", 1), ...lessons("A1", 1, { status: "todo" }), ...lessons("A2", 2)],
     });
 
@@ -123,47 +158,35 @@ describe(listPlanLevels, () => {
   });
 
   it("earns two levels together when the lower one's last lesson finishes", () => {
-    const graphSkills = [graph("A1", 2), graph("A2", 2)];
     const items = [...lessons("A1", 1), ...lessons("A2", 2)];
     const last = lessons("A1", 1, { status: "todo" });
 
-    expect(earned(levels({ graphSkills, items: [...items, ...last] }))).toStrictEqual([]);
+    expect(earned(levels({ items: [...items, ...last] }))).toStrictEqual([]);
 
     const finished = last.map((item) => ({ ...item, status: "done" as const }));
 
-    expect(earned(levels({ graphSkills, items: [...items, ...finished] }))).toStrictEqual([
-      "A1",
-      "A2",
-    ]);
+    expect(earned(levels({ items: [...items, ...finished] }))).toStrictEqual(["A1", "A2"]);
   });
 
   it("earns B1 for a learner placed at B1 once B1 is finished, while B2 is still to do", () => {
-    const list = levels({
-      graphSkills: [graph("B1", 4), graph("B2", 4)],
-      items: [...lessons("B1", 4), ...lessons("B2", 4, { status: "todo" })],
-    });
+    const list = levels({ items: [...lessons("B1", 4), ...lessons("B2", 4, { status: "todo" })] });
 
     expect(earned(list)).toStrictEqual(["B1"]);
   });
 
   it("leaves a level with a lesson set aside uncertified, but not the levels above it", () => {
     const skipped = lessons("A1", 1, { status: "skipped" });
-    const graphSkills = [graph("A1", 3), graph("A2", 2)];
     const items = [...lessons("A1", 2), ...skipped, ...lessons("A2", 2)];
 
-    expect(earned(levels({ graphSkills, items }))).toStrictEqual(["A2"]);
+    expect(earned(levels({ items }))).toStrictEqual(["A2"]);
 
     const heldBack = new Set(skipped.flatMap((item) => item.lessonId ?? []));
 
-    expect(earned(levels({ graphSkills, heldBackLessonIds: heldBack, items }))).toStrictEqual([
-      "A1",
-      "A2",
-    ]);
+    expect(earned(levels({ heldBackLessonIds: heldBack, items }))).toStrictEqual(["A1", "A2"]);
   });
 
   it("certifies no level of a band while one of its skills is untagged", () => {
     const list = levels({
-      graphSkills: [graph("A1", 2), graph("B1", 2), graph("B-untagged", 2), graph("B2", 2)],
       items: [
         ...lessons("A1", 2),
         ...lessons("B1", 2),
@@ -181,14 +204,12 @@ describe(listPlanLevels, () => {
       kind,
     }));
 
-    expect(
-      earned(levels({ graphSkills: [graph("A1", 2)], items: [...lessons("A1", 2), ...others] })),
-    ).toStrictEqual(["A1"]);
+    expect(earned(levels({ items: [...lessons("A1", 2), ...others] }))).toStrictEqual(["A1"]);
   });
 });
 
 function label(items: LevelItem[]) {
-  return getPlanLevelLabel(levels({ graphSkills: [], items }));
+  return getPlanLevelLabel(levels({ items }));
 }
 
 describe(getPlanLevelLabel, () => {
@@ -236,7 +257,6 @@ describe(getPlanLevelLabel, () => {
 describe(getUnitLevels, () => {
   it("puts a unit that mixes levels on its highest", () => {
     const list = levels({
-      graphSkills: [],
       items: [
         ...lessons("A1", 1, { chapterId: "mixed" }),
         ...lessons("A2", 1, { chapterId: "mixed" }),

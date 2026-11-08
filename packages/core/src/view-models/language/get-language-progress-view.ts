@@ -53,7 +53,7 @@ export async function getLanguageProgressView(
   const target = getTargetLevel(details);
 
   const [level, levels, doneIds, allowance] = await Promise.all([
-    readPlanLevel({ goalId: goal.id, target, userId }),
+    readPlanLevel({ goal, target }),
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
     loadDoneUnitIds({ units, userId }),
     getAllowance(),

@@ -5,11 +5,11 @@ import { type CefrLevel } from "@zoonk/utils/cefr";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type PlanLevel, getUnitLevels, listPlanLevels } from "../../language/levels/plan-levels";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { loadPlanScope } from "../../plans/_utils/plan-scope";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
 import { type LanguageLevelCertificateDetails } from "../certificate-contract";
 import { getLastFinishedAt, sumStudiedMinutes } from "./award-course-certificate";
 import { createCertificateCode } from "./certificate-code";
-import { loadSkillSizes } from "./skill-sizes";
 
 /**
  * Goals built from a learner's own material have a private course and earn no language levels.
@@ -72,10 +72,10 @@ function getLevelKey({ language, level }: { language: string; level: CefrLevel }
 }
 
 async function loadPlanLevels(tx: TransactionClient, plan: LanguagePlan): Promise<PlanLevel[]> {
-  const graphSkills = await loadSkillSizes({ goal: plan.goal, plan });
+  const scope = await loadPlanScope({ goal: plan.goal, plan });
 
   const skillIds = new Set([
-    ...graphSkills.map((skill) => skill.skillId),
+    ...scope.graphSkillIds,
     ...plan.items.flatMap((item) => item.skillId ?? []),
   ]);
 
@@ -97,9 +97,9 @@ async function loadPlanLevels(tx: TransactionClient, plan: LanguagePlan): Promis
       : [];
 
   return listPlanLevels({
-    graphSkills,
     heldBackLessonIds: new Set(heldBack.map((lesson) => lesson.id)),
     items: plan.items,
+    scope,
     skills: new Map(skills.map((skill) => [skill.id, skill])),
   });
 }

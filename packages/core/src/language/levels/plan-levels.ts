@@ -1,6 +1,6 @@
 import { type PlanItem, type Skill } from "@zoonk/db";
 import { CEFR_LEVELS, type CefrLevel, formatCefrScore } from "@zoonk/utils/cefr";
-import { type SizedSkill, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
+import { type PlanScope, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
 import { getWorkProgress, isWorkFinished } from "../../plans/_utils/work-progress";
 import { BAND_LEVELS } from "./skill-level-rules";
@@ -27,6 +27,8 @@ export type PlanLevel = {
 
 type Placement = { level: CefrLevel; tagged: boolean };
 
+type LevelSkills = ReadonlyMap<string, LevelSkill>;
+
 /** An untagged skill counts at its band's lower level, so the level never reads above the truth. */
 function placeSkill(skill: LevelSkill | undefined): Placement | null {
   if (skill?.cefrLevel) {
@@ -34,6 +36,50 @@ function placeSkill(skill: LevelSkill | undefined): Placement | null {
   }
 
   return skill?.level ? { level: BAND_LEVELS[skill.level][0], tagged: false } : null;
+}
+
+function getRank(placement: Placement): number {
+  return CEFR_LEVELS.indexOf(placement.level);
+}
+
+/**
+ * A lesson counts once, at the lowest level of the plan skills it teaches. It stays untagged while
+ * an untagged skill's band could put it lower.
+ */
+function placeLesson({
+  skillIds,
+  skills,
+}: {
+  skillIds: readonly string[];
+  skills: LevelSkills;
+}): Placement | null {
+  const placements = skillIds.flatMap((skillId) => placeSkill(skills.get(skillId)) ?? []);
+
+  const [lowest] = placements.toSorted(
+    (a, b) => getRank(a) - getRank(b) || Number(b.tagged) - Number(a.tagged),
+  );
+
+  return lowest ?? null;
+}
+
+/**
+ * Where each item counts: at its lesson's level when the plan counts its lesson, otherwise at its
+ * skill's. The size, the studied count, a level's blockers and its label all read this one map.
+ */
+function placeItems({ scope, skills }: { scope: Pick<PlanScope, "lessons">; skills: LevelSkills }) {
+  const lessons = new Map(
+    scope.lessons.map((lesson) => [
+      lesson.lessonId,
+      placeLesson({ skillIds: lesson.skillIds, skills }),
+    ]),
+  );
+
+  const place = (item: Pick<LevelItem, "lessonId" | "skillId">): Placement | null =>
+    item.lessonId && lessons.has(item.lessonId)
+      ? (lessons.get(item.lessonId) ?? null)
+      : placeSkill(skills.get(item.skillId ?? ""));
+
+  return { lessons, place };
 }
 
 function getBand(level: CefrLevel): number {
@@ -60,52 +106,73 @@ function isLeftOut({
 
 type LevelItems = Pick<PlanLevel, "items" | "level">;
 
-/** Each CEFR level's lesson items, in plan order, each at its skill's level. */
-export function groupLevelItems({
+function groupByLevel({
   items,
-  skills,
+  place,
 }: {
   items: readonly LevelItem[];
-  skills: ReadonlyMap<string, LevelSkill>;
+  place: (item: LevelItem) => Placement | null;
 }): LevelItems[] {
   const lessons = items.filter((item) => item.kind === "lesson");
 
   return CEFR_LEVELS.map((level) => ({
-    items: lessons.filter((item) => placeSkill(skills.get(item.skillId ?? ""))?.level === level),
+    items: lessons.filter((item) => place(item)?.level === level),
     level,
   }));
 }
 
-/**
- * Where one language goal's plan stands at each CEFR level, judged on its own: lesson items count at
- * their skill's level and every other item kind is left out. A level is earned with nothing left to
- * do at it or below, nothing set aside at it, its band tagged, and half its graph size studied.
- */
-export function listPlanLevels({
-  graphSkills,
-  heldBackLessonIds = new Set(),
+/** Each CEFR level's lesson items, in plan order. */
+export function groupLevelItems({
   items,
+  scope,
   skills,
 }: {
-  graphSkills: readonly SizedSkill[];
+  items: readonly LevelItem[];
+  scope: Pick<PlanScope, "lessons">;
+  skills: LevelSkills;
+}): LevelItems[] {
+  return groupByLevel({ items, place: placeItems({ scope, skills }).place });
+}
+
+/**
+ * Where one language goal's plan stands at each CEFR level, judged on its own: lesson items count
+ * where `placeItems` puts them and every other item kind is left out. A level is earned with nothing
+ * left to do at it or below, nothing set aside at it, its band tagged, and half its lessons studied.
+ */
+export function listPlanLevels({
+  heldBackLessonIds = new Set(),
+  items,
+  scope,
+  skills,
+}: {
   heldBackLessonIds?: ReadonlySet<string>;
   items: readonly LevelItem[];
-  skills: ReadonlyMap<string, LevelSkill>;
+  scope: PlanScope;
+  skills: LevelSkills;
 }): PlanLevel[] {
-  const place = (skillId: string | null) => placeSkill(skills.get(skillId ?? ""));
-  const atLevel = groupLevelItems({ items, skills });
+  const { lessons, place } = placeItems({ scope, skills });
+  const atLevel = groupByLevel({ items, place });
 
   const untaggedBands = new Set(
     [
-      ...items.map((item) => (item.kind === "lesson" ? place(item.skillId) : null)),
-      ...graphSkills.map((skill) => place(skill.skillId)),
+      ...items.map((item) => (item.kind === "lesson" ? place(item) : null)),
+      ...scope.graphSkillIds.map((skillId) => placeSkill(skills.get(skillId))),
     ].flatMap((placement) => (placement && !placement.tagged ? getBand(placement.level) : [])),
   );
 
   return atLevel.map(({ items: levelItems, level }, index) => {
     const measure = measureStudied({
-      graphSkills: graphSkills.filter((skill) => place(skill.skillId)?.level === level),
       items: levelItems,
+      lessonIds: new Set(
+        [...lessons].flatMap(([lessonId, placement]) =>
+          placement?.level === level ? lessonId : [],
+        ),
+      ),
+      unwritten: scope.unwritten.reduce(
+        (sum, skill) =>
+          placeSkill(skills.get(skill.skillId))?.level === level ? sum + skill.lessons : sum,
+        0,
+      ),
     });
 
     const finished =

@@ -1,8 +1,20 @@
 import { type PlanItem } from "@zoonk/db";
+import { isStandIn } from "../planner/plan-item-rules";
 import { countLessons } from "./stand-in-lessons";
 
-/** A plan graph skill at its full size (see `loadSkillSizes`). */
-export type SizedSkill = { size: number; skillId: string };
+/** A written lesson the plan counts, with the plan's graph skills it teaches. */
+export type CountedLesson = { lessonId: string; skillIds: readonly string[] };
+
+/** A graph skill's lessons nobody has written yet: none once it's outlined. */
+export type UnwrittenLessons = { lessons: number; skillId: string };
+
+/** What a plan holds to study, read from content links rather than from the planner's choices. */
+export type PlanScope = {
+  /** Every skill of the plan's graph, a merged one under its survivor. */
+  graphSkillIds: readonly string[];
+  lessons: readonly CountedLesson[];
+  unwritten: readonly UnwrittenLessons[];
+};
 
 type StudiedItem = Pick<
   PlanItem,
@@ -10,29 +22,27 @@ type StudiedItem = Pick<
 >;
 
 /**
- * Each skill counts at its full size, so a plan trimmed to fit a date can't earn a certificate by
- * finishing what it kept, and never below the lessons the plan holds for it, so a re-plan or a merge
- * that shrinks the graph can't drop lessons the learner already has. A skill the graph doesn't hold
- * counts its own items.
+ * Each written lesson counts once however many skills it teaches, so a re-plan that shares lessons
+ * out among skills again, a test-out or a dated plan's cuts can't change the size.
  */
 export function measureStudied({
-  graphSkills,
   items,
+  lessonIds,
+  unwritten,
 }: {
-  graphSkills: readonly SizedSkill[];
   items: readonly StudiedItem[];
+  lessonIds: ReadonlySet<string>;
+  unwritten: number;
 }): { size: number; studied: number } {
-  const sized = new Set(graphSkills.map((skill) => skill.skillId));
-  const held = Map.groupBy(items, (item) => item.skillId ?? "");
-  const unsized = items.filter((item) => !item.skillId || !sized.has(item.skillId));
+  const done = items.filter((item) => item.status === "done");
+
+  const studied = new Set(
+    done.flatMap((item) => item.lessonId ?? []).filter((id) => lessonIds.has(id)),
+  );
 
   return {
-    size:
-      graphSkills.reduce(
-        (sum, skill) => sum + Math.max(skill.size, countLessons(held.get(skill.skillId) ?? [])),
-        0,
-      ) + countLessons(unsized),
-    studied: countLessons(items.filter((item) => item.status === "done")),
+    size: lessonIds.size + unwritten,
+    studied: studied.size + countLessons(done.filter((item) => isStandIn(item))),
   };
 }
 

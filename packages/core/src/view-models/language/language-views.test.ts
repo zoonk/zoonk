@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -124,6 +125,19 @@ describe("language view models", () => {
       goalTarget: { label: "A1+", score: 0.5 },
       level: { label: "A2", target: null },
       today: { label: "A2", target: null },
+    });
+  });
+
+  it("reads a lesson at the lowest level of the plan skills it teaches, as certificates count it", async () => {
+    const setup = await languageGoalFixture();
+    const { goal, items, skills, user } = setup;
+    mockSession(user.id);
+    await Promise.all([tagSkills(setup), finishArriving(setup)]);
+
+    await lessonSkillFixture({ lessonId: items[2]?.lessonId ?? "", skillId: skills[0]?.id ?? "" });
+
+    await expect(getLanguageTodayView({ goalId: goal.id })).resolves.toMatchObject({
+      today: { level: { label: "A1+" } },
     });
   });
 

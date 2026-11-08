@@ -1,6 +1,6 @@
 import { type CourseLevel, type Goal, type PlanItem } from "@zoonk/db";
 import { CourseLevel as COURSE_LEVELS } from "@zoonk/db/enums";
-import { type SizedSkill, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
+import { type PlanScope, isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
 import { areLessonsFinished, isTodo } from "../../plans/_utils/plan-end";
 import { getWorkProgress } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
@@ -51,19 +51,37 @@ function isStudied(item: CertifiableItem): boolean {
   return getWorkProgress(item.status) === "studied";
 }
 
+/**
+ * The lessons of the unit's skills, each once, with what those skills still lack: a lesson the unit
+ * holds counts its plan skills, any other item its own skill.
+ */
 function isUnitHalfStudied({
-  graphSkills,
   learn,
+  scope,
 }: {
-  graphSkills: readonly SizedSkill[];
   learn: readonly CertifiableItem[];
+  scope: PlanScope;
 }): boolean {
-  const skillIds = new Set(learn.flatMap((item) => item.skillId ?? []));
+  const lessons = new Map(scope.lessons.map((lesson) => [lesson.lessonId, lesson]));
+  const counted = learn.flatMap((item) => lessons.get(item.lessonId ?? "") ?? []);
+
+  const skillIds = new Set([
+    ...counted.flatMap((lesson) => lesson.skillIds),
+    ...learn.flatMap((item) => (lessons.has(item.lessonId ?? "") ? [] : (item.skillId ?? []))),
+  ]);
+
+  const teaching = scope.lessons.filter((lesson) =>
+    lesson.skillIds.some((skillId) => skillIds.has(skillId)),
+  );
 
   return isHalfStudied(
     measureStudied({
-      graphSkills: graphSkills.filter((skill) => skillIds.has(skill.skillId)),
       items: learn,
+      lessonIds: new Set([...counted, ...teaching].map((lesson) => lesson.lessonId)),
+      unwritten: scope.unwritten.reduce(
+        (sum, skill) => (skillIds.has(skill.skillId) ? sum + skill.lessons : sum),
+        0,
+      ),
     }),
   );
 }
@@ -76,19 +94,19 @@ function isUnitHalfStudied({
 function isUnitDone({
   challenges,
   dates,
-  graphSkills,
   learn,
   phases,
+  scope,
 }: {
   challenges: readonly CertifiableItem[];
   dates: UnitDates;
-  graphSkills: readonly SizedSkill[];
   learn: readonly CertifiableItem[];
   phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
+  scope: PlanScope;
 }): boolean {
   return (
     areLessonsFinished({ items: learn, ...dates }) &&
-    isUnitHalfStudied({ graphSkills, learn }) &&
+    isUnitHalfStudied({ learn, scope }) &&
     !phases.some((phase) => phase.challengeLeftOut) &&
     !challenges.some((item) => isTodo(item))
   );
@@ -130,23 +148,23 @@ function holdsWholeLevel({
  */
 export function listCertificateUnits({
   goal,
-  graphSkills,
   heldKeys,
   items,
   levelChapters,
   levelCourseId,
   phases,
   planCreatedAt,
+  scope,
   studiesPastTarget,
 }: {
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
-  graphSkills: readonly SizedSkill[];
   heldKeys: ReadonlySet<string>;
   items: readonly CertifiableItem[];
   levelChapters: readonly LevelChapter[];
   levelCourseId: string | null;
   phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
   planCreatedAt: Date;
+  scope: PlanScope;
   studiesPastTarget: boolean;
 }): CertificateUnit[] {
   if (!COURSE_GOALS.has(goal.kind)) {
@@ -174,9 +192,9 @@ export function listCertificateUnits({
           isUnitDone({
             challenges: unitChallenges,
             dates,
-            graphSkills,
             learn: unitLearn,
             phases: phases.filter((_phase, index) => phaseIndexes.has(index)),
+            scope,
           });
 
         return [
@@ -200,7 +218,7 @@ export function listCertificateUnits({
     courseLevel: null,
     finished:
       learn.some((item) => isStudied(item) && (!item.level || !covered.has(item.level))) &&
-      isUnitDone({ challenges, dates, graphSkills, learn, phases }),
+      isUnitDone({ challenges, dates, learn, phases, scope }),
     items: [...learn, ...challenges],
     key: goal.id,
   };

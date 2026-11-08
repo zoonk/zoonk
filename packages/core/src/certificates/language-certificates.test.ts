@@ -30,6 +30,7 @@ import { type LevelTestBank } from "../language/level-test/level-test-contract";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { testOutKnownPlanItems } from "../learner/_utils/test-out-known-plan-items";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { bringBackMissedLessons } from "../plans/bring-back-missed-lessons";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { type PlanGraphSkill, parsePlanGraph } from "../plans/planner/plan-state";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
@@ -797,6 +798,276 @@ describe("a skill's size through re-plans and merges", () => {
     await finishLesson(fixture, 2);
 
     await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A2" }]);
+  });
+});
+
+/** Links each of the plan's written lessons to its other skill too, so every lesson teaches both. */
+async function shareLessons({ plan, skills }: ItalianPlan) {
+  const [first, second] = skills;
+
+  await Promise.all(
+    plan.items.flatMap((item) =>
+      item.lessonId
+        ? lessonSkillFixture({
+            lessonId: item.lessonId,
+            skillId: (item.skillId === first?.id ? second?.id : first?.id) ?? "",
+          })
+        : [],
+    ),
+  );
+}
+
+async function finishLessonId({ user }: ItalianPlan, lessonId: string) {
+  await writeLearnerChange({ userId: user.id }, (tx) =>
+    completeLessonPlanItems(tx, { lessonId, now: new Date(), userId: user.id }),
+  );
+}
+
+function listTodoLessons({ plan }: ItalianPlan) {
+  return prisma.planItem.findMany({
+    orderBy: { position: "asc" },
+    where: { kind: "lesson", lessonId: { not: null }, planId: plan.id, status: "todo" },
+  });
+}
+
+async function listLevelKeys(userId: string) {
+  const certificates = await listLevelCertificates(userId);
+  return certificates.map((row) => row.key);
+}
+
+/** Whether the plan earned its A1 level, or for a course goal, its course certificate. */
+async function isCertified({ goal, user }: ItalianPlan, course: boolean) {
+  if (!course) {
+    const keys = await listLevelKeys(user.id);
+    return keys.includes("it:A1");
+  }
+
+  mockSession(user.id);
+  const claimed = await claimCourseCertificate(goal.id);
+  return claimed.status === "ready";
+}
+
+/** Two outlined skills whose eight written lessons each teach both, re-planned from a beginner's start. */
+async function sharedLessonPlan(levels: [CefrLevel, CefrLevel]) {
+  const fixture = await italianPlan({
+    items: [
+      ...Array.from({ length: 4 }, () => ({ skill: 0 })),
+      ...Array.from({ length: 4 }, () => ({ skill: 1 })),
+    ],
+    skills: levels.map((level) => ({ lessons: 4, level })),
+  });
+
+  await shareLessons(fixture);
+  await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+  await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 1 });
+
+  await prisma.goal.update({
+    data: { details: { level: "none", targetLevel: "A1" } },
+    where: { id: fixture.goal.id },
+  });
+
+  await refreshGoalPlan({ goalId: fixture.goal.id });
+  return fixture;
+}
+
+describe("a level's size, each written lesson counted once", () => {
+  it.each([
+    { course: false, earned: true, estimate: 30, studied: 3 },
+    { course: false, earned: false, estimate: 2, studied: 1 },
+    { course: true, earned: true, estimate: 30, studied: 3 },
+  ])(
+    "measures six outlined lessons through a re-plan and a test-out, not an estimate of $estimate ($studied studied, course: $course)",
+    async ({ course, earned, estimate, studied }) => {
+      const fixture = await italianPlan({
+        items: Array.from({ length: 6 }, (_, index) => ({
+          skill: 0,
+          status: index < studied ? ("done" as const) : ("todo" as const),
+        })),
+        skills: [{ lessons: estimate, level: "A1" }],
+      });
+
+      if (course) {
+        await asCourseGoal(fixture);
+      }
+
+      await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+      await refreshGoalPlan({ goalId: fixture.goal.id });
+      await testOutSkill(fixture, 0);
+
+      await expect(isCertified(fixture, course)).resolves.toBe(earned);
+    },
+  );
+
+  it.each([["A1", "A1"] as const, ["A1", "A2"] as const])(
+    "counts eight lessons that teach a %s and a %s skill once each, at the lower level, through a test-out and a re-plan",
+    async (...levels) => {
+      const fixture = await sharedLessonPlan(levels);
+
+      await testOutSkill(fixture, 0);
+      await refreshGoalPlan({ goalId: fixture.goal.id });
+      const todo = await listTodoLessons(fixture);
+
+      expect(todo).toHaveLength(4);
+
+      for (const item of todo) {
+        // oxlint-disable-next-line no-await-in-loop -- A learner finishes one lesson at a time.
+        await finishLessonId(fixture, item.lessonId ?? "");
+      }
+
+      await expect(listLevelKeys(fixture.user.id)).resolves.toStrictEqual(["it:A1"]);
+    },
+  );
+
+  it.each([5, 10, 15, 20])(
+    "earns no level below half for a dated plan whose lessons teach two levels, at %s minutes a day",
+    async (dailyMinutes) => {
+      const fixture = await italianPlan({
+        items: [
+          ...Array.from({ length: 3 }, () => ({ skill: 0 })),
+          ...Array.from({ length: 3 }, () => ({ skill: 1 })),
+        ],
+        skills: [
+          { lessons: 3, level: "A1" },
+          { lessons: 3, level: "A2" },
+        ],
+      });
+
+      await shareLessons(fixture);
+      await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+      await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 1 });
+      await prisma.planItem.deleteMany({ where: { planId: fixture.plan.id } });
+
+      await prisma.goal.update({
+        data: {
+          dailyMinutes,
+          details: { level: "none", targetLevel: "A1" },
+          targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        },
+        where: { id: fixture.goal.id },
+      });
+
+      await refreshGoalPlan({ goalId: fixture.goal.id });
+      const [first] = await listTodoLessons(fixture);
+
+      if (first?.lessonId) {
+        await finishLessonId(fixture, first.lessonId);
+        await testOutSkill(fixture, 0);
+        await refreshGoalPlan({ goalId: fixture.goal.id });
+      }
+
+      const [next] = await listTodoLessons(fixture);
+
+      if (next?.lessonId) {
+        await finishLessonId(fixture, next.lessonId);
+      }
+
+      await expect(listLevelKeys(fixture.user.id)).resolves.not.toContain("it:A1");
+    },
+  );
+
+  it.each([false, true])(
+    "leaves out the lessons of an area removed after its test-out (course: %s)",
+    async (course) => {
+      const fixture = await italianPlan({
+        items: [
+          { skill: 0, status: "done" },
+          { skill: 0 },
+          ...Array.from({ length: 10 }, () => ({ skill: 1 })),
+        ],
+        skills: [
+          { lessons: 2, level: "A1" },
+          { lessons: 10, level: "A1" },
+        ],
+      });
+
+      await updateGraphSkill(fixture, { attrs: { area: "Kept", outlined: true }, skill: 0 });
+      await updateGraphSkill(fixture, { attrs: { area: "Removed", outlined: true }, skill: 1 });
+
+      if (course) {
+        await asCourseGoal(fixture);
+      }
+
+      await testOutSkill(fixture, 1);
+      await removeArea(fixture, "Removed");
+      await finishLesson(fixture, 1);
+
+      await expect(isCertified(fixture, course)).resolves.toBe(true);
+    },
+  );
+
+  it("leaves out lessons held back for good", async () => {
+    const fixture = await italianPlan({
+      items: [
+        { skill: 0 },
+        ...Array.from({ length: 5 }, () => ({ skill: 0, status: "skipped" as const })),
+      ],
+      skills: [{ lessons: 6, level: "A1" }],
+    });
+
+    await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+
+    await prisma.lesson.updateMany({
+      data: { setAsideAt: new Date() },
+      where: { id: { in: fixture.plan.items.slice(1).flatMap((item) => item.lessonId ?? []) } },
+    });
+
+    await finishLesson(fixture, 0);
+
+    await expect(listLevelKeys(fixture.user.id)).resolves.toStrictEqual(["it:A1"]);
+  });
+
+  it.each([
+    { earned: false, studied: 2 },
+    { earned: true, studied: 3 },
+  ])(
+    "measures six written lessons, not a tested-out stand-in a re-plan rewrote ($studied studied)",
+    async ({ earned, studied }) => {
+      const fixture = await italianPlan({
+        items: [
+          ...Array.from({ length: studied }, () => ({ skill: 0, status: "done" as const })),
+          { skill: 0, standIn: 6 - studied, status: "testedOut" },
+          { skill: 1, unit: 1 },
+        ],
+        skills: [
+          { lessons: 6, level: "A1" },
+          { lessons: 1, level: "A2" },
+        ],
+      });
+
+      await writeLessons(fixture, { count: 6 - studied, skill: 0 });
+      await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+      await refreshGoalPlan({ goalId: fixture.goal.id });
+      await finishLesson(fixture, studied + 1);
+
+      await expect(isCertified(fixture, false)).resolves.toBe(earned);
+    },
+  );
+
+  it("earns a level after bringing its tested-out lessons back and studying them", async () => {
+    const fixture = await italianPlan({
+      items: [...Array.from({ length: 6 }, () => ({ skill: 0 })), { skill: 1, unit: 1 }],
+      skills: [
+        { lessons: 30, level: "A1" },
+        { lessons: 1, level: "A2" },
+      ],
+    });
+
+    await updateGraphSkill(fixture, { attrs: { outlined: true }, skill: 0 });
+    await testOutSkill(fixture, 0);
+
+    await bringBackMissedLessons({
+      goalId: fixture.goal.id,
+      now: new Date(),
+      skillIds: [fixture.skills[0]?.id ?? ""],
+      timeZone: TIME_ZONE,
+    });
+
+    for (const index of [0, 1, 2, 3, 4, 5]) {
+      // oxlint-disable-next-line no-await-in-loop -- A learner finishes one lesson at a time.
+      await finishLesson(fixture, index);
+    }
+
+    await expect(listLevelKeys(fixture.user.id)).resolves.toContain("it:A1");
   });
 });
 
