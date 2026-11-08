@@ -176,7 +176,6 @@ class NextStopWarmUpScreenshots {
             SessionViewModel(
                 StudyOpener(api, api::writeLesson, cache, { "UTC" }),
                 StudySessionStore(api, cache) { "UTC" },
-                { _, _ -> },
                 cache,
                 readiness = { _, _ -> error("The lesson is written") },
                 generations = { error("Nothing is written") },
@@ -227,7 +226,6 @@ class NextStopWarmUpScreenshots {
             SessionViewModel(
                 StudyOpener(api, api::writeLesson, cache, { "UTC" }),
                 StudySessionStore(api, cache) { "UTC" },
-                { _, _ -> },
                 cache,
                 readiness = { _, _ ->
                     LessonReadiness(
@@ -253,6 +251,7 @@ class NextStopWarmUpScreenshots {
                 now = { compose.mainClock.currentTime },
             )
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
+        kotlinx.coroutines.runBlocking { warmUps.decks[WARM_UP_ID].prepare() }
         var shown by mutableStateOf(step(0, screen = StudyBlock.Screen.SESSION, lessonId = LESSON).copy(title = "Inside the hive"))
 
         compose.setContent {

@@ -311,7 +311,19 @@ fun LessonCompletionView(
         // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.
         doneWhenSplit = { state.lessonMap?.let { LessonEndMap(it) } },
         next = {
-            if (completion.status == CompletionStatus.Saved && ending.guest) {
+            completion.result?.planReveal?.let { reveal ->
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(R.string.onboarding_whats_next), style = MaterialTheme.typography.labelLarge)
+                    Text(
+                        stringResource(
+                            if (reveal.planReady) R.string.onboarding_your_plan_ready else R.string.onboarding_reveal_building_title,
+                        ),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Text(reveal.goalTitle, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            if (completion.result?.planReveal == null && completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }
                 Text(
                     stringResource(R.string.player_guest_save_note),
@@ -371,6 +383,16 @@ internal fun completionMainAction(
 
         CompletionStatus.Saved -> {
             when {
+                state.completion?.result?.planReveal != null -> {
+                    {
+                        state.completion?.result?.planReveal?.let {
+                            exits.replace(
+                                AppRoute.GoalSetup(it.goalId.toString(), revealMoment = true),
+                            )
+                        }
+                    }
+                }
+
                 ending.inSession -> {
                     viewModel::continueSession
                 }
@@ -417,18 +439,19 @@ fun CompletionActions(
         when {
             status == CompletionStatus.Ready -> R.string.player_finish
             status == CompletionStatus.Failed -> R.string.player_try_again
+            state.completion?.result?.planReveal != null -> R.string.onboarding_see_plan
             ending.guest -> R.string.player_build_my_plan
             ending.nextLessonId != null -> R.string.player_next_lesson
             else -> R.string.player_action_continue
         }
     val back = if (lesson.targetLanguage != null) R.string.player_back_to_unit else R.string.player_back_to_chapter
 
-    if (status == CompletionStatus.Saved && ending.inSession) {
+    if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.inSession) {
         LessonSessionEnd(state, viewModel, exits)
         return
     }
 
-    if (status == CompletionStatus.Saved && ending.guest) {
+    if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.guest) {
         TaskActions { width ->
             OutlinedButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
                 Text(stringResource(R.string.player_create_account_to_save))
@@ -439,7 +462,7 @@ fun CompletionActions(
     }
 
     TaskActions { width ->
-        if (status == CompletionStatus.Saved && ending.nextLessonId != null) {
+        if (status == CompletionStatus.Saved && state.completion?.result?.planReveal == null && ending.nextLessonId != null) {
             OutlinedButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }

@@ -2,6 +2,7 @@ enum FollowUpKind {
   refreshStudyDay        @map("refresh_study_day")
   prepareSession        @map("prepare_session")
   prepareGoalLessons    @map("prepare_goal_lessons")
+  preparePlacementItems @map("prepare_placement_items")
   writeLesson           @map("write_lesson")
   classifyMistakeCause  @map("classify_mistake_cause")
   findMistakePattern    @map("find_mistake_pattern")

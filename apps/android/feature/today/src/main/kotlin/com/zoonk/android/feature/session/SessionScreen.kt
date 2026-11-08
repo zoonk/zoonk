@@ -41,9 +41,11 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.TrackVisibleWait
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
@@ -52,12 +54,13 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
-import com.zoonk.android.feature.player.LiveLessonWritingApi
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
-import com.zoonk.android.feature.warmup.WarmUpCard
+import com.zoonk.android.feature.warmup.WaitContent
+import com.zoonk.android.feature.warmup.WaitQuizAction
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -117,7 +120,6 @@ fun SessionScreen(
             SessionViewModel(
                 app.studyOpener,
                 app.studySessions,
-                LiveLessonWritingApi(app.api),
                 app.cache,
                 readiness = { session, lessonId -> app.lessonPlayer.api.readiness(session, lessonId.toString()) },
                 generations = { LiveGenerationSource(app.api, app.sessions.current) },
@@ -353,6 +355,8 @@ internal fun NextStop(
         val hold = rememberReadyHold(ready)
         val warmUpId = viewModel.lesson?.takeIf { it.id == step.lessonId && refusal == null && !hold.over }?.warmUpId
         val guessing = if (warmUpId != null) Modifier.watchTouches(hold) else Modifier
+        val quiz = rememberWaitQuiz(warmUpId, warmUps)
+        if (waiting || hold.holding) TrackVisibleWait("nextStop", "lesson", goalId?.toString())
         val startsFor = goalId?.takeIf { ready }
         val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
         val startFocus = remember { FocusRequester() }
@@ -389,13 +393,17 @@ internal fun NextStop(
         val retry = { goalId?.let { viewModel.start(day, step, it) } }
 
         TaskScaffold(
-            onClose = navigator::closeTask,
+            onClose = { if (quiz.showingProgress && quiz.hasQuiz) quiz.back() else navigator.closeTask() },
             modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
             title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
             bottomBar =
-                if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
+                if ((waiting && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null || instead != null ||
+                    onStop != null ||
+                    viewModel.failed != null
+                ) {
                     {
                         TaskActionBar {
+                            if (!ready) WaitQuizAction(quiz, hold)
                             when (viewModel.failed) {
                                 SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
                                 SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
@@ -485,7 +493,7 @@ internal fun NextStop(
                                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                             }
                             StepFacts(step)
-                            if (written) {
+                            if (written && !hold.holding) {
                                 Text(
                                     stringResource(R.string.session_next_lesson_ready),
                                     Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -507,28 +515,40 @@ internal fun NextStop(
                                     }
                                 }
                             }
-                            if (waiting) {
-                                Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                                    if (failure != null) {
-                                        GenerationFailureNotice(failure, onRetry = { retry() })
+                            if (waiting || hold.holding) {
+                                val shown =
+                                    if (ready) {
+                                        GenerationRun(status = GenerationRun.Status.Ready)
+                                    } else if (failure != null) {
+                                        run.copy(status = GenerationRun.Status.Failed, failure = failure)
                                     } else {
-                                        LessonWritingProgress(
-                                            run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
-                                            onRetry = {
-                                                if (run.failure ==
-                                                    GenerationFailure.Connection
-                                                ) {
-                                                    viewModel.reconnect()
-                                                } else {
-                                                    retry()
-                                                }
-                                            },
-                                            note = stringResource(R.string.session_next_writing_note),
-                                        )
+                                        run
                                     }
+                                WaitContent(
+                                    quiz,
+                                    hold,
+                                    AnalyticsEvent.WarmUpSurface.NextStop,
+                                    GenerationKind.Lesson,
+                                    shown,
+                                    stringResource(if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note),
+                                    goalId = goalId?.toString(),
+                                    onRetry = { retry() },
+                                ) {
+                                    LessonWritingProgress(
+                                        shown,
+                                        {
+                                            if (run.failure ==
+                                                GenerationFailure.Connection
+                                            ) {
+                                                viewModel.reconnect()
+                                            } else {
+                                                retry()
+                                            }
+                                        },
+                                        stringResource(R.string.session_next_writing_note),
+                                    )
                                 }
                             }
-                            WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold, Modifier.padding(top = 16.dp))
                         }
                     }
                 }

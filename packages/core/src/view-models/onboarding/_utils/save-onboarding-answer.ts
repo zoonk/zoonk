@@ -18,6 +18,7 @@ import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "../o
 import { getExamChoiceOperations } from "./exam-choice-answer";
 import { findOnboardingGoalIds } from "./onboarding-goals";
 import { getReasonDetails } from "./reason-answer";
+import { saveAnswerGoal } from "./save-answer-goal";
 
 type Details = Record<string, unknown>;
 
@@ -314,14 +315,8 @@ export async function saveAnswerInputs({
             input.question === "schedule" ? (input.timeZone ?? current.timezone) : current.timezone,
         };
 
-        const goalChanged = Object.entries(data).some(
-          ([key, value]) => !isDeepStrictEqual(value, Reflect.get(current, key)),
-        );
-
-        if (goalChanged) {
-          // oxlint-disable-next-line no-await-in-loop -- Shared answers commit on one transaction client.
-          await tx.goal.update({ data, where: { id: current.id } });
-        }
+        // oxlint-disable-next-line no-await-in-loop -- Answers and their owed work share the transaction.
+        const goalChanged = await saveAnswerGoal({ current, data, input, own, tx });
 
         // oxlint-disable-next-line no-await-in-loop -- Shared answers commit on one transaction client.
         const settingsChanged = await saveAnswerSettings(tx, {

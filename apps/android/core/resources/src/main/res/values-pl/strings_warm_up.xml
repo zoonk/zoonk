@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_deck_end": "f925607f0ba6e65302d85e9f96e499b0cfdf11c13592c08fb415d251fdaeb02f",
-  "warm_up_guess_hint": "553df5741b52a16fef0eb145d479ab7534133f93a3b3af282343b15adb8cdefe",
+  "warm_up_back_to_quiz": "ffa9d8f76f2a8760dc5c30f3542aad76c517053aba85230e2bfa801c194af6e1",
+  "warm_up_first_lesson": "2b51901f350ab123a1618f6bbda6b8c35243d9229f687693b2548a3a503226e7",
+  "warm_up_first_lesson_ready": "1bc7da469bbe39b44179dcc9329bfa24e0b024248eea2b92d5cdfc9319851a5e",
+  "warm_up_first_lesson_screens": "0eb28d623832158943765b764a785c6347291f68cfca602e25fc7d93ed3f397d",
+  "warm_up_first_lesson_writing": "f67e5db836fb35c3909e1ec1408b1f46d68e8cb4b6e0f0cd025e198b4c0cb8ba",
+  "warm_up_guess_hint": "75699a442641ff2544e6d6be94706cf1e0d7195c2c6dd17a7ac7f0bed183b725",
   "warm_up_lesson_ready": "0755419e8b55ef0a3442e2c20e85648d62f78fff92210b20ef6a03743b108bdc",
   "warm_up_next": "83c9e2bb47134909235c93084d500727869216c537d5a8fbd4a41bb050a1cba3",
   "warm_up_plan_ready": "07c4464cf9e041ae4f34234861616e8a17ffb57f0ee3ef6bc3c39629e702740a",
   "warm_up_plan_ready_one_question": "0d9ff5330cdbd9248a9839e704fa85fdfa1f20f0fc5b11c21c085ca584eab670",
   "warm_up_plan_ready_whenever": "c0f06a9be492af0fe597749082b07536c683e7734c05501f58745305b0b7856c",
+  "warm_up_plan_waiting": "e865dd58074607df0a89394d48655797d9700752b32168a3ef995d1840607f40",
+  "warm_up_play_quiz": "ecaad9a309c4669794e0ab0b218c59714f456a0b147188b32d1612b06f30d12e",
   "warm_up_questions_ready": "662d63c9779e77aaf9b5584a4d34e198ea73dff4f536fabd4e2b38f568f4dcc9",
   "warm_up_questions_ready_description": "b387ec76d84496c5d31f514bfe9c33d701c45e6ab19e52fc577ee2aad299e939",
-  "warm_up_title": "1c890db4c63ff51f346b2294be306b92ae94be41fa856e756f2d87d679a04991"
+  "warm_up_ready_to_start": "dccb41ac93618291f4bf1d69af67d7cf21153078cd79b112add35e7f7f97784d",
+  "warm_up_start_first_lesson": "25f974a7b6b3831cefc9f8f2477d1e379d2afbfa95885130abf25ca366622647",
+  "warm_up_title": "0158d00eb9d0cb5d983091badcd71b54a9aaa8c3277a92491a5edc7cbe088417"
 }
 -->
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
-    <string name="warm_up_title">Zgaduj, póki czekasz</string>
+    <string name="warm_up_title">Rozwiąż quiz w międzyczasie</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Zgaduj dalej</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
-    <string name="warm_up_deck_end">Na razie to wszystko.</string>
     <!-- Under a warm-up question: a guess never counts -->
-    <string name="warm_up_guess_hint">Jeśli teraz się pomylisz, łatwiej zapamiętasz odpowiedź na później.</string>
+    <string name="warm_up_guess_hint">To tylko zabawa. Odpowiedzi nie wliczają się do wyniku.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Twój plan jest gotowy</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
@@ -34,4 +41,13 @@
     <string name="warm_up_questions_ready_description">Zacznij, kiedy chcesz.</string>
     <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">Twoja lekcja jest gotowa. Zacznij, kiedy chcesz.</string>
+    <string name="warm_up_back_to_quiz">Wróć do quizu</string>
+    <string name="warm_up_play_quiz">Rozwiąż quiz w czasie oczekiwania</string>
+    <string name="warm_up_first_lesson_writing">Przygotowujemy twoją pierwszą lekcję: %1$s</string>
+    <string name="warm_up_first_lesson_ready">Twoja pierwsza lekcja jest gotowa</string>
+    <string name="warm_up_plan_waiting">Gdy skończysz lekcję, twój plan będzie na ciebie czekać.</string>
+    <string name="warm_up_start_first_lesson">Zacznij lekcję 1</string>
+    <string name="warm_up_first_lesson">Twoja pierwsza lekcja</string>
+    <string name="warm_up_ready_to_start">Możesz zacząć</string>
+    <string name="warm_up_first_lesson_screens">Przygotowujemy krótkie treści na około 5 ekranów</string>
 </resources>

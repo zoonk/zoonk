@@ -38,7 +38,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
+enum class PlanPart { Aim, Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
 
 /** [Started] stays: the new goal becomes the active one, which the Plan then shows. */
 enum class NextLevelStart { Idle, Starting, Started, Failed }

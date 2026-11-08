@@ -621,6 +621,12 @@ class OnboardingScreenshots {
             isGuest: Boolean = false,
             run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
         ) {
+            val preview =
+                remember {
+                    val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                    AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+                        .resource<com.zoonk.api.models.StudyDay>(com.zoonk.android.data.Audience.SignedIn) { revealTodayOf() }
+                }
             SetupColumn {
                 PlanRevealStep(
                     examGoal(),
@@ -631,6 +637,7 @@ class OnboardingScreenshots {
                     rememberPlans(api),
                     rememberAppNavigator(),
                     AppRoute.GoalSetup(GOAL_ID),
+                    today = preview,
                 )
             }
         }

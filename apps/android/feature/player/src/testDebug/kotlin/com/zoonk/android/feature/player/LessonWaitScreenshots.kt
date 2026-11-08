@@ -189,7 +189,7 @@ class LessonWaitScreenshots {
 
                 override suspend fun status(id: String) = Generation.Status.RUNNING
             }
-        val viewModel = LessonWritingViewModel("lesson-1", LessonPlayerStore(api, cache), { _, _ -> }, { generations }, cache, session)
+        val viewModel = LessonWritingViewModel("lesson-1", LessonPlayerStore(api, cache), { generations }, cache, session)
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         val exits =
             object : LessonPlayerExits {
@@ -200,6 +200,7 @@ class LessonWaitScreenshots {
                 override fun replace(route: AppRoute) = Unit
             }
 
+        if (deck) kotlinx.coroutines.runBlocking { warmUps.decks[WARM_UP_ID].prepare() }
         viewModel.open()
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
