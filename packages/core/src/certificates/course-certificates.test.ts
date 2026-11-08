@@ -2,7 +2,12 @@ import { randomUUID } from "node:crypto";
 import { type CourseLevel, type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   courseChapterFixture,
@@ -19,6 +24,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
+import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { testOutKnownPlanItems } from "../learner/_utils/test-out-known-plan-items";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
@@ -402,6 +408,49 @@ describe("course certificates", () => {
         timeZone: TIME_ZONE,
       }),
     );
+
+    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("keeps tested-out skills at their size through a re-plan that rewrites their stand-in smaller", async () => {
+    const [fixture, skill, written] = await Promise.all([
+      courseGoal({
+        items: [{ status: "done" }, { status: "todo" }, { status: "todo" }, WON_CHALLENGE],
+      }),
+      skillFixture({ level: "beginner" }),
+      libraryLessonFixture(),
+    ]);
+
+    await Promise.all([
+      addGraphSkill(fixture, { ...skill, lessons: 4 }),
+      chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: written.id }),
+      lessonSkillFixture({ lessonId: written.id, skillId: skill.id }),
+    ]);
+
+    const standIn = await planItemFixture({
+      lessons: 4,
+      minutes: 16,
+      planId: fixture.plan.id,
+      skillId: skill.id,
+    });
+
+    const [, known] = fixture.plan.items;
+
+    await markPlanItemsTestedOut({
+      goalId: fixture.goal.id,
+      items: [known, standIn].flatMap((item) =>
+        item ? [{ ...item, skillIds: [item.skillId ?? ""] }] : [],
+      ),
+      knownSkillIds: new Set([known?.skillId ?? "", skill.id]),
+      testedOutAt: new Date(),
+      timeZone: TIME_ZONE,
+    });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: standIn.id } }),
+    ).resolves.toMatchObject({ lessons: 1, status: "testedOut" });
+
+    await finishLesson(fixture);
 
     await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
   });

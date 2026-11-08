@@ -1,5 +1,6 @@
 import {
   type CourseLevel,
+  type Goal,
   type LibraryVisibility,
   type PlanItem,
   type User,
@@ -8,8 +9,15 @@ import {
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS, type CefrLevel } from "@zoonk/utils/cefr";
@@ -20,6 +28,7 @@ import { finishLanguageLevelTest } from "../language/level-test/finish-language-
 import { type LevelTestBank } from "../language/level-test/level-test-contract";
 import { testOutKnownPlanItems } from "../learner/_utils/test-out-known-plan-items";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
 
 const TIME_ZONE = "America/Sao_Paulo";
@@ -86,6 +95,26 @@ async function italianPlan({
         : null,
     ),
   );
+
+  await Promise.all([
+    ...units.map((unit, position) =>
+      courseChapterFixture({ chapterId: unit.id, courseId: course.id, position }),
+    ),
+    ...items.flatMap((spec, position) => {
+      const lesson = lessons[position];
+
+      return lesson
+        ? [
+            chapterLessonFixture({
+              chapterId: lesson.homeChapterId ?? "",
+              lessonId: lesson.id,
+              position,
+            }),
+            lessonSkillFixture({ lessonId: lesson.id, skillId: skillRows[spec.skill]?.id ?? "" }),
+          ]
+        : [];
+    }),
+  ]);
 
   const goal = await goalFixture({
     kind: "language",
@@ -317,7 +346,15 @@ function answers(skill: "listening" | "reading"): StoredAnswer[] {
   }));
 }
 
-async function testTaker(levelAnswers: StoredAnswer[]) {
+async function takeTest({
+  goal,
+  levelAnswers,
+  targetLanguage,
+}: {
+  goal: Goal;
+  levelAnswers: StoredAnswer[];
+  targetLanguage: string;
+}) {
   await prisma.languageLevelTest.upsert({
     create: {
       content: BANK,
@@ -325,13 +362,11 @@ async function testTaker(levelAnswers: StoredAnswer[]) {
       model: "test",
       promptVersion: "test",
       runId: "test",
-      targetLanguage: "en",
+      targetLanguage,
     },
     update: { content: BANK },
-    where: { languagePair: { language: "pt", targetLanguage: "en" } },
+    where: { languagePair: { language: "pt", targetLanguage } },
   });
-
-  const { goal, user } = await languageGoalFixture();
 
   await prisma.goal.update({
     data: {
@@ -343,7 +378,12 @@ async function testTaker(levelAnswers: StoredAnswer[]) {
     where: { id: goal.id },
   });
 
-  mockSession(user.id);
+  mockSession(goal.userId);
+}
+
+async function testTaker(levelAnswers: StoredAnswer[]) {
+  const { goal, user } = await languageGoalFixture();
+  await takeTest({ goal, levelAnswers, targetLanguage: "en" });
   return { goal, user };
 }
 
@@ -395,5 +435,56 @@ describe("the level test", () => {
       { score: 0.5, skill: "reading", startScore: 0 },
       { score: 2, skill: "listening", startScore: 2 },
     ]);
+  });
+});
+
+describe("a learner the level test placed high", () => {
+  it("earns no level for the few lessons left after testing out most of them", async () => {
+    const fixture = await italianPlan({
+      items: [
+        { skill: 0 },
+        { skill: 0 },
+        { skill: 1 },
+        { skill: 1 },
+        ...Array.from({ length: 4 }, () => ({ skill: 2, unit: 1 })),
+        { skill: 3, unit: 2 },
+        { skill: 3, unit: 2 },
+      ],
+      skills: [
+        { lessons: 2, level: "A1" },
+        { lessons: 2, level: "A2" },
+        { lessons: 4, level: "B1" },
+        { lessons: 2, level: "B1" },
+      ],
+    });
+
+    const { goal, plan, skills, user } = fixture;
+    const levelAnswers = [...answers("reading"), ...answers("listening")];
+
+    await takeTest({ goal, levelAnswers, targetLanguage: "it" });
+    await finishLanguageLevelTest(goal.id);
+
+    const placed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(placed.details).toMatchObject({ level: "B1+" });
+
+    const knownId = skills[2]?.id ?? "";
+    const known = plan.items.filter((item) => item.skillId === knownId);
+
+    await writeLearnerChange({ userId: user.id }, (tx) =>
+      testOutKnownPlanItems(tx, {
+        goalId: goal.id,
+        items: known.map((item) => ({ ...item, skillIds: [knownId] })),
+        knownSkillIds: new Set([knownId]),
+        testedOutAt: new Date(),
+        timeZone: TIME_ZONE,
+      }),
+    );
+
+    await refreshGoalPlan({ goalId: goal.id });
+
+    await finishLesson(fixture, 8);
+    await finishLesson(fixture, 9);
+
+    await expect(listLevelCertificates(user.id)).resolves.toStrictEqual([]);
   });
 });

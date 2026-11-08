@@ -85,9 +85,9 @@ describe(listPlanLevels, () => {
     expect(earned(list)).toStrictEqual([...CEFR_LEVELS]);
   });
 
-  it("sizes a level by the graph: outlined lessons once written, nothing for a skill left out by choice", () => {
+  it("sizes a level by the graph: outlined lessons once written, nothing for a skill left out by choice, all of a tested-out one", () => {
     const list = levels({
-      graphSkills: [graph("A1", 30, 6), graph("A1-chosen-out", 10, 0), graph("A2", 4)],
+      graphSkills: [graph("A1", 30, 6), graph("A1-chosen-out", 10, 0), graph("A2", 4, 0)],
       items: [...lessons("A1", 3), ...lessons("A2", 2), standIn("A2", 2, "testedOut")],
     });
 

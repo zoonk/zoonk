@@ -9,9 +9,18 @@ type StudiedItem = Pick<
   "chapterId" | "kind" | "lessonId" | "lessons" | "skillId" | "status"
 >;
 
-/** A skill's full size, even where a dated plan trims it or leaves it out; 0 when it's out by choice. */
-function getSkillSize(skill: Pick<SizedSkill, "lessons" | "plannedLessons">): number {
-  return skill.plannedLessons ?? skill.lessons;
+/**
+ * A skill's full size, even where a dated plan trims it or leaves it out; 0 when it's out by choice.
+ * A re-plan also sizes a tested-out skill at 0, so it counts at its graph size instead.
+ */
+function getSkillSize({
+  skill,
+  testedOut,
+}: {
+  skill: SizedSkill;
+  testedOut: ReadonlySet<string>;
+}): number {
+  return testedOut.has(skill.skillId) ? skill.lessons : (skill.plannedLessons ?? skill.lessons);
 }
 
 /**
@@ -28,8 +37,14 @@ export function measureStudied({
   const sized = new Set(graphSkills.map((skill) => skill.skillId));
   const unsized = items.filter((item) => !item.skillId || !sized.has(item.skillId));
 
+  const testedOut = new Set(
+    items.flatMap((item) => (item.status === "testedOut" && item.skillId ? item.skillId : [])),
+  );
+
   return {
-    size: graphSkills.reduce((sum, skill) => sum + getSkillSize(skill), 0) + countLessons(unsized),
+    size:
+      graphSkills.reduce((sum, skill) => sum + getSkillSize({ skill, testedOut }), 0) +
+      countLessons(unsized),
     studied: countLessons(items.filter((item) => item.status === "done")),
   };
 }
