@@ -136,6 +136,12 @@ class OnboardingStore(
             session?.let { api.onboarding(it, goalId) }
         }
 
+    val revealToday =
+        cache.keyed<String, com.zoonk.api.models.StudyDay>(
+            Audience.SignedIn,
+            setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress),
+        ) { session, goalId -> session?.let { api.revealToday(it, goalId) } }
+
     /** Drafts this process sent from a tap: a draft opened later waits for the learner's own tap. */
     private val sent = mutableSetOf<String>()
 
@@ -161,6 +167,11 @@ class OnboardingStore(
         return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, goal, language) }
             .also { if (it is WriteOutcome.Done) sent += it.value.id.toString() }
     }
+
+    suspend fun markPlanRevealed(goalId: String) =
+        write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.UserProgress)) {
+            api.markPlanRevealed(it, goalId)
+        }
 
     suspend fun readAgain(draftId: String) = write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.readAgain(it, draftId) }
 

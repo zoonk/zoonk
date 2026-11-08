@@ -41,6 +41,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
@@ -228,8 +229,11 @@ private fun ColumnScope.ScheduleTime(
     val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
     val marked = markedTimes(found)
 
+    com.zoonk.android.data
+        .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
+        continueLabel = stringResource(R.string.onboarding_see_plan),
         canContinue = hasDays && minutes != null,
         pending = pending || waitsToSave(line, picked),
         onContinue = {
@@ -249,6 +253,7 @@ private fun ColumnScope.ScheduleTime(
         },
     ) {
         if (!factsBeside) PlanFactChips(goal)
+        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal)
 
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -281,6 +286,15 @@ private fun ColumnScope.ScheduleTime(
                 date = date,
                 exam = exam,
                 line = shown.line,
+                aim =
+                    LocalSetupAim.current.aim?.let { selected ->
+                        selected.aim?.value?.takeIf { value ->
+                            selected.choices.any {
+                                it.aim.value ==
+                                    value
+                            }
+                        }
+                    },
                 minutes = minutes,
                 note = fullTimeNote(shown.found, shown.line, studiesEveryDay = days.size == EVERY_DAY.size),
                 offer = timeOffer(shown.found, shown.line, minutes),

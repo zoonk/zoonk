@@ -379,7 +379,7 @@ internal fun ColumnScope.SubjectsLevelStep(
     }
 }
 
-internal enum class TextQuestion { Reason, Admission, Position, Score }
+internal enum class TextQuestion { Admission, Position, Score }
 
 private data class TextQuestionCopy(
     @StringRes val title: Int,
@@ -399,28 +399,13 @@ internal fun ColumnScope.TextStep(
     var value by words.field(0)
     val answer = { text: String? ->
         onAnswer(
-            if (question == TextQuestion.Reason) {
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf2Value(
-                    OnboardingAnswerInputOneOf2(OnboardingAnswerInputOneOf2.Question.REASON, text),
-                )
-            } else {
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf3Value(
-                    OnboardingAnswerInputOneOf3(OnboardingAnswerInputOneOf3.Question.TARGET, text),
-                )
-            },
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf3Value(
+                OnboardingAnswerInputOneOf3(OnboardingAnswerInputOneOf3.Question.TARGET, text),
+            ),
         )
     }
     val (title, description, label, placeholder) =
         when (question) {
-            TextQuestion.Reason -> {
-                TextQuestionCopy(
-                    R.string.onboarding_reason_title,
-                    R.string.onboarding_reason_description,
-                    R.string.onboarding_reason_label,
-                    R.string.onboarding_reason_placeholder,
-                )
-            }
-
             TextQuestion.Admission -> {
                 TextQuestionCopy(
                     R.string.onboarding_admission_title,
@@ -731,7 +716,8 @@ private fun NoSittingLine(
 internal fun goalZone(timeZone: String?): ZoneId = timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
 
 /** From tomorrow to ten years ahead, the deadlines core accepts. */
-internal fun targetDateBounds(today: LocalDate): ClosedRange<LocalDate> = today.plusDays(1)..today.plusDays(MAX_DAYS_AHEAD)
+internal fun targetDateBounds(today: LocalDate): ClosedRange<LocalDate> =
+    today.plusDays(1)..today.plusDays(com.zoonk.android.feature.plan.MAX_PLAN_DAYS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -946,4 +932,3 @@ private fun AnswerField(
 }
 
 private const val MAX_ANSWER_LENGTH = 200
-private const val MAX_DAYS_AHEAD = 3650L

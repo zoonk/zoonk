@@ -22,9 +22,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -54,11 +56,28 @@ internal fun SetupColumn(
         val spread = fold?.takeIf { aside == null }
         val waitSlot = remember { mutableStateOf<PageWait?>(null) }
         val wait = waitSlot.value
+        val reversed = LocalWaitPane.current?.value != null
 
         Column(
             when {
-                fold != null && aside != null -> Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }
-                else -> Modifier.fillMaxSize()
+                fold != null && aside != null -> {
+                    (
+                        if (reversed) {
+                            Modifier.fillMaxSize().padding(
+                                start = fold.end,
+                            )
+                        } else {
+                            Modifier.width(fold.start).fillMaxHeight()
+                        }
+                    ).semantics {
+                        isTraversalGroup =
+                            true
+                    }
+                }
+
+                else -> {
+                    Modifier.fillMaxSize()
+                }
             }.then(wait?.let { Modifier.watchTouches(it.hold) } ?: Modifier),
         ) {
             BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
@@ -87,11 +106,16 @@ internal fun SetupColumn(
                 }
             }
 
-            wait?.takeIf { it.hold.holding }?.let { HeldBar(it) }
+            wait?.takeIf { it.visible && (it.actions != null || it.hold.holding) }?.let { HeldBar(it) }
         }
 
         if (fold != null && aside != null) {
-            Box(Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true }) { aside() }
+            Box(
+                (if (reversed) Modifier.width(fold.start).fillMaxHeight() else Modifier.fillMaxSize().padding(start = fold.end)).semantics {
+                    isTraversalGroup =
+                        true
+                },
+            ) { aside() }
         }
     }
 }
@@ -109,6 +133,8 @@ internal val LocalSetupPage = compositionLocalOf<SetupPage?> { null }
 internal data class PageWait(
     val hold: ReadyHold,
     val action: String,
+    val actions: State<@Composable () -> Unit>? = null,
+    val visible: Boolean = true,
 )
 
 /**
@@ -127,11 +153,36 @@ internal fun PageHold(
 }
 
 @Composable
+internal fun PageWaitActions(
+    hold: ReadyHold,
+    visible: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    val slot = LocalSetupPage.current?.wait
+    if (slot == null) {
+        content()
+        return
+    }
+    val actions = rememberUpdatedState(content)
+    val wait = PageWait(hold, "", actions, visible)
+    SideEffect { slot.value = wait }
+    DisposableEffect(slot) { onDispose { slot.value = null } }
+}
+
+@Composable
 private fun HeldBar(wait: PageWait) {
     DockedActionBar {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
             Box(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = MARGIN, vertical = EDGE)) {
-                Button(onClick = wait.hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(wait.action) }
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (wait.actions !=
+                        null
+                    ) {
+                        wait.actions.value()
+                    } else {
+                        Button(onClick = wait.hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(wait.action) }
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Title of the screen where a learner writes their goal. -->
     <string name="onboarding_start_title">What do you want to achieve?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -303,7 +303,7 @@
     <string name="onboarding_reveal_building_title">Building your plan</string>
     <string name="onboarding_reveal_building_description">We\'re choosing what to learn first and fitting it into your days. A new subject can take a minute or two.</string>
     <!-- Above a published course's title, offered while the learner's plan is built. -->
-    <string name="onboarding_library_course_fits">A course in the Library fits your goal</string>
+    <string name="onboarding_library_course_fits">A Library course fits your goal. Start it now</string>
     <string name="onboarding_reveal_reading_title">Reading the exam\'s official documents</string>
     <string name="onboarding_reveal_reading_last_title">Reading the last edition\'s official documents</string>
     <string name="onboarding_reveal_reading_notice">Your plan will follow the notice\'s subjects, topics and dates. This usually takes a few minutes.</string>
@@ -312,22 +312,10 @@
     <string name="onboarding_reveal_reading_done_step">Your plan, from what you told us</string>
     <string name="onboarding_reveal_reading_step">Reading the official documents</string>
     <string name="onboarding_reveal_created">Plan created</string>
-    <plurals name="onboarding_reveal_days">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
-    </plurals>
-    <plurals name="onboarding_reveal_about_days">
-        <item quantity="one">About %d day</item>
-        <item quantity="other">About %d days</item>
-    </plurals>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a day, such as "Nov 8". -->
-    <string name="onboarding_reveal_until_about">Until about %1$s</string>
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
-    <string name="onboarding_reveal_until_about_month">Until about %1$s</string>
     <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_reveal_daily">%1$s a day</string>
     <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
-    <string name="onboarding_reveal_daily_weekends">%1$s a day, %2$s on weekends</string>
     <!-- Under a plan without a date that holds every part of a learn goal. -->
     <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <!-- Under a plan without a date that stops before every part of a learn goal. -->
@@ -441,18 +429,18 @@
     <string name="onboarding_continue">Continue</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_purpose_title">What do you want from it?</string>
-    <string name="onboarding_purpose_description">Pick what motivates you most.</string>
+    <string name="onboarding_purpose_description">It sets how deep your course goes, and so how long it is.</string>
     <string name="onboarding_purpose_label">What you want from it</string>
     <string name="onboarding_purpose_overview">Get an overview</string>
-    <string name="onboarding_purpose_overview_description">The big ideas, no formulas</string>
+    <string name="onboarding_purpose_overview_description">A short course: the big ideas, no formulas</string>
     <string name="onboarding_purpose_deep">Understand it in depth</string>
-    <string name="onboarding_purpose_deep_description">From the basics to advanced</string>
+    <string name="onboarding_purpose_deep_description">The full path, from the basics to advanced</string>
     <string name="onboarding_purpose_work">Use it at work</string>
-    <string name="onboarding_purpose_work_description">Apply it to real projects</string>
+    <string name="onboarding_purpose_work_description">Only what your work uses, in the order it needs</string>
     <string name="onboarding_purpose_career_change">Change careers</string>
-    <string name="onboarding_purpose_career_change_description">Get ready for a new role</string>
+    <string name="onboarding_purpose_career_change_description">What the new role needs, portfolio included</string>
     <string name="onboarding_purpose_refresh">Refresh what I studied</string>
-    <string name="onboarding_purpose_refresh_description">Pick up what you left behind</string>
+    <string name="onboarding_purpose_refresh_description">Back to the level you had, after a quick test</string>
     <string name="onboarding_purpose_other">Something else</string>
     <string name="onboarding_purpose_other_description">Tell us later, in your own words</string>
     <string name="onboarding_level_title">How much do you already know?</string>
@@ -510,9 +498,7 @@
     <string name="onboarding_position_description">The notice can have a different exam for each position.</string>
     <string name="onboarding_position_label">Position</string>
     <string name="onboarding_reason_title">Why are you learning it?</string>
-    <string name="onboarding_reason_description">The situations you care about shape every lesson.</string>
-    <string name="onboarding_reason_label">Why</string>
-    <string name="onboarding_reason_placeholder">E.g., a job interview, travel</string>
+    <string name="onboarding_reason_description">Your answer sets how far your course goes.</string>
     <string name="onboarding_score_title">What score do you need?</string>
     <string name="onboarding_score_placeholder">E.g., band 7, 100 points</string>
     <string name="onboarding_follow_ups_title">Tell us a bit more</string>
@@ -608,4 +594,66 @@
     <string name="onboarding_reveal_reading_line_guide">Finding the parts and topics the official guide lists…</string>
     <string name="onboarding_reveal_reading_line_dates">Checking the exam\'s dates and format…</string>
     <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
+    <string name="onboarding_see_plan">See your plan</string>
+    <string name="onboarding_plan_ready">Plan ready</string>
+    <string name="onboarding_plan_ready_goal">Your plan for %1$s is ready.</string>
+    <string name="onboarding_plan_look_over">Look it over before you start.</string>
+    <string name="onboarding_reveal_start_here">Start here</string>
+    <string name="onboarding_reveal_up_next">Up next</string>
+    <string name="onboarding_reveal_first_week">Your first week</string>
+    <string name="onboarding_reveal_rest_day">Rest day</string>
+    <string name="onboarding_reveal_challenge">Challenge</string>
+    <string name="onboarding_reveal_review">Review</string>
+    <string name="onboarding_reveal_mock">Mock exam</string>
+    <string name="onboarding_reveal_a_day">a day</string>
+    <string name="onboarding_reveal_weekends">%1$s on weekends</string>
+    <string name="onboarding_reveal_until_exam">until the exam</string>
+    <string name="onboarding_reveal_until_date">until your date</string>
+    <string name="onboarding_reveal_estimated_finish">estimated finish</string>
+    <string name="onboarding_whats_next">What\'s next</string>
+    <string name="onboarding_your_plan_ready">Your plan is ready</string>
+    <string name="onboarding_reveal_more_kinds">+%1$s</string>
+    <string name="onboarding_aim_travel">Get by on trips</string>
+    <string name="onboarding_aim_talk">Everyday conversations</string>
+    <string name="onboarding_aim_work">Work or study in it</string>
+    <string name="onboarding_aim_fluent">Speak it fluently</string>
+    <string name="onboarding_your_aim">Your aim</string>
+    <string name="onboarding_aim_change">Change</string>
+    <string name="onboarding_aim_picker_title">How far do you want to go?</string>
+    <string name="onboarding_aim_hours_more">About %1$s h more</string>
+    <string name="onboarding_aim_hours_month">About %1$s h more · around %2$s</string>
+    <string name="onboarding_aim_hours">%1$s h</string>
+    <string name="onboarding_aim_by_month">by %1$s</string>
+    <string name="onboarding_aim_finish">At %1$s a day, you reach %2$s around %3$s.</string>
+    <string name="onboarding_aim_changed">Your course now goes up to %1$s.</string>
+    <string name="onboarding_reason_travel">Travel</string>
+    <string name="onboarding_reason_travel_description">Get by on trips: order, ask the way, small talk</string>
+    <string name="onboarding_reason_talk">Talk with people</string>
+    <string name="onboarding_reason_talk_description">Everyday conversations, at home or abroad</string>
+    <string name="onboarding_reason_work">Work or study in it</string>
+    <string name="onboarding_reason_work_description">Meetings, interviews and classes</string>
+    <string name="onboarding_reason_fluent">Speak it fluently</string>
+    <string name="onboarding_reason_fluent_description">Talk about almost anything with ease</string>
+    <string name="onboarding_reason_certificate">Pass a certificate</string>
+    <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI and others</string>
+    <string name="onboarding_reason_other_description">In your own words. Aims for B1</string>
+    <string name="onboarding_reason_exam">Exam</string>
+    <string name="onboarding_reason_which_exam">Which one?</string>
+    <string name="onboarding_reason_exam_plan">Your plan follows that exam\'s papers and score.</string>
+    <string name="onboarding_reason_your_words">In your own words</string>
+    <string name="onboarding_reason_hours_note">Hours of study from scratch, practice included. Less if you already know some.</string>
+    <string name="onboarding_aim_from_none">From scratch, at %1$s a day.</string>
+    <string name="onboarding_aim_from_basic">From the basics, at %1$s a day.</string>
+    <string name="onboarding_aim_from_intermediate">From an intermediate level, at %1$s a day.</string>
+    <string name="onboarding_aim_from_advanced">From an advanced level, at %1$s a day.</string>
+    <string name="onboarding_aim_from_level">From %1$s, at %2$s a day.</string>
+    <!-- The count is the separate animated readout above this noun. -->
+    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
+        <item quantity="one">lesson</item>
+        <item quantity="other">lessons</item>
+    </plurals>
+    <plurals name="onboarding_reveal_lessons_done">
+        <item quantity="one">lesson, %1$s done</item>
+        <item quantity="other">lessons, %1$s done</item>
+    </plurals>
 </resources>

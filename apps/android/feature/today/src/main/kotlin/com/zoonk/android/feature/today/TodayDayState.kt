@@ -35,13 +35,6 @@ fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
 fun DayView.studiedToday(): Long = week.days.firstOrNull { it.isToday }?.minutes ?: 0
 
-/**
- * A lesson nobody has started writing is written when the learner opens it, so it never claims to
- * be in progress.
- */
-fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
-    kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
-
 /** While lessons are written or outlined, Today reads itself again until they land. */
 fun DayView.isWaitingForLessons(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
     lessonsComing ||

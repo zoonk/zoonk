@@ -128,6 +128,16 @@ interface OnboardingApi {
         input: OnboardingAnswerInput,
     ): Onboarding
 
+    suspend fun revealToday(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): com.zoonk.api.models.StudyDay
+
+    suspend fun markPlanRevealed(
+        session: AuthenticatedSession,
+        goalId: String,
+    )
+
     suspend fun goalGenerationRun(
         session: AuthenticatedSession,
         goalId: String,
@@ -309,6 +319,20 @@ class LiveOnboardingApi(
         goalId: String,
         input: OnboardingAnswerInput,
     ) = perform { api.clients(session).onboarding.answerOnboardingQuestion(UUID.fromString(goalId), input) }
+
+    override suspend fun revealToday(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform {
+        api.clients(session).onboarding.getPlanRevealToday(UUID.fromString(goalId), timeZone = TimeZone.getDefault().id)
+    }
+
+    override suspend fun markPlanRevealed(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {
+        perform { api.clients(session).onboarding.markPlanRevealed(UUID.fromString(goalId)) }
+    }
 
     override suspend fun goalGenerationRun(
         session: AuthenticatedSession,

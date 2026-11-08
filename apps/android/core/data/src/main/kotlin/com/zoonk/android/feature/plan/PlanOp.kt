@@ -15,6 +15,7 @@ import com.zoonk.api.models.PlanOperationOneOf15
 import com.zoonk.api.models.PlanOperationOneOf15ChoicesInner
 import com.zoonk.api.models.PlanOperationOneOf16
 import com.zoonk.api.models.PlanOperationOneOf17
+import com.zoonk.api.models.PlanOperationOneOf18
 import com.zoonk.api.models.PlanOperationOneOf2
 import com.zoonk.api.models.PlanOperationOneOf3
 import com.zoonk.api.models.PlanOperationOneOf4
@@ -142,6 +143,10 @@ sealed interface PlanOp {
         val subjects: List<String>,
     ) : PlanOp
 
+    data class Aim(
+        val aim: String,
+    ) : PlanOp
+
     data object Unknown : PlanOp
 
     companion object
@@ -174,6 +179,10 @@ val PlanOperationOutput.op: PlanOp
 
 fun PlanOp.Companion.of(json: JsonObject): PlanOp =
     when (json.string("kind")) {
+        "setAim" -> {
+            PlanOp.Aim(json.string("aim").orEmpty())
+        }
+
         "setDailyMinutes" -> {
             PlanOp.DailyMinutes(json.int("minutes"))
         }
@@ -383,12 +392,18 @@ fun PlanOp.toOperation(): PlanOperation? =
         }
 
         is PlanOp.AreaStart -> {
-            PlanOperation.PlanOperationOneOf17Value(
-                PlanOperationOneOf17(
+            PlanOperation.PlanOperationOneOf18Value(
+                PlanOperationOneOf18(
                     areas,
-                    PlanOperationOneOf17.Kind.SET_AREA_START,
-                    if (pastBasics) PlanOperationOneOf17.Start.PAST_BASICS else PlanOperationOneOf17.Start.BASICS,
+                    PlanOperationOneOf18.Kind.SET_AREA_START,
+                    if (pastBasics) PlanOperationOneOf18.Start.PAST_BASICS else PlanOperationOneOf18.Start.BASICS,
                 ),
+            )
+        }
+
+        is PlanOp.Aim -> {
+            PlanOperation.PlanOperationOneOf17Value(
+                PlanOperationOneOf17(contractEnum(aim), PlanOperationOneOf17.Kind.SET_AIM),
             )
         }
 
