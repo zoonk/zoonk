@@ -55,6 +55,8 @@ struct GenerationWait: Equatable, Sendable {
     let id: String
     let title: String
     var isReady: Bool
+    /// The learner finished it, which only the onboarding read knows: it's not offered again.
+    var isDone = false
     /// The server's times, as each phase keeps them.
     var startedAt: Date?
     var endedAt: Date?
@@ -105,8 +107,8 @@ struct GenerationWait: Equatable, Sendable {
     return wait
   }
 
-  /// What the onboarding read says of lesson 1: the read is the truth after a reconnect, so a lesson
-  /// either side calls ready is ready.
+  /// What the onboarding read says of lesson 1 outranks the stream, which replays its old steps after
+  /// a reconnect: a lesson either side calls ready is ready, and one the read calls done is done.
   func firstLesson(read: FirstLesson?) -> FirstLesson? {
     guard let live = firstLesson else {
       return read
@@ -121,6 +123,7 @@ struct GenerationWait: Equatable, Sendable {
     return merged
   }
 
+    merged.isDone = read.isDone
   var visiblePhases: [Phase] {
     phases.filter { !$0.isOptional || $0.isReported }
   }

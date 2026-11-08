@@ -161,6 +161,12 @@ final class GenerationWaitTests: XCTestCase {
     // A reconnection replays the lesson being picked after it was ready.
     wait.apply(writing)
     XCTAssertEqual(wait.firstLesson?.isReady, true)
+    XCTAssertEqual(wait.firstLesson(read: ready)?.isDone, false)
+
+    // Finished, as only the read knows: the stream's replayed ready never offers it again.
+    var done = ready
+    done.isDone = true
+    XCTAssertEqual(wait.firstLesson(read: done)?.isDone, true)
   }
 
   func testIgnoresStepsItDoesntKnow() {

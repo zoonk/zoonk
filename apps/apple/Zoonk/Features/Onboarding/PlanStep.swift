@@ -207,7 +207,7 @@ struct PlanBuilding: View {
         } else {
           WaitStatusStrip(
             label: Text(title), isDone: holding != nil, share: { wait.shownShare(at: $0) },
-            firstLesson: firstLesson)
+            firstLesson: firstLesson?.isDone == true ? nil : firstLesson)
         }
       } progress: {
         WaitHeading(
@@ -257,7 +257,7 @@ struct PlanBuilding: View {
       return next.ready(holding)
     }
 
-    guard let firstLesson, firstLesson.isReady else {
+    guard let firstLesson, firstLesson.isReady, !firstLesson.isDone else {
       return nil
     }
 
@@ -277,7 +277,9 @@ struct PlanBuilding: View {
 
 extension GenerationWait.FirstLesson {
   init(_ read: Components.Schemas.Onboarding.FirstLessonPayload) {
-    self.init(id: read.id, title: read.title, isReady: read.status == .ready)
+    self.init(
+      id: read.id, title: read.title, isReady: read.status != .writing, isDone: read.status == .done
+    )
   }
 }
 
