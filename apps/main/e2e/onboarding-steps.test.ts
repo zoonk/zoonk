@@ -170,7 +170,7 @@ test.describe("When a wait can't go on", () => {
 
     await expect(notice).toBeVisible();
 
-    const nextQuestion = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
+    const nextQuestion = page.getByRole("heading", { name: "How much do you already know?" });
     await expect(nextQuestion).toBeVisible();
 
     await stopRuns({ entityId: goal.id, page });

@@ -204,13 +204,16 @@ function ScheduleView({ lang, state }: ViewProps) {
             weekendPicked: null,
           }}
           findTimeToCover={async () => timeToCover(lang)}
+          firstLesson={null}
           getTimeAdvice={async (week) => timeAdvice(lang, week.dailyMinutes)}
           goal={goal}
+          lessonHref={(id) => `/learn/${id}`}
+          library={null}
           onAnswer={noop}
           onChangeDate={noop}
-          onPlanReadyChange={noop}
           pending={false}
           planReadiness={{ readingNotice: false, ready: true }}
+          readWarmUp={async () => null}
           recommendedMinutes={60}
           run={null}
           together={{ count: 1, place: 0 }}
@@ -289,22 +292,25 @@ function RevealView({ lang }: ViewProps) {
             actions={
               {
                 getPlan: async () => ({ status: "ready", ...revealed }),
-                recordPlanWait: async () => {},
+                markPlanRevealed: async () => true,
+                readWarmUp: async () => null,
               } as any
             }
+            buddy={null}
+            firstLesson={null}
             focusTestHref="/focus-test"
             goal={{ kind: "learn", title: c.title }}
             goalId={CAREER_ID}
             initialPlan={revealed}
             isGuest={false}
-            libraryCourse={null}
-            onPlanReadyChange={noop}
+            lessonHref={(id) => `/learn/${id}`}
+            library={null}
             planActions={PLAN_ACTIONS as any}
             planLinkHref={(id) => `/plans/${id}`}
-            refreshPages={noop}
+            planRevealed={false}
             run={null}
             signUpHref="/login"
-            todayHref="/today"
+            toToday={noop}
           />
         </OnboardingFrame>
       </OnboardingRailProvider>
