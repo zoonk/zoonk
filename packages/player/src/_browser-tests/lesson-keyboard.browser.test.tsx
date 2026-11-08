@@ -489,6 +489,19 @@ describe("lesson by keyboard", () => {
     });
   });
 
+  it("a word bank hands keyboard focus to Check once every word is in the answer", async () => {
+    const step = languageStep("reading");
+
+    renderLessonPlayer({ lesson: buildLesson([step], { language: "pt", targetLanguage: "en" }) });
+
+    for (const { word } of step.exercise.wordBankOptions) {
+      // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+      await pressEnterOn(bankTile(word));
+    }
+
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toHaveFocus();
+  });
+
   it.each<[string, () => PlayableLibraryStep]>([
     ["a listening step", listeningWithAudio],
     [

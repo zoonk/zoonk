@@ -38,7 +38,10 @@ export function placeKeepingFocus({
   updateKeepingFocus(
     event,
     place,
-    () => (fillsAnswer ? getReadyLessonPrimary() : null) ?? getNearestAvailable(tiles, tile),
+    () =>
+      (fillsAnswer ? getReadyLessonPrimary() : null) ??
+      getNearestAvailable(tiles, tile) ??
+      getReadyLessonPrimary(),
   );
 }
 
