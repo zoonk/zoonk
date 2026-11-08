@@ -1,5 +1,3 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
-import { trackOnboardingProgress } from "@zoonk/core/analytics/track-onboarding-progress";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { setGoalPrimaryCourse } from "@zoonk/core/library/curriculum/goal-primary-course";
@@ -15,7 +13,7 @@ import {
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { getRun } from "workflow/api";
 import { type BuiltCurriculum } from "../goal-curriculum";
-import { type GoalStreamStep } from "./goal-progress-step";
+import { goalProgressStep } from "./goal-progress-step";
 
 function toBuiltCurriculum({
   generatedAt,
@@ -102,30 +100,9 @@ export async function reuseCurriculumStep({
 
   const goalId = inputs.goal.id;
 
-  await using stream = createStepStream<GoalStreamStep>();
-
-  trackOnboardingProgress({
-    at: Date.now(),
-    goalId,
-    platform: null,
-    stage: "run_step",
-    status: "started",
-    step: "buildSkillGraph",
-  });
-
-  await stream.status({ entityId: goalId, status: "started", step: "buildSkillGraph" });
+  await goalProgressStep({ entityId: goalId, status: "started", step: "buildSkillGraph" });
   const adopted = await adoptCurriculum({ goalId, reusable });
-
-  trackOnboardingProgress({
-    at: Date.now(),
-    goalId,
-    platform: null,
-    stage: "run_step",
-    status: "completed",
-    step: "buildSkillGraph",
-  });
-
-  await stream.status({ entityId: goalId, status: "completed", step: "buildSkillGraph" });
+  await goalProgressStep({ entityId: goalId, status: "completed", step: "buildSkillGraph" });
 
   return adopted;
 }

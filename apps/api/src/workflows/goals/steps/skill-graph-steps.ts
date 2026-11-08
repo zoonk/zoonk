@@ -4,7 +4,6 @@ import {
   type SkillGraphParams,
   type SkillsPart,
 } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
-import { trackOnboardingProgress } from "@zoonk/core/analytics/track-onboarding-progress";
 import { findExamLibrary } from "@zoonk/core/library/curriculum/exam-library-skills";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
@@ -19,7 +18,7 @@ import {
   writeWholeSkillGraph,
 } from "@zoonk/core/library/curriculum/write-skill-graph";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
-import { type GoalStreamStep } from "./goal-progress-step";
+import { type GoalStreamStep, goalProgressStep } from "./goal-progress-step";
 
 type GraphCallParams = Omit<SkillGraphParams, "findLibrarySkills" | "onSkillNamed">;
 
@@ -50,18 +49,7 @@ export async function prepareSkillGraphStep({
 }) {
   "use step";
 
-  await using stream = createStepStream<GoalStreamStep>();
-
-  trackOnboardingProgress({
-    at: Date.now(),
-    goalId: inputs.goal.id,
-    platform: null,
-    stage: "run_step",
-    status: "started",
-    step: "buildSkillGraph",
-  });
-
-  await stream.status({ entityId: inputs.goal.id, status: "started", step: "buildSkillGraph" });
+  await goalProgressStep({ entityId: inputs.goal.id, status: "started", step: "buildSkillGraph" });
 
   const examBlueprintId =
     inputs.graphPrompt.examBlueprint && isSharedExamGraph({ inputs, scope })
