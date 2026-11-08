@@ -73,6 +73,7 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
+import com.zoonk.android.feature.player.engine.listeningInstead
 import com.zoonk.android.feature.player.language.LanguageStepView
 import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.model.CheckOption
@@ -80,7 +81,6 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
 import com.zoonk.android.feature.player.model.StepContent
-import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.characters.Buddy
@@ -656,9 +656,6 @@ internal fun SpokenAnswerView(
         }
     }
 }
-
-internal fun StepContent.SpokenAnswer.listeningInstead(cantTalk: Boolean): StepContent.Language? =
-    listening?.takeIf { cantTalk }?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {

@@ -119,6 +119,25 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("button", { name: "Record" })).not.toBeInTheDocument();
   });
 
+  it("shows the right translation after a missed listening answer, as a listening screen does", async () => {
+    openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(), step: spokenSentenceStep() });
+
+    await page.getByRole("button", { name: "I can't talk now" }).click();
+
+    const bank = page.getByRole("group", { name: "Word bank" });
+
+    for (const word of [/^aluguel\?$/iu, /^o$/iu, /^é$/iu, /^quanto$/iu]) {
+      // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+      await bank.getByRole("button", { name: word }).click();
+    }
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Not quite" }))
+      .toMatchTextContent(/Answer: Quanto é o aluguel\?/u);
+  });
+
   it("saves the listening answer that replaced a slow spoken one only after that grade settles", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     allowMicrophone();
