@@ -1960,16 +1960,6 @@
               }
             }
           },
-          "403": {
-            "description": "Today's time limit is reached",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -19608,16 +19598,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Today's time limit is reached",
             "content": {
               "application/json": {
                 "schema": {
