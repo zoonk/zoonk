@@ -105,7 +105,6 @@ export function ReadingStep({
       answer={step.sentence.sentence}
       answerKind="reading"
       onSelectAnswer={onSelectAnswer}
-      otherOrders={step.sentence.otherSentenceOrders}
       result={result}
       selectedAnswer={selectedAnswer}
       wordBankOptions={step.wordBankOptions}

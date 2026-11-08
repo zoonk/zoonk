@@ -2,7 +2,7 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { buildAcceptedArrangeWordSequences } from "@zoonk/core/player/contracts/arrange-words-answers";
+import { segmentArrangeWords } from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
@@ -70,7 +70,6 @@ export function ArrangeWordsInteraction({
   answerKind,
   children,
   onSelectAnswer,
-  otherOrders,
   result,
   selectedAnswer,
   wordBankOptions,
@@ -79,20 +78,13 @@ export function ArrangeWordsInteraction({
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
-  otherOrders: string[][];
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences({
-    kind: answerKind,
-    otherOrders,
-    text: answer,
-  });
-
-  const correctWords = acceptedWordSequences[0] ?? [];
+  const correctWords = segmentArrangeWords({ kind: answerKind, text: answer });
 
   const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
