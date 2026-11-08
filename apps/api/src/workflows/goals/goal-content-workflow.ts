@@ -1,4 +1,5 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
+import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -23,6 +24,7 @@ import { recordGoalRunStep } from "./steps/record-goal-run-step";
 import { loadStoredCurriculumStep } from "./steps/stored-plan-steps";
 
 export type GoalContentInput = {
+  followUp?: GoalRebuildFollowUp;
   goalId: string;
   researchId?: string | null;
   /** The learner's upload answered research's ask after the plan was built. */

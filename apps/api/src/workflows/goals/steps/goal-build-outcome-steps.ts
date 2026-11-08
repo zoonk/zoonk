@@ -8,12 +8,11 @@ import {
 } from "@zoonk/core/lookahead/placement-item-skills";
 import { prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
-import { getStepMetadata } from "workflow";
 
 export async function isGoalRebuildOwedStep(input: Parameters<typeof isGoalRebuildOwed>[0]) {
   "use step";
 
-  return { owed: await isGoalRebuildOwed(input), startedAt: getStepMetadata().stepStartedAt };
+  return isGoalRebuildOwed(input);
 }
 
 export async function finishGoalRebuildStep(

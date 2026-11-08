@@ -29,12 +29,7 @@ import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 type Dealt = { pickedId: string | null; position: number };
 
 const POSITION_KEY = "zoonk:warm-up:";
-
-/**
- * The decks whose card was on screen in this tab. A wait can mount again with the same card (the
- * plan's wait turns to its notice's, then lesson 1's), and Warm-Up Shown counts one showing.
- */
-const shownDecks = new Set<string>();
+const SHOWN_KEY = "zoonk:warm-up-shown:";
 
 /** The next card the learner hasn't guessed in this tab, so another wait goes on from there. */
 function readPosition(deckId: string): number {
@@ -141,11 +136,13 @@ export function useWaitQuiz({
   };
 
   const markShown = () => {
-    if (shownDecks.has(deck.id)) {
+    const key = `${SHOWN_KEY}${deck.id}`;
+
+    if (tabStorage.get(key) === "1") {
       return;
     }
 
-    shownDecks.add(deck.id);
+    tabStorage.set(key, "1");
 
     track({
       name: "Warm-Up Shown",

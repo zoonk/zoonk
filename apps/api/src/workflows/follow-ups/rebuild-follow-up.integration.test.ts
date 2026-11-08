@@ -2,6 +2,7 @@ import { waitForSleep } from "@workflow/vitest";
 import { generateWholeSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
+import { requestGoalPlacement } from "@zoonk/core/learner/placement/request";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
@@ -39,6 +40,12 @@ vi.mock("@zoonk/ai/tasks/curriculum/skill-graph-calls", async (importOriginal) =
 }));
 
 vi.mock("@zoonk/ai/tasks/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
+
+// Fault injection after the graph commits: ordinary fixtures cannot make this write fail reliably.
+vi.mock("@zoonk/core/learner/placement/request", async (importOriginal) => {
+  const actual = await importOriginal<{ requestGoalPlacement: typeof requestGoalPlacement }>();
+  return { ...actual, requestGoalPlacement: vi.fn(actual.requestGoalPlacement) };
+});
 
 const WAIT = { timeout: 10_000 };
 
@@ -330,6 +337,45 @@ describe("a learner's owed rebuild", () => {
       ).resolves.toMatchObject({ graph: before.graph, placementPreparedAt: expect.any(Date) });
 
       expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["older", "newer"])(
+    "resumes after a later failure when the saved graph's provenance is %s than this run",
+    { timeout: 60_000 },
+    async (age) => {
+      const { goal, user } = await savedGoal();
+      const generatedAt = new Date(Date.now() + (age === "older" ? -1 : 1) * 86_400_000);
+
+      const generate = vi.mocked(generateWholeSkillGraph).getMockImplementation()!;
+
+      vi.mocked(generateWholeSkillGraph).mockImplementation(async (...args) => {
+        const result = await generate(...args);
+
+        return {
+          ...result,
+          provenance: { ...result.provenance, generatedAt: generatedAt.toISOString() },
+        };
+      });
+
+      await editPurpose(goal.id);
+      vi.mocked(requestGoalPlacement).mockRejectedValue(new Error("placement failed"));
+      await dispatch(user.id);
+      const failed = await goalRun(goal.id);
+      await expect(failed.returnValue).rejects.toThrow("placement failed");
+      expect(generateWholeSkillGraph).toHaveBeenCalledOnce();
+
+      const saved = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+      expect(saved).toMatchObject({ buildFailedAt: expect.any(Date), generatedAt });
+      expect(JSON.stringify(saved.graph)).toContain("Deep foundations");
+      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+      vi.mocked(requestGoalPlacement).mockReset();
+      const retried = await retry(goal.id);
+      await drive(retried);
+      await expect(retried.returnValue).resolves.toMatchObject({ status: "prepared" });
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+      expect(generateWholeSkillGraph).toHaveBeenCalledOnce();
     },
   );
 

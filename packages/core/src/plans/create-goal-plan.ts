@@ -5,7 +5,6 @@ import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getKeptMonthStart } from "../exams/kept-month";
-import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import {
   getAnsweredQuestions,
   isCourseDateSkipped,
@@ -16,10 +15,10 @@ import { loadPlanAtToken } from "./_utils/plan-token";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { ensureQuickBaseLessons, hasQuickBases } from "./_utils/quick-bases";
 import { planOnRecommendedBases } from "./_utils/recommended-bases";
-import { type ComputedPlan, computePlan, revalidatePlanTags } from "./_utils/replan";
+import { type ComputedPlan, computePlan } from "./_utils/replan";
 import { trackPlanCreated } from "./_utils/track-plan-created";
 import { checkNoticeLanding, getNoticeWaitEnd } from "./notice-wait";
-import { PlanConflictError, withPlanRetry } from "./plan-conflict";
+import { withPlanRetry } from "./plan-conflict";
 import { listPlanSetupTasks } from "./plan-setup";
 import { toIsoDate } from "./planner/plan-calendar";
 import { type PlanGraph, parsePlanSettings, planGraphSchema } from "./planner/plan-state";
@@ -162,28 +161,6 @@ async function planFromGraph({
   const computed = isFirst ? await planOnRecommendedBases({ computed: planned, context }) : planned;
 
   if (!isFirst && isPlanUnchanged({ computed, context })) {
-    if (provenance && context.plan.generatedAt?.getTime() !== provenance.generatedAt.getTime()) {
-      await writeLearnerChange(
-        { lockPlanIds: [context.plan.id], userId: goal.userId },
-        async (tx) => {
-          const saved = await tx.plan.updateMany({
-            data: provenance,
-            where: {
-              generatedAt: context.plan.generatedAt,
-              id: context.plan.id,
-              inputVersion: context.plan.inputVersion,
-            },
-          });
-
-          if (saved.count === 0) {
-            throw new PlanConflictError();
-          }
-        },
-      );
-
-      revalidatePlanTags(goal.userId);
-    }
-
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 

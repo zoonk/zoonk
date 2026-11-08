@@ -45,16 +45,12 @@ export async function rebuildGoalCurriculumWorkflow(input: RebuildGoalCurriculum
   const { followUp, goalId } = input;
   const { workflowRunId: generationId } = getWorkflowMetadata();
   let failed = true;
-  let startedAt: Date | null = null;
 
   try {
     await recordGoalRunStep({ clearFailure: false, generationId, goalId });
     const state = await waitForSavedGraph(goalId);
 
-    const admission = await isGoalRebuildOwedStep({ followUp, goalId });
-    startedAt = admission.startedAt;
-
-    if (!admission.owed) {
+    if (!(await isGoalRebuildOwedStep({ followUp, goalId }))) {
       throw new Error("This curriculum rebuild is no longer owed.");
     }
 
@@ -62,6 +58,6 @@ export async function rebuildGoalCurriculumWorkflow(input: RebuildGoalCurriculum
     failed = false;
     return result;
   } finally {
-    await finishGoalRebuildStep({ failed, followUp, generationId, goalId, startedAt });
+    await finishGoalRebuildStep({ failed, followUp, generationId, goalId });
   }
 }

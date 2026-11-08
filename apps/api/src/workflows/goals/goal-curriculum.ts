@@ -1,3 +1,4 @@
+import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import {
   pinGraphToCourse,
   toStartedCourseIds,
@@ -91,6 +92,7 @@ async function saveCurriculum({
 async function createPlanAndOutlines({
   built,
   context,
+  followUp,
   inputs,
   reused,
   saved,
@@ -99,6 +101,7 @@ async function createPlanAndOutlines({
 }: {
   built: BuiltGraph;
   context: GoalRunContext;
+  followUp?: GoalRebuildFollowUp;
   inputs: GoalCurriculumInputs;
   reused: boolean;
   saved: Promise<SavedCurriculum>;
@@ -111,6 +114,7 @@ async function createPlanAndOutlines({
 
   const setupTasks = await retryPlanConflicts(createGoalPlanStep, {
     courseIdsByKey,
+    followUp,
     goalId,
     graph,
     idsByKey,
@@ -252,6 +256,7 @@ async function prepareCurriculum({
  */
 export async function buildCurriculum({
   context,
+  followUp,
   inputs,
   opening,
   rebuild,
@@ -259,6 +264,7 @@ export async function buildCurriculum({
   scope,
 }: {
   context: GoalRunContext;
+  followUp?: GoalRebuildFollowUp;
   inputs: GoalCurriculumInputs;
   /** The learner's first skill, which the graph reads and starts with. */
   opening?: Promise<GoalOpeningSkill | null>;
@@ -282,6 +288,7 @@ export async function buildCurriculum({
   const written = await createPlanAndOutlines({
     built,
     context,
+    followUp,
     inputs,
     reused,
     saved,
