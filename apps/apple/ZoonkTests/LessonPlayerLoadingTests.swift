@@ -703,6 +703,31 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertFalse(store.hasUnsavedAnswers)
   }
 
+  func testAFinishThatFailedTriesAgainWhenTheLearnerComesBack() async throws {
+    let transport = HeldAnswersTransport(runAnswers: "[]")
+    let store = try checksPlayer(
+      steps: ["one"], defaults: try temporaryDefaults(), transport: transport)
+    await store.load()
+    await transport.failChecks(on: ["one"])
+
+    store.select(.check(optionId: "right"))
+    await store.check()
+    store.continueLesson()
+
+    while store.state?.completion?.status == .saving {
+      await Task.yield()
+    }
+
+    XCTAssertEqual(store.state?.completion?.status, .failed)
+
+    await transport.failChecks(on: [])
+    await store.retryFailedFinish()
+
+    XCTAssertEqual(store.state?.completion?.status, .saved)
+    let requests = await transport.requests
+    XCTAssertEqual(requests.last, "complete")
+  }
+
   /// The second answer is held while the first one's save is still on its way.
   func testFinishingWaitsForEveryHeldAnswer() async throws {
     let transport = HeldAnswersTransport(runAnswers: "[]")

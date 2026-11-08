@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -264,7 +265,6 @@ fun LessonCompletionView(
     buddy: LearnerSummaryBuddy? = null,
 ) {
     val completion = state.completion ?: return
-    val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
 
     if (completion.status == CompletionStatus.Ready) {
         ResultPages(
@@ -287,16 +287,27 @@ fun LessonCompletionView(
         return
     }
 
+    val saving = completion.status == CompletionStatus.Saving
+    val title =
+        when {
+            saving -> R.string.player_saving_progress
+            completion.status == CompletionStatus.Failed -> R.string.player_lesson_not_saved
+            completion.testedOut -> R.string.player_already_knew
+            else -> R.string.player_lesson_complete
+        }
+
     ResultPages(
         withMoment = completion.status == CompletionStatus.Saved,
         columnModifier = Modifier.taskColumn(),
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    stringResource(title),
+                    Modifier.semantics { heading() },
+                    color = if (saving) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
 
-                if (completion.status == CompletionStatus.Saving) {
-                    Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
                 if (completion.status == CompletionStatus.Failed) {
                     Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
                 }

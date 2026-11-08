@@ -900,6 +900,10 @@ class LessonPlayerViewModel(
         if (unsaved.isNotEmpty() && resending?.isActive != true) work.launch { sendUnsent() }
     }
 
+    fun retryFailedFinish() {
+        if (mutableState.value?.completion?.status == CompletionStatus.Failed) dispatch(LessonAction.CompletionRetried)
+    }
+
     private suspend fun sendUnsent(): Boolean {
         resending?.takeIf { it.isActive }?.await()
         if (unsaved.isEmpty()) return true

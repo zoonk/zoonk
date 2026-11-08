@@ -1,15 +1,13 @@
 "use client";
 
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
-import { MomentHeader, MomentSaving, PendingMainAction } from "./moment-header";
+import { MomentHeader, MomentSavingTitle, PendingMainAction } from "./moment-header";
 
-export function PendingMoment({ action, title }: { action: string; title: string }) {
+export function PendingMoment({ action }: { action: string }) {
   return (
     <>
       <TaskBody data-slot="pending-moment">
-        <MomentHeader title={title}>
-          <MomentSaving />
-        </MomentHeader>
+        <MomentHeader title={<MomentSavingTitle />} />
       </TaskBody>
 
       <TaskActionBar>

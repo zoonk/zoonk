@@ -115,5 +115,5 @@ export function PracticeDone({
 export function PracticeSaving() {
   const t = useExtracted();
 
-  return <PendingMoment action={t("Back")} title={t("Practice done")} />;
+  return <PendingMoment action={t("Back")} />;
 }
