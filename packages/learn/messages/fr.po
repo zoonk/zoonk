@@ -235,7 +235,6 @@ msgstr "Te tromper maintenant t’aide à retenir la réponse plus tard."
 #: src/_components/plus-lock.tsx
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
@@ -464,7 +463,6 @@ msgid "Plus"
 msgstr "Plus"
 
 #: src/_components/plus-lock.tsx
-#: src/mind-maps/mind-map-row.tsx
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Disponible avec Plus"
@@ -7059,19 +7057,19 @@ msgid "In short:"
 msgstr "En bref :"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "tc8knM"
-msgid "Lessons not written yet"
-msgstr "Leçons pas encore préparées"
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# leçon à préparer} other {# leçons à préparer}}"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "TS33yQ"
-msgid "Its lessons get written first, so it takes a few minutes."
-msgstr "Ses leçons sont d’abord préparées, ce qui prend quelques minutes."
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, one {On prépare d’abord # leçon, ce qui prend quelques minutes.} other {On prépare d’abord # leçons, ce qui prend quelques minutes.}}"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "rqcOg3"
-msgid "Its lessons get written first and count toward your free lessons."
-msgstr "Ses leçons sont d’abord préparées et comptent dans ton quota de leçons gratuites."
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {On prépare d’abord # leçon, qui est décomptée de tes leçons gratuites.} other {On prépare d’abord # leçons, qui sont décomptées de tes leçons gratuites.}}"
 
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "AAKHvt"

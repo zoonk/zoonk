@@ -17,7 +17,9 @@ import {
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
+  ListRowTrailing,
 } from "../_components/list-group";
+import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -84,14 +86,22 @@ function useAvailableLine({ place, plus, shown, view }: RowCopyInput): string | 
 
   const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
 
+  const count = view.lessonsToWrite;
+
   if (writesLessons && place === "library") {
-    return t("Lessons not written yet");
+    return t("{count, plural, one {# lesson to write} other {# lessons to write}}", { count });
   }
 
   if (writesLessons) {
     return plus
-      ? t("Its lessons get written first, so it takes a few minutes.")
-      : t("Its lessons get written first and count toward your free lessons.");
+      ? t(
+          "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}",
+          { count },
+        )
+      : t(
+          "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
+          { count },
+        );
   }
 
   return place === "library" ? null : t("Its main ideas in one picture");
@@ -153,16 +163,13 @@ function useStateLines(input: RowCopyInput): { hint: string | null; line: string
 function RowText({ input, titleId }: { input: RowCopyInput; titleId: string }) {
   const t = useExtracted();
   const { hint, line } = useStateLines(input);
-  const { place, shown, view } = input;
+  const { place, view } = input;
   const chapter = t("Chapter {number, number}", { number: view.position });
 
   return (
     <ListRowContent aria-live="polite">
       <ListRowTitle className="wrap-break-word" id={titleId}>
         {place === "chapter" ? t("Mind map") : view.title}
-        {shown === "plusRequired" && place !== "library" && (
-          <span className="sr-only">{` (${t("Available with Plus")})`}</span>
-        )}
       </ListRowTitle>
 
       {(line || place === "library") && (
@@ -192,15 +199,6 @@ function RowAction({
   titleId: string;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-
-  if (shown === "plusRequired") {
-    return (
-      <LearnLink aria-describedby={titleId} className={ACTION_CLASS} href={routes.upgrade}>
-        {t("See Plus")}
-      </LearnLink>
-    );
-  }
 
   if (shown === "failed" || shown === "unreachable") {
     return (
@@ -260,7 +258,7 @@ export function MindMapRow({
     return null;
   }
 
-  const lockedInList = place === "library" && shown === "plusRequired";
+  const locked = shown === "plusRequired";
 
   const body = (
     <>
@@ -280,9 +278,18 @@ export function MindMapRow({
         </button>
       )}
 
-      {lockedInList && <ListRowLink href={routes.upgrade}>{body}</ListRowLink>}
+      {locked && (
+        <ListRowLink href={routes.upgrade}>
+          {body}
+          {place !== "library" && (
+            <ListRowTrailing>
+              <PlusMark className="font-sans" />
+            </ListRowTrailing>
+          )}
+        </ListRowLink>
+      )}
 
-      {!ready && !lockedInList && (
+      {!ready && !locked && (
         <div className={LIST_ROW_CLASS}>
           {body}
           <span className="flex shrink-0 items-center empty:hidden">

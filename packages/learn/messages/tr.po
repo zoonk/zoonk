@@ -235,7 +235,6 @@ msgstr "Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır."
 #: src/_components/plus-lock.tsx
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
@@ -464,7 +463,6 @@ msgid "Plus"
 msgstr "Plus"
 
 #: src/_components/plus-lock.tsx
-#: src/mind-maps/mind-map-row.tsx
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Plus ile kullanılabilir"
@@ -7059,19 +7057,19 @@ msgid "In short:"
 msgstr "Kısaca:"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "tc8knM"
-msgid "Lessons not written yet"
-msgstr "Henüz hazırlanmamış dersler"
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, other {Hazırlanacak # ders}}"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "TS33yQ"
-msgid "Its lessons get written first, so it takes a few minutes."
-msgstr "Önce ünitenin dersleri hazırlanır, bu yüzden birkaç dakika sürer."
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, other {Önce # ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.}}"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "rqcOg3"
-msgid "Its lessons get written first and count toward your free lessons."
-msgstr "Önce ünitenin dersleri hazırlanır ve ücretsiz ders hakkından düşülür."
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, other {Önce # ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.}}"
 
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "AAKHvt"

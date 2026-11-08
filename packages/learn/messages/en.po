@@ -235,7 +235,6 @@ msgstr "Getting it wrong now helps you remember later."
 #: src/_components/plus-lock.tsx
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-row.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
@@ -464,7 +463,6 @@ msgid "Plus"
 msgstr "Plus"
 
 #: src/_components/plus-lock.tsx
-#: src/mind-maps/mind-map-row.tsx
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Available with Plus"
@@ -7059,19 +7057,19 @@ msgid "In short:"
 msgstr "In short:"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "tc8knM"
-msgid "Lessons not written yet"
-msgstr "Lessons not written yet"
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lesson to write} other {# lessons to write}}"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "TS33yQ"
-msgid "Its lessons get written first, so it takes a few minutes."
-msgstr "Its lessons get written first, so it takes a few minutes."
+msgctxt "ZkDPp1"
+msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
+msgstr "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
 
 #: src/mind-maps/mind-map-row.tsx
-msgctxt "rqcOg3"
-msgid "Its lessons get written first and count toward your free lessons."
-msgstr "Its lessons get written first and count toward your free lessons."
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "AAKHvt"
