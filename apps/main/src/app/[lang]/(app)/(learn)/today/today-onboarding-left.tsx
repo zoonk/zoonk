@@ -7,6 +7,7 @@ import { getExtracted } from "next-intl/server";
 
 type OnboardingLeft = "questions" | "reveal";
 
+/** Null while the plan is still being made: Today then follows its build like any other. */
 export async function readOnboardingLeft(goalId: string): Promise<OnboardingLeft | null> {
   const result = await getOnboarding({ goalId });
 
@@ -14,11 +15,13 @@ export async function readOnboardingLeft(goalId: string): Promise<OnboardingLeft
     return null;
   }
 
-  if (result.onboarding.steps.some((step) => step !== "plan")) {
+  const { planReadiness, planRevealed, steps } = result.onboarding;
+
+  if (steps.some((step) => step !== "plan")) {
     return "questions";
   }
 
-  return result.onboarding.planRevealed ? null : "reveal";
+  return planReadiness.ready && !planRevealed ? "reveal" : null;
 }
 
 export async function TodayOnboardingLeft({
