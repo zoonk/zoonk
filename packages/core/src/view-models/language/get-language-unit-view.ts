@@ -1,10 +1,11 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type CourseLevel, prisma } from "@zoonk/db";
+import { type CefrLevel } from "@zoonk/utils/cefr";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
 import { getSpeakingLevel } from "../../language/conversations/_utils/conversation-goal";
 import { loadPracticeCall } from "../../language/conversations/_utils/practice-call";
-import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
+import { formatLevels } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
@@ -12,8 +13,9 @@ import { readActiveGoal } from "../../learner/facts/learning-profile";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
-import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
+import { type TestOutPlan, loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { getSkillLevelRows, toIdKey } from "../../library/_utils/shared-rows";
 import { readLessonMapSentences } from "../../library/lessons/lesson-map";
 import { getSession } from "../../users/get-session";
 import { findUpNextLessonId } from "../_utils/up-next-lesson";
@@ -52,6 +54,24 @@ function getLessonState({ done, next }: { done: boolean; next: boolean }) {
   }
 
   return next ? ("next" as const) : ("upcoming" as const);
+}
+
+function listUnitSkillIds({ chapterId, plan }: { chapterId: string; plan: TestOutPlan | null }) {
+  return (plan?.items ?? []).flatMap((item) =>
+    item.chapterId === chapterId && item.lessonId ? item.skillIds : [],
+  );
+}
+
+/** The band until every skill of the learner's lessons in the unit has its level. */
+function formatUnitLevels({
+  band,
+  skills,
+}: {
+  band: CourseLevel;
+  skills: readonly { cefrLevel: CefrLevel | null }[];
+}): string {
+  const levels = skills.map((skill) => skill.cefrLevel);
+  return formatLevels({ band, levels: levels.every((level) => level !== null) ? levels : [] });
 }
 
 /** Requires an owned language goal and a unit in its plan. */
@@ -95,25 +115,34 @@ export async function getLanguageUnitView({
     ? await loadTestOutPlan(goal.id, { goal, source: readSavedPlan(userId, goal.id) })
     : null;
 
-  const [todayBlocks, level, grammarTips, words, mistakes, pronunciation, blockedTestOutChapters] =
-    await Promise.all([
-      goal ? readTodayLearnBlocks(userId, goal.id) : [],
-      getSpeakingLevel({ goal, targetLanguage, userId }),
-      loadGrammarTips(lessonIds),
-      loadUnitWords(lessonIds),
-      loadUnitMistakes({ lessonIds, userId }),
-      readDuePronunciation(userId, targetLanguage),
-      goal
-        ? loadBlockedTestOutChapters({
-            chapterIds: [chapter.id],
-            goalId: goal.id,
-            known: { goal, ...(plan && { plan }) },
-            now: new Date(),
-            timeZone: getAnswerTimeZone({ goal }),
-            userId,
-          })
-        : new Set<string>(),
-    ]);
+  const [
+    todayBlocks,
+    level,
+    grammarTips,
+    words,
+    mistakes,
+    pronunciation,
+    blockedTestOutChapters,
+    unitSkills,
+  ] = await Promise.all([
+    goal ? readTodayLearnBlocks(userId, goal.id) : [],
+    getSpeakingLevel({ goal, targetLanguage, userId }),
+    loadGrammarTips(lessonIds),
+    loadUnitWords(lessonIds),
+    loadUnitMistakes({ lessonIds, userId }),
+    readDuePronunciation(userId, targetLanguage),
+    goal
+      ? loadBlockedTestOutChapters({
+          chapterIds: [chapter.id],
+          goalId: goal.id,
+          known: { goal, ...(plan && { plan }) },
+          now: new Date(),
+          timeZone: getAnswerTimeZone({ goal }),
+          userId,
+        })
+      : new Set<string>(),
+    getSkillLevelRows(toIdKey(listUnitSkillIds({ chapterId: chapter.id, plan }))),
+  ]);
 
   const chapterIds = [...new Set(plan?.items.flatMap((item) => item.chapterId ?? []))];
   const unitIndex = chapterIds.indexOf(chapter.id);
@@ -171,7 +200,7 @@ export async function getLanguageUnitView({
       unit: {
         chapterId: chapter.id,
         description: chapter.description,
-        levelRange: CEFR_BANDS[chapter.level],
+        levelRange: formatUnitLevels({ band: chapter.level, skills: unitSkills }),
         objectives: chapter.objectives,
         position: unitIndex === -1 ? null : unitIndex + 1,
         title: chapter.title,

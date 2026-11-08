@@ -1,7 +1,7 @@
 import "server-only";
 import { type LanguageLessonParams } from "@zoonk/ai/tasks/language/language-lesson";
 import { prisma } from "@zoonk/db";
-import { CEFR_BANDS } from "../../../language/levels/skill-level-rules";
+import { formatLevels } from "../../../language/levels/skill-level-rules";
 
 const MAX_KNOWN_WORDS = 80;
 
@@ -56,7 +56,15 @@ export async function loadLanguageLessonInputs({
   workflowRunId: string;
 }): Promise<LanguageLessonState> {
   const lesson = await prisma.lesson.findUnique({
-    include: { homeChapter: true, skills: { orderBy: { createdAt: "asc" }, take: 1 } },
+    include: {
+      homeChapter: {
+        include: { goalSkills: { select: { skill: { select: { cefrLevel: true } } } } },
+      },
+      skills: {
+        include: { skill: { select: { cefrLevel: true } } },
+        orderBy: { createdAt: "asc" },
+      },
+    },
     omit: { spec: true, summary: true },
     where: { id: lessonId },
   });
@@ -72,6 +80,11 @@ export async function loadLanguageLessonInputs({
   const unit = lesson.homeChapter;
   const knownWords = await findKnownWords({ chapterId: unit?.id ?? null, lessonId });
 
+  // The plan skills a lesson teaches sit on it or on its unit; its finer skills have no level.
+  const levels = [...lesson.skills, ...(unit?.goalSkills ?? [])].flatMap(
+    ({ skill }) => skill.cefrLevel ?? [],
+  );
+
   return {
     inputs: {
       learnerLanguage: lesson.language,
@@ -83,7 +96,7 @@ export async function loadLanguageLessonInputs({
         lessonCanDo: lesson.canDo,
         lessonDescription: lesson.description,
         lessonTitle: lesson.title,
-        level: CEFR_BANDS[lesson.level],
+        level: formatLevels({ band: lesson.level, levels }),
         targetLanguage: lesson.targetLanguage,
         unitCanDos: unit?.objectives ?? [],
         unitTitle: unit?.title ?? lesson.title,

@@ -1,7 +1,10 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
 import { prisma } from "@zoonk/db";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterSkillFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
@@ -233,6 +236,35 @@ describe(writeLanguageLessonContent, () => {
 
     const distractorWord = await prisma.word.findFirstOrThrow({ where: { word: `income ${key}` } });
     expect(distractorWord.audioUrl).toContain("blob.test");
+  });
+
+  it("writes at the levels its plan skills are tagged at, on the lesson or its unit, past its untagged finer skills", async () => {
+    await aiOrganizationFixture();
+
+    const [chapter, finer, lessonSkill, unitSkill] = await Promise.all([
+      libraryChapterFixture({ language: "pt", targetLanguage: "en" }),
+      skillFixture({ level: "beginner" }),
+      skillFixture({ cefrLevel: "A2", level: "beginner" }),
+      skillFixture({ cefrLevel: "B1", level: "intermediate" }),
+    ]);
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({
+      chapterId: chapter.id,
+      language: "pt",
+    });
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: lessonSkill.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: unitSkill.id }),
+    ]);
+
+    mockDraft(uniqueDraft(crypto.randomUUID()));
+    mockAudio();
+
+    await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+
+    expect(vi.mocked(generateLanguageLesson).mock.calls[0]?.[0]).toMatchObject({ level: "A2–B1" });
   });
 
   it("reuses the target language's words, sentences and audio for another language pair", async () => {
