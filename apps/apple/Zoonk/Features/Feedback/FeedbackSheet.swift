@@ -324,6 +324,7 @@ struct SaveFailureReportButton: View {
     }
     .buttonStyle(.ghost)
     .controlSize(.small)
+    .padding(.leading, -ZoonkButtonStyle.horizontalPadding(.small))
   }
 }
 
