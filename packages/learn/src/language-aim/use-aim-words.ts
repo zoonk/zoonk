@@ -4,33 +4,6 @@ import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
-const DAY_MS = 86_400_000;
-
-/**
- * When the learner reaches another aim at the same pace: the plan's finish moved by that aim's
- * share of the hours, so the sheet and the finish line under it never disagree.
- */
-export function getAimEndDate({
-  current,
-  endDate,
-  hours,
-  today,
-}: {
-  current: number;
-  endDate: string | null;
-  hours: number;
-  today: string;
-}): string | null {
-  if (!endDate || current <= 0) {
-    return null;
-  }
-
-  const from = Date.parse(today);
-  const days = (Date.parse(endDate) - from) / DAY_MS;
-
-  return new Date(from + Math.round((days * hours) / current) * DAY_MS).toISOString().slice(0, 10);
-}
-
 export function useAimWords() {
   const t = useExtracted();
   const format = useFormatter();
