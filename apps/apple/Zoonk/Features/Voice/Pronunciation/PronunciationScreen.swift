@@ -212,11 +212,14 @@ private struct PronunciationRoundView: View {
       } else if case .limit(let limit) = notice {
         HelpLimitNotice(limit: limit)
       } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
-        FailureLine(message: statusLine(notice))
-          .typeStyle(.note)
-        if (round?.answerFailures ?? 0) > 1 {
-          SaveFailureReportButton { showsSaveReport = true }
-        }
+        SaveFailureNotice(
+          failures: round?.answerFailures ?? 0,
+          firstMessage: LocalizedStringResource(
+            "That didn't go through. Try again.", table: "Voice",
+            comment: "Grading a word failed"),
+          onReport: { showsSaveReport = true }
+        )
+        .typeStyle(.note)
       } else {
         Text(statusLine(notice))
           .typeStyle(.note)
@@ -273,14 +276,7 @@ private struct PronunciationRoundView: View {
       return String(
         localized: "We couldn't hear the word. Try again a little closer.", table: "Voice",
         comment: "A recording had no word in it")
-    case .failed:
-      if (round?.answerFailures ?? 0) > 1 {
-        return String(localized: PracticeSaveError.repeatedMessage)
-      }
-      return String(
-        localized: "That didn't go through. Try again.", table: "Voice",
-        comment: "Grading a word failed")
-    case .limit, nil:
+    case .failed, .limit, nil:
       return String(
         localized: "Press Record and say the word out loud", table: "Voice",
         comment: "Asks the learner to say the word")
@@ -347,19 +343,14 @@ private struct PronunciationRoundView: View {
 
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
-      VStack(alignment: .leading, spacing: 4) {
-        FailureLine(
-          message: round.finishFailures > 1
-            ? PracticeSaveError.repeatedMessage
-            : LocalizedStringResource(
-              "We couldn't save your answers.", table: "Voice",
-              comment: "Finishing the round failed")
-        )
-        .typeStyle(.body)
-        if round.finishFailures > 1 {
-          SaveFailureReportButton { showsSaveReport = true }
-        }
-      }
+      SaveFailureNotice(
+        failures: round.finishFailures,
+        firstMessage: LocalizedStringResource(
+          "We couldn't save your answers.", table: "Voice",
+          comment: "Finishing the round failed"),
+        onReport: { showsSaveReport = true }
+      )
+      .typeStyle(.body)
 
       Spacer()
 

@@ -73,7 +73,7 @@ extension FeedbackFormStore: Identifiable {
   ) {
     self.init(
       api: api, context: context,
-      defaultEmail: learner.summary.value?.identity.isAnonymous == true
+      defaultEmail: learner.summary.value?.identity.isAnonymous ?? true
         ? nil : session.account?.user.email,
       token: session.authenticatedSession?.bearerToken)
   }
@@ -294,24 +294,12 @@ private struct FeedbackForm: View {
   }
 
   private func failureMessage(_ failure: FeedbackFailure) -> LocalizedStringResource {
-    if store.isSaveReport, failure != .validation {
-      return LocalizedStringResource(
+    switch failure {
+    case .network, .unavailable:
+      LocalizedStringResource(
         "We couldn't send your message. Try again, or email us at hello@zoonk.com.",
         table: "Feedback",
-        comment: "A save failure report could not be sent; the learner can retry or email support")
-    }
-
-    return switch failure {
-    case .network:
-      LocalizedStringResource(
-        "You're offline. Check your connection and try again.",
-        table: "Feedback",
-        comment: "Feedback form error when the network is unavailable.")
-    case .unavailable:
-      LocalizedStringResource(
-        "Feedback couldn't be sent. Try again later.",
-        table: "Feedback",
-        comment: "Feedback form error when the service is temporarily unavailable.")
+        comment: "Feedback could not be sent; the learner can retry or email support")
     case .validation:
       LocalizedStringResource(
         "Check your email and message, then try again.",

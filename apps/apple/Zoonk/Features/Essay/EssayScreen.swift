@@ -311,25 +311,19 @@ private struct EssayContent: View {
   private var statusLine: some View {
     Group {
       if finishFailures > 0, !finishing {
-        FailureLine(
-          message: finishFailures > 1
-            ? PracticeSaveError.repeatedMessage
-            : LocalizedStringResource(
-              "That didn't go through. Try again in a moment.", table: "Essay",
-              comment: "Finishing the block failed"))
-        if finishFailures > 1 {
-          SaveFailureReportButton { showsSaveReport = true }
-        }
+        SaveFailureNotice(
+          failures: finishFailures,
+          firstMessage: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Essay",
+            comment: "Finishing the block failed"),
+          onReport: { showsSaveReport = true })
       } else if writer.status == .failed {
-        FailureLine(
-          message: writer.saveFailures > 1
-            ? PracticeSaveError.repeatedMessage
-            : LocalizedStringResource(
-              "That didn't go through. Your text is still here. Try again in a moment.",
-              table: "Essay", comment: "Grading failed"))
-        if writer.saveFailures > 1 {
-          SaveFailureReportButton { showsSaveReport = true }
-        }
+        SaveFailureNotice(
+          failures: writer.saveFailures,
+          firstMessage: LocalizedStringResource(
+            "That didn't go through. Your text is still here. Try again in a moment.",
+            table: "Essay", comment: "Grading failed"),
+          onReport: { showsSaveReport = true })
       } else if writer.isWriting, writer.status == .signUpRequired {
         HelpLimitNotice(limit: .signUpRequired)
       } else if let statusNote {

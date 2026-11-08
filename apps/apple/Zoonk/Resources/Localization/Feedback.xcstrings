@@ -237,65 +237,6 @@
         }
       }
     },
-    "Feedback couldn't be sent. Try again later." : {
-      "comment" : "Feedback form error when the service is temporarily unavailable.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Feedback konnte nicht gesendet werden. Versuch es später noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se pudieron enviar tus comentarios. Inténtalo más tarde."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton avis n’a pas pu être envoyé. Réessaie plus tard."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossibile inviare il feedback. Riprova più tardi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "フィードバックを送信できませんでした。しばらくしてからもう一度お試しください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "의견을 보내지 못했어요. 나중에 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się wysłać opinii. Spróbuj ponownie później."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível enviar sua mensagem. Tente de novo mais tarde."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geri bildirim gönderilemedi. Daha sonra tekrar dene."
-          }
-        }
-      }
-    },
     "Found a problem or have an idea? Tell us below or email hello@zoonk.com." : {
       "comment" : "Introduction shown above the feedback fields.",
       "localizations" : {
@@ -834,7 +775,7 @@
       }
     },
     "We couldn't send your message. Try again, or email us at hello@zoonk.com." : {
-      "comment" : "A save failure report could not be sent; the learner can retry or email support",
+      "comment" : "Feedback could not be sent; the learner can retry or email support",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -947,65 +888,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sana ulaşmak için bu e-posta adresini kullanacağız."
-          }
-        }
-      }
-    },
-    "You're offline. Check your connection and try again." : {
-      "comment" : "Feedback form error when the network is unavailable.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du bist offline. Prüf deine Verbindung und versuch es noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estás sin conexión. Revisa tu conexión e inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu es hors ligne. Vérifie ta connexion et réessaie."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è connessione. Controlla la rete e riprova."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オフラインです。ネット接続を確認して、もう一度お試しください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "인터넷에 연결되어 있지 않아요. 연결 상태를 확인하고 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brak połączenia z internetem. Sprawdź połączenie i spróbuj ponownie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você está sem internet. Confira sua conexão e tente de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İnternet bağlantın yok. Bağlantını kontrol edip tekrar dene."
           }
         }
       }

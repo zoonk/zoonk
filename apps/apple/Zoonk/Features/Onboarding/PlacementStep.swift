@@ -617,10 +617,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       }
 
       if failures > 0, !isSaving {
-        FailureLine(message: PracticeSaveError.message(failures: failures))
-        if failures > 1 {
-          SaveFailureReportButton(action: onReport)
-        }
+        SaveFailureNotice(failures: failures, onReport: onReport)
       }
     } actions: {
       PracticeMainButton(

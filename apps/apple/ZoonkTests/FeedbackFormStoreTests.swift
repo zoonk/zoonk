@@ -4,6 +4,34 @@ import XCTest
 
 @MainActor
 final class FeedbackFormStoreTests: XCTestCase {
+  func testUnloadedSummaryDoesNotUseTheSessionEmail() async {
+    let api = FeedbackAPISpy(result: .success(()))
+    let session = SessionStore.preview(
+      account: CurrentAccount(
+        account: AccountAccess(
+          deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
+        user: AccountUser(
+          email: "guest@zoonk.test", id: "guest", image: nil, name: "Guest", username: nil)))
+    let learner = LearnerSummaryStore(
+      api: LearnerSummaryAPI(clients: .live(baseURL: AppConfiguration.current.apiBaseURL)),
+      cache: AppCache(session: session))
+    let store = FeedbackFormStore(
+      api: api, context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
+      session: session, learner: learner)
+
+    XCTAssertNil(learner.summary.value)
+    XCTAssertTrue(store.defaultEmail.isEmpty)
+    XCTAssertTrue(store.email.isEmpty)
+    XCTAssertTrue(store.asksForEmail)
+    store.email = "reply@zoonk.test"
+
+    await store.submit()
+
+    let submissions = await api.submissions()
+    XCTAssertEqual(store.state, .sent)
+    XCTAssertEqual(submissions.first?.submission.email, "reply@zoonk.test")
+  }
+
   func testSaveReportSubmitsWithoutAnEmailAndKeepsItsContext() async {
     let api = FeedbackAPISpy(result: .success(()))
     let context = FeedbackContext(screen: "placement-question", reportType: .saveFailure)
