@@ -150,7 +150,7 @@ export function RevealToday({ session }: { session: DayView | null }) {
       <PageSectionHeader>
         <PageSectionTitle id="reveal-today">{t("Today")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${formatDay(session.localDate)} · ${formatDuration(session.minutes.dailyGoal)}`}
+          {`${formatDay(session.localDate)} · ${formatDuration(session.minutes.planned)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 
