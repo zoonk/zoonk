@@ -12,6 +12,37 @@ import {
 const ITALIAN = "Quando pioveva l'autobus è arrivato";
 
 describe(keepOtherArrangeOrders, () => {
+  it.each(["reading", "listening"] as const)(
+    "does not join spaced words into one written word for %s",
+    (kind) => {
+      expect(
+        keepOtherArrangeOrders({
+          kind,
+          orders: ["Cannot you come today?"],
+          text: "Can you not come today?",
+        }),
+      ).toStrictEqual([]);
+    },
+  );
+
+  it("never splits a joined candidate word into spaced bank tiles", () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom("reading" as const, "listening" as const),
+        fc.array(fc.stringMatching(/^[a-z]{2,8}$/u), { maxLength: 5, minLength: 2 }),
+        (kind, words) => {
+          expect(
+            keepOtherArrangeOrders({
+              kind,
+              orders: [`${words.toReversed().join("")} today`],
+              text: `today ${words.join(" ")}`,
+            }),
+          ).toStrictEqual([]);
+        },
+      ),
+    );
+  });
+
   it("keeps an order of the same tiles", () => {
     expect(
       keepOtherArrangeOrders({
