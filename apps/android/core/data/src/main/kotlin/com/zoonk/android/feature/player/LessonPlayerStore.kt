@@ -15,6 +15,7 @@ import com.zoonk.android.feature.player.model.toLessonLoad
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AnswerExplanationRequest
+import com.zoonk.api.models.LessonClockInput
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -66,6 +67,12 @@ interface LessonPlayerApi {
         stepId: String,
         input: LessonStepCheckInput,
     ): LessonStepCheckResult
+
+    suspend fun clock(
+        session: AuthenticatedSession,
+        lessonId: String,
+        input: LessonClockInput,
+    )
 
     /** "Explain my answer" on a wrong typed answer: only on the learner's tap, since it may run AI. */
     suspend fun explainAnswer(
@@ -163,6 +170,14 @@ class LiveLessonPlayerApi(
         stepId: String,
         input: LessonStepCheckInput,
     ) = perform { api.streamingClients(session).libraryLessons.createStepCheck(UUID.fromString(stepId), input) }
+
+    override suspend fun clock(
+        session: AuthenticatedSession,
+        lessonId: String,
+        input: LessonClockInput,
+    ) {
+        perform { api.clients(session).libraryLessons.updateLibraryLessonClock(UUID.fromString(lessonId), input) }
+    }
 
     override suspend fun explainAnswer(
         session: AuthenticatedSession,
