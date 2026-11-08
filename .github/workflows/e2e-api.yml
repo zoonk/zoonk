@@ -89,6 +89,7 @@ jobs:
           docker logs db
           exit 1
 
-      # Through turbo's cache: unchanged inputs replay the last passing run.
+      # Through turbo's cache: unchanged inputs replay the last passing run. Streamed, since turbo's
+      # CI default holds a task's output until it ends, and a hung task's never does.
       - name: Run E2E tests
-        run: pnpm --filter @zoonk/db db:setup:e2e && pnpm turbo run e2e --filter api --env-mode=loose
+        run: pnpm --filter @zoonk/db db:setup:e2e && pnpm turbo run e2e --filter api --env-mode=loose --log-order=stream --log-prefix=none
