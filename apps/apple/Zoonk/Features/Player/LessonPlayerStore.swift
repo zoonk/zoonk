@@ -606,6 +606,7 @@ final class LessonPlayerStore {
   }
 
   func explainFirst() {
+    if let stepId = state?.currentStep?.id { workedHere.insert(stepId) }
     activate()
     writeExampleLinesOnce()
     state?.explainFirst()

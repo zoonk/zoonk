@@ -50,6 +50,25 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.state?.results["one"])
   }
 
+  func testExplainFirstKeepsItsQuestionBlankWhenTheRunArrives() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let store = try openingPlayer(
+      checkLesson(["one", "intro", "two"], explanations: ["intro"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.act()
+    store.explainFirst()
+    XCTAssertEqual(store.state?.currentStep?.id, "intro")
+    await transport.release()
+    await loading.value
+    store.continueLesson()
+
+    XCTAssertEqual(store.state?.currentStep?.id, "one")
+    XCTAssertNil(store.state?.results["one"])
+    XCTAssertNil(store.state?.answers["one"])
+  }
+
   func testNavigationDoesNotKeepAnAnsweredQuestionBlank() async throws {
     let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
     let store = try openingPlayer(
