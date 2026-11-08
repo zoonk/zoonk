@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, it } from "vitest";
-import { check, fixture } from "./artifact-test-fixture.mts";
+import { catalogFixture, check, fixture } from "./artifact-test-fixture.mts";
 
 describe("static redirect artifacts", () => {
   it("accepts a persisted redirect without an h1 and rejects Set-Cookie", async () => {
@@ -74,6 +74,35 @@ describe("route artifact gates", () => {
         code: 1,
         stderr: /dynamic fallback is PARTIALLY_STATIC/u,
       });
+    } finally {
+      await rm(data.root, { recursive: true });
+    }
+  });
+});
+
+function taggedMeta({ status, tags }: { status: number; tags: string }) {
+  return JSON.stringify({ headers: { "x-next-cache-tags": tags }, status });
+}
+
+describe("shared cache tags", () => {
+  it("rejects a cache tag every page carries, but not Next's implicit ones", async () => {
+    const data = await catalogFixture();
+    const home = join(data.dist, "server/app/en.meta");
+
+    try {
+      await Promise.all([
+        writeFile(home, taggedMeta({ status: 200, tags: "_N_T_/layout,catalog-courses" })),
+        writeFile(
+          `${data.artifact}.meta`,
+          taggedMeta({ status: 404, tags: "_N_T_/layout,catalog-courses,course:1" }),
+        ),
+      ]);
+
+      await assert.rejects(check(data), { code: 1, stderr: /every page: .*catalog-courses/u });
+      await writeFile(home, taggedMeta({ status: 200, tags: "_N_T_/layout" }));
+
+      const checked = await check(data);
+      assert.doesNotMatch(checked.stdout, /every page/u);
     } finally {
       await rm(data.root, { recursive: true });
     }
