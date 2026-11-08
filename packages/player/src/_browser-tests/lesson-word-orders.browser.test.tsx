@@ -254,6 +254,7 @@ describe("pending word orders", () => {
       await placeWords(words);
       await check.click();
       await expect.element(feedback.getByText("Not quite")).toBeVisible();
+      await expect.element(feedback.getByText(`Answer: ${TRANSLATION}`)).toBeVisible();
       await page.getByRole("button", { name: "Ask Pip" }).click();
 
       await expect
@@ -330,6 +331,47 @@ describe("pending word orders", () => {
   describe("a slow or failed check", () => {
     afterEach(() => {
       vi.useRealTimers();
+    });
+
+    it("uses a new attempt for rearranged words after a failed check and reuses it for unchanged words", async () => {
+      const lesson = buildLesson([sentenceStep("reading", true)], {
+        language: "pt",
+        targetLanguage: "it",
+      });
+
+      const checkStep = vi
+        .fn<LessonPlayerAdapters["checkStep"]>()
+        .mockRejectedValue(new Error("offline"));
+
+      renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+      await placeWords(WRONG_ORDER);
+      await check.click();
+      await expect.element(page.getByText(CHECK_FAILED)).toBeVisible();
+      expect(checkStep).toHaveBeenCalledOnce();
+      const first = checkStep.mock.calls[0]![0];
+      expect(first.attemptId).toStrictEqual(expect.any(String));
+
+      await page
+        .getByRole("group", { name: "Your answer" })
+        .getByRole("button", { name: "Position 1: pioveva. Tap to remove." })
+        .click();
+
+      await placeWords(["pioveva"]);
+      await check.click();
+      await expect.element(page.getByText(CHECK_FAILED)).toBeVisible();
+      expect(checkStep).toHaveBeenCalledTimes(2);
+      const rearranged = checkStep.mock.calls[1]![0];
+      expect(rearranged.answer).not.toStrictEqual(first.answer);
+      expect(rearranged.attemptId).toStrictEqual(expect.any(String));
+      expect(rearranged.attemptId).not.toBe(first.attemptId);
+
+      await check.click();
+      await expect.element(page.getByText(CHECK_FAILED)).toBeVisible();
+      expect(checkStep).toHaveBeenCalledTimes(3);
+      const retried = checkStep.mock.calls[2]![0];
+      expect(retried.answer).toStrictEqual(rearranged.answer);
+      expect(retried.attemptId).toBe(rearranged.attemptId);
     });
 
     it("says a word bank's check failed and lets the learner check again", async () => {
