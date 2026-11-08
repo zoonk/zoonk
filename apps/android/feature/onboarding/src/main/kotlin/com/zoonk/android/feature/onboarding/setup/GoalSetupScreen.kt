@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
@@ -37,10 +38,14 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.TrackDeckReceived
+import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
@@ -48,6 +53,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.warmup.WaitQuizState
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -84,9 +90,13 @@ fun GoalSetupScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val buddy =
+        com.zoonk.android.feature.ceremonies
+            .momentBuddy(app)
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
     CompositionLocalProvider(
+        LocalRevealBuddy provides buddy,
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
     ) {
@@ -114,8 +124,10 @@ fun GoalSetupScreen(
     warmUps: WarmUpStore? = null,
     prepareToday: suspend () -> Unit = {},
 ) {
+    val waitBack = remember { mutableStateOf<WaitQuizState?>(null) }
+    val waitPane = remember { mutableStateOf<androidx.compose.runtime.State<@Composable () -> Unit>?>(null) }
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId) }
+    val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
     val state by store.onboardings[vm.goalId].collectShown()
     val view = (state as? LoadState.Loaded)?.value
     val step = vm.flow.current
@@ -144,6 +156,7 @@ fun GoalSetupScreen(
     PageScaffold(
         onBack = {
             when {
+                waitBack.value?.let { it.showingProgress && it.hasQuiz } == true -> waitBack.value?.back()
                 testing != null -> leave()
                 back != null -> back()
                 else -> navigator.back()
@@ -187,7 +200,19 @@ fun GoalSetupScreen(
         BoxWithConstraints(Modifier.padding(padding).consumeWindowInsets(padding).onPageSpan { span = it }) {
             val fold = spreadFold(maxWidth, span)
             val bookFold = pageFold(maxWidth, span)
-            val planSoFar: @Composable () -> Unit = { view?.let { PlanSoFar(it.goal) } }
+            val planSoFar: @Composable () -> Unit = {
+                Column {
+                    waitPane.value?.let { content ->
+                        Column(
+                            Modifier.padding(16.dp),
+                            verticalArrangement =
+                                androidx.compose.foundation.layout.Arrangement
+                                    .spacedBy(24.dp),
+                        ) { content.value() }
+                    }
+                    view?.let { PlanSoFar(it.goal) }
+                }
+            }
             // An open book gives a test's question both pages, never the plan so far: where large text leaves them too
             // narrow to spread, the question keeps one column before the fold.
             val planBeside = fold == null && (testing == null || bookFold == null)
@@ -198,35 +223,41 @@ fun GoalSetupScreen(
             PageWithSupportingPane(supportingPane = planSoFar.takeIf { planBeside }, panesTouch = fold != null) { asideBeside ->
                 when (val shown = state) {
                     is LoadState.Loaded -> {
-                        SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
-                            if (vm.saveFailed) {
-                                Text(
-                                    vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
-                                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-                            step?.let {
-                                val setupStep =
-                                    @Composable {
-                                        SetupStep(
-                                            it,
-                                            shown.value,
-                                            vm,
-                                            store,
-                                            plans,
-                                            mocks,
-                                            isGuest,
-                                            navigator,
-                                            route,
-                                            asideBeside || fold != null,
-                                            warmUps,
-                                            prepareToday,
-                                            announce,
-                                        )
-                                    }
-                                if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
+                        CompositionLocalProvider(
+                            LocalWaitBack provides waitBack,
+                            LocalWaitPane provides waitPane,
+                            LocalWaitBeside provides (asideBeside || fold != null),
+                        ) {
+                            SetupColumn(fold, aside = planSoFar.takeIf { testing == null }) {
+                                if (vm.saveFailed && step != OnboardingStep.PLAN) {
+                                    Text(
+                                        vm.dayTooShort?.let { dayTooShortWords(it) } ?: stringResource(R.string.onboarding_save_failed),
+                                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
+                                }
+                                step?.let {
+                                    val setupStep =
+                                        @Composable {
+                                            SetupStep(
+                                                it,
+                                                shown.value,
+                                                vm,
+                                                store,
+                                                plans,
+                                                mocks,
+                                                isGuest,
+                                                navigator,
+                                                route,
+                                                asideBeside || fold != null,
+                                                warmUps,
+                                                prepareToday,
+                                                announce,
+                                            )
+                                        }
+                                    if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
+                                }
                             }
                         }
                     }
@@ -267,12 +298,47 @@ private fun ColumnScope.SetupStep(
     val pending = vm.isSaving
     val run by vm.follower.run.collectAsStateWithLifecycle()
     val onRetryRun = vm.follower::retry.takeIf { run.failure == GenerationFailure.Connection || vm.follower.canRestart }
+    val onboardingId = view.goal.details.text("onboardingId")
+    TrackDeckReceived(view.goal.id.toString(), run.warmUpId, onboardingId)
+    LaunchedEffect(run.warmUpId) { run.warmUpId?.let { warmUps?.decks?.get(it)?.prepare() } }
+    if (step != OnboardingStep.SCHEDULE && step != OnboardingStep.PLAN &&
+        step != OnboardingStep.PLACEMENT
+    ) {
+        TrackOnboardingQuestion(view.goal.id.toString(), step.value, onboardingId)
+    }
+    val savedFirst = view.firstLesson
+    val liveFirst = run.firstLesson
+    val firstLesson =
+        liveFirst?.let {
+            it.copy(
+                title = it.title ?: savedFirst?.title,
+                ready =
+                    it.ready || savedFirst?.takeIf { saved -> saved.id.toString() == it.id }?.status?.value == "ready",
+            )
+        } ?: savedFirst?.let { GenerationFirstLesson(it.id.toString(), it.title, it.status.value == "ready") }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(
         LocalPlanStart provides planStart,
         LocalSetupWarmUp provides warmUps,
+        LocalSetupAim provides
+            SetupAimContext(
+                view.languageAim,
+                vm.isSaving,
+                vm.saveFailed,
+                { aim, done -> vm.changeAim(plans, aim, done) },
+            ),
+        LocalSetupWait provides
+            SetupWaitContext(
+                view.goal.id.toString(),
+                firstLesson,
+                firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } },
+                view.planReadiness.ready || run.planMade,
+                run.warmUpId,
+                view.libraryCourse,
+                view.libraryCourse?.let { course -> { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) } },
+            ),
         LocalOnboardingAnnounce provides announce,
     ) {
         QuestionStep(
@@ -328,7 +394,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.REASON -> {
-            TextStep(TextQuestion.Reason, subject, pending, rememberUnsentWords(vm.goalId, step.value, count = 1), vm::answer)
+            ReasonStep(subject, view.languageAim, pending, rememberUnsentWords(vm.goalId, step.value, count = 2), vm::answer)
         }
 
         OnboardingStep.TARGET -> {
@@ -430,7 +496,23 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLAN -> {
-            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, plans, navigator, route, prepareToday)
+            PlanRevealStep(
+                view.goal,
+                isGuest,
+                view.libraryCourse,
+                run,
+                onRetryRun,
+                plans,
+                navigator,
+                route,
+                prepareToday,
+                onReveal = vm::reveal,
+                saving = vm.isSaving,
+                saveFailed = vm.saveFailed,
+                playMoment = vm::takeRevealMoment,
+                planRevealed = view.planRevealed,
+                today = store.revealToday[view.goal.id.toString()],
+            )
         }
     }
 }

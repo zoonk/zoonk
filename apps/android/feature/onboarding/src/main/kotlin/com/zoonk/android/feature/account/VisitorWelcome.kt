@@ -53,6 +53,10 @@ fun VisitorWelcome(
     modifier: Modifier = Modifier,
 ) {
     val sender = viewModel { GoalSenderViewModel(app.onboarding, app.analytics) }
+    if (sender.isSending) {
+        com.zoonk.android.data
+            .TrackVisibleWait("understanding", "curriculum", attemptId = sender.attemptId)
+    }
     val language = currentLocale().language
 
     VisitorWelcome(

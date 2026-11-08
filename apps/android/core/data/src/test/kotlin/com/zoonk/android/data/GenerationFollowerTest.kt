@@ -51,6 +51,78 @@ class GenerationFollowerTest {
     }
 
     @Test
+    fun aReadyPlanStillFollowsItsFirstLessonUntilItCanStart() =
+        runTest {
+            val source = FakeSource()
+            val finish = kotlinx.coroutines.CompletableDeferred<Unit>()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(
+                            GenerationEvent(
+                                status = "started",
+                                step = "writeFirstLesson",
+                                lessonId = "lesson-1",
+                                lessonTitle = "Dawn songs",
+                            ),
+                        )
+                        emit(event("goalReady"))
+                        finish.await()
+                        emit(GenerationEvent(status = "completed", step = "firstLessonReady", lessonId = "lesson-1"))
+                        MutableSharedFlow<Unit>().collect {}
+                    },
+                )
+            val follower = follower(source, kind = GenerationKind.Placement)
+            follower.follow("a")
+            runCurrent()
+            assertEquals(GenerationRun.Status.Ready, follower.run.value.status)
+            assertEquals(
+                false,
+                follower.run.value.firstLesson
+                    ?.ready,
+            )
+            finish.complete(Unit)
+            runCurrent()
+            assertEquals(GenerationFirstLesson("lesson-1", "Dawn songs", ready = true), follower.run.value.firstLesson)
+            follower.stop()
+        }
+
+    @Test
+    fun firstLessonReadinessSurvivesReplayedWritingEventsWithoutEndingThePlan() =
+        runTest {
+            val source = FakeSource()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(
+                            GenerationEvent(
+                                status = "started",
+                                step = "writeFirstLesson",
+                                lessonId = "lesson-1",
+                                lessonTitle = "Dawn songs",
+                            ),
+                        )
+                        emit(GenerationEvent(status = "completed", step = "firstLessonReady", lessonId = "lesson-1"))
+                        emit(
+                            GenerationEvent(
+                                status = "started",
+                                step = "writeFirstLesson",
+                                lessonId = "lesson-1",
+                                lessonTitle = "Dawn songs",
+                            ),
+                        )
+                        MutableSharedFlow<Unit>().collect {}
+                    },
+                )
+            val follower = follower(source, kind = GenerationKind.Placement)
+            follower.follow("a")
+            runCurrent()
+            assertEquals(GenerationFirstLesson("lesson-1", "Dawn songs", ready = true), follower.run.value.firstLesson)
+            assertEquals(GenerationRun.Status.Following, follower.run.value.status)
+            follower.stop()
+        }
+
+    @Test
     fun aRunKeepsTheNewestSkillItsGraphWrote() =
         runTest {
             val source = FakeSource()

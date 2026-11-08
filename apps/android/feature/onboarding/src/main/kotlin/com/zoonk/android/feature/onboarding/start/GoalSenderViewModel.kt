@@ -21,6 +21,9 @@ class GoalSenderViewModel(
     private val store: OnboardingStore,
     private val analytics: EventTracker = EventTracker {},
 ) : ViewModel() {
+    var attemptId by mutableStateOf<String?>(null)
+        private set
+
     var isSending by mutableStateOf(false)
         private set
 
@@ -34,13 +37,28 @@ class GoalSenderViewModel(
     ) {
         if (isSending) return
         isSending = true
-        analytics.track(AnalyticsEvent.GoalTyped(hasAttachment = false))
+        val attempt = AnalyticsEvent.GoalTyped(hasAttachment = false)
+        attemptId = attempt.attemptId
+        analytics.track(attempt)
         error = null
         viewModelScope.launch {
             when (val outcome = store.sendGoal(goal, language)) {
-                is WriteOutcome.Done -> onSent(outcome.value.id.toString())
-                WriteOutcome.Obsolete -> Unit
-                else -> error = outcome.startError()
+                is WriteOutcome.Done -> {
+                    analytics.track(
+                        AnalyticsEvent.OnboardingProgressed(
+                            "attempt_linked",
+                            onboardingId = outcome.value.id.toString(),
+                            attemptId = attempt.attemptId,
+                        ),
+                    )
+                    onSent(outcome.value.id.toString())
+                }
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    error = outcome.startError()
+                }
             }
             isSending = false
         }

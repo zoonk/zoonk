@@ -55,7 +55,6 @@ class NextStopFoldTest {
             SessionViewModel(
                 StudyOpener(api, api::writeLesson, cache, { "UTC" }),
                 StudySessionStore(api, cache) { "UTC" },
-                { _, _ -> },
                 cache,
                 readiness = { _, _ ->
                     LessonReadiness(
@@ -94,6 +93,7 @@ class NextStopFoldTest {
             }
         }
         rule.waitForIdle()
+        rule.onNodeWithText("Play a quiz while you wait").performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
 
         rule.unfoldBook(folds)

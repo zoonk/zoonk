@@ -103,6 +103,10 @@ fun ColumnScope.LanguageLevelTestStep(
     val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle()) }
     val test by store.levelTests[goalId].collectShown()
     val phase = vm.phase(test)
+    val hold =
+        com.zoonk.android.feature.warmup
+            .rememberReadyHold(phase != LevelTestPhase.Waiting)
+    val shown = if (hold.holding) LevelTestPhase.Waiting else phase
     val poll = rememberPoll(active = phase == LevelTestPhase.Waiting && !vm.bank.isStopped) { vm.check() }
     val audioQuestion = (phase as? LevelTestPhase.Question)?.question?.takeIf { it.audioPending }?.id
     val audioPoll = rememberPoll(active = audioQuestion != null, key = audioQuestion) { vm.check() }
@@ -116,12 +120,14 @@ fun ColumnScope.LanguageLevelTestStep(
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val finish = { vm.finish(onDone) }
 
-    when (phase) {
+    when (shown) {
         LevelTestPhase.Loading -> {
             StepLoading()
         }
 
         LevelTestPhase.Intro -> {
+            com.zoonk.android.data
+                .TrackOnboardingQuestion(goalId, "placement")
             LevelTestIntro(
                 language,
                 targetLanguage,
@@ -139,7 +145,8 @@ fun ColumnScope.LanguageLevelTestStep(
             val run = vm.bank.run().withPoll(poll.stopped)
             LevelTestWaiting(
                 targetLanguage = targetLanguage,
-                run = run,
+                hold = hold,
+                run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready) else run,
                 onRetry =
                     when {
                         poll.stopped -> poll::restart
@@ -153,18 +160,18 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Question -> {
-            key(phase.question.id) {
+            key(shown.question.id) {
                 val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
-                TestQuestion(phase.question, targetLanguage, audioPending, vm, navigator)
+                TestQuestion(shown.question, targetLanguage, audioPending, vm, navigator)
             }
         }
 
         is LevelTestPhase.Speaking -> {
-            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::stop)
+            LevelTestSpeaking(shown.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::stop)
         }
 
         is LevelTestPhase.Done -> {
-            LevelTestDone(phase.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+            LevelTestDone(shown.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
         }
     }
 }
@@ -237,17 +244,29 @@ private fun InterfaceOffer(language: String) {
 @Composable
 private fun ColumnScope.LevelTestWaiting(
     targetLanguage: String,
+    hold: com.zoonk.android.feature.warmup.ReadyHold,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
 ) {
-    GenerationWait(kind = GenerationKind.LevelTestBank, run = run, onRetry = onRetry) {
-        OnboardingHeading(
-            stringResource(R.string.onboarding_language_test_preparing_title),
-            stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
-        )
+    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_language_test_preparing_title)
+    SetupWait(
+        run,
+        GenerationKind.LevelTestBank,
+        com.zoonk.android.data.AnalyticsEvent.WarmUpSurface.PlacementWait,
+        title,
+        hold,
+        stringResource(R.string.onboarding_continue),
+        onRetry,
+    ) {
+        GenerationWait(GenerationKind.LevelTestBank, run, onRetry) {
+            OnboardingHeading(
+                title,
+                stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
+            )
+        }
     }
     OnboardingActions {
         FinishFailed(failed)

@@ -268,6 +268,23 @@ class LessonPlayerViewModel(
         private set
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
+    private var sceneRecorded = false
+    private var answerRecorded = false
+
+    fun firstSceneVisible() {
+        if (sceneRecorded) return
+        sceneRecorded = true
+        analytics.track(
+            AnalyticsEvent.OnboardingProgressed("first_scene_visible", goalId = activeGoalId(), lessonId = lessonId, at = now()),
+        )
+    }
+
+    private fun firstAnswer() {
+        if (answerRecorded) return
+        answerRecorded = true
+        analytics.track(AnalyticsEvent.OnboardingProgressed("first_answer", goalId = activeGoalId(), lessonId = lessonId, at = now()))
+    }
+
     private var abandonSent = false
 
     /**
@@ -476,6 +493,7 @@ class LessonPlayerViewModel(
         val spoken = step?.content as? StepContent.SpokenAnswer
 
         if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
+        firstAnswer()
         activate()
         dispatch(LessonAction.CheckStarted(stepId))
         if (!awaitRun()) {
@@ -530,6 +548,7 @@ class LessonPlayerViewModel(
         val answer = state.answers[step.id] ?: return
 
         if (state.phase != LessonPhase.Playing) return
+        firstAnswer()
 
         writeExampleLines()
 

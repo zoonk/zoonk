@@ -155,6 +155,7 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data class GoalSetup(
         val goalId: String,
+        val revealMoment: Boolean = false,
     ) : AppRoute
 
     /** `dailyMinutes` is the time a day the course's example plan showed. */

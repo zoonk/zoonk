@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding.start
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.onboarding.goalsUnderstanding
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOf
 import com.zoonk.api.models.OnboardingExamDate
 import org.junit.Assert.assertEquals
@@ -35,6 +36,19 @@ class UnderstoodRowsTest {
             it.editable ==
                 EditableField.TargetDate
         }
+
+    @Test
+    fun anInferredLanguageAimShowsWithoutATargetScoreInThePromptsDetails() {
+        val goal = understanding(goalsUnderstanding()).goals.single()
+        val language =
+            goal.copy(
+                draft = goal.draft.copy(kind = GoalDraftOutput.Kind.LANGUAGE, title = "Learn French", details = emptyMap()),
+                languageAim = ApiJson.decodeFromString("""{"aim":"B1","choices":[{"aim":"B1","hours":375}]}"""),
+            )
+        val row = rows.rows(language).single { it.id == "targetScore" }
+        assertEquals("B1 · Everyday conversations", row.value.plain())
+        assertEquals(EditableField.TargetScore, row.editable)
+    }
 
     @Test
     fun anOfficialDateCountsDownWithItsSource() {

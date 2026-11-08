@@ -34,12 +34,15 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TrackVisibleWait
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.steps.count
-import com.zoonk.android.feature.warmup.WarmUpCard
+import com.zoonk.android.feature.warmup.WaitContent
+import com.zoonk.android.feature.warmup.WaitQuizAction
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -66,6 +69,7 @@ fun LessonWaitingScreen(
     warmUps: WarmUpStore,
     exits: LessonPlayerExits,
     readLesson: suspend () -> Unit,
+    goalId: String? = null,
 ) {
     val writing by viewModel.writing.collectAsStateWithLifecycle()
     val run by viewModel.run.collectAsStateWithLifecycle()
@@ -83,7 +87,8 @@ fun LessonWaitingScreen(
             late = true
         }
     }
-    LaunchedEffect(ready) { if (ready) viewModel.recordWait() }
+    val quiz = rememberWaitQuiz(warmUpId, warmUps)
+    if (waits) TrackVisibleWait("lessonWait", "lesson", goalId)
     val opens = hold.over
     LaunchedEffect(opens) {
         while (opens) {
@@ -96,7 +101,7 @@ fun LessonWaitingScreen(
 
     LessonFrame(
         title = outline.title,
-        onClose = exits::close,
+        onClose = { if (quiz.showingProgress && quiz.hasQuiz) quiz.back() else exits.close() },
         modifier = if (waits) Modifier.watchTouches(hold) else Modifier,
         bottomBar =
             when {
@@ -121,6 +126,10 @@ fun LessonWaitingScreen(
                     }
                 }
 
+                waits && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext) -> {
+                    { WaitQuizAction(quiz, hold) }
+                }
+
                 else -> {
                     null
                 }
@@ -141,13 +150,21 @@ fun LessonWaitingScreen(
                 LessonWriting.Writing, LessonWriting.Ready -> {
                     val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
                     val failed = shown.status == GenerationRun.Status.Failed
-                    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    WaitContent(
+                        quiz,
+                        hold,
+                        AnalyticsEvent.WarmUpSurface.LessonWait,
+                        GenerationKind.Lesson,
+                        shown,
+                        stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
+                        goalId = goalId,
+                        onRetry = viewModel::retry,
+                    ) {
                         LessonWritingProgress(
                             shown,
                             viewModel::retry,
                             stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
                         )
-                        WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold)
                     }
                     if (!hold.holding && (late || failed)) alternative?.let { Alternative(it, instead = false, exits) }
                 }

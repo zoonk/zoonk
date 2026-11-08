@@ -30,7 +30,54 @@ sealed class AnalyticsEvent(
 
     data class GoalTyped(
         val hasAttachment: Boolean,
-    ) : AnalyticsEvent("Goal Typed", mapOf("has_attachment" to hasAttachment))
+        val attemptId: String = UUID.randomUUID().toString(),
+        val submittedAt: Long = System.currentTimeMillis(),
+    ) : AnalyticsEvent("Goal Typed", mapOf("has_attachment" to hasAttachment, "attempt_id" to attemptId, "submitted_at" to submittedAt))
+
+    data class OnboardingProgressed(
+        val stage: String,
+        val goalId: String? = null,
+        val onboardingId: String? = null,
+        val attemptId: String? = null,
+        val question: String? = null,
+        val deckId: String? = null,
+        val lessonId: String? = null,
+        val at: Long = System.currentTimeMillis(),
+    ) : AnalyticsEvent(
+            "Onboarding Progressed",
+            listOfNotNull(
+                "stage" to stage,
+                "at" to at,
+                goalId?.let { "goal_id" to it },
+                onboardingId?.let { "onboarding_id" to it },
+                attemptId?.let { "attempt_id" to it },
+                question?.let { "question" to it },
+                deckId?.let { "deck_id" to it },
+                lessonId?.let { "lesson_id" to it },
+            ).toMap(),
+        )
+
+    data class GenerationWaited(
+        val surface: String,
+        val contentKind: String,
+        val startedAt: Long,
+        val endedAt: Long,
+        val goalId: String? = null,
+        val onboardingId: String? = null,
+        val attemptId: String? = null,
+    ) : AnalyticsEvent(
+            "Generation Waited",
+            listOfNotNull(
+                "surface" to surface,
+                "content_kind" to contentKind,
+                "started_at" to startedAt,
+                "ended_at" to endedAt,
+                "milliseconds" to (endedAt - startedAt).coerceAtLeast(0),
+                goalId?.let { "goal_id" to it },
+                onboardingId?.let { "onboarding_id" to it },
+                attemptId?.let { "attempt_id" to it },
+            ).toMap(),
+        )
 
     data class HookAnswered(
         val lessonId: String,
@@ -146,7 +193,19 @@ sealed class AnalyticsEvent(
     data class WarmUpShown(
         val surface: WarmUpSurface,
         val cardCount: Int,
-    ) : AnalyticsEvent("Warm-Up Shown", mapOf("surface" to surface.value, "card_count" to cardCount))
+        val deckId: String? = null,
+        val goalId: String? = null,
+        val at: Long = System.currentTimeMillis(),
+    ) : AnalyticsEvent(
+            "Warm-Up Shown",
+            listOfNotNull(
+                "surface" to surface.value,
+                "card_count" to cardCount,
+                "at" to at,
+                deckId?.let { "deck_id" to it },
+                goalId?.let { "goal_id" to it },
+            ).toMap(),
+        )
 
     /** [position] counts from 1 in the deck. */
     data class WarmUpAnswered(
@@ -165,6 +224,8 @@ sealed class AnalyticsEvent(
         PlanWait("planWait"),
         PlacementWait("placementWait"),
         LessonWait("lessonWait"),
+        ExamNotice("examNotice"),
+        NextStop("nextStop"),
     }
 
     enum class PublicPage(

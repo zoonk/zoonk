@@ -23,6 +23,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.examGoal
@@ -91,6 +92,33 @@ class PlanRevealStepFlowTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun returningToAnAutomaticallyOpenedFirstLessonKeepsTheWaitOpen() {
+        val restoration = StateRestorationTester(rule)
+        var opened = 0
+        restoration.setContent {
+            ZoonkTheme {
+                CompositionLocalProvider(
+                    LocalSetupWait provides
+                        SetupWaitContext(
+                            firstLesson = GenerationFirstLesson("lesson-1", "Dawn songs", ready = true),
+                            onStartLesson = { opened++ },
+                        ),
+                ) {
+                    SetupColumn {
+                        PlanBuilding(GenerationRun(status = GenerationRun.Status.Following), null, next = PlanNext.TimeQuestion)
+                    }
+                }
+            }
+        }
+        rule.waitForIdle()
+        assertEquals(1, opened)
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitForIdle()
+        assertEquals(1, opened)
+        rule.onNodeWithText("Start lesson 1").assertExists()
     }
 
     @Test
@@ -173,6 +201,7 @@ class PlanRevealStepFlowTest {
     fun aGuessWhileThePlanIsBuiltDoesntHoldItOnceItsDocumentsAreRead() {
         planApi.shownPlan = planOf(ready = false)
         show()
+        rule.onNodeWithText("Play a quiz while you wait").performScrollTo().performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         planApi.shownPlan = planOf(notice = "reading")
         rule.mainClock.advanceTimeBy(POLL_MILLIS)
@@ -190,6 +219,7 @@ class PlanRevealStepFlowTest {
     fun aGuessWhileTheDocumentsAreReadKeepsItsAnswerThroughALostConnectionAndHoldsThePlan() {
         planApi.shownPlan = planOf(notice = "reading")
         show()
+        rule.onNodeWithText("Play a quiz while you wait").performScrollTo().performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         planApi.planFailure = ApiException(ApiError.Network)
         rule.mainClock.advanceTimeBy(POLL_MILLIS * 3)

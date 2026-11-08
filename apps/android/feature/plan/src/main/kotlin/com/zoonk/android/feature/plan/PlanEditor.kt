@@ -260,6 +260,28 @@ internal fun ColumnScope.PlanEditorBody(
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
+        page.plan.languageAim?.let { languageAim ->
+            languageAim.aim?.let { aim ->
+                LanguageAimRow(
+                    aim.value,
+                    languageAim.choices,
+                    onPick = { next, done ->
+                        edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
+                            if (it?.status ==
+                                PlanChangeResult.Status.APPLIED
+                            ) {
+                                done()
+                            }
+                        }
+                    },
+                    pending = edits.isPending(PlanPart.Aim),
+                    failed = edits.hasFailed(PlanPart.Aim),
+                    endDate =
+                        page.plan.estimate.endDate
+                            ?.toJavaLocalDate(),
+                )
+            }
+        }
         PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         PlanScheduleSection(
             page,

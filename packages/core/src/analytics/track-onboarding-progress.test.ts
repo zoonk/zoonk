@@ -46,7 +46,7 @@ describe(trackOnboardingProgress, () => {
   });
 
   it.each(["warm", "cold"] as const)(
-    "marks a %s first lesson from the stored lesson and goal",
+    "keeps the request-time %s classification when the lesson becomes ready",
     async (cache) => {
       const user = await userFixture();
 
@@ -54,7 +54,7 @@ describe(trackOnboardingProgress, () => {
         goalFixture({ createdAt: new Date("2026-11-08T12:00:00Z"), userId: user.id }),
         libraryLessonFixture({
           contentStatus: "completed",
-          createdAt: new Date(cache === "warm" ? "2026-11-07T12:00:00Z" : "2026-11-08T12:00:01Z"),
+          createdAt: new Date("2026-11-07T12:00:00Z"),
         }),
       ]);
 
@@ -62,6 +62,7 @@ describe(trackOnboardingProgress, () => {
 
       trackOnboardingProgress({
         at: 1234,
+        cache,
         goalId: goal.id,
         lesson_id: lesson.id,
         platform: null,
@@ -123,6 +124,46 @@ describe(trackOnboardingProgress, () => {
           onboarding_id: onboardingId,
           stage: "goal_created",
         }),
+      }),
+    );
+  });
+});
+
+describe("first lesson cache label", () => {
+  it("calls a lesson outlined before the goal but written for it cold", async () => {
+    const user = await userFixture();
+
+    const [goal, lesson] = await Promise.all([
+      goalFixture({ createdAt: new Date("2026-11-08T12:00:00Z"), userId: user.id }),
+      libraryLessonFixture({
+        contentStatus: "pending",
+        createdAt: new Date("2026-11-07T12:00:00Z"),
+      }),
+    ]);
+
+    await prisma.lesson.update({
+      data: { contentStatus: "completed", generatedAt: new Date("2026-11-08T12:01:00Z") },
+      where: { id: lesson.id },
+    });
+
+    const flush = runDeferredWork();
+
+    trackOnboardingProgress({
+      at: Date.parse("2026-11-08T12:01:00Z"),
+      cache: "cold",
+      goalId: goal.id,
+      lesson_id: lesson.id,
+      platform: null,
+      stage: "run_step",
+      status: "completed",
+      step: "firstLessonReady",
+    });
+
+    await flush();
+
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({ cache: "cold", lesson_id: lesson.id }),
       }),
     );
   });
