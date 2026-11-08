@@ -72,9 +72,11 @@ struct LessonCompletionView: View {
       ProgressView()
     case .failed:
       FailureLine(
-        message: LocalizedStringResource(
-          "That didn't go through. Your answers are kept.", table: "Player",
-          comment: "Under the title of a finished lesson whose save failed, above Try again"))
+        message: completion.saveFailures > 1
+          ? PracticeSaveError.repeatedMessage
+          : LocalizedStringResource(
+            "That didn't go through. Your answers are kept.", table: "Player",
+            comment: "Under the title of a finished lesson whose save failed, above Try again"))
     case .saved:
       if let summary = completion.summary {
         readouts(summary)

@@ -88,12 +88,12 @@ class EssayScreenshots {
                             closed = ui.closed,
                             announce = false,
                             finishing = false,
-                            finishFailed = false,
+                            finishFailures = 0,
                             viewModel,
                             navigator,
                         )
                     } else {
-                        EssayWrite(read, ui, finishing = false, finishFailed = false, viewModel, navigator)
+                        EssayWrite(read, ui, finishing = false, finishFailures = 0, viewModel, navigator)
                     }
                 }
             }

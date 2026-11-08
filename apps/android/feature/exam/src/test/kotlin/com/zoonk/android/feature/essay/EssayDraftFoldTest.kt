@@ -54,7 +54,7 @@ class EssayDraftFoldTest {
         restoration.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                EssayWrite(read, ui, finishing = false, finishFailed = false, viewModel, rememberAppNavigator())
+                EssayWrite(read, ui, finishing = false, finishFailures = 0, viewModel, rememberAppNavigator())
             }
         }
         val cursor = TextRange(text.length / 2)
@@ -82,7 +82,7 @@ class EssayDraftFoldTest {
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                EssayWrite(read, ui, finishing = false, finishFailed = false, viewModel, rememberAppNavigator())
+                EssayWrite(read, ui, finishing = false, finishFailures = 0, viewModel, rememberAppNavigator())
             }
         }
         val cursor = TextRange(text.length / 2)

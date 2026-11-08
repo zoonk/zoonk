@@ -48,7 +48,7 @@ export function usePronunciationRound({
   const [step, setStep] = useState<RoundStep>({ index: 0, kind: "word", word: READY });
   const [answered, setAnswered] = useState(0);
   const [outcomes, setOutcomes] = useState<Record<number, TaskSegment>>({});
-  const [failed, setFailed] = useState(false);
+  const [failures, setFailures] = useState(0);
   const [isPending, startTransition] = useTransition();
 
   const index = step.kind === "word" ? step.index : words.length;
@@ -60,15 +60,12 @@ export function usePronunciationRound({
       return;
     }
 
-    setFailed(false);
-
     startTransition(async () => {
       const result = await actions.finish(roundId).catch(() => null);
+      setFailures((count) => (result ? 0 : count + 1));
 
       if (result) {
         setStep({ kind: "result", result });
-      } else {
-        setFailed(true);
       }
     });
   };
@@ -116,7 +113,7 @@ export function usePronunciationRound({
 
   return {
     current,
-    failed,
+    failures,
     index,
     isPending,
     next,

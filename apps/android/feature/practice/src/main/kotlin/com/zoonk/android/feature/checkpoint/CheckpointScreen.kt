@@ -438,7 +438,7 @@ private fun DuelActions(
     question: Question?,
     viewModel: CheckpointViewModel,
 ) {
-    if (state.error != null) SaveErrorText(onRetry = viewModel::retry.takeIf { !state.pending })
+    if (state.error != null) SaveErrorText(state.saveFailures, onRetry = viewModel::retry.takeIf { !state.pending })
     TaskActions { width ->
         when {
             question == null || state.feedback != null -> {

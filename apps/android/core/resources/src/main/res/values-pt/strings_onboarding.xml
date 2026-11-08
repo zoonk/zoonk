@@ -155,7 +155,7 @@
   "onboarding_paste_link_placeholder": "af3c1cde59cf645d0707e6dfe02ac533e428914a8f25abaea1a31641ae87f870",
   "onboarding_paste_text": "bbc32a4207ea0f3bb7c12ded4e7005ea6c7151f777d45be8aac043b91543d848",
   "onboarding_paste_text_placeholder": "66500062805aaa171b6f974f5799575560f1fef8a3b7b4c3a2c0a04da45c64dc",
-  "onboarding_placement_answer_failed": "12ddc5698dbb163ad96084add2a4ff886aaf40e26376d8f160b807e5da533f16",
+  "onboarding_placement_answer_failed": "dc315ea7e40da9cd12686d3981efe28490609e16dffbc6466d0f9f27495b01e3",
   "onboarding_placement_answered": "418427cdda7050da393c0a69ad56fb28f51a93b288322a01ee1b38f4b6f46093",
   "onboarding_placement_confirm": "1208dd241d8e4b37ec44a7a575c298eef6250fb55827791c2890355bfa005dcd",
   "onboarding_placement_continue_mock": "14aa272908fac11572e3cae25af3525a5fdde524afd9d211c8579979f2f12e6d",
@@ -189,7 +189,6 @@
   "onboarding_placement_stop_mock": "d423f8cee5346505954c8e0f83f0194ddd2e0ae8d46c42c9f6f771a58ccf71ab",
   "onboarding_placement_title": "e65aef01beae15222193ba9662f611797f159d5911fc343c5d329774d55dfd11",
   "onboarding_placement_true": "fad82db82db2575a949342914f22ba64571a47479d3cc686c7cca48c44218d81",
-  "onboarding_placement_try_again": "fb8d4d40493dbcda5452f29552cf943b5cf69cdb9b2ffd33e3b6cd48a9f9258d",
   "onboarding_placement_unavailable_description": "d0020ed7103eab6fc0b01c2c0bec8b39adf825955939d3fc338c298b1de45a45",
   "onboarding_placement_unavailable_title": "f9205287bd93aa49c4aa7af1f3dff7dab43954a7591d658dfbaf7cc7cba3681c",
   "onboarding_placement_waiting_material": "1bfb9d35b4b56e0f2c7a66dc3975830ed4184f0edb9b3951e1bb1a676ea7a64f",
@@ -645,8 +644,7 @@
     <string name="onboarding_placement_dont_know">Ainda não sei</string>
     <string name="onboarding_placement_confirm">Confirmar</string>
     <string name="onboarding_placement_stop">Parar aqui e ver meu plano</string>
-    <string name="onboarding_placement_answer_failed">Não foi possível enviar. Suas respostas foram guardadas.</string>
-    <string name="onboarding_placement_try_again">Tentar de novo</string>
+    <string name="onboarding_placement_answer_failed">Não deu certo. Suas respostas foram mantidas.</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">Verdadeiro</string>
     <string name="onboarding_placement_false">Falso</string>

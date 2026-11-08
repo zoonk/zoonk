@@ -441,7 +441,7 @@ internal fun AnswerActions(
         var notSureSent by rememberSaveable { mutableStateOf(false) }
         LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
 
-        if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+        if (phase == RunPhase.AnswerFailed) SaveErrorText(run.saveFailures, onRetry = controls::retry.takeIf { controls.canRetry })
         if (answeredElsewhere) AlreadyAnsweredText()
         TaskActions { width ->
             notSureOffer(question, every = notSureOnEvery)?.takeUnless { done || reading }?.let { offer ->

@@ -65,7 +65,7 @@ data class FocusTestUi(
     val questions: List<Question> = emptyList(),
     val answers: List<GradedAnswer> = emptyList(),
     val sending: Boolean = false,
-    val sendFailed: Boolean = false,
+    val sendFailures: Int = 0,
     val outcome: FocusTestOutcome? = null,
     /** False for an outcome brought back after the process ended: it was celebrated already. */
     val celebrate: Boolean = true,
@@ -191,17 +191,17 @@ class FocusTestViewModel(
     fun send() {
         val ui = mutableUi.value
         if (ui.sending || ui.answers.isEmpty()) return
-        mutableUi.update { it.copy(sending = true, sendFailed = false) }
+        mutableUi.update { it.copy(sending = true) }
         viewModelScope.launch {
             when (val result = store.submit(goalId, AnswersDraft(requestId, ui.answers))) {
                 is MutationResult.Done -> {
                     saved[OUTCOME] = ApiJson.encodeToString(FocusTestResult.serializer(), result.value)
-                    mutableUi.update { it.copy(sending = false, outcome = result.value.outcome()) }
+                    mutableUi.update { it.copy(sending = false, sendFailures = 0, outcome = result.value.outcome()) }
                     answersDraft?.remove()
                 }
 
                 is MutationResult.Failed -> {
-                    mutableUi.update { it.copy(sending = false, sendFailed = true) }
+                    mutableUi.update { it.copy(sending = false, sendFailures = it.sendFailures + 1) }
                 }
 
                 MutationResult.Obsolete -> {

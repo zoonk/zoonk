@@ -15,7 +15,9 @@ struct PlacementStep: View {
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
-  @State private var failed = false
+  @State private var questionFailures = 0
+  @State private var finishFailed = false
+  @State private var failedAnswer: SentAnswer?
   @State private var waitRound = 0
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
   @State private var shown = (answered: 0, spent: 0.0)
@@ -129,7 +131,8 @@ struct PlacementStep: View {
     case .question(let question, let labels):
       PlacementQuestionScreen(
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
-        labels: labels, isSaving: isSaving, failed: failed,
+        labels: labels, isSaving: isSaving, failures: questionFailures,
+        saveFailure: finishFailed ? Self.saveFailureMessage : nil,
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
@@ -197,15 +200,16 @@ struct PlacementStep: View {
   }
 
   @ViewBuilder private var saveFailure: some View {
-    if failed {
+    if finishFailed, !isSaving {
       Section {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Onboarding",
-            comment: "A change couldn't be saved"))
+        FailureLine(message: Self.saveFailureMessage)
       }
     }
   }
+
+  private static let saveFailureMessage = LocalizedStringResource(
+    "That didn't save. Try again.", table: "Onboarding",
+    comment: "A change couldn't be saved")
 
   private var isMockOpen: Bool {
     router.tasks.contains { route in
@@ -464,7 +468,10 @@ struct PlacementStep: View {
     }
 
     isSaving = true
-    failed = false
+    finishFailed = false
+    let sent = SentAnswer(
+      answer: answer, sender: answer.isDontKnow ? .notSure : .check,
+      measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
 
     Task {
       defer { isSaving = false }
@@ -472,12 +479,15 @@ struct PlacementStep: View {
       do {
         let result = try await onboarding.answerPlacement(
           goalID: view.goal.id, itemID: question.itemId, answer: answer,
-          duration: shownAt.duration(to: .now))
+          duration: .milliseconds(sent.durationMs))
+        questionFailures = 0
+        failedAnswer = nil
         shown.answered += 1
         show(result.placement)
       } catch is CancellationError {
       } catch {
-        failed = true
+        failedAnswer = sent
+        questionFailures += 1
       }
     }
   }
@@ -488,7 +498,7 @@ struct PlacementStep: View {
     }
 
     isSaving = true
-    failed = false
+    finishFailed = false
 
     Task {
       defer { isSaving = false }
@@ -506,13 +516,13 @@ struct PlacementStep: View {
           try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: false)
           try await onDone()
         case .failed:
-          failed = true
+          finishFailed = true
         case .obsolete:
           break
         }
       } catch is CancellationError {
       } catch {
-        failed = true
+        finishFailed = true
       }
     }
   }
@@ -522,8 +532,9 @@ struct PlacementStep: View {
       return
     }
 
+    let fromQuestion = if case .question = phase { true } else { false }
     isSaving = true
-    failed = false
+    finishFailed = false
 
     Task {
       defer { isSaving = false }
@@ -531,9 +542,16 @@ struct PlacementStep: View {
       do {
         try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
         try await onDone()
+        if fromQuestion {
+          questionFailures = 0
+        }
       } catch is CancellationError {
       } catch {
-        failed = true
+        if fromQuestion {
+          questionFailures += 1
+        } else {
+          finishFailed = true
+        }
       }
     }
   }
@@ -551,12 +569,16 @@ struct PlacementQuestionScreen<Media: View>: View {
     "I don't know yet", table: "Onboarding",
     comment: "Answers a placement question without guessing")
   let isSaving: Bool
-  let failed: Bool
+  let failures: Int
+  var saveFailure: LocalizedStringResource?
   let onAnswer: (PracticeAnswer) -> Void
   let onStop: () -> Void
   @ViewBuilder var media: () -> Media
 
   @State private var draft: PracticeAnswer?
+  @State private var submission: Submission?
+
+  private enum Submission { case confirm, dontKnow, stop }
 
   var body: some View {
     PracticeTaskLayout {
@@ -583,38 +605,48 @@ struct PlacementQuestionScreen<Media: View>: View {
     } response: {
       asked.response
 
-      if failed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Onboarding",
-            comment: "A change couldn't be saved"))
+      if let saveFailure, !isSaving {
+        FailureLine(message: saveFailure)
+      }
+
+      if failures > 0, !isSaving {
+        FailureLine(message: PracticeSaveError.message(failures: failures))
       }
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        icon: .check, isBusy: isSaving, isDisabled: draft?.complete == nil
+        icon: .check, isBusy: isSaving && submission == .confirm,
+        isDisabled: isSaving || draft?.complete == nil
       ) {
         if let answer = draft?.complete {
+          submission = .confirm
           onAnswer(answer)
         }
       }
 
       PracticeSecondaryButton(
-        title: dontKnowLabel, icon: .notSure, isDisabled: isSaving
+        title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+        isDisabled: isSaving
       ) {
+        submission = .dontKnow
         onAnswer(.dontKnow)
       }
 
-      Button(action: onStop) {
+      BusyButton(isBusy: isSaving && submission == .stop) {
+        submission = .stop
+        onStop()
+      } label: {
         Text("Stop here and see my plan", tableName: "Onboarding", comment: "Ends placement early")
       }
-      .disabled(isSaving)
+      .disabled(isSaving && submission != .stop)
     }
   }
 
   private var asked: PracticeQuestionView {
     PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+      guard !isSaving else { return }
+      submission = .confirm
       onAnswer(answer)
     }
   }
@@ -628,13 +660,16 @@ extension PlacementQuestionScreen where Media == EmptyView {
     question: PracticeQuestion,
     labels: PracticeTrueFalseLabels,
     isSaving: Bool,
-    failed: Bool,
+    failures: Int,
+    saveFailure: LocalizedStringResource? = nil,
     onAnswer: @escaping (PracticeAnswer) -> Void,
     onStop: @escaping () -> Void
   ) {
     self.init(
       subject: subject, number: number, progress: progress, question: question, labels: labels,
-      isSaving: isSaving, failed: failed, onAnswer: onAnswer, onStop: onStop, media: { EmptyView() }
+      isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      onAnswer: onAnswer, onStop: onStop,
+      media: { EmptyView() }
     )
   }
 }

@@ -469,6 +469,11 @@ msgid "That didn't work. Try again in a moment."
 msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
 
 #: src/_components/save-error.tsx
+msgctxt "71Gfs0"
+msgid "Still not going through. You can come back later."
+msgstr "今回も送信できませんでした。時間をおいて、また戻ってきてください。"
+
+#: src/_components/save-error.tsx
 msgctxt "7i_b3c"
 msgid "That didn't go through. Your answers are kept."
 msgstr "送信できませんでした。回答はそのまま残っています。"

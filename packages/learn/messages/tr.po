@@ -469,6 +469,11 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Bir sorun oluştu. Birazdan tekrar dene."
 
 #: src/_components/save-error.tsx
+msgctxt "71Gfs0"
+msgid "Still not going through. You can come back later."
+msgstr "Yine gönderilemedi. Daha sonra geri dönebilirsin."
+
+#: src/_components/save-error.tsx
 msgctxt "7i_b3c"
 msgid "That didn't go through. Your answers are kept."
 msgstr "Gönderilemedi. Cevapların saklanıyor."

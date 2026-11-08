@@ -22,6 +22,7 @@
   "practice_pause_text": "3b923785d2e80ff38d4b9ad90076633ff6ccc3612a0c4cea15f6d3bdacc882da",
   "practice_progress": "ec4a6c86d92a50fe9723f08d798007031c4708aa73b8de760a1c9cc06d187b89",
   "practice_save_error": "ef24919fed92ca180d002b565fa932de3f76cdd927edf1a7c25e2ee4a0f7aa78",
+  "practice_save_error_repeat": "1b912e22001918f2f308c8b8fbae2ec9aa65940cc8c451f2ce7864d935e99e36",
   "practice_time_machine_answered": "a358cd5debb54729f27b75f9ed3e30867aeb2c9c4485868d25f0e9a038221dc9",
   "practice_time_machine_right_again": "4c1e107ef9ce67ba8e258d716d41b53d594455656e3247f4ea2d6d3290ea72df",
   "practice_time_machine_right_before": "bb78692e0d3f30313510b0f0928a8f5ce68637b1a50eb003c2ab2976aab6ba74",
@@ -50,6 +51,7 @@
     <string name="practice_finish_ready_detail">마치고 결과를 확인해 보세요.</string>
     <string name="practice_already_answered">이미 이 문제에 답했어요.</string>
     <string name="practice_save_error">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
+    <string name="practice_save_error_repeat">이번에도 전송하지 못했어요. 나중에 다시 와도 돼요.</string>
     <plurals name="practice_net_right">
         <item quantity="other">%d문제 정답</item>
     </plurals>

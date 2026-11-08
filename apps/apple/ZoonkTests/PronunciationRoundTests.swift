@@ -72,10 +72,10 @@ final class PronunciationRoundTests: XCTestCase {
 
     await round.record(recording)
     await round.next()
-    XCTAssertTrue(round.finishFailed)
+    XCTAssertEqual(round.finishFailures, 1)
 
     await round.finish()
-    XCTAssertFalse(round.finishFailed)
+    XCTAssertEqual(round.finishFailures, 0)
     XCTAssertEqual(round.step, .result(.fixture))
   }
 
