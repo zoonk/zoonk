@@ -72,7 +72,6 @@ private fun course(minutes: Long?): OwnedCertificate {
         level = null,
         minutes = minutes,
         recipientName = "Ana Souza",
-        skillLevels = emptyList(),
         targetLanguage = null,
         title = "Python",
         topics = emptyList(),

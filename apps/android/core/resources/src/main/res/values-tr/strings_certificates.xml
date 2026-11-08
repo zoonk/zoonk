@@ -60,7 +60,7 @@
   "certificates_linkedin_title": "90ff492fe1f4436662fb757886c3bcc207704d995f6778f6f6c1f990aa6e74cf",
   "certificates_locked": "7aa387d05c7b6f82060198e816a0d3f2ed4699d18dd6eb81a9c37794bfbfc96c",
   "certificates_meaning_cefr": "97da19af2abb13ea8d48a9a095a5506a9b3c0f7aacebebab07e93f73975d7fcf",
-  "certificates_meaning_language": "9f399ffd11a0a1de0dede407e129f5378ef4d9129af1060ad4cdb84d944d2d4b",
+  "certificates_meaning_language": "42e697a8cbd81b6edb20014d637afc530b4158c7a60ea3983c41fafd0fa71c63",
   "certificates_meaning_level": "60c2c95fc1807d2555fa4a64229c423fe953d65218fa9a100fbbd6649d1cfd18",
   "certificates_meaning_name": "dd0f7f433b2ad526abdcffc4b0efcd2e780819171673a668ca642067a89f2284",
   "certificates_meaning_plan": "502a230c2e95bfe21a0b8ed6370464f3f1b2060629b3fdba61ed4990e035e5ab",
@@ -89,7 +89,7 @@
   "certificates_topics_covered": "0090afe0bb5329a502e5847116df80cbda15ab483a4fcd977b5d905a5908de0a",
   "certificates_up_next": "41ac7c68c0b715bc2e2c4f2c06bde1a1d78af8fedbf29de5a60af5549faa6f23",
   "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
-  "certificates_up_next_language": "a61fe9215a0c99fa53332c83f3d75dbac1a5fd902836379513fcafba26c1d273",
+  "certificates_up_next_language": "f7e033a3091764eb06cbcdf33e59772091824da232f461392c956e205ba7a790",
   "certificates_verified": "ebc12e6b7894dae692f213859e6bec215903b9c3dc12637a0cb7e2e5d928befa",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754",
   "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9"
@@ -120,8 +120,8 @@
     <string name="certificates_get">Sertifikanı al</string>
     <string name="certificates_up_next">Sıradaki</string>
     <string name="certificates_up_next_course">Planı tamamladığında sertifikanı alırsın</string>
-    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın</string>
+    <!-- Under a language goal: its next certificate comes when the learner finishes a CEFR level of their plan, having studied at least half of that level's lessons. -->
+    <string name="certificates_up_next_language">Bir seviyeyi derslerinin en az yarısını çalışarak tamamladığında verilir</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs tamamlandı!</string>
     <string name="certificates_level_complete">%1$s tamamlandı!</string>
@@ -206,7 +206,7 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">yaklaşık %1$s</string>
     <string name="certificates_meaning_title">Bu sertifikanın anlamı</string>
-    <string name="certificates_meaning_language">Zoonk, her beceriyi (okuma, dinleme, konuşma, yazma) öğrencinin derslerde ve alıştırmalarda verdiği cevaplara göre ölçer. Bu cevaplarla seviyesi yükselen tüm beceriler bir sonraki seviyeye ulaştığında seviye tamamlanır; bu sertifika da bu becerilerin her biri %1$s seviyesine ulaştığında verildi.</string>
+    <string name="certificates_meaning_language">Zoonk, bir seviyedeki derslerin en az yarısını çalışıp seviyeyi tamamlayanlara bu sertifikayı verir.</string>
     <string name="certificates_meaning_level">Zoonk bu sertifikayı, bir kurs seviyesindeki her dersi çalışarak veya testini geçerek tüm üniteleri tamamlayan ve o seviyedeki tüm meydan okumaları kazanan öğrencilere verir.</string>
     <string name="certificates_meaning_plan">Zoonk bu sertifikayı, öğrenci bir kursun planındaki tüm dersleri çalışarak veya testlerini geçerek tamamladığında ve plandaki tüm meydan okumaları kazandığında verir.</string>
     <string name="certificates_meaning_record">Zoonk’ta kursun tamamlandığını gösterir; akademik kredi yerine geçmez.</string>

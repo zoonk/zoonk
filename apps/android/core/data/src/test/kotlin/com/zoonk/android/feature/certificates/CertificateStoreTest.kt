@@ -134,7 +134,6 @@ private fun owned(code: String): OwnedCertificate {
         level = null,
         minutes = 240,
         recipientName = "Ana Souza",
-        skillLevels = emptyList(),
         targetLanguage = null,
         title = "Python",
         topics = emptyList(),
