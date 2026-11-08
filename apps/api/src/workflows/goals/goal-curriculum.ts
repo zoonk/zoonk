@@ -291,14 +291,13 @@ export async function buildCurriculum({
 
   await updateCoursesBehind([...new Set(Object.values(written.courseIdsByKey))]);
 
-  // Placement invalidates plan inputs, so it starts only after the initial plan commits.
-  if (!rebuild) {
-    await preparePlanPlacement({
-      context,
-      goalId,
-      waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
-    });
-  }
+  // Placement invalidates plan inputs, so it starts only after the plan commits.
+  await preparePlanPlacement({
+    context,
+    goalId,
+    rebuild,
+    waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
+  });
 
   return { ...built, ...written };
 }

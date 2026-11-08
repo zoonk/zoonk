@@ -1,6 +1,8 @@
 import "server-only";
 import { type FollowUp as FollowUpRow, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { type OwedFollowUp, followUpSchema } from "./follow-up-contract";
 
 const BATCH = 50;
@@ -40,7 +42,16 @@ export async function endFollowUp({
   id: string;
   revision: number;
 }): Promise<void> {
-  await prisma.followUp.deleteMany({ where: { id, revision } });
+  const ended = await prisma.$queryRaw<{ rebuilt: boolean; userId: string }[]>`
+    DELETE FROM follow_ups WHERE id = ${id}::uuid AND revision = ${revision}
+    RETURNING user_id AS "userId", kind = 'rebuild_goal_curriculum'::"FollowUpKind" AS rebuilt
+  `;
+
+  for (const row of ended) {
+    if (row.rebuilt) {
+      revalidateCacheTags([getGoalsCacheTag(row.userId), getLearnerModelCacheTag(row.userId)]);
+    }
+  }
 }
 
 export function countFollowUps(userId: string): Promise<number> {

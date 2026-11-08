@@ -55,7 +55,13 @@ export async function recordGoalGeneration({
   );
 }
 
-export async function recordGoalBuildFailure(goalId: string): Promise<void> {
+export async function recordGoalBuildFailure({
+  goalId,
+  generationId,
+}: {
+  goalId: string;
+  generationId: string;
+}): Promise<void> {
   const goal = await prisma.goal.findUnique({
     include: { plan: { select: { id: true } } },
     where: { id: goalId },
@@ -70,7 +76,7 @@ export async function recordGoalBuildFailure(goalId: string): Promise<void> {
   await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
     const updated = await tx.plan.updateMany({
       data: { buildFailedAt: new Date() },
-      where: { buildFailedAt: null, id: planId },
+      where: { buildFailedAt: null, goal: { generationRunId: generationId }, id: planId },
     });
 
     if (updated.count === 0) {

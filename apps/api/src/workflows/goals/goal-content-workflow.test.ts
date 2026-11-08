@@ -531,6 +531,40 @@ describe(goalContentWorkflow, () => {
     ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
   });
 
+  it.each([false, true])(
+    "prepares the rebuilt graph's placement only if it is still ahead (taken: %s)",
+    async (taken) => {
+      const { goal } = await newGoal({
+        details: {
+          answered: ["purpose", "level", ...(taken ? ["placement"] : [])],
+          level: "basic",
+          purpose: "overview",
+        },
+        planRevealedAt: null,
+      });
+
+      await goalContentWorkflow({ goalId: goal.id });
+      getStartMock().mockClear();
+      vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(isolatedGraph()));
+
+      await goalContentWorkflow({ goalId: goal.id, rebuild: true });
+
+      const placementRuns = getStartMock().mock.calls.filter(
+        ([workflow]) => workflow === placementItemsWorkflow,
+      );
+
+      expect(placementRuns).toHaveLength(taken ? 0 : 1);
+
+      expect(vi.mocked(generateWholeSkillGraph).mock.calls.at(-1)?.[0].serviceTier).toBe(
+        "priority",
+      );
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
+    },
+  );
+
   it.each(["ready", "failed"] as const)(
     "publishes goalReady while a warm-up is still pending, then drains its %s outcome before closing",
     async (outcome) => {
@@ -3197,7 +3231,7 @@ describe(goalContentWorkflow, () => {
     );
   });
 
-  it("rebuilds the curriculum from the notice the learner uploaded, without writing ahead again", async () => {
+  it("rebuilds the uploaded notice and placement without writing lessons ahead again", async () => {
     const { goal } = await newGoal({ kind: "exam" });
 
     vi.mocked(classifyGoalSpecificity).mockResolvedValue(
@@ -3237,7 +3271,12 @@ describe(goalContentWorkflow, () => {
     );
 
     expect(generateItems).not.toHaveBeenCalled();
-    expect(generatePlacementItems).not.toHaveBeenCalled();
+
+    expect(generatePlacementItems).toHaveBeenCalledWith(
+      expect.objectContaining({
+        examFormat: expect.objectContaining({ blueprintId: blueprint.id }),
+      }),
+    );
 
     expect(getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow)).toBe(
       false,
