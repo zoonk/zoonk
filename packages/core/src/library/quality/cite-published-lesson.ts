@@ -4,6 +4,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { citeScreens } from "../lessons/_utils/checked-version";
 import { loadPublishedLessonInputs } from "../lessons/_utils/lesson-writing-inputs";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { type LessonCheckPlan } from "../lessons/write-lesson-content";
 import { BACKGROUND_TIER, type CheckContext, toTaskAnalytics } from "./_utils/published-versions";
 
@@ -33,7 +34,7 @@ export async function citePublishedLesson({
     cited.map(({ citation, position }) =>
       prisma.step.updateMany({
         data: { sourceId: citation.sourceId, sourcePage: citation.page },
-        where: { lessonId: context.lessonId, position, retiredAt: null, version: plan.version },
+        where: { lessonId: context.lessonId, position, version: plan.version, ...CURRENT_STEPS },
       }),
     ),
   );
