@@ -7,6 +7,7 @@ import {
 } from "@zoonk/learn/generation/kinds";
 import {
   type GenerationFailure,
+  type GenerationFirstLesson,
   type GenerationRun,
   type GenerationStepState,
   type GenerationStepTimes,
@@ -27,6 +28,7 @@ export type WorkflowRunState = {
   /** A new number changes the events URL, so a fresh connection opens. */
   connection: number;
   failure: GenerationFailure | null;
+  firstLesson: GenerationFirstLesson | null;
   joined: string | null;
   lostConnections: number;
   polled: string | null;
@@ -54,6 +56,7 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   clockOffsetMs: null,
   connection: 0,
   failure: null,
+  firstLesson: null,
   joined: null,
   lostConnections: 0,
   polled: null,
@@ -93,6 +96,30 @@ function recordStepTime(
   return { ...state.stepTimes, [message.step]: { ...times, [message.status]: message.at } };
 }
 
+function recordFirstLesson(
+  state: WorkflowRunState,
+  message: StepStreamMessage,
+): GenerationFirstLesson | null {
+  if (message.step === "writeFirstLesson" && message.lessonId && message.lessonTitle) {
+    const ready =
+      state.firstLesson?.id === message.lessonId && state.firstLesson.status === "ready";
+
+    return {
+      id: message.lessonId,
+      status: ready ? "ready" : "writing",
+      title: message.lessonTitle,
+    };
+  }
+
+  const known = state.firstLesson;
+
+  if (message.step === "firstLessonReady" && known && known.id === message.lessonId) {
+    return { ...known, status: "ready" };
+  }
+
+  return known;
+}
+
 /** A step keeps its furthest state: a replayed "started" never undoes a "completed". */
 function recordStep(
   state: WorkflowRunState,
@@ -102,6 +129,7 @@ function recordStep(
 
   return {
     ...state,
+    firstLesson: recordFirstLesson(state, message),
     skillName: message.skillName ?? state.skillName,
     stepTimes: recordStepTime(state, message),
     steps: { ...state.steps, [message.step]: status },
