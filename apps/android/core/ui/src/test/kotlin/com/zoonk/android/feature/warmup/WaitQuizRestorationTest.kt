@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -39,17 +40,14 @@ class WaitQuizRestorationTest {
     @Test
     fun aColdRunReplayKeepsTheAnsweredCardAndViewAndContinuesFromIt() {
         val restore = StateRestorationTester(rule)
+        val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         lateinit var quiz: WaitQuizState
         lateinit var hold: ReadyHold
         lateinit var receiveDeck: () -> Unit
         restore.setContent {
             var id by remember { mutableStateOf<String?>(null) }
-            val warmUps =
-                remember {
-                    val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
-                    val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-                    WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
-                }
             receiveDeck = { id = WARM_UP_ID }
             quiz = rememberWaitQuiz(id, warmUps)
             hold = rememberReadyHold(false)
@@ -57,6 +55,7 @@ class WaitQuizRestorationTest {
         rule.runOnIdle { receiveDeck() }
         rule.waitForIdle()
         rule.runOnIdle {
+            assertTrue(quiz.claimShown())
             quiz.showQuiz(hold)
             quiz.pick(quiz.card!!.options.first(), hold)
             quiz.next()
@@ -68,6 +67,7 @@ class WaitQuizRestorationTest {
         rule.runOnIdle { receiveDeck() }
         rule.waitForIdle()
         rule.runOnIdle {
+            assertFalse(quiz.claimShown())
             assertEquals(1, quiz.index)
             assertEquals(answer, quiz.picked)
             assertTrue(quiz.showingProgress)

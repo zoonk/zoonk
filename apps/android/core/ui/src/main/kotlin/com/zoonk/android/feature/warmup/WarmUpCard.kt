@@ -87,7 +87,6 @@ class WaitQuizState internal constructor(
     picked: String? = null,
     showingProgress: Boolean,
     visitedQuiz: Boolean = !showingProgress,
-    shown: Boolean = false,
     opened: Boolean = false,
 ) {
     var warmUpId by mutableStateOf(warmUpId)
@@ -100,8 +99,6 @@ class WaitQuizState internal constructor(
         private set
     var visitedQuiz by mutableStateOf(visitedQuiz)
         private set
-    var shown by mutableStateOf(shown)
-        internal set
     internal var opened by mutableStateOf(opened)
         private set
     var deck by mutableStateOf<WarmUpDeck?>(null)
@@ -112,6 +109,8 @@ class WaitQuizState internal constructor(
     val hasQuiz get() = card != null
     val canShowQuiz get() = hasQuiz || coming
     val hasNext get() = picked != null && index + 1 < (deck?.cards?.size ?: 0)
+
+    internal fun claimShown(): Boolean = warmUpId?.let { warmUps?.claimShown(it) } ?: false
 
     fun open() {
         if (opened) return
@@ -178,21 +177,19 @@ fun rememberWaitQuiz(
                         it.picked.orEmpty(),
                         it.showingProgress,
                         it.visitedQuiz,
-                        it.shown,
                         it.warmUpId.orEmpty(),
                         it.opened,
                     )
                 },
                 restore = {
                     WaitQuizState(
-                        (it[5] as String).ifEmpty { null },
+                        (it[4] as String).ifEmpty { null },
                         warmUps,
                         it[0] as Int,
                         (it[1] as String).ifEmpty { null },
                         it[2] as Boolean,
                         it[3] as Boolean,
-                        it[4] as Boolean,
-                        it[6] as Boolean,
+                        it[5] as Boolean,
                     )
                 },
             )
@@ -366,8 +363,7 @@ private fun QuizCard(
     }
     val tracker = LocalEventTracker.current
     LifecycleResumeEffect(quiz.warmUpId) {
-        if (!quiz.shown) {
-            quiz.shown = true
+        if (quiz.claimShown()) {
             tracker.track(AnalyticsEvent.WarmUpShown(surface, quiz.deck?.cards?.size ?: 0, quiz.warmUpId, goalId))
         }
         onPauseOrDispose {}
