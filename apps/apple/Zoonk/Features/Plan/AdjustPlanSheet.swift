@@ -21,6 +21,7 @@ struct AdjustPlanSheet: View {
   /// The weekend switch answers at once, while the plan it changed is read again; until it's
   /// touched, it shows whether the plan's weekend has its own time.
   @State private var weekendChoice: Bool?
+  @State private var aimEnds: [String: String] = [:]
 
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -45,7 +46,15 @@ struct AdjustPlanSheet: View {
           .id(Section.date)
 
           if let languageAim = plan.languageAim, !languageAim.choices.isEmpty {
-            aimSection(languageAim)
+            // A plan with a date ends on it whatever the aim, so its aims show their hours alone.
+            if plan.schedule.targetDate == nil {
+              aimSection(languageAim)
+                .readsAimEnds($aimEnds, of: languageAim, key: plan) { [editor] aim in
+                  await editor.preview([.aim(aim)])?.effect?.endDateAfter
+                }
+            } else {
+              aimSection(languageAim)
+            }
           }
 
           PlanTimeSection(
@@ -124,9 +133,15 @@ struct AdjustPlanSheet: View {
               .typeStyle(.rowTitle)
               .foregroundStyle(Color(.foreground))
 
-            Text(aimDetail(choice, languageAim: languageAim))
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
+            Text(
+              aimChoiceDetail(
+                hours: choice.hours,
+                end: plan.schedule.targetDate != nil
+                  ? nil
+                  : choice.aim == languageAim.aim ? plan.estimate.endDate : aimEnds[choice.aim])
+            )
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           .contentShape(.rect)
@@ -152,26 +167,6 @@ struct AdjustPlanSheet: View {
         .textCase(nil)
       }
     }
-  }
-
-  private func aimDetail(_ choice: LanguageAimView.Choice, languageAim: LanguageAimView) -> String {
-    let hours = choice.hours.formatted()
-
-    guard
-      let end = languageAim.endDate(
-        hours: choice.hours, planEnd: plan.estimate.endDate, today: plan.today)
-    else {
-      return String(
-        localized: "About \(hours) h more", table: "Plan",
-        comment: "Under a language level to aim for: the hours of study still needed to reach it")
-    }
-
-    return String(
-      localized: "About \(hours) h more · around \(PlanDate.longText(end, month: true))",
-      table: "Plan",
-      comment:
-        "Under a language level to aim for: the hours of study still needed to reach it, then when; the second argument is a month and year, like 'Nov 2027'"
-    )
   }
 
   private var daysSection: some View {

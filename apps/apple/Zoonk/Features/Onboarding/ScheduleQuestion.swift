@@ -395,8 +395,14 @@ struct ScheduleQuestion: View {
       AimChoicesSheet(
         languageAim: languageAim,
         fromLine: shown.minutes.map { aimFromLine(level: levelDetail, minutes: $0) },
-        planEnd: finishDate(shown),
-        today: GoalDate.today(now: .now, timeZone: view.goal.timezone)
+      let key = shown.adviceKey
+
+        currentEnd: finishDate(shown),
+        readEnd: { [onboarding, goalID = view.goal.id] aim in
+          let advice = try? await onboarding.timeAdvice(
+            goalID: goalID, week: key.week, dailyMinutes: key.minutes, aim: aim)
+          return advice?.ready == true ? advice?.endDate : nil
+        }
       ) { picked in
         await changeAim(picked)
       }
