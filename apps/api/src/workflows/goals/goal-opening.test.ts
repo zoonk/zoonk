@@ -24,7 +24,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
@@ -33,6 +33,7 @@ import { getStartMock } from "../_test-utils/start-mock";
 import * as outlineSteps from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
+import * as openingSteps from "./steps/goal-opening-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateWholeSkillGraph>>["data"];
 type Opening = Awaited<ReturnType<typeof generateGoalOpening>>["data"];
@@ -156,6 +157,10 @@ describe("a learn goal's opening", () => {
     );
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("writes the first lesson through the learner's own start, fast, and plans from it", async () => {
     const { goal, user } = await newGoal();
 
@@ -226,6 +231,34 @@ describe("a learn goal's opening", () => {
       },
       { entityId: goal.id, lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
     ]);
+  });
+
+  it("saves the opening chapter before starting the graph", async () => {
+    const { goal } = await newGoal();
+    let release!: () => void;
+
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    const save = openingSteps.saveOpeningChapterStep;
+    let saving = false;
+
+    vi.spyOn(openingSteps, "saveOpeningChapterStep").mockImplementation(async (input) => {
+      saving = true;
+      await held;
+      return save(input);
+    });
+
+    const run = goalContentWorkflow({ goalId: goal.id });
+
+    try {
+      await vi.waitFor(() => expect(saving).toBe(true));
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+    } finally {
+      release();
+      await run;
+    }
   });
 
   it("opens the lesson an earlier run picked and writes the graph from its skill again", async () => {
@@ -326,10 +359,7 @@ describe("a learn goal's opening", () => {
       openingLessonId: null,
     });
 
-    // The graph still starts from the saved first skill.
-    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toMatchObject({
-      name: opening.skill.name,
-    });
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toBeNull();
   });
 
   it("leaves exam and language goals to their own start", async () => {
@@ -351,5 +381,69 @@ describe("a learn goal's opening", () => {
     expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
       expect.objectContaining({ speed: "fast" }),
     ]);
+  });
+
+  it("reports readiness without waiting for other learners' replans", async () => {
+    const { goal } = await newGoal();
+    const other = await userFixture();
+    const otherGoal = await goalFixture({ userId: other.id });
+    let release!: () => void;
+
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    let otherReplanStarted = false;
+
+    const request = openingSteps.requestOpeningLessonStep;
+
+    vi.spyOn(openingSteps, "requestOpeningLessonStep").mockImplementation(async (input) => {
+      const skill = await prisma.skill.findFirstOrThrow({ where: { name: opening.skill.name } });
+
+      await prisma.plan.create({
+        data: {
+          goalId: otherGoal.id,
+          items: {
+            create: {
+              kind: "lesson",
+              phase: 0,
+              position: 0,
+              skillId: skill.id,
+              status: "todo",
+              titleSnapshot: skill.name,
+            },
+          },
+        },
+      });
+
+      return request(input);
+    });
+
+    const replan = outlineSteps.replanWaitingGoalStep;
+
+    vi.spyOn(outlineSteps, "replanWaitingGoalStep").mockImplementation(async (goalId) => {
+      if (goalId === otherGoal.id) {
+        otherReplanStarted = true;
+        await held;
+      }
+
+      return replan(goalId);
+    });
+
+    const run = goalContentWorkflow({ goalId: goal.id });
+
+    try {
+      await vi.waitFor(
+        () => {
+          expect(getStreamedEvents().map(({ step }) => step)).toContain("firstLessonReady");
+        },
+        { timeout: 5000 },
+      );
+
+      expect(otherReplanStarted).toBe(false);
+    } finally {
+      release();
+      await run;
+    }
   });
 });

@@ -9,7 +9,6 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimCourseWhenFree } from "../courses/claim-course-when-free";
 import { BUSY_WAIT, MAX_CLAIM_TRIES } from "../courses/course-outline-workflow";
-import { replanWaitingGoals } from "../courses/replan-waiting-goals";
 import { finishCourseOutlineStep } from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { readLessonStatusStep } from "../lessons/steps/read-lesson-status-step";
@@ -36,7 +35,7 @@ const LEARNER_TIER = chooseServiceTier({ wait: "learner" });
 
 export type GoalOpening = {
   /**
-   * The first skill the graph reads and starts with: this run's, or the one an earlier run saved.
+   * The first skill the graph reads after its chapter is saved: this run's or an earlier run's.
    * Null when there is none, as when writing it failed.
    */
   skill: Promise<GoalOpeningSkill | null>;
@@ -311,26 +310,14 @@ export function openGoal({
       : null,
   );
 
-  // A plan built before the chapter landed gets its lessons as an outline's would, once the
-  // lesson's run is on its way.
-  const replanned = Promise.all([written, writing]).then(([opening]) =>
-    opening
-      ? replanWaitingGoals({
-          context: { analytics: context.analytics, courseId: opening.opening.course.id },
-          goalIds: [goal.id],
-          skillIds: [opening.opening.skill.id],
-        })
-      : null,
-  );
-
-  const settled = Promise.all([lesson, writing, replanned]).then(([saved, ready]) =>
+  const settled = Promise.all([lesson, writing]).then(([saved, ready]) =>
     saved && ready ? reportReady({ goalId: goal.id, lessonId: saved.id, ready }) : null,
   );
 
   return {
     settled: settled.catch(() => null),
-    skill: Promise.all([known, written]).then(
-      ([found, opening]) => opening?.opening ?? found?.skill ?? null,
+    skill: Promise.all([known, written, lesson]).then(([found, opening, saved]) =>
+      saved ? (opening?.opening ?? found?.skill ?? null) : null,
     ),
     started: writing.catch(() => null),
   };
