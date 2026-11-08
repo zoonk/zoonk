@@ -24,6 +24,7 @@ import com.zoonk.api.models.StudyBlockOpening
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -56,6 +57,7 @@ class LessonStartTest {
     private suspend fun TestScope.player(
         opening: String?,
         tapped: Boolean,
+        saved: SavedStateHandle = SavedStateHandle(),
     ): LessonPlayerViewModel {
         val cache = AppCache(session, backgroundScope)
         val drafts = DraftStore(folder.newFolder(), backgroundScope, dispatcher)
@@ -71,7 +73,7 @@ class LessonStartTest {
             sessions = session,
             choices = TodayChoices(drafts),
             drafts = drafts,
-            saved = SavedStateHandle(),
+            saved = saved,
         )
     }
 
@@ -113,6 +115,155 @@ class LessonStartTest {
             )
             assertEquals("the typed answer is graded", listOf(typed), api.checks.map { it.first })
         }
+
+    @Test fun aLearnerWhoDidNothingIsResumedToTheirFurthestScreen() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE), checkStep(TWO), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE, TWO)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                LAST,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+        }
+
+    @Test fun continuingKeepsTheScreenWhenTheRunResumesElsewhere() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(explanationStep(FIRST), checkStep(ONE), checkStep(TWO), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE, TWO)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.dispatch(LessonAction.Continue)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertTrue(vm.state.value?.run is LessonRun.Started)
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+        }
+
+    @Test fun aSelectionKeepsItsScreenWhenTheRunResumesElsewhere() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE), checkStep(TWO), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE, TWO)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.select(LessonAnswer.Check("wrong"))
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                LessonAnswer.Check("wrong"),
+                vm.state.value
+                    ?.answers
+                    ?.get(ONE),
+            )
+        }
+
+    @Test fun aSpokenTakeKeepsItsScreenWhenTheRunResumesElsewhere() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(spokenStep(ONE), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            api.spokenGrade = {
+                ApiJson.decodeFromString(
+                    com.zoonk.api.models.SpokenAnswerGrade
+                        .serializer(),
+                    """{"attemptId":"00000000-0000-4000-8000-000000000021","explanation":null,"isCorrect":true,"score":1,
+                        "transcript":"Tengo hambre","words":[],"wordsToPractice":[]}""",
+                )
+            }
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            val grading =
+                async {
+                    vm.gradeSpoken(
+                        ONE,
+                        com.zoonk.android.feature.audio
+                            .VoiceRecording(ByteArray(8), 1200),
+                    )
+                }
+            runCurrent()
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                com.zoonk.android.feature.audio.GradeOutcome
+                    .Graded(Unit),
+                grading.await(),
+            )
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(LessonPhase.Feedback, vm.state.value?.phase)
+        }
+
+    /** Android closed the app in the background: the typed draft comes back on its screen once the run places the learner. */
+    @Test fun aRestoredDraftLandsOnItsScreenAfterTheResume() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(typedAnswerStep(ONE), typedAnswerStep(TWO), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            api.runAnswers = answered(ONE)
+            api.startGate = CompletableDeferred()
+            val draft = LessonAnswer.Typed("Because the droplets are small")
+            val saved = SavedStateHandle(mapOf("answers" to hashMapOf(TWO to ApiJson.encodeToString(LessonAnswer.serializer(), draft))))
+            val vm = player(null, tapped = true, saved = saved)
+            vm.open(lesson)
+            runCurrent()
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                TWO,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                draft,
+                vm.state.value
+                    ?.answers
+                    ?.get(TWO),
+            )
+        }
+
+    private fun answered(vararg stepIds: String) =
+        stepIds.joinToString(",", "[", "]") { """{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$it"}""" }
 
     @Test fun aTypedAnswerSurvivesRetryingAFailedStartAfterCheck() = typedAnswerSurvivesRetryingStart(check = true)
 
@@ -376,4 +527,11 @@ class LessonStartTest {
             assertEquals(LessonPhase.Completed, vm.state.value?.phase)
             assertEquals("completion records the held answer", listOf("quiz"), api.checks.map { it.first })
         }
+
+    private companion object {
+        const val FIRST = "00000000-0000-4000-8000-000000000201"
+        const val ONE = "00000000-0000-4000-8000-000000000202"
+        const val TWO = "00000000-0000-4000-8000-000000000203"
+        const val LAST = "00000000-0000-4000-8000-000000000204"
+    }
 }

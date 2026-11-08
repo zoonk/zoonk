@@ -260,6 +260,9 @@ class LessonPlayerViewModel(
     private var exampleLinesWrite: Job? = null
     private var writingExampleLines by mutableStateOf(false)
     private var abandonSent = false
+
+    /** Whether the learner did anything in the lesson on this visit: a run that starts after that keeps their screen. */
+    private var acted = false
     private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
     /**
@@ -276,6 +279,7 @@ class LessonPlayerViewModel(
         this.lesson = lesson
         owner = session
         admittedRunId = null
+        acted = false
         heldDeviceVerdicts.clear()
         unsaved.clear()
         screenLocks.clear()
@@ -347,11 +351,17 @@ class LessonPlayerViewModel(
         }
     }
 
+    /** The learner's own action in the lesson; a tap that only starts the run ([activate]) isn't one. */
+    private fun act() {
+        acted = true
+        activate()
+    }
+
     fun dispatch(action: LessonAction) {
         when (action) {
             LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
             LessonAction.RestoreWriting, is LessonAction.SelectAnswer, is LessonAction.DontKnow, is LessonAction.SkipWriting,
-            -> activate()
+            -> act()
 
             else -> Unit
         }
@@ -388,7 +398,6 @@ class LessonPlayerViewModel(
     }
 
     fun select(answer: LessonAnswer?) {
-        activate()
         val step = mutableState.value?.currentStep ?: return
         dispatch(LessonAction.SelectAnswer(step.id, answer))
     }
@@ -434,7 +443,7 @@ class LessonPlayerViewModel(
         val spoken = step?.content as? StepContent.SpokenAnswer
 
         if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
-        activate()
+        act()
         dispatch(LessonAction.CheckStarted(stepId))
         if (!awaitRun()) {
             dispatch(LessonAction.CheckFailed(stepId))
@@ -482,7 +491,7 @@ class LessonPlayerViewModel(
      * their verdict at once and are recorded in the background, and the rest wait for the server.
      */
     fun check() {
-        activate()
+        act()
         val state = mutableState.value ?: return
         val step = state.currentStep ?: return
         val answer = state.answers[step.id] ?: return
@@ -708,7 +717,8 @@ class LessonPlayerViewModel(
                     )
             }
                 ?: LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
-        state = reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress)), started)
+        state =
+            reduce(state, run.toStartedAction(unsaved.values.flatten().mapNotNull(PendingCheck::progress), keepsScreen = acted), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
         val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }
@@ -1018,14 +1028,17 @@ class LessonPlayerViewModel(
     }
 }
 
-private fun LibraryLessonRun.toStartedAction(heldAnswers: List<RunAnswer>) =
-    LessonAction.RunStarted(
-        runId = runId.toString(),
-        answers = answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
-        hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
-        startedAt = startedAt,
-        optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
-        heldAnswers = heldAnswers,
-    )
+private fun LibraryLessonRun.toStartedAction(
+    heldAnswers: List<RunAnswer>,
+    keepsScreen: Boolean,
+) = LessonAction.RunStarted(
+    runId = runId.toString(),
+    answers = answers.map { RunAnswer(it.stepId.toString(), it.isCorrect, it.answeredAt) },
+    hyperdrive = HyperdriveStart(hyperdrive.knownStepIds.map(UUID::toString).toSet(), hyperdrive.streak.toInt()),
+    startedAt = startedAt,
+    optionalStepIds = optionalStepIds.orEmpty().map(UUID::toString),
+    heldAnswers = heldAnswers,
+    keepsScreen = keepsScreen,
+)
 
 private fun List<LessonStep>.pictures(): Map<String, StepImage> = mapNotNull { step -> step.image?.let { step.id to it } }.toMap()

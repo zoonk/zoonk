@@ -605,7 +605,7 @@ class LessonPlayerReducerTest {
         assertEquals(LessonPhase.Completed to CompletionStatus.Ready, done.phase to done.completion?.status)
         assertEquals(CompletionStatus.Saving, done.then(LessonAction.CompletionRetried).completion?.status)
 
-        val answeredHere = play(steps, LessonAction.Continue, *answerCheck("q1", false), started(answer))
+        val answeredHere = play(steps, LessonAction.Continue, *answerCheck("q1", false), started(answer).copy(keepsScreen = true))
         assertEquals(LessonPhase.Feedback, answeredHere.phase)
         assertEquals(mapOf("q1" to false), answeredHere.firstVerdicts)
     }
