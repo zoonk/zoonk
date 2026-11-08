@@ -1,13 +1,10 @@
 import "server-only";
 import { readGoalDetails } from "../../language/_utils/language-goal";
 import { loadSpeakingPaperEntry } from "../../language/exam-speaking/_utils/exam-speaking-setup";
-import {
-  getTargetLevel,
-  loadLanguageSkillLevels,
-} from "../../language/levels/language-skill-levels";
-import { getOverallLevel } from "../../language/levels/skill-level-rules";
+import { getTargetLevel } from "../../language/levels/language-skill-levels";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
-import { loadLanguageGoalContext } from "./_utils/language-goal-context";
+import { resolveLanguageViewGoal } from "./_utils/language-view-goal";
+import { readPlanLevel } from "./_utils/plan-level";
 import { type LanguageTodayView } from "./language-view-contract";
 
 export type LanguageTodayViewResult =
@@ -20,7 +17,7 @@ export async function getLanguageTodayView(
 ): Promise<LanguageTodayViewResult> {
   "use cache: private";
 
-  const loaded = await loadLanguageGoalContext(input.goalId);
+  const loaded = await resolveLanguageViewGoal(input.goalId);
 
   if (loaded.status !== "ready") {
     return loaded;
@@ -29,20 +26,11 @@ export async function getLanguageTodayView(
   const { goal, userId } = loaded.context;
   const details = readGoalDetails(goal);
 
-  const [levels, pronunciation, speaking] = await Promise.all([
-    loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
+  const [level, pronunciation, speaking] = await Promise.all([
+    readPlanLevel({ goalId: goal.id, target: getTargetLevel(details), userId }),
     readDuePronunciation(userId, goal.targetLanguage),
     loadSpeakingPaperEntry({ goal }),
   ]);
 
-  const label = getOverallLevel(levels.map((level) => level.score));
-
-  return {
-    status: "ready",
-    today: {
-      level: label ? { label, target: getTargetLevel(details)?.label ?? null } : null,
-      pronunciation,
-      speaking,
-    },
-  };
+  return { status: "ready", today: { level, pronunciation, speaking } };
 }

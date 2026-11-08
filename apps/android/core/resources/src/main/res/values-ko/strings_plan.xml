@@ -245,7 +245,6 @@
   "plan_estimate_based_on_last": "9a84f00f05c74328076349e2458e239aff2e9911838f181955099513493110eb",
   "plan_estimate_waits": "1f603a16f3bc9867f5dd7ef5688d5abdd81ff3298d499a9f9cf54131a3761011",
   "plan_estimated_score": "00ea4b92cc768f8cf84ef9c5e6a016641daf37dcb8db005fc4c3a6c772f6a2bf",
-  "plan_even_across_skills": "a92788ce13525abed0bd69d6b9a07f50a7aad70e480251b54c5ae3aa932057bf",
   "plan_every_day": "7b0616256cd2d2a7a3ba3ac2fc38f80686583f7a2b0235be2bfe8ad01d36b471",
   "plan_everything": "25739144a41c3484a83f682148573f91cb2e818b3a44bf5d46a4acf51229fe85",
   "plan_exam_choice_left_out": "f8ae4eee70157995a37458604535da4439b59a0bbd99cdd7f388948c3ad019fe",
@@ -454,7 +453,6 @@
   "plan_short_mock_and_practice": "dd6441dc6273781495a2e82e64fcde1f30892b3cfee6e020f53367da9ef45f96",
   "plan_short_mock_and_review": "b27a51b07b81be669217286fe1acb112dc19c28f4924c3eb0c7a5a0f607466b1",
   "plan_show_fewer_chapters": "4f504d1bb98609708c58dbe292d0587951fa36e7792fc28b3cd5d2f606ccfe0b",
-  "plan_skill_leads": "d3f7410b95a2d9e21901f7cc3be9e75ad8e4a026462a80449d743bbe5e4949c0",
   "plan_skills_you_know": "da2751647ba39893f1559482fd5065ab8d91700f50be29bb402bf30155d67240",
   "plan_skipped": "d6c4b3a5c7deb80a3876fe1e5262b3e108fa87aded474f0293a0ddd5b027d125",
   "plan_skipped_known": "fd13221261e354eb17f0155437c4d4e19f4b198ba2ec1dae7fcd71236eb9b10b",
@@ -865,10 +863,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">레벨</string>
     <string name="plan_your_level">내 수준</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">스킬 간 균형</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">%1$s 수준이 가장 높아요</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">아직 학습을 마친 레슨 없음</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->

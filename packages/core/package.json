@@ -410,6 +410,7 @@
     "./library/routes/outline": "./src/library/routes/find-outline-route.ts",
     "./library/skills/create": "./src/library/skills/create-skill.ts",
     "./library/skills/merge": "./src/library/skills/merge-skill.ts",
+    "./library/skills/tag-levels": "./src/library/skills/tag-skill-levels.ts",
     "./library/sources/answer-question": "./src/library/sources/answer-material-question.ts",
     "./library/sources/contract": "./src/library/sources/source-contract.ts",
     "./library/sources/fetch": "./src/library/sources/fetch-document.ts",

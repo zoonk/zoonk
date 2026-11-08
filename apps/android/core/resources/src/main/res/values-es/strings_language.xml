@@ -7,28 +7,35 @@
   "language_alphabet_skip_failed": "0f3b7c35dc0e22ca8c1ab86b67a62cebed9d153784f47eaffcbd70533b15bb51",
   "language_can_already": "c705aca54cf150b08186d4cc5f063d358d525c7e3e9d7f931416c43d367ca78e",
   "language_can_do_not_yet": "977ea58ce39bedbc9f1f09309c86de642839e3453f271afea50a5bb656757391",
+  "language_estimate_listening": "d6a128b1443e620ed558ce9f26923d8a0bb99bbd16aa92c36253756d50e098be",
+  "language_estimate_reading": "d86dd7838e5ceaeb96a4b7ab003660570a9a775df1c9ba9276e1baa4fe645c48",
+  "language_estimate_rose_listening": "799055979261ca6986ebfdc58d94c8cbaa5f2938cd8a6e11c186e61df55254d5",
+  "language_estimate_rose_reading": "5d22ac566286d09d402f3026b0cc1509958fd3a73022adb0b271f94a8dd84da5",
+  "language_estimate_rose_speaking": "d6d14d2147ce9b869cbdc3397d9018c79a90ebe1b417f50b4e21f2db5ceaf33d",
+  "language_estimate_rose_writing": "32fdde2023e8c333e2bef61eaaf5d86adb89cf0294cfeb82c99c2763dc77cebb",
+  "language_estimate_speaking": "04e572d879701a74acb8b963f82560cce4c1cb5c58693e87111f9e5ef2752592",
+  "language_estimate_trend": "471ca805286144d363034a9daf3693f4c1aca6869da75a14cc82140559b028ac",
+  "language_estimate_writing": "2b26c51b06867b727322c91f9c7991c2da950527392bb11733ddeed6865ca87b",
+  "language_estimates_note": "e4970148a02cdc1fc0300b3351250e3728ab1a6f66925446565209315ca81852",
+  "language_estimates_rose": "10979f16c98246a283b1bcbd03f145e29e93461cca6e88055afdce1191f350fe",
   "language_level": "1e0dcfb1f77191609a7c3810a05a094e2bc1d7ae3a7e6babfd0968fd865d240d",
-  "language_level_by_skill": "64ed67f8b27c287e3b13fbaef96084b0b6086a1da156322d07f53f0d49b649da",
   "language_level_down": "6c745680b0ff4132f2d8ab9eb716b9f0b0e39c8829d208e364ab8d4fc550f147",
   "language_level_goal": "c312a6a49d772f4ebc693e0aea526ceef7e878a08d9474bd3e93e37d33376a58",
   "language_level_goal_by": "7b20b1db46875ebc398c5ea85bdcea1cf1dc5a1b744bb60a40d43681f4f5056c",
-  "language_level_rose": "b339db0b5d7637207919237707c08650c3283123fc04f98f93065e93135bb502",
   "language_level_toward": "31fd9285f8041025a618039432b6a5ef91945f6b3f8f45c952a52390a9520f43",
   "language_level_toward_goal": "da648ad18876e33e7fe36d449dd8b9eb4dc0eec24d02036282c54d2dca565d18",
   "language_level_toward_spoken": "1b9d38b1082d96c83b5adcf97df4635fa0931abdd1b40fde877639afd6ee58dd",
   "language_level_up": "fe0c5ec9805f2a42556c4fee1c3fbdc775d191169e35e82ed64fa2fd5d622ec9",
   "language_levels_move": "ffa3429b4b7c331830d0a4814c8b3fc4cb80820696a23efa60d6c73778f70e7f",
-  "language_levels_rose": "05b31ac8c9fa28869684864b19327c2bf193321bbca114b0818b58360cba7229",
   "language_pattern_noticed": "73f78abbd0edb6c2b8995f53b96348edd1cbfb5fd5f366b9d196baabd58a903f",
   "language_pattern_noticed_summary": "32906f53f409665ecbf362824b2b6985152dce277d8052ab5905cd414cd6e543",
   "language_pattern_practice": "98d26022ad094763e74a6e07cd3f006f9a86e8916e8360b3d5a77c0d86e9297e",
   "language_pattern_typos": "c1bc2f5d2e4169ddafc5c6ade327128d594aac4f5e76c2d410780ae73289ad67",
   "language_pattern_typos_description": "55497eb997fbd89f0a442d3cab03fbefc1ebf7691ba0e9eb3728ab90f43f056b",
+  "language_practice_estimates": "0562020e3f08c8ae559ef5c7dc8b4535719482765d483b3cdf4fd36414090bf0",
   "language_say_again": "a52640dd6930caafcc97df2b224c4430ef28ab78988876cc5b16f0fee8ac21fe",
   "language_say_them": "7e3533aaeeb13c80281c574c4ec3568742bb6275037a9af26eda94acd5f6f237",
   "language_see_your_plan": "7fd087c75686aad729edfbac8d248c1551796d51ce4155429628e11235f74e96",
-  "language_skill_level": "be2640ff3849e45dab207554591f18dbb337385010b83c33854b7faee6b5eaaa",
-  "language_skill_level_trend": "fda3a8a6bcf42339610df5f7fa11d54952fbf6bf4637092d788e4dd9d8cd01a0",
   "language_skill_listening": "6be19b49f5b378ffac943bad0dda14038f6cd17e9ae213f21ed47fd2467fed43",
   "language_skill_reading": "6c0354ead390143a578f4a9d1198639ebc07598256ae7eadc2604fa9193eb860",
   "language_skill_speaking": "8feb6688cc9c94ceef0092a7135b5ed067d6929b33133ca894114e61b6fded02",
@@ -82,28 +89,36 @@
     <string name="language_skill_speaking">Expresión oral</string>
     <string name="language_skill_words">Vocabulario</string>
     <string name="language_skill_writing">Expresión escrita</string>
-    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
-    <string name="language_level_by_skill">Nivel por habilidad</string>
+    <!-- Heads each skill's level (reading, listening, speaking, writing) on the CEFR scale from A1 to C2, estimated from the learner's answers to set how hard practice is. -->
+    <string name="language_practice_estimates">Niveles estimados para la práctica</string>
     <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
     <string name="language_level_goal_by">Objetivo %1$s para %2$s</string>
     <!-- The level the learner aims for: "Goal B2". -->
     <string name="language_level_goal">Objetivo %1$s</string>
-    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
-    <string name="language_skill_level">%1$s, %2$s</string>
-    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
-    <string name="language_skill_level_trend">%1$s, %2$s, %3$s</string>
+    <!-- What TalkBack says for a skill's row. %1$s is a CEFR level, such as "B1". -->
+    <string name="language_estimate_reading">Nivel estimado de lectura: %1$s</string>
+    <string name="language_estimate_listening">Nivel estimado de escucha: %1$s</string>
+    <string name="language_estimate_speaking">Nivel estimado de expresión oral: %1$s</string>
+    <string name="language_estimate_writing">Nivel estimado de expresión escrita: %1$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Estimated reading level: B1, up since the level test". -->
+    <string name="language_estimate_trend">%1$s, %2$s</string>
     <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
     <string name="language_level_up">subió desde la prueba de nivel</string>
     <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
     <string name="language_level_down">bajó desde la prueba de nivel</string>
     <string name="language_levels_move">Los niveles cambian a medida que practicas. Cada semana son más precisos.</string>
-    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
-    <string name="language_level_rose">%1$s subió a %2$s desde la prueba de nivel.</string>
-    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
-    <plurals name="language_levels_rose">
-        <item quantity="one">%1$s subieron desde la prueba de nivel.</item>
-        <item quantity="many">%1$s subieron desde la prueba de nivel.</item>
-        <item quantity="other">%1$s subieron desde la prueba de nivel.</item>
+    <!-- Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons. -->
+    <string name="language_estimates_note">Estas estimaciones sirven para ajustar la dificultad de la práctica. Los certificados dependen de las lecciones que completes en tu plan.</string>
+    <!-- One skill's estimate rose since the level test. %1$s is a CEFR level, such as "B2". -->
+    <string name="language_estimate_rose_reading">Tu nivel estimado de lectura subió a %1$s</string>
+    <string name="language_estimate_rose_listening">Tu nivel estimado de escucha subió a %1$s</string>
+    <string name="language_estimate_rose_speaking">Tu nivel estimado de expresión oral subió a %1$s</string>
+    <string name="language_estimate_rose_writing">Tu nivel estimado de expresión escrita subió a %1$s</string>
+    <!-- The count is how many skills' estimates rose since the level test, always two or more; %1$s lists them: "Speaking and Writing estimates went up". -->
+    <plurals name="language_estimates_rose">
+        <item quantity="one">Subieron los niveles estimados de %1$s</item>
+        <item quantity="many">Subieron los niveles estimados de %1$s</item>
+        <item quantity="other">Subieron los niveles estimados de %1$s</item>
     </plurals>
     <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
     <string name="language_can_already">Ya puedo…</string>

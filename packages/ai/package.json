@@ -96,6 +96,7 @@
     "./tasks/language/live-conversation-usage": "./src/tasks/language/live-conversation-usage.ts",
     "./tasks/language/mistake-pattern": "./src/tasks/language/mistake-pattern.ts",
     "./tasks/language/mistake-pattern-rules": "./src/tasks/language/mistake-pattern-rules.ts",
+    "./tasks/language/skill-levels": "./src/tasks/language/skill-levels.ts",
     "./tasks/language/speaking-bands": "./src/tasks/language/speaking-bands.ts",
     "./tasks/language/speaking-mock-scenario": "./src/tasks/language/speaking-mock-scenario.ts",
     "./tasks/language/speaking-score": "./src/tasks/language/speaking-score.ts",

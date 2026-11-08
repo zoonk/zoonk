@@ -67,6 +67,7 @@ import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
+import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
@@ -123,6 +124,10 @@ const LANDING_RAN_OUT_MS = 10 * 60 * 1000;
 
 /** The workflow runtime's default `maxRetries`. */
 const STEP_RETRIES = 3;
+
+function skillLevelRuns() {
+  return getStartMock().mock.calls.filter(([workflow]) => workflow === skillLevelsWorkflow);
+}
 
 function planSkillIdsOf(plan: { graph: unknown }): string[] {
   return planCoursesSchema.parse(plan.graph).skills.map((skill) => skill.skillId);
@@ -1703,7 +1708,7 @@ describe(goalContentWorkflow, () => {
     ]);
   });
 
-  it("plans a later learner who typed the same words from the first one's graph, whatever their goal's title", async () => {
+  it("plans a later learner who typed the same words from the first one's graph, whatever their goal's title, and tags that graph's skills once", async () => {
     const answers = italianAnswers();
 
     const first = await newGoal({
@@ -1714,6 +1719,24 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: first.goal.id });
     vi.mocked(generateWholeSkillGraph).mockClear();
+
+    const firstPlanSkillIds = planSkillIdsOf(
+      await prisma.plan.findUniqueOrThrow({ where: { goalId: first.goal.id } }),
+    );
+
+    expect(skillLevelRuns()).toStrictEqual([
+      [
+        skillLevelsWorkflow,
+        [
+          {
+            analytics: expect.objectContaining({ goalId: first.goal.id }),
+            skillIds: expect.arrayContaining(firstPlanSkillIds),
+            wait: "soon",
+          },
+        ],
+        { experimental_hook: { token: "skill-levels:test-run-id" } },
+      ],
+    ]);
 
     const later = await newGoal({
       ...answers,
@@ -1730,6 +1753,7 @@ describe(goalContentWorkflow, () => {
 
     expect(generateWholeSkillGraph).not.toHaveBeenCalled();
     expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(firstPlan));
+    expect(skillLevelRuns()).toHaveLength(1);
   });
 
   it("plans two learners who answered the same at once from one graph", async () => {

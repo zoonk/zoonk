@@ -1,16 +1,21 @@
 import "server-only";
 import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { loadPlanScope } from "../../plans/_utils/plan-scope";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
-import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import {
   type CertifiableItem,
   type CertificateUnit,
   listCertificateUnits,
 } from "./certificate-units";
+import { loadSkillCourseLevels } from "./skill-course-levels";
 
-export type UnitGoal = Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "userId">;
+export type UnitGoal = Pick<
+  Goal,
+  "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "userId"
+>;
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {
   items: readonly Pick<
@@ -85,32 +90,6 @@ async function loadHomeChapters(db: TransactionClient, plan: UnitPlan) {
   });
 
   return new Map(lessons.map((lesson) => [lesson.id, lesson.homeChapterId]));
-}
-
-/** A stand-in counts in the primary course's level of its skill unless the plan's graph gives the skill to another course. */
-async function loadStandInLevels(db: TransactionClient, { goal, plan }: UnitInput) {
-  const courses = new Map(
-    parsePlanGraph(plan.graph).skills.map((skill) => [skill.skillId, skill.courseIds?.[0]]),
-  );
-
-  const skillIds = plan.items.flatMap((item) =>
-    isStandIn(item) &&
-    item.skillId &&
-    (courses.get(item.skillId) ?? goal.primaryCourseId) === goal.primaryCourseId
-      ? item.skillId
-      : [],
-  );
-
-  if (!goal.primaryCourseId || skillIds.length === 0) {
-    return new Map<string, CertifiableItem["level"]>();
-  }
-
-  const skills = await db.skill.findMany({
-    select: { id: true, level: true },
-    where: { id: { in: skillIds } },
-  });
-
-  return new Map(skills.map((skill) => [skill.id, skill.level]));
 }
 
 /**
@@ -240,26 +219,40 @@ export async function loadCertificateUnits(
   { goal, plan }: UnitInput,
   db: TransactionClient = prisma,
 ) {
-  const [course, homeChapters, standInLevels, held] = await Promise.all([
+  const [course, homeChapters, held, scope] = await Promise.all([
     loadPrimaryCourse(db, goal),
     loadHomeChapters(db, plan),
-    loadStandInLevels(db, { goal, plan }),
     loadHeldCertificates(db, goal),
+    loadPlanScope({ goal, plan }),
   ]);
 
   const levels = new Map(course?.courseChapters.map((entry) => [entry.chapterId, entry.level]));
+
+  const chapterOf = (item: UnitPlan["items"][number]) =>
+    item.chapterId ?? (item.lessonId ? homeChapters.get(item.lessonId) : null) ?? null;
+
+  const skillLevels = await loadSkillCourseLevels(db, {
+    chapterLevels: levels,
+    goal,
+    heldChapters: new Map(
+      plan.items.flatMap((item) =>
+        LEARN_KINDS.has(item.kind) && item.lessonId
+          ? [[item.lessonId, chapterOf(item)] as const]
+          : [],
+      ),
+    ),
+    plan,
+    scope,
+  });
 
   const items = plan.items.map((item): CertifiableItem => {
     if (!LEARN_KINDS.has(item.kind)) {
       return { ...item, chapterId: null, level: null };
     }
 
-    const chapterId =
-      item.chapterId ?? (item.lessonId ? homeChapters.get(item.lessonId) : null) ?? null;
-
-    const level = chapterId
-      ? (levels.get(chapterId) ?? null)
-      : (standInLevels.get(item.skillId ?? "") ?? null);
+    const chapterId = chapterOf(item);
+    const standInLevel = isStandIn(item) ? skillLevels.get(item.skillId ?? "")?.at(0) : null;
+    const level = chapterId ? (levels.get(chapterId) ?? null) : (standInLevel ?? null);
 
     return { ...item, chapterId, level };
   });
@@ -280,6 +273,12 @@ export async function loadCertificateUnits(
       course?.visibility === "public" && course.format === "core" ? goal.primaryCourseId : null,
     phases: parsePlanPhases(plan.phases),
     planCreatedAt: plan.createdAt,
+    scope,
+    skillLevels: new Map(
+      [...skillLevels].filter(([skillId]) =>
+        scope.keptSkills.some((skill) => skill.skillId === skillId),
+      ),
+    ),
     studiesPastTarget: goal.kind === "exam" && parsePlanSettings(plan.settings).fullCourse,
   });
 

@@ -463,18 +463,18 @@ struct StudyNext: Decodable, Equatable, Sendable {
 struct LanguageStanding: Decodable, Equatable, Sendable {
   struct Level: Decodable, Equatable, Sendable {
     let label: String
-    let score: Double
     /// `reading`, `listening`, `speaking` or `writing`.
     let skill: String
   }
 
-  struct Target: Decodable, Equatable, Sendable {
+  struct PlanLevel: Decodable, Equatable, Sendable {
     let label: String
+    /// Nil once the plan's level reaches the goal's.
+    let target: String?
   }
 
-  let level: String?
+  let level: PlanLevel?
   let levels: [Level]
-  let target: Target?
 }
 
 struct LanguageUnitsOverview: Decodable, Equatable, Sendable {

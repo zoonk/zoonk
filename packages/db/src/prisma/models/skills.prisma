@@ -9,6 +9,15 @@ enum ItemFormat {
   numeric
 }
 
+enum CefrLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
 /// A duplicate that slips through identity search is merged (`mergedIntoId`), never deleted, so
 /// learners' mastery follows the surviving skill. A private course's skills are never reused.
 model Skill {
@@ -21,6 +30,13 @@ model Skill {
   description    String
   example        String?
   level          CourseLevel?
+  /// A language skill's level within its band (`level`); null until tagged.
+  cefrLevel      CefrLevel?          @map("cefr_level")
+  /// Tries at tagging `cefrLevel`, a step's retries included; a skill at the cap isn't tried again.
+  cefrAttempts   Int                 @default(0) @map("cefr_attempts") @db.SmallInt
+  /// The run tagging `cefrLevel` and when it claimed the skill, so two runs never pay for one tag.
+  cefrRunId      String?             @map("cefr_run_id")
+  cefrClaimedAt  DateTime?           @map("cefr_claimed_at")
   /// Null until the item writer was asked for typed-number questions, false when it found none.
   isQuantitative Boolean?            @map("is_quantitative")
   mergedIntoId   String?             @map("merged_into_id") @db.Uuid

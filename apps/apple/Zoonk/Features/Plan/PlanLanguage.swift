@@ -10,33 +10,38 @@ func languageSkillName(_ skill: String) -> String {
 }
 
 extension LanguageStanding {
-  /// Nil before the first levels or when two lead together.
-  var leadingSkill: String? {
-    let sorted = levels.sorted { $0.score > $1.score }
-
-    guard let first = sorted.first else {
-      return nil
-    }
-
-    let rest = sorted.dropFirst()
-
-    if rest.allSatisfy({ $0.score == first.score }) {
-      return String(
-        localized: "Even across skills", table: "Plan", comment: "No language skill leads")
-    }
-
-    return rest.first?.score == first.score
-      ? nil
-      : String(
-        localized: "\(languageSkillName(first.skill)) leads", table: "Plan",
-        comment: "The language skill ahead of the others")
-  }
-
   var levelText: String {
-    let now =
-      level
-      ?? String(localized: "Not yet", table: "Plan", comment: "A language level not measured yet")
-    return target.map { "\(now) → \($0.label)" } ?? now
+    guard let level else {
+      return String(
+        localized: "Not yet", table: "Plan", comment: "A language level not measured yet")
+    }
+
+    return level.target.map { "\(level.label) → \($0)" } ?? level.label
+  }
+}
+
+extension LanguageStanding.Level {
+  /// One sentence per skill, since a skill's name can't be dropped into a sentence in every
+  /// language.
+  fileprivate var estimate: String {
+    switch skill {
+    case "reading":
+      String(
+        localized: "Estimated reading level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    case "listening":
+      String(
+        localized: "Estimated listening level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    case "speaking":
+      String(
+        localized: "Estimated speaking level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    default:
+      String(
+        localized: "Estimated writing level: \(label)", table: "Plan",
+        comment: "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2")
+    }
   }
 }
 
@@ -60,6 +65,23 @@ struct LanguageLevelSheet: View {
           } label: {
             Text(languageSkillName(level.skill))
           }
+          .accessibilityRepresentation { Text(level.estimate) }
+        }
+      } header: {
+        SectionTitle(
+          Text(
+            "Practice estimates", tableName: "Plan",
+            comment:
+              "Heads each language skill's level, estimated from the learner's answers to set how hard practice is"
+          ))
+      } footer: {
+        SectionFooter {
+          Text(
+            "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan.",
+            tableName: "Plan",
+            comment:
+              "Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons"
+          )
         }
       }
     }

@@ -252,7 +252,6 @@ msgstr "시험"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "말하기"
@@ -3478,21 +3477,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "외 {count}개"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "듣기"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "읽기"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "쓰기"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3553,11 +3537,11 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "인증서 진위 확인"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#. The fine print on a language level certificate, such as B1.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Zoonk에서 연습한 모든 언어 능력이 답변을 바탕으로 한 평가에서 {level}에 도달했을 때 발급해요. 공식 시험 결과가 아니에요."
+msgctxt "0ytAdy"
+msgid "Awarded for finishing this level on Zoonk. This is not an official exam result."
+msgstr "Zoonk에서 이 레벨을 완료해 받은 인증서예요. 공식 시험 결과는 아니에요."
 
 #. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
 #: src/lib/certificates/certificate-view.ts

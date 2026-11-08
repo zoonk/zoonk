@@ -50,6 +50,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/language/language-lesson": { generateLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/language/language-sentence-orders": { generateLanguageSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
+  "@zoonk/ai/tasks/language/skill-levels": { classifySkillLevels: vi.fn() },
   "@zoonk/ai/tasks/lesson-marks": { tagLesson: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec": { generateLessonSpec: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec/picture-need": { judgePicture: vi.fn() },

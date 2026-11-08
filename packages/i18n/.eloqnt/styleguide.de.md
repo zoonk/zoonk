@@ -74,7 +74,6 @@
 - “Past date”: “Nach dem Zieldatum”, not “Beendet” or “Abgelaufen”
 - “Needs adjusting”: “Anpassung nötig”
 - “Too tight”: “Zu knapp”
-- “Even across skills”: “Alle Fähigkeiten gleichauf”
 - “left out”: “ausgelassen”, not “übersprungen”
 - “Daily time”: “Tägliche Lernzeit”, not “Zeitbudget”
 - “rest day”: “Pausentag”, not “Ruhetag”
