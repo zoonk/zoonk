@@ -198,6 +198,7 @@ test.describe("Why a language learner studies it", () => {
     const goal = await goalFixture({
       details: { answered: [], level: "none", subject: "Italian" },
       kind: "language",
+      planRevealedAt: null,
       prompt: `learn italian ${randomUUID()}`,
       targetLanguage: "it",
       title: "Learn Italian",
