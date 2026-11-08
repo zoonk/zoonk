@@ -189,8 +189,8 @@ export function MindMapViewer({
   const descriptionId = useId();
   const alt = useMindMapAlt({ outline, title });
   const barButton = buttonVariants({ size: "icon-bar", variant: "ghost" });
-  const zoom = usePanZoom({ active: open });
   const [asText, setAsText] = useState(false);
+  const zoom = usePanZoom({ active: open && image !== null && !asText });
 
   return (
     <Dialog
