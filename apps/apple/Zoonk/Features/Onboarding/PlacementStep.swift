@@ -333,7 +333,7 @@ struct PlacementStep: View {
     .measuresWait(
       surface: "placementWait", contentKind: "curriculum", goalID: view.goal.id,
       onboardingID: view.onboardingID)
-    .task(id: waitRound) { await waitForQuestions() }
+    .taskThroughPush(id: waitRound) { await waitForQuestions() }
   }
 
   private func outcome(title: Text, description: Text) -> some View {

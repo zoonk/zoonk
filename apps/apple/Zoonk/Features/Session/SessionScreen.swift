@@ -175,7 +175,7 @@ private struct NextStopView: View {
         isStartFocused = true
       }
     }
-    .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing, waits: waits)) {
+    .taskThroughPush(id: FollowedLesson(lessonID: next?.lessonId, writing: writing, waits: waits)) {
       await followLesson()
     }
     .onChange(of: isLessonWorkRunning, initial: true) { _, running in

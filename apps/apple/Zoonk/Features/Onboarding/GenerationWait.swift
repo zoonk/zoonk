@@ -729,7 +729,7 @@ struct GenerationFollower<Content: View>: View {
 
     content(run)
       .announcesStatus(run.workingLabel)
-      .task(id: Following(id: runID, connection: connection)) {
+      .taskThroughPush(id: Following(id: runID, connection: connection)) {
         failure = nil
 
         if let runID {

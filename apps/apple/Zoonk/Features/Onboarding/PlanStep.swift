@@ -35,7 +35,7 @@ struct PlanStep: View {
         PlanReveal(view: view, plan: read)
       }
     }
-    .task(id: wait) {
+    .taskThroughPush(id: wait) {
       guard wait == .readingNotice else {
         return
       }

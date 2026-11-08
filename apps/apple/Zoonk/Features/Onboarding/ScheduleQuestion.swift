@@ -138,12 +138,12 @@ struct ScheduleQuestion: View {
         .onboardingColumn()
         .questionShown(.schedule, of: view)
     }
-    .task(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
+    .taskThroughPush(id: Asked(key: findKey, enabled: findsTime, round: found.round)) {
       await found.ask(findKey, when: findsTime) {
         try await onboarding.timeToCover(goalID: view.goal.id, week: findKey.week)
       }
     }
-    .task(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
+    .taskThroughPush(id: Asked(key: shown.adviceKey, enabled: asksAdvice, round: advised.round)) {
       let key = shown.adviceKey
 
       await advised.ask(key, when: asksAdvice) {
