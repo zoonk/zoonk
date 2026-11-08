@@ -262,6 +262,29 @@ class GenerationFollowerTest {
         }
 
     @Test
+    fun aRestartKeepsTheGoalsFailedDeckSoNoSkeletonComesBack() =
+        runTest {
+            val source = FakeSource()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(event("warmUpFailed"))
+                        emit(event("createPlan", "error"))
+                    },
+                )
+            source.streams["b"] = mutableListOf(flow { MutableSharedFlow<Unit>().collect {} })
+            val follower = follower(source, kind = GenerationKind.Curriculum) { "b" }
+
+            follower.follow("a")
+            runCurrent()
+            follower.retry()
+            runCurrent()
+            follower.stop()
+
+            assertEquals(StepState.Completed, follower.run.value.steps["warmUpFailed"])
+        }
+
+    @Test
     fun lostUpdatesReconnectToTheSameRunKeepingWhatItReported() =
         runTest {
             val source = FakeSource()

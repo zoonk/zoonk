@@ -100,7 +100,12 @@ class GenerationFollower(
                 val restart = restart ?: return
                 followed?.let(replaced::add)
                 followed = null
-                state.value = GenerationRun(warmUpId = state.value.warmUpId, firstLesson = state.value.firstLesson)
+                state.value =
+                    GenerationRun(
+                        warmUpId = state.value.warmUpId,
+                        firstLesson = state.value.firstLesson,
+                        steps = state.value.steps.filterKeys { it == "warmUpFailed" },
+                    )
                 job?.cancel()
                 job =
                     scope.launch {
