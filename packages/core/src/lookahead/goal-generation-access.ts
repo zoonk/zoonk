@@ -12,7 +12,7 @@ export type GoalGenerationAccess =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Requires ownership; a saved graph owes a rebuild, and newer research claims small AI help. */
+/** Requires ownership; only owed work retries a rebuild, and newer research claims small AI help. */
 export async function getGoalGenerationAccess({
   goalId,
   withResearch = false,

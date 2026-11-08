@@ -65,7 +65,7 @@ function askFor({
 
   return db.followUp.upsert({
     create: { input, key, kind, requestedAt, userId },
-    update: { input, requestedAt, revision: { increment: 1 } },
+    update: { failedAt: null, input, requestedAt, revision: { increment: 1 } },
     where: { userKindKey: { key, kind, userId } },
   });
 }

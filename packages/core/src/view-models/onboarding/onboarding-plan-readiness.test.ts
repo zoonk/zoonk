@@ -48,6 +48,16 @@ describe("the onboarding view's plan readiness", () => {
     await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
     await prisma.plan.update({ data: { buildFailedAt: new Date() }, where: { goalId: goal.id } });
 
+    await prisma.followUp.create({
+      data: {
+        failedAt: new Date(),
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "rebuildGoalCurriculum",
+        userId: goal.userId,
+      },
+    });
+
     await expect(readReadiness(goal.id)).resolves.toStrictEqual({ time: BUILDING, view: BUILDING });
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: false } });
   });

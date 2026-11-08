@@ -20,6 +20,36 @@ function prepareGoal(lessonsAskedAt: number | null): FollowUp {
 }
 
 describe(oweFollowUps, () => {
+  it("skips a terminal failure until a new ask rearms that row once", async () => {
+    const user = await userFixture();
+    const goalId = crypto.randomUUID();
+
+    const row = await prisma.followUp.create({
+      data: {
+        failedAt: new Date(),
+        input: { goalId },
+        key: goalId,
+        kind: "rebuildGoalCurriculum",
+        requestedAt: new Date(0),
+        userId: user.id,
+      },
+    });
+
+    await expect(listFollowUps(user.id)).resolves.toStrictEqual([]);
+    await expect(listLearnersWithOldFollowUps()).resolves.not.toContain(user.id);
+
+    await oweFollowUps({
+      followUps: [{ input: { goalId }, kind: "rebuildGoalCurriculum" }],
+      userId: user.id,
+    });
+
+    await expect(
+      prisma.followUp.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ failedAt: null, revision: 1 });
+
+    await expect(listFollowUps(user.id)).resolves.toHaveLength(1);
+  });
+
   it("reads beyond started rows and still sees a new revision of one", async () => {
     const user = await userFixture();
 

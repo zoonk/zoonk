@@ -14,7 +14,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getRun } from "workflow/api";
+import { type Run, getRun } from "workflow/api";
 import { mockSession } from "../../../../../packages/core/src/_test-utils/mock-session";
 import { createSetUpGoalPlan } from "../../../../../packages/core/src/plans/_test-utils/set-up-plan";
 import { POST as retryGoal } from "../../app/v1/goals/[goalId]/generations/route";
@@ -26,6 +26,8 @@ import { getGoalContentToken } from "../goals/goal-content-workflow";
 import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { followUpsWorkflow, getFollowUpsToken } from "./follow-ups-workflow";
+
+/* oxlint-disable no-await-in-loop -- Tests wake each durable sleep before waiting for the next. */
 
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 vi.mock("@zoonk/core/analytics/request-platform", () => ({ getRequestPlatform: async () => null }));
@@ -52,7 +54,12 @@ const CAUSE = {
 async function savedGoal() {
   const user = await userFixture();
   const organization = await aiOrganizationFixture();
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const course = await courseFixture({
+    imageUrl: "https://blob.test/course.webp",
+    organizationId: organization.id,
+  });
+
   const [band] = await courseBandsFixture({ courseId: course.id, levels: ["beginner"] });
 
   if (!band) {
@@ -91,13 +98,12 @@ async function savedGoal() {
     userId: user.id,
   });
 
-  await createSetUpGoalPlan({
-    goalId: goal.id,
-    graph: {
-      phases: [{ milestone: null, name: "Overview" }],
-      skills: plannedSkills([skill]).map((entry) => ({ ...entry, courseIds: [course.id] })),
-    },
-  });
+  const planGraph = {
+    phases: [{ milestone: null, name: "Overview" }],
+    skills: plannedSkills([skill]).map((entry) => ({ ...entry, courseIds: [course.id] })),
+  };
+
+  await createSetUpGoalPlan({ goalId: goal.id, graph: planGraph });
 
   const graph: GoalSkillGraph = {
     courses: [{ key: "course", levels: ["beginner"], title: course.title }],
@@ -122,8 +128,13 @@ async function savedGoal() {
   };
 
   mockSession(user.id);
-  vi.mocked(generateWholeSkillGraph).mockResolvedValue({ ...taskResult(graph), repaired: [] });
-  return { goal, lesson, user };
+
+  vi.mocked(generateWholeSkillGraph).mockImplementation(async () => ({
+    ...taskResult(graph),
+    repaired: [],
+  }));
+
+  return { goal, lesson, planGraph, user };
 }
 
 async function editPurpose(goalId: string) {
@@ -163,6 +174,24 @@ async function retry(goalId: string) {
   return getRun(result.generationId);
 }
 
+async function drive(run: Run<unknown>) {
+  for (let index = 0; index < 400; index += 1) {
+    const status = await run.status;
+
+    if (status !== "pending" && status !== "running") {
+      return;
+    }
+
+    const id = await waitForSleep(run, { timeout: 1000 }).catch(() => null);
+
+    if (id) {
+      await run.wakeUp({ correlationIds: [id] });
+    }
+  }
+
+  throw new Error("The rebuild did not finish");
+}
+
 describe("a learner's owed rebuild", () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -185,34 +214,38 @@ describe("a learner's owed rebuild", () => {
     vi.unstubAllEnvs();
   });
 
-  it(
-    "finishes a failed rebuild's row without blocking other owed work",
-    { timeout: 60_000 },
-    async () => {
-      vi.mocked(classifyGoalSpecificity).mockRejectedValue(new Error("refused"));
-      const { goal, user } = await savedGoal();
-      await editPurpose(goal.id);
-      const mistake = await mistakeFixture({ cause: null, userId: user.id });
+  it("records a failed rebuild without blocking other owed work", { timeout: 60_000 }, async () => {
+    vi.mocked(classifyGoalSpecificity).mockRejectedValue(new Error("refused"));
+    const { goal, user } = await savedGoal();
+    await editPurpose(goal.id);
+    const mistake = await mistakeFixture({ cause: null, userId: user.id });
 
-      await prisma.followUp.create({
-        data: {
-          input: { cause: CAUSE, mistakeId: mistake.id },
-          key: mistake.id,
-          kind: "classifyMistakeCause",
-          userId: user.id,
-        },
-      });
+    await prisma.followUp.create({
+      data: {
+        input: { cause: CAUSE, mistakeId: mistake.id },
+        key: mistake.id,
+        kind: "classifyMistakeCause",
+        userId: user.id,
+      },
+    });
 
-      await dispatch(user.id);
-      const rebuild = await goalRun(goal.id);
-      await expect(rebuild.returnValue).rejects.toThrow();
-      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await dispatch(user.id);
+    const rebuild = await goalRun(goal.id);
+    await expect(rebuild.returnValue).rejects.toThrow();
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
 
-      await expect(
-        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
-      ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
-    },
-  );
+    const calls = vi.mocked(classifyGoalSpecificity).mock.calls.length;
+    await dispatch(user.id);
+    expect(classifyGoalSpecificity).toHaveBeenCalledTimes(calls);
+
+    await expect(
+      prisma.followUp.findFirstOrThrow({ where: { userId: user.id } }),
+    ).resolves.toMatchObject({ failedAt: expect.any(Date) });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
+  });
 
   it(
     "holds the reveal after an edit and opens it when the actual rebuild finishes",
@@ -249,7 +282,7 @@ describe("a learner's owed rebuild", () => {
       const failed = await goalRun(goal.id);
       await expect(failed.returnValue).rejects.toThrow();
       await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: false } });
-      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
 
       vi.mocked(classifyGoalSpecificity).mockResolvedValue(
         taskResult({ generalGoal: "Foundations", personalDetails: [], privateCourse: false }),
@@ -260,9 +293,187 @@ describe("a learner's owed rebuild", () => {
       await expect(retried.returnValue).resolves.toMatchObject({ status: "built" });
       await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
 
+      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+
       expect(generateWholeSkillGraph).toHaveBeenCalledWith(
         expect.objectContaining({ purpose: "deep" }),
       );
+    },
+  );
+
+  it(
+    "resumes two retries on a healthy revealed graph without replacing it",
+    { timeout: 60_000 },
+    async () => {
+      const { goal, user } = await savedGoal();
+      await prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } });
+      const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+      expect(before.placementPreparedAt).toBeNull();
+      const first = await retry(goal.id);
+      await drive(first);
+      await expect(first.returnValue).resolves.toMatchObject({ status: "prepared" });
+
+      await vi.waitFor(async () => {
+        await expect(
+          prisma.plan.findUniqueOrThrow({ where: { id: before.id } }),
+        ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
+      }, WAIT);
+
+      const second = await retry(goal.id);
+      await drive(second);
+      await expect(second.returnValue).resolves.toMatchObject({ status: "ready" });
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: before.id } }),
+      ).resolves.toMatchObject({ graph: before.graph, placementPreparedAt: expect.any(Date) });
+
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+    },
+  );
+
+  it(
+    "lets only the latest waiting answer revision rebuild the graph",
+    { timeout: 90_000 },
+    async () => {
+      const { goal, user } = await savedGoal();
+
+      const heldId = await startOnce(
+        heldInitialCurriculum,
+        [],
+        getGoalContentToken({ goalId: goal.id, rebuild: true }),
+      );
+
+      const held = getRun(heldId);
+      const hold = await waitForSleep(held);
+      await editPurpose(goal.id);
+      await dispatch(user.id);
+      const first = await goalRun(goal.id);
+      await waitForSleep(first);
+
+      await answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { purpose: "refresh", question: "purpose" },
+      });
+
+      await dispatch(user.id);
+
+      await vi.waitFor(async () => {
+        const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        expect(current.generationRunId).not.toBe(first.runId);
+      }, WAIT);
+
+      const second = await goalRun(goal.id);
+      await waitForSleep(second);
+      await held.wakeUp({ correlationIds: [hold] });
+      await held.returnValue;
+      await Promise.all([drive(first), drive(second)]);
+      await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+      await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+
+      expect(generateWholeSkillGraph).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ purpose: "refresh" }),
+      );
+    },
+  );
+
+  it(
+    "waits for a slow first build past the old graph-wait limit, then opens the rebuilt reveal",
+    { timeout: 180_000 },
+    async () => {
+      const { goal, planGraph, user } = await savedGoal();
+      const saved = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+      await prisma.plan.update({ data: { graph: {} }, where: { id: saved.id } });
+
+      const firstId = await startOnce(
+        heldInitialCurriculum,
+        [],
+        getGoalContentToken({ goalId: goal.id }),
+      );
+
+      const first = getRun(firstId);
+      const firstSleep = await waitForSleep(first);
+
+      try {
+        await editPurpose(goal.id);
+        await dispatch(user.id);
+        const rebuild = await goalRun(goal.id);
+
+        for (let index = 0; index < 101; index += 1) {
+          const waiting = await waitForSleep(rebuild);
+          await rebuild.wakeUp({ correlationIds: [waiting] });
+        }
+
+        const waiting = await waitForSleep(rebuild);
+        await expect(first.status).resolves.toBe("running");
+
+        await expect(
+          prisma.plan.findUniqueOrThrow({ where: { id: saved.id } }),
+        ).resolves.toMatchObject({ buildFailedAt: null });
+
+        await createSetUpGoalPlan({ goalId: goal.id, graph: planGraph });
+        await rebuild.wakeUp({ correlationIds: [waiting] });
+        await expect(rebuild.returnValue).resolves.toMatchObject({ status: "built" });
+        await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ plan: { ready: true } });
+        expect(generateWholeSkillGraph).toHaveBeenCalledOnce();
+      } finally {
+        await first.wakeUp({ correlationIds: [firstSleep] });
+        await first.returnValue;
+      }
+    },
+  );
+
+  it(
+    "keeps a failed rebuild owed when the first graph was saved during its wait",
+    { timeout: 60_000 },
+    async () => {
+      const { goal, planGraph, user } = await savedGoal();
+
+      await prisma.plan.update({
+        data: { generatedAt: null, graph: {} },
+        where: { goalId: goal.id },
+      });
+
+      const firstId = await startOnce(
+        heldInitialCurriculum,
+        [],
+        getGoalContentToken({ goalId: goal.id }),
+      );
+
+      const first = getRun(firstId);
+      const hold = await waitForSleep(first);
+
+      try {
+        await editPurpose(goal.id);
+        await dispatch(user.id);
+        const rebuild = await goalRun(goal.id);
+        const waiting = await waitForSleep(rebuild);
+        vi.mocked(classifyGoalSpecificity).mockRejectedValue(new Error("refused"));
+
+        await createSetUpGoalPlan({
+          goalId: goal.id,
+          graph: planGraph,
+          provenance: {
+            generatedAt: new Date(),
+            model: "first",
+            promptVersion: "first",
+            runId: "first",
+          },
+        });
+
+        await rebuild.wakeUp({ correlationIds: [waiting] });
+        await expect(rebuild.returnValue).rejects.toThrow();
+
+        await expect(
+          prisma.followUp.findFirstOrThrow({
+            where: { key: goal.id, kind: "rebuildGoalCurriculum" },
+          }),
+        ).resolves.toMatchObject({ failedAt: expect.any(Date) });
+      } finally {
+        await first.wakeUp({ correlationIds: [hold] });
+        await first.returnValue;
+      }
     },
   );
 
@@ -274,6 +485,7 @@ describe("a learner's owed rebuild", () => {
 
       const goal = await goalFixture({
         details: { level: "basic", purpose: "overview" },
+        planRevealedAt: null,
         userId: user.id,
       });
 
@@ -305,11 +517,14 @@ describe("a learner's owed rebuild", () => {
         vi.spyOn(process, "uptime").mockReturnValue(0);
         await expect(stopStalledRun(rebuild.runId)).resolves.toMatchObject({ stalled: true });
         await expect(rebuild.status).resolves.toBe("cancelled");
-        await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+        await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(1);
 
         await expect(
           prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
         ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
+
+        await initial.wakeUp({ correlationIds: [initialWait] });
+        await initial.returnValue;
 
         const oldAsk = {
           followUp: { id: followUp.id, revision: followUp.revision },
@@ -325,8 +540,10 @@ describe("a learner's owed rebuild", () => {
         await expect(getRun(restartedId).returnValue).rejects.toThrow("no longer owed");
         expect(generateWholeSkillGraph).not.toHaveBeenCalled();
       } finally {
-        await initial.wakeUp({ correlationIds: [initialWait] });
-        await initial.returnValue;
+        if ((await initial.status) === "running") {
+          await initial.wakeUp({ correlationIds: [initialWait] });
+          await initial.returnValue;
+        }
       }
     },
   );

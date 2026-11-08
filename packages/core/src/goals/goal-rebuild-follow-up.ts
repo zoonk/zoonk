@@ -4,11 +4,10 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { parsePlanGraph } from "../plans/planner/plan-state";
 
 export type GoalRebuildFollowUp = { id: string; revision: number };
 
-/** Internal: the generation admission checked this goal's owner. Repeated starts share one ask. */
+/** Internal: generation admission checked this goal's owner. Retries share one active ask. */
 export async function requestGoalRebuild(goal: Goal): Promise<GoalRebuildFollowUp | null> {
   if (goal.kind === "explain") {
     return null;
@@ -17,20 +16,14 @@ export async function requestGoalRebuild(goal: Goal): Promise<GoalRebuildFollowU
   const result = await writeLearnerChange<GoalRebuildFollowUp | null>(
     { userId: goal.userId },
     async (tx) => {
-      const current = await tx.goal.findUnique({ include: { plan: true }, where: { id: goal.id } });
-
       const where = {
         userKindKey: { key: goal.id, kind: "rebuildGoalCurriculum" as const, userId: goal.userId },
       };
 
       const owed = await tx.followUp.findUnique({ where });
 
-      if (owed) {
-        return unchanged({ id: owed.id, revision: owed.revision });
-      }
-
-      if (!current || parsePlanGraph(current.plan?.graph).skills.length === 0) {
-        return unchanged(null);
+      if (!owed || !owed.failedAt) {
+        return unchanged(owed ? { id: owed.id, revision: owed.revision } : null);
       }
 
       await oweFollowUps({
@@ -39,8 +32,8 @@ export async function requestGoalRebuild(goal: Goal): Promise<GoalRebuildFollowU
         userId: goal.userId,
       });
 
-      const created = await tx.followUp.findUniqueOrThrow({ where });
-      return { id: created.id, revision: created.revision };
+      const retried = await tx.followUp.findUniqueOrThrow({ where });
+      return { id: retried.id, revision: retried.revision };
     },
   );
 
@@ -61,6 +54,7 @@ export async function isGoalRebuildOwed({
   return (
     (await prisma.followUp.count({
       where: {
+        failedAt: null,
         id: followUp.id,
         key: goalId,
         kind: "rebuildGoalCurriculum",
@@ -76,11 +70,14 @@ export async function finishGoalRebuild({
   followUp,
   generationId,
   goalId,
+  startedAt,
 }: {
   failed: boolean;
   followUp: GoalRebuildFollowUp;
   generationId: string;
   goalId: string;
+  /** The rebuild's admission after its graph wait, never the run's creation time. */
+  startedAt: Date | null;
 }): Promise<void> {
   const [row, plan] = await Promise.all([
     prisma.followUp.findUnique({ where: { id: followUp.id } }),
@@ -100,14 +97,33 @@ export async function finishGoalRebuild({
         return unchanged(false);
       }
 
-      if (failed) {
-        await tx.plan.updateMany({
-          data: { buildFailedAt: new Date() },
-          where: { goal: { generationRunId: generationId }, goalId },
-        });
+      const saved = plan
+        ? await tx.plan.findUnique({
+            select: {
+              generatedAt: true,
+              goal: { select: { generationRunId: true, planRevealedAt: true } },
+            },
+            where: { id: plan.id },
+          })
+        : null;
+
+      const failedAt = new Date();
+      const ownFailure = failed && saved?.goal.generationRunId === generationId;
+
+      if (ownFailure) {
+        await tx.plan.updateMany({ data: { buildFailedAt: failedAt }, where: { goalId } });
       }
 
-      await tx.followUp.deleteMany({ where: { id: row.id, revision: followUp.revision } });
+      if (
+        ownFailure &&
+        !saved.goal.planRevealedAt &&
+        (!startedAt || !saved.generatedAt || saved.generatedAt < startedAt)
+      ) {
+        await tx.followUp.update({ data: { failedAt }, where: { id: row.id } });
+      } else {
+        await tx.followUp.deleteMany({ where: { id: row.id, revision: followUp.revision } });
+      }
+
       return true;
     },
   );

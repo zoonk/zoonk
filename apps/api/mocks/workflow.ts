@@ -32,6 +32,7 @@ export class FatalError extends Error {
 }
 
 export const getWorkflowMetadata = vi.fn(() => workflowMetadata);
+export const getStepMetadata = vi.fn(() => ({ stepStartedAt: new Date() }));
 export const getWritable = vi.fn().mockReturnValue(createWritable());
 export const sleep = vi.fn((_duration: Date | string) => Promise.resolve());
 
@@ -51,6 +52,7 @@ export function resetWorkflowMockState(): void {
   workflowReleaseLockMock.mockReset();
   workflowWriteMock.mockReset().mockResolvedValue(null);
   getWorkflowMetadata.mockReset().mockImplementation(() => workflowMetadata);
+  getStepMetadata.mockReset();
   getWritable.mockReset().mockReturnValue(createWritable());
   // `mockReset` restores the implementation `vi.fn` was created with.
   sleep.mockReset();
