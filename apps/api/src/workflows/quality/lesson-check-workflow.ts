@@ -18,6 +18,7 @@ import {
   fixPublishedDraftStep,
   publishFixedVersionStep,
   readLessonImageScopeStep,
+  recheckPublishedDraftStep,
   redraftPublishedLessonStep,
   setAsidePublishedLessonStep,
   stagePublishedDraftStep,
@@ -39,20 +40,27 @@ type CheckContext = Omit<LessonCheckInput, "plan"> & { workflowRunId: string };
 type Redraft = { drafts: HeldBackDraft[]; outcome: PublishedLessonOutcome };
 
 async function finishDraft(outcome: PublishedDraftOutcome): Promise<PublishedLessonOutcome> {
-  if (outcome.status === "drafted") {
-    return finishDraft(await checkPublishedDraftStep({ state: outcome.state }));
+  const checked =
+    outcome.status === "drafted"
+      ? await checkPublishedDraftStep({ state: outcome.state })
+      : outcome;
+
+  if (checked.status === "checked") {
+    return stagePublishedDraftStep(checked);
   }
 
-  if (outcome.status === "needsFix") {
-    const state = await fixPublishedDraftStep({ first: outcome.first, state: outcome.state });
-    return finishDraft(await checkPublishedDraftStep({ fixed: true, state }));
+  if (checked.status !== "needsFix") {
+    return checked;
   }
 
-  if (outcome.status === "checked") {
-    return stagePublishedDraftStep(outcome);
+  const fixed = await fixPublishedDraftStep({ first: checked.first, state: checked.state });
+
+  if (fixed.status === "passed") {
+    return fixed;
   }
 
-  return outcome;
+  const rechecked = await recheckPublishedDraftStep({ state: fixed.state });
+  return rechecked.status === "checked" ? stagePublishedDraftStep(rechecked) : rechecked;
 }
 
 async function redraft({

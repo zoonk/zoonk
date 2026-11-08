@@ -3,24 +3,30 @@ import {
   type PublishedLessonOutcome,
   checkPublishedDraft,
   fixPublishedDraft,
+  recheckPublishedDraft,
   stagePublishedDraft,
 } from "../library/quality/published-lesson-check";
 
 export async function settlePublishedDraft(
   outcome: PublishedDraftOutcome,
 ): Promise<PublishedLessonOutcome> {
-  if (outcome.status === "drafted") {
-    return settlePublishedDraft(await checkPublishedDraft({ state: outcome.state }));
+  const checked =
+    outcome.status === "drafted" ? await checkPublishedDraft({ state: outcome.state }) : outcome;
+
+  if (checked.status === "checked") {
+    return stagePublishedDraft(checked);
   }
 
-  if (outcome.status === "needsFix") {
-    const state = await fixPublishedDraft({ first: outcome.first, state: outcome.state });
-    return settlePublishedDraft(await checkPublishedDraft({ fixed: true, state }));
+  if (checked.status !== "needsFix") {
+    return checked;
   }
 
-  if (outcome.status === "checked") {
-    return stagePublishedDraft(outcome);
+  const fixed = await fixPublishedDraft({ first: checked.first, state: checked.state });
+
+  if (fixed.status === "passed") {
+    return fixed;
   }
 
-  return outcome;
+  const rechecked = await recheckPublishedDraft({ state: fixed.state });
+  return rechecked.status === "checked" ? stagePublishedDraft(rechecked) : rechecked;
 }

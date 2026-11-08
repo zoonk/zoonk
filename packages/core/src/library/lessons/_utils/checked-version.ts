@@ -31,7 +31,6 @@ export type LessonGate = {
 };
 
 export type CheckedVersion = {
-  fixed: boolean;
   screens: ConvertedScreen[];
   status: "passed";
   version: WrittenVersion;

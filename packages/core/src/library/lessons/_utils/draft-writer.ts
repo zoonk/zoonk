@@ -9,14 +9,9 @@ export function pickDraftWriter({
 }: {
   heldBackDrafts: readonly HeldBackDraft[];
   reuse: CallReuse;
-}): {
-  heldBackProblems: (HeldBackDraft["problems"][number] & { source: "review" })[];
-  model: string;
-} {
+}): { heldBackProblems: HeldBackDraft["problems"]; model: string } {
   return {
-    heldBackProblems: heldBackDrafts.flatMap((draft) =>
-      draft.problems.map((problem) => ({ ...problem, source: "review" as const })),
-    ),
+    heldBackProblems: heldBackDrafts.flatMap((draft) => draft.problems),
     model: getLessonWriterModel({ reuse }),
   };
 }

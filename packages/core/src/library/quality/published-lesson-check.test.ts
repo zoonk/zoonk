@@ -20,8 +20,8 @@ import { completeLessonContent } from "../generation/lesson-generation-state";
 import { readLessonMap } from "../lessons/lesson-map";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
+import { citePublishedLesson } from "./cite-published-lesson";
 import {
-  citePublishedLesson,
   publishFixedVersion,
   checkPublishedLesson as reviewPublished,
   redraftPublishedLesson as writePublished,
@@ -169,6 +169,67 @@ function listSteps(lessonId: string) {
 }
 
 describe(checkPublishedLesson, () => {
+  it.each([false, true])(
+    "keeps the live version when the writer declines its finding (unrelated edit: %s)",
+    async (unrelated) => {
+      const written = writtenRight();
+      const { lesson, plan } = await publishLesson({ lesson: written });
+      mockReview([wrongRise]);
+
+      const fixed = unrelated
+        ? withScreen(written, 1, explanation("A thermometer measures temperature."))
+        : structuredClone(written);
+
+      mockFix({ changedScreens: unrelated ? [1] : [], lesson: fixed });
+
+      await expect(
+        checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+      ).resolves.toStrictEqual({ status: "passed" });
+
+      expect(checkLessonQuality).toHaveBeenCalledOnce();
+      expect(citeMaterial).not.toHaveBeenCalled();
+      const steps = await listSteps(lesson.id);
+      expect(steps.every((step) => step.version === 1 && !step.staged)).toBe(true);
+    },
+  );
+
+  it("declines a lesson-wide finding only when the screens and summary are unchanged", async () => {
+    const written = writtenRight();
+    const { lesson, plan } = await publishLesson({ lesson: written });
+    mockReview([{ ...wrongRise, screen: null }]);
+    mockFix({ changedScreens: [], lesson: structuredClone(written) });
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+    ).resolves.toStrictEqual({ status: "passed" });
+
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    const steps = await listSteps(lesson.id);
+    expect(steps.every((step) => !step.staged)).toBe(true);
+  });
+
+  it("rechecks a summary-only fix of a lesson-wide finding", async () => {
+    const written = writtenRight();
+    const { lesson, plan } = await publishLesson({ lesson: written });
+    mockReview([{ ...wrongRise, screen: null }]);
+
+    mockFix({
+      changedScreens: [],
+      lesson: {
+        ...written,
+        summary: { ideas: [{ label: "Up", text: "A rise moves up." }], shape: "hub" },
+      },
+    });
+
+    mockReview();
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+    ).resolves.toMatchObject({ status: "republished" });
+
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
+  });
+
   it("reviews, fixes, rechecks and stages in separate calls", async () => {
     const { lesson, plan, draft } = await publishLesson({ lesson: writtenWrong() });
     mockReview([wrongRise]);
@@ -187,8 +248,12 @@ describe(checkPublishedLesson, () => {
       throw new Error("Expected findings");
     }
 
-    mockFix({ changedScreens: [], lesson: writtenWrong() });
-    const { fixPublishedDraft, checkPublishedDraft } = await import("./published-lesson-check");
+    mockFix({
+      changedScreens: [4],
+      lesson: withScreen(writtenWrong(), 4, explanation("A rise still moves down below zero.")),
+    });
+
+    const { fixPublishedDraft, recheckPublishedDraft } = await import("./published-lesson-check");
     const fixed = await fixPublishedDraft({ first: reviewed.first, state: reviewed.state });
 
     expect(fixLessonDraft).toHaveBeenCalledExactlyOnceWith(
@@ -198,7 +263,11 @@ describe(checkPublishedLesson, () => {
     expect(checkLessonQuality).toHaveBeenCalledOnce();
     mockReview([wrongRise]);
 
-    await expect(checkPublishedDraft({ fixed: true, state: fixed })).resolves.toMatchObject({
+    if (fixed.status !== "fixed") {
+      throw new Error("Expected a changed fix");
+    }
+
+    await expect(recheckPublishedDraft({ state: fixed.state })).resolves.toMatchObject({
       status: "heldBack",
     });
 
@@ -363,10 +432,15 @@ describe(checkPublishedLesson, () => {
     expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);
   });
 
-  it("holds back a version whose fix left the screen the reviewer found wrong as it was", async () => {
+  it("holds back a changed fix that the reviewer still finds wrong", async () => {
     const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
     mockReview([wrongRise]);
-    mockFix({ changedScreens: [], lesson: writtenWrong() });
+
+    mockFix({
+      changedScreens: [4],
+      lesson: withScreen(writtenWrong(), 4, explanation("A rise still moves down below zero.")),
+    });
+
     mockReview([wrongRise]);
 
     await expect(
@@ -420,6 +494,25 @@ describe(checkPublishedLesson, () => {
 });
 
 describe(redraftPublishedLesson, () => {
+  it("rechecks an unchanged fix of a redraft", async () => {
+    const { lesson, plan } = await publishLesson();
+    mockDraft(writtenWrong());
+    mockReview([wrongRise]);
+    mockFix({ changedScreens: [], lesson: writtenWrong() });
+    mockReview([wrongRise]);
+
+    await expect(
+      redraftPublishedLesson({
+        heldBackDrafts: [],
+        lessonId: lesson.id,
+        version: plan.version,
+        workflowRunId: randomUUID(),
+      }),
+    ).resolves.toMatchObject({ status: "heldBack" });
+
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
+  });
+
   it("replaces a version no fix put right with a fresh draft, told what held the first back", async () => {
     const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
 
@@ -443,10 +536,7 @@ describe(redraftPublishedLesson, () => {
     ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
     expect(writeLessonDraft).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        heldBackProblems: heldBack.problems.map((problem) => ({ ...problem, source: "review" })),
-        serviceTier: "flex",
-      }),
+      expect.objectContaining({ heldBackProblems: heldBack.problems, serviceTier: "flex" }),
     );
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();

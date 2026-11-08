@@ -4,12 +4,13 @@ import {
   type PublishedDraftOutcome,
   checkPublishedDraft,
   checkPublishedLesson,
-  citePublishedLesson,
   fixPublishedDraft,
   publishFixedVersion,
+  recheckPublishedDraft,
   redraftPublishedLesson,
   stagePublishedDraft,
 } from "@zoonk/core/library/quality/published-checks";
+import { citePublishedLesson } from "@zoonk/core/library/quality/published-citations";
 import { setAsidePublishedLesson } from "@zoonk/core/library/quality/set-aside";
 import { prisma } from "@zoonk/db";
 import { type ContentAnalytics } from "../../_shared/content-analytics";
@@ -86,4 +87,11 @@ export async function checkPublishedDraftStep(input: Parameters<typeof checkPubl
 export async function stagePublishedDraftStep(input: Parameters<typeof stagePublishedDraft>[0]) {
   "use step";
   return stagePublishedDraft(input);
+}
+
+export async function recheckPublishedDraftStep(
+  input: Parameters<typeof recheckPublishedDraft>[0],
+) {
+  "use step";
+  return recheckPublishedDraft(input);
 }

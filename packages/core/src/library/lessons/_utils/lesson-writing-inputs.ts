@@ -18,7 +18,6 @@ import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
 export type LessonWritingInputs = {
   activityTemplates: WriterActivityTemplate[];
-  categories: string[];
   chapterLessons: ChapterLesson[];
   chapterTitle: string;
   courseTitle: string;
@@ -54,7 +53,7 @@ function matchSpecSkills({
 async function findLessonToWrite(lessonId: string) {
   return prisma.lesson.findUnique({
     include: {
-      homeChapter: { include: { homeCourse: { include: { categories: true } } } },
+      homeChapter: { include: { homeCourse: true } },
       skills: { include: { skill: true }, orderBy: [{ createdAt: "asc" }, { skillId: "asc" }] },
     },
     omit: { summary: true },
@@ -103,7 +102,6 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       activityTemplates: describeActivityTemplates(
         spec.screens.flatMap((screen) => screen.activityTemplate ?? []),
       ),
-      categories: course?.categories.map((category) => category.category) ?? [],
       chapterLessons,
       chapterTitle: lesson.homeChapter?.title ?? lesson.title,
       courseTitle: course?.title ?? lesson.homeChapter?.title ?? lesson.title,

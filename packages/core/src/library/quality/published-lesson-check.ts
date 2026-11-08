@@ -1,8 +1,6 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
-import { prisma } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
 import {
   type CheckedVersion,
@@ -10,7 +8,6 @@ import {
   type LessonGate,
   type WrittenVersion,
   checkFixedLesson,
-  citeScreens,
   citeScreensIfPossible,
   fixVersionDraft,
   readLessonSources,
@@ -94,16 +91,6 @@ async function readStagedFix(lessonId: string): Promise<PublishedLessonOutcome |
   return staged && { ...staged, status: "republished" };
 }
 
-function toReviewFindings(gate: GateResult): GateResult {
-  const fromCode = gate.blocking.filter((problem) => problem.source === "code");
-
-  return {
-    ...gate,
-    blocking: gate.blocking.filter((problem) => problem.source === "review"),
-    minor: [...gate.minor, ...fromCode],
-  };
-}
-
 /** Internal workflow bridge; not an app authorization boundary. */
 export async function checkPublishedLesson({
   plan,
@@ -123,9 +110,12 @@ export async function checkPublishedLesson({
 
   const { gate, inputs } = loaded;
 
-  const first = toReviewFindings(
-    await runLessonQualityGate({ ...gate, lesson: plan.lesson, review: true }),
-  );
+  const checked = await runLessonQualityGate({ ...gate, lesson: plan.lesson, review: true });
+
+  const first = {
+    ...checked,
+    blocking: checked.blocking.filter((problem) => problem.source === "review"),
+  };
 
   if (first.blocking.length === 0) {
     return { status: "passed" };
@@ -139,6 +129,7 @@ export async function checkPublishedLesson({
       context,
       gate,
       inputs,
+      live: true,
       replaces: plan.version,
       version: {
         lesson: plan.lesson,
@@ -152,6 +143,7 @@ export async function checkPublishedLesson({
 export type PublishedDraftState = {
   context: CheckContext;
   inputs: LessonWritingInputs;
+  live: boolean;
   gate: LessonGate;
   version: WrittenVersion;
   replaces: number;
@@ -173,48 +165,79 @@ export async function fixPublishedDraft({
 }: {
   first: GateResult;
   state: PublishedDraftState;
-}): Promise<PublishedDraftState> {
-  return {
-    ...state,
-    version: await fixVersionDraft({ draft: state.version, first, gate: state.gate }),
-  };
+}): Promise<{ status: "passed" } | { status: "fixed"; state: PublishedDraftState }> {
+  const version = await fixVersionDraft({ draft: state.version, first, gate: state.gate });
+  const before = state.version.lesson;
+  const after = version.lesson;
+
+  const declined = first.blocking.every(({ screen }) =>
+    screen === null
+      ? isDeepStrictEqual(before, after)
+      : isDeepStrictEqual(before.screens[screen], after.screens[screen]),
+  );
+
+  return state.live && declined
+    ? { status: "passed" }
+    : { state: { ...state, version }, status: "fixed" };
 }
 
 export async function checkPublishedDraft({
   state,
-  fixed = false,
 }: {
   state: PublishedDraftState;
-  fixed?: boolean;
-}): Promise<PublishedDraftOutcome> {
+}): Promise<
+  Extract<PublishedDraftOutcome, { status: "checked" | "needsFix" }> | { status: "replaced" }
+> {
   if ((await readCurrentLessonVersion(state.context.lessonId)) !== state.replaces) {
     return { status: "replaced" };
   }
 
-  const checked = fixed
-    ? await checkFixedLesson({ fixed: state.version.lesson, gate: state.gate, review: true })
-    : await runLessonQualityGate({ ...state.gate, lesson: state.version.lesson, review: true });
+  const checked = await runLessonQualityGate({
+    ...state.gate,
+    lesson: state.version.lesson,
+    review: true,
+  });
 
-  if (checked.blocking.length === 0) {
-    return {
-      checked: { fixed, screens: checked.screens, status: "passed", version: state.version },
-      state,
-      status: "checked",
-    };
+  return checked.blocking.length > 0
+    ? { first: checked, state, status: "needsFix" }
+    : {
+        checked: { screens: checked.screens, status: "passed", version: state.version },
+        state,
+        status: "checked",
+      };
+}
+
+export async function recheckPublishedDraft({
+  state,
+}: {
+  state: PublishedDraftState;
+}): Promise<
+  Extract<PublishedDraftOutcome, { status: "checked" | "heldBack" }> | { status: "replaced" }
+> {
+  if ((await readCurrentLessonVersion(state.context.lessonId)) !== state.replaces) {
+    return { status: "replaced" };
   }
 
-  if (!fixed) {
-    return { first: checked, state, status: "needsFix" };
-  }
+  const checked = await checkFixedLesson({
+    fixed: state.version.lesson,
+    gate: state.gate,
+    review: true,
+  });
 
-  return {
-    draft: toHeldBackDraft({
-      model: state.gate.writerModel,
-      problems: checked.blocking,
-      workflowRunId: state.context.workflowRunId,
-    }),
-    status: "heldBack",
-  };
+  return checked.blocking.length > 0
+    ? {
+        draft: toHeldBackDraft({
+          model: state.gate.writerModel,
+          problems: checked.blocking,
+          workflowRunId: state.context.workflowRunId,
+        }),
+        status: "heldBack",
+      }
+    : {
+        checked: { screens: checked.screens, status: "passed", version: state.version },
+        state,
+        status: "checked",
+      };
 }
 
 export async function stagePublishedDraft({
@@ -280,6 +303,7 @@ export async function redraftPublishedLesson({
       context,
       gate: loaded.gate,
       inputs: loaded.inputs,
+      live: false,
       replaces: version,
       version: {
         lesson: repairWrittenLesson({
@@ -306,44 +330,4 @@ export async function publishFixedVersion({
   version: number;
 }): Promise<boolean> {
   return (await publishStagedLessonVersion({ lessonId, version })) !== null;
-}
-
-/** Internal workflow bridge; a failed citation call throws so the workflow step can retry. */
-export async function citePublishedLesson({
-  plan,
-  ...context
-}: CheckContext & { plan: Pick<LessonCheckPlan, "lesson" | "version"> }): Promise<number> {
-  const inputs = await loadPublishedLessonInputs(context.lessonId);
-
-  if (!inputs) {
-    return 0;
-  }
-
-  const citations = await citeScreens({
-    analytics: await toTaskAnalytics(context),
-    inputs,
-    lesson: plan.lesson,
-    serviceTier: BACKGROUND_TIER,
-  });
-
-  const cited = citations.flatMap((citation, position) =>
-    citation ? [{ citation, position }] : [],
-  );
-
-  const updates = await prisma.$transaction(
-    cited.map(({ citation, position }) =>
-      prisma.step.updateMany({
-        data: { sourceId: citation.sourceId, sourcePage: citation.page },
-        where: { lessonId: context.lessonId, position, retiredAt: null, version: plan.version },
-      }),
-    ),
-  );
-
-  const count = updates.reduce((total, update) => total + update.count, 0);
-
-  if (count > 0) {
-    revalidateCacheTags([getLibraryLessonCacheTag(context.lessonId)]);
-  }
-
-  return count;
 }

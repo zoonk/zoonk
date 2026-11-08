@@ -325,8 +325,8 @@ describe(lessonCheckWorkflow, () => {
     const { input, item, lesson } = await publishedLesson();
     vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
 
-    vi.mocked(fixLessonDraft).mockImplementation(async (params) =>
-      taskResult({ changedScreens: [], lesson: params.lesson }),
+    vi.mocked(fixLessonDraft).mockImplementation(async () =>
+      taskResult({ changedScreens: [2], lesson: fixedDraft }),
     );
 
     await expect(lessonCheckWorkflow(input)).resolves.toStrictEqual({
