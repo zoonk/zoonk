@@ -8,6 +8,13 @@ export function mockSession(userId: string | null): void {
   );
 }
 
+export function mockAdminSession(userId: string): void {
+  vi.mocked(getSession).mockResolvedValue(
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Admin capabilities only read the identity and role.
+    { user: { id: userId, role: "admin" } } as Awaited<ReturnType<typeof getSession>>,
+  );
+}
+
 export function mockGuestSession(userId: string): void {
   vi.mocked(getSession).mockResolvedValue(
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Business tests only read the identity and guest flag.

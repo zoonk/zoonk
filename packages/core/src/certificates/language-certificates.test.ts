@@ -22,6 +22,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS, type CefrLevel } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
+import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
 import { finishLanguageLevelTest } from "../language/level-test/finish-language-level-test";
@@ -315,6 +316,71 @@ describe("language level certificates", () => {
 
     await expect(listLevelCertificates(small.user.id)).resolves.toMatchObject([{ key: "it:A1" }]);
     await expect(listLevelCertificates(large.user.id)).resolves.toStrictEqual([]);
+  });
+});
+
+async function mergeIntoNewA1Skill(duplicateId: string) {
+  const survivor = await skillFixture({ cefrLevel: "A1", language: "pt", level: "beginner" });
+  await mergeSkills({ duplicateId, survivorId: survivor.id });
+}
+
+describe("a plan whose skill an admin merged", () => {
+  it("measures the merged skill once, at its size in the plan's graph", async () => {
+    const fixture = await italianPlan({
+      items: [
+        { skill: 0, status: "done" },
+        { skill: 0, status: "testedOut" },
+        { skill: 1, unit: 1 },
+      ],
+      skills: [
+        { lessons: 2, level: "A1" },
+        { lessons: 1, level: "A2" },
+      ],
+    });
+
+    await mergeIntoNewA1Skill(fixture.skills[0]?.id ?? "");
+    await finishLesson(fixture, 2);
+
+    const certificates = await listLevelCertificates(fixture.user.id);
+
+    expect(certificates.map((row) => row.key).toSorted()).toStrictEqual(["it:A1", "it:A2"]);
+  });
+
+  it("measures a skill merged into another of the plan's skills with both their sizes", async () => {
+    const fixture = await italianPlan({
+      items: [
+        { skill: 0, status: "done" },
+        { skill: 1, status: "testedOut" },
+        { skill: 2, unit: 1 },
+      ],
+      skills: [
+        { lessons: 1, level: "A1" },
+        { lessons: 3, level: "A1" },
+        { lessons: 1, level: "A2" },
+      ],
+    });
+
+    const [duplicate, survivor] = fixture.skills;
+
+    await mergeSkills({ duplicateId: duplicate?.id ?? "", survivorId: survivor?.id ?? "" });
+    await finishLesson(fixture, 2);
+
+    await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A2" }]);
+  });
+
+  it("reads the level of the skill it merged into, not of the untagged one it replaced", async () => {
+    const fixture = await italianPlan({
+      items: [{ skill: 0, status: "done" }, { skill: 0 }],
+      skills: [{ lessons: 2, level: "A1" }],
+    });
+
+    const duplicateId = fixture.skills[0]?.id ?? "";
+
+    await prisma.skill.update({ data: { cefrLevel: null }, where: { id: duplicateId } });
+    await mergeIntoNewA1Skill(duplicateId);
+    await finishLesson(fixture, 1);
+
+    await expect(listLevelCertificates(fixture.user.id)).resolves.toMatchObject([{ key: "it:A1" }]);
   });
 });
 

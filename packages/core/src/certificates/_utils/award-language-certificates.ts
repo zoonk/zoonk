@@ -6,10 +6,10 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type PlanLevel, getUnitLevels, listPlanLevels } from "../../language/levels/plan-levels";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
-import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type LanguageLevelCertificateDetails } from "../certificate-contract";
 import { getLastFinishedAt, sumStudiedMinutes } from "./award-course-certificate";
 import { createCertificateCode } from "./certificate-code";
+import { loadGraphSkills } from "./graph-skills";
 
 /**
  * Goals built from a learner's own material have a private course and earn no language levels.
@@ -61,7 +61,7 @@ function getLevelKey({ language, level }: { language: string; level: CefrLevel }
 }
 
 async function loadPlanLevels(tx: TransactionClient, plan: LanguagePlan): Promise<PlanLevel[]> {
-  const graphSkills = parsePlanGraph(plan.graph).skills;
+  const graphSkills = await loadGraphSkills(plan.graph, tx);
 
   const skillIds = new Set([
     ...graphSkills.map((skill) => skill.skillId),

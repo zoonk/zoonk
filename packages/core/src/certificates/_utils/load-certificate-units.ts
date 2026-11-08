@@ -3,12 +3,17 @@ import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } f
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
-import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import {
+  type PlanGraphSkill,
+  parsePlanPhases,
+  parsePlanSettings,
+} from "../../plans/planner/plan-state";
 import {
   type CertifiableItem,
   type CertificateUnit,
   listCertificateUnits,
 } from "./certificate-units";
+import { loadGraphSkills } from "./graph-skills";
 
 export type UnitGoal = Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "userId">;
 
@@ -88,10 +93,11 @@ async function loadHomeChapters(db: TransactionClient, plan: UnitPlan) {
 }
 
 /** A stand-in counts in the primary course's level of its skill unless the plan's graph gives the skill to another course. */
-async function loadStandInLevels(db: TransactionClient, { goal, plan }: UnitInput) {
-  const courses = new Map(
-    parsePlanGraph(plan.graph).skills.map((skill) => [skill.skillId, skill.courseIds?.[0]]),
-  );
+async function loadStandInLevels(
+  db: TransactionClient,
+  { goal, graphSkills, plan }: UnitInput & { graphSkills: readonly PlanGraphSkill[] },
+) {
+  const courses = new Map(graphSkills.map((skill) => [skill.skillId, skill.courseIds?.[0]]));
 
   const skillIds = plan.items.flatMap((item) =>
     isStandIn(item) &&
@@ -111,6 +117,11 @@ async function loadStandInLevels(db: TransactionClient, { goal, plan }: UnitInpu
   });
 
   return new Map(skills.map((skill) => [skill.id, skill.level]));
+}
+
+async function loadPlanSkills(db: TransactionClient, input: UnitInput) {
+  const graphSkills = await loadGraphSkills(input.plan.graph, db);
+  return { graphSkills, standInLevels: await loadStandInLevels(db, { ...input, graphSkills }) };
 }
 
 /**
@@ -240,10 +251,10 @@ export async function loadCertificateUnits(
   { goal, plan }: UnitInput,
   db: TransactionClient = prisma,
 ) {
-  const [course, homeChapters, standInLevels, held] = await Promise.all([
+  const [course, homeChapters, { graphSkills, standInLevels }, held] = await Promise.all([
     loadPrimaryCourse(db, goal),
     loadHomeChapters(db, plan),
-    loadStandInLevels(db, { goal, plan }),
+    loadPlanSkills(db, { goal, plan }),
     loadHeldCertificates(db, goal),
   ]);
 
@@ -269,7 +280,7 @@ export async function loadCertificateUnits(
 
   const units = listCertificateUnits({
     goal,
-    graphSkills: parsePlanGraph(plan.graph).skills,
+    graphSkills,
     heldKeys,
     items,
     levelChapters:

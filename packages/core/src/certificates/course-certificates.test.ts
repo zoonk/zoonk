@@ -22,6 +22,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
 import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
@@ -145,15 +146,16 @@ async function courseGoal({
 
 type CourseGoal = Awaited<ReturnType<typeof courseGoal>>;
 
-async function addGraphSkill(
+async function setGraphSkill(
   { plan }: CourseGoal,
   skill: { id: string; lessons: number; name: string },
 ) {
   const { graph } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
   const stored = parsePlanGraph(graph);
+  const others = stored.skills.filter((entry) => entry.skillId !== skill.id);
 
   await prisma.plan.update({
-    data: { graph: { ...stored, skills: [...stored.skills, ...plannedSkills([skill])] } },
+    data: { graph: { ...stored, skills: [...others, ...plannedSkills([skill])] } },
     where: { id: plan.id },
   });
 }
@@ -395,7 +397,7 @@ describe("course certificates", () => {
       skillFixture({ level: "beginner" }),
     ]);
 
-    await addGraphSkill(fixture, { ...placed, lessons: 5 });
+    await setGraphSkill(fixture, { ...placed, lessons: 5 });
     const todo = lastTodo(fixture);
 
     await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
@@ -422,7 +424,7 @@ describe("course certificates", () => {
     ]);
 
     await Promise.all([
-      addGraphSkill(fixture, { ...skill, lessons: 4 }),
+      setGraphSkill(fixture, { ...skill, lessons: 4 }),
       chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: written.id }),
       lessonSkillFixture({ lessonId: written.id, skillId: skill.id }),
     ]);
@@ -453,6 +455,30 @@ describe("course certificates", () => {
     await finishLesson(fixture);
 
     await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("keeps a skill an admin merged at its size in the plan's graph", async () => {
+    const fixture = await courseGoal({ items: [{ status: "done" }, WON_CHALLENGE] });
+    const [studied] = fixture.plan.items;
+    const skill = await prisma.skill.findUniqueOrThrow({ where: { id: studied?.skillId ?? "" } });
+
+    await setGraphSkill(fixture, { ...skill, lessons: 3 });
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toStrictEqual({
+      status: "notFinished",
+    });
+
+    const survivor = await skillFixture({
+      language: skill.language,
+      targetLanguage: skill.targetLanguage,
+    });
+
+    await mergeSkills({ duplicateId: skill.id, survivorId: survivor.id });
+    mockSession(fixture.user.id);
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toStrictEqual({
+      status: "notFinished",
+    });
   });
 
   it("never awards a language goal's plan a course certificate", async () => {
