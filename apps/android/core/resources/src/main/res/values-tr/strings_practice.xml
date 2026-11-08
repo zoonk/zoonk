@@ -22,6 +22,7 @@
   "practice_pause_text": "6424a7143a4d45ff5e3f1c6f3e7ada15f30eaaad7ca3ea7e5f4cad1ca7b44e6f",
   "practice_progress": "6dbecbbb71faf7a4cb1df8ece3e80fd032c625232c03917c0b716a1ae2e36182",
   "practice_save_error": "449a54577347c8d41236fa4f3fda5f76c2af89d965bca9e220b2870f0e839966",
+  "practice_save_error_repeat": "20a8b32f347de67190603b3a00ac0fcaefa447f9862345431995bffaa09e2375",
   "practice_time_machine_answered": "38107a7628466b2a3065e9572d11415f3857f54610e0863d8e5376c4adfba097",
   "practice_time_machine_right_again": "69517a78c8dc718f616e0ac2160b5bd31d2ebf511397b45260495b0cd875beac",
   "practice_time_machine_right_before": "cb4f82e43d6852e567867c1d148d2cda310a370177b312ffd780ea694de9fd61",
@@ -50,6 +51,7 @@
     <string name="practice_finish_ready_detail">Sonucunu görmek için bitir.</string>
     <string name="practice_already_answered">Bu soruyu daha önce cevapladın.</string>
     <string name="practice_save_error">Gönderilemedi. Cevapların saklanıyor.</string>
+    <string name="practice_save_error_repeat">Yine gönderilemedi. Daha sonra geri dönebilirsin.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d doğru</item>
         <item quantity="other">%d doğru</item>

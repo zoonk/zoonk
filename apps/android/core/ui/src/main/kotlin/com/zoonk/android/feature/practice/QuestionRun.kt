@@ -54,6 +54,7 @@ data class QuestionRun(
     val phase: RunPhase,
     val stage: DrillStage,
     val timedOut: Boolean = false,
+    val saveFailures: Int = 0,
     val answers: Map<Int, Graded> = emptyMap(),
 ) {
     val canAnswer: Boolean get() = phase == RunPhase.Answering || phase == RunPhase.AnswerFailed
@@ -67,10 +68,15 @@ data class QuestionRun(
         blank: Boolean = feedback.blank,
     ) = copy(
         phase = RunPhase.Checked(answer, feedback),
+        saveFailures = 0,
         answers = answers + (index to Graded(feedback.isCorrect, blank)),
     )
 
-    fun failed(phase: RunPhase) = copy(phase = phase)
+    fun failed(phase: RunPhase) =
+        copy(
+            phase = phase,
+            saveFailures = saveFailures + if (phase == RunPhase.AnswerFailed || phase == RunPhase.FinishFailed) 1 else 0,
+        )
 
     fun timeUp() = copy(timedOut = true)
 
@@ -100,7 +106,7 @@ data class QuestionRun(
 
     fun finishing() = copy(phase = RunPhase.Finishing)
 
-    fun finished(completion: StudyBlockCompletion) = copy(phase = RunPhase.Finished(completion))
+    fun finished(completion: StudyBlockCompletion) = copy(phase = RunPhase.Finished(completion), saveFailures = 0)
 
     companion object {
         /** Resumes at the first unanswered question; a fully answered block waits for Finish. */

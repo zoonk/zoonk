@@ -22,6 +22,7 @@
   "practice_pause_text": "366dc9094c8dfc148f27b058c9e4d241fa2fc178b11f4e4c9a8aacd6e7b186db",
   "practice_progress": "0d9a9c053215d37462b9d63ae3d509135d3197ae1904dba9e5e112a4fe563e3a",
   "practice_save_error": "d19c62b26b29f79b0db82d65a2dd9067caeb416cc2e2c0cce4f3729b654ec827",
+  "practice_save_error_repeat": "f78d770ea3afabde1aedc0ba59e9436f877de5d3ea39a1cf3a754d4987cf60cf",
   "practice_time_machine_answered": "3988713f5625c676020e30f7118a6bb68af89d0bfa92b111286490d3cb6c14a0",
   "practice_time_machine_right_again": "88f65133907e8cd70178da3db13cd9380db7a03cd4d09983dd413e253c6c72ad",
   "practice_time_machine_right_before": "13eeff7f7be1233ed17149223b07580ec19a278d25185631f3b695e5da7d33c7",
@@ -50,6 +51,7 @@
     <string name="practice_finish_ready_detail">終了すると結果を確認できます。</string>
     <string name="practice_already_answered">この問題にはすでに答えています。</string>
     <string name="practice_save_error">送信できませんでした。回答はそのまま残っています。</string>
+    <string name="practice_save_error_repeat">今回も送信できませんでした。時間をおいて、また戻ってきてください。</string>
     <plurals name="practice_net_right">
         <item quantity="other">%d問正解</item>
     </plurals>

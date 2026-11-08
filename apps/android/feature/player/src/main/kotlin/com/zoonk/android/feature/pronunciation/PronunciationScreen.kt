@@ -281,7 +281,7 @@ private fun WordStep(
             },
             bottomBar = {
                 TaskActionBar {
-                    if (round.finishFailed) SaveFailed(onRetry = model::finish)
+                    if (round.finishFailures > 0 && !round.pending) SaveFailed(round.finishFailures, onRetry = model::finish)
                     WordActions(round, step, model, status, tapRecord)
                 }
             },
@@ -643,10 +643,13 @@ private fun WordActions(
 }
 
 @Composable
-private fun SaveFailed(onRetry: () -> Unit) {
+private fun SaveFailed(
+    failures: Int,
+    onRetry: () -> Unit,
+) {
     Row(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalAlignment = Alignment.CenterVertically) {
         Text(
-            stringResource(R.string.pronunciation_save_failed),
+            stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.pronunciation_save_failed),
             Modifier.weight(1f, fill = false),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,

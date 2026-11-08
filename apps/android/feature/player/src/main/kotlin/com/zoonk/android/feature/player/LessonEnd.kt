@@ -298,7 +298,18 @@ fun LessonCompletionView(
                     Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 if (completion.status == CompletionStatus.Failed) {
-                    Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(
+                            if (completion.saveFailures >
+                                1
+                            ) {
+                                R.string.practice_save_error_repeat
+                            } else {
+                                R.string.player_save_failed
+                            },
+                        ),
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
                 if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }

@@ -258,7 +258,7 @@ private fun PatternQuestion(
         // Main's pattern drill counts a checked answer as done before Continue; a study block doesn't.
         progress = { RunMeter(index, pattern.drill.size, drill.segments, done = if (checked == null) index else index + 1) },
         actions = { ruleShown ->
-            if (drill.failed && !drill.saving) SaveErrorText(viewModel::retry)
+            if (drill.failures > 0 && !drill.saving) SaveErrorText(drill.failures, viewModel::retry)
             TaskActions { width ->
                 if (!ruleShown) {
                     OutlinedButton(onClick = { ruleOpen = true }) {

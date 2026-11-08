@@ -64,6 +64,7 @@ data class LessonCompletion(
     val status: CompletionStatus,
     val result: LibraryLessonCompletion? = null,
     val testedOut: Boolean = false,
+    val saveFailures: Int = 0,
 )
 
 @Immutable

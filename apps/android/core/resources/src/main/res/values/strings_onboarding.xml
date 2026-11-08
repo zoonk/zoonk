@@ -232,7 +232,6 @@
     <string name="onboarding_placement_confirm">Confirm</string>
     <string name="onboarding_placement_stop">Stop here and see my plan</string>
     <string name="onboarding_placement_answer_failed">That didn\'t go through. Your answers are kept.</string>
-    <string name="onboarding_placement_try_again">Try again</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">True</string>
     <string name="onboarding_placement_false">False</string>

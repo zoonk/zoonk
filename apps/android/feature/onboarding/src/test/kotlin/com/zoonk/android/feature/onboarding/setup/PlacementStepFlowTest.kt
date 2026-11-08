@@ -88,7 +88,7 @@ class PlacementStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         api.writeFailure = null
-        tap("Try again")
+        tap("Confirm")
 
         assertEquals(2, api.placementAnswers.size)
         assertEquals(api.placementAnswers[0], api.placementAnswers[1])

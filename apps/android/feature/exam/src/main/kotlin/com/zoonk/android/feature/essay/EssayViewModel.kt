@@ -42,7 +42,7 @@ data class EssayUi(
     val text: String = "",
     val send: EssaySend = EssaySend.Idle,
     val finishing: Boolean = false,
-    val finishFailed: Boolean = false,
+    val finishFailures: Int = 0,
     /** The block is done, so only going on is left. */
     val finished: Boolean = false,
     /** The essay's latest read says it was completed or skipped. */
@@ -166,11 +166,17 @@ class EssayViewModel(
     /** Every draft still being graded is recorded first, so the block counts it. */
     fun finish() {
         if (mutableUi.value.finishing || move.value.busy) return
-        mutableUi.update { it.copy(finishing = true, finishFailed = false) }
+        mutableUi.update { it.copy(finishing = true) }
         viewModelScope.launch {
             sending.values.toList().awaitAll()
             val finished = mutableUi.value.finished || store.finish(sessionId, blockId) is MutationResult.Done
-            mutableUi.update { it.copy(finishing = false, finishFailed = !finished, finished = finished) }
+            mutableUi.update {
+                it.copy(
+                    finishing = false,
+                    finishFailures = if (finished) 0 else it.finishFailures + 1,
+                    finished = finished,
+                )
+            }
             if (finished) mover.continueSession()
         }
     }

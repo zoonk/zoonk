@@ -21,7 +21,8 @@
   "practice_pause_stop": "fea96b27bf850935e3d3631431ebc09f09f383bf170084c7b7df010830a28b73",
   "practice_pause_text": "114e0e367ebabbb00a7d9c949186a5f30ec40416f15848c80267acc3b17281f5",
   "practice_progress": "77ef3640b5f3cb2a53840adbcd50d425cbe33e4a17a2507e6200ba9943e094e3",
-  "practice_save_error": "3574638047aaaf457cf701a79cef64de97947f41c0ceb00d202858736ed8c309",
+  "practice_save_error": "fab07730c38e3e42a30a35376cd817b07ab07eb02975a7636a9b60e2da899d76",
+  "practice_save_error_repeat": "8791c509134f1240c06c96933817002a0da09655c2dbe3c6fb1b806e4b783cfa",
   "practice_time_machine_answered": "4c82a0c75c7bc99bb0585dfffcdaf7e11a175ff22912664ca28e43c05c8a2333",
   "practice_time_machine_right_again": "2b9ebe37663553bfedcecd3ba845aa50cb281fb6f684c3f42976ac8cecaabd82",
   "practice_time_machine_right_before": "3acb1c54c39cbc4361a6fc1f1cef300eb3a0926243dd719c55c66bafad81329d",
@@ -49,7 +50,8 @@
     <string name="practice_finish_ready_title">Tu n’as plus de questions auxquelles répondre</string>
     <string name="practice_finish_ready_detail">Termine pour voir ton résultat.</string>
     <string name="practice_already_answered">Tu as déjà répondu à cette question.</string>
-    <string name="practice_save_error">Ça n’a pas fonctionné. Tes réponses sont conservées.</string>
+    <string name="practice_save_error">Ça n’a pas marché. Tes réponses sont conservées.</string>
+    <string name="practice_save_error_repeat">Ça ne marche toujours pas. Tu peux revenir plus tard.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d bonne réponse</item>
         <item quantity="many">%d bonnes réponses</item>

@@ -298,13 +298,11 @@ private fun ColumnScope.TestQuestion(
         labels = TrueFalseLabels.TRUE_FALSE,
         typedWords = null,
         pending = vm.isSaving,
-        answerFailed = vm.answerFailed,
-        finishFailed = false,
+        saveFailures = vm.saveFailures,
         onAnswer = { answer, durationMs ->
             val index = answer.selectedIndex()
             vm.answer(question.id, index, durationMs, skipped = noAudio && index == null)
         },
-        onRetry = vm::retryAnswer,
         onStop = vm::stop,
         dontKnowLabel =
             stringResource(

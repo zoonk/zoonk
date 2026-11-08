@@ -221,7 +221,7 @@ class LevelTestStepFlowTest {
         tap("Confirm")
 
         api.replyLost = false
-        tap("Try again")
+        tap("Confirm")
 
         assertEquals(1, api.levelTestAnswers.size)
         rule.onNodeWithText("Marco va al mercato ogni sabato.").assertDoesNotExist()
@@ -309,7 +309,7 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         api.writeFailure = null
-        tap("Try again")
+        tap("Confirm")
 
         assertEquals(2, api.levelTestAnswers.size)
         assertEquals(api.levelTestAnswers[0], api.levelTestAnswers[1])

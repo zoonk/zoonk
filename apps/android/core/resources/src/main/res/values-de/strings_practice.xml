@@ -22,6 +22,7 @@
   "practice_pause_text": "cb67f57edb3adea809c1953db89afd75aa70c766ce7fd4b7f068f6e48a7cfbb0",
   "practice_progress": "4707ca12868e3de449fba552a619c8e4e338c13064623ff54b6cf36c17fbb674",
   "practice_save_error": "778cf93d508dc4084568a49aaabb120db91ad01f5828dd04ec26b01a94a00e8a",
+  "practice_save_error_repeat": "efaeb3f5433f1712bd9eb668ad39de61576217520221aa824d396e013d1afb48",
   "practice_time_machine_answered": "463b480ab84ca1c021e8a1c1c7208ffb0972712229448d426c531fcac1abcf09",
   "practice_time_machine_right_again": "e9156bc03ee2d3612b5c45f3cb4a4f91fdf318809844799130f03361e2244150",
   "practice_time_machine_right_before": "f11e191d799f2ddfdea3571e0ce2230c3bc98d77506876cb899568db877152d2",
@@ -50,6 +51,7 @@
     <string name="practice_finish_ready_detail">Schließ die Übung ab, um zu sehen, wie es lief.</string>
     <string name="practice_already_answered">Du hast diese Frage bereits beantwortet.</string>
     <string name="practice_save_error">Das hat nicht geklappt. Deine Antworten bleiben erhalten.</string>
+    <string name="practice_save_error_repeat">Das klappt immer noch nicht. Du kannst später wiederkommen.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d richtig</item>
         <item quantity="other">%d richtig</item>

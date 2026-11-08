@@ -298,7 +298,7 @@ internal fun FocusTestQuestions(
         app = app,
         screen = "focus-test",
         pending = ui.sending,
-        failed = ui.sendFailed,
+        failures = ui.sendFailures,
         onAnswer = viewModel::answer,
         onSend = viewModel::send,
         onClose = onClose,

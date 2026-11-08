@@ -189,7 +189,6 @@
   "onboarding_placement_stop_mock": "fc3cd2f38e4338a0817eda61a0d372dd8f4c40eddc9244ad57c071e509ad53a8",
   "onboarding_placement_title": "1fb7419f21f7b2c123fb9af56d80d732e0e83e2ef6427d0fb7a9a46b555ba9f6",
   "onboarding_placement_true": "78840871089f7443e3dc308975c96fb03df5205bde839407f155191fd8a9c91e",
-  "onboarding_placement_try_again": "61641c215f113c97ab4000b2a606c328ff75ec243ccaf56ff9483cb0ba4a70d7",
   "onboarding_placement_unavailable_description": "2c50fb8650f540b239bbae81cf3f00bdbf5b1854e38e088d4a71249a3964e21c",
   "onboarding_placement_unavailable_title": "35517e8ac95ef2f61bf32984add2b7016078c64c11da8a5ace59db140e8042c2",
   "onboarding_placement_waiting_material": "f2d75cad058df9b09c594a8434269daa678b2d57aa185d4e9a602812ed87d739",
@@ -646,7 +645,6 @@
     <string name="onboarding_placement_confirm">Confirmar</string>
     <string name="onboarding_placement_stop">Parar aquí y ver mi plan</string>
     <string name="onboarding_placement_answer_failed">No se pudo guardar. Conservamos tus respuestas.</string>
-    <string name="onboarding_placement_try_again">Intentar de nuevo</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">Verdadero</string>
     <string name="onboarding_placement_false">Falso</string>

@@ -69,7 +69,7 @@ class CheckpointViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    update { it.copy(pending = false, error = DuelError.Answer) }
+                    update { it.copy(pending = false, error = DuelError.Answer, saveFailures = it.saveFailures + 1) }
                     if (result.code in STALE) reread()
                 }
 
@@ -103,7 +103,7 @@ class CheckpointViewModel(
                     }
 
                     is MutationResult.Failed -> {
-                        update { it.copy(pending = false, error = DuelError.Finish) }
+                        update { it.copy(pending = false, error = DuelError.Finish, saveFailures = it.saveFailures + 1) }
                     }
 
                     MutationResult.Obsolete -> {}

@@ -105,7 +105,7 @@ internal fun ChoiceQuestionsRun(
     app: AppContainer,
     screen: String,
     pending: Boolean,
-    failed: Boolean,
+    failures: Int,
     onAnswer: (Question, Answer) -> Unit,
     onSend: () -> Unit,
     onClose: () -> Unit,
@@ -123,7 +123,7 @@ internal fun ChoiceQuestionsRun(
     val question = questions.getOrNull(shown)
     var saved by rememberDraft()
     val pick = saved.answerFor(shown, question)
-    val locked = pending || failed || sent
+    val locked = pending || failures > 0 || sent
     var sender by rememberSaveable { mutableStateOf<AnswerSender?>(null) }
 
     fun send(
@@ -155,7 +155,7 @@ internal fun ChoiceQuestionsRun(
                 null
             } else {
                 {
-                    if (failed && !pending) SaveErrorText(onSend)
+                    if (failures > 0 && !pending) SaveErrorText(failures, onSend)
                     TaskActions { width ->
                         if (question != null) {
                             NotSureButton(

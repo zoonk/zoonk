@@ -292,10 +292,13 @@ fun ListeningSet(set: ItemSet) {
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */
 @Composable
-fun SaveErrorText(onRetry: (() -> Unit)? = null) {
+fun SaveErrorText(
+    failures: Int,
+    onRetry: (() -> Unit)? = null,
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
-            text = stringResource(R.string.practice_save_error),
+            text = stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.practice_save_error),
             modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,

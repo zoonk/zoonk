@@ -51,7 +51,7 @@ internal class LevelTestViewModel(
     var isSaving by mutableStateOf(false)
         private set
 
-    var answerFailed by mutableStateOf(false)
+    var saveFailures by mutableStateOf(0)
         private set
 
     var finishFailed by mutableStateOf(false)
@@ -112,33 +112,52 @@ internal class LevelTestViewModel(
         skipped: Boolean = false,
     ) {
         if (isSaving) return
-        sent = SentTestAnswer(questionId, answerIndex, durationMs, skipped)
-        send()
-    }
-
-    /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
-    fun retryAnswer() {
-        val answer = sent ?: return
-        if (isSaving) return
+        val previous = sent
+        val duration =
+            previous
+                ?.takeIf {
+                    it.questionId == questionId && it.answerIndex == answerIndex && it.skipped == skipped
+                }?.durationMs ?: durationMs
+        val answer = SentTestAnswer(questionId, answerIndex, duration, skipped)
         isSaving = true
         viewModelScope.launch {
-            test.refresh()
-            val current = (phase(test.state.value) as? LevelTestPhase.Question)?.question?.id
-            isSaving = false
-            if (current == answer.questionId) {
-                send()
-            } else {
-                sent = null
-                answerFailed = false
+            if (previous != null) {
+                if (!test.refreshed()) {
+                    saveFailures++
+                    isSaving = false
+                    return@launch
+                }
+                val current = (phase(test.state.value) as? LevelTestPhase.Question)?.question?.id
+                if (current != questionId) {
+                    sent = null
+                    saveFailures = 0
+                    finishFailed = false
+                    isSaving = false
+                    return@launch
+                }
             }
+            sent = answer
+            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
+                is WriteOutcome.Done -> {
+                    sent = null
+                    saveFailures = 0
+                    finishFailed = false
+                }
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    saveFailures++
+                }
+            }
+            isSaving = false
         }
     }
 
     /** The learner leaves the questions for the levels they have so far, saved so reopening the test shows them too. */
     fun stop() {
         if (isSaving) return
-        stopped = true
-        finish {}
+        finish { stopped = true }
     }
 
     fun finish(onDone: () -> Unit) {
@@ -148,6 +167,7 @@ internal class LevelTestViewModel(
         viewModelScope.launch {
             when (store.finishLevelTest(goalId)) {
                 is WriteOutcome.Done -> {
+                    saveFailures = 0
                     onDone()
                 }
 
@@ -155,26 +175,7 @@ internal class LevelTestViewModel(
 
                 else -> {
                     finishFailed = true
-                }
-            }
-            isSaving = false
-        }
-    }
-
-    private fun send() {
-        val answer = sent ?: return
-        isSaving = true
-        answerFailed = false
-        viewModelScope.launch {
-            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
-                is WriteOutcome.Done -> {
-                    sent = null
-                }
-
-                WriteOutcome.Obsolete -> {}
-
-                else -> {
-                    answerFailed = true
+                    saveFailures++
                 }
             }
             isSaving = false

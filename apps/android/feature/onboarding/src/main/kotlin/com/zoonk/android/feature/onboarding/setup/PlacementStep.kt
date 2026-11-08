@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +49,6 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
-import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
@@ -174,10 +172,8 @@ internal fun ColumnScope.PlacementStep(
                     labels = shown.labels,
                     typedWords = rememberUnsentWords(goalId, typedDraftStep(shown.item.itemId), count = 1),
                     pending = vm.isSaving,
-                    answerFailed = vm.answerFailed,
-                    finishFailed = vm.finishFailed,
+                    saveFailures = vm.saveFailures,
                     onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                    onRetry = vm::retryAnswer,
                     onStop = { finish(false) },
                 )
             }
@@ -351,6 +347,8 @@ private class Choice(
     val rich: Boolean,
 )
 
+private enum class PlacementSender { Confirm, DontKnow, Stop }
+
 /** Shared with the language level test; only a typed question needs [typedWords]. */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
@@ -359,10 +357,8 @@ internal fun ColumnScope.PlacementQuestion(
     labels: TrueFalseLabels,
     typedWords: UnsentWords?,
     pending: Boolean,
-    answerFailed: Boolean,
-    finishFailed: Boolean,
+    saveFailures: Int,
     onAnswer: (PlacementAnswer, Long) -> Unit,
-    onRetry: () -> Unit,
     onStop: () -> Unit,
     dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
     media: @Composable () -> Unit = {},
@@ -370,7 +366,7 @@ internal fun ColumnScope.PlacementQuestion(
     val choices = choices(item.format, labels)
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
     val typed = typedWords?.values?.first().orEmpty()
-    var sent by rememberSaveable { mutableStateOf(false) }
+    var sender by rememberSaveable { mutableStateOf<PlacementSender?>(null) }
     val shownAt = remember { SystemClock.elapsedRealtime() }
     val answer: PlacementAnswer? =
         if (item.format == PlacementFormat.Typed) {
@@ -378,13 +374,13 @@ internal fun ColumnScope.PlacementQuestion(
         } else {
             picked?.let { choices.getOrNull(it)?.answer }
         }
-    val send = { chosen: PlacementAnswer ->
+    val send = { chosen: PlacementAnswer, pressed: PlacementSender ->
         if (!pending) {
-            sent = true
+            sender = pressed
             onAnswer(chosen, SystemClock.elapsedRealtime() - shownAt)
         }
     }
-    val confirm = { answer?.let(send) }
+    val confirm = { answer?.let { send(it, PlacementSender.Confirm) } }
     val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
 
     QuestionPages(
@@ -414,35 +410,47 @@ internal fun ColumnScope.PlacementQuestion(
             }
         },
     ) {
-        if (answerFailed && sent && !pending) {
-            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                Text(
-                    stringResource(R.string.onboarding_placement_answer_failed),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.onboarding_placement_try_again)) }
-            }
+        if (saveFailures > 0 && !pending) {
+            Text(
+                stringResource(if (saveFailures > 1) R.string.practice_save_error_repeat else R.string.onboarding_placement_answer_failed),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
-        FinishFailed(finishFailed)
         BesideOrAbove(
             start = {
                 OutlinedButton(
-                    onClick = { send(DONT_KNOW) },
+                    onClick = { send(DONT_KNOW, PlacementSender.DontKnow) },
+                    busy = pending && sender == PlacementSender.DontKnow,
                     enabled = !pending,
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                    focusableWhenDisabled = pending,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
                 ) {
-                    Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
-                    Text(dontKnowLabel, modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+                    Text(dontKnowLabel)
                 }
             },
             end = {
-                Button(onClick = { confirm() }, enabled = answer != null && !pending) {
+                Button(
+                    onClick = { confirm() },
+                    busy = pending && sender == PlacementSender.Confirm,
+                    enabled = answer != null && !pending,
+                    focusableWhenDisabled = pending,
+                ) {
                     Text(stringResource(R.string.onboarding_placement_confirm))
                 }
             },
         )
-        TextButton(onClick = onStop, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            onClick = {
+                sender = PlacementSender.Stop
+                onStop()
+            },
+            busy = pending && sender == PlacementSender.Stop,
+            enabled = !pending,
+            focusableWhenDisabled = pending,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Text(stringResource(R.string.onboarding_placement_stop))
         }
     }

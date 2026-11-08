@@ -21,7 +21,8 @@
   "practice_pause_stop": "0c3937460124c9a1f50fec1b8d897e8056ed90ff9e189722ff2d4495847fe3e7",
   "practice_pause_text": "19a5abab3f49643860620d4bb4d024bdc0e0354893e4ccee7e45843f81f8da55",
   "practice_progress": "00a778f09dc80d92642d4637c3be526cbeca9181a62672f10d3c2529638d3bf4",
-  "practice_save_error": "9c4b803bd02c9e0f5ad8f0a0408b8a4261ec4bc845f82e1715c44c443ca0b142",
+  "practice_save_error": "168fc2b93ca9cceba86314e981bd0513044ef87a18a5c84a602c6cfdf9e8d0c5",
+  "practice_save_error_repeat": "84e75b6ec06db8396af897616a2964d8fbfa6a0e6fb1f9cf9227d585c7bc31b5",
   "practice_time_machine_answered": "339b64a0c26e40fe712a80e6505834b1bb31473e759ea4a230977c82e424ba81",
   "practice_time_machine_right_again": "4070a0f0037b2c31eca7338b85b85bff58b6a19c761a9d80ab37409e83578e05",
   "practice_time_machine_right_before": "8c2db5c4e382fe601878121b85c4207bb0b9c2c4fca646de34f5c008214ba64a",
@@ -49,7 +50,8 @@
     <string name="practice_finish_ready_title">Não falta nenhuma resposta</string>
     <string name="practice_finish_ready_detail">Conclua para ver como você foi.</string>
     <string name="practice_already_answered">Você já respondeu a esta pergunta.</string>
-    <string name="practice_save_error">Não deu certo. Suas respostas estão guardadas.</string>
+    <string name="practice_save_error">Não deu certo. Suas respostas foram mantidas.</string>
+    <string name="practice_save_error_repeat">Ainda não deu certo. Você pode voltar mais tarde.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d acerto</item>
         <item quantity="many">%d acertos</item>
