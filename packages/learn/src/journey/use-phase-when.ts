@@ -21,7 +21,7 @@ function useFormatEstimate() {
   };
 }
 
-export function usePlanEndText(): string | null {
+function usePlanEndText(): string | null {
   const t = useExtracted();
   const formatEstimate = useFormatEstimate();
   const { plan } = usePlanScreen();
