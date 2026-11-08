@@ -412,9 +412,13 @@ class LessonPlayerViewModel(
         val spoken = step?.content as? StepContent.SpokenAnswer
 
         if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
-        if (!awaitRun()) return GradeOutcome.Failed
-
+        activate()
         dispatch(LessonAction.CheckStarted(stepId))
+        if (!awaitRun()) {
+            dispatch(LessonAction.CheckFailed(stepId))
+            return GradeOutcome.Failed
+        }
+        if (mutableState.value?.currentStep?.id != stepId) return GradeOutcome.Obsolete
         val outcome =
             withTimeoutOrNull(SPOKEN_TIMEOUT) {
                 cache

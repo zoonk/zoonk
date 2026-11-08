@@ -21,6 +21,7 @@ import com.zoonk.api.models.StudyBlockOpening
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -135,6 +136,38 @@ class LessonStartTest {
             api.startGate!!.complete(Unit)
             advanceUntilIdle()
             assertEquals(1, api.checks.size)
+        }
+
+    @Test fun spokenGradingShowsBusyAndWaitsForAdmission() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(spokenStep("say")))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
+            var graded = false
+            api.spokenGrade = {
+                graded = true
+                throw com.zoonk.android.data
+                    .ApiException(com.zoonk.android.data.ApiError.Network)
+            }
+            val vm = player("""{"target":{"kind":"block","blockId":"00000000-0000-0000-0000-000000000001"}}""", tapped = false)
+            vm.open(lesson)
+            runCurrent()
+            val grading =
+                backgroundScope.launch {
+                    vm.gradeSpoken(
+                        "say",
+                        com.zoonk.android.feature.audio
+                            .VoiceRecording(ByteArray(8), 1200),
+                    )
+                }
+            runCurrent()
+            assertEquals(com.zoonk.android.feature.player.engine.LessonPhase.Checking, vm.state.value?.phase)
+            assertTrue(!graded)
+            assertEquals(1, api.startOpenings.size)
+            api.startGate!!.complete(Unit)
+            runCurrent()
+            assertTrue(graded)
+            assertTrue(grading.isCompleted)
         }
 
     @Test fun writtenStepsNavigateBeforeAdmissionAndStartWithTheirExactOpening() =
