@@ -169,11 +169,15 @@ test.describe("Onboarding from a typed goal", () => {
     });
 
     // Leaving before Start brings the plan back; Start ends onboarding.
+    const resumePlan = page
+      .getByRole("link", { exact: true, name: "See your plan" })
+      .and(page.locator(`a[href="/start/${created.id}"]`));
+
     await page.goto("/today");
-    await page.getByRole("link", { name: "See your plan" }).click();
+    await resumePlan.click();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(/\/today$/u);
-    await expect(page.getByRole("link", { name: "See your plan" })).toBeHidden();
+    await expect(resumePlan).toBeHidden();
   });
 });
 
