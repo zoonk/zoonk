@@ -14,11 +14,13 @@ import {
   toIsoDate,
 } from "./plan-calendar";
 import { createExamDays, createLearnDays } from "./plan-days";
+import { getItemKey } from "./plan-items";
 import { findExamWindow, getKeptExamWindows } from "./plan-phases";
 import { type PlanSettings } from "./plan-state";
-import { type QueueUnit } from "./plan-units";
+import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
-import { type FixedEvent, listPlanDays } from "./schedule-units";
+import { type FixedEvent, type PlanDay, listPlanDays } from "./schedule-units";
+import { getTaughtDay } from "./whole-boss";
 
 export type RunDayInput = Pick<
   BuildPlanInput,
@@ -130,6 +132,43 @@ function describeRunDays({
   };
 }
 
+/** Lessons finished today already took part of today's time, so the rest of today holds only what's left. */
+function reserveFinishedToday({
+  days,
+  input,
+  units,
+}: {
+  days: PlanDay[];
+  input: BuildPlanInput;
+  units: readonly QueueUnit[];
+}): PlanDay[] {
+  const today = input.today.getTime();
+  const byKey = new Map(units.map((unit) => [unit.key, unit]));
+
+  const minutes = input.items
+    .filter(
+      (item) =>
+        item.kind === "lesson" &&
+        item.status === "done" &&
+        getTaughtDay({ input, item })?.getTime() === today,
+    )
+    .reduce(
+      (total, item) =>
+        total + (byKey.get(getItemKey(item))?.minutes ?? DEFAULT_LESSON_MINUTES * input.paceFactor),
+      0,
+    );
+
+  if (minutes === 0) {
+    return days;
+  }
+
+  return days.map((day) =>
+    day.date.getTime() === today
+      ? { ...day, shape: { ...day.shape, reserved: (day.shape.reserved ?? 0) + minutes } }
+      : day,
+  );
+}
+
 export function listFundedPlanDays({
   days,
   input,
@@ -145,10 +184,14 @@ export function listFundedPlanDays({
 }) {
   const { describeDay } = describeRunDays({ days, settings: input.settings });
 
-  const planDays = listPlanDays({
-    describeDay,
-    horizonDays: getHorizonDays({ input, start: input.today }),
-    start: input.today,
+  const planDays = reserveFinishedToday({
+    days: listPlanDays({
+      describeDay,
+      horizonDays: getHorizonDays({ input, start: input.today }),
+      start: input.today,
+    }),
+    input,
+    units,
   });
 
   return fundMocks({

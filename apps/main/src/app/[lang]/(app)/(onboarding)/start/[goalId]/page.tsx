@@ -13,6 +13,7 @@ import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
+import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -90,17 +91,25 @@ async function StepsContent({ params }: Props) {
   }
 
   // A planner failure must not block the earlier answers.
-  const [plan, syllabus] =
+  const [plan, syllabus, today] =
     (result.onboarding.steps[0] ?? "plan") === "plan"
-      ? await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })])
-      : [null, null];
+      ? await Promise.all([
+          getGoalPlan(goalId),
+          getSyllabusView({ goalId }),
+          getPlanRevealToday(goalId),
+        ])
+      : [null, null, null];
 
   return (
     <OnboardingPage backHref="/today">
       <StepsClient
         initialPlan={
           plan?.status === "ready"
-            ? { plan: plan.plan, syllabus: syllabus?.status === "ready" ? syllabus.syllabus : null }
+            ? {
+                plan: plan.plan,
+                syllabus: syllabus?.status === "ready" ? syllabus.syllabus : null,
+                today: today?.status === "ready" ? today.session : null,
+              }
             : null
         }
         isGuest={Boolean(session?.user.isAnonymous)}

@@ -199,11 +199,11 @@ export async function computePlan({
     ]);
 
   const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
-    aim: state.goal.aim ?? null,
     bands: loaded.bands,
     goal: context.goal,
     graph: resolved,
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
+    state,
   });
 
   const inputs = {

@@ -18,6 +18,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
+import { studyDayResponseSchema } from "../src/lib/openapi/schemas/study-day";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
@@ -231,6 +232,39 @@ test.describe("Today API", () => {
     expect(after.session).toStrictEqual(opened.session);
 
     await api.dispose();
+  });
+
+  test("shows the reveal's Today before the plan is seen, as Today will, saving nothing", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "reveal-today" }),
+      createBearerLearner({ baseURL, prefix: "reveal-today-other" }),
+    ]);
+
+    const { goal, lesson } = await createExamGoal(userId);
+    await prisma.goal.update({ data: { planRevealedAt: null }, where: { id: goal.id } });
+
+    const path = `/v1/goals/${goal.id}/plan-reveal/today?timeZone=UTC`;
+
+    const [gated, reveal, theirs] = await Promise.all([
+      api.get("/v1/today?timeZone=UTC"),
+      api.get(path),
+      other.api.get(path),
+    ]);
+
+    expect([gated.status(), reveal.status(), theirs.status()]).toStrictEqual([409, 200, 404]);
+    await expect(gated.json()).resolves.toMatchObject({ error: { code: "PLAN_NOT_READY" } });
+
+    const day = studyDayResponseSchema.parse(await reveal.json());
+    expect(day.status).toBe("unstarted");
+    expect(day.blocks.map((block) => block.lessonId)).toContain(lesson.id);
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
+    await prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } });
+    const opened = await api.get("/v1/today?timeZone=UTC");
+    const today = todayResponseSchema.parse(await opened.json());
+    expect(today.session).toStrictEqual(day);
+
+    await Promise.all([api.dispose(), other.api.dispose()]);
   });
 
   test("shares exact saved mock funding and fractional budgets through Today and Plan", async () => {

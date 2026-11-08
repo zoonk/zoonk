@@ -10,10 +10,7 @@ import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-sug
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
-import {
-  type LessonGenerationState,
-  getLessonGenerationStates,
-} from "../../library/generation/lesson-generation-state";
+import { type LessonGenerationState } from "../../library/generation/lesson-generation-state";
 import {
   type GoalUploadRequest,
   toGoalUploadRequest,
@@ -28,7 +25,6 @@ import {
 import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type PlanStatus } from "../../preparation/plan-status";
-import { withLessonScreens } from "../../sessions/_utils/lesson-screens";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
@@ -37,6 +33,7 @@ import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
 import { type TodayAdmission, admitToday } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
+import { readDaySession } from "./_utils/day-session";
 import { listEarlierWork } from "./_utils/earlier-work";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
@@ -160,10 +157,6 @@ async function loadSessionDay({
 }) {
   const studySession = day.session;
 
-  const lessonIds = studySession.blocks.flatMap((block) =>
-    block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
-  );
-
   const shortPlan = await loadShortPlanDay({
     goal,
     source: day.selection
@@ -176,9 +169,9 @@ async function loadSessionDay({
     today: studySession.localDate,
   });
 
-  const [studied, lessonStates, exam] = await Promise.all([
+  const [studied, { lessonStates, session }, exam] = await Promise.all([
     hasStudiedOn({ localDate: studySession.localDate, userId }),
-    getLessonGenerationStates(lessonIds),
+    readDaySession(day),
     loadExamMoment({
       goal,
       includesMockExams: studySession.examAccess.includesMockExams,
@@ -187,13 +180,7 @@ async function loadSessionDay({
     }),
   ]);
 
-  return {
-    exam,
-    lessonStates,
-    shortPlan,
-    studied,
-    studySession: withLessonScreens(studySession, lessonStates, { saved: day.selection === null }),
-  };
+  return { exam, lessonStates, shortPlan, studied, studySession: session };
 }
 
 async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {

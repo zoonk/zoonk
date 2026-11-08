@@ -95,6 +95,29 @@ describe(createGoals, () => {
     expect(profile.activeGoalId).toBe(goalId);
   });
 
+  it("starts a language goal's plan stopping at its aim", async () => {
+    await useLearner();
+
+    const result = await createGoals({
+      dailyMinutes: 30,
+      goals: [
+        draft({
+          details: { targetScore: "A2" },
+          kind: "language",
+          prompt: "Italian for my trip",
+          targetLanguage: "it",
+          title: "Learn Italian",
+        }),
+      ],
+      timeZone: "America/Sao_Paulo",
+    });
+
+    const goalId = result.status === "created" ? result.goals[0]?.id : "";
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+
+    expect(plan.settings).toMatchObject({ stopsAtAim: true });
+  });
+
   it("gives a language certificate's exam goal the language it tests when onboarding leaves it out", async () => {
     await useLearner();
 

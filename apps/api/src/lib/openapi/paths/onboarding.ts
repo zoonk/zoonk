@@ -1,3 +1,4 @@
+import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import {
   goalUnderstandingInputSchema,
   onboardingAnswerInputSchema,
@@ -20,6 +21,7 @@ import {
   unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
+import { studyDayResponseSchema } from "../schemas/study-day";
 import { AUTHENTICATED_SECURITY } from "../security";
 
 const location = z.object({
@@ -207,6 +209,29 @@ export const onboardingPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Answer an onboarding question",
+      tags: ["Onboarding"],
+    },
+  },
+  "/goals/{goalId}/plan-reveal/today": {
+    get: {
+      description:
+        "The day Today will show, read for the plan reveal's Today before the learner has seen their plan: the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included, for a goal whose reveal is still ahead. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
+      operationId: "getPlanRevealToday",
+      requestParams: { path: goalPathParamsSchema, query: studySessionTimeZoneInputSchema },
+      responses: {
+        ...goalErrors,
+        "200": {
+          content: { "application/json": { schema: studyDayResponseSchema } },
+          description: "The day Today will show",
+        },
+        "409": {
+          ...conflictResponse,
+          description:
+            "The goal is paused, completed or archived, or its plan isn't ready (`PLAN_NOT_READY`, with the goal in `details`), as `GET /today` answers",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get the plan reveal's Today",
       tags: ["Onboarding"],
     },
   },

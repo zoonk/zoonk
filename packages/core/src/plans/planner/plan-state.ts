@@ -1,5 +1,4 @@
 import { CourseLevel } from "@zoonk/db/enums";
-import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
@@ -129,6 +128,11 @@ const planSettingsSchema = z.object({
   skippedActivities: z.array(z.enum(LANGUAGE_ACTIVITY_TYPES)).default([]),
   skippedAreas: z.array(z.string()).default([]),
   startDate: isoDateSchema.nullable().default(null),
+  /**
+   * A language plan studies only the situations up to its aim's band. Plans laid out before that
+   * rule keep every band until the learner moves their aim.
+   */
+  stopsAtAim: z.boolean().default(false),
   team: challengeTeamSchema.nullable().default(null),
   tools: z.array(toolChoiceSchema).default([]),
   weekdayMinutes: z
@@ -164,7 +168,7 @@ export type StoredBaseChoice = z.infer<typeof baseChoiceSchema>;
 export const planStateSchema = z.object({
   goal: z.object({
     /** A language goal's aim (its `targetScore`); absent from snapshots saved before it was kept. */
-    aim: z.enum(CEFR_LEVELS).nullable().optional(),
+    aim: z.string().nullable().optional(),
     dailyMinutes: z.int(),
     targetDate: isoDateSchema.nullable(),
   }),
