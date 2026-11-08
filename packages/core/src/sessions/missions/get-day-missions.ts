@@ -4,7 +4,6 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { withLessonDisplayMinutes } from "../_utils/lesson-display-minutes";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
 import { readMissionDocument } from "./catalog";
@@ -31,8 +30,7 @@ export async function getDayMissions({
     return [];
   }
 
-  const blocks =
-    displayBlocks ?? (await withLessonDisplayMinutes({ blocks: storedSession.blocks, client }));
+  const blocks = displayBlocks ?? storedSession.blocks;
 
   const missions = await loadMissionDayViews({
     client,

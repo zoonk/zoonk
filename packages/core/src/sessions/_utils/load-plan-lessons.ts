@@ -20,15 +20,20 @@ const LESSON_INCLUDE = {
 function toPlannedLesson({
   item,
   lesson,
+  paceFactor = 1,
 }: {
   item: LearnItem | null;
   lesson: LessonWithSkills;
+  paceFactor?: number;
 }): PlannedLesson {
   return {
     canDo: lesson.canDo,
     chapterId: item?.chapterId ?? lesson.homeChapterId,
     lessonId: lesson.id,
-    minutes: lesson.estimatedMinutes || DEFAULT_LESSON_MINUTES,
+    minutes: Math.max(
+      1,
+      Math.round((lesson.estimatedMinutes || DEFAULT_LESSON_MINUTES) * paceFactor),
+    ),
     planItemId: item?.id ?? null,
     planItemKey: item ? getItemKey(item) : null,
     planSkillId: item?.skillId ?? null,
@@ -40,8 +45,12 @@ function toPlannedLesson({
 /** Deleted, set-aside, and unoutlined lessons are omitted. */
 export async function loadPlanLessons({
   items,
+  paceFactor = 1,
+  client = prisma,
 }: {
   items: readonly LearnItem[];
+  paceFactor?: number;
+  client?: Pick<typeof prisma, "lesson">;
 }): Promise<PlannedLesson[]> {
   const lessonIds = items.flatMap((item) => item.lessonId ?? []);
 
@@ -49,14 +58,14 @@ export async function loadPlanLessons({
     return [];
   }
 
-  const lessons = await prisma.lesson.findMany({
+  const lessons = await client.lesson.findMany({
     include: LESSON_INCLUDE,
     where: { id: { in: lessonIds }, setAsideAt: null },
   });
 
   return items.flatMap((item) => {
     const lesson = lessons.find((candidate) => candidate.id === item.lessonId);
-    return lesson ? [toPlannedLesson({ item, lesson })] : [];
+    return lesson ? [toPlannedLesson({ item, lesson, paceFactor })] : [];
   });
 }
 
@@ -64,9 +73,11 @@ export async function loadPlanLessons({
 export async function loadLessonsForSkills({
   limit,
   skillIds,
+  paceFactor = 1,
 }: {
   limit: number;
   skillIds: readonly string[];
+  paceFactor?: number;
 }): Promise<PlannedLesson[]> {
   const rows = await prisma.lessonSkill.findMany({
     include: { lesson: { include: LESSON_INCLUDE } },
@@ -83,7 +94,9 @@ export async function loadLessonsForSkills({
     (lesson, index) => bySkill.findIndex((other) => other.id === lesson.id) === index,
   );
 
-  return unique.slice(0, limit).map((lesson) => toPlannedLesson({ item: null, lesson }));
+  return unique
+    .slice(0, limit)
+    .map((lesson) => toPlannedLesson({ item: null, lesson, paceFactor }));
 }
 
 /** Look ahead after keptLessonIds so retained work cannot consume the window for newly landed lessons. */
@@ -91,6 +104,7 @@ export function loadUpcomingLessons({
   dayMinutes,
   items,
   keptLessonIds,
+  paceFactor,
 }: Parameters<typeof loadPlanLessons>[0] & {
   dayMinutes: number;
   keptLessonIds?: ReadonlySet<string>;
@@ -99,5 +113,34 @@ export function loadUpcomingLessons({
     items: items
       .filter((item) => !item.lessonId || !keptLessonIds?.has(item.lessonId))
       .slice(0, getLessonLookahead(dayMinutes)),
+    paceFactor,
   });
+}
+
+export async function loadDayPlanLessons({
+  dayMinutes,
+  fillItems,
+  keptLessonIds,
+  learnItems,
+  paceFactor,
+}: {
+  dayMinutes: number;
+  fillItems: readonly LearnItem[];
+  keptLessonIds?: ReadonlySet<string>;
+  learnItems: readonly LearnItem[];
+  paceFactor?: number;
+}) {
+  const available = await loadUpcomingLessons({
+    dayMinutes,
+    items: [...learnItems, ...fillItems.filter((item) => !learnItems.includes(item))],
+    keptLessonIds,
+    paceFactor,
+  });
+
+  const allocated = new Set(learnItems.map((item) => getItemKey(item)));
+
+  return {
+    fillLessons: available.filter((lesson) => !allocated.has(lesson.planItemKey ?? "")),
+    lessons: available.filter((lesson) => allocated.has(lesson.planItemKey ?? "")),
+  };
 }

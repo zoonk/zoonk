@@ -77,6 +77,7 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 
 - **Owner's words:** pass 7 R1 "Today must never change under the learner"; round 9 R9-TODAY "system refreshes never remove/reorder blocks (append landed lessons at end within time)".
 - **Check:** once today's session was shown, a `refresh` or `outlinesLanded` keeps every lesson of today still to do, in the same order (a stand-in's landed lessons take its place), and puts new ones after them.
+- A learner completion may remove unstarted tail lessons to fit measured lesson time within today's commitment; their plan items stay `todo`. Background refreshes still never remove or reorder shown work.
 - **Reads:** `todayShown`, `today`, `before.items`, `after.items`.
 
 ### R8. Work carries over
@@ -325,3 +326,9 @@ Still open:
 - Lesson quality: pictures that teach, native visuals where they help, "Spot the AI's mistake" only in work courses, activity variety. These belong to evals.
 - Plus features shown locked, never hidden, and copy tone: screen and E2E checks.
 - Today's count matching the session's rows: needs the built session in the step.
+
+### R46. A plan's first open day gives all its time to lessons
+
+- **Owner's words:** every ordinary day fills the learner's time; on a new plan there is nothing learned to practice yet.
+- **Check:** on plan creation, the original first open day reserves no practice share in lesson allocations, for dated and undated exams and other goals. Closed days, fixed events and the final stretch keep their rules. An after-exam continuation does not become a new first day.
+- **Code:** `checkDayOneLessonShare` (day-rules.ts).

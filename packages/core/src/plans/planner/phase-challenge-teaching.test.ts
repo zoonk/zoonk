@@ -312,12 +312,21 @@ describe("a challenge near a mock", () => {
     };
 
     const built = buildPlan(input);
-    const core = built.items.filter((item) => item.kind === "lesson" && item.phase === 1);
+    const phase = built.phases[1]!;
 
-    const end = core
-      .map((item) => toIsoDate(built.teachingEnds.get(item.key) ?? item.scheduledFor!))
+    const end = [...built.lessonDayMinutes.values()]
+      .flatMap((days) => [...days.keys()])
+      .filter(
+        (day) =>
+          phase.startDate !== null &&
+          phase.endDate !== null &&
+          day >= phase.startDate &&
+          day <= phase.endDate,
+      )
       .toSorted()
       .at(-1)!;
+
+    expect(end).toBeDefined();
 
     const challenge = built.items.find((item) => item.key === "boss:1");
     const day = toIsoDate(challenge!.scheduledFor!);
@@ -325,7 +334,7 @@ describe("a challenge near a mock", () => {
     expect(built.mockFunding.map((mock) => mock.date)).toStrictEqual(["2026-11-06"]);
     expect(built.bossFallback).toBeUndefined();
     expect(day).toBe(built.studyDays.find((study) => study > end));
-    expect(day).toBe("2026-11-05");
+    expect(day).toBe("2026-11-09");
     expect(built.checkpointOverflow).toStrictEqual([{ date: day, minutes: 15 }]);
   });
 });

@@ -23,7 +23,6 @@ import { readBlockPayload } from "../sessions/block-payload";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
-import { getLearningShare } from "./planner/plan-phases";
 import { parsePlanPhases, parsePlanSettings } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
@@ -470,10 +469,9 @@ describe("checkpoint kind facts share the actual planned and played duration", (
       });
 
       const settings = parsePlanSettings(initial.settings);
-      const share = getLearningShare({ phaseKind: "learn", practiceBias: settings.practiceBias });
 
       const lessonMinutes = library.lessons.reduce(
-        (sum, lesson) => sum + (lesson.estimatedMinutes * (settings.pace?.factor ?? 1)) / share,
+        (sum, lesson) => sum + lesson.estimatedMinutes * (settings.pace?.factor ?? 1),
         0,
       );
 

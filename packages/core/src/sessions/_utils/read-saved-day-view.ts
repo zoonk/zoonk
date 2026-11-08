@@ -8,11 +8,11 @@ import { toDayBlockRef } from "../day-block";
 import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
+import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
-import { withLessonDisplayMinutes } from "./lesson-display-minutes";
 import { loadStudySessionView } from "./load-session-view";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -47,8 +47,7 @@ export async function readSavedDayView({
     return view;
   }
 
-  const [display, subjects, blockedTestOutChapters, catchUp] = await Promise.all([
-    withLessonDisplayMinutes({ blocks: refill.blocks }),
+  const [subjects, blockedTestOutChapters, catchUp] = await Promise.all([
     loadBlockSubjects({ blocks: refill.blocks, blueprint, goal: session.goal }),
     loadBlockedTestOutChapters({
       chapterIds: [
@@ -72,7 +71,7 @@ export async function readSavedDayView({
 
   const savedViews = new Map(view.blocks.map((block) => [block.id, block]));
 
-  const blocks = display.map((block) => {
+  const blocks = refill.blocks.map((block) => {
     const saved = block.id ? savedViews.get(block.id) : undefined;
 
     if (saved) {
@@ -103,10 +102,16 @@ export async function readSavedDayView({
       : null,
     emptyDay: null,
     extraTime: getExtraTime({ blocks: refill.blocks }),
-    minutes: {
-      ...view.minutes,
-      planned: refill.blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),
-    },
+    minutes: getSessionMinutes({
+      blocks: refill.blocks,
+      dailyGoal: view.minutes.dailyGoal,
+      planned: getVisibleSessionTotal({
+        blocks: session.blocks,
+        planned: refill.plannedMinutes,
+        visibleIds: new Set(refill.blocks.flatMap((block) => block.id ?? [])),
+      }),
+      reserved: view.lessonsComing || view.lessonsToPrepare,
+    }),
     missions: missions.map((mission): UnstartedDayView["missions"][number] => {
       const { opens, ...rest } = mission;
 

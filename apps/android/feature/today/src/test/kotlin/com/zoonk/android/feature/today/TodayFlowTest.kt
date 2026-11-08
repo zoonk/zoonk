@@ -120,6 +120,7 @@ class TodayFlowTest {
         val minutes =
             buildJsonObject {
                 put("dailyGoal", 20)
+                put("left", 20)
                 put("done", 0)
                 put("planned", 20)
             }

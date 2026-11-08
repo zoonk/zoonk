@@ -23,7 +23,7 @@ function shortInput({
   ...attrs
 }: Partial<BuildPlanInput> & { skills: PlanGraphSkill[] }): BuildPlanInput {
   return {
-    goal: { dailyMinutes: 10, kind: "exam", targetDate: addDays(TODAY, 3) },
+    goal: { dailyMinutes: 5, kind: "exam", targetDate: addDays(TODAY, 3) },
     graph: { phases: [{ milestone: null, name: "Basics" }], skills },
     items: [],
     lessons: [],

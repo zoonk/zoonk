@@ -5,6 +5,8 @@ export const DAY_STATES = ["ahead", "done", "prepare", "rest", "underway", "wait
 export type DayState = (typeof DAY_STATES)[number];
 
 type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPosition"> & {
+  lessonsComing?: boolean;
+  lessonsToPrepare?: boolean;
   blocks: readonly Pick<StudyBlockView, "position" | "status">[];
 };
 
@@ -28,6 +30,10 @@ function getDayState(day: DayStateInput): DayState {
 
   if (hasNext) {
     return "underway";
+  }
+
+  if (day.lessonsComing || day.lessonsToPrepare) {
+    return "waiting";
   }
 
   if (studyDay) {

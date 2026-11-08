@@ -77,12 +77,7 @@ export async function appendLandedLessons({
       });
 
       await transaction.studySession.update({
-        data: {
-          planVersion: savedVersion,
-          plannedMinutes:
-            session.blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0) +
-            lessons.reduce((sum, block) => sum + block.estimatedMinutes, 0),
-        },
+        data: { planVersion: savedVersion },
         where: { id: session.id },
       });
     },

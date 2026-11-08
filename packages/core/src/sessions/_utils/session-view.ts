@@ -5,6 +5,7 @@ import { type studyBlockSchema } from "../block-view-contract";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
+import { type SessionMinutes } from "../session-minutes";
 import { toDayBlockView } from "./day-block-view";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
@@ -58,8 +59,7 @@ export type StudySessionView = {
   hyperdrive: { level: number; streak: number };
   id: string;
   localDate: Date;
-  /** done uses planned durations of completed blocks rather than measured elapsed time. */
-  minutes: { dailyGoal: number; done: number; planned: number };
+  minutes: SessionMinutes;
   missions: Mission[];
   nextBlockId: string | null;
   nextPosition: number | null;

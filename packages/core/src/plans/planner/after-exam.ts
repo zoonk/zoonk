@@ -79,6 +79,7 @@ export function continueAfterExam({
   saved,
   settings,
   start,
+  planStart,
 }: {
   clocks?: readonly MockClock[];
   cursor?: number | null;
@@ -91,6 +92,7 @@ export function continueAfterExam({
   goal: { kind: GoalKind; targetDate: Date | null };
   mockMinutes: number;
   phase: number;
+  planStart: Date;
   settings: Pick<PlanSettings, "fullCourse" | "movedEvents" | "practiceBias">;
   start: Date;
 }): AfterExam | null {
@@ -107,6 +109,7 @@ export function continueAfterExam({
     calendar,
     eventWeekday: getWeeklyEventWeekday(calendar),
     mockMinutes,
+    planStart,
     practiceBias: settings.practiceBias,
     start: firstDay,
     targetDate: null,

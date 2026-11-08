@@ -36,8 +36,7 @@ describe("funding only the exam work the saved plan retains", () => {
       return fixture;
     };
 
-    // A learn plan's first day is all lessons, so the one it matches is past that day.
-    const [exam, learn] = await Promise.all([setup("exam", START), setup("learn", "2020-09-27")]);
+    const [exam, learn] = await Promise.all([setup("exam", START), setup("learn", START)]);
 
     const [saved, examItems, learnItems] = await Promise.all([
       prisma.plan.findUniqueOrThrow({ where: { id: exam.plan.id } }),
