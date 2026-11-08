@@ -61,11 +61,12 @@ async function lockMindMapRow(
   { chapterId, now }: { chapterId: string; now: Date },
 ): Promise<MindMapRow> {
   await transaction.$executeRaw`
-    INSERT INTO chapter_mind_maps (chapter_id, language, status, updated_at)
+    INSERT INTO chapter_mind_maps (chapter_id, language, status, created_at, updated_at)
     VALUES (
       ${chapterId}::uuid,
       (SELECT language FROM library_chapters WHERE id = ${chapterId}::uuid),
       'pending',
+      ${now}::timestamp,
       ${now}::timestamp
     )
     ON CONFLICT (chapter_id) DO NOTHING`;

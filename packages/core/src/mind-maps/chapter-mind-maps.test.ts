@@ -235,6 +235,25 @@ describe("chapter mind maps", () => {
     ).resolves.toStrictEqual([{ targetId: finished }]);
   });
 
+  it("dates a new map's row with the instants the app's own writes store, whatever the database's time zone", async () => {
+    const { finished, goal } = await finishedChapter();
+    const before = Date.now();
+
+    await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+
+    const after = Date.now();
+
+    const row = await prisma.chapterMindMap.findUniqueOrThrow({
+      select: { createdAt: true, updatedAt: true },
+      where: { chapterId: finished },
+    });
+
+    for (const instant of [row.createdAt, row.updatedAt]) {
+      expect(instant.getTime()).toBeGreaterThanOrEqual(before);
+      expect(instant.getTime()).toBeLessThanOrEqual(after);
+    }
+  });
+
   it("claims the map and each lesson it writes first together, or none of them", async () => {
     const { current, goal, lessons, user } = await finishedChapter();
     const [writing, unstarted] = lessons.slice(2).map((lesson) => lesson.id);
