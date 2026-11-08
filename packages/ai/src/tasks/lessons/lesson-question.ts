@@ -4,6 +4,7 @@ import { generateText, streamText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import beyondLessonPrompt from "./lesson-question-beyond.prompt.md";
 import chapterPrompt from "./lesson-question-chapter.prompt.md";
@@ -43,7 +44,10 @@ function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
     variants: getLessonScreenVariants(contextSnapshot),
   });
 
-  return `${systemPrompt}\n${scopePrompt}`;
+  const learnerLanguage =
+    "language" in contextSnapshot ? contextSnapshot.language : contextSnapshot.course.language;
+
+  return fillPromptLanguages({ learnerLanguage, template: `${systemPrompt}\n${scopePrompt}` });
 }
 
 export type LessonQuestionAnswerCompletion = {
