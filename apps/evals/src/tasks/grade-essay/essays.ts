@@ -23,6 +23,14 @@ Além disso, faltam políticas públicas eficientes para enfrentar a questão. H
 
 Portanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.`,
 
+  noProposalFoodWaste: `No Brasil, milhões de toneladas de alimentos são descartadas todos os anos, enquanto parte da população ainda convive com a fome. Esse contraste revela que o desperdício não é apenas um problema econômico, mas também social. Entre as suas principais causas estão os padrões estéticos exigidos pelo comércio e a falta de planejamento no consumo doméstico.
+
+Em primeiro lugar, o comércio impõe um padrão de aparência aos alimentos. Frutas e legumes com pequenas manchas ou formatos irregulares são rejeitados pelos supermercados, embora mantenham o mesmo valor nutritivo. Assim, grande parte da produção é descartada ainda no campo ou nas centrais de abastecimento, antes mesmo de chegar ao consumidor.
+
+Além disso, muitas famílias não planejam suas compras. Atraídas por promoções, elas levam para casa mais do que conseguem consumir, e os alimentos acabam estragando na geladeira. Esse comportamento, repetido em milhões de lares, transforma o desperdício doméstico em uma das maiores fontes de perda de comida no país.
+
+Dessa forma, percebe-se que o desperdício de alimentos no Brasil tem raízes tanto no comércio quanto nos hábitos da população. Enquanto esse cenário persistir, toneladas de comida continuarão indo para o lixo em um país onde tantas pessoas ainda passam fome.`,
+
   offTopicSocialMedia: `O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.
 
 Em primeiro lugar, a exposição precoce às telas afeta o desenvolvimento infantil. Crianças que passam muitas horas conectadas dormem menos, têm mais dificuldade de concentração e, muitas vezes, comparam a própria vida com imagens editadas de influenciadores, o que pode gerar ansiedade.
@@ -48,6 +56,14 @@ Em segundo lugar, faltam profissionais e insumos nas unidades básicas de saúde
 Portanto, o Ministério da Saúde deve ampliar o horário de funcionamento das salas de vacinação, por meio de turnos noturnos e aos sábados nas unidades básicas de saúde, a fim de que os trabalhadores consigam vacinar os filhos sem faltar ao emprego. Dessa forma, o país poderá recuperar as altas taxas de cobertura que já alcançou no passado.`,
 
   tooShortMobility: `A mobilidade urbana é um problema nas cidades grandes. O transito é muito ruim e o governo precisa investir em metrô e ônibus para melhorar a vida das pessoas que trabalham longe de casa.`,
+
+  vagueProposalMobility: `O crescimento desordenado das grandes cidades brasileiras tornou a mobilidade urbana um dos principais desafios do país. Todos os dias, milhões de trabalhadores enfrentam longas viagens em ônibus lotados ou passam horas presos em congestionamentos. Esse problema decorre, sobretudo, da prioridade dada ao transporte individual e da expansão das cidades para regiões distantes dos centros.
+
+Em primeiro lugar, as políticas urbanas favoreceram o automóvel. Ao longo das últimas décadas, a construção de avenidas e viadutos recebeu mais investimentos do que o transporte coletivo, que permaneceu lento e caro. Com isso, quem tem condições prefere usar o carro, o que aumenta ainda mais o número de veículos nas ruas e piora o trânsito para todos.
+
+Além disso, a população de baixa renda foi empurrada para as periferias. Como os aluguéis nas regiões centrais são altos, muitas famílias vivem longe dos locais de trabalho e dependem de várias conduções para chegar ao emprego. Assim, o tempo gasto no deslocamento reduz as horas de descanso e de convívio familiar desses trabalhadores.
+
+Portanto, é preciso que medidas sejam tomadas para mudar essa situação. Somente assim as grandes cidades brasileiras poderão oferecer uma mobilidade mais justa para todos.`,
 
   weakReading: `Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.
 

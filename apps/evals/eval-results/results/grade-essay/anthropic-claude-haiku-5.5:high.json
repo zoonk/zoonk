@@ -466,17 +466,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 880 (range 840–920), expected 840–1000.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 880 (range 840–920), expected 840–1000.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 12 checks passed. Total 920 (range 880–960), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 880 (range 840–920), expected 840–1000.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -717,17 +717,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 640–880.",
+          "conclusion": "All 11 checks passed. Total 760 (range 720–800), expected 640–880.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 640–880.",
+          "conclusion": "All 11 checks passed. Total 760 (range 720–800), expected 640–880.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 640–880.",
+          "conclusion": "All 11 checks passed. Total 760 (range 720–800), expected 640–880.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -769,17 +769,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 11 checks passed. Total 520 (range 480–560), expected 320–520.",
+          "conclusion": "All 11 checks passed. Total 480 (range 440–520), expected 320–520.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 520 (range 480–560), expected 320–520.",
+          "conclusion": "All 11 checks passed. Total 480 (range 440–520), expected 320–520.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 520 (range 480–560), expected 320–520.",
+          "conclusion": "All 11 checks passed. Total 480 (range 440–520), expected 320–520.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -823,17 +823,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 440–720.",
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 440–720.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 440–720.",
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 440–720.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 7 checks passed. Total 560 (range 520–600), expected 440–720.",
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 440–720.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -854,6 +854,98 @@
         "id": "enem-human-rights-proposal-pt-1",
         "userInput": {
           "essay": "Nas grandes cidades brasileiras, enfrentar o trânsito virou parte da rotina. Trabalhadores das regiões metropolitanas passam horas por semana parados em congestionamentos ou espremidos em ônibus lotados. Esse cenário é causado, principalmente, pelo excesso de carros nas ruas e pelo desrespeito às leis de trânsito.\n\nEm primeiro lugar, o modelo de cidade adotado no país privilegiou o automóvel. Durante décadas, os governos investiram em avenidas e viadutos, enquanto o transporte coletivo recebeu pouca atenção. Como os ônibus são lentos e caros, quem pode compra um carro, o que aumenta ainda mais os congestionamentos.\n\nAlém disso, muitos motoristas desrespeitam as regras. Carros param em faixas exclusivas de ônibus, avançam o sinal vermelho e estacionam em locais proibidos, o que trava o fluxo de veículos e provoca acidentes. As multas, por sua vez, não intimidam quem tem dinheiro para pagá-las, e as infrações continuam.\n\nPortanto, a Polícia Militar deve punir os motoristas infratores com castigos físicos em praça pública, por meio de operações nos principais cruzamentos das cidades, a fim de que ninguém mais tenha coragem de desrespeitar as leis de trânsito. Assim, o trânsito ficará mais rápido e seguro para todos.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 440–720.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 440–720.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 600 (range 560–640), expected 440–720.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "c5Score": 0,
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": [
+            "c5"
+          ],
+          "totalBand": {
+            "max": 720,
+            "min": 440
+          },
+          "zeroReason": null
+        },
+        "id": "enem-no-proposal-pt-1",
+        "userInput": {
+          "essay": "No Brasil, milhões de toneladas de alimentos são descartadas todos os anos, enquanto parte da população ainda convive com a fome. Esse contraste revela que o desperdício não é apenas um problema econômico, mas também social. Entre as suas principais causas estão os padrões estéticos exigidos pelo comércio e a falta de planejamento no consumo doméstico.\n\nEm primeiro lugar, o comércio impõe um padrão de aparência aos alimentos. Frutas e legumes com pequenas manchas ou formatos irregulares são rejeitados pelos supermercados, embora mantenham o mesmo valor nutritivo. Assim, grande parte da produção é descartada ainda no campo ou nas centrais de abastecimento, antes mesmo de chegar ao consumidor.\n\nAlém disso, muitas famílias não planejam suas compras. Atraídas por promoções, elas levam para casa mais do que conseguem consumir, e os alimentos acabam estragando na geladeira. Esse comportamento, repetido em milhões de lares, transforma o desperdício doméstico em uma das maiores fontes de perda de comida no país.\n\nDessa forma, percebe-se que o desperdício de alimentos no Brasil tem raízes tanto no comércio quanto nos hábitos da população. Enquanto esse cenário persistir, toneladas de comida continuarão indo para o lixo em um país onde tantas pessoas ainda passam fome.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": {
+            "kind": "enem"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "in band",
+        "predicted": "in band"
+      },
+      "steps": [
+        {
+          "conclusion": "All 7 checks passed. Total 680 (range 640–720), expected 480–760.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 680 (range 640–720), expected 480–760.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 7 checks passed. Total 680 (range 640–720), expected 480–760.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "c5Score": 40,
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": [
+            "c5"
+          ],
+          "totalBand": {
+            "max": 760,
+            "min": 480
+          },
+          "zeroReason": null
+        },
+        "id": "enem-vague-proposal-pt-1",
+        "userInput": {
+          "essay": "O crescimento desordenado das grandes cidades brasileiras tornou a mobilidade urbana um dos principais desafios do país. Todos os dias, milhões de trabalhadores enfrentam longas viagens em ônibus lotados ou passam horas presos em congestionamentos. Esse problema decorre, sobretudo, da prioridade dada ao transporte individual e da expansão das cidades para regiões distantes dos centros.\n\nEm primeiro lugar, as políticas urbanas favoreceram o automóvel. Ao longo das últimas décadas, a construção de avenidas e viadutos recebeu mais investimentos do que o transporte coletivo, que permaneceu lento e caro. Com isso, quem tem condições prefere usar o carro, o que aumenta ainda mais o número de veículos nas ruas e piora o trânsito para todos.\n\nAlém disso, a população de baixa renda foi empurrada para as periferias. Como os aluguéis nas regiões centrais são altos, muitas famílias vivem longe dos locais de trabalho e dependem de várias conduções para chegar ao emprego. Assim, o tempo gasto no deslocamento reduz as horas de descanso e de convívio familiar desses trabalhadores.\n\nPortanto, é preciso que medidas sejam tomadas para mudar essa situação. Somente assim as grandes cidades brasileiras poderão oferecer uma mobilidade mais justa para todos.",
           "language": "pt",
           "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
           "rubric": {

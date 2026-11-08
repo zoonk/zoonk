@@ -14,7 +14,7 @@ export type GradeEssayExpected = {
   zeroReason: EssayGrade["zeroReason"];
   feedbackLanguage: "en" | "pt";
   interventionElements?: Partial<EnemInterventionElements>;
-  /** For a proposal the rubric limits, such as a conditional one; otherwise C5 must be 40 per element the grade marks. */
+  /** Set when C5 isn't 40 per element the grade marks: a limited, vague or missing proposal. */
   c5Score?: number;
   /** Words the feedback must use, such as the word minimum an essay falls short of. */
   feedbackMentions?: string[];
@@ -306,6 +306,38 @@ export const TEST_CASES: TestCase<GradeEssayExpected, GradeEssayInput>[] = [
     id: "enem-human-rights-proposal-pt",
     userInput: {
       essay: ENEM_ESSAYS.humanRightsMobility,
+      language: "pt",
+      prompt: MOBILITY_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 0,
+      feedbackLanguage: "pt",
+      nextStepCriteria: ["c5"],
+      totalBand: { max: 720, min: 440 },
+      zeroReason: null,
+    },
+    id: "enem-no-proposal-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.noProposalFoodWaste,
+      language: "pt",
+      prompt: FOOD_WASTE_PROMPT,
+      rubric: { kind: "enem" },
+    },
+  },
+  {
+    expected: {
+      c5Score: 40,
+      feedbackLanguage: "pt",
+      nextStepCriteria: ["c5"],
+      totalBand: { max: 760, min: 480 },
+      zeroReason: null,
+    },
+    id: "enem-vague-proposal-pt",
+    userInput: {
+      essay: ENEM_ESSAYS.vagueProposalMobility,
       language: "pt",
       prompt: MOBILITY_PROMPT,
       rubric: { kind: "enem" },

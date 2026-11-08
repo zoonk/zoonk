@@ -8,17 +8,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 11 checks passed. Total 960 (range 920–1000), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 960 (range 920–1000), expected 840–1000.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 960 (range 920–1000), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 960 (range 920–1000), expected 840–1000.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 11 checks passed. Total 960 (range 920–1000), expected 840–1000.",
+          "conclusion": "All 12 checks passed. Total 960 (range 920–1000), expected 840–1000.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -63,17 +63,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
+          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 600–760.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
+          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 600–760.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
+          "conclusion": "All 11 checks passed. Total 720 (range 680–760), expected 600–760.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -118,17 +118,17 @@
         {
           "conclusion": "Total 640 (range 600–680), expected 320–600.",
           "kind": "majorErrors",
-          "score": 9.33
+          "score": 9.43
         },
         {
           "conclusion": "Total 640 (range 600–680), expected 320–600.",
           "kind": "minorErrors",
-          "score": 9.33
+          "score": 9.43
         },
         {
           "conclusion": "Total 640 (range 600–680), expected 320–600.",
           "kind": "potentialImprovements",
-          "score": 9.33
+          "score": 9.43
         }
       ],
       "testCase": {
@@ -206,17 +206,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "conclusion": "All 11 checks passed. Total 680 (range 640–720), expected 600–760.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "conclusion": "All 11 checks passed. Total 680 (range 640–720), expected 600–760.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 10 checks passed. Total 680 (range 640–720), expected 600–760.",
+          "conclusion": "All 11 checks passed. Total 680 (range 640–720), expected 600–760.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -373,17 +373,17 @@
       },
       "steps": [
         {
-          "conclusion": "All 6 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
+          "conclusion": "All 7 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
+          "conclusion": "All 7 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "All 6 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
+          "conclusion": "All 7 checks passed. Total 20 (range 16.4–23.6), expected 18–26.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -391,6 +391,9 @@
       "testCase": {
         "expected": {
           "feedbackLanguage": "en",
+          "feedbackMentions": [
+            "250"
+          ],
           "nextStepCriteria": [
             "criterion-1"
           ],
