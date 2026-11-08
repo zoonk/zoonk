@@ -1,7 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { getPlanLevelLabel, listPlanLevels } from "../../../language/levels/plan-levels";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
+import { getSkillLevelRows, toIdKey } from "../../../library/_utils/shared-rows";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 
 /** GET-only, after ownership authorization. Null while the plan has no lessons. */
@@ -20,15 +20,12 @@ export async function readPlanLevel({
 
   const graphSkills = parsePlanGraph(plan.graph).skills;
 
-  const skillIds = new Set([
-    ...graphSkills.map((skill) => skill.skillId),
-    ...plan.items.flatMap((item) => (item.kind === "lesson" && item.skillId ? item.skillId : [])),
-  ]);
-
-  const skills = await prisma.skill.findMany({
-    select: { cefrLevel: true, id: true, level: true },
-    where: { id: { in: [...skillIds] } },
-  });
+  const skills = await getSkillLevelRows(
+    toIdKey([
+      ...graphSkills.map((skill) => skill.skillId),
+      ...plan.items.map((item) => (item.kind === "lesson" ? item.skillId : null)),
+    ]),
+  );
 
   return getPlanLevelLabel(
     listPlanLevels({

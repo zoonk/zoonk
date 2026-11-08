@@ -433,7 +433,7 @@ const REGISTRY: Record<string, Registration[]> = {
     {
       fields: ["cefrAttempts", "cefrLevel"],
       verdict: "excluded",
-      why: "a skill's level within its band, read by views, not the planner",
+      why: "a skill's level within its band, read by views and certificates, not the planner",
       writes: ["raw:skills", "skill.updateMany"],
     },
   ],

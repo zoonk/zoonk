@@ -1,19 +1,13 @@
-import { type CourseLevel, type PlanItem, type Skill } from "@zoonk/db";
+import { type PlanItem, type Skill } from "@zoonk/db";
 import { CEFR_LEVELS, type CefrLevel, formatCefrScore } from "@zoonk/utils/cefr";
 import { isHalfStudied, measureStudied } from "../../plans/_utils/half-studied";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
 import { getWorkProgress, isWorkFinished } from "../../plans/_utils/work-progress";
 import { type PlanGraphSkill } from "../../plans/planner/plan-state";
+import { BAND_LEVELS } from "./skill-level-rules";
 
 const LEVELS_PER_BAND = 2;
 const HALF_STEP = 0.5;
-
-const BAND_LOWER_LEVEL: Record<CourseLevel, CefrLevel> = {
-  advanced: "C1",
-  beginner: "A1",
-  intermediate: "B1",
-  overview: "A1",
-};
 
 export type LevelSkill = Pick<Skill, "cefrLevel" | "level">;
 
@@ -42,7 +36,7 @@ function placeSkill(skill: LevelSkill | undefined): Placement | null {
     return { level: skill.cefrLevel, tagged: true };
   }
 
-  return skill?.level ? { level: BAND_LOWER_LEVEL[skill.level], tagged: false } : null;
+  return skill?.level ? { level: BAND_LEVELS[skill.level][0], tagged: false } : null;
 }
 
 function getBand(level: CefrLevel): number {
