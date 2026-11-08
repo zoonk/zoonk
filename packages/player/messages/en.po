@@ -3529,6 +3529,16 @@ msgctxt "I67vt5"
 msgid "No more writing today."
 msgstr "No more writing today."
 
+#: src/lesson/lesson-stage.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "We couldn't check your answer this time. Try again."
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "Still checking. This is taking longer than usual."
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"
@@ -3646,18 +3656,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "Just a guess, it doesn't count"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "We couldn't check your answer this time. Try again."
-
-#: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Still checking. This is taking longer than usual."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
 msgid "Press Enter to check, Shift+Enter for a new line."
 msgstr "Press Enter to check, Shift+Enter for a new line."
@@ -3668,14 +3666,14 @@ msgid "Write your answer"
 msgstr "Write your answer"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "Tap and say it out loud"
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Record"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "Tljb7W"
+msgid "Tap and say it out loud"
+msgstr "Tap and say it out loud"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx

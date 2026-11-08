@@ -3529,6 +3529,16 @@ msgctxt "I67vt5"
 msgid "No more writing today."
 msgstr "今日の記述問題はこれで終わりです。"
 
+#: src/lesson/lesson-stage.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "今回は答え合わせができませんでした。もう一度試してください。"
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "答え合わせを続けています。いつもより時間がかかっています。"
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"
@@ -3646,18 +3656,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "予想なので、採点されません"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "今回は答え合わせができませんでした。もう一度試してください。"
-
-#: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "答え合わせを続けています。いつもより時間がかかっています。"
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
 msgid "Press Enter to check, Shift+Enter for a new line."
 msgstr "Enterで答え合わせ、Shift+Enterで改行できます。"
@@ -3668,14 +3666,14 @@ msgid "Write your answer"
 msgstr "答えを書いてください"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "タップして声に出して言ってください"
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "録音する"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "Tljb7W"
+msgid "Tap and say it out loud"
+msgstr "タップして声に出して言ってください"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx

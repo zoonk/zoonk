@@ -3529,6 +3529,16 @@ msgctxt "I67vt5"
 msgid "No more writing today."
 msgstr "오늘 쓰기는 여기까지예요."
 
+#: src/lesson/lesson-stage.tsx
+msgctxt "N9yMCQ"
+msgid "We couldn't check your answer this time. Try again."
+msgstr "이번에는 답을 확인하지 못했어요. 다시 시도해 보세요."
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "dw3XKv"
+msgid "Still checking. This is taking longer than usual."
+msgstr "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"
@@ -3646,18 +3656,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "예상일 뿐, 점수에는 반영되지 않아요"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "이번에는 답을 확인하지 못했어요. 다시 시도해 보세요."
-
-#: src/lesson/steps/lesson-answer-field.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
 msgid "Press Enter to check, Shift+Enter for a new line."
 msgstr "Enter를 눌러 답을 확인하고, Shift+Enter를 눌러 줄을 바꾸세요."
@@ -3668,14 +3666,14 @@ msgid "Write your answer"
 msgstr "답을 써 주세요"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "누르고 소리 내어 말하세요"
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "녹음"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "Tljb7W"
+msgid "Tap and say it out loud"
+msgstr "누르고 소리 내어 말하세요"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
