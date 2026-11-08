@@ -128,7 +128,9 @@ describe("a course-start plan whose later level revisits an earlier level's skil
       new Set(["lesson:b-0", "lesson:b-1", "lesson:b-2", "lesson:b-3"]),
     );
 
-    expect(dateOf(kept, "lesson:b-5")).toBe("2026-11-02");
+    // Four lessons spent today's 10 minutes: only the chapter's next lesson stays on today.
+    expect(dateOf(kept, "lesson:b-4")).toBe("2026-11-02");
+    expect(dateOf(kept, "lesson:b-5")).toBe("2026-11-04");
     expect(dateOf(kept, "boss:0")).toBe("2026-11-06");
     expect(dateOf(kept, "lesson:i-2")).toBe("2026-11-09");
 
