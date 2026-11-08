@@ -6,6 +6,7 @@ import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
+import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
@@ -42,6 +43,17 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "prepareGoalLessons":
       await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
       return;
+    case "preparePlacementItems": {
+      const ask = `placement-items:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
+
+      await startOnce(
+        placementItemsWorkflow,
+        [{ ...followUp.input, analytics: { distinctId: userId } }],
+        ask,
+      );
+
+      return;
+    }
     case "writeLesson": {
       const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
 
