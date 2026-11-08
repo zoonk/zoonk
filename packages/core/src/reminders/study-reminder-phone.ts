@@ -3,6 +3,7 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getStudyReminderCacheTag } from "../cache/tags";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
+import { getReminderPhone } from "./_utils/reminder-phone";
 import { findDefaultReminderTime, findStudyReminderView } from "./_utils/study-reminder-view";
 import { NO_PHONE } from "./clear-study-reminder-phone";
 import { type StudyReminderPhoneInput, type StudyReminderView } from "./study-reminder-contract";
@@ -23,6 +24,7 @@ export async function selectStudyReminderPhone(
   }
 
   const userId = session.user.id;
+  const now = new Date();
 
   const phone = {
     pushLabel: input.label,
@@ -32,6 +34,11 @@ export async function selectStudyReminderPhone(
   };
 
   const previousOwners = await writeLearnerChange({ userId }, async (tx) => {
+    const current = await tx.studyReminder.findUnique({
+      include: { pushSession: { select: { expiresAt: true } } },
+      where: { userId },
+    });
+
     const owners = await tx.studyReminder.updateManyAndReturn({
       data: NO_PHONE,
       select: { userId: true },
@@ -45,7 +52,11 @@ export async function selectStudyReminderPhone(
         time: await findDefaultReminderTime(userId),
         userId,
       },
-      update: { ...phone, locale: input.locale },
+      update: {
+        ...phone,
+        locale: input.locale,
+        ...(current?.pushOn && !getReminderPhone({ now, reminder: current }) && { enabledAt: now }),
+      },
       where: { userId },
     });
 
@@ -54,8 +65,5 @@ export async function selectStudyReminderPhone(
 
   revalidateCacheTags([userId, ...previousOwners].map((id) => getStudyReminderCacheTag(id)));
 
-  return {
-    reminder: await findStudyReminderView({ now: new Date(), user: session.user }),
-    status: "ready",
-  };
+  return { reminder: await findStudyReminderView({ now, user: session.user }), status: "ready" };
 }

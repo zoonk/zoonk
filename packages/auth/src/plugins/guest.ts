@@ -6,6 +6,7 @@ export function guestPlugin() {
     onLinkAccount: async ({ anonymousUser, newUser }) => {
       await linkGuestAccount({
         account: newUser.user,
+        guestSessionId: anonymousUser.session.id,
         guestUserId: anonymousUser.user.id,
         sessionId: newUser.session.id,
       });

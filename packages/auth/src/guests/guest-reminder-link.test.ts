@@ -135,6 +135,7 @@ describe("guest study reminder linking", () => {
 
     await linkGuestAccount({
       account: { id: accountId },
+      guestSessionId: guestSession!.id,
       guestUserId: guestId,
       sessionId: accountSession!.id,
     });

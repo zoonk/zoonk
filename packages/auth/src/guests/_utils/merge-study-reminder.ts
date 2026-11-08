@@ -5,18 +5,22 @@ import { type GuestLinkContext } from "./merge-keyed-rows";
  * so it isn't offered again and a day already sent isn't sent twice.
  */
 export async function mergeStudyReminder({
+  guestSessionId,
   guestUserId,
   sessionId,
   transaction,
   userId,
-}: GuestLinkContext & { sessionId?: string }) {
-  await transaction.studyReminder.updateMany({
-    data: { pushSessionId: sessionId ?? null },
-    where: {
-      pushSession: { expiresAt: { gt: new Date() }, userId: guestUserId },
-      userId: { in: [guestUserId, userId] },
-    },
-  });
+}: GuestLinkContext & { guestSessionId?: string; sessionId?: string }) {
+  if (guestSessionId && sessionId) {
+    await transaction.studyReminder.updateMany({
+      data: { pushSessionId: sessionId },
+      where: {
+        pushSession: { expiresAt: { gt: new Date() }, userId: guestUserId },
+        pushSessionId: guestSessionId,
+        userId: { in: [guestUserId, userId] },
+      },
+    });
+  }
 
   await transaction.$executeRaw`
     WITH guest_reminder AS (

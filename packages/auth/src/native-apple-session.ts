@@ -150,12 +150,14 @@ export async function linkNativeAppleGuest({
     query: { disableCookieCache: true, disableRefresh: true },
   });
 
-  const guest = current
-    ? await prisma.user.findUnique({
-        select: { id: true },
-        where: { id: current.user.id, isAnonymous: true },
-      })
-    : null;
+  if (!current) {
+    return;
+  }
+
+  const guest = await prisma.user.findUnique({
+    select: { id: true },
+    where: { id: current.user.id, isAnonymous: true },
+  });
 
   if (guest) {
     const session = await prisma.session.findUniqueOrThrow({
@@ -164,6 +166,7 @@ export async function linkNativeAppleGuest({
 
     await linkGuestAccount({
       account: { id: userId },
+      guestSessionId: current.session.id,
       guestUserId: guest.id,
       sessionId: session.id,
     });
