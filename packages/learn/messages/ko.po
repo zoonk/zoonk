@@ -12563,6 +12563,11 @@ msgctxt "a8JHBW"
 msgid "Study {minutes} more minutes"
 msgstr "{minutes}분 더 공부하기"
 
+#: src/session/failed-moment.tsx
+msgctxt "kapQxt"
+msgid "Your lesson isn't saved yet"
+msgstr "레슨이 아직 저장되지 않았어요"
+
 #: src/session/lesson-moment.tsx
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"

@@ -19,6 +19,7 @@ import {
 import { useLessonRun } from "./use-lesson-run";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
+import { useWhenBack } from "./use-when-back";
 
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
@@ -59,24 +60,14 @@ function revealWithoutGuess({
   return true;
 }
 
-export function useLessonPlayerActions({
+function useCompletionSave({
   adapters,
   dispatch,
-  lesson,
+  ensureRun,
+  flushChecks,
   state,
-  track,
-  writeExampleLines,
-}: ActionsInput) {
-  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
-  const { ensureRun, flushChecks, resendHeld } = lessonRun;
-
-  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
-    ...lessonRun,
-    adapters,
-    dispatch,
-    state,
-  });
-
+}: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
+  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushChecks">) {
   const saveCompletion = useEffectEvent(async () => {
     const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
 
@@ -127,6 +118,33 @@ export function useLessonPlayerActions({
       void saveCompletion();
     }
   }, [isSaving]);
+
+  useWhenBack(() => {
+    if (state.phase === "completed" && state.completion?.status === "failed") {
+      dispatch({ type: "completionRetried" });
+    }
+  });
+}
+
+export function useLessonPlayerActions({
+  adapters,
+  dispatch,
+  lesson,
+  state,
+  track,
+  writeExampleLines,
+}: ActionsInput) {
+  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
+  const { ensureRun, resendHeld } = lessonRun;
+
+  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
+    ...lessonRun,
+    adapters,
+    dispatch,
+    state,
+  });
+
+  useCompletionSave({ ...lessonRun, adapters, dispatch, state });
 
   const check = useCallback(() => {
     const step = getCurrentStep(state);

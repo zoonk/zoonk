@@ -376,6 +376,44 @@ describe("coming back to a lesson", () => {
     await expect.element(page.getByRole("link", { name: /^Continue/u })).toBeVisible();
   });
 
+  it("says the lesson is complete only once the server confirms, and finishes a failed save when the connection is back", async () => {
+    const lesson = buildLesson([teachingStep("explanation")]);
+    const finished = buildAdapters(lesson).completeLesson;
+    const firstSave = Promise.withResolvers<never>();
+
+    const completeLesson = vi
+      .fn<LessonPlayerAdapters["completeLesson"]>()
+      .mockReturnValueOnce(firstSave.promise)
+      .mockImplementation(finished);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { completeLesson }), lesson });
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect
+      .element(page.getByRole("heading", { name: "Saving your progress…" }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("heading", { name: "Lesson complete" }))
+      .not.toBeInTheDocument();
+
+    firstSave.reject(new TypeError("Failed to fetch"));
+
+    await expect
+      .element(page.getByRole("heading", { name: "Your lesson isn't saved yet" }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("heading", { name: "Lesson complete" }))
+      .not.toBeInTheDocument();
+
+    globalThis.dispatchEvent(new Event("online"));
+
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    expect(completeLesson).toHaveBeenCalledTimes(2);
+  });
+
   it("finishes without sending again an answer the run refused", async () => {
     const lesson = buildLesson([teachingStep("check")]);
 

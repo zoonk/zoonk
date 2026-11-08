@@ -187,7 +187,9 @@ private struct LessonPlayerContent: View {
     )
     .onChange(of: scenePhase) { _, phase in
       switch phase {
-      case .active: store.sendHeldAnswers()
+      case .active:
+        store.sendHeldAnswers()
+        Task { await store.retryFailedFinish() }
       case .background: store.reportAbandonment()
       default: break
       }

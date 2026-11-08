@@ -60,17 +60,9 @@ struct LessonCompletionView: View {
     if completion.status == .ready {
       finishReady
     } else {
-      Group {
-        if completion.testedOut {
-          Text(
-            "You already knew this", tableName: "Player",
-            comment: "Title after \"I already know this\" passed every check")
-        } else {
-          Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
-        }
-      }
-      .typeStyle(.heroTitle)
-      .accessibilityAddTraits(.isHeader)
+      title
+        .typeStyle(.heroTitle)
+        .accessibilityAddTraits(.isHeader)
     }
 
     switch completion.status {
@@ -79,16 +71,40 @@ struct LessonCompletionView: View {
     case .saving:
       ProgressView()
     case .failed:
-      Text(
-        "We couldn't save this lesson. Try again in a moment. Nothing you did was lost.",
-        tableName: "Player",
-        comment: "Saving a finished lesson failed"
-      )
-      .foregroundStyle(.mutedForeground)
+      FailureLine(
+        message: LocalizedStringResource(
+          "That didn't go through. Your answers are kept.", table: "Player",
+          comment: "Under the title of a finished lesson whose save failed, above Try again"))
     case .saved:
       if let summary = completion.summary {
         readouts(summary)
           .celebratesOnce(id: summary)
+      }
+    }
+  }
+
+  /// Only a saved lesson says it's complete: until then the server can still send the learner back
+  /// to a question.
+  @ViewBuilder
+  private var title: some View {
+    switch completion.status {
+    case .saving:
+      Text(
+        "Saving your progress…", tableName: "Player",
+        comment: "In place of a lesson's end title until the lesson is saved"
+      )
+      .foregroundStyle(.mutedForeground)
+    case .failed:
+      Text(
+        "Your lesson isn't saved yet", tableName: "Player",
+        comment: "Title at a lesson's end when saving it failed")
+    case .ready, .saved:
+      if completion.testedOut {
+        Text(
+          "You already knew this", tableName: "Player",
+          comment: "Title after \"I already know this\" passed every check")
+      } else {
+        Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
       }
     }
   }

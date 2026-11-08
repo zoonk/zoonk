@@ -4,7 +4,11 @@ import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { FailedMoment } from "@zoonk/learn/session/failed-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
-import { MomentHeader, MomentSaving, PendingMainAction } from "@zoonk/learn/session/moment-header";
+import {
+  MomentHeader,
+  MomentSavingTitle,
+  PendingMainAction,
+} from "@zoonk/learn/session/moment-header";
 import {
   TASK_MAIN_ACTION_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
@@ -120,15 +124,13 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
 
   if (completion.status === "failed") {
-    return <FailedMoment onRetry={onRetry} title={title} />;
+    return <FailedMoment onRetry={onRetry} />;
   }
 
   return (
     <>
       <TaskBody data-slot="lesson-completion">
-        <MomentHeader title={title}>
-          {completion.status === "saving" && <MomentSaving />}
-
+        <MomentHeader title={isSaved ? title : <MomentSavingTitle />}>
           {isSaved && (
             <CompletionReadouts
               answered={correctCount + incorrectCount}

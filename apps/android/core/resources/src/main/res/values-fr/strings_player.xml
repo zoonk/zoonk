@@ -96,6 +96,7 @@
   "player_lesson_complete": "6233462eee97f4fce15433c2cf99884419f1fcb6cb0d52ce6549c6228c2b10a5",
   "player_lesson_map": "51d0a8d5637b5f791e9c1f6079c1e66131020b19f92c29b9479e5f1a05b0b30d",
   "player_lesson_map_nested": "74db607a4b4967c92149b0330e7bfa19e52d8c489097beaa436878feb398bcf7",
+  "player_lesson_not_saved": "f14523a1a0d0a4704d18c46f5a7ec11b73071616bdb265c86f783a470ce111f3",
   "player_lesson_of": "2cca02e8bb2d4a5925e506f368b57a442f0b2203eaba854c1207ad8cc4f7c059",
   "player_listen": "33c25f4330c7d879754a4b64be21df831570adff59c8eed9c194d146ccfb27f9",
   "player_microphone_blocked": "810ce0eb4cc51bf5a714fa24c64d336f75e713aec335222c8e02d809c004234a",
@@ -142,7 +143,7 @@
   "player_ready_while_waiting": "38286d6278dabf0e2d7c31b160b4d060fe3b955b5eaa8251d0319f5eade8437a",
   "player_review_ideas": "327ae348479aa648083730680f21250a27967744c649ba1df33e6de8b29a662c",
   "player_review_on": "961f0a7e19c01d58127edcb29c986d4f6660ea13b156b3b5db5faeb6bd28db89",
-  "player_save_failed": "d1987bd52db878f734aa87a28d732162709154e4640d35958dd95a93d84ac4fa",
+  "player_save_failed": "00535485a6a8bf386b3bb2a342dcabc564d64ea6cdef128793fbb2e1a6cfaab0",
   "player_saved_to_mistakes": "6e7efaa738e99ebcdb1c825a53451217d765133ccd304cbc1699003f4afb6a84",
   "player_saved_to_mistakes_back_at_end": "00db9c7403bdc876e33e38b9cb934167db2ed24a0b8acec4f8329f8d05f8cf9f",
   "player_saved_to_mistakes_back_date": "0e6f976f66891f1d47a7fe6872ca5981fabc3b1e1524a5ce2d78af5fffbefcd3",
@@ -413,7 +414,8 @@
     <string name="player_lesson_complete">Leçon terminée</string>
     <string name="player_already_knew">Tu savais déjà ça</string>
     <string name="player_saving_progress">Enregistrement de ta progression…</string>
-    <string name="player_save_failed">L’enregistrement a échoué. Tes réponses sont conservées.</string>
+    <string name="player_save_failed">Ça n’a pas marché. Tes réponses sont conservées.</string>
+    <string name="player_lesson_not_saved">Ta leçon n’est pas encore enregistrée</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Révision le %1$s</string>
     <string name="player_next_lesson">Leçon suivante</string>
