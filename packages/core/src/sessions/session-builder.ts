@@ -1,9 +1,17 @@
 import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-block";
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
-import { type DuelMarks, keepDuelLessons, splitAtDuel } from "./_utils/lessons-before-challenges";
+import { fillRemainingLessonTime } from "./_utils/fill-session-time";
+import { type DuelMarks, splitAtDuel } from "./_utils/lessons-before-challenges";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
 import { type PracticeTopic, buildPracticeBlocks, countDrilled } from "./_utils/practice-blocks";
+import {
+  getLessonMinutes,
+  getNewLessons,
+  isSessionReviewDay,
+  takeLessons,
+  toLessonBlock,
+} from "./_utils/session-lessons";
 import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "./block-minutes";
 import {
   type BlockCapsule,
@@ -14,7 +22,7 @@ import {
 } from "./block-payload";
 import { takeReviewCapsules } from "./capsules";
 import { getSessionDayMinutes } from "./fresh-start";
-import { countFullReviewQuestions, isFullReviewDay } from "./full-review";
+import { countFullReviewQuestions } from "./full-review";
 
 /** Fresh starts reduce review backlog rather than carrying missed reviews into the new day. */
 const FRESH_START_REVIEW_FACTOR = 0.5;
@@ -58,6 +66,7 @@ export type SessionBuildInput = {
   placementItemIds: string[];
   freshStart: StudyFreshStart | null;
   lessons: PlannedLesson[];
+  fillLessons?: PlannedLesson[];
   /** An exam where a wrong answer cancels a right one: mixed practice is scored net. */
   netScored: boolean;
   practice: PracticeItem[];
@@ -92,47 +101,6 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
 /** Full reviews stay whole on returns so the exam-eve session still reaches every topic. */
 function getSessionBudget(input: SessionBuildInput): number {
   return Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
-}
-
-export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
-  return {
-    canDo: lesson.canDo,
-    estimatedMinutes: toMinutes(lesson.minutes),
-    kind: "learn",
-    lessonId: lesson.lessonId,
-    payload: toBlockPayload({
-      chapterId: lesson.chapterId,
-      planItemId: lesson.planItemId,
-      planItemKey: lesson.planItemKey ?? null,
-      planSkillId: lesson.planSkillId,
-      reinforcement,
-      skillIds: lesson.skillIds,
-      title: lesson.title,
-    }),
-  };
-}
-
-/** The first lesson may overflow the soft budget. */
-function takeLessons({
-  budget,
-  lessons,
-}: {
-  budget: number;
-  lessons: readonly PlannedLesson[];
-}): PlannedLesson[] {
-  const fitting = lessons.filter(
-    (_, index) =>
-      lessons.slice(0, index + 1).reduce((sum, lesson) => sum + lesson.minutes, 0) <= budget,
-  );
-
-  const first = lessons[0];
-  const offerNext = fitting.length === 0 && first && budget >= MIN_BLOCK_MINUTES;
-
-  return offerNext ? [first] : fitting;
-}
-
-function getLessonMinutes(lessons: readonly PlannedLesson[]): number {
-  return lessons.reduce((sum, lesson) => sum + toMinutes(lesson.minutes), 0);
 }
 
 function buildReviewBlock({
@@ -197,15 +165,6 @@ function fillReview({
   return blocks.map((block) => (review && block.kind === "review" ? review : block));
 }
 
-function isReviewDay(input: SessionBuildInput): boolean {
-  return Boolean(input.reviewPlanItemId || input.reviewPlanItemKey) || isFullReviewDay(input);
-}
-
-/** Review days and expired free trials offer no new lessons; duel days retain only their planned surrounding lessons. */
-function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
-  return input.examTrialEnded || isReviewDay(input) ? [] : keepDuelLessons(input);
-}
-
 /** Preserve the opened day's practice share; unused question capacity returns time to lessons. */
 function getPracticeMinutes({
   budget,
@@ -216,7 +175,7 @@ function getPracticeMinutes({
   input: SessionBuildInput;
   remaining: number;
 }): number {
-  const share = isReviewDay(input) ? 1 : input.practiceShare;
+  const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
   const practice = input.examTrialEnded ? [] : input.practice;
   const drilled = countDrilled(input.drills);
   const opened = input.openedPractice;
@@ -279,7 +238,11 @@ export function buildSessionBlocks(input: SessionBuildInput): {
   const learnBudget =
     remaining - getPracticeMinutes({ budget, input, remaining }) - getLessonMinutes(reinforcement);
 
-  const lessons = takeLessons({ budget: learnBudget, lessons: getNewLessons(input) });
+  const lessons = takeLessons({
+    budget: learnBudget,
+    lessons: getNewLessons(input),
+    overflow: !input.usedMinutes,
+  });
 
   const learnMinutes = getLessonMinutes([...reinforcement, ...lessons]);
   const { after, before } = splitAtDuel(lessons);
@@ -304,7 +267,14 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     ...after.map((lesson) => toLessonBlock(lesson, false)),
   ].filter((block) => block !== null);
 
-  const blocks = fillReview({ blocks: built, budget, input });
-
-  return { blocks, plannedMinutes: blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0) };
+  return fillRemainingLessonTime({
+    blocks: fillReview({ blocks: built, budget, input }),
+    budget,
+    checkpointMinutes,
+    input,
+    learnBudget,
+    lessons,
+    produceMinutes: produce?.estimatedMinutes ?? 0,
+    reinforcement,
+  });
 }

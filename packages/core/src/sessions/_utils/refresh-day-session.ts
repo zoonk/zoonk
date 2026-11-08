@@ -1,11 +1,12 @@
-import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import "server-only";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { getSessionUsedMinutes } from "../session-minutes";
 import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
@@ -26,14 +27,6 @@ function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[
   return blocks.filter((block) => block.status !== "pending" || readBlockPayload(block).extra);
 }
 
-function sumMinutes(blocks: readonly Pick<PlannedBlock, "estimatedMinutes">[]): number {
-  return blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0);
-}
-
-function getKeptMinutes(blocks: readonly StudySessionBlock[]): number {
-  return sumMinutes(blocks.map((block) => ({ estimatedMinutes: block.estimatedMinutes ?? 0 })));
-}
-
 /** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
 function getOpenedPractice({
   kept,
@@ -44,7 +37,7 @@ function getOpenedPractice({
 }): SessionBuildInput["openedPractice"] {
   const keptIds = new Set(kept.map((block) => block.id));
 
-  const minutes = getKeptMinutes(
+  const minutes = getSessionUsedMinutes(
     session.blocks.filter((block) => block.kind === "practice" && !keptIds.has(block.id)),
   );
 
@@ -84,6 +77,7 @@ function withoutKept({
       (checkpoint) => !keptCheckpoints.has(checkpoint.planItemId),
     ),
     drills: kinds.has("practice") ? [] : input.drills,
+    fillLessons: input.fillLessons?.filter(isNewLesson),
     lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
     openedPractice: getOpenedPractice({ kept, session }),
     placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
@@ -92,12 +86,12 @@ function withoutKept({
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
     produce: kinds.has("produce") ? null : input.produce,
     reinforcement: input.reinforcement.filter((lesson) => isNewLesson(lesson)),
-    usedMinutes: getKeptMinutes(kept),
+    usedMinutes: getSessionUsedMinutes(kept),
   };
 }
 
 /** Supply today's selection to preserve its allocation; omitting it fills from the plan's next lessons. */
-async function planRestOfDayWithPlan({
+export async function planRestOfDayWithPlan({
   day,
   kept,
   readSubscription,
@@ -129,7 +123,7 @@ async function planRestOfDayWithPlan({
   });
 
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
-  const { blocks } = buildSessionBlocks(
+  const { blocks, plannedMinutes } = buildSessionBlocks(
     withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
   );
 
@@ -138,6 +132,7 @@ async function planRestOfDayWithPlan({
   return {
     blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
     plan: await dayPlan,
+    plannedMinutes: getSessionUsedMinutes(kept) + plannedMinutes,
   };
 }
 
@@ -191,10 +186,13 @@ async function replaceNotStartedBlocks({
 
   const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 
-  const { blocks: planned, plan } =
-    selection && unstarted
-      ? await planStudyDay({ ...context, selection })
-      : await planRestOfDayWithPlan({ day, kept, selection });
+  const {
+    blocks: planned,
+    plan,
+    plannedMinutes,
+  } = selection && unstarted
+    ? await planStudyDay({ ...context, selection })
+    : await planRestOfDayWithPlan({ day, kept, selection });
 
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 
@@ -244,9 +242,12 @@ async function replaceNotStartedBlocks({
 
       if (unchanged) {
         // Ended days keep their binding.
-        if (locked.status !== "completed" && locked.planVersion !== savedVersion) {
+        if (
+          locked.status !== "completed" &&
+          (locked.planVersion !== savedVersion || locked.plannedMinutes !== plannedMinutes)
+        ) {
           await transaction.studySession.update({
-            data: { planVersion: savedVersion },
+            data: { planVersion: savedVersion, plannedMinutes },
             where: { id: session.id },
           });
         }
@@ -292,7 +293,7 @@ async function replaceNotStartedBlocks({
       await transaction.studySession.update({
         data: {
           planVersion: savedVersion,
-          plannedMinutes: getKeptMinutes(kept) + sumMinutes(planned),
+          plannedMinutes,
           ...(missions && { missions }),
           ...(reopens && { status: "active" }),
         },

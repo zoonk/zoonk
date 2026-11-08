@@ -409,7 +409,7 @@ describe("a known topic Pedro's time left without lessons", () => {
 
   it("brings its lessons into the plan when practice misses it", async () => {
     const { goal, itemsOf, ordinary, plan } = await setup(PEDRO, {
-      dailyMinutes: 15,
+      dailyMinutes: 10,
       testOut: false,
     });
 

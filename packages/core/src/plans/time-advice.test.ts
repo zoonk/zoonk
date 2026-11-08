@@ -246,20 +246,20 @@ describe(getPlanTimeAdvice, () => {
     const studyDays = [0];
     const advice = await readAdvice(goal.id, studyDays);
 
-    const [preview55, preview65, preview70] = await Promise.all([
-      readCoverage(goal.id, studyDays, { dailyMinutes: 55 }),
+    const [preview50, preview65, preview55] = await Promise.all([
+      readCoverage(goal.id, studyDays, { dailyMinutes: 50 }),
       readCoverage(goal.id, studyDays, { dailyMinutes: 65 }),
-      readCoverage(goal.id, studyDays, { dailyMinutes: 70 }),
+      readCoverage(goal.id, studyDays, { dailyMinutes: 55 }),
     ]);
 
-    expect(preview55.coveredShare).toBe(1);
+    expect(preview50.coveredShare).toBe(1);
     expect(preview65.coveredShare).toBe(1);
-    expect(preview70.coveredShare).toBe(0.91);
+    expect(preview55.coveredShare).toBe(0.36);
 
     const shortOfFitting = [
       { dailyMinutes: 5, funded: [], overflowing: ["2020-10-04", "2020-10-11"] },
-      { dailyMinutes: 25, funded: ["2020-10-11"], overflowing: [] },
-      { dailyMinutes: 50, funded: ["2020-10-11"], overflowing: ["2020-10-04"] },
+      { dailyMinutes: 25, funded: [], overflowing: ["2020-10-11"] },
+      { dailyMinutes: 55, funded: ["2020-10-11"], overflowing: [] },
     ];
 
     for (const { dailyMinutes, ...savedDates } of shortOfFitting) {
@@ -280,7 +280,7 @@ describe(getPlanTimeAdvice, () => {
       expect(saved?.coveredShare).toBe(preview.coveredShare);
       // eslint-disable-next-line no-await-in-loop -- The time the Plan finds for the accepted week.
       const savedTime = await readPlanTime(goal.id);
-      expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([55, 55]);
+      expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([50, 50]);
       // eslint-disable-next-line no-await-in-loop -- What the accepted time funds and overflows.
       await expect(readSavedDates(goal.id)).resolves.toStrictEqual(savedDates);
     }
@@ -290,28 +290,26 @@ describe(getPlanTimeAdvice, () => {
     ).resolves.toMatchObject({ status: "updated" });
 
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1, fits: true });
-    await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 55 });
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 50 });
 
     await expect(readSavedDates(goal.id)).resolves.toMatchObject({ funded: ["2020-10-11"] });
 
-    const higher = await updateGoal({
+    const withAnotherMock = await updateGoal({
       goalId: goal.id,
-      input: { dailyMinutes: 70, studyDays, timeZone: "UTC" },
+      input: { dailyMinutes: 55, studyDays, timeZone: "UTC" },
     });
 
-    expect(higher.status).toBe("updated");
-    const saved70 = await readFeasibility(goal.id);
-    const time70 = await readPlanTime(goal.id);
-    expect(saved70?.fits).toBe(false);
-    expect(saved70?.coveredShare).toBe(preview70.coveredShare);
+    expect(withAnotherMock.status).toBe("updated");
+    const saved55 = await readFeasibility(goal.id);
+    const time55 = await readPlanTime(goal.id);
+    expect(saved55?.fits).toBe(false);
+    expect(saved55?.coveredShare).toBe(preview55.coveredShare);
 
-    await expect(readSavedDates(goal.id)).resolves.toMatchObject({
-      funded: ["2020-10-04", "2020-10-11"],
-    });
+    await expect(readSavedDates(goal.id)).resolves.toMatchObject({ funded: ["2020-10-11"] });
 
     const accepted = await updateGoal({
       goalId: goal.id,
-      input: { dailyMinutes: 55, studyDays, timeZone: "UTC" },
+      input: { dailyMinutes: 50, studyDays, timeZone: "UTC" },
     });
 
     expect(accepted.status).toBe("updated");
@@ -322,7 +320,7 @@ describe(getPlanTimeAdvice, () => {
     expect(plan).toMatchObject({
       plan: {
         feasibility: { coveredShare: 1, fits: true },
-        schedule: { dailyMinutes: 55, weekdayMinutes: [55, 0, 0, 0, 0, 0, 0] },
+        schedule: { dailyMinutes: 50, weekdayMinutes: [50, 0, 0, 0, 0, 0, 0] },
       },
       status: "ready",
     });
@@ -331,9 +329,9 @@ describe(getPlanTimeAdvice, () => {
 
     expect([
       advice.recommendedMinutes,
-      time70.recommendedMinutes,
+      time55.recommendedMinutes,
       planTime.recommendedMinutes,
-    ]).toStrictEqual([55, 55, 55]);
+    ]).toStrictEqual([50, 50, 50]);
   });
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {
@@ -941,7 +939,7 @@ describe(getPlanTimeAdvice, () => {
     const interview = new Date("2020-12-28T00:00:00Z");
 
     const { goal, plan } = await unplannedGoalFixture({
-      dailyMinutes: 45,
+      dailyMinutes: 50,
       details: { level: "B1+", targetScore: "B2" },
       kind: "language",
       settings: { startDate: "2020-09-28", weekdayMinutes: [0, 45, 45, 45, 45, 45, 0] },

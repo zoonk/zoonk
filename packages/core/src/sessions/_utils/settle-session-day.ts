@@ -12,6 +12,7 @@ import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
 import { measureSessionState } from "./capture-snapshot";
+import { refitSessionLessons } from "./refit-session-lessons";
 import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { trackSessionCompleted } from "./session-events";
@@ -87,6 +88,18 @@ async function completeIfFinished({
         throw new SessionCompletionUnchangedError("open");
       }
 
+      if (await refitSessionLessons(tx, { sessionId: session.id, timeZone })) {
+        return null;
+      }
+
+      const refilled = await tx.studySessionBlock.count({
+        where: { sessionId: session.id, status: { in: ["active", "pending"] } },
+      });
+
+      if (refilled > 0) {
+        return null;
+      }
+
       const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
 
       if (current.status === "completed") {
@@ -145,6 +158,10 @@ async function completeIfFinished({
 
   if (error) {
     throw error;
+  }
+
+  if (!completed) {
+    return false;
   }
 
   // "10 more minutes" reopens a finished session; finishing it again isn't a new session.

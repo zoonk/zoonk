@@ -126,6 +126,7 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
       goal: { kind: "exam", targetDate },
       mockMinutes: 30,
       phase: 4,
+      planStart: fromIsoDate("2026-09-28"),
       saved: [],
       settings: { fullCourse: true, movedEvents: [], practiceBias: "balanced" },
       start: TODAY,
