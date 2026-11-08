@@ -116,7 +116,9 @@ class MindMapViewModel(
                 }
 
                 else -> {
-                    locals.update { it + (chapterId to MindMapLocal(shown = status)) }
+                    // A lock or a failure lives in the store's reads: the row stops following once it shows one.
+                    val held = store.show(key, status)
+                    locals.update { if (held) it - chapterId else it + (chapterId to MindMapLocal(shown = status)) }
                     if (store.reread(key, status)) {
                         locals.update { it - chapterId }
                         return

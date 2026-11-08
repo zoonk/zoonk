@@ -151,7 +151,7 @@ class MindMapStore(
                     readAgain(key)
                     MindMapCreated.Ready
                 } else {
-                    onItsWay(key, shown)
+                    show(key, shown)
                     MindMapCreated.OnItsWay(shown)
                 }
             }
@@ -170,7 +170,7 @@ class MindMapStore(
         key: ChapterKey,
     ): MindMapCreated {
         if (result.code == PLUS_REQUIRED) {
-            showAs(key, GoalMindMap.Status.PLUS_REQUIRED, ChapterMindMap.Status.PLUS_REQUIRED)
+            show(key, MindMapShown.PlusRequired)
             return MindMapCreated.PlusRequired
         }
         val limit = Limit.of(result)
@@ -219,27 +219,28 @@ class MindMapStore(
         return listOfNotNull(listed?.status?.shown, read?.status?.shown).all { it == status }
     }
 
-    private fun onItsWay(
+    /**
+     * Writes what the server said of a map into the reads kept of it, so it outlives the screen that
+     * heard it; false for one a read can't hold without the map itself (ready) or the list leaves out.
+     */
+    fun show(
         key: ChapterKey,
         shown: MindMapShown,
-    ) {
-        val writing = shown == MindMapShown.WritingLessons
-        showAs(
-            key,
-            if (writing) GoalMindMap.Status.WRITING_LESSONS else GoalMindMap.Status.DRAWING,
-            if (writing) ChapterMindMap.Status.WRITING_LESSONS else ChapterMindMap.Status.DRAWING,
-        )
-    }
-
-    private fun showAs(
-        key: ChapterKey,
-        listed: GoalMindMap.Status,
-        read: ChapterMindMap.Status,
-    ) {
+    ): Boolean {
+        val (listed, read) =
+            when (shown) {
+                MindMapShown.Available -> GoalMindMap.Status.AVAILABLE to ChapterMindMap.Status.AVAILABLE
+                MindMapShown.WritingLessons -> GoalMindMap.Status.WRITING_LESSONS to ChapterMindMap.Status.WRITING_LESSONS
+                MindMapShown.Drawing -> GoalMindMap.Status.DRAWING to ChapterMindMap.Status.DRAWING
+                MindMapShown.Failed -> GoalMindMap.Status.FAILED to ChapterMindMap.Status.FAILED
+                MindMapShown.PlusRequired -> GoalMindMap.Status.PLUS_REQUIRED to ChapterMindMap.Status.PLUS_REQUIRED
+                else -> return false
+            }
         list[key.goalId].update { maps ->
             maps.copy(chapters = maps.chapters.map { if (it.chapterId == key.chapterId) it.copy(status = listed) else it })
         }
         chapter[key].update { it.copy(status = read) }
+        return true
     }
 
     suspend fun picture(

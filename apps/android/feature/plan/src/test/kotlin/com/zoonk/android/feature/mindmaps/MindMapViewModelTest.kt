@@ -13,12 +13,16 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -114,6 +118,46 @@ class MindMapViewModelTest {
                 ),
                 maps.requests.value[chapterId],
             )
+        }
+
+    @Test
+    fun aLockThePollFoundOutlivesTheRowStoppingItUntilBuyingPlus() =
+        runTest(dispatcher) {
+            val (_, _, cache) = setUp()
+            var hold = false
+            val reading = CompletableDeferred<Unit>()
+            val held =
+                object : MindMapApi by api {
+                    override suspend fun chapter(
+                        session: AuthenticatedSession,
+                        key: ChapterKey,
+                    ): ChapterMindMap {
+                        if (hold) {
+                            reading.complete(Unit)
+                            awaitCancellation()
+                        }
+                        return api.chapter(session, key)
+                    }
+                }
+            val heldStore = MindMapStore(held, cache)
+            val maps = MindMapViewModel(heldStore, ana, goalId, { current }, io = dispatcher)
+            api.chapter = { chapterMindMap("drawing") }
+            heldStore.chapter[key].load()
+            api.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
+            hold = true
+
+            // The row stops following once it shows the lock, here while the poll reads the map again.
+            val follow = launch { maps.follow(chapterId, MindMapShown.Drawing) }
+            reading.await()
+            assertEquals(MindMapShown.PlusRequired, shownMindMap(heldStore.chapterShown(), maps.requests.value[chapterId]))
+            follow.cancelAndJoin()
+
+            hold = false
+            api.chapter = { chapterMindMap("available") }
+            cache.invalidate(setOf(DataDomain.UserSubscription))
+            heldStore.chapter[key].load()
+
+            assertEquals(MindMapShown.Available, shownMindMap(heldStore.chapterShown(), maps.requests.value[chapterId]))
         }
 
     @Test
