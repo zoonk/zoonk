@@ -2,6 +2,7 @@
 
 import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpCard as Card, type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -42,7 +43,8 @@ export type WaitQuizRefs = {
 
 /**
  * The card being played, kept by the wait screen so its other view and its bar act on the same one.
- * Null while there's no card: no deck yet, or every card was guessed in this tab.
+ * Null while there's no card: no deck yet, or every card was guessed in this tab. Undefined while
+ * the deck is known but its card isn't yet: the server can't know the tab's place in the deck.
  */
 export function useWaitQuiz({
   deck,
@@ -54,10 +56,9 @@ export function useWaitQuiz({
   onGuess: () => void;
   refs: WaitQuizRefs;
   surface: WarmUpSurface;
-}): WaitQuizState | null {
+}): WaitQuizState | null | undefined {
   const { track } = useLearnAnalytics();
   const moved = useRef(false);
-  // The server can't know the tab's place, so the card shows once the page is in the browser.
   const mounted = useIsMounted();
   const [dealt, setDealt] = useState<Dealt | null>(null);
   const stored = deck && mounted ? { pickedId: null, position: readPosition(deck.id) } : null;
@@ -82,7 +83,15 @@ export function useWaitQuiz({
     (refs.nextRef.current ?? refs.questionRef.current)?.focus();
   });
 
-  if (!deck || !shown || !card) {
+  if (!deck) {
+    return null;
+  }
+
+  if (!shown) {
+    return undefined;
+  }
+
+  if (!card) {
     return null;
   }
 
@@ -158,6 +167,41 @@ function QuizReveal({ card, pickedId }: { card: Card; pickedId: string }) {
   );
 }
 
+function QuizEyebrow() {
+  const t = useExtracted();
+
+  return (
+    <PageEyebrow>
+      {t({
+        description:
+          "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+        message: "Quiz while you wait",
+      })}
+    </PageEyebrow>
+  );
+}
+
+const OPTION_COUNT = 3;
+
+/** The card's shapes, until the browser knows which card this tab is on. */
+export function WaitQuizSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <QuizEyebrow />
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-2/3" />
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        {Array.from({ length: OPTION_COUNT }, (_, index) => (
+          <Skeleton className="rounded-option h-12.5 w-full" key={index} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /**
  * A guess while the learner waits, a side game apart from their course. Once what they wait for is
  * ready (`holding`), they can still answer this card and read its reveal, but no new card is dealt.
@@ -201,13 +245,7 @@ export function WaitQuizCard({
   return (
     <section aria-labelledby={questionId} className="flex flex-col gap-5" data-slot="wait-quiz">
       <div className="flex flex-col gap-2">
-        <PageEyebrow>
-          {t({
-            description:
-              "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
-            message: "Quiz while you wait",
-          })}
-        </PageEyebrow>
+        <QuizEyebrow />
 
         <h2
           className={cn(QUESTION_TEXT_CLASS, "text-pretty outline-none")}

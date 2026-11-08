@@ -3,9 +3,7 @@
 import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
@@ -19,7 +17,13 @@ import {
   useState,
 } from "react";
 import { type ReadyHoldControl } from "./use-ready-hold";
-import { WaitQuizCard, type WaitQuizRefs, type WaitQuizState, useWaitQuiz } from "./wait-quiz";
+import {
+  WaitQuizCard,
+  type WaitQuizRefs,
+  WaitQuizSkeleton,
+  type WaitQuizState,
+  useWaitQuiz,
+} from "./wait-quiz";
 
 type WaitView = "progress" | "quiz";
 
@@ -39,7 +43,8 @@ type WaitScreenValue = {
   openProgress: () => void;
   playQuiz: () => void;
   questionRef: WaitQuizRefs["questionRef"];
-  quiz: WaitQuizState | null;
+  /** Undefined while the deck is known but its card isn't yet. */
+  quiz: WaitQuizState | null | undefined;
   /** The ready action: moves on, taking back the history entry the progress pushed. */
   release: () => void;
   /** The bar's slot has something to offer of its own: the next card, or a way to the quiz. */
@@ -115,18 +120,12 @@ function useWaitView({
   hold: ReadyHoldControl;
   questionRef: WaitQuizRefs["questionRef"];
 }) {
-  const mounted = useIsMounted();
   const entryId = useId();
-  const [chosen, setChosen] = useState<WaitView | null>(null);
+  const [chosen, setChosen] = useState<WaitView>(() => (hasQuiz ? "quiz" : "progress"));
   const [opened, setOpened] = useState(false);
   const [switched, setSwitched] = useState(false);
   const { contentRef, focusNext, statusRef } = useViewFocus({ questionRef });
-
-  if (chosen === null && mounted) {
-    setChosen(hasQuiz ? "quiz" : "progress");
-  }
-
-  const view: WaitView = hasQuiz ? (chosen ?? "progress") : "progress";
+  const view: WaitView = hasQuiz ? chosen : "progress";
 
   const showQuiz = () => {
     focusNext("quiz");
@@ -218,7 +217,8 @@ export function WaitScreen({
   const quiz = useWaitQuiz({ deck, onGuess: hold.engage, refs: { nextRef, questionRef }, surface });
 
   const view = useWaitView({ hasQuiz: quiz !== null, hold, questionRef });
-  const slotShown = quiz !== null && (view.view === "progress" || quiz.pickedId !== null);
+  const picked = typeof quiz?.pickedId === "string";
+  const slotShown = Boolean(quiz) && (view.view === "progress" || picked);
 
   return (
     <WaitScreenContext value={{ ...view, aside, hold, nextRef, questionRef, quiz, slotShown }}>
@@ -231,23 +231,12 @@ export function WaitScreen({
 export const WAIT_NARROW_ONLY_CLASS = "min-[72rem]:hidden";
 
 /** The status strip and the quiz, or the progress, in the screen's column. */
-export function WaitContent({
-  className,
-  progress,
-  status,
-}: {
-  className?: string;
-  progress: ReactNode;
-  status: ReactNode;
-}) {
+export function WaitContent({ progress, status }: { progress: ReactNode; status: ReactNode }) {
   const { contentRef, hold, questionRef, quiz, switched, view } = useWaitScreen();
 
   return (
     <div
-      className={cn(
-        "duration-quick flex flex-col gap-6 transition-opacity ease-out outline-none data-switched:starting:opacity-0",
-        className,
-      )}
+      className="duration-quick flex flex-col gap-6 transition-opacity ease-out outline-none data-switched:starting:opacity-0"
       data-slot="wait-content"
       data-switched={switched ? "" : undefined}
       key={view}
@@ -255,10 +244,14 @@ export function WaitContent({
       // Focus lands here as the progress opens when it has no heading of its own.
       tabIndex={-1}
     >
-      {view === "quiz" && quiz ? (
+      {view === "quiz" ? (
         <>
           {status}
-          <WaitQuizCard holding={hold.status === "hold"} questionRef={questionRef} quiz={quiz} />
+          {quiz ? (
+            <WaitQuizCard holding={hold.status === "hold"} questionRef={questionRef} quiz={quiz} />
+          ) : (
+            <WaitQuizSkeleton />
+          )}
         </>
       ) : (
         progress
@@ -269,9 +262,9 @@ export function WaitContent({
 
 /** The progress in the host's aside, only while the quiz has the column. */
 export function WaitAside({ children }: { children: ReactNode }) {
-  const { aside, quiz, view } = useWaitScreen();
+  const { aside, view } = useWaitScreen();
 
-  if (!aside || view !== "quiz" || !quiz) {
+  if (!aside || view !== "quiz") {
     return null;
   }
 
@@ -308,8 +301,9 @@ export function WaitSlot({
 }) {
   const t = useExtracted();
   const { backToQuiz, nextRef, opened, playQuiz, quiz, view } = useWaitScreen();
-  const answered = quiz !== null && quiz.pickedId !== null;
-  const nextShown = !children && view === "quiz" && answered && quiz.hasNext;
+  const answered = typeof quiz?.pickedId === "string";
+  const hasNext = quiz ? quiz.hasNext : false;
+  const nextShown = !children && view === "quiz" && answered && hasNext;
 
   useEnterKey(() => quiz?.next(), { enabled: nextShown && enterKey });
 
