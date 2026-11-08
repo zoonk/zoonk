@@ -24,7 +24,16 @@ export const TEXT = {
 
 export const SHEET = {
   brand: { gap: 10, logo: 30, size: 22 },
-  covered: { above: 34, labelGap: 6, labelSize: 12, listGap: 10, moreGap: 4, rowGap: 8 },
+  covered: {
+    above: 34,
+    labelGap: 6,
+    labelSize: 12,
+    listGap: 10,
+    moreGap: 4,
+    readoutGap: 56,
+    readoutSize: 40,
+    rowGap: 8,
+  },
   footer: {
     above: 30,
     columnGap: 28,
@@ -46,6 +55,7 @@ export const SHEET = {
   graph: { above: 26 },
   height: 2480,
   kind: { above: 84, lineHeight: 1.2, size: 20 },
+  ladder: { bandGap: 10, cellGap: 3, cellHeight: 12, labelGap: 9, labelSize: 13, radius: 3 },
   marginX: 72,
   marginY: 49,
   meta: {
@@ -122,6 +132,7 @@ export const SHARE = {
     height: 630,
     inset: 28,
     kind: { size: 25 },
+    ladder: { bandGap: 10, cellGap: 3, cellHeight: 14, labelGap: 9, labelSize: 21, radius: 4 },
     name: {
       above: 0,
       largest: 96,
@@ -136,9 +147,9 @@ export const SHARE = {
     radius: 8,
     route: {
       height: 34,
-      labelGap: 10,
-      labelHeight: 30,
-      labelSize: 21,
+      labelGap: 0,
+      labelHeight: 0,
+      labelSize: 0,
       ring: 8,
       square: 9,
       squareRadius: 3,
@@ -165,6 +176,7 @@ export const SHARE = {
     height: 1350,
     inset: 40,
     kind: { size: 34 },
+    ladder: { bandGap: 10, cellGap: 3, cellHeight: 14, labelGap: 9, labelSize: 21, radius: 4 },
     name: {
       above: 16,
       largest: 156,

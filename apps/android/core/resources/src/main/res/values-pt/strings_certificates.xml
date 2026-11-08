@@ -5,11 +5,14 @@
   "certificates_add_to_linkedin": "09d4499ddef281c885e3715f15e52162307a23ee57daf3ab64a0918e03831ac3",
   "certificates_alt_course": "af8d1b5de77d62e7998fc80858e4c9e46d65485777a3d025360f15ff86c79c49",
   "certificates_alt_dated": "4d8caaacdb7d712506f599ca4d1895f7ef70453e76bb3e236c4eb4ebbcf9164d",
+  "certificates_alt_level": "8d1cfd6cfa7396eb06b8d118fa421fadc40eb6a4678c85d21816e78560f29ff6",
+  "certificates_can_do": "202aa01d93c9c906dce66a95a05280c94536a35c301ca99cd6cad15c203c39a9",
   "certificates_cancel": "0b77dcee8533c4ae26994a0f92cbfabda9649b746478303a5da812be6b6ff5d1",
   "certificates_caption_course": "3acc396c24ded27b34651055631cd59b7efc9c50766ed82a108e2eeadb919812",
   "certificates_caption_course_hours": "4cd57bced00dc3bccbcbf8a0a3cbaa4378e5dc067d836f2e3f854b0f6754ded3",
   "certificates_caption_course_minutes": "8f9a0678b2af11b909207c6fb5856284c457eae29552cfe3e190b7d00e2f2cab",
   "certificates_caption_course_tested_out": "4d93316036202b11a4dbb8b7b444645c1b126dcc4baa2a6f7ccb5bcdba5961d6",
+  "certificates_caption_level": "a83c370c0100fe326d4057c2dd33e6defb3fea9f1ee0008c247b29dd17de3689",
   "certificates_certificate": "e3af2d7b468a84822394f664c66fbd66e9a092149dcc3291d4d9556c16f6e078",
   "certificates_change": "b931a8fef4fce8717149064007fc3ce078ff50134ec0699e3fad5059fa01f710",
   "certificates_change_name": "3f3270985246257ed7fe9435369129f03046f394856e6b66803803bdb927f1cb",
@@ -34,15 +37,17 @@
   "certificates_download": "4a8cb1d0e0febc08787effb793df9e83dbd6d5e86de1736c11e600f88b576f71",
   "certificates_downloaded": "973bba8d52b22bd9abbd44579071eee5d91d0afeba5ceb575a74d9b604965466",
   "certificates_earned": "cec49473a8e7ec122829555cde8b2db37115390163c82b652082932c61bd6f24",
-  "certificates_empty_description": "fc626ce009f52970069d5e6a5a8b41e7e21d2938fe0ef31d1460979d6a8855a9",
+  "certificates_empty_description": "e531935a5ca71f11a2409034611a5ea94916fb87a5a33d7428a8c8657aee53c1",
   "certificates_empty_title": "95e2dbbdd4e9eb95dd5d20208d1f3a342f11830c43c597152f9b1c63a32f692d",
   "certificates_get": "0c3deb156c492ad36b6fe0a3d82cb8887e4ed16bd89c1de0a9bf0f1ae00dc58e",
   "certificates_issued_on": "661a75c0cb2d99a1bc099cb9561be46bed0ca1eb5e211b95b4b59c6954c9c9fd",
   "certificates_kind_completion": "a84d07427537e76e677148c3b52478aa20a5e0a960d9f882942eb267dd7c1d38",
+  "certificates_language_level": "9ff7875ed82879df14c030832652480a94dcb12b44804079573510d78c82d374",
+  "certificates_language_ready": "68a2a0810d0837e4584bab24907da11b345d91a86f876246dc461b62dcdaaeb2",
   "certificates_lead": "cbdc4e991a1985f69c81ee41d532a8f47ae1ac007dd162b7106c882337b2ae89",
   "certificates_lessons": "856539d83e713903bd6a04ee6d912328a67ee3dccbe00e7c9f1ca07d3141d77d",
   "certificates_level_complete": "f8a3ab8cde5629ac22e91a3f04d053f104342b40545921e714e5a2bf6058e434",
-  "certificates_level_range": "686d883b9af08dbd84e0f06e3bb64055556ace892c22694215f48e7e35a6ba78",
+  "certificates_level_on_zoonk": "506731ef8c4cd2e00299400260ed4f179acc5ab010e5eb99cb9df4dea3b30788",
   "certificates_link_copied": "a68e6e63d218dea6defedc45f74deea2fb0f925b931d72cef6217f5428fc7564",
   "certificates_link_note": "c1a8a1652456ba14c55e9f63f0cf6ff281955474d418ea4ac409255b77fc6ab0",
   "certificates_linkedin_credential_id": "ebd4c64378d6908403fe2f5d5b4ce2adf44c854cf6aa2f73c7f7b1244b9c6fc2",
@@ -55,10 +60,10 @@
   "certificates_linkedin_title": "cb133ee21e649e95ab9992938149122332367b320f6d722b98ad5d8586ff1134",
   "certificates_locked": "113c8bcf4043f1a7fc88fdd782697d300e7e13ab1684defce35f87b2a5beb44d",
   "certificates_meaning_cefr": "3a1eb981ff9d9dac1963e1469bc3dcb958b0bfa2655f352cd65785c2c5abc2bc",
-  "certificates_meaning_language": "04c21a23261b79bda15e337191fae0c010f583de3cbcb4a28495fb402e296444",
-  "certificates_meaning_level": "6ae7ce0a797334bc15a62a83ada871a8d3e5fbd7c208d041b50e8f5354b4ac50",
+  "certificates_meaning_language": "87132a1d054e357fb87cc9b450d5c4faa3b6f6c5dc80fd2262c3a4115b905e69",
+  "certificates_meaning_level": "cd4b75ad5b39bbbdc2f92b6e60ef8dbf267bef83fc030fc90f36a949e39b25f3",
   "certificates_meaning_name": "c6ecdbffd5d5ee117996acf86c797785d1ea813a330af4c813ac2f8d6ce3c4f0",
-  "certificates_meaning_plan": "223d3f905d1b646c8b973a5efc2b5903cfaf80d6b4e40e130f6d2b805521abae",
+  "certificates_meaning_plan": "77b9ca64ab71a1e428809d99a9b4d981eef2430e1e20b2d177770b05bde451d6",
   "certificates_meaning_record": "79c2cecf34eecb41230a6fd2d8878c2b4c40ba94089f38987ce6ce8e84d9b357",
   "certificates_meaning_title": "410792190ac10c765031e931b43ff7d1ca15f1a1b86b526d7913ab92a7b29978",
   "certificates_name_hint": "84995d997e766cd8d2a9680baee15fd704b651a5d36d3a5f295fb7b429c0cba4",
@@ -83,7 +88,8 @@
   "certificates_title": "ac813ce4e18294aa493d99a32d68b1d6d7fd07f1337edc8a445f69abc7bba662",
   "certificates_topics_covered": "b1a6f13a7435cd30843c8cb44c4f7da714ed3b271a6feb2d4246d6d3a7612d7a",
   "certificates_up_next": "ec888da0f88d2765c22dc22042a3139c27aaa65111e267f4af7aa0ee9743a1e2",
-  "certificates_up_next_course": "4075525004759eed8d9c6623931f1acb8da03905cf94e6292662dc3b91465022",
+  "certificates_up_next_course": "7d6ca1258d81b8dc40953571ccccc1231c0d8891ba794b43531c427b0a516938",
+  "certificates_up_next_language": "acc9336f23a5942e85598e3ba389bb2a8201f071015211e6c11ded4d6c8ddfed",
   "certificates_verified": "7be2a9dbc2061d65d1ed3626702cf5ccf99c41fd0e779fd79468f69c9c383e9c",
   "certificates_view": "0d742162d6d7f86943f7445ca16b6c78eb95a2f24252af9fceca01fc2f6ddc70",
   "certificates_view_several": "996f8bf659e38a4a8b4d21a3652155f667440230e1c6b823af89a73ff60d0b04"
@@ -99,14 +105,14 @@
         <item quantity="other">%1$d certificados</item>
     </plurals>
     <string name="certificates_lead">Um certificado para cada nível e plano que você concluir.</string>
-    <!-- What a certificate certifies: a finished course level or plan. Printed on the certificate itself. -->
+    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificado de conclusão</string>
-    <!-- A language course level and its CEFR range, such as Intermediate (B1–B2). -->
-    <string name="certificates_level_range">%1$s (%2$s)</string>
+    <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Ainda sem certificados</string>
-    <string name="certificates_empty_description">Seus certificados aparecem aqui quando você conclui um nível ou um plano e estuda pelo menos metade das aulas.</string>
+    <string name="certificates_empty_description">Seus certificados aparecem aqui quando você conclui um nível ou um plano.</string>
     <string name="certificates_continue_learning">Continuar aprendendo</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Ver certificado</string>
@@ -114,7 +120,9 @@
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Emitir seu certificado</string>
     <string name="certificates_up_next">A seguir</string>
-    <string name="certificates_up_next_course">Você recebe seu certificado quando conclui o plano e estuda pelo menos metade das aulas</string>
+    <string name="certificates_up_next_course">Você recebe seu certificado quando conclui o plano</string>
+    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
+    <string name="certificates_up_next_language">Você recebe quando todas as habilidades que pratica chegam ao próximo nível</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Curso concluído!</string>
     <string name="certificates_level_complete">%1$s concluído!</string>
@@ -126,7 +134,9 @@
     </plurals>
     <!-- %1$s is the course's title. -->
     <string name="certificates_course_ready">Seu certificado de %1$s está pronto.</string>
-    <!-- %1$s lists the certificates' names, such as "Italian · Intermediate (B1–B2) and Python". -->
+    <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_ready">Seu certificado de %1$s %2$s está pronto.</string>
+    <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
     <string name="certificates_several_ready">Seus certificados de %1$s estão prontos.</string>
     <!-- %1$s is the learner's name, as printed on their certificate. -->
     <string name="certificates_on_your_certificate">No seu certificado: %1$s</string>
@@ -170,8 +180,12 @@
     <string name="certificates_not_found">Não encontramos esse certificado</string>
     <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s concluiu %2$s</string>
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <string name="certificates_alt_level">%1$s concluiu o nível %2$s em %3$s</string>
     <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_course_on_zoonk">%1$s, concluído no Zoonk</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_level_on_zoonk">Nível %1$s em %2$s, concluído no Zoonk</string>
     <!-- Above a certificate's headline on its page, beside a check mark. -->
     <string name="certificates_verified">Certificado verificado · emitido pelo Zoonk</string>
     <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
@@ -194,14 +208,16 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">cerca de %1$s</string>
     <string name="certificates_meaning_title">O que este certificado significa</string>
-    <string name="certificates_meaning_language">O Zoonk emite este certificado quando a pessoa conclui todas as aulas de um nível de um curso de idiomas, estudando pelo menos metade delas no Zoonk e passando em testes para concluir as demais.</string>
-    <string name="certificates_meaning_level">O Zoonk emite este certificado quando a pessoa conclui todas as aulas de um nível de um curso, estudando pelo menos metade delas no Zoonk e passando em testes para concluir as demais, e vence todos os desafios desse nível.</string>
-    <string name="certificates_meaning_plan">O Zoonk emite este certificado quando a pessoa conclui todas as aulas do plano de um curso, estudando pelo menos metade delas no Zoonk e passando em testes para concluir as demais, e vence todos os desafios desse plano.</string>
+    <string name="certificates_meaning_language">O Zoonk mede cada habilidade (leitura, escuta, conversação e escrita) com base nas respostas de quem estuda nas aulas e na prática. Um nível é concluído quando todas as habilidades que avançaram com essas respostas chegam ao nível seguinte. Por isso, este certificado foi emitido quando cada uma delas chegou a %1$s.</string>
+    <string name="certificates_meaning_level">O Zoonk emite este certificado quando você conclui todos os capítulos de um nível do curso, estudando cada aula ou passando no teste dela, e vence todos os desafios desse nível.</string>
+    <string name="certificates_meaning_plan">O Zoonk emite este certificado quando a pessoa conclui todas as aulas do plano de um curso, estudando cada uma ou passando no teste dela, e vence todos os desafios do plano.</string>
     <string name="certificates_meaning_record">É um registro de conclusão no Zoonk e não vale como crédito acadêmico.</string>
     <string name="certificates_meaning_cefr">Os níveis seguem o CEFR, o Quadro Europeu Comum de Referência para Línguas. Este não é o resultado de uma prova oficial.</string>
     <string name="certificates_meaning_name">O nome é o que a pessoa informou na conta do Zoonk; o Zoonk não verifica documentos de identidade.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">Tópicos abordados</string>
+    <!-- Heading over what a language certificate's learner can do -->
+    <string name="certificates_can_do">O que sabe fazer</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
@@ -226,6 +242,8 @@
         <item quantity="many">%1$s aulas</item>
         <item quantity="other">%1$s aulas</item>
     </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_caption_level">Acabei de concluir o nível %1$s de %2$s no Zoonk.</string>
     <string name="certificates_linkedin_title">Adicionar ao seu perfil LinkedIn</string>
     <string name="certificates_linkedin_description">LinkedIn abre o formulário para adicionar uma licença ou certificação. Copie os dados de cada campo para ele.</string>
     <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->

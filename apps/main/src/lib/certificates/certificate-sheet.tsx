@@ -9,6 +9,57 @@ import { type CertificateView } from "./certificate-view";
 
 type Scale = (value: number) => number;
 
+function SheetReadouts({
+  covered,
+  px,
+  view,
+}: {
+  covered: FittedSheet["covered"];
+  px: Scale;
+  view: CertificateView;
+}) {
+  if (covered?.kind !== "readouts" || view.covered?.kind !== "readouts") {
+    return null;
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: px(SHEET.covered.readoutGap),
+        marginTop: px(SHEET.covered.above),
+      }}
+    >
+      {view.covered.readouts.map((readout) => (
+        <div
+          key={readout.label}
+          style={{ display: "flex", flexDirection: "column", gap: px(SHEET.covered.labelGap) }}
+        >
+          <span
+            style={{
+              color: CERTIFICATE_COLORS.muted,
+              fontSize: px(SHEET.covered.labelSize),
+              fontWeight: 500,
+            }}
+          >
+            {readout.label}
+          </span>
+          <span
+            style={{
+              fontSize: px(SHEET.covered.readoutSize),
+              fontWeight: FONT_WEIGHTS.readout,
+              letterSpacing: "-0.04em",
+              lineHeight: 1,
+            }}
+          >
+            {readout.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function SheetTopics({
   covered,
   moreTopics,
@@ -20,7 +71,7 @@ function SheetTopics({
   px: Scale;
   view: CertificateView;
 }) {
-  if (!covered || !view.covered) {
+  if (covered?.kind !== "topics" || view.covered?.kind !== "topics") {
     return null;
   }
 
@@ -107,47 +158,38 @@ function SheetMeta({ px, view }: { px: Scale; view: CertificateView }) {
   );
 }
 
-function SheetFacts({
-  facts,
-  px,
-  view,
-}: {
-  facts: FittedSheet["facts"];
-  px: Scale;
-  view: CertificateView;
-}) {
+function SheetFacts({ px, view }: { px: Scale; view: CertificateView }) {
   const { footer } = SHEET;
-  const factPx: Scale = (value) => px(value * facts.scale);
 
   return (
     <div
       style={{ display: "flex", flexBasis: 0, flexDirection: "column", flexGrow: 1, minWidth: 0 }}
     >
-      <div style={{ display: "flex", gap: px(facts.gap) }}>
-        {view.facts.map(({ label, value }) => (
+      <div style={{ display: "flex", gap: px(footer.factGap) }}>
+        {view.facts.map((fact) => (
           <div
-            key={label}
-            style={{ display: "flex", flexDirection: "column", gap: factPx(footer.factLabelGap) }}
+            key={fact.label}
+            style={{ display: "flex", flexDirection: "column", gap: px(footer.factLabelGap) }}
           >
             <span
               style={{
                 color: CERTIFICATE_COLORS.muted,
-                fontSize: factPx(footer.labelSize),
+                fontSize: px(footer.labelSize),
                 fontWeight: 500,
               }}
             >
-              {label}
+              {fact.label}
             </span>
             <span
               style={{
                 fontFamily: "Geist Mono",
-                fontSize: factPx(footer.valueSize),
+                fontSize: px(footer.valueSize),
                 fontWeight: 500,
                 letterSpacing: 0,
                 whiteSpace: "nowrap",
               }}
             >
-              {value}
+              {fact.value}
             </span>
           </div>
         ))}
@@ -168,15 +210,7 @@ function SheetFacts({
   );
 }
 
-function SheetFooter({
-  facts,
-  px,
-  view,
-}: {
-  facts: FittedSheet["facts"];
-  px: Scale;
-  view: CertificateView;
-}) {
+function SheetFooter({ px, view }: { px: Scale; view: CertificateView }) {
   const { footer } = SHEET;
 
   return (
@@ -190,7 +224,7 @@ function SheetFooter({
         paddingTop: px(footer.ruleGap),
       }}
     >
-      <SheetFacts facts={facts} px={px} view={view} />
+      <SheetFacts px={px} view={view} />
 
       <div
         style={{
@@ -270,13 +304,20 @@ export function CertificateSheet({
       <ShapedImage above={px(SHEET.name.above)} text={fitted.name} />
       <ShapedImage above={px(SHEET.title.above)} text={fitted.title} />
       <SheetMeta px={px} view={view} />
+      <SheetReadouts covered={fitted.covered} px={px} view={view} />
       <SheetTopics covered={fitted.covered} moreTopics={fitted.moreTopics} px={px} view={view} />
 
       <div style={{ display: "flex", marginTop: "auto", paddingTop: px(SHEET.graph.above) }}>
-        <CertificateGraph route={SHEET.route} scale={scale} view={view} />
+        <CertificateGraph
+          ladder={SHEET.ladder}
+          route={SHEET.route}
+          scale={scale}
+          showLabels
+          view={view}
+        />
       </div>
 
-      <SheetFooter facts={fitted.facts} px={px} view={view} />
+      <SheetFooter px={px} view={view} />
     </div>
   );
 }

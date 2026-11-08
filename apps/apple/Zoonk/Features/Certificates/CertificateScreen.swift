@@ -395,12 +395,20 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
     Section {
       name
 
-      if let level = facts.levelName {
+      if let level = facts.courseLevel {
         CertificateDetailRow(
           label: Text("Level", tableName: "Certificates", comment: "A course certificate's level")
         ) {
-          Text(verbatim: level)
+          Text(level.localizedTitle)
             .typeWeight(.medium)
+        }
+      }
+
+      if facts.kind == .languageLevel {
+        ForEach(facts.skillLevels ?? [], id: \.skill) { level in
+          CertificateDetailRow(label: Text(languageSkillName(level.skill)), isData: true) {
+            Text(verbatim: level.label)
+          }
         }
       }
 
@@ -490,9 +498,11 @@ private struct CertificateDetailRow<Value: View>: View {
 }
 
 /// Main's `CertificateMeaning`: how Zoonk decided to issue this kind of certificate, and what it
-/// isn't. A language level's claims no challenge: a free learner finishes one without its Plus
-/// calls.
+/// isn't.
 private struct CertificateMeaning: View {
+  /// Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it.
+  private static let bandAbove = ["A1": "A2", "A2": "B1", "B1": "B2", "B2": "C1", "C1": "C2"]
+
   /// Main's `leading-relaxed` paragraphs at 15pt.
   private static let paragraphStyle = TypeStyle(
     size: 15, relativeTo: .subheadline, weight: .regular, lineHeight: 1.625)
@@ -508,14 +518,16 @@ private struct CertificateMeaning: View {
       table: "Certificates",
       comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
 
-    if facts.cefrRange != nil {
+    if facts.kind == .languageLevel {
+      let band = facts.level.flatMap { Self.bandAbove[$0] } ?? ""
+
       return [
         String(
           localized:
-            "Zoonk issues this certificate when a learner finishes every lesson of a language course's level, studying at least half of them on Zoonk and passing any others by test.",
+            "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached \(band).",
           table: "Certificates",
-          comment: "How a certificate for a language course's level is earned"
-        ),
+          comment:
+            "How a language level certificate is earned; the argument is a CEFR band, such as B2"),
         String(
           localized:
             "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
@@ -529,11 +541,11 @@ private struct CertificateMeaning: View {
       facts.courseLevel == nil
       ? String(
         localized:
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it.",
+          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
         table: "Certificates", comment: "How a certificate for a course's whole plan is earned")
       : String(
         localized:
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's level, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it.",
+          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
         table: "Certificates", comment: "How a certificate for a course's level is earned")
 
     return [
@@ -570,29 +582,37 @@ private struct CertificateMeaning: View {
   }
 }
 
-/// Main's `CertificateCovered`: the course's chapters it covers.
+/// Main's `CertificateCovered`: a course's chapters, or what a language level's learner can do.
 private struct CertificateCovered: View {
   let facts: CertificateFacts
 
   var body: some View {
-    if !facts.topics.isEmpty {
+    let lines = facts.kind == .course ? facts.topics : facts.canDo
+
+    if !lines.isEmpty {
       Section {
-        ForEach(facts.topics, id: \.self) { topic in
+        ForEach(lines, id: \.self) { line in
           MarkedRow {
             StatusMark(status: .done)
           } content: {
-            Text(topic)
+            Text(line)
           } end: {
             EmptyView()
           }
         }
       } header: {
         SectionTitle(
-          Text(
-            "Topics covered", tableName: "Certificates",
-            comment: "Heading over the chapters a course certificate covers")
+          facts.kind == .course
+            ? Text(
+              "Topics covered", tableName: "Certificates",
+              comment: "Heading over the chapters a course certificate covers")
+            : Text(
+              "Can do", tableName: "Certificates",
+              comment: "Heading over what a language certificate's learner can do")
         ) {
-          Text(facts.topics.count, format: .number)
+          if facts.kind == .course {
+            Text(lines.count, format: .number)
+          }
         }
       }
     }

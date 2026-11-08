@@ -37,8 +37,8 @@ test.describe("Certificates API", () => {
     expect(response.headers()["x-robots-tag"]).toBe("noindex");
 
     expect(body).toMatchObject({
-      cefrRange: null,
       code: certificate.code,
+      kind: "course",
       recipientName: "Ana Souza",
       title: "Quantum physics from scratch",
     });
@@ -58,30 +58,6 @@ test.describe("Certificates API", () => {
     );
 
     expect(missing.map((item) => item.status())).toStrictEqual([404, 404]);
-    await anonymous.dispose();
-  });
-
-  test("names a language course's level with the CEFR levels it covers", async () => {
-    const user = await userFixture({ name: "Ana Souza" });
-
-    const certificate = await certificateFixture({
-      courseLevel: "intermediate",
-      language: "pt",
-      targetLanguage: "it",
-      title: "Italiano",
-      userId: user.id,
-    });
-
-    const anonymous = await request.newContext({ baseURL });
-    const response = await anonymous.get(`/v1/certificates/${certificate.code}`);
-    const body = await readBody({ response, schema: certificateSchema });
-
-    expect(body).toMatchObject({ cefrRange: "B1–B2", courseLevel: "intermediate" });
-
-    expect(new URL(body.linkedInUrl).searchParams.get("name")).toBe(
-      "Italiano · Intermediário (B1–B2)",
-    );
-
     await anonymous.dispose();
   });
 

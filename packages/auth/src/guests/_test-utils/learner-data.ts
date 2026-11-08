@@ -239,7 +239,7 @@ export async function countLearnerRows(userId: string) {
 }
 
 export function createCertificate({
-  key = `${randomUUID()}:beginner`,
+  key = `es:${randomUUID()}`,
   userId,
 }: {
   key?: string;
@@ -249,20 +249,13 @@ export function createCertificate({
     data: {
       code: randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase(),
       completedOn: new Date("2026-09-01T00:00:00Z"),
-      courseLevel: "beginner",
       createdAt: new Date("2026-09-01T00:00:00Z"),
-      details: {
-        category: null,
-        lessonsStudied: 20,
-        lessonsTestedOut: 0,
-        minutes: null,
-        topics: [],
-      },
+      details: { canDo: [], lessonsStudied: 20, minutes: null, skillLevels: [] },
       key,
-      kind: "course",
+      kind: "languageLevel",
       language: "en",
+      level: "A1",
       targetLanguage: "es",
-      title: "Español",
       userId,
     },
   });

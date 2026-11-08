@@ -1,7 +1,12 @@
-import { CourseLevel } from "@zoonk/db/enums";
+import { CertificateKind, CourseLevel, LanguageSkill } from "@zoonk/db/enums";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+
+/** C2 has nothing above it to reach, and the level test tops out at C1+. */
+export const CERTIFIED_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
+
+export type CertifiedLevel = (typeof CERTIFIED_LEVELS)[number];
 
 /** Crockford base32: no I, L, O or U, so a code typed from paper reads one way. */
 export const CERTIFICATE_CODE_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
@@ -26,6 +31,15 @@ export function normalizeCertificateCode(input: string): string | null {
 
 const countSchema = z.int().min(0);
 
+const certifiedLevelSchema = z.enum(CERTIFIED_LEVELS);
+
+const skillLevelSchema = z
+  .object({
+    label: z.string().meta({ description: 'The skill\'s level, such as "B1" or "B2+"' }),
+    skill: z.enum(LanguageSkill),
+  })
+  .meta({ id: "CertificateSkillLevel" });
+
 export const courseCertificateDetailsSchema = z.object({
   category: z.enum(COURSE_CATEGORIES).nullable(),
   lessonsStudied: countSchema,
@@ -34,21 +48,26 @@ export const courseCertificateDetailsSchema = z.object({
   topics: z.array(z.string()),
 });
 
+export const languageLevelCertificateDetailsSchema = z.object({
+  canDo: z.array(z.string()),
+  lessonsStudied: countSchema,
+  minutes: countSchema.nullable(),
+  skillLevels: z.array(skillLevelSchema),
+});
+
 export type CourseCertificateDetails = z.infer<typeof courseCertificateDetailsSchema>;
+
+export type LanguageLevelCertificateDetails = z.infer<typeof languageLevelCertificateDetailsSchema>;
 
 /** A plain shape, so the API can add its links without an `allOf` strict clients can't decode. */
 export const certificateFactsShape = {
+  canDo: z
+    .array(z.string())
+    .meta({ description: "Language level: what the learner can do, in the certificate's words" }),
   category: z
     .enum(COURSE_CATEGORIES)
     .nullable()
-    .meta({ description: "The course's first category, for its subject mark" }),
-  cefrRange: z
-    .string()
-    .nullable()
-    .meta({
-      description:
-        'A language course\'s level: the CEFR levels it covers, such as "B1–B2", shown with the level\'s name ("Intermediate (B1–B2)"). Null otherwise',
-    }),
+    .meta({ description: "Course: the course's first category, for its subject mark" }),
   code: z
     .string()
     .meta({
@@ -58,22 +77,26 @@ export const certificateFactsShape = {
   completedOn: z.iso.date().meta({ description: "The learner-local day it was earned" }),
   courseId: uuidSchema()
     .nullable()
-    .meta({ description: "The course while it's public, for a link to its page" }),
+    .meta({ description: "Course: the course while it's public, for a link to its page" }),
   courseLevel: z
     .enum(CourseLevel)
     .nullable()
     .meta({
       description:
-        'The level it certifies, named with the title ("Python · Beginner"). Null for a plan certified whole',
+        'Course: the level it certifies, named with the title ("Python · Beginner"). Null for a plan certified whole, and for language levels',
     }),
+  kind: z.enum(CertificateKind),
   language: z.string().meta({ description: "The locale the certificate's own words are in" }),
-  lessonsStudied: countSchema.nullable().meta({ description: "Lessons studied on Zoonk" }),
-  lessonsTestedOut: countSchema.nullable().meta({ description: "Lessons passed by test" }),
+  lessonsStudied: countSchema.nullable().meta({ description: "Course and language level" }),
+  lessonsTestedOut: countSchema.nullable().meta({ description: "Course: lessons passed by test" }),
+  level: certifiedLevelSchema
+    .nullable()
+    .meta({ description: "Language level: the level finished" }),
   minutes: countSchema
     .nullable()
     .meta({
       description:
-        "About how long the studied lessons take, from the plan's estimates; null when unknown",
+        "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
     }),
   recipientName: z
     .string()
@@ -82,12 +105,25 @@ export const certificateFactsShape = {
       description:
         "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
     }),
-  title: z.string().meta({ description: "The course's title, as written" }),
+  skillLevels: z
+    .array(skillLevelSchema)
+    .meta({
+      description:
+        "Language level: each skill the learner's answers raised, at its level when earned",
+    }),
+  targetLanguage: z.string().nullable().meta({ description: "Language kinds: the language" }),
+  title: z
+    .string()
+    .nullable()
+    .meta({
+      description:
+        "Course: its title, as written. Null for language kinds, named from the language",
+    }),
   topics: z
     .array(z.string())
     .meta({
       description:
-        "The chapters it covers in plan order, the level's for a level and every one for a plan",
+        "Course: the chapters it covers in plan order, the level's for a level and every one for a plan",
     }),
 };
 

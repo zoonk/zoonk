@@ -1,18 +1,19 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { getLanguageName, getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useAppLocale } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLevelName } from "../course/use-level-name";
 
 const MINUTES_PER_HOUR = 60;
 
-const WORD_JOINER = "\u2060";
-
-type NamedLevel = Pick<CertificateFacts, "cefrRange" | "courseLevel">;
-
-type NamedFacts = NamedLevel & Pick<CertificateFacts, "title">;
+type NamedFacts = Pick<
+  CertificateFacts,
+  "courseLevel" | "kind" | "level" | "targetLanguage" | "title"
+>;
 
 /** The plan's estimate, so it's shown rounded: whole hours past the first one. */
 export function roundStudyMinutes(minutes: number): number {
@@ -21,51 +22,48 @@ export function roundStudyMinutes(minutes: number): number {
     : Math.round(minutes / MINUTES_PER_HOUR) * MINUTES_PER_HOUR;
 }
 
-/**
- * Browsers may break a line after a dash, which splits a CEFR range ("A1–" / "A2") in a title. Only
- * for titles: a name the learner copies must not carry the invisible joiner.
- */
-export function keepLevelTogether(level: string): string {
-  return level.replaceAll("–", `–${WORD_JOINER}`);
+function useLanguageName() {
+  const locale = useAppLocale();
+
+  return (targetLanguage: string | null) =>
+    targetLanguage ? getLanguageName({ targetLanguage, userLanguage: locale }) : "";
 }
 
-export function useCertificateLevel() {
-  const t = useExtracted();
-  const levelName = useLevelName();
+export function useLanguageNameInSentence() {
+  const locale = useAppLocale();
 
-  return (facts: NamedLevel): string | null => {
-    const level = facts.courseLevel && levelName(facts.courseLevel);
-
-    return level && facts.cefrRange
-      ? t({
-          description:
-            "A language course's level with the CEFR levels it covers, such as “Intermediate (B1–B2)”.",
-          message: "{level} ({cefrRange})",
-          values: { cefrRange: facts.cefrRange, level },
-        })
-      : level;
-  };
+  return (targetLanguage: string | null) =>
+    targetLanguage ? getLanguageNameInSentence({ targetLanguage, userLanguage: locale }) : "";
 }
 
 /**
- * A course's title, with its level for a level's certificate ("Python · Beginner", "Italian ·
- * Intermediate (B1–B2)"), in the viewer's language.
+ * A course's title, with its level for a level's certificate ("Python · Beginner"), or the language
+ * and its level ("Spanish B1"), in the viewer's language.
  */
 export function useCertificateName() {
   const t = useExtracted();
-  const certificateLevel = useCertificateLevel();
+  const languageName = useLanguageName();
+  const levelName = useLevelName();
 
   return (facts: NamedFacts): string => {
-    const level = certificateLevel(facts);
+    if (facts.kind === "course" && facts.courseLevel) {
+      return t({
+        description:
+          "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name.",
+        message: "{course} · {level}",
+        values: { course: facts.title ?? "", level: levelName(facts.courseLevel) },
+      });
+    }
 
-    return level
-      ? t({
-          description:
-            "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name.",
-          message: "{course} · {level}",
-          values: { course: facts.title, level },
-        })
-      : facts.title;
+    if (facts.kind === "course") {
+      return facts.title ?? "";
+    }
+
+    return t({
+      description: 'A language and a CEFR level, such as "Spanish B1": a certificate\'s name.',
+      message: "{language} {level}",
+      values: { language: languageName(facts.targetLanguage), level: facts.level ?? "" },
+    });
   };
 }
 
@@ -96,10 +94,19 @@ export function useCertificateDate() {
 export function useCertificateSentence() {
   const t = useExtracted();
   const certificateName = useCertificateName();
+  const languageName = useLanguageNameInSentence();
 
   return (facts: NamedFacts & Pick<CertificateFacts, "recipientName">): string => {
     const name = facts.recipientName;
+    const level = facts.level ?? "";
+    const language = languageName(facts.targetLanguage);
     const certificate = certificateName(facts);
+
+    if (facts.kind === "languageLevel") {
+      return name
+        ? t("{name} completed level {level} in {language}", { language, level, name })
+        : t("Level {level} in {language}, completed on Zoonk", { language, level });
+    }
 
     return name
       ? t("{name} completed {course}", { course: certificate, name })

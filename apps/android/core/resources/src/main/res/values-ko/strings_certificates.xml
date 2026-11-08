@@ -5,11 +5,14 @@
   "certificates_add_to_linkedin": "01ab5ac5f5ed85a9c3a57ee99ea162a344481254c0515fa66af8a6dfe068d4bf",
   "certificates_alt_course": "50f4adf6bc4e4d64980c8ff998dcb1ee21aa0e59dff70f9a6167af0d797093a4",
   "certificates_alt_dated": "6109e6f2853cd08f359efd9f9bf05e5a48ac818272fc3ff2d1faf80ea35c4b9d",
+  "certificates_alt_level": "8da9fd2ed3d97bff6095ba6777761f022cb9dcf2c584bcb8e32725febccac501",
+  "certificates_can_do": "a003aaacfea3f5fd48ca2302025222d7929231aee69398b74f23a80c53a03359",
   "certificates_cancel": "335a834ed2f5259c9eee673561f05476a041131f896980379d6142499d2d7a1d",
   "certificates_caption_course": "aa0d192e0eeb41dc968d30294fc4fa6decee834f3f7ed064e7b047e621ba9073",
   "certificates_caption_course_hours": "d872db4d340b32b482dabbe3fef7855304a6f8675db69ff2b9e24445df891a8c",
   "certificates_caption_course_minutes": "0a98626bb8db34518ff7317c2044033a1bf15b5600b6ef5d43ac0c66cfc0c6d0",
   "certificates_caption_course_tested_out": "17ce3071125998f3ad2b7524030d7b2887ba4a871ebb7cc37c22ab328b282d5f",
+  "certificates_caption_level": "07e857ad9480b35fdb4e01811dbed41c00fb19e0d083c9f66ae5aaa119a4bf75",
   "certificates_certificate": "22c0487340ab86e183335330fcd18813f5c633de3c3f86f80c74902f68a5deb0",
   "certificates_change": "8ba886c6df2ff9932e03e173c8f5ed6c57bec30d070f978703df5d3b4e39fe31",
   "certificates_change_name": "9f4796c72c1c6bd3e1d545bb79122ecf877456246b770fde393ec5093eec67fb",
@@ -34,15 +37,17 @@
   "certificates_download": "a7ef56337b4757bbefd8d71a0ba278236afd3035ca445e7942d371643ab4fdab",
   "certificates_downloaded": "862c8e9ae03463d24baa71aabbcab1fc448e39fca1f7da5b6657bbd45a2e418d",
   "certificates_earned": "1a5c8500bd794b75aa094f43c5db66da29cd8a8156af92b3666e1c055faec035",
-  "certificates_empty_description": "8355f9ab81c026a4b1d10617634a810e0bfaf0c61374b626d4d42351102e6012",
+  "certificates_empty_description": "f2f0529dcb33e25a11c1ef94a0745a2f67757fd06d577a4af041d0cc942ab3cb",
   "certificates_empty_title": "a1647625f3b3cfd4e2af45bde1d985d8f2048ac49168f96ab580b8f6f160cfc5",
   "certificates_get": "549d5f8fbbba6eb8771c1395f237372d6791d9ebabb3c283bc1ce05406f07b72",
   "certificates_issued_on": "bd25682561692e9dab9f2345d4b68af85c610f1f32d5ec7e01e0e14145352f87",
   "certificates_kind_completion": "f417e86beb3e24e610d49ca7ab105f21929aad6fa8d2f7343c6293ae52a529c1",
+  "certificates_language_level": "9a929089174b475ba8499786dc5907e76d95c0a0a217b247b927293f7cceb9f1",
+  "certificates_language_ready": "d8ee76c9cefe0e4b5c949d102698aff299a16dbd34b0cf91057670c5b7851eb9",
   "certificates_lead": "9bf4e1b8863f15cb4208b49563b4e607bc87136ed022f6c2db6f5144ed8af49d",
   "certificates_lessons": "cbb5836737560926feadde2fe45c4afbc1b6d1f6fbf752d37b789e6f58fd4614",
   "certificates_level_complete": "eff50704b3c23634ac951b3803c3488999df00f18779993f7d9d4c98f626b33f",
-  "certificates_level_range": "0ab002758a0a5ca83de46d592b7048caf859a19ecea2d8566f9bc567ff69149e",
+  "certificates_level_on_zoonk": "9942b3dbadd42dcbcca5d7ed39320047e6d5993073c83fc9f7429db4eb11e765",
   "certificates_link_copied": "9855b0eef3cb17904436b02b463f568dab7101093c52932576d6a66842f9227f",
   "certificates_link_note": "0ee0180d27e1d6eb4e2130a8f0b3cf48b42c42f4982fa6b8aa9cc77d1e0b6015",
   "certificates_linkedin_credential_id": "ccb6a6c383eaa93c7ca6ad5482c6adaf727b84115d2728b685e548e833226cf0",
@@ -55,10 +60,10 @@
   "certificates_linkedin_title": "c151ecbdb72973075f02d1edafa9a078b04979c4fada21f07168911301205d0c",
   "certificates_locked": "9000021ab686cdf931b21e9982f7c2d491b7c60d97236dd33cde7b3da9cf43dd",
   "certificates_meaning_cefr": "ac48947f020c687b4b087e61e6cfad108e0c1e9eca8c08a9e739a5c756e37037",
-  "certificates_meaning_language": "ab3312646c1d2c5f50cf953a72662a14f1b8bbd6abb344a8b36b66e5857a895b",
-  "certificates_meaning_level": "51dcc67031ee0f6f3f94415f1e3e53cbb175da83972e2e139c201cf8076aedaf",
+  "certificates_meaning_language": "2620d39792f09187893f1121433d31f539c5e3e4f2911cae999da93a92b7bfd6",
+  "certificates_meaning_level": "60641d25c148f16e14ab7db86f43cb4b4b712f8802a012ea96a3d0011bb89c0e",
   "certificates_meaning_name": "bbde9a1085dfe2f901b557b3103541d164414a99773d3f75f42e381150178a98",
-  "certificates_meaning_plan": "51b5f99ed10dc77149d581b2ea2f55c41e41c131a6f49ef54b2c2b7e8d3d046f",
+  "certificates_meaning_plan": "b56cda80d85fabc95aa07a3371dea7ecbf179dd4e8c1a708bf6bc9d0cde19a0a",
   "certificates_meaning_record": "e8b3a6fd116a7e3a335594e06c81ed3af9c5bc9234fe071aadd34a2a1897a684",
   "certificates_meaning_title": "682a4aa6c8c94c8dc3d476520470624b168b199c0da794e483591a960ad497d9",
   "certificates_name_hint": "08ff55f152370badff03597e212907e2553bbce0d9f3e7cdbcb8744f597c35b1",
@@ -83,7 +88,8 @@
   "certificates_title": "5409f1bac51719b30e4fb2f7aa1f0bc32b9ec54f73f60c43f98e80ed7d82673e",
   "certificates_topics_covered": "0b4accb1eebf55dc3ff30935bb057a535fcc8b50e22d346172a2e3aab55c999f",
   "certificates_up_next": "0dfb34b367f38d98e6438440531f2ca2ac9a4f973ce8b903724abbf05f9c01d8",
-  "certificates_up_next_course": "c9f586999826d26f5e3caf669ec20053e88cf601e8a09f0d99fe059d7582f429",
+  "certificates_up_next_course": "b90c6948ccf42a5f570434f3e7992def8f7f35d1833f7194e9c4e972741c5b63",
+  "certificates_up_next_language": "36853c5708a9690e40e3743489fc6c629cb77e4290597fc7992003aaf195d78e",
   "certificates_verified": "6b2c2671b4baab1b5a9cb13eaf08ef21aac89a6729e5753a9e2d848a09393c10",
   "certificates_view": "b87fa67ace2226d0aaffe0d0be896252de9ff1ab57cda8c1f742803944ceb003",
   "certificates_view_several": "61f8df18fe7dcae29c34e337258b9308bf536eae4e9aaecd0a0663a269433808"
@@ -97,14 +103,14 @@
         <item quantity="other">인증서 %1$d개</item>
     </plurals>
     <string name="certificates_lead">레벨과 계획을 마칠 때마다 인증서를 받아요.</string>
-    <!-- What a certificate certifies: a finished course level or plan. Printed on the certificate itself. -->
+    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">수료 인증서</string>
-    <!-- A language course level and its CEFR range, such as Intermediate (B1–B2). -->
-    <string name="certificates_level_range">%1$s (%2$s)</string>
+    <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">아직 인증서가 없어요</string>
-    <string name="certificates_empty_description">레슨을 절반 이상 학습하고 레벨이나 계획을 마치면 여기에 인증서가 표시돼요.</string>
+    <string name="certificates_empty_description">레벨이나 계획을 마치면 여기에 인증서가 표시돼요.</string>
     <string name="certificates_continue_learning">계속 학습하기</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">인증서 보기</string>
@@ -112,7 +118,9 @@
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">인증서 받기</string>
     <string name="certificates_up_next">다음</string>
-    <string name="certificates_up_next_course">레슨을 절반 이상 학습하고 계획을 마치면 인증서를 받아요</string>
+    <string name="certificates_up_next_course">계획을 마치면 인증서를 받을 수 있어요</string>
+    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
+    <string name="certificates_up_next_language">연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">코스 완료!</string>
     <string name="certificates_level_complete">%1$s 완료!</string>
@@ -122,7 +130,9 @@
     </plurals>
     <!-- %1$s is the course's title. -->
     <string name="certificates_course_ready">%1$s 인증서가 준비됐어요.</string>
-    <!-- %1$s lists the certificates' names, such as "Italian · Intermediate (B1–B2) and Python". -->
+    <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_ready">%1$s %2$s 인증서가 준비됐어요.</string>
+    <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
     <string name="certificates_several_ready">%1$s 인증서가 준비됐어요.</string>
     <!-- %1$s is the learner's name, as printed on their certificate. -->
     <string name="certificates_on_your_certificate">인증서에 표시되는 이름: %1$s님</string>
@@ -166,8 +176,12 @@
     <string name="certificates_not_found">이 인증서를 찾을 수 없어요</string>
     <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s님이 %2$s 코스를 마쳤어요</string>
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <string name="certificates_alt_level">%1$s님이 %2$s 레벨의 %3$s 과정을 마쳤어요</string>
     <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_course_on_zoonk">%1$s 코스를 Zoonk에서 수료했어요</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_level_on_zoonk">%1$s 레벨의 %2$s 과정을 Zoonk에서 수료했어요</string>
     <!-- Above a certificate's headline on its page, beside a check mark. -->
     <string name="certificates_verified">검증된 인증서 · Zoonk 발급</string>
     <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
@@ -190,14 +204,16 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">약 %1$s</string>
     <string name="certificates_meaning_title">이 인증서의 의미</string>
-    <string name="certificates_meaning_language">언어 코스의 한 레벨에 있는 모든 레슨을 완료하면 Zoonk가 이 인증서를 발급해요. 레슨의 절반 이상은 Zoonk에서 학습하고, 나머지는 테스트를 통과해야 해요.</string>
-    <string name="certificates_meaning_level">코스의 한 레벨에 있는 모든 레슨을 완료하고 모든 챌린지에서 승리하면 Zoonk가 이 인증서를 발급해요. 레슨의 절반 이상은 Zoonk에서 학습하고, 나머지는 테스트를 통과해야 해요.</string>
-    <string name="certificates_meaning_plan">코스 계획에 있는 모든 레슨을 완료하고 모든 챌린지에서 승리하면 Zoonk가 이 인증서를 발급해요. 레슨의 절반 이상은 Zoonk에서 학습하고, 나머지는 테스트를 통과해야 해요.</string>
+    <string name="certificates_meaning_language">Zoonk는 학습자가 레슨과 연습에서 한 답변을 바탕으로 각 스킬(읽기, 듣기, 말하기, 쓰기)을 측정해요. 답변을 통해 레벨이 오른 스킬이 모두 다음 레벨에 도달하면 현재 레벨을 완료한 것으로 봐요. 이 인증서는 해당 스킬이 모두 %1$s에 도달했을 때 발급됐어요.</string>
+    <string name="certificates_meaning_level">코스의 한 레벨에서 각 레슨을 공부하거나 해당 레슨의 테스트를 통과해 모든 챕터를 마치고, 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요.</string>
+    <string name="certificates_meaning_plan">코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요.</string>
     <string name="certificates_meaning_record">Zoonk에서 학습을 완료했다는 기록이에요. 학점으로 인정되지는 않아요.</string>
     <string name="certificates_meaning_cefr">레벨은 유럽 공통 언어 참조 기준인 CEFR에 맞춰져 있어요. 공식 시험 결과는 아니에요.</string>
     <string name="certificates_meaning_name">이름은 학습자가 Zoonk 계정에 등록한 이름이에요. Zoonk는 신분증을 확인하지 않아요.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">학습한 주제</string>
+    <!-- Heading over what a language certificate's learner can do -->
+    <string name="certificates_can_do">할 수 있는 일</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
@@ -216,6 +232,8 @@
     <plurals name="certificates_lessons">
         <item quantity="other">레슨 %1$s개</item>
     </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_caption_level">Zoonk에서 %1$s 레벨의 %2$s 학습을 막 마쳤어요.</string>
     <string name="certificates_linkedin_title">LinkedIn 프로필에 추가하기</string>
     <string name="certificates_linkedin_description">LinkedIn에서 자격증이나 인증서를 추가하는 양식이 열려요. 각 항목을 복사해 양식에 붙여 넣으세요.</string>
     <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->

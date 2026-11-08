@@ -8,7 +8,7 @@ export async function loadUnshownCertificates(userId: string): Promise<OwnedCert
   const rows = await prisma.certificate.findMany({
     include: CERTIFICATE_FACTS_INCLUDE,
     orderBy: { createdAt: "asc" },
-    where: { kind: "course", shownAt: null, userId },
+    where: { shownAt: null, userId },
   });
 
   return rows.map((row) => toOwnedCertificateFacts(row));

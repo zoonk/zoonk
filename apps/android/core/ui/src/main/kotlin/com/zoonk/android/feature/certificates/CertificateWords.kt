@@ -12,11 +12,14 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.OwnedCertificate
 import com.zoonk.api.models.OwnedCertificateFacts
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.roundToInt
+
+enum class CertificateKind { Course, LanguageLevel }
 
 /**
  * What names a certificate, the same in a completion's facts and in the learner's list, so the
@@ -26,33 +29,43 @@ import kotlin.math.roundToInt
 @Immutable
 data class CertificateName(
     val code: String,
-    val title: String,
+    val kind: CertificateKind,
+    val title: String?,
     val courseLevel: String?,
-    val cefrRange: String?,
+    val targetLanguage: String?,
+    val level: String?,
     val completedOn: LocalDate,
     val locked: Boolean,
 )
 
 val OwnedCertificate.naming: CertificateName
-    get() = CertificateName(code, title, courseLevel?.value, cefrRange, completedOn, locked)
+    get() = CertificateName(code, kindOf(kind.value), title, courseLevel?.value, targetLanguage, level?.value, completedOn, locked)
 
 val OwnedCertificateFacts.naming: CertificateName
-    get() = CertificateName(code, title, courseLevel?.value, cefrRange, completedOn, locked)
+    get() = CertificateName(code, kindOf(kind.value), title, courseLevel?.value, targetLanguage, level?.value, completedOn, locked)
 
+private fun kindOf(value: String) = if (value == "languageLevel") CertificateKind.LanguageLevel else CertificateKind.Course
+
+/** The language a level certifies, capitalized as a title: "Spanish", pt "Espanhol". */
 @Composable
 @ReadOnlyComposable
-fun certificateLevelName(
-    courseLevel: String,
-    cefrRange: String?,
-): String {
-    val level = courseLevelName(courseLevel)
-    return cefrRange?.let { stringResource(R.string.certificates_level_range, level, it) } ?: level
+fun CertificateName.languageWord(): String {
+    val locale = currentLocale()
+    return targetLanguage?.let { languageName(it, locale).replaceFirstChar { first -> first.titlecase(locale) } }.orEmpty()
 }
 
 @Composable
 @ReadOnlyComposable
 fun CertificateName.words(): String =
-    courseLevel?.let { stringResource(R.string.certificates_course_level, title, certificateLevelName(it, cefrRange)) } ?: title
+    when (kind) {
+        CertificateKind.Course -> {
+            courseLevel?.let { stringResource(R.string.certificates_course_level, title.orEmpty(), courseLevelName(it)) } ?: title.orEmpty()
+        }
+
+        CertificateKind.LanguageLevel -> {
+            stringResource(R.string.certificates_language_level, languageWord(), level.orEmpty())
+        }
+    }
 
 /** "Certificate of completion · Nov 3, 2026", as lists show it. */
 @Composable
@@ -68,10 +81,23 @@ fun CertificateName.kindLine(): String =
 @ReadOnlyComposable
 fun OwnedCertificate.sentence(): String {
     val recipient = recipientName
-    return if (recipient != null) {
-        stringResource(R.string.certificates_alt_course, recipient, naming.words())
-    } else {
-        stringResource(R.string.certificates_course_on_zoonk, naming.words())
+    val level = level?.value.orEmpty()
+    return when {
+        naming.kind == CertificateKind.LanguageLevel && recipient != null -> {
+            stringResource(R.string.certificates_alt_level, recipient, level, naming.languageWord())
+        }
+
+        naming.kind == CertificateKind.LanguageLevel -> {
+            stringResource(R.string.certificates_level_on_zoonk, level, naming.languageWord())
+        }
+
+        recipient != null -> {
+            stringResource(R.string.certificates_alt_course, recipient, naming.words())
+        }
+
+        else -> {
+            stringResource(R.string.certificates_course_on_zoonk, naming.words())
+        }
     }
 }
 
@@ -88,31 +114,40 @@ fun OwnedCertificate.pictureLabel(): String {
 @ReadOnlyComposable
 fun OwnedCertificate.caption(): String {
     val locale = currentLocale()
+    val level = level?.value.orEmpty()
     val name = naming.words()
-    val studied = (lessonsStudied ?: 0).toInt()
-    val studyMinutes = minutes?.toInt()?.takeIf { it > 0 }
-    if (studied == 0) {
-        return stringResource(R.string.certificates_caption_course_tested_out, name)
-    }
-    val lessons = pluralStringResource(R.plurals.certificates_lessons, studied, formatNumber(studied.toDouble(), locale))
-    return when {
-        studyMinutes == null -> {
-            stringResource(R.string.certificates_caption_course, name, lessons)
+    return when (naming.kind) {
+        CertificateKind.Course -> {
+            val studied = (lessonsStudied ?: 0).toInt()
+            val studyMinutes = minutes?.toInt()?.takeIf { it > 0 }
+            if (studied == 0) {
+                return stringResource(R.string.certificates_caption_course_tested_out, name)
+            }
+            val lessons = pluralStringResource(R.plurals.certificates_lessons, studied, formatNumber(studied.toDouble(), locale))
+            when {
+                studyMinutes == null -> {
+                    stringResource(R.string.certificates_caption_course, name, lessons)
+                }
+
+                studyMinutes < MINUTES_PER_HOUR -> {
+                    pluralStringResource(
+                        R.plurals.certificates_caption_course_minutes,
+                        studyMinutes,
+                        name,
+                        lessons,
+                        studyMinutes,
+                    )
+                }
+
+                else -> {
+                    val hours = (studyMinutes / MINUTES_PER_HOUR.toDouble()).roundToInt()
+                    pluralStringResource(R.plurals.certificates_caption_course_hours, hours, name, lessons, hours)
+                }
+            }
         }
 
-        studyMinutes < MINUTES_PER_HOUR -> {
-            pluralStringResource(
-                R.plurals.certificates_caption_course_minutes,
-                studyMinutes,
-                name,
-                lessons,
-                studyMinutes,
-            )
-        }
-
-        else -> {
-            val hours = (studyMinutes / MINUTES_PER_HOUR.toDouble()).roundToInt()
-            pluralStringResource(R.plurals.certificates_caption_course_hours, hours, name, lessons, hours)
+        CertificateKind.LanguageLevel -> {
+            stringResource(R.string.certificates_caption_level, level, naming.languageWord())
         }
     }
 }

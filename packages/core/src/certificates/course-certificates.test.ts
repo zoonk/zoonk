@@ -64,14 +64,12 @@ async function courseGoal({
   details,
   items = [{ status: "done" }, { status: "todo" }, WON_CHALLENGE],
   kind = "learn",
-  targetLanguage,
 }: {
   chapters?: ChapterSpec[];
   course?: Parameters<typeof courseFixture>[0];
   details?: Parameters<typeof goalFixture>[0]["details"];
   items?: ItemSpec[];
   kind?: Goal["kind"];
-  targetLanguage?: string;
 } = {}) {
   const [user, course, chapters, lessons] = await Promise.all([
     userFixture({ name: "  Ana Souza  " }),
@@ -105,7 +103,6 @@ async function courseGoal({
     details,
     kind,
     primaryCourseId: course.id,
-    targetLanguage,
     timezone: TIME_ZONE,
     title: "My own words for it",
     userId: user.id,
@@ -205,8 +202,8 @@ describe("course certificates", () => {
       certificates: [
         {
           category: "science",
-          cefrRange: null,
           courseLevel: "beginner",
+          kind: "course",
           lessonsStudied: 2,
           lessonsTestedOut: 0,
           minutes: 60,
@@ -346,7 +343,7 @@ describe("course certificates", () => {
 
   it("counts the stand-ins a finishing test-out adds as passed by test", async () => {
     const [fixture, placed] = await Promise.all([
-      courseGoal({ items: [{ status: "done" }, { status: "done" }, {}, WON_CHALLENGE] }),
+      courseGoal(),
       skillFixture({ level: "beginner" }),
     ]);
 
@@ -365,23 +362,15 @@ describe("course certificates", () => {
 
     const [certificate] = await listCertificates(fixture.user.id);
 
-    expect(certificate?.details).toMatchObject({ lessonsStudied: 2, lessonsTestedOut: 2 });
+    expect(certificate?.details).toMatchObject({ lessonsStudied: 1, lessonsTestedOut: 2 });
   });
 
-  it("awards no level placed past most of it and studied less than half", async () => {
-    const placed = { status: "testedOut" } as const;
+  it("never awards a language goal's plan a course certificate", async () => {
+    const fixture = await courseGoal({ kind: "language" });
 
-    const fixture = await courseGoal({
-      items: [placed, placed, placed, { status: "todo" }, WON_CHALLENGE],
-    });
+    await finishLesson(fixture);
 
-    await finishLesson(fixture, fixture.plan.items[3]);
-
-    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
-
-    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toStrictEqual({
-      status: "notFinished",
-    });
+    await expect(listCertificates(fixture.user.id)).resolves.toHaveLength(0);
   });
 
   it("shows the moment in every result until the learner closes it", async () => {
@@ -613,143 +602,6 @@ describe("certificates with and without Plus", () => {
   });
 });
 
-const LANGUAGE_COURSE = {
-  format: "language",
-  targetLanguage: "it",
-  title: "Italiano",
-} satisfies Parameters<typeof courseFixture>[0];
-
-const INTERMEDIATE: ChapterSpec[] = [
-  { level: "intermediate", title: "Na cidade" },
-  { level: "intermediate", title: "No trabalho" },
-];
-
-function languageGoal(items: ItemSpec[]) {
-  return courseGoal({
-    chapters: INTERMEDIATE,
-    course: LANGUAGE_COURSE,
-    items,
-    kind: "language",
-    targetLanguage: "it",
-  });
-}
-
-describe("language course certificates", () => {
-  it("certifies a language course's level like any course's, naming its language", async () => {
-    const fixture = await languageGoal([
-      { status: "testedOut" },
-      { status: "done" },
-      { status: "todo" },
-      WON_CHALLENGE,
-    ]);
-
-    await finishLesson(fixture, fixture.plan.items[2]);
-
-    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
-      {
-        courseLevel: "intermediate",
-        details: { lessonsStudied: 2, lessonsTestedOut: 1 },
-        key: `${fixture.course.id}:intermediate`,
-        kind: "course",
-        targetLanguage: "it",
-        title: "Italiano",
-      },
-    ]);
-
-    await expect(listCurrentUserCertificates()).resolves.toMatchObject({
-      certificates: [{ cefrRange: "B1–B2", courseLevel: "intermediate", title: "Italiano" }],
-    });
-  });
-
-  it("offers a language level finished outside the award points with its CEFR range", async () => {
-    await languageGoal([{ status: "done" }, { status: "done" }, WON_CHALLENGE]);
-
-    await expect(readMapCertificates()).resolves.toStrictEqual({
-      earned: [],
-      unclaimed: [{ cefrRange: "B1–B2", courseLevel: "intermediate" }],
-    });
-  });
-
-  it("awards no level placed past most of it and studied less than half", async () => {
-    const placed = { status: "testedOut" } as const;
-    const fixture = await languageGoal([placed, placed, placed, { status: "todo" }, WON_CHALLENGE]);
-
-    await finishLesson(fixture, fixture.plan.items[3]);
-
-    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
-  });
-
-  it("never holds a free learner's level back for the Plus call they can't take", async () => {
-    const fixture = await languageGoal([
-      { status: "done" },
-      { status: "todo" },
-      { kind: "boss", status: "todo" },
-    ]);
-
-    await finishLesson(fixture, fixture.plan.items[1]);
-
-    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
-      { courseLevel: "intermediate", issuedAt: null },
-    ]);
-  });
-
-  it("uses the lesson transaction's subscription state when awarding a language certificate", async () => {
-    const fixture = await languageGoal([
-      { status: "done" },
-      { status: "todo" },
-      { kind: "boss", status: "todo" },
-    ]);
-
-    await applePlus(fixture.user.id);
-
-    await writeLearnerChange({ userId: fixture.user.id }, async (tx) => {
-      await tx.subscription.updateMany({
-        data: { status: "canceled" },
-        where: { referenceId: fixture.user.id },
-      });
-
-      await completePlanItem(tx, {
-        now: new Date(),
-        planItemId: fixture.plan.items[1]?.id ?? "",
-        userId: fixture.user.id,
-      });
-    });
-
-    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
-      { courseLevel: "intermediate", issuedAt: null },
-    ]);
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: fixture.plan.items[1]?.id } }),
-    ).resolves.toMatchObject({ status: "done" });
-  });
-
-  it("has a Plus learner win the level's call first", async () => {
-    const fixture = await languageGoal([
-      { status: "done" },
-      { status: "todo" },
-      { kind: "boss", status: "todo" },
-    ]);
-
-    await applePlus(fixture.user.id);
-    await finishLesson(fixture, fixture.plan.items[1]);
-
-    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
-
-    await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
-      completePlanItem(tx, {
-        now: new Date(),
-        planItemId: fixture.plan.items[2]?.id ?? "",
-        userId: fixture.user.id,
-      }),
-    );
-
-    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
-      { courseLevel: "intermediate", issuedAt: expect.any(Date) },
-    ]);
-  });
-});
-
 describe(claimCourseCertificate, () => {
   it("awards each level finished outside the award points, dated with its own last work", async () => {
     const fixture = await courseGoal({
@@ -764,10 +616,7 @@ describe(claimCourseCertificate, () => {
 
     await expect(readMapCertificates()).resolves.toStrictEqual({
       earned: [],
-      unclaimed: [
-        { cefrRange: null, courseLevel: "beginner" },
-        { cefrRange: null, courseLevel: "intermediate" },
-      ],
+      unclaimed: [{ courseLevel: "beginner" }, { courseLevel: "intermediate" }],
     });
 
     const claimed = await claimCourseCertificate(fixture.goal.id);
@@ -846,7 +695,7 @@ describe(claimCourseCertificate, () => {
 
     await expect(readMapCertificates()).resolves.toStrictEqual({
       earned: [],
-      unclaimed: [{ cefrRange: null, courseLevel: null }],
+      unclaimed: [{ courseLevel: null }],
     });
 
     await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
@@ -893,17 +742,21 @@ describe("a certificate as anyone sees it", () => {
     );
 
     expect(Object.keys(facts ?? {}).toSorted()).toStrictEqual([
+      "canDo",
       "category",
-      "cefrRange",
       "code",
       "completedOn",
       "courseId",
       "courseLevel",
+      "kind",
       "language",
       "lessonsStudied",
       "lessonsTestedOut",
+      "level",
       "minutes",
       "recipientName",
+      "skillLevels",
+      "targetLanguage",
       "title",
       "topics",
     ]);
@@ -949,34 +802,6 @@ describe("a certificate as anyone sees it", () => {
 
     await expect(listCurrentUserCertificates()).resolves.toMatchObject({
       certificates: [{ code: finishedLater.code }, { code: claimedLater.code }],
-    });
-  });
-
-  it("never shows a language level the release before this one wrote", async () => {
-    const user = await userFixture();
-
-    const straggler = await certificateFixture({
-      courseLevel: null,
-      details: { canDo: [], lessonsStudied: 2, minutes: 8, skillLevels: [] },
-      key: "it:B1",
-      kind: "languageLevel",
-      shownAt: null,
-      targetLanguage: "it",
-      title: null,
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-
-    await expect(listCurrentUserCertificates()).resolves.toStrictEqual({
-      certificates: [],
-      status: "ready",
-    });
-
-    await expect(getPublicCertificate(straggler.code)).resolves.toBeNull();
-
-    await expect(celebrateProgress({ progress: null, userId: user.id })).resolves.toMatchObject({
-      certificates: [],
     });
   });
 

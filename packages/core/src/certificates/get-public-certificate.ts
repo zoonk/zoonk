@@ -17,7 +17,7 @@ export async function getPublicCertificate(code: string): Promise<CertificateFac
 
   const row = await prisma.certificate.findUnique({
     include: CERTIFICATE_FACTS_INCLUDE,
-    where: { code: normalized, issuedAt: { not: null }, kind: "course" },
+    where: { code: normalized, issuedAt: { not: null } },
   });
 
   return row ? toCertificateFacts(row) : null;

@@ -46,17 +46,23 @@ class LiveCertificatesApi(
     override suspend fun goals(session: AuthenticatedSession) = perform { api.clients(session).goals.listGoals() }.goals
 }
 
+/** Main's "Up next" on an empty certificates page: an active goal and its plan's share of lessons done, null for a language. */
 data class CertificateUpNext(
     val goal: Goal,
-    val progress: Double,
+    val progress: Double?,
 )
 
+/** Main's rule: active learn and exam goals whose plan has lessons, and active language goals. */
 fun certificateUpNext(goals: List<Goal>): List<CertificateUpNext> =
     goals
         .filter { it.status == Goal.Status.ACTIVE }
         .mapNotNull { goal ->
             when (goal.kind) {
-                Goal.Kind.LEARN, Goal.Kind.EXAM, Goal.Kind.LANGUAGE -> {
+                Goal.Kind.LANGUAGE -> {
+                    CertificateUpNext(goal, progress = null)
+                }
+
+                Goal.Kind.LEARN, Goal.Kind.EXAM -> {
                     goal.plan
                         ?.takeIf { it.lessonsTotal > 0 }
                         ?.let { CertificateUpNext(goal, it.lessonsDone.toDouble() / it.lessonsTotal) }

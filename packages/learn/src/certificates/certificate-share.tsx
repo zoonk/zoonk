@@ -16,20 +16,32 @@ import { LinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import { CopyButton } from "./certificate-copy-button";
-import { roundStudyMinutes, useCertificateName } from "./certificate-labels";
+import {
+  roundStudyMinutes,
+  useCertificateName,
+  useLanguageNameInSentence,
+} from "./certificate-labels";
 
 const MINUTES_PER_HOUR = 60;
 
 export type ShareableCertificate = Pick<
   CertificateFacts,
-  "cefrRange" | "courseLevel" | "lessonsStudied" | "minutes" | "title"
+  "courseLevel" | "kind" | "lessonsStudied" | "level" | "minutes" | "targetLanguage" | "title"
 >;
 
 function useShareText() {
   const t = useExtracted();
   const certificateName = useCertificateName();
+  const languageName = useLanguageNameInSentence();
 
   return (facts: ShareableCertificate): string => {
+    const level = facts.level ?? "";
+    const language = languageName(facts.targetLanguage);
+
+    if (facts.kind === "languageLevel") {
+      return t("I just completed level {level} in {language} on Zoonk.", { language, level });
+    }
+
     const course = certificateName(facts);
     const lessons = facts.lessonsStudied ?? 0;
     const minutes = facts.minutes ? roundStudyMinutes(facts.minutes) : null;

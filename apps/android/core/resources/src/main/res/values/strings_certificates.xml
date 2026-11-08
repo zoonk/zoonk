@@ -8,14 +8,14 @@
         <item quantity="other">%1$d certificates</item>
     </plurals>
     <string name="certificates_lead">A certificate for every level and plan you finish.</string>
-    <!-- What a certificate certifies: a finished course level or plan. Printed on the certificate itself. -->
+    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificate of completion</string>
-    <!-- A language course level and its CEFR range, such as Intermediate (B1–B2). -->
-    <string name="certificates_level_range">%1$s (%2$s)</string>
+    <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">No certificates yet</string>
-    <string name="certificates_empty_description">Your certificates show up here when you finish a level or a plan, studying at least half its lessons.</string>
+    <string name="certificates_empty_description">Your certificates show up here when you finish a level or a plan.</string>
     <string name="certificates_continue_learning">Continue learning</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">View certificate</string>
@@ -23,7 +23,9 @@
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Get your certificate</string>
     <string name="certificates_up_next">Up next</string>
-    <string name="certificates_up_next_course">Your certificate comes when you finish the plan, studying at least half its lessons</string>
+    <string name="certificates_up_next_course">Your certificate comes when you finish the plan</string>
+    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
+    <string name="certificates_up_next_language">Comes when every skill you practice reaches the next level</string>
 
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Course complete!</string>
@@ -35,7 +37,9 @@
     </plurals>
     <!-- %1$s is the course's title. -->
     <string name="certificates_course_ready">Your certificate for %1$s is ready.</string>
-    <!-- %1$s lists the certificates' names, such as "Italian · Intermediate (B1–B2) and Python". -->
+    <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_ready">Your %1$s %2$s certificate is ready.</string>
+    <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
     <string name="certificates_several_ready">Your %1$s certificates are ready.</string>
     <!-- %1$s is the learner's name, as printed on their certificate. -->
     <string name="certificates_on_your_certificate">On your certificate: %1$s</string>
@@ -80,8 +84,12 @@
     <string name="certificates_not_found">We couldn\'t find this certificate</string>
     <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s completed %2$s</string>
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <string name="certificates_alt_level">%1$s completed level %2$s in %3$s</string>
     <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_course_on_zoonk">%1$s, completed on Zoonk</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_level_on_zoonk">Level %1$s in %2$s, completed on Zoonk</string>
     <!-- Above a certificate's headline on its page, beside a check mark. -->
     <string name="certificates_verified">Verified certificate · issued by Zoonk</string>
     <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
@@ -104,14 +112,16 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">about %1$s</string>
     <string name="certificates_meaning_title">What this certificate means</string>
-    <string name="certificates_meaning_language">Zoonk issues this certificate when a learner finishes every lesson of a language course\'s level, studying at least half of them on Zoonk and passing any others by test.</string>
-    <string name="certificates_meaning_level">Zoonk issues this certificate when a learner finishes every lesson of a course\'s level, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it.</string>
-    <string name="certificates_meaning_plan">Zoonk issues this certificate when a learner finishes every lesson of a course\'s plan, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it.</string>
+    <string name="certificates_meaning_language">Zoonk measures each skill (reading, listening, speaking, writing) from the learner\'s answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached %1$s.</string>
+    <string name="certificates_meaning_level">Zoonk issues this certificate when a learner finishes every chapter of a course\'s level, studying each lesson or passing its test, and wins every challenge in it.</string>
+    <string name="certificates_meaning_plan">Zoonk issues this certificate when a learner finishes every lesson of a course\'s plan, by studying it or passing its test, and wins every challenge in it.</string>
     <string name="certificates_meaning_record">It\'s a record of completion on Zoonk, not academic credit.</string>
     <string name="certificates_meaning_cefr">Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.</string>
     <string name="certificates_meaning_name">The name is the one the learner gave their Zoonk account; Zoonk doesn\'t check IDs.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">Topics covered</string>
+    <!-- Heading over what a language certificate's learner can do -->
+    <string name="certificates_can_do">Can do</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
 
@@ -134,6 +144,8 @@
         <item quantity="one">%1$s lesson</item>
         <item quantity="other">%1$s lessons</item>
     </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_caption_level">I just completed level %1$s in %2$s on Zoonk.</string>
 
     <string name="certificates_linkedin_title">Add to your LinkedIn profile</string>
     <string name="certificates_linkedin_description">LinkedIn opens its form to add a license or certification. Copy each field into it.</string>

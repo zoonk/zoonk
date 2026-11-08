@@ -1,10 +1,11 @@
 import { getCourseLevelNames } from "./course-level-names";
+import { getLanguageName } from "./languages";
 import { getSupportedLocaleFromLanguage } from "./locale";
 import { hashSeed } from "./seeded-random";
 import { MAIN_URL } from "./url";
 
 /** Bump when the certificate's design changes, so shared images aren't served from old caches. */
-const CERTIFICATE_DESIGN_VERSION = 2;
+const CERTIFICATE_DESIGN_VERSION = 1;
 
 const ISSUER = "Zoonk";
 
@@ -19,13 +20,14 @@ export const CERTIFICATE_IMAGE_VARIANTS = ["print", "screen", "link", "post"] as
 export type CertificateImageVariant = (typeof CERTIFICATE_IMAGE_VARIANTS)[number];
 
 type CertificateLinkInput = {
-  cefrRange: string | null;
   code: string;
   completedOn: string;
   courseLevel: keyof ReturnType<typeof getCourseLevelNames> | null;
   language: string;
+  level: string | null;
   recipientName: string | null;
-  title: string;
+  targetLanguage: string | null;
+  title: string | null;
 };
 
 export type CertificateLinks = {
@@ -54,25 +56,26 @@ export function getCertificateImageVersion(recipientName: string | null): string
   return hashSeed(`${CERTIFICATE_DESIGN_VERSION}:${recipientName ?? ""}`).toString(VERSION_RADIX);
 }
 
-type NamedLevel = Pick<CertificateLinkInput, "cefrRange" | "language"> & {
-  courseLevel: NonNullable<CertificateLinkInput["courseLevel"]>;
-};
-
-/** In the certificate's own language: "Beginner", or "Intermediate (B1–B2)" for a language's. */
-export function getCertificateLevelName({ cefrRange, courseLevel, language }: NamedLevel): string {
-  const level = getCourseLevelNames(language)[courseLevel];
-  return cefrRange ? `${level} (${cefrRange})` : level;
-}
-
-/** In the certificate's own language: "Python · Beginner", "Italiano · Intermediário (B1–B2)" or "Python". */
+/** In the certificate's own language: "Python · Beginner", "Python", or "Spanish B1". */
 export function getCertificateName(
-  input: Pick<CertificateLinkInput, "cefrRange" | "courseLevel" | "language" | "title">,
+  input: Pick<
+    CertificateLinkInput,
+    "courseLevel" | "language" | "level" | "targetLanguage" | "title"
+  >,
 ): string {
-  const { courseLevel } = input;
+  if (input.title && input.courseLevel) {
+    return `${input.title} · ${getCourseLevelNames(input.language)[input.courseLevel]}`;
+  }
 
-  return courseLevel
-    ? `${input.title} · ${getCertificateLevelName({ ...input, courseLevel })}`
-    : input.title;
+  if (input.title) {
+    return input.title;
+  }
+
+  const language = input.targetLanguage
+    ? getLanguageName({ targetLanguage: input.targetLanguage, userLanguage: input.language })
+    : ISSUER;
+
+  return input.level ? `${language} ${input.level}` : language;
 }
 
 function getLinkedInUrl({ input, url }: { input: CertificateLinkInput; url: string }): string {

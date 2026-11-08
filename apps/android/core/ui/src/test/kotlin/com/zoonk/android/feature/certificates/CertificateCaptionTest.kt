@@ -59,17 +59,21 @@ class CertificateCaptionTest {
 private fun course(minutes: Long?): OwnedCertificate {
     val picture = "https://www.zoonk.com/en/c/K7QF2M9XHD4P/image"
     return OwnedCertificate(
+        canDo = emptyList(),
         category = null,
-        cefrRange = null,
         code = "K7QF2M9XHD4P",
         completedOn = LocalDate(2026, 11, 3),
         courseId = null,
         courseLevel = null,
+        kind = OwnedCertificate.Kind.COURSE,
         language = "en",
         lessonsStudied = 12,
         lessonsTestedOut = 0,
+        level = null,
         minutes = minutes,
         recipientName = "Ana Souza",
+        skillLevels = emptyList(),
+        targetLanguage = null,
         title = "Python",
         topics = emptyList(),
         locked = false,

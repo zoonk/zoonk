@@ -2,10 +2,9 @@ import "server-only";
 import { getExtracted } from "next-intl/server";
 import { formatCount } from "./certificate-format";
 import {
-  type FactsFit,
   type SheetCovered,
+  type SheetGraphKind,
   getCoveredFallbacks,
-  getFactsFit,
   getLinkOverflow,
   getPostOverflow,
   getSheetOverflow,
@@ -143,9 +142,26 @@ function shrinkUntil({
   });
 }
 
+function toSheetCovered(view: CertificateView): SheetCovered {
+  if (!view.covered) {
+    return null;
+  }
+
+  return view.covered.kind === "topics"
+    ? { kind: "topics", topics: view.covered.topics }
+    : { kind: "readouts" };
+}
+
+function getSheetGraphKind(view: CertificateView): SheetGraphKind {
+  if (view.graph.kind === "ladder") {
+    return "ladder";
+  }
+
+  return view.graph.label ? "labelledRoute" : "route";
+}
+
 export type FittedSheet = {
   covered: SheetCovered;
-  facts: FactsFit;
   moreTopics: string | null;
   name: ShapedText;
   title: ShapedText;
@@ -161,7 +177,10 @@ async function getMoreTopics({
   locale: string;
   view: CertificateView;
 }): Promise<string | null> {
-  const hidden = covered && view.covered ? view.covered.total - covered.topics.length : 0;
+  const hidden =
+    covered?.kind === "topics" && view.covered?.kind === "topics"
+      ? view.covered.total - covered.topics.length
+      : 0;
 
   if (hidden <= 0) {
     return null;
@@ -188,25 +207,23 @@ export async function fitSheet({
   const shaping = { locale, scale, view };
   const name = getName(shaping, SHEET.name);
   const title = getTitle(shaping, SHEET.title);
-  const facts = getFactsFit(view);
 
   const [nameShaped, titleShaped] = await Promise.all([
     shapeSpec({ ...name, scale: shaping.scale, spec: SHEET.name }),
     shapeSpec({ ...title, scale: shaping.scale, spec: SHEET.title }),
   ]);
 
-  const overflow = (parts: Omit<FittedSheet, "facts" | "moreTopics">) =>
+  const overflow = (parts: Omit<FittedSheet, "moreTopics">) =>
     getSheetOverflow({
       covered: parts.covered,
-      facts,
       finePrint: view.finePrint,
-      labelledGraph: view.graph.label !== null,
+      graph: getSheetGraphKind(view),
       nameHeight: parts.name.blockHeight / shaping.scale,
       titleHeight: parts.title.blockHeight / shaping.scale,
     });
 
   const covered =
-    getCoveredFallbacks(view.covered).find(
+    getCoveredFallbacks(toSheetCovered(view)).find(
       (option) => overflow({ covered: option, name: nameShaped, title: titleShaped }) <= 0,
     ) ?? null;
 
@@ -226,7 +243,6 @@ export async function fitSheet({
 
   return {
     covered,
-    facts,
     moreTopics: await getMoreTopics({ covered, locale, view }),
     name: fittedName,
     title: fittedTitle,
@@ -265,7 +281,7 @@ export async function fitLink({
     ...name,
     fits: (shaped) =>
       getLinkOverflow({
-        labelledGraph: view.graph.label !== null,
+        graph: view.graph.kind === "ladder" ? "ladder" : "route",
         nameHeight: shaped.blockHeight,
         titleHeight: titleShaped.blockHeight,
       }) <= 0,
@@ -294,6 +310,7 @@ export async function fitPost({
 
   const overflow = (parts: FittedShare) =>
     getPostOverflow({
+      graph: view.graph.kind === "ladder" ? "ladder" : "route",
       hasStats: view.stats.length > 0,
       nameHeight: parts.name.blockHeight,
       titleHeight: parts.title.blockHeight,

@@ -14,7 +14,6 @@
 ## Glossary
 
 - “lesson”: “Lektion”
-- “studied” (a lesson): “bearbeitet”, not “gelernt”
 - “goal” (the learner's goal): “Ziel”, not “Lernziel”
 - “plan” (study plan): “Plan”, also beside Plus; subscription plan (“the free plan”): “Tarif”
 - “Free” (subscription name): “Free”

@@ -53,8 +53,10 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.feature.certificates.CertificateAction
 import com.zoonk.android.feature.certificates.CertificateActions
+import com.zoonk.android.feature.certificates.CertificateKind
 import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.CertificateNameField
 import com.zoonk.android.feature.certificates.CertificateNameModel
@@ -63,9 +65,9 @@ import com.zoonk.android.feature.certificates.CertificatesPlusNotice
 import com.zoonk.android.feature.certificates.LinkedInSheet
 import com.zoonk.android.feature.certificates.LockedCertificate
 import com.zoonk.android.feature.certificates.caption
-import com.zoonk.android.feature.certificates.certificateLevelName
 import com.zoonk.android.feature.certificates.certificateNameModel
 import com.zoonk.android.feature.certificates.fileName
+import com.zoonk.android.feature.certificates.languageWord
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.certificates.pictureLabel
 import com.zoonk.android.feature.certificates.pictureUrl
@@ -375,10 +377,16 @@ private fun NameRow(
 @Composable
 private fun title(awarded: List<CertificateName>): String {
     val only = awarded.singleOrNull() ?: return pluralStringResource(R.plurals.certificates_earned, awarded.size, awarded.size)
-    return only.courseLevel?.let {
-        stringResource(R.string.certificates_level_complete, certificateLevelName(it, only.cefrRange))
+    return when (only.kind) {
+        CertificateKind.Course -> {
+            only.courseLevel?.let { stringResource(R.string.certificates_level_complete, courseLevelName(it)) }
+                ?: stringResource(R.string.certificates_course_complete)
+        }
+
+        CertificateKind.LanguageLevel -> {
+            stringResource(R.string.certificates_level_complete, only.level.orEmpty())
+        }
     }
-        ?: stringResource(R.string.certificates_course_complete)
 }
 
 @Composable
@@ -389,7 +397,10 @@ private fun line(awarded: List<CertificateName>): String {
                 R.string.certificates_several_ready,
                 formatList(awarded.reversed().map { it.words() }, currentLocale()),
             )
-    return stringResource(R.string.certificates_course_ready, only.words())
+    return when (only.kind) {
+        CertificateKind.Course -> stringResource(R.string.certificates_course_ready, only.words())
+        else -> stringResource(R.string.certificates_language_ready, only.languageWord(), only.level.orEmpty())
+    }
 }
 
 private const val SETTLE_FROM = 0.92f

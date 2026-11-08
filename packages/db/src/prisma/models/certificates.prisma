@@ -5,8 +5,8 @@ enum CertificateKind {
 
 /// Titles and numbers are snapshots, so a certificate reads the same after its course changes or
 /// goes away. `key` awards each once: "<courseId>:<level>" for a course level, the goal for a plan
-/// certified whole. Every learner earns the row; only `issuedAt` makes it a certificate they can
-/// show.
+/// certified whole, "<language>:<band>" for a language level. Every learner earns the row; only
+/// `issuedAt` makes it a certificate they can show.
 model Certificate {
   id             String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String          @map("user_id") @db.Uuid
@@ -21,15 +21,12 @@ model Certificate {
   course         Course?         @relation(fields: [courseId], references: [id], onDelete: SetNull)
   /// The learner's language: the certificate's own words are written in it.
   language       String          @db.VarChar(10)
-  /// A language goal's language: its course levels follow the CEFR.
   targetLanguage String?         @map("target_language") @db.VarChar(10)
-  /// Unused. The migration that drops it first deletes what the previous release wrote while it
-  /// still ran: `language_level` certificates, and course certificates with fewer than half their
-  /// lessons studied (the same two deletes as `certificates_course_levels_only`). It also removes
-  /// `languageLevel` from `CertificateKind`.
-  level          String?         @ignore @db.VarChar(2)
-  /// The course level it certifies; null for a plan certified whole.
+  /// The CEFR band, for a language level.
+  level          String?         @db.VarChar(2)
+  /// The course level it certifies; null for a plan certified whole and for language levels.
   courseLevel    CourseLevel?    @map("course_level")
+  /// A course's title; null for language kinds, which are named from `targetLanguage`.
   title          String?
   details        Json            @default("{}")
   /// The learner's local day, fixed when it was earned.

@@ -1,15 +1,12 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { cacheTag } from "next/cache";
 import { getCertificatesCacheTag } from "../../cache/tags";
-import { getCertificateCefrRange } from "../../certificates/_utils/certificate-facts";
 import {
   type UnitGoal,
   loadCertificateUnits,
 } from "../../certificates/_utils/load-certificate-units";
 import { type SavedPlan } from "../../learner/facts/saved-plan";
-import { readActiveSubscription } from "../../learner/facts/subscription";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
 import { loadGoalMap } from "../_utils/goal-map";
@@ -30,7 +27,7 @@ async function readPlanCertificates({
   goal,
   plan,
 }: {
-  goal: UnitGoal & Pick<Goal, "targetLanguage">;
+  goal: UnitGoal;
   plan: SavedPlan | null;
 }): Promise<FieldMapView["certificates"]> {
   cacheTag(getCertificatesCacheTag(goal.userId));
@@ -39,11 +36,7 @@ async function readPlanCertificates({
     return null;
   }
 
-  const { due, held, units } = await loadCertificateUnits({
-    goal,
-    plan,
-    readSubscription: readActiveSubscription,
-  });
+  const { due, held, units } = await loadCertificateUnits({ goal, plan });
 
   const earned = units.flatMap((unit) => {
     const row = held.find((entry) => entry.key === unit.key);
@@ -57,15 +50,7 @@ async function readPlanCertificates({
     return null;
   }
 
-  const targetLanguage = goal.kind === "language" ? goal.targetLanguage : null;
-
-  return {
-    earned,
-    unclaimed: due.map(({ courseLevel }) => ({
-      cefrRange: getCertificateCefrRange({ courseLevel, targetLanguage }),
-      courseLevel,
-    })),
-  };
+  return { earned, unclaimed: due.map((unit) => ({ courseLevel: unit.courseLevel })) };
 }
 
 /** Requires an owned goal (active by default); completed plans may offer next study, refresh goals lead with fading skills. */

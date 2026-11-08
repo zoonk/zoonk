@@ -409,10 +409,9 @@ struct PlanSuggestionSection: View {
   private var completeTitle: Text {
     let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
 
-    if let only = unclaimed.first, let level = only.courseLevel, unclaimed.count == 1 {
+    if let level = unclaimed.first?.courseLevel, unclaimed.count == 1 {
       return Text(
-        "\(level.certifiedTitle(cefrRange: only.cefrRange).keepingLevelTogether) complete",
-        tableName: "Plan",
+        "\(String(localized: level.localizedTitle)) complete", tableName: "Plan",
         comment:
           "A Plan suggestion's title once every lesson and challenge of a course level is done, such as \"Beginner complete\", before the plan's end"
       )

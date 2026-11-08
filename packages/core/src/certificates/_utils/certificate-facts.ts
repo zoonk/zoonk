@@ -1,9 +1,11 @@
 import { type Certificate, type Course, type User } from "@zoonk/db";
-import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import {
+  CERTIFIED_LEVELS,
   type CertificateFacts,
+  type CertifiedLevel,
   type OwnedCertificateFacts,
   courseCertificateDetailsSchema,
+  languageLevelCertificateDetailsSchema,
 } from "../certificate-contract";
 
 const LOGICAL_DATE_LENGTH = 10;
@@ -18,37 +20,49 @@ export type CertificateRow = Certificate & {
   user: Pick<User, "isAnonymous" | "name">;
 };
 
-/**
- * A language goal's course levels follow the CEFR. An overview, if a language course ever has
- * one, covers no range of its own.
- */
-export function getCertificateCefrRange({
-  courseLevel,
-  targetLanguage,
-}: Pick<Certificate, "courseLevel" | "targetLanguage">): string | null {
-  return targetLanguage && courseLevel && courseLevel !== "overview"
-    ? CEFR_BANDS[courseLevel]
-    : null;
-}
+const NO_DETAILS = {
+  canDo: [],
+  category: null,
+  lessonsStudied: null,
+  lessonsTestedOut: null,
+  minutes: null,
+  skillLevels: [],
+  topics: [],
+} satisfies Partial<CertificateFacts>;
 
 /** A guest has no profile to name. */
 function getRecipientName(user: CertificateRow["user"]): string | null {
   return user.isAnonymous ? null : user.name.trim() || null;
 }
 
+function toCertifiedLevel(level: string | null): CertifiedLevel | null {
+  return CERTIFIED_LEVELS.find((band) => band === level) ?? null;
+}
+
+function getKindDetails(row: CertificateRow) {
+  if (row.kind === "course") {
+    return courseCertificateDetailsSchema.parse(row.details);
+  }
+
+  return languageLevelCertificateDetailsSchema.parse(row.details);
+}
+
 export function toCertificateFacts(row: CertificateRow): CertificateFacts {
   const isPublicCourse = row.course?.isPublished && row.course.visibility === "public";
 
   return {
-    ...courseCertificateDetailsSchema.parse(row.details),
-    cefrRange: getCertificateCefrRange(row),
+    ...NO_DETAILS,
+    ...getKindDetails(row),
     code: row.code,
     completedOn: row.completedOn.toISOString().slice(0, LOGICAL_DATE_LENGTH),
     courseId: isPublicCourse ? row.courseId : null,
     courseLevel: row.courseLevel,
+    kind: row.kind,
     language: row.language,
+    level: toCertifiedLevel(row.level),
     recipientName: getRecipientName(row.user),
-    title: row.title ?? "",
+    targetLanguage: row.targetLanguage,
+    title: row.title,
   };
 }
 

@@ -2,21 +2,28 @@
 
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { useExtracted, useFormatter } from "next-intl";
-import { keepLevelTogether, useCertificateLevel, useCertificateName } from "./certificate-labels";
+import { useLevelName } from "../course/use-level-name";
+import { useCertificateName } from "./certificate-labels";
 
 function useOneCertificateCopy() {
   const t = useExtracted();
   const certificateName = useCertificateName();
-  const certificateLevel = useCertificateLevel();
+  const levelName = useLevelName();
 
   return (facts: OwnedCertificateFacts) => {
     const certificate = certificateName(facts);
-    const level = certificateLevel(facts);
+
+    if (facts.kind === "languageLevel") {
+      return {
+        line: t("Your {certificate} certificate is ready.", { certificate }),
+        title: t("{level} complete!", { level: facts.level ?? "" }),
+      };
+    }
 
     return {
       line: t("Your certificate for {course} is ready.", { course: certificate }),
-      title: level
-        ? t("{level} complete!", { level: keepLevelTogether(level) })
+      title: facts.courseLevel
+        ? t("{level} complete!", { level: levelName(facts.courseLevel) })
         : t("Course complete!"),
     };
   };

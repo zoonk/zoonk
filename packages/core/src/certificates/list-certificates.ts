@@ -36,7 +36,7 @@ export async function listCurrentUserCertificates(): Promise<CertificateListResu
     include: CERTIFICATE_FACTS_INCLUDE,
     // The rows one claim writes share a creation time; their time-ordered ids keep them apart.
     orderBy: [{ completedOn: "desc" }, { id: "desc" }],
-    where: { kind: "course", userId },
+    where: { userId },
   });
 
   return { certificates: rows.map((row) => toOwnedCertificateFacts(row)), status: "ready" };

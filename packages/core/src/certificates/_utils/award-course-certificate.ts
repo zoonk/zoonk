@@ -5,16 +5,12 @@ import { isValidCategory } from "@zoonk/utils/categories";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
-import { isWorkFinished } from "../../plans/_utils/work-progress";
+import { getWorkProgress, isWorkFinished } from "../../plans/_utils/work-progress";
 import { PHASE_WORK_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { type CourseCertificateDetails } from "../certificate-contract";
 import { createCertificateCode } from "./certificate-code";
-import {
-  type CertifiableItem,
-  type CertificateUnit,
-  splitCertifiedLessons,
-} from "./certificate-units";
+import { type CertifiableItem, type CertificateUnit } from "./certificate-units";
 import {
   UNIT_PLAN_SELECT,
   type UnitGoal,
@@ -22,7 +18,7 @@ import {
   loadCertificateUnits,
 } from "./load-certificate-units";
 
-type CertificateGoal = UnitGoal & Pick<Goal, "language" | "targetLanguage" | "timezone">;
+type CertificateGoal = UnitGoal & Pick<Goal, "language" | "timezone">;
 
 const GOAL_SELECT = {
   id: true,
@@ -30,7 +26,6 @@ const GOAL_SELECT = {
   language: true,
   primaryCourseId: true,
   targetDate: true,
-  targetLanguage: true,
   timezone: true,
   userId: true,
 } as const;
@@ -95,12 +90,15 @@ function buildDetails({
   topics: string[];
   unit: CertificateUnit;
 }): CourseCertificateDetails {
-  const { studied, testedOut } = splitCertifiedLessons(unit.items);
+  const lessons = unit.items.filter((item) => item.kind === "lesson");
+  const studied = lessons.filter((item) => getWorkProgress(item.status) === "studied");
 
   return {
     category: isValidCategory(category) ? category : null,
     lessonsStudied: countLessons(studied),
-    lessonsTestedOut: countLessons(testedOut),
+    lessonsTestedOut: countLessons(
+      lessons.filter((item) => getWorkProgress(item.status) === "testedOut"),
+    ),
     minutes: sumStudiedMinutes(studied),
     topics,
   };
@@ -122,15 +120,16 @@ export async function writeFinishedUnits(
     return { ...loaded, written: 0 };
   }
 
-  const chapters = await loadChapters(tx, due);
-
-  const category = goal.primaryCourseId
-    ? await tx.courseCategory.findFirst({
-        orderBy: { createdAt: "asc" },
-        select: { category: true },
-        where: { courseId: goal.primaryCourseId },
-      })
-    : null;
+  const [chapters, category] = await Promise.all([
+    loadChapters(tx, due),
+    goal.primaryCourseId
+      ? tx.courseCategory.findFirst({
+          orderBy: { createdAt: "asc" },
+          select: { category: true },
+          where: { courseId: goal.primaryCourseId },
+        })
+      : null,
+  ]);
 
   const timeZone = getAnswerTimeZone({ goal });
 
@@ -148,7 +147,6 @@ export async function writeFinishedUnits(
     key: unit.key,
     kind: "course" as const,
     language: goal.language,
-    targetLanguage: goal.kind === "language" ? goal.targetLanguage : null,
     title: unit.title,
     userId: goal.userId,
   }));
@@ -159,27 +157,19 @@ export async function writeFinishedUnits(
   return { ...loaded, written: rows.length };
 }
 
-/** Prisma loads a row's relations at once, so the goal is its own read in the transaction. */
-export async function loadCertificatePlan(
+export function loadCertificatePlan(
   tx: TransactionClient,
   where: { goalId: string } | { id: string },
 ) {
-  const plan = await tx.plan.findUnique({ select: { ...UNIT_PLAN_SELECT, goalId: true }, where });
-
-  if (!plan) {
-    return null;
-  }
-
-  const goal = await tx.goal.findUniqueOrThrow({ select: GOAL_SELECT, where: { id: plan.goalId } });
-
-  return { ...plan, goal };
+  return tx.plan.findUnique({
+    select: { ...UNIT_PLAN_SELECT, goal: { select: GOAL_SELECT } },
+    where,
+  });
 }
 
 /**
  * A unit can only finish with the phase of the work that just finished, so a phase with lessons or
- * a challenge left skips its plan before the plan is read. A language plan's challenge doesn't:
- * a free learner can't take its Plus calls, so only the full read can tell whether it holds a
- * level back.
+ * a challenge left skips its plan before the plan is read.
  */
 export async function awardCourseCertificates(
   tx: TransactionClient,
@@ -194,7 +184,6 @@ export async function awardCourseCertificates(
   const open = await tx.planItem.groupBy({
     by: ["planId", "phase"],
     where: {
-      NOT: { kind: "boss", plan: { goal: { kind: "language" } } },
       OR: work.map(({ phase, planId }) => ({ phase, planId })),
       kind: { in: [...PHASE_WORK_KINDS] },
       status: "todo",

@@ -1,14 +1,5 @@
 import "server-only";
-import {
-  type Course,
-  type Goal,
-  type Plan,
-  type PlanItem,
-  type TransactionClient,
-  prisma,
-} from "@zoonk/db";
-import { findActiveSubscriptionForUser } from "../../auth/subscription";
-import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
@@ -20,8 +11,6 @@ import {
 } from "./certificate-units";
 
 export type UnitGoal = Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "userId">;
-
-const LEVEL_COURSE_FORMATS: ReadonlySet<Course["format"]> = new Set(["core", "language"]);
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {
   items: readonly Pick<
@@ -159,23 +148,26 @@ async function findChaptersTaughtInPlan(
     (item) => LEARN_KINDS.has(item.kind) && isWorkFinished(item.status),
   );
 
-  const chapters = await db.chapter.findMany({
-    select: {
-      id: true,
-      lessons: {
-        select: {
-          lesson: { select: { skills: { select: { skillId: true }, where: { skill: visible } } } },
+  const [chapters, finishedSkills] = await Promise.all([
+    db.chapter.findMany({
+      select: {
+        id: true,
+        lessons: {
+          select: {
+            lesson: {
+              select: { skills: { select: { skillId: true }, where: { skill: visible } } },
+            },
+          },
+          where: { lesson: { ...visible, setAsideAt: null } },
         },
-        where: { lesson: { ...visible, setAsideAt: null } },
       },
-    },
-    where: { id: { in: missing } },
-  });
-
-  const finishedSkills = await db.lessonSkill.findMany({
-    select: { skillId: true },
-    where: { lessonId: { in: finished.flatMap((item) => item.lessonId ?? []) } },
-  });
+      where: { id: { in: missing } },
+    }),
+    db.lessonSkill.findMany({
+      select: { skillId: true },
+      where: { lessonId: { in: finished.flatMap((item) => item.lessonId ?? []) } },
+    }),
+  ]);
 
   const taught = new Set([
     ...finishedSkills.map((row) => row.skillId),
@@ -208,12 +200,6 @@ function loadHeldCertificates(db: TransactionClient, goal: UnitGoal) {
 }
 
 type UnitInput = { goal: UnitGoal; plan: UnitPlan };
-
-function getLevelCourseId({ course, goal }: { course: UnitCourse | null; goal: UnitGoal }) {
-  return course?.visibility === "public" && LEVEL_COURSE_FORMATS.has(course.format)
-    ? goal.primaryCourseId
-    : null;
-}
 
 /**
  * Named by a course, never by the goal's title, which the learner can rename: the primary course,
@@ -248,30 +234,18 @@ async function nameUnits(
 
 /**
  * The plan's level and plan certificates, finished or not, with the ones the learner holds and the
- * finished ones they're owed. Writes keep the fresh Plus check; GET reads pass `readSubscription`.
- * Writes read inside the learner's transaction, whose one connection runs one query at a time, so
- * the reads go in turn.
+ * finished ones they're owed.
  */
 export async function loadCertificateUnits(
-  {
-    goal,
-    plan,
-    readSubscription,
-  }: UnitInput & Pick<Parameters<typeof arePhaseChallengesRequired>[0], "readSubscription">,
+  { goal, plan }: UnitInput,
   db: TransactionClient = prisma,
 ) {
-  const course = await loadPrimaryCourse(db, goal);
-  const homeChapters = await loadHomeChapters(db, plan);
-  const standInLevels = await loadStandInLevels(db, { goal, plan });
-  const held = await loadHeldCertificates(db, goal);
-
-  const phaseChallengesRequired = await arePhaseChallengesRequired({
-    goalKind: goal.kind,
-    readSubscription:
-      readSubscription ??
-      ((userId) => findActiveSubscriptionForUser({ client: db, now: new Date(), userId })),
-    userId: goal.userId,
-  });
+  const [course, homeChapters, standInLevels, held] = await Promise.all([
+    loadPrimaryCourse(db, goal),
+    loadHomeChapters(db, plan),
+    loadStandInLevels(db, { goal, plan }),
+    loadHeldCertificates(db, goal),
+  ]);
 
   const levels = new Map(course?.courseChapters.map((entry) => [entry.chapterId, entry.level]));
 
@@ -302,8 +276,8 @@ export async function loadCertificateUnits(
         ...entry,
         taughtInPlan: taught.has(entry.chapterId),
       })) ?? [],
-    levelCourseId: getLevelCourseId({ course, goal }),
-    phaseChallengesRequired,
+    levelCourseId:
+      course?.visibility === "public" && course.format === "core" ? goal.primaryCourseId : null,
     phases: parsePlanPhases(plan.phases),
     planCreatedAt: plan.createdAt,
     studiesPastTarget: goal.kind === "exam" && parsePlanSettings(plan.settings).fullCourse,

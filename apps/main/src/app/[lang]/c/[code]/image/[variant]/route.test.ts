@@ -15,14 +15,15 @@ const ORIGIN = "http://localhost:9000";
 
 function linkImageUrl({ code, name }: { code: string; name: string }) {
   const links = getCertificateLinks({
-    cefrRange: null,
     code,
     completedOn: "2026-11-03",
     courseLevel: null,
     language: "en",
+    level: null,
     origin: ORIGIN,
     recipientName: name,
-    title: "Quantum physics from scratch",
+    targetLanguage: null,
+    title: null,
   });
 
   const url = new URL(links.imageUrls.link);

@@ -257,15 +257,23 @@ struct CertificateCeremony: View {
         comment: "Title when one result earned several certificates")
     }
 
-    guard let level = top.levelName else {
+    let level =
+      switch top.kind {
+      case .course: top.courseLevel.map { String(localized: $0.localizedTitle) }
+      case .languageLevel: top.level
+      }
+
+    guard let level else {
       return String(
         localized: "Course complete!", table: "Certificates",
         comment: "Title when the learner finished a whole plan's course")
     }
 
     return String(
-      localized: "\(level.keepingLevelTogether) complete!", table: "Certificates",
-      comment: "Title when the learner finished a course's level, such as Beginner")
+      localized: "\(level) complete!", table: "Certificates",
+      comment:
+        "Title when the learner finished a level: a CEFR language level, such as B1, or a course's level, such as Beginner"
+    )
   }
 
   private var line: String {
@@ -277,11 +285,19 @@ struct CertificateCeremony: View {
         comment: "Under the title when several certificates were earned; the list of their names")
     }
 
+    if top.kind == .course {
+      return String(
+        localized: "Your certificate for \(top.name) is ready.", table: "Certificates",
+        comment:
+          "Under the title when a course certificate was earned; the course or its level, such as Python · Beginner"
+      )
+    }
+
     return String(
-      localized: "Your certificate for \(top.name) is ready.", table: "Certificates",
+      localized: "Your \(top.languageName) \(top.level ?? "") certificate is ready.",
+      table: "Certificates",
       comment:
-        "Under the title when a course certificate was earned; the course or its level, such as Python · Beginner"
-    )
+        "Under the title when a language certificate was earned: the language, then the level")
   }
 
   private func close() {

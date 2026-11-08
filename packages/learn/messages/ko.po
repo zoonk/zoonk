@@ -1552,23 +1552,33 @@ msgctxt "QshKyk"
 msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
 msgstr "링크가 있으면 누구나 이 인증서를 볼 수 있어요. 이 페이지는 검색 결과에 나오지 않아요."
 
-#. A language course's level with the CEFR levels it covers, such as “Intermediate (B1–B2)”.
-#: src/certificates/certificate-labels.ts
-msgctxt "g0iGVr"
-msgid "{level} ({cefrRange})"
-msgstr "{level} ({cefrRange})"
-
 #. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
 #: src/certificates/certificate-labels.ts
 msgctxt "LD0O-X"
 msgid "{course} · {level}"
 msgstr "{course} · {level}"
 
+#. A language and a CEFR level, such as "Spanish B1": a certificate's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "ZP9lOu"
+msgid "{language} {level}"
+msgstr "{language} {level}"
+
 #. An approximate study time, such as "about 41 hr".
 #: src/certificates/certificate-labels.ts
 msgctxt "8QINPM"
 msgid "about {duration}"
 msgstr "약 {duration}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "ZfBPq3"
+msgid "{name} completed level {level} in {language}"
+msgstr "{name}님이 {level} 레벨의 {language} 과정을 마쳤어요"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "7ULGz_"
+msgid "Level {level} in {language}, completed on Zoonk"
+msgstr "{level} 레벨의 {language} 과정을 Zoonk에서 수료했어요"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "do3pHn"
@@ -1667,24 +1677,24 @@ msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't c
 msgstr "이름은 학습자가 Zoonk 계정에 등록한 이름이에요. Zoonk는 신분증을 확인하지 않아요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "S9RirL"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a language course's level, studying at least half of them on Zoonk and passing any others by test."
-msgstr "언어 코스의 한 레벨에 있는 모든 레슨을 완료하면 Zoonk가 이 인증서를 발급해요. 레슨의 절반 이상은 Zoonk에서 학습하고, 나머지는 테스트를 통과해야 해요."
-
-#: src/certificates/certificate-meaning.tsx
 msgctxt "s94wjH"
 msgid "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
 msgstr "레벨은 유럽 공통 언어 참조 기준인 CEFR에 맞춰져 있어요. 공식 시험 결과는 아니에요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "1rRK1U"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's level, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it."
-msgstr "코스의 한 레벨에 있는 모든 레슨을 완료하고 모든 챌린지에서 승리하면 Zoonk가 이 인증서를 발급해요. 레슨의 절반 이상은 Zoonk에서 학습하고, 나머지는 테스트를 통과해야 해요."
+msgctxt "X1QrOq"
+msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
+msgstr "Zoonk는 학습자가 레슨과 연습에서 한 답변을 바탕으로 각 스킬(읽기, 듣기, 말하기, 쓰기)을 측정해요. 답변을 통해 레벨이 오른 스킬이 모두 다음 레벨에 도달하면 현재 레벨을 완료한 것으로 봐요. 이 인증서는 해당 스킬이 모두 {level}에 도달했을 때 발급됐어요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "J9lkce"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it."
-msgstr "코스 계획에 있는 모든 레슨을 완료하고 모든 챌린지에서 승리하면 Zoonk가 이 인증서를 발급해요. 레슨의 절반 이상은 Zoonk에서 학습하고, 나머지는 테스트를 통과해야 해요."
+msgctxt "j5jrUM"
+msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
+msgstr "코스의 한 레벨에서 각 레슨을 공부하거나 해당 레슨의 테스트를 통과해 모든 챕터를 마치고, 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "9Bnhaw"
+msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
+msgstr "코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "wB_Ebz"
@@ -1702,9 +1712,19 @@ msgid "Topics covered"
 msgstr "학습한 주제"
 
 #: src/certificates/certificate-meaning.tsx
+msgctxt "8Rm1i0"
+msgid "Can do"
+msgstr "할 수 있는 일"
+
+#: src/certificates/certificate-meaning.tsx
 msgctxt "NnlD8J"
 msgid "Learn {course} on Zoonk"
 msgstr "Zoonk에서 {course} 배우기"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "1h_6la"
+msgid "Learn {language} on Zoonk"
+msgstr "Zoonk에서 {language} 배우기"
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "hxYqqG"
@@ -1723,14 +1743,19 @@ msgid "Start free, no account needed."
 msgstr "계정 없이 무료로 시작할 수 있어요."
 
 #: src/certificates/certificate-moment-copy.ts
-msgctxt "lopydx"
-msgid "Your certificate for {course} is ready."
-msgstr "{course} 인증서가 준비됐어요."
+msgctxt "buj2o3"
+msgid "Your {certificate} certificate is ready."
+msgstr "{certificate} 인증서가 준비됐어요."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "e63c09"
 msgid "{level} complete!"
 msgstr "{level} 완료!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "lopydx"
+msgid "Your certificate for {course} is ready."
+msgstr "{course} 인증서가 준비됐어요."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "SqnwjO"
@@ -1826,6 +1851,11 @@ msgid "Download"
 msgstr "다운로드"
 
 #: src/certificates/certificate-share.tsx
+msgctxt "sfDPEB"
+msgid "I just completed level {level} in {language} on Zoonk."
+msgstr "Zoonk에서 {level} 레벨의 {language} 학습을 막 마쳤어요."
+
+#: src/certificates/certificate-share.tsx
 msgctxt "rIzvkK"
 msgid "I just finished {course} on Zoonk."
 msgstr "방금 Zoonk에서 {course} 코스를 마쳤어요."
@@ -1906,9 +1936,14 @@ msgid "Certificates"
 msgstr "인증서"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "CZUJO4"
-msgid "Your certificate comes when you finish the plan, studying at least half its lessons"
-msgstr "레슨을 절반 이상 학습하고 계획을 마치면 인증서를 받아요"
+msgctxt "Ek6qb7"
+msgid "Comes when every skill you practice reaches the next level"
+msgstr "연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "ojltlj"
+msgid "Your certificate comes when you finish the plan"
+msgstr "계획을 마치면 인증서를 받을 수 있어요"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
@@ -1916,9 +1951,9 @@ msgid "No certificates yet"
 msgstr "아직 인증서가 없어요"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "LfpYNe"
-msgid "Your certificates show up here when you finish a level or a plan, studying at least half its lessons."
-msgstr "레슨을 절반 이상 학습하고 레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
+msgctxt "_eLagx"
+msgid "Your certificates show up here when you finish a level or a plan."
+msgstr "레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

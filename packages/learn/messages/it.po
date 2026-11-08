@@ -1552,23 +1552,33 @@ msgctxt "QshKyk"
 msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
 msgstr "Chiunque abbia il link può vedere questo certificato. La sua pagina non compare nei risultati di ricerca."
 
-#. A language course's level with the CEFR levels it covers, such as “Intermediate (B1–B2)”.
-#: src/certificates/certificate-labels.ts
-msgctxt "g0iGVr"
-msgid "{level} ({cefrRange})"
-msgstr "{level} ({cefrRange})"
-
 #. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
 #: src/certificates/certificate-labels.ts
 msgctxt "LD0O-X"
 msgid "{course} · {level}"
 msgstr "{course} · {level}"
 
+#. A language and a CEFR level, such as "Spanish B1": a certificate's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "ZP9lOu"
+msgid "{language} {level}"
+msgstr "{language} {level}"
+
 #. An approximate study time, such as "about 41 hr".
 #: src/certificates/certificate-labels.ts
 msgctxt "8QINPM"
 msgid "about {duration}"
 msgstr "circa {duration}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "ZfBPq3"
+msgid "{name} completed level {level} in {language}"
+msgstr "{name} ha completato il livello {level} di {language}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "7ULGz_"
+msgid "Level {level} in {language}, completed on Zoonk"
+msgstr "Livello {level} di {language}, completato su Zoonk"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "do3pHn"
@@ -1667,24 +1677,24 @@ msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't c
 msgstr "Il nome è quello indicato per l’account Zoonk; Zoonk non controlla i documenti d’identità."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "S9RirL"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a language course's level, studying at least half of them on Zoonk and passing any others by test."
-msgstr "Zoonk rilascia questo certificato a chi completa tutte le lezioni del livello di un corso di lingua, studiandone almeno la metà su Zoonk e superando i test per le altre."
-
-#: src/certificates/certificate-meaning.tsx
 msgctxt "s94wjH"
 msgid "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
 msgstr "I livelli sono in linea con il CEFR, il Quadro comune europeo di riferimento per le lingue. Non è il risultato di un esame ufficiale."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "1rRK1U"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's level, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it."
-msgstr "Zoonk rilascia questo certificato a chi completa tutte le lezioni del livello di un corso, studiandone almeno la metà su Zoonk e superando i test per le altre, e vince tutte le sfide del livello."
+msgctxt "X1QrOq"
+msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
+msgstr "Zoonk misura ogni abilità (lettura, ascolto, parlato, scrittura) in base alle risposte date durante le lezioni e le esercitazioni. Un livello è completo quando tutte le abilità migliorate con quelle risposte raggiungono il livello successivo. Questo certificato è stato quindi rilasciato quando ciascuna ha raggiunto {level}."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "J9lkce"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, studying at least half of them on Zoonk and passing any others by test, and wins every challenge in it."
-msgstr "Zoonk rilascia questo certificato a chi completa tutte le lezioni del piano di un corso, studiandone almeno la metà su Zoonk e superando i test per le altre, e vince tutte le sfide del piano."
+msgctxt "j5jrUM"
+msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
+msgstr "Zoonk rilascia questo certificato a chi completa tutti i capitoli di un livello del corso, studiando ogni lezione o superando il relativo test, e vince tutte le sfide del livello."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "9Bnhaw"
+msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
+msgstr "Zoonk rilascia questo certificato a chi completa ogni lezione del piano di un corso, studiandola o superandone il test, e vince tutte le sfide del piano."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "wB_Ebz"
@@ -1702,9 +1712,19 @@ msgid "Topics covered"
 msgstr "Argomenti trattati"
 
 #: src/certificates/certificate-meaning.tsx
+msgctxt "8Rm1i0"
+msgid "Can do"
+msgstr "Cosa sa fare"
+
+#: src/certificates/certificate-meaning.tsx
 msgctxt "NnlD8J"
 msgid "Learn {course} on Zoonk"
 msgstr "Impara {course} su Zoonk"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "1h_6la"
+msgid "Learn {language} on Zoonk"
+msgstr "Impara {language} su Zoonk"
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "hxYqqG"
@@ -1723,14 +1743,19 @@ msgid "Start free, no account needed."
 msgstr "Inizia gratis, senza account."
 
 #: src/certificates/certificate-moment-copy.ts
-msgctxt "lopydx"
-msgid "Your certificate for {course} is ready."
-msgstr "Il tuo certificato per {course} è pronto."
+msgctxt "buj2o3"
+msgid "Your {certificate} certificate is ready."
+msgstr "Il tuo certificato di {certificate} è pronto."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "e63c09"
 msgid "{level} complete!"
 msgstr "{level} completato!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "lopydx"
+msgid "Your certificate for {course} is ready."
+msgstr "Il tuo certificato per {course} è pronto."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "SqnwjO"
@@ -1826,6 +1851,11 @@ msgid "Download"
 msgstr "Scarica"
 
 #: src/certificates/certificate-share.tsx
+msgctxt "sfDPEB"
+msgid "I just completed level {level} in {language} on Zoonk."
+msgstr "Ho appena completato il livello {level} di {language} su Zoonk."
+
+#: src/certificates/certificate-share.tsx
 msgctxt "rIzvkK"
 msgid "I just finished {course} on Zoonk."
 msgstr "Ho appena completato {course} su Zoonk."
@@ -1906,9 +1936,14 @@ msgid "Certificates"
 msgstr "Certificati"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "CZUJO4"
-msgid "Your certificate comes when you finish the plan, studying at least half its lessons"
-msgstr "Ricevi il certificato quando completi il piano, se hai studiato almeno metà delle lezioni"
+msgctxt "Ek6qb7"
+msgid "Comes when every skill you practice reaches the next level"
+msgstr "Lo ottieni quando passi al livello successivo in tutte le abilità che alleni"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "ojltlj"
+msgid "Your certificate comes when you finish the plan"
+msgstr "Ricevi il certificato quando completi il piano"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
@@ -1916,9 +1951,9 @@ msgid "No certificates yet"
 msgstr "Ancora nessun certificato"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "LfpYNe"
-msgid "Your certificates show up here when you finish a level or a plan, studying at least half its lessons."
-msgstr "I tuoi certificati compaiono qui quando completi un livello o un piano, se hai studiato almeno metà delle lezioni."
+msgctxt "_eLagx"
+msgid "Your certificates show up here when you finish a level or a plan."
+msgstr "I tuoi certificati compaiono qui quando completi un livello o un piano."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

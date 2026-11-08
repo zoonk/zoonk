@@ -6,6 +6,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { awardLanguageLevelCertificates } from "../../certificates/_utils/award-language-certificates";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
 import { isPatternCheckDue } from "../patterns/find-mistake-pattern";
@@ -65,11 +66,21 @@ export async function addSkillEvidence(
 
   const next = applyLevelEvidence(current, evidence);
   const raised = next.score > current.score;
+  const now = new Date();
 
   await tx.languageSkillLevel.update({
-    data: { ...next, ...(raised && current.raisedAt === null && { raisedAt: new Date() }) },
+    data: { ...next, ...(raised && current.raisedAt === null && { raisedAt: now }) },
     where: { id: current.id },
   });
+
+  if (raised) {
+    await awardLanguageLevelCertificates(tx, {
+      language,
+      now,
+      previous: { score: current.score, skill },
+      userId,
+    });
+  }
 }
 
 /** Callers must derive `userId` from the authenticated session. */
