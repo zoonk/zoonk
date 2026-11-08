@@ -14,7 +14,7 @@ const COURSE_FINE_PRINT =
   "Awarded for finishing a study plan on Zoonk, with at least half its lessons studied.";
 
 const LANGUAGE_FINE_PRINT =
-  "At least half its lessons studied on Zoonk. Levels follow the CEFR; not an official exam result.";
+  "At least half its lessons studied. Levels follow the CEFR; not an official exam result.";
 
 /** A line box in u, as the sheet's name and title draw them. */
 const NAME_LINE = 92 * 1.02;

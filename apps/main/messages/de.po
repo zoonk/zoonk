@@ -3548,23 +3548,23 @@ msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "Level {level}"
 
-#. The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does. Keep it short: it has one line on the certificate.
+#. The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does, and say the levels follow it rather than that they are CEFR levels. Anyone the learner shares it with reads it, so don't address the reader. Keep it under 95 characters, or 50 in Japanese or Korean: it has one line on the certificate, and a longer one pushes the topics off it.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "UclPL-"
-msgid "At least half its lessons studied on Zoonk. Levels follow the CEFR; not an official exam result."
-msgstr "Mindestens die Hälfte der Lektionen auf Zoonk bearbeitet. Level nach CEFR; kein offizielles Prüfungsergebnis."
+msgctxt "NXK_ET"
+msgid "At least half its lessons studied. Levels follow the CEFR; not an official exam result."
+msgstr "Mindestens 50 % der Lektionen bearbeitet. Level nach CEFR; kein offizielles Prüfungsergebnis."
 
-#. The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Keep it short: it has one line on the certificate.
+#. The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Anyone the learner shares it with reads it, so don't address the reader. Keep it under 95 characters, or 50 in Japanese or Korean: it has one line on the certificate, and a longer one pushes the topics off it.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "h7-WzZ"
 msgid "Awarded for finishing this level on Zoonk, with at least half its lessons studied."
-msgstr "Verliehen für den Abschluss dieses Levels auf Zoonk; mindestens die Hälfte der Lektionen bearbeitet."
+msgstr "Für den Abschluss dieses Levels auf Zoonk mit mindestens 50 % bearbeiteten Lektionen."
 
-#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Keep it short: it has one line on the certificate.
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Anyone the learner shares it with reads it, so don't address the reader. Keep it under 95 characters, or 50 in Japanese or Korean: it has one line on the certificate, and a longer one pushes the topics off it.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "EtdCOf"
 msgid "Awarded for finishing a study plan on Zoonk, with at least half its lessons studied."
-msgstr "Verliehen für den Abschluss eines Plans auf Zoonk; mindestens die Hälfte der Lektionen bearbeitet."
+msgstr "Für den Abschluss eines Plans auf Zoonk mit mindestens 50 % bearbeiteten Lektionen."
 
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts

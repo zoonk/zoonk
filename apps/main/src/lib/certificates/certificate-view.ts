@@ -118,22 +118,22 @@ async function getFinePrint({ facts, locale }: KindInput): Promise<string> {
   if (facts.cefrRange) {
     return t({
       description:
-        "The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does. Keep it short: it has one line on the certificate.",
+        "The fine print on a language course level's certificate, such as Italian · Intermediate (B1–B2), under the facts that show how many lessons were studied and passed by test. The CEFR is the Common European Framework of Reference for Languages: keep the acronym “CEFR”, as the certificate's page does, and say the levels follow it rather than that they are CEFR levels. Anyone the learner shares it with reads it, so don't address the reader. Keep it under 95 characters, or 50 in Japanese or Korean: it has one line on the certificate, and a longer one pushes the topics off it.",
       message:
-        "At least half its lessons studied on Zoonk. Levels follow the CEFR; not an official exam result.",
+        "At least half its lessons studied. Levels follow the CEFR; not an official exam result.",
     });
   }
 
   return facts.courseLevel
     ? t({
         description:
-          "The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Keep it short: it has one line on the certificate.",
+          "The fine print on a course level's certificate, under the facts that show how many lessons were studied and passed by test. Anyone the learner shares it with reads it, so don't address the reader. Keep it under 95 characters, or 50 in Japanese or Korean: it has one line on the certificate, and a longer one pushes the topics off it.",
         message:
           "Awarded for finishing this level on Zoonk, with at least half its lessons studied.",
       })
     : t({
         description:
-          "The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Keep it short: it has one line on the certificate.",
+          "The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists. Anyone the learner shares it with reads it, so don't address the reader. Keep it under 95 characters, or 50 in Japanese or Korean: it has one line on the certificate, and a longer one pushes the topics off it.",
         message:
           "Awarded for finishing a study plan on Zoonk, with at least half its lessons studied.",
       });
