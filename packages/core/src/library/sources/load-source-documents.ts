@@ -49,8 +49,12 @@ async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8
   return fetched?.contentType === mimeType ? fetched.bytes : null;
 }
 
-async function loadSourceFiles(source: Source) {
+async function loadSourceFiles({ preferText, source }: { preferText: boolean; source: Source }) {
   const mediaType = source.mimeType ?? "";
+
+  if (preferText && source.extractedText) {
+    return { file: null, images: [] };
+  }
 
   if (mediaType === PDF_CONTENT_TYPE && isCutText(source.extractedText)) {
     return { file: null, images: [] };
@@ -74,8 +78,14 @@ async function loadSourceFiles(source: Source) {
   return { file: null, images: parsed.images };
 }
 
-async function toSourceDocument(source: Source): Promise<SourceDocument> {
-  const { file, images } = await loadSourceFiles(source);
+async function toSourceDocument({
+  preferText,
+  source,
+}: {
+  preferText: boolean;
+  source: Source;
+}): Promise<SourceDocument> {
+  const { file, images } = await loadSourceFiles({ preferText, source });
 
   return {
     contentHash: source.contentHash,
@@ -89,8 +99,14 @@ async function toSourceDocument(source: Source): Promise<SourceDocument> {
   };
 }
 
-/** Internal: callers must authorize access to the source ids before reading private files. */
-export async function loadSourceDocuments(sourceIds: string[]): Promise<SourceDocument[]> {
+/**
+ * Internal: callers must authorize access to the source ids before reading private files.
+ * `preferText` downloads only the files of sources with no stored text, for a reading done from text.
+ */
+export async function loadSourceDocuments(
+  sourceIds: string[],
+  { preferText = false }: { preferText?: boolean } = {},
+): Promise<SourceDocument[]> {
   const sources = await prisma.source.findMany({ where: { id: { in: sourceIds } } });
   const byId = new Map(sources.map((source) => [source.id, source]));
 
@@ -98,5 +114,5 @@ export async function loadSourceDocuments(sourceIds: string[]): Promise<SourceDo
     .map((sourceId) => byId.get(sourceId))
     .filter((source) => source !== undefined);
 
-  return Promise.all(ordered.map((source) => toSourceDocument(source)));
+  return Promise.all(ordered.map((source) => toSourceDocument({ preferText, source })));
 }
