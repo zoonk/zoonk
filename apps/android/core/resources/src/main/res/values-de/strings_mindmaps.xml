@@ -25,9 +25,9 @@
   "mindmaps_intro_lessons_first_free": "640e4284c43716fa20c4fbac4cb261aaabcca618946cac83ad7c5b87a9bbdd10",
   "mindmaps_intro_lessons_first_plus": "fc8188934d28ce05c103cf9382e26f6eb024c2424d82983d941834373427e9bc",
   "mindmaps_keep_studying": "549730140204158ec1d51c1ab3dc52b1ebf993d8fde03ecda3c7d60b6fa91e2b",
-  "mindmaps_lessons_first_free": "ab9e8f8e85ce809e6d3115f335f8ffaf5f2a593d459a5960c823eb1c84703aa7",
-  "mindmaps_lessons_first_plus": "67c6f66bebf7fe80b60e016b8d63b64a75f0b7994b7e8f3189abee2565f50dad",
-  "mindmaps_lessons_not_written": "429622743437af8fe9e210807fd29879a0470792019e1c887500f9bf4790f2f2",
+  "mindmaps_lessons_first_free": "76ca6da61329afead036bc9db3fe559f1a69bd875571f9505ef2bd5b9262458e",
+  "mindmaps_lessons_first_plus": "25dd79a0db333729b86a418dfbdaf93e549a8bc801b75b6db8150eec4dcd79a0",
+  "mindmaps_lessons_to_write": "3898a6375cd09781eb322e13226090df3da5677e3f2905184266a8714ca8b38c",
   "mindmaps_open": "cf5266b1c41d0923533810ebf78d8597f2edda572505a331c6cddbf48059a04d",
   "mindmaps_open_spoken": "59f526e5967f3220d6c7b5c2711b435593d13d5349342534f0911617f550a6de",
   "mindmaps_ready": "50fa70d417dc36699f601354ccb12564bd79e4fc9885ccc43634cb9024ebf540",
@@ -80,12 +80,21 @@
     <string name="mindmaps_row_title">Mindmap</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Das Wichtigste aus dem Kapitel in einem Bild</string>
-    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Wir erstellen zuerst die Lektionen des Kapitels und rechnen sie auf deine kostenlosen Lektionen an.</string>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">Wir erstellen zuerst die Lektionen des Kapitels, deshalb dauert es ein paar Minuten.</string>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">Noch nicht erstellte Lektionen</string>
+    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_free">
+        <item quantity="one">Wir erstellen zuerst %1$s Lektion und rechnen sie auf deine kostenlosen Lektionen an.</item>
+        <item quantity="other">Wir erstellen zuerst %1$s Lektionen und rechnen sie auf deine kostenlosen Lektionen an.</item>
+    </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">Wir erstellen zuerst %1$s Lektion. Das dauert ein paar Minuten.</item>
+        <item quantity="other">Wir erstellen zuerst %1$s Lektionen. Das dauert ein paar Minuten.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">Noch %1$s Lektion zu erstellen</item>
+        <item quantity="other">Noch %1$s Lektionen zu erstellen</item>
+    </plurals>
     <string name="mindmaps_writing_lessons">Wir erstellen zuerst die Lektionen, dann die Mindmap…</string>
     <string name="mindmaps_writing_lessons_wait">Das dauert ein paar Minuten. Du kannst die Seite verlassen; du findest die Mindmap später hier.</string>
     <string name="mindmaps_drawing">Wir zeichnen die Mindmap…</string>

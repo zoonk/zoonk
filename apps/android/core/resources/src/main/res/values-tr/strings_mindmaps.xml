@@ -25,9 +25,9 @@
   "mindmaps_intro_lessons_first_free": "f51b9413b05b02cb6dc05c4745e8866671e5f80d8b9e9fe17778ee80b1a26b69",
   "mindmaps_intro_lessons_first_plus": "0de045f1198f98b70dd65c00f3fb0514b54bbdc4982aa83df974fbfefafb160a",
   "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
-  "mindmaps_lessons_first_free": "7759eb2ee193fb3cf1827b22b13b45acaa030c45f914d7f6a60e9de8aa5290f0",
-  "mindmaps_lessons_first_plus": "c2e8aecb89017c5c7c3bf7af2e05916b11c69b3640ef1099fa077ed45bce948d",
-  "mindmaps_lessons_not_written": "0accfa6be14ef86555e022752e88847763d15973fedb63d2ace01fda3c986ca3",
+  "mindmaps_lessons_first_free": "f8acb4b7c9cfc88677fdc0f592652df92ec8273a5c5a1b57cef1b616502381c3",
+  "mindmaps_lessons_first_plus": "d387162e42ccd430f715ef8357d08e51576f2f917ba779ff9ed18e49ddd93153",
+  "mindmaps_lessons_to_write": "7faee3711fb245b146e9ad6aa4a118e7374b2467c82147cdf977ec33cf7ff818",
   "mindmaps_open": "05b2a0f112825e7ec7a811acb736d631928d5267cf66260c1679a741ed978d1c",
   "mindmaps_open_spoken": "2472b797493afc3cf1b597cf027e762285ca43667a94a3f4d7e1205f6ab27802",
   "mindmaps_ready": "0516c9487d72f6a40140ff66a33990435286e2ab0b8a5d77c4678075d236231d",
@@ -80,12 +80,21 @@
     <string name="mindmaps_row_title">Zihin haritası</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Ana kavramları tek bir görselde</string>
-    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Önce ünitenin dersleri hazırlanır ve ücretsiz ders hakkından düşülür.</string>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">Önce ünitenin dersleri hazırlanır, bu yüzden birkaç dakika sürer.</string>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">Henüz hazırlanmamış dersler</string>
+    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_free">
+        <item quantity="one">Önce %1$s ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.</item>
+        <item quantity="other">Önce %1$s ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.</item>
+    </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">Önce %1$s ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.</item>
+        <item quantity="other">Önce %1$s ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">Hazırlanacak %1$s ders</item>
+        <item quantity="other">Hazırlanacak %1$s ders</item>
+    </plurals>
     <string name="mindmaps_writing_lessons">Önce dersleri, sonra zihin haritasını hazırlıyoruz…</string>
     <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak.</string>
     <string name="mindmaps_drawing">Zihin haritasını çiziyoruz…</string>

@@ -25,9 +25,9 @@
   "mindmaps_intro_lessons_first_free": "6f877e6724883569bd9e170d50febc4e247ddb6eb4b55a53e80c94a6393501c3",
   "mindmaps_intro_lessons_first_plus": "4776d85b3a86c00f47cb08a14d427d694c05ad9e62d230e124aec868fa63f822",
   "mindmaps_keep_studying": "70ffcca5db70373084f4c2a3d5c1ce330a9b7a9217ff95ec4f24914005f373aa",
-  "mindmaps_lessons_first_free": "4d4e59bacdeb742c594f817fe2da37e937d5ea550c097ad3a9574be08efd607c",
-  "mindmaps_lessons_first_plus": "92821f0181f75df0a0288b5a6be01a0c188dc38296076dde5361b15dca9244fd",
-  "mindmaps_lessons_not_written": "6cd950e7295b659a193f0526419af221f5a12ffa1a65d46f7174621fc079ab37",
+  "mindmaps_lessons_first_free": "d4f4f4f00b1e80e5d049c551c0433454307fccdd9fd72e04a513d8b3cc863aaa",
+  "mindmaps_lessons_first_plus": "23e610d87d4fdf9970d8e1a2d5125b1e09ca7567fdec374928a481e38ec2fae0",
+  "mindmaps_lessons_to_write": "b9f4568ff3ee15eeba4876e70870d3d7fc2630a2a7440650642e551e2df1466c",
   "mindmaps_open": "5fffd0435577f427958e0e6389553551761187edde5ed88ccac9b571a566d0e5",
   "mindmaps_open_spoken": "4f49306bfbe0752903f6d14a0837baaaaede6f0bee8435a2cf5b2e293426b2c7",
   "mindmaps_ready": "dffdd162f0144d7998be93acfd953a7a72a597211a0b792a4ea508e3a80244e9",
@@ -78,12 +78,18 @@
     <string name="mindmaps_row_title">마인드맵</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">핵심 내용을 한 장의 그림으로</string>
-    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">챕터의 레슨을 먼저 만들고, 만든 레슨은 무료 레슨 한도에 포함돼요.</string>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">챕터의 레슨을 먼저 만들어야 해서 몇 분 정도 걸려요.</string>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">아직 만들지 않은 레슨</string>
+    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_free">
+        <item quantity="other">레슨 %1$s개를 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요.</item>
+    </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="other">레슨 %1$s개를 먼저 만들어야 해서 몇 분 걸려요.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="other">만들 레슨 %1$s개</item>
+    </plurals>
     <string name="mindmaps_writing_lessons">레슨, 마인드맵 순서로 만들고 있어요…</string>
     <string name="mindmaps_writing_lessons_wait">몇 분 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요.</string>
     <string name="mindmaps_drawing">마인드맵을 그리고 있어요…</string>

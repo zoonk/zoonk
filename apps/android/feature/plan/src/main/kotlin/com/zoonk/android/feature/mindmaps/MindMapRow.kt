@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -247,11 +248,17 @@ private fun MapFacts.statusLine(
 
     return when (shown) {
         MindMapShown.Available, MindMapShown.Refused -> {
-            when {
-                lessonsToWrite == 0L -> described
-                library -> stringResource(R.string.mindmaps_lessons_not_written)
-                plus -> stringResource(R.string.mindmaps_lessons_first_plus)
-                else -> stringResource(R.string.mindmaps_lessons_first_free)
+            val toWrite =
+                when {
+                    library -> R.plurals.mindmaps_lessons_to_write
+                    plus -> R.plurals.mindmaps_lessons_first_plus
+                    else -> R.plurals.mindmaps_lessons_first_free
+                }
+            if (lessonsToWrite == 0L) {
+                described
+            } else {
+                val count = lessonsToWrite.toInt()
+                pluralStringResource(toWrite, count, formatNumber(count.toDouble(), currentLocale()))
             }
         }
 

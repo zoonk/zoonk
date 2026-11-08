@@ -25,9 +25,9 @@
   "mindmaps_intro_lessons_first_free": "284adc8697c86c0b043d960d4ae9f199caa4689e42dc85c1b5fe5823736ec6b0",
   "mindmaps_intro_lessons_first_plus": "f43cc4fe11c7250109f5a7857c5ae08f03fe7eb50ceee6ed3948c2fc79636306",
   "mindmaps_keep_studying": "712c8abc59dd244cad48a712f02314b0730c6c0cdded693ea87f9141c2c511b6",
-  "mindmaps_lessons_first_free": "496391a002260476e21cb246386553628b5b4bb6c93fc27a683f94a6b7af8f99",
-  "mindmaps_lessons_first_plus": "5d9776f2397931e0d2218662a93b8f7840e8b8f471db99aaf78046f5e002c9ce",
-  "mindmaps_lessons_not_written": "3d6978b567e62ae43e1f42cc08ddc9d86e03d71eacc6ac286df44269e5413080",
+  "mindmaps_lessons_first_free": "f5b67af5d91c3bb3f3090c6cfa7efa32799e42373e1423226f6b5893b9073f7f",
+  "mindmaps_lessons_first_plus": "904a9bbc613aebb2f2e10050c8a0520a973f9a391d1a68fab504959c06e45e55",
+  "mindmaps_lessons_to_write": "cc12e5a12b9e595a75fb2cc237b30f9fe47ab4596f47db7563fb2e6c1538e1a6",
   "mindmaps_open": "191b24b9df422c995784261eacffb115cb0a6941927f74ca22d492d2e371ade9",
   "mindmaps_open_spoken": "dc8998886a7dd6eec7f573ef3bb7c5f40f45bf9a6ba496189323387e326b350b",
   "mindmaps_ready": "c97de6c670e9be309cc8c186fb923990a23bd4fdf0ed10f3f77dac3cb627d6e6",
@@ -84,12 +84,27 @@
     <string name="mindmaps_row_title">Mapa myśli</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Główne zagadnienia rozdziału na jednym obrazku</string>
-    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Najpierw przygotowujemy lekcje z tego rozdziału, które wliczają się do twojego limitu bezpłatnych lekcji.</string>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">Najpierw przygotowujemy lekcje z tego rozdziału, więc potrwa to kilka minut.</string>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">Lekcje jeszcze nieprzygotowane</string>
+    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_free">
+        <item quantity="one">Najpierw przygotujemy %1$s lekcję i wliczymy ją do twojej puli bezpłatnych lekcji.</item>
+        <item quantity="few">Najpierw przygotujemy %1$s lekcje i wliczymy je do twojej puli bezpłatnych lekcji.</item>
+        <item quantity="many">Najpierw przygotujemy %1$s lekcji i wliczymy je do twojej puli bezpłatnych lekcji.</item>
+        <item quantity="other">Najpierw przygotujemy %1$s lekcji i wliczymy je do twojej puli bezpłatnych lekcji.</item>
+    </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">Najpierw przygotujemy %1$s lekcję, więc zajmie to kilka minut.</item>
+        <item quantity="few">Najpierw przygotujemy %1$s lekcje, więc zajmie to kilka minut.</item>
+        <item quantity="many">Najpierw przygotujemy %1$s lekcji, więc zajmie to kilka minut.</item>
+        <item quantity="other">Najpierw przygotujemy %1$s lekcji, więc zajmie to kilka minut.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s lekcja do przygotowania</item>
+        <item quantity="few">%1$s lekcje do przygotowania</item>
+        <item quantity="many">%1$s lekcji do przygotowania</item>
+        <item quantity="other">%1$s lekcji do przygotowania</item>
+    </plurals>
     <string name="mindmaps_writing_lessons">Przygotowujemy lekcje, a potem mapę myśli…</string>
     <string name="mindmaps_writing_lessons_wait">To potrwa kilka minut. Możesz wyjść, a mapa będzie tu czekać.</string>
     <string name="mindmaps_drawing">Rysujemy mapę myśli…</string>

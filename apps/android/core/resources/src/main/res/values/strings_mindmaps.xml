@@ -34,12 +34,21 @@
     <string name="mindmaps_row_title">Mind map</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Its main ideas in one picture</string>
-    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. -->
-    <string name="mindmaps_lessons_first_free">Its lessons get written first and count toward your free lessons.</string>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. -->
-    <string name="mindmaps_lessons_first_plus">Its lessons get written first, so it takes a few minutes.</string>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · Lessons not written yet". -->
-    <string name="mindmaps_lessons_not_written">Lessons not written yet</string>
+    <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_free">
+        <item quantity="one">%1$s lesson gets written first and counts toward your free lessons.</item>
+        <item quantity="other">%1$s lessons get written first and count toward your free lessons.</item>
+    </plurals>
+    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
+    <plurals name="mindmaps_lessons_first_plus">
+        <item quantity="one">%1$s lesson gets written first, so it takes a few minutes.</item>
+        <item quantity="other">%1$s lessons get written first, so it takes a few minutes.</item>
+    </plurals>
+    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s lesson to write</item>
+        <item quantity="other">%1$s lessons to write</item>
+    </plurals>
     <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
     <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
     <string name="mindmaps_drawing">Drawing the mind map…</string>
