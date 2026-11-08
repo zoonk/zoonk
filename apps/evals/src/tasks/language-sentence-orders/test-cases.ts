@@ -15,7 +15,7 @@ export type SentenceOrdersExpected = {
 
 export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[] = [
   {
-    expectations: `Brazilian Portuguese speaker learning Italian. In the first sentence the subject can follow the verb ("Quando pioveva è arrivato l'autobus") and the "quando" clause can close the sentence; an order that attaches "quando" to the bus's arrival says something else. In the second, "oggi" can close the sentence, but "non" stays right before the verb.`,
+    expectations: `Brazilian Portuguese speaker learning Italian. In the first sentence the subject can follow the verb ("Quando pioveva è arrivato l'autobus") and the "quando" clause can close the sentence; an order that attaches "quando" to the bus's arrival says something else. In the second, "oggi" can close the sentence, but "non" stays right before the verb. In the third, "in ritardo" and "atrasado" describe the arrival, not the bus: keep subject-after-verb orders with the same meaning, but reject "L'autobus in ritardo è arrivato" and "O ônibus atrasado chegou", which mean the late bus arrived.`,
     expected: {
       sentences: [
         {
@@ -38,6 +38,16 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
             valid: ["Eu não peguei o guarda-chuva hoje", "Eu não peguei hoje o guarda-chuva"],
           },
         },
+        {
+          orders: {
+            invalid: ["L'autobus in ritardo è arrivato"],
+            valid: ["È arrivato in ritardo l'autobus"],
+          },
+          translationOrders: {
+            invalid: ["O ônibus atrasado chegou"],
+            valid: ["Chegou atrasado o ônibus"],
+          },
+        },
       ],
     },
     id: "pt-it-rain-and-bus",
@@ -52,6 +62,7 @@ export const TEST_CASES: TestCase<SentenceOrdersExpected, SentenceOrdersInput>[]
           sentence: "Oggi non ho preso l'ombrello",
           translation: "Hoje eu não peguei o guarda-chuva",
         },
+        { sentence: "L'autobus è arrivato in ritardo", translation: "O ônibus chegou atrasado" },
       ],
       targetLanguage: "it",
     },
