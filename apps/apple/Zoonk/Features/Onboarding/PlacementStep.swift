@@ -309,10 +309,13 @@ struct PlacementStep: View {
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
-
-      saveFailure
     } extra: {
       VStack(spacing: 6) {
+        if finishFailed, !isSaving {
+          FailureLine(message: Self.saveFailureMessage)
+            .multilineTextAlignment(.center)
+        }
+
         BusyButton(isBusy: isSaving, icon: .skip) {
           finish(fromScratch: false)
         } label: {
