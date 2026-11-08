@@ -278,7 +278,10 @@ struct ScheduleQuestion: View {
     let line = lineAt(advice, current)
 
     let (answer, updating) = ScheduleTime.shownAnswer(
-      last: .init(found: lastFound, line: lineAt(advised.last(for: adviceKey), lastFound)),
+      // A date answers one aim: a new aim's line works it out instead of showing the old one's.
+      last: .init(
+        found: lastFound,
+        line: lineAt(advised.last(for: adviceKey) { $0.aim == adviceKey.aim }, lastFound)),
       now: .init(found: current, line: line))
 
     return Shown(
