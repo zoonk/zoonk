@@ -1,6 +1,7 @@
 import { CHALLENGE_STATUSES, type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { BuddyGlasses } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -11,11 +12,7 @@ import {
   checkpointPhaseSchema,
 } from "./checkpoint-evidence";
 import { mockLeftOutSchema } from "./mock-left-out";
-import {
-  logicalDateSchema,
-  studyBlockDetailResponseSchema,
-  studyBlockSchema,
-} from "./study-sessions";
+import { logicalDateSchema, studyBlockDetailResponseSchema } from "./study-sessions";
 import { mockWrittenPartsSchema } from "./weekly-challenge";
 
 const unknownSizeSchema = z.int().min(0).nullable();

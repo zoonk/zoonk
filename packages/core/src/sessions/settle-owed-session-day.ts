@@ -43,7 +43,14 @@ export function oweDaySettlement(
     timeZone,
   };
 
-  return oweFollowUps({ db: tx, followUps: [{ input, kind: "settleSessionDay" }], userId });
+  return oweFollowUps({
+    db: tx,
+    followUps: [
+      { input, kind: "settleSessionDay" },
+      { input: { sessionId: block.sessionId, timeZone }, kind: "refreshStudyDay" },
+    ],
+    userId,
+  });
 }
 
 type OwedSession = NonNullable<Awaited<ReturnType<typeof findOwedSession>>>;

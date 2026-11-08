@@ -1,8 +1,9 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleStopIcon } from "lucide-react";
+import { ArrowRightIcon, CircleStopIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
@@ -11,8 +12,9 @@ import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { useFormatDuration } from "../_utils/time-format";
-import { SCREEN_STEADY_MS } from "../_utils/use-steady";
+import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { LearnLink } from "../learn-link";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
@@ -87,10 +89,12 @@ function ActionFailed({ children }: { children: React.ReactNode }) {
  * second tap never stops the session.
  */
 function MomentActions({
+  continueHref,
   onContinue,
   onStop,
   sessionCompleted,
 }: {
+  continueHref?: string | null;
   onContinue: () => Promise<boolean>;
   onStop: () => Promise<boolean>;
   sessionCompleted: boolean;
@@ -99,7 +103,7 @@ function MomentActions({
 
   const proceed = useSessionAction({
     action: onContinue,
-    enterKey: true,
+    enterKey: !continueHref,
     steadyMs: SCREEN_STEADY_MS,
   });
 
@@ -126,15 +130,20 @@ function MomentActions({
           </Button>
         )}
 
-        <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
-          {sessionCompleted ? t("See today's summary") : t("Continue")}
-        </EnterButton>
+        {continueHref ? (
+          <MomentContinueLink href={continueHref} />
+        ) : (
+          <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
+            {sessionCompleted ? t("See today's summary") : t("Continue")}
+          </EnterButton>
+        )}
       </TaskActions>
     </TaskActionBar>
   );
 }
 
 export function StudyMoment({
+  continueHref,
   blocks,
   buddy,
   exitHref,
@@ -149,6 +158,7 @@ export function StudyMoment({
   renderCeremony,
   testedOut = false,
 }: {
+  continueHref?: string | null;
   blocks: readonly StudyBlock[];
   buddy?: LearnBuddy | null;
   exitHref?: string;
@@ -211,6 +221,7 @@ export function StudyMoment({
       </TaskBody>
 
       <MomentActions
+        continueHref={continueHref}
         onContinue={onContinue}
         onStop={onStop}
         sessionCompleted={moment.sessionCompleted}
@@ -232,5 +243,28 @@ export function StudyMoment({
       <SessionHeader exitHref={exitHref} queue={queue.rows} sessionBar={moment.sessionBar} />
       {content}
     </SessionFrame>
+  );
+}
+
+function MomentContinueLink({ href }: { href: string }) {
+  const t = useExtracted();
+  const ref = useEnterClick<HTMLAnchorElement>();
+  const steady = useSteady(SCREEN_STEADY_MS);
+
+  return (
+    <LearnLink
+      className={buttonVariants({ size: "xl" })}
+      href={href}
+      lessonWritten
+      onClick={(event) => {
+        if (!steady()) {
+          event.preventDefault();
+        }
+      }}
+      ref={ref}
+    >
+      {t("Continue")}
+      <ArrowRightIcon aria-hidden="true" className="size-4" />
+    </LearnLink>
   );
 }

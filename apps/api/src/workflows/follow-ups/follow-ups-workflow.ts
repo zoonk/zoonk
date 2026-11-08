@@ -17,6 +17,7 @@ import {
   listFollowUpsStep,
   requestLessonWritingStep,
 } from "./steps/follow-up-steps";
+import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
 
 const MAX_PASSES = 20;
 
@@ -31,6 +32,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
   const { userId } = followUp;
 
   switch (followUp.kind) {
+    case "refreshStudyDay":
+      await refreshStudyDayStep({ ...followUp.input, userId });
+      return;
     case "prepareSession":
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;

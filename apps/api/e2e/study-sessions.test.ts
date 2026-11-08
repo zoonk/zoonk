@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contract";
 import { prisma } from "@zoonk/db";
@@ -23,7 +24,6 @@ import {
   startedStudyBlockResponseSchema,
   studyAnswerFeedbackResponseSchema,
   studyBlockDetailResponseSchema,
-  studyBlockSchema,
   studySessionResponseSchema,
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";

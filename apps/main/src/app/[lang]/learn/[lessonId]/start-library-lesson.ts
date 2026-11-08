@@ -1,5 +1,12 @@
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
+import { waitForUserActivation } from "@/lib/lessons/wait-for-user-activation";
+import { type LessonOpening } from "@/lib/session/lesson-opening";
+import { stayingHere } from "@/lib/session/tap-answer";
 import { libraryLessonRunSchema } from "@zoonk/core/lesson-player/contract";
+import {
+  type StudyBlockOpening,
+  studyBlockOpeningSchema,
+} from "@zoonk/core/sessions/open-block-contract";
 import { type LessonStartOutcome } from "@zoonk/player/lesson/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
@@ -61,11 +68,32 @@ export async function startLibraryLesson({
   lessonId,
   runId,
   studySessionId,
+  opening = null,
+  onOpened,
+  onSession,
+  renderedLearnerId,
 }: {
   lessonId: string;
+  opening?: LessonOpening;
+  onOpened?: (opening: StudyBlockOpening) => void;
+  onSession?: (sessionId: string | null) => void;
+  renderedLearnerId?: string;
   runId?: string;
   studySessionId: string | null;
 }): Promise<LessonStartOutcome> {
+  if (opening === "invalid" && !runId) {
+    return { reason: "notFound" };
+  }
+
+  if (opening && !runId) {
+    const stillInVisit = stayingHere(renderedLearnerId);
+    await waitForUserActivation();
+
+    if (!(await stillInVisit())) {
+      return { reason: "failed" };
+    }
+  }
+
   const guest = await ensureGuestSession();
 
   // A session check or guest sign-in that failed is worth retrying; it never means "signed out".
@@ -73,10 +101,13 @@ export async function startLibraryLesson({
     return { reason: "failed" };
   }
 
+  const here = stayingHere(guest.learnerId);
+
   const { data: response, error } = await safeAsync(() =>
     fetch(`/api/library/lessons/${encodeURIComponent(lessonId)}/starts`, {
       body: JSON.stringify({
         ...(runId && { runId }),
+        ...(!runId && opening && { opening }),
         timeZone: getLocalTimeZone(),
         ...(studySessionId && { studySessionId }),
       }),
@@ -90,8 +121,26 @@ export async function startLibraryLesson({
     return { reason: "failed" };
   }
 
-  return toStartOutcome({
-    body: await response.json().catch(() => null),
-    learnerId: guest.learnerId,
-  });
+  const body: unknown = await response.json().catch(() => null);
+
+  if (getString(body, "status") === "opened") {
+    const destination = studyBlockOpeningSchema.safeParse(isJsonObject(body) ? body.opening : null);
+
+    if (destination.success && (await here())) {
+      onOpened?.(destination.data);
+      return { reason: "opened" };
+    }
+
+    return { reason: "failed" };
+  }
+
+  if (getString(body, "status") === "started" && isJsonObject(body)) {
+    const run = libraryLessonRunSchema.safeParse(body.run);
+
+    if (run.success) {
+      onSession?.(run.data.sessionId);
+    }
+  }
+
+  return toStartOutcome({ body, learnerId: guest.learnerId });
 }

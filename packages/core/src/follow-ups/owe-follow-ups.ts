@@ -7,6 +7,7 @@ import { startFollowUps } from "./follow-up-starter";
 
 function getFollowUpKey(followUp: FollowUp): string {
   switch (followUp.kind) {
+    case "refreshStudyDay":
     case "prepareSession":
       return followUp.input.sessionId;
     case "settleSessionDay":

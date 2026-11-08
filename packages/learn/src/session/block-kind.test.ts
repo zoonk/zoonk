@@ -7,8 +7,9 @@ type BlockFields = Pick<StudyBlock, "checkpoint" | "kind" | "mistakesOnly">;
 function checkpoint(mock: boolean): NonNullable<StudyBlock["checkpoint"]> {
   return {
     kind: "weekly",
-    mock,
-    ...(mock && { mockIdentity: { day: null, fullLength: false } }),
+    ...(mock
+      ? { mock: true as const, mockIdentity: { day: null, fullLength: false } }
+      : { mock: false as const }),
     passMark: 70,
     phase: null,
     rematch: false,

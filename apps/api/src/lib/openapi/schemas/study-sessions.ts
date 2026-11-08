@@ -1,4 +1,5 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/completion-contract";
 import { StudyFreshStart, StudySessionStatus } from "@zoonk/db";
 import { formatDuration } from "@zoonk/utils/duration";
@@ -14,11 +15,8 @@ import {
   lessonsToPrepareSchema,
 } from "./day-lessons";
 import { listeningTranscriptSchema } from "./item-set";
-import { studyBlockSchema } from "./study-block";
 import { studyBlockQuestionSchema } from "./study-block-question";
 import { weeklyStudyTimeSchema } from "./weekly-study-time";
-
-export { studyBlockSchema } from "./study-block";
 
 const EXAMPLE_FUNDED_DAILY_MINUTES = 14.875;
 const EXAMPLE_DAILY_MINUTES = 15;
@@ -160,7 +158,7 @@ export const studySessionResponseSchema = z
           .nullable()
           .meta({
             description:
-              "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+              "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
           }),
         time: weeklyStudyTimeSchema,
       })

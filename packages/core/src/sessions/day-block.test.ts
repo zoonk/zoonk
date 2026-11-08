@@ -3,6 +3,7 @@ import {
   type DayWork,
   dayBlockRefSchema,
   getBlockScreen,
+  isLessonLink,
   resolveDayBlock,
   toDayBlockRef,
 } from "./day-block";
@@ -156,4 +157,90 @@ describe("day work selected before a session exists", () => {
       }),
     ).toStrictEqual({ status: "gone" });
   });
+});
+
+describe("written lesson links", () => {
+  it.each([
+    {
+      current: true,
+      expected: true,
+      id: "block",
+      saved: true,
+      screen: "lesson",
+      status: "pending",
+      waitReason: null,
+    },
+    {
+      current: true,
+      expected: true,
+      id: "block",
+      saved: true,
+      screen: "lesson",
+      status: "active",
+      waitReason: null,
+    },
+    {
+      current: false,
+      expected: false,
+      id: "block",
+      saved: true,
+      screen: "lesson",
+      status: "pending",
+      waitReason: null,
+    },
+    {
+      current: true,
+      expected: false,
+      saved: true,
+      screen: "lesson",
+      status: "pending",
+      waitReason: null,
+    },
+    {
+      current: true,
+      expected: true,
+      saved: false,
+      screen: "lesson",
+      status: "pending",
+      waitReason: null,
+    },
+    {
+      current: true,
+      expected: false,
+      id: "block",
+      saved: true,
+      screen: "unknown",
+      status: "pending",
+      waitReason: null,
+    },
+    {
+      current: true,
+      expected: false,
+      id: "block",
+      saved: true,
+      screen: "lesson",
+      status: "completed",
+      waitReason: null,
+    },
+    {
+      current: true,
+      expected: false,
+      id: "block",
+      saved: true,
+      screen: "lesson",
+      status: "pending",
+      waitReason: "lessons",
+    },
+  ] as const)(
+    "decides $status/$screen on current=$current saved=$saved",
+    ({ current, expected, id, saved, screen, status, waitReason }) => {
+      expect(
+        isLessonLink({
+          block: { id, kind: "learn", lessonId: LESSON, screen, status, waitReason },
+          current,
+          saved,
+        }),
+      ).toBe(expected);
+    },
+  );
 });

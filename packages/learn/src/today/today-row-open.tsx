@@ -42,6 +42,22 @@ export function RowOpen({
     });
   };
 
+  const href = actions.lessonHref(block);
+
+  if (href) {
+    return (
+      <LearnLink
+        aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+        className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
+        data-slot="today-row-open"
+        href={href}
+        lessonWritten
+      >
+        {children}
+      </LearnLink>
+    );
+  }
+
   return (
     <>
       <button

@@ -12,11 +12,18 @@ import { openSessionBlock } from "./_utils/open-session-block";
 import { type OpenStudyDayInput, type OpenStudyDayResult } from "./open-day-contract";
 
 /** The explicit learner POST owns persistence; renders and prefetches only select in memory. */
-export async function openStudyDay(input: OpenStudyDayInput): Promise<OpenStudyDayResult> {
-  return openDay(input, 0);
+export async function openStudyDay(
+  input: OpenStudyDayInput,
+  now = new Date(),
+): Promise<OpenStudyDayResult> {
+  return openDay(input, 0, now);
 }
 
-async function openDay(input: OpenStudyDayInput, attempt: number): Promise<OpenStudyDayResult> {
+async function openDay(
+  input: OpenStudyDayInput,
+  attempt: number,
+  now: Date,
+): Promise<OpenStudyDayResult> {
   const actor = await getSession();
 
   if (!actor) {
@@ -41,7 +48,6 @@ async function openDay(input: OpenStudyDayInput, attempt: number): Promise<OpenS
     return { status: "goalNotActive" };
   }
 
-  const now = new Date();
   const timeZone = getAnswerTimeZone({ goal: currentGoal, timeZone: input.timeZone });
   const localDate = getDateInTimeZone({ date: now, timeZone });
 
@@ -58,7 +64,7 @@ async function openDay(input: OpenStudyDayInput, attempt: number): Promise<OpenS
         });
 
   if (opened.status === "stale" && attempt === 0) {
-    return openDay(input, 1);
+    return openDay(input, 1, now);
   }
 
   const session =

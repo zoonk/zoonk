@@ -1,3 +1,4 @@
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import {
   studyAnswerInputSchema,
@@ -29,7 +30,6 @@ import {
   startedStudyBlockResponseSchema,
   studyAnswerFeedbackResponseSchema,
   studyBlockDetailResponseSchema,
-  studyBlockSchema,
   studySessionResponseSchema,
 } from "../schemas/study-sessions";
 import { weeklyChallengeResponseSchema } from "../schemas/weekly-challenge";

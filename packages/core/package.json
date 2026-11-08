@@ -649,7 +649,10 @@
     "./view-models/today/get": "./src/view-models/today/get-today-view.ts",
     "./view-models/today/notice": "./src/view-models/today/today-notice.ts",
     "./workflows/steps": "./src/workflows/steps.ts",
-    "./subscriptions/get-web-plus-subscription": "./src/subscriptions/get-web-plus-subscription.ts"
+    "./subscriptions/get-web-plus-subscription": "./src/subscriptions/get-web-plus-subscription.ts",
+    "./sessions/block-view-contract": "./src/sessions/block-view-contract.ts",
+    "./sessions/refresh-owed-day": "./src/sessions/refresh-owed-study-day.ts",
+    "./lesson-player/finished-study-block": "./src/lesson-player/get-finished-study-block.ts"
   },
   "scripts": {
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",

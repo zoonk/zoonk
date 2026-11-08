@@ -29,3 +29,88 @@ test.describe("Today's instant tab", () => {
     await expect(page).toHaveURL(/\/today$/u);
   });
 });
+
+test.describe("a written lesson's combined start", () => {
+  test("paints from its link while start is held, then replaces an alternative opening", async ({
+    browser,
+  }) => {
+    const { lesson, session, user } = await createStudyDay({ reviewDone: true });
+    const page = await openAs(browser, user);
+    const sent: string[] = [];
+    const release = Promise.withResolvers<null>();
+
+    await page.route("**/api/library/lessons/*/starts", async (route) => {
+      sent.push(route.request().postData() ?? "");
+      await release.promise;
+
+      await route.fulfill({
+        contentType: "application/json",
+        json: {
+          opening: { blockId: null, kind: "session", sessionId: session.id },
+          status: "opened",
+        },
+      });
+    });
+
+    await page.goto("/today");
+    const row = page.getByRole("link", { exact: true, name: lesson.title });
+    await expectHydrated(row);
+
+    await instant(page, async () => {
+      await row.click();
+      await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+    });
+
+    await expect.poll(() => sent.length).toBe(1);
+    expect(JSON.parse(sent[0] ?? "{}")).toMatchObject({ opening: { target: { kind: "block" } } });
+    release.resolve(null);
+    await expect(page).toHaveURL(/\/session\?session=/u);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.context().close();
+  });
+
+  test("a reload sends no start until the first action, then sends the URL's exact opening", async ({
+    browser,
+  }) => {
+    const { lesson, session, user } = await createStudyDay({ reviewDone: true });
+    const page = await openAs(browser, user);
+    const sent: unknown[] = [];
+
+    await page.route("**/api/library/lessons/*/starts", async (route) => {
+      sent.push(route.request().postDataJSON());
+
+      await route.fulfill({
+        json: {
+          run: {
+            answers: [],
+            hyperdrive: { knownStepIds: [], streak: 0 },
+            replay: false,
+            runId: "289775ed-1f10-4589-9c4d-e429b219deaa",
+            sessionId: session.id,
+            startedAt: new Date().toISOString(),
+          },
+          status: "started",
+        },
+      });
+    });
+
+    await page.goto("/today");
+    const row = page.getByRole("link", { exact: true, name: lesson.title });
+    await expectHydrated(row);
+    await row.click();
+    await expect.poll(() => sent.length).toBe(1);
+    await page.reload();
+
+    const choice = page.getByRole("radio", {
+      name: "Where the electron is most likely to be found",
+    });
+
+    await expectHydrated(choice);
+    expect(sent).toHaveLength(1);
+    await choice.click();
+    await expect.poll(() => sent.length).toBe(2);
+    expect(sent[1]).toMatchObject({ opening: { target: { kind: "block" } } });
+    await page.context().close();
+  });
+});

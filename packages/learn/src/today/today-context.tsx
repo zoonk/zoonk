@@ -54,6 +54,7 @@ export type TodayActions = {
     surface?: PlanChangeDecisionInput["surface"];
   }) => Promise<PlanChangeView | "stale" | null>;
   /** The standalone player for a lesson finished today, never its block in the session. */
+  lessonHref: (block: DayStep) => string | null;
   lessonAgainHref: (lessonId: string) => string;
   missionLinks: MissionLinks;
   openBlock: (step: DayStep) => Promise<boolean>;

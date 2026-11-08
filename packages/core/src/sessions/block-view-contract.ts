@@ -1,10 +1,17 @@
-import { dayBlockRefSchema, dayBlockScreenSchema } from "@zoonk/core/sessions/day-block";
-import { StudyBlockKind, StudyBlockStatus } from "@zoonk/db";
+import { StudyBlockKind, StudyBlockStatus } from "@zoonk/db/enums";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { studyCheckpointSchema } from "./checkpoint-evidence";
+import { checkpointRefSchema, dayBlockRefSchema, dayBlockScreenSchema } from "./day-block";
 
 const idSchema = uuidSchema();
+const checkpointDetails = { passMark: z.int().min(0), timeLimitMinutes: z.int().min(0).nullable() };
+
+export const studyCheckpointSchema = z
+  .discriminatedUnion("mock", [
+    checkpointRefSchema.options[0].extend(checkpointDetails),
+    checkpointRefSchema.options[1].extend(checkpointDetails),
+  ])
+  .meta({ id: "StudyCheckpoint" });
 
 export const studyBlockSchema = z
   .object({
@@ -69,6 +76,9 @@ export const studyBlockSchema = z
       .meta({
         description: "An exam topic the board asks a lot in past papers: tiles tag it Often tested",
       }),
+    opensInPlayer: z
+      .boolean()
+      .describe("Written work that can navigate to the player before the combined start admits it"),
     planItemId: idSchema.nullable(),
     planItemKey: dayBlockRefSchema.shape.planItemKey.describe(
       "Logical plan work identity; never a database UUID",

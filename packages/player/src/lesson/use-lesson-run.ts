@@ -33,6 +33,10 @@ export function useLessonRun({
     dispatch({ type: "runStarting" });
 
     const run = adapters.startLesson().then((outcome) => {
+      if (outcome.reason === "opened") {
+        return null;
+      }
+
       if (outcome.reason === "started") {
         dispatch({
           answers: outcome.answers,

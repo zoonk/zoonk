@@ -1,8 +1,9 @@
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { dayBlockRefSchema } from "@zoonk/core/sessions/day-block";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
-import { studyBlockSchema, studySessionResponseSchema } from "./study-sessions";
+import { studySessionResponseSchema } from "./study-sessions";
 
 const nonBlockDestinations = missionSchema.shape.opens
   .unwrap()
