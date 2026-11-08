@@ -341,7 +341,9 @@ final class LessonPlayerStore {
       self.state?.startRun(
         runId: run.runId, answers: run.answers, held: held.map(\.runAnswer),
         startedAt: run.startedAt, hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds)
-      heldForRun.forEach { hold($0(run.runId)) }
+      for answer in heldForRun {
+        hold(answer(run.runId))
+      }
       heldForRun = []
       sendHeldAnswers()
     case .failure(let refusal): self.state?.refuseRun(refusal)
