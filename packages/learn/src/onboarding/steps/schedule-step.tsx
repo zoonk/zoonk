@@ -2,6 +2,7 @@
 
 import { getExamDocument } from "@zoonk/core/exams/document";
 import { type GoalView } from "@zoonk/core/goals/contract";
+import { type LanguageAim, type LanguageAimView } from "@zoonk/core/language/aims";
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { Button } from "@zoonk/ui/components/button";
@@ -16,6 +17,7 @@ import { OnboardingQuestionShown } from "../onboarding-clock";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { FullCourseToggle } from "./full-course-toggle";
 import { type LibraryCourseLink, PlanWait } from "./plan-wait";
+import { ScheduleAim, getAimAhead } from "./schedule-aim";
 import { type GoalsTogether, keepsFullCourse, toPickedMinutes, waitsToSave } from "./schedule-time";
 import { StepForm } from "./step-form";
 import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
@@ -70,11 +72,13 @@ function getScheduleAnswer({
 }
 
 function ScheduleTime({
+  aim,
   exam,
   onChangeDate,
   pending,
   schedule,
 }: {
+  aim: string | null;
   exam: boolean;
   onChangeDate: () => void;
   pending: boolean;
@@ -127,6 +131,7 @@ function ScheduleTime({
                 })}
           </Button>
         }
+        aim={aim}
         date={getGoalDate(schedule)}
         exam={exam}
         line={shown.line}
@@ -212,9 +217,11 @@ export function ScheduleStep({
   firstLesson,
   getTimeAdvice,
   goal,
+  languageAim,
   lessonHref,
   library,
   onAnswer,
+  onChangeAim,
   onChangeDate,
   pending,
   planReadiness,
@@ -228,9 +235,11 @@ export function ScheduleStep({
   exam?: boolean;
   firstLesson: GenerationFirstLesson | null;
   goal: GoalView;
+  languageAim: LanguageAimView | null;
   lessonHref: (lessonId: string) => string;
   library: LibraryCourseLink | null;
   onAnswer: (input: OnboardingAnswerInput) => void;
+  onChangeAim: (aim: LanguageAim) => Promise<boolean>;
   onChangeDate: (draft: ScheduleDraft) => void;
   pending: boolean;
   planReadiness: PlanReadiness;
@@ -241,8 +250,11 @@ export function ScheduleStep({
 }) {
   const t = useExtracted();
 
+  const aim = getAimAhead(languageAim);
+
   const schedule = useSchedule({
     actions: { findTimeToCover, getTimeAdvice },
+    aim: languageAim?.aim ?? null,
     dated,
     draft,
     exam,
@@ -285,9 +297,18 @@ export function ScheduleStep({
         title={t("How much time can you study each day?")}
       >
         <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
+        <ScheduleAim
+          endDate={schedule.shown.line.kind === "finish" ? schedule.shown.line.endDate : null}
+          languageAim={languageAim}
+          level={goal.details.level}
+          minutes={schedule.minutes}
+          onChangeAim={onChangeAim}
+          timeZone={goal.timezone}
+        />
         {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
         <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
         <ScheduleTime
+          aim={aim}
           exam={exam}
           onChangeDate={() => onChangeDate(schedule.draft)}
           pending={pending}

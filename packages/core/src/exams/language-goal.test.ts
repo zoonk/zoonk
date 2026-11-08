@@ -19,7 +19,11 @@ vi.mock("../goals/_utils/create-goal-records", async (importOriginal) => {
   return { ...actual, insertGoalWithPlan: vi.fn(actual.insertGoalWithPlan) };
 });
 
-const IELTS_REASON = { question: "reason", reason: "vou fazer o IELTS em março" } as const;
+const IELTS_REASON = {
+  question: "reason",
+  reason: "certificate",
+  words: "vou fazer o IELTS em março",
+} as const;
 
 /** A learner's English goal typed in onboarding, so it carries the draft's id like every such goal. */
 async function languageGoalInOnboarding() {
@@ -150,7 +154,7 @@ describe(moveLanguageGoalToExam, () => {
 });
 
 describe("onboarding's reason answer", () => {
-  it("moves a language goal whose reason names a certificate, and onboarding goes on as the exam goal", async () => {
+  it("moves a language goal to an exam goal for the certificate the learner names, and onboarding goes on as the exam goal", async () => {
     const user = await userFixture();
 
     const goal = await goalFixture({
@@ -162,10 +166,7 @@ describe("onboarding's reason answer", () => {
 
     mockSession(user.id);
 
-    const result = await answerOnboardingQuestion({
-      goalId: goal.id,
-      input: { question: "reason", reason: "vou fazer o IELTS em março" },
-    });
+    const result = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
 
     expect(result).toMatchObject({
       movedTo: { created: true, goal: { kind: "exam", title: "IELTS" } },
@@ -177,7 +178,7 @@ describe("onboarding's reason answer", () => {
     });
   });
 
-  it("keeps a language goal whose reason names no exam", async () => {
+  it("keeps a language goal whose reason is no certificate, aiming for that reason's level", async () => {
     const user = await userFixture();
 
     const goal = await goalFixture({ kind: "language", targetLanguage: "en", userId: user.id });
@@ -187,11 +188,48 @@ describe("onboarding's reason answer", () => {
     await expect(
       answerOnboardingQuestion({
         goalId: goal.id,
-        input: { question: "reason", reason: "to travel" },
+        input: { question: "reason", reason: "travel" },
       }),
     ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { reason: "travel", targetScore: "A2" },
+      status: "active",
+    });
+  });
+
+  it("keeps a language goal when only the learner's own words name a certificate", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "language", targetLanguage: "en", userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { question: "reason", reason: "other", words: "meu chefe falou do IELTS" },
+      }),
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { reason: "meu chefe falou do IELTS", targetScore: "B1" },
+      status: "active",
+    });
+  });
+
+  it("keeps a language goal aiming for B1 when its certificate isn't one an exam goal can plan", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "language", targetLanguage: "it", userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { question: "reason", reason: "certificate", words: "PLIDA" },
+      }),
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { reason: "PLIDA", targetScore: "B1" },
       status: "active",
     });
   });

@@ -23,6 +23,7 @@ const OPERATION_MESSAGES = {
     "Pick a day on or after next Monday to move a weekly challenge or mock exam.",
   noStudyDays: "A plan needs at least one study day",
   notExam: "Only an exam's plan goes on after its date: other goals study everything without one",
+  notLanguage: "Only a language goal's plan has a level it goes up to",
   nothingLeft: "A plan can't skip every area",
   pastDate: "That date has already passed",
   unfundedMove: "Not enough study time before that day for this mock exam. Pick a later day.",

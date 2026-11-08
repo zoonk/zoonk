@@ -1,6 +1,8 @@
 import "server-only";
 import { type Goal, type Plan, type PlanItem, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { readLanguageAim } from "../../language/aims/language-aims";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
@@ -81,11 +83,15 @@ export function getPlanState({
   goal,
   plan,
 }: {
-  goal: Pick<Goal, "dailyMinutes" | "targetDate">;
+  goal: Pick<Goal, "dailyMinutes" | "details" | "kind" | "targetDate">;
   plan: Pick<Plan, "graph" | "settings">;
 }): PlanState {
   return {
     goal: {
+      aim:
+        goal.kind === "language" && isJsonObject(goal.details)
+          ? readLanguageAim(goal.details)
+          : null,
       dailyMinutes: goal.dailyMinutes,
       targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     },

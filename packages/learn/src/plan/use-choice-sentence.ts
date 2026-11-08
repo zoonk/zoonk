@@ -7,7 +7,7 @@ import { useSentenceSpace } from "../_utils/locale";
 
 type ChoiceOperation = Extract<
   PlanOperation,
-  { kind: "setBaseChoices" | "setFullCourse" | "setTargetDate" }
+  { kind: "setAim" | "setBaseChoices" | "setFullCourse" | "setTargetDate" }
 >;
 
 type BaseChoices = Extract<PlanOperation, { kind: "setBaseChoices" }>["choices"];
@@ -56,6 +56,7 @@ function useBaseChoicesSentence() {
 
 export function isChoiceOperation(operation: PlanOperation): operation is ChoiceOperation {
   return (
+    operation.kind === "setAim" ||
     operation.kind === "setBaseChoices" ||
     operation.kind === "setFullCourse" ||
     operation.kind === "setTargetDate"
@@ -84,6 +85,8 @@ export function useChoiceSentence() {
           : t("Your plan ends at the exam again.");
       case "setBaseChoices":
         return baseChoicesSentence(operation.choices);
+      case "setAim":
+        return t("Your course now goes up to {level}.", { level: operation.aim });
       default:
         return operation satisfies never;
     }

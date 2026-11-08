@@ -12,6 +12,13 @@ function examSteps(details: Record<string, unknown>) {
   });
 }
 
+function languageSteps(details: Record<string, unknown>) {
+  return getOnboardingSteps({
+    goal: { details, kind: "language", replacesGoalId: null, targetDate: null },
+    profile: SET_UP_PROFILE,
+  });
+}
+
 describe(getOnboardingSteps, () => {
   it("asks a learn goal what it's for, how much they know and their time", () => {
     const steps = getOnboardingSteps({
@@ -209,6 +216,18 @@ describe(getOnboardingSteps, () => {
     });
 
     expect(steps).toStrictEqual(["reason", "targetDate", "placement", "schedule", "plan"]);
+  });
+
+  it("asks a language goal why until its words give the level it aims for", () => {
+    expect(languageSteps({ level: "basic", reason: "talk with my partner's family" })).toContain(
+      "reason",
+    );
+
+    expect(languageSteps({ level: "basic", reason: "fluent", targetScore: "fluent" })).toContain(
+      "reason",
+    );
+
+    expect(languageSteps({ level: "basic", targetScore: "B1" })).not.toContain("reason");
   });
 
   it("keeps skipped and answered questions behind the learner", () => {

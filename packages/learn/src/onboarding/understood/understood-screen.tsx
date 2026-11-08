@@ -98,7 +98,12 @@ function GoalCard({
   const rowsFor = useUnderstoodRows();
 
   const rows = [
-    ...rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates }),
+    ...rowsFor({
+      cutoff: goal.cutoff,
+      draft: goal.draft,
+      examDates: goal.examDates,
+      languageAim: goal.languageAim,
+    }),
     ...extraRows,
   ];
 
@@ -122,7 +127,13 @@ function GoalCard({
 
 function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   const rowsFor = useUnderstoodRows();
-  const rows = rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates });
+
+  const rows = rowsFor({
+    cutoff: goal.cutoff,
+    draft: goal.draft,
+    examDates: goal.examDates,
+    languageAim: goal.languageAim,
+  });
 
   return (
     <ul className="flex flex-col [&>li+li]:border-t">

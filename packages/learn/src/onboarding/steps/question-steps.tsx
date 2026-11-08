@@ -29,23 +29,27 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
 
   const choices: Choice<OnboardingPurpose>[] = [
     {
-      description: t("The big ideas, no formulas"),
+      description: t("A short course: the big ideas, no formulas"),
       label: t("Get an overview"),
       value: "overview",
     },
     {
-      description: t("From the basics to advanced"),
+      description: t("The full path, from the basics to advanced"),
       label: t("Understand it in depth"),
       value: "deep",
     },
-    { description: t("Apply it to real projects"), label: t("Use it at work"), value: "work" },
     {
-      description: t("Get ready for a new role"),
+      description: t("Only what your work uses, in the order it needs"),
+      label: t("Use it at work"),
+      value: "work",
+    },
+    {
+      description: t("What the new role needs, portfolio included"),
       label: t("Change careers"),
       value: "careerChange",
     },
     {
-      description: t("Pick up what you left behind"),
+      description: t("Back to the level you had, after a quick test"),
       label: t("Refresh what I studied"),
       value: "refresh",
     },
@@ -59,7 +63,7 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   return (
     <StepForm
       canContinue={purpose !== null}
-      description={t("Pick what motivates you most.")}
+      description={t("It sets how deep your course goes, and so how long it is.")}
       subject={subject}
       onContinue={() => purpose && submit(purpose)}
       pending={pending}
@@ -120,25 +124,15 @@ export function LevelStep({
 
 export type ExamTarget = "admission" | "position" | "score";
 
-type TextQuestion = ExamTarget | "reason";
-
-function toTextAnswer({
-  question,
-  value,
-}: {
-  question: TextQuestion;
-  value: string | null;
-}): OnboardingAnswerInput {
-  return question === "reason"
-    ? { question, reason: value }
-    : { question: "target", target: value };
+function toTextAnswer(value: string | null): OnboardingAnswerInput {
+  return { question: "target", target: value };
 }
 
-function useTextQuestionCopy(question: TextQuestion) {
+function useExamTargetCopy(question: ExamTarget) {
   const t = useExtracted();
 
   const copy: Record<
-    TextQuestion,
+    ExamTarget,
     Record<"description" | "label" | "title", string> & { placeholder?: string }
   > = {
     admission: {
@@ -151,12 +145,6 @@ function useTextQuestionCopy(question: TextQuestion) {
       description: t("The notice can have a different exam for each position."),
       label: t("Position"),
       title: t("Which position are you applying for?"),
-    },
-    reason: {
-      description: t("The situations you care about shape every lesson."),
-      label: t("Why"),
-      placeholder: t("E.g., a job interview, travel"),
-      title: t("Why are you learning it?"),
     },
     score: {
       description: t("It helps your plan focus on what counts most."),
@@ -177,16 +165,16 @@ export function TextStep({
   pending,
   question,
   subject,
-}: StepProps & { question: TextQuestion }) {
-  const copy = useTextQuestionCopy(question);
+}: StepProps & { question: ExamTarget }) {
+  const copy = useExamTargetCopy(question);
   const [value, setValue] = useState("");
 
   return (
     <StepForm
       canContinue={value.trim().length > 0}
       description={copy.description}
-      onContinue={() => onAnswer(toTextAnswer({ question, value: value.trim() }))}
-      onSkip={() => onAnswer(toTextAnswer({ question, value: null }))}
+      onContinue={() => onAnswer(toTextAnswer(value.trim()))}
+      onSkip={() => onAnswer(toTextAnswer(null))}
       pending={pending}
       subject={subject}
       title={copy.title}

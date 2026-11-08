@@ -256,6 +256,7 @@ export function StepsFlow({
                 onPlacementFinishFailed={(finishFailed) =>
                   setFailed(finishFailed ? { dayTooShort: null, step: "placement" } : null)
                 }
+                onViewChange={(view) => setState((previous) => ({ ...previous, view }))}
                 pending={
                   isPending && sending !== null && (sending.open || sending.step === state.current)
                 }

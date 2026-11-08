@@ -13,12 +13,14 @@ export function TextField({
   autoFocus = true,
   label,
   onChange,
+  onKeyDown,
   placeholder,
   value,
 }: {
   autoFocus?: boolean;
   label: string;
   onChange: (value: string) => void;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   placeholder?: string;
   value: string;
 }) {
@@ -33,6 +35,7 @@ export function TextField({
         id={inputId}
         maxLength={MAX_ONBOARDING_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         value={value}
       />

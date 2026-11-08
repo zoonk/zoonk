@@ -1,4 +1,3 @@
-import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import {
   type ExamChoiceView,
@@ -8,24 +7,22 @@ import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type DaySplit } from "../../goals/daily-budget";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
 import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { reasonAnswerSchema } from "../../language/aims/language-aim-schemas";
+import {
+  type LanguageAimView,
+  type OnboardingLanguageAim,
+} from "../../language/aims/language-aims";
 import { type NoSitting } from "../../plans/plan-view-contract";
-import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type PlanReadiness } from "../../plans/time-advice-contract";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
+import { scheduleAnswerSchema, timeZoneSchema } from "./schedule-answer-schema";
 
 const MAX_KNOWN_SUBJECTS = 40;
 const MAX_EXAM_CHOICES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
-
-const timeZoneSchema = z
-  .string()
-  .refine(isValidTimeZone, { message: "Invalid timezone" })
-  .optional()
-  .meta({ description: "The learner's IANA timezone, for relative dates; UTC when left out" });
 
 export const goalUnderstandingInputSchema = z
   .object({
@@ -79,6 +76,7 @@ export type UnderstoodGoalView = {
   draft: GoalDraft;
   /** Empty until research has stored notice dates. */
   examDates: OnboardingExamDate[];
+  languageAim: LanguageAimView | null;
 };
 
 export type UnderstoodSchedule = {
@@ -230,6 +228,7 @@ export type OnboardingView = {
   goal: GoalView;
   /** Goals created in the same onboarding, which share the day's time. */
   goalIds: string[];
+  languageAim: OnboardingLanguageAim | null;
   /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
   /** As the time answers say it, so the time question opens on its wait while the plan can't answer. */
@@ -251,40 +250,6 @@ const nullableAnswer = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH
 /** Generated iOS clients omit nil fields, so omission must equal an explicit null skipped answer. */
 const skippableAnswer = nullableAnswer.default(null);
 
-const scheduleAnswerSchema = z
-  .object({
-    dailyMinutes: z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES),
-    fullCourse: z
-      .boolean()
-      .optional()
-      .meta({
-        description:
-          "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
-      }),
-    question: z.literal("schedule"),
-    studyDays: z
-      .array(
-        z
-          .int()
-          .min(0)
-          .max(DAYS_PER_WEEK - 1),
-      )
-      .min(1)
-      .max(DAYS_PER_WEEK)
-      .optional(),
-    timeZone: timeZoneSchema,
-    weekendMinutes: z
-      .int()
-      .min(MIN_DAILY_MINUTES)
-      .max(MAX_DAILY_MINUTES)
-      .optional()
-      .meta({
-        description:
-          "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
-      }),
-  })
-  .strict();
-
 /** Null skips skippable questions; placement marks completion after finishing, stopping, or opting out. */
 export const onboardingAnswerInputSchema = z
   .discriminatedUnion("question", [
@@ -301,7 +266,7 @@ export const onboardingAnswerInputSchema = z
           .meta({ description: "For work, what they use the subject for in their job" }),
       })
       .strict(),
-    z.object({ question: z.literal("reason"), reason: skippableAnswer }).strict(),
+    reasonAnswerSchema,
     z.object({ question: z.literal("target"), target: skippableAnswer }).strict(),
     z
       .object({

@@ -17,6 +17,7 @@ import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "../onboarding-steps";
 import { getExamChoiceOperations } from "./exam-choice-answer";
 import { findOnboardingGoalIds } from "./onboarding-goals";
+import { getReasonDetails } from "./reason-answer";
 
 type Details = Record<string, unknown>;
 
@@ -70,7 +71,7 @@ function getDetailChanges({
         tasks: input.tasks,
       });
     case "reason":
-      return input.reason ? { reason: input.reason } : {};
+      return getReasonDetails(input);
     case "target":
       return input.target ? { [getTargetField(details)]: input.target } : {};
     case "followUps":
