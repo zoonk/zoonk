@@ -72,8 +72,6 @@ function toOpening(raw: z.infer<typeof schema>) {
   return { chapter, graph, skill };
 }
 
-export type GoalOpening = ReturnType<typeof toOpening>;
-
 /**
  * A learn goal's first skill, its course and that skill's first chapter, from the same facts the
  * skill graph reads, so the learner's first lesson can be written before the graph is.
