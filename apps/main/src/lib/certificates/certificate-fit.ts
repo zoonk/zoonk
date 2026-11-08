@@ -264,8 +264,11 @@ export async function fitLink({
   const fittedName = await shrinkUntil({
     ...name,
     fits: (shaped) =>
-      getLinkOverflow({ nameHeight: shaped.blockHeight, titleHeight: titleShaped.blockHeight }) <=
-      0,
+      getLinkOverflow({
+        labelledGraph: view.graph.label !== null,
+        nameHeight: shaped.blockHeight,
+        titleHeight: titleShaped.blockHeight,
+      }) <= 0,
     scale: 1,
     shaped: nameShaped,
   });

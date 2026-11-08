@@ -46,9 +46,11 @@ function estimateLines({
 
 export type SheetCovered = { topics: readonly string[] } | null;
 
-function getGraphHeight(labelled: boolean): number {
-  const labels = labelled ? SHEET.route.labelHeight + SHEET.route.labelGap : 0;
-  return labels + SHEET.route.height;
+type RouteSpec = { height: number; labelGap: number; labelHeight: number };
+
+function getGraphHeight({ labelled, route }: { labelled: boolean; route: RouteSpec }): number {
+  const labels = labelled ? route.labelHeight + route.labelGap : 0;
+  return labels + route.height;
 }
 
 function getTopicRowLines(topics: readonly string[]): number[] {
@@ -169,7 +171,7 @@ export function getSheetOverflow({
     SHEET.title.above + titleHeight,
     SHEET.meta.above + SHEET.meta.chipHeight,
     getCoveredHeight(covered),
-    SHEET.graph.above + getGraphHeight(labelledGraph),
+    SHEET.graph.above + getGraphHeight({ labelled: labelledGraph, route: SHEET.route }),
     SHEET.footer.above +
       SHEET.footer.rule +
       SHEET.footer.ruleGap +
@@ -194,9 +196,11 @@ const LINK_CONTENT_HEIGHT = link.height - link.inset * 2 - link.padding.top - li
 
 /** How far the link picture's parts run past its sheet, in px; zero or less fits. */
 export function getLinkOverflow({
+  labelledGraph,
   nameHeight,
   titleHeight,
 }: {
+  labelledGraph: boolean;
   nameHeight: number;
   titleHeight: number;
 }): number {
@@ -204,7 +208,7 @@ export function getLinkOverflow({
     Math.max(link.brand.logo, lineBox(link.brand.size), lineBox(link.kind.size)),
     nameHeight,
     link.title.above + titleHeight,
-    link.graph.above + link.route.height,
+    link.graph.above + getGraphHeight({ labelled: labelledGraph, route: link.route }),
     link.bottom.above + lineBox(link.bottom.size),
   ].reduce((sum, part) => sum + part, 0);
 
@@ -213,7 +217,7 @@ export function getLinkOverflow({
 
 const POST_CONTENT_HEIGHT = post.height - post.inset * 2 - post.padding.top - post.padding.bottom;
 
-const POST_GRAPH_HEIGHT = post.route.labelHeight + post.route.labelGap + post.route.height;
+const POST_GRAPH_HEIGHT = getGraphHeight({ labelled: true, route: post.route });
 
 /** How far the post's parts run past its sheet, in px; zero or less fits. */
 export function getPostOverflow({

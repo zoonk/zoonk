@@ -71,12 +71,10 @@ function RouteLabel({ label, spec }: { label: string; spec: RouteSpec }) {
 export function CertificateGraph({
   route,
   scale,
-  showLabels,
   view,
 }: {
   route: RouteSpec;
   scale: number;
-  showLabels: boolean;
   view: CertificateView;
 }) {
   const { graph } = view;
@@ -89,7 +87,7 @@ export function CertificateGraph({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: spec.width }}>
-      {showLabels && graph.label && <RouteLabel label={graph.label} spec={spec} />}
+      {graph.label && <RouteLabel label={graph.label} spec={spec} />}
 
       <div
         style={{ display: "flex", height: spec.height, position: "relative", width: spec.width }}

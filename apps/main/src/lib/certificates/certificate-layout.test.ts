@@ -168,12 +168,20 @@ describe(getFactsFit, () => {
 });
 
 describe(getLinkOverflow, () => {
+  const title = 2 * 42 * 1.12;
+
   it("fits a two-line name and title, and runs over with a name that needs six lines", () => {
-    const title = 2 * 42 * 1.12;
+    const plan = { labelledGraph: false, titleHeight: title };
 
-    expect(getLinkOverflow({ nameHeight: 2 * 96, titleHeight: title })).toBeLessThanOrEqual(0);
+    expect(getLinkOverflow({ ...plan, nameHeight: 2 * 96 })).toBeLessThanOrEqual(0);
 
-    expect(getLinkOverflow({ nameHeight: 6 * 60, titleHeight: title })).toBeGreaterThan(0);
+    expect(getLinkOverflow({ ...plan, nameHeight: 6 * 60 })).toBeGreaterThan(0);
+  });
+
+  it("fits a one-line name and a two-line title under a level's route label", () => {
+    expect(
+      getLinkOverflow({ labelledGraph: true, nameHeight: 96, titleHeight: title }),
+    ).toBeLessThanOrEqual(0);
   });
 });
 

@@ -98,7 +98,7 @@ export function CertificateLink({
       <ShapedImage above={link.title.above} text={fitted.title} />
 
       <div style={{ display: "flex", marginTop: link.graph.above }}>
-        <CertificateGraph route={link.route} scale={1} showLabels={false} view={view} />
+        <CertificateGraph route={link.route} scale={1} view={view} />
       </div>
 
       <div style={{ display: "flex", marginTop: link.bottom.above }}>
@@ -198,7 +198,7 @@ export function CertificatePost({
       {view.stats.length === 0 && <FreeSpace />}
 
       <div style={{ display: "flex", marginTop: post.graph.above }}>
-        <CertificateGraph route={post.route} scale={1} showLabels view={view} />
+        <CertificateGraph route={post.route} scale={1} view={view} />
       </div>
 
       <PostStats view={view} />

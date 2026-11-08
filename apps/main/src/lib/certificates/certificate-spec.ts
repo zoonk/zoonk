@@ -136,9 +136,9 @@ export const SHARE = {
     radius: 8,
     route: {
       height: 34,
-      labelGap: 0,
-      labelHeight: 0,
-      labelSize: 0,
+      labelGap: 10,
+      labelHeight: 30,
+      labelSize: 21,
       ring: 8,
       square: 9,
       squareRadius: 3,
