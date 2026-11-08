@@ -1,135 +1,128 @@
 "use client";
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { BusyContent, Button } from "@zoonk/ui/components/button";
-import { DetailActions, DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
+import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
+import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Fragment, useState } from "react";
-import { DETAIL_PRIMARY_CLASS } from "../../_components/detail-page";
+import { useState } from "react";
 import { PageSectionTitle } from "../../_components/page";
+import { ChangeSaveError } from "../../_components/save-error";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
-import { daysUntilIsoDate } from "../../_utils/iso-date";
-import { useFormatDuration } from "../../_utils/time-format";
-import { usePlanEndText } from "../../journey/use-phase-when";
-import { LearnLink } from "../../learn-link";
+import { type LearnBuddy, resolveLearnBuddy } from "../../buddies/use-buddy-name";
 import { PlanChoiceLines } from "../../plan/plan-choice-lines";
 import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
-import { useStudyDaysText } from "../../plan/use-study-days-text";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
 import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
+import { RevealToday, RevealWeek } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
+import { RevealReadouts } from "./reveal-readouts";
 
-/**
- * Today is prefetched only once the learner reaches for it, when the plan is final: opening it
- * builds the day once. A Today still on its way shows on the link, not as a tap that did nothing.
- */
-function StartButton({ href }: { href: string }) {
-  const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
-  const [reached, setReached] = useState(false);
-  const reach = () => setReached(true);
+/** Zu cheers on the moment's last beat, after the check, the count and "Start here". */
+function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
+  const resolved = resolveLearnBuddy(buddy);
 
   return (
-    <span className="contents" onFocus={reach} onPointerDown={reach} onPointerEnter={reach}>
-      <LearnLink
-        aria-keyshortcuts="Enter"
-        className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
-        href={href}
-        prefetch={reached}
-        ref={ref}
-      >
-        <BusyContent icon={<PlayIcon aria-hidden="true" />}>
-          {t("Start")}
+    <BuddyActor
+      beltColor={resolved.beltColor}
+      className="size-20 shrink-0 lg:size-24"
+      energy={resolved.energy}
+      expression="happy"
+      glasses={resolved.glasses}
+      kind={resolved.kind}
+      label=""
+      reaction={{ act: "cheer", delayMs: 3 * BEAT_MS }}
+      studiedToday
+    />
+  );
+}
+
+function PlanCreated() {
+  const t = useExtracted();
+  const celebrate = useCelebration();
+
+  return (
+    <SuccessEyebrow iconClassName={cn(celebrate && "animate-settle")}>
+      {t("Plan created")}
+    </SuccessEyebrow>
+  );
+}
+
+/**
+ * Pinned to the bottom on phones and tablets, where the plan scrolls under it, and beside the hero
+ * from `lg`. Start works from the moment's first frame.
+ */
+function RevealActions({
+  isGuest,
+  onAdjust,
+  onStart,
+  signUpHref,
+  started,
+}: {
+  isGuest: boolean;
+  onAdjust: () => void;
+  onStart: () => Promise<boolean>;
+  signUpHref: string;
+  started: boolean;
+}) {
+  const t = useExtracted();
+  const startRef = useEnterClick<HTMLButtonElement>();
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const start = async () => {
+    setPending(true);
+    setFailed(false);
+
+    // Busy until the next page opens; a failed save keeps the learner here to try again.
+    if (!(await onStart())) {
+      setPending(false);
+      setFailed(true);
+    }
+  };
+
+  return (
+    <div
+      className={cn(
+        "bg-background sticky bottom-0 -mx-4 flex flex-col gap-2 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        "lg:static lg:col-2! lg:row-start-1 lg:mx-0 lg:w-56 lg:self-start lg:border-t-0 lg:p-0",
+      )}
+      data-slot="reveal-actions"
+    >
+      {failed && <ChangeSaveError />}
+
+      <div className="flex gap-2 lg:flex-col-reverse">
+        <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
+          {t("Adjust")}
+        </Button>
+
+        <Button
+          aria-keyshortcuts="Enter"
+          busy={pending}
+          className="flex-2 font-[560] lg:flex-none"
+          icon={<PlayIcon aria-hidden="true" />}
+          onClick={start}
+          ref={startRef}
+          size="lg"
+        >
+          {started ? t("Continue") : t("Start")}
           <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </BusyContent>
-      </LearnLink>
-    </span>
-  );
-}
+        </Button>
+      </div>
 
-function useScheduleFacts(): string[] {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const studyDaysText = useStudyDaysText();
-  const { plan } = usePlanScreen();
-  const { shape, weekdayMinutes } = plan.schedule;
-  const everyDay = weekdayMinutes.every((minutes) => minutes > 0);
-
-  const time =
-    shape.weekend === null
-      ? t("{time} a day", { time: formatDuration(shape.weekdays) })
-      : t("{weekdays} a day, {weekend} on weekends", {
-          weekdays: formatDuration(shape.weekdays),
-          weekend: formatDuration(shape.weekend),
-        });
-
-  return everyDay ? [time] : [time, studyDaysText(weekdayMinutes)];
-}
-
-function RevealFacts() {
-  const t = useExtracted();
-  const today = useMountTime();
-  const planEnd = usePlanEndText();
-  const scheduleFacts = useScheduleFacts();
-  const { plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated } = plan.schedule;
-  const days = targetDate ? daysUntilIsoDate({ isoDate: targetDate, today }) : null;
-
-  const facts = [
-    days !== null &&
-      (targetDateEstimated
-        ? t("{days, plural, one {About # day} other {About # days}}", { days })
-        : t("{days, plural, one {# day} other {# days}}", { days })),
-    days === null && planEnd,
-    ...scheduleFacts,
-  ].filter((fact): fact is string => typeof fact === "string" && fact !== "");
-
-  return (
-    <p className="text-muted-foreground font-mono text-[0.8125rem] tabular-nums">
-      {facts.map((fact, index) => (
-        <Fragment key={fact}>
-          {index > 0 && " · "}
-          <span>{fact}</span>
-        </Fragment>
-      ))}
-    </p>
-  );
-}
-
-/**
- * A language ends at the level the learner picked and an exam at its date; a learn goal without a
- * date runs as long as its whole subject takes, so the reveal says what sets that. Planning without
- * a date stops at the longest plan there can be, so only a plan holding every part says it does.
- */
-function RevealPace() {
-  const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
-
-  if (goal.kind !== "learn" || plan.schedule.targetDate || !plan.estimate.endDate) {
-    return null;
-  }
-
-  return (
-    <p className="text-muted-foreground max-w-prose text-sm text-pretty">
-      {plan.feasibility?.fits
-        ? t(
-            "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
-          )
-        : t(
-            "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.",
-          )}
-    </p>
+      {isGuest && <SavePlanNote signUpHref={signUpHref} />}
+    </div>
   );
 }
 
@@ -143,18 +136,24 @@ function RevealRailBlock({ children, title }: { children: React.ReactNode; title
 }
 
 export function RevealBody({
+  buddy,
   isGuest,
+  moment,
+  onStart,
   signUpHref,
   syllabus,
-  todayHref,
 }: {
+  buddy: LearnBuddy | null;
   isGuest: boolean;
+  /** False once the learner pressed Start: a reveal they open again shows its end, still. */
+  moment: boolean;
+  onStart: () => Promise<boolean>;
   signUpHref: string;
   syllabus: SyllabusView | null;
-  todayHref: string;
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
+  const started = plan.nextDays[0]?.items.some((item) => item.status !== "todo") ?? false;
 
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
@@ -162,62 +161,65 @@ export function RevealBody({
   });
 
   return (
-    <OnboardingColumn
-      className="gap-8"
-      rail={
-        <>
-          <RevealRailBlock title={t("What fits")}>
-            <RevealCoverage syllabus={syllabus} />
-          </RevealRailBlock>
+    <CelebrationScope play={moment}>
+      <OnboardingColumn
+        className="gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-start lg:gap-x-10 lg:*:col-span-2"
+        rail={
+          <>
+            <RevealRailBlock title={t("What fits")}>
+              <RevealCoverage syllabus={syllabus} />
+            </RevealRailBlock>
 
-          <RevealRailBlock title={t("Choices")}>
-            <PlanChoices />
-          </RevealRailBlock>
-        </>
-      }
-      wide
-    >
-      <DetailHero>
-        <DetailHeroText>
-          <SuccessEyebrow>{t("Plan created")}</SuccessEyebrow>
-          <OnboardingTitle className="text-balance">{goal.title}</OnboardingTitle>
-          <RevealFacts />
+            <RevealRailBlock title={t("Choices")}>
+              <PlanChoices />
+            </RevealRailBlock>
+          </>
+        }
+        wide
+      >
+        <header className="flex min-w-0 flex-col gap-5 pt-2 lg:col-1! lg:row-start-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 flex-col gap-1">
+              <PlanCreated />
+              <OnboardingTitle className="text-balance">{goal.title}</OnboardingTitle>
+            </div>
+            <RevealBuddy buddy={buddy} />
+          </div>
+
+          <RevealReadouts />
+
           <PlanChoiceLines
             choices={plan.examChoices}
             onChange={() => setEditor({ open: true, section: "choices" })}
           />
-          <RevealPace />
           <RevealNoticeDay />
-        </DetailHeroText>
+        </header>
 
-        <div className="flex flex-col gap-2 md:max-w-xs">
-          <DetailActions>
-            <StartButton href={todayHref} />
-            <Button
-              onClick={() => setEditor({ open: true, section: null })}
-              size="lg"
-              variant="outline"
-            >
-              {t("Adjust")}
-            </Button>
-          </DetailActions>
-          {isGuest && <SavePlanNote signUpHref={signUpHref} />}
+        <RevealToday />
+        <RevealWeek />
+
+        <div className="flex flex-col gap-2">
+          <PlanPhasesBar />
+          <PlanChapterList />
+          {plan.notice === "usual" && <UsualStructureNote />}
         </div>
-      </DetailHero>
 
-      <div className="flex flex-col gap-2">
-        <PlanPhasesBar />
-        <PlanChapterList />
-        {plan.notice === "usual" && <UsualStructureNote />}
-      </div>
+        <AreaWeights syllabus={syllabus} />
 
-      <AreaWeights syllabus={syllabus} />
+        <PlanEditor
+          onOpenChange={(open) => setEditor({ ...editor, open })}
+          open={editor.open}
+          section={editor.section}
+        />
 
-      <PlanEditor
-        onOpenChange={(open) => setEditor({ ...editor, open })}
-        open={editor.open}
-        section={editor.section}
-      />
-    </OnboardingColumn>
+        <RevealActions
+          isGuest={isGuest}
+          onAdjust={() => setEditor({ open: true, section: null })}
+          onStart={onStart}
+          signUpHref={signUpHref}
+          started={started}
+        />
+      </OnboardingColumn>
+    </CelebrationScope>
   );
 }

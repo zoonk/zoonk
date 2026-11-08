@@ -10,7 +10,7 @@ import { usePlanScreen } from "../../plan/plan-context";
 
 const ROWS_SHOWN = 5;
 
-function useRevealPhases() {
+export function useRevealPhases() {
   const { plan } = usePlanScreen();
   return plan.phases.filter((phase) => phase.kind !== "afterExam");
 }

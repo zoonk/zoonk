@@ -38,6 +38,7 @@ msgstr "Corretta"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/certificates/certificates-screen.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -66,6 +67,7 @@ msgstr "Saltato"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
 msgctxt "JXdbo8"
 msgid "Done"
@@ -102,6 +104,7 @@ msgstr "Studiato"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-queue.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
@@ -156,6 +159,7 @@ msgstr "Tempo giornaliero"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
@@ -4515,6 +4519,7 @@ msgid "{count, plural, one {# skill you already know} other {# skills you alread
 msgstr "{count, plural, other {# abilità che conosci già}}"
 
 #: src/journey/journey-chapters.tsx
+#: src/onboarding/steps/reveal-days.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "Altre lezioni"
@@ -4742,6 +4747,7 @@ msgstr "Simulazione per la prossima sessione d’esame"
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -4868,7 +4874,6 @@ msgid "Too tight"
 msgstr "Troppo serrato"
 
 #: src/journey/pace-details.tsx
-#: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "aefUZL"
 msgid "{time} a day"
@@ -9979,6 +9984,7 @@ msgid "Your answers are saved. Try again so it's ready when you finish."
 msgstr "Abbiamo salvato le tue risposte. Riprova, così il piano sarà pronto quando avrai finito."
 
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/schedule-step.tsx
 #: src/plan/focus-test/focus-test-result.tsx
 #: src/today/today-action.tsx
 #: src/today/today-progress-card.tsx
@@ -10146,29 +10152,15 @@ msgid "A couple of details make your plan fit better."
 msgstr "Un paio di dettagli rendono il piano più adatto a te."
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "La_2pe"
-msgid "{weekdays} a day, {weekend} on weekends"
-msgstr "{weekdays} al giorno, {weekend} nel fine settimana"
+msgctxt "v9nycX"
+msgid "Plan created"
+msgstr "Piano creato"
 
 #: src/onboarding/steps/reveal-body.tsx
-msgctxt "4OjqDe"
-msgid "{days, plural, one {About # day} other {About # days}}"
-msgstr "{days, plural, one {Circa # giorno} other {Circa # giorni}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "UA5qaX"
-msgid "{days, plural, one {# day} other {# days}}"
-msgstr "{days, plural, one {# giorno} other {# giorni}}"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "1-tKgx"
-msgid "Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Il tuo piano copre ogni parte del tuo obiettivo. Per finire prima, dedicagli più tempo al giorno, oppure scegli una data: il piano include ciò che conta di più nel tempo disponibile."
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "b3M-c5"
-msgid "Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then."
-msgstr "Il tempo che dedichi ogni giorno determina quanto puoi studiare con il tuo piano. Per andare oltre o finire prima, dedicagli più tempo al giorno, oppure scegli una data: il piano include ciò che conta di più nel tempo disponibile."
+#: src/plan/plan-suggestion.tsx
+msgctxt "fhGzJi"
+msgid "Adjust"
+msgstr "Adatta"
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "q_N3d-"
@@ -10180,27 +10172,87 @@ msgctxt "7T47RX"
 msgid "Choices"
 msgstr "Scelte"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "Piano creato"
-
-#: src/onboarding/steps/reveal-body.tsx
-#: src/plan/plan-suggestion.tsx
-msgctxt "fhGzJi"
-msgid "Adjust"
-msgstr "Adatta"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
 msgstr "Fatto. Ora il tuo piano copre l’intero obiettivo."
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Ripassa"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Sfida"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "xmtnm9"
+msgid "Start here"
+msgstr "Inizia da qui"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "Gg5U7i"
+msgid "Rest day"
+msgstr "Giorno di riposo"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "tWAtPK"
+msgid "Your first week"
+msgstr "La tua prima settimana"
+
+#: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "UA5qaX"
+msgid "{days, plural, one {# day} other {# days}}"
+msgstr "{days, plural, one {# giorno} other {# giorni}}"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
 msgctxt "xYZ4fs"
 msgid "Use this date"
 msgstr "Usa questa data"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BIgEET"
+msgid "{time} on weekends"
+msgstr "{time} nel fine settimana"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "KInjCw"
+msgid "a day"
+msgstr "al giorno"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "xAwjqh"
+msgid "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}"
+msgstr "{count, plural, one {lezione, {done, number} già alle spalle} other {lezioni, {done, number} già alle spalle}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BSAVzC"
+msgid "{count, plural, one {lesson} other {lessons}}"
+msgstr "{count, plural, one {lezione} other {lezioni}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "4EBz1E"
+msgid "until the exam"
+msgstr "all’esame"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "RokfZv"
+msgid "until your date"
+msgstr "alla data che hai scelto"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "4OjqDe"
+msgid "{days, plural, one {About # day} other {About # days}}"
+msgstr "{days, plural, one {Circa # giorno} other {Circa # giorni}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "x0b1HZ"
+msgid "estimated finish"
+msgstr "fine prevista"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "aTEFtd"

@@ -175,6 +175,7 @@ export function lessonPlayerElement({
             exit: "/",
             exitTo: null,
             nextLesson: null,
+            seePlan: (goalId: string) => `/start/${goalId}`,
             signUp: "/login",
             upgrade: "/subscription",
           }}

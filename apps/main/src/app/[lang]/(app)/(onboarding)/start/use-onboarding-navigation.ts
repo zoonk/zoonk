@@ -39,5 +39,6 @@ export function useOnboardingNavigation(): OnboardingNavigation {
       router.push(`/start/${goalId}`);
       router.refresh();
     },
+    toToday: () => router.push("/today"),
   };
 }

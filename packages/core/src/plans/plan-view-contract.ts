@@ -201,6 +201,8 @@ export type PlanView = {
   } | null;
   end: PlanEndView | null;
   goalId: string;
+  /** Today and the six days after it. */
+  nextDays: PlanDayView[];
   notice: "reading" | "usual" | null;
   ownLevel: OwnLevel | null;
   fitOffer: (PlanOffer & { canApply: boolean }) | null;

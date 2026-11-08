@@ -1037,6 +1037,26 @@ msgid "Paused"
 msgstr "Pausiert"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Deinen Plan ansehen"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "7aP-Hw"
+msgid "Look it over before you start."
+msgstr "Schau ihn dir an, bevor du loslegst."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "rKFY6-"
+msgid "Your plan for {goal} is ready."
+msgstr "Dein Plan für {goal} ist fertig."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "yKjBeN"
+msgid "Plan ready"
+msgstr "Plan fertig"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
 msgid "Continue setting up"
 msgstr "Einrichtung fortsetzen"

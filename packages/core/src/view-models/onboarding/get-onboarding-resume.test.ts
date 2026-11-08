@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { choiceBlueprintFixture } from "../../exams/choices/_test-utils/choice-blueprint";
+import { markPlanRevealed } from "../../goals/mark-plan-revealed";
 import { getOnboardingResume } from "./get-onboarding-resume";
 
 const FINISHED_DETAILS = {
@@ -151,6 +152,41 @@ describe(getOnboardingResume, () => {
     await expect(getOnboardingResume()).resolves.toStrictEqual({
       resume: { kind: "today" },
       status: "ready",
+    });
+  });
+
+  it("brings back a plan the learner hasn't seen until they press its action, and only theirs", async () => {
+    const user = await signedInGuest();
+
+    const goal = await goalFixture({
+      details: FINISHED_DETAILS,
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await planFixture({ goalId: goal.id });
+
+    await expect(getOnboardingResume()).resolves.toStrictEqual({
+      resume: { goalId: goal.id, kind: "goal", title: goal.title },
+      status: "ready",
+    });
+
+    await signedInGuest();
+    await expect(markPlanRevealed(goal.id)).resolves.toStrictEqual({ status: "notFound" });
+
+    mockGuestSession(user.id);
+    await expect(markPlanRevealed(goal.id)).resolves.toStrictEqual({ status: "ready" });
+    const seen = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    await expect(getOnboardingResume()).resolves.toStrictEqual({
+      resume: { kind: "today" },
+      status: "ready",
+    });
+
+    await expect(markPlanRevealed(goal.id)).resolves.toStrictEqual({ status: "ready" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      planRevealedAt: seen.planRevealedAt,
     });
   });
 

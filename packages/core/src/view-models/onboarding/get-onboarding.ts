@@ -37,6 +37,7 @@ import {
   getOnboardingSteps,
   isClassTest,
   isCourseDateSkipped,
+  isPlanRevealOwed,
 } from "./onboarding-steps";
 
 export type OnboardingResult =
@@ -291,6 +292,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       goalIds,
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
+      planRevealed: !isPlanRevealOwed(goal),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,

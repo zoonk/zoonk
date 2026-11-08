@@ -139,6 +139,7 @@
     "./goals/get": "./src/goals/get-goal.ts",
     "./goals/goal-input-limits": "./src/goals/goal-input-limits.ts",
     "./goals/list-current-user": "./src/goals/list-current-user-goals.ts",
+    "./goals/mark-plan-revealed": "./src/goals/mark-plan-revealed.ts",
     "./goals/opening": "./src/goals/goal-opening.ts",
     "./goals/owned-goal": "./src/learner/get-owned-goal.ts",
     "./goals/record-generation": "./src/goals/record-goal-generation.ts",

@@ -91,7 +91,7 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByRole("button", { name: "Saturday" }).click();
     await page.getByRole("switch", { name: "Different time on weekends" }).click();
     await page.getByLabel("Time on weekends", { exact: true }).selectOption("60");
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await page.getByRole("button", { exact: true, name: "See your plan" }).click();
 
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
@@ -167,6 +167,13 @@ test.describe("Onboarding from a typed goal", () => {
       buddyKind: "zu",
       memoryEnabled: true,
     });
+
+    // Leaving before Start brings the plan back; Start ends onboarding.
+    await page.goto("/today");
+    await page.getByRole("link", { name: "See your plan" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(page.getByRole("link", { name: "See your plan" })).toBeHidden();
   });
 });
 
@@ -222,7 +229,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
 
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   await page.evaluate((text) => {
@@ -246,7 +253,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
     });
   }, previousLesson);
 
-  await page.getByRole("link", { name: "Start" }).press("Enter");
+  await page.getByRole("button", { exact: true, name: "Start" }).press("Enter");
   await expect(page).toHaveURL(/\/today$/u);
   await expect(page.getByRole("main").getByText("Nothing new for today.")).toBeVisible();
 

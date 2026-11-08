@@ -5,6 +5,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
@@ -143,31 +144,33 @@ function QuestionStepScreen({
 
 export function OnboardingStepScreen({
   actions,
+  buddy,
   isGuest,
   onAnswer,
   onPlacementDone,
   onPlacementFinishFailed,
   pending,
   plan,
-  refreshPages,
   routes,
   run,
   schedule,
   step,
+  toToday,
   view,
 }: {
   actions: OnboardingActions;
+  buddy: LearnBuddy | null;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => void;
   onPlacementDone: () => void;
   onPlacementFinishFailed: (failed: boolean) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
-  refreshPages: () => void;
   routes: OnboardingRoutes;
   schedule: { draft: ScheduleDraft | null; onChangeDate: (draft: ScheduleDraft) => void };
   run: GenerationRun | null;
   step: OnboardingStep;
+  toToday: () => void;
   view: OnboardingView;
 }) {
   const subject = getSubject(view);
@@ -233,6 +236,7 @@ export function OnboardingStepScreen({
       return (
         <PlanReveal
           actions={actions}
+          buddy={buddy}
           goal={{ kind: view.goal.kind, title: view.goal.title }}
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
@@ -245,10 +249,10 @@ export function OnboardingStepScreen({
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}
-          refreshPages={refreshPages}
+          planRevealed={view.planRevealed}
           run={run}
           signUpHref={routes.signUp}
-          todayHref={routes.today}
+          toToday={toToday}
         />
       );
     default:

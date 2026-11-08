@@ -1,5 +1,6 @@
 "use client";
 
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
@@ -22,6 +23,7 @@ export function StepsClient(props: {
 }) {
   const navigation = useOnboardingNavigation();
   const routes = useWebOnboardingRoutes();
+  const learner = useFrameLearner();
   const goalId = props.onboarding.goal.id;
 
   const generation = useWorkflowRun({
@@ -36,6 +38,7 @@ export function StepsClient(props: {
       <StepsFlow
         {...props}
         actions={WEB_ONBOARDING_ACTIONS}
+        buddy={learner.status === "ready" ? learner.summary.buddy : null}
         planActions={{
           ...props.planActions,
           adviseOnBases: () => getGoalBasesAdvice(goalId),

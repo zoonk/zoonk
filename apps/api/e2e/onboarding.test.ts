@@ -4,6 +4,7 @@ import { onboardingDraftViewSchema } from "@zoonk/core/view-models/onboarding/vi
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { goalCreateResponseSchema } from "../src/lib/openapi/schemas/goals";
 import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
@@ -32,9 +33,10 @@ test.describe("Onboarding API", () => {
         data: { purpose: "deep", question: "purpose" },
       }),
       apiContext.get(`/v1/goals/${goalId}/explanation`),
+      apiContext.post(`/v1/goals/${goalId}/plan-reveal/views`),
     ]);
 
-    expect(responses.map((response) => response.status())).toEqual([401, 401, 401, 401]);
+    expect(responses.map((response) => response.status())).toEqual([401, 401, 401, 401, 401]);
     await apiContext.dispose();
   });
 
@@ -126,5 +128,32 @@ test.describe("Onboarding API", () => {
 
     expect(invalid.status()).toBe(400);
     await apiContext.dispose();
+  });
+
+  test("ends onboarding when the learner presses the plan reveal's action, for their goal only", async () => {
+    const [{ apiContext, user }, other] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "plan-reveal" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "plan-reveal-other" }),
+    ]);
+
+    const goal = await goalFixture({ planRevealedAt: null, userId: user.id });
+    const onboarding = `/v1/goals/${goal.id}/onboarding`;
+    const views = `/v1/goals/${goal.id}/plan-reveal/views`;
+
+    await expect(
+      readBody({ response: await apiContext.get(onboarding), schema: onboardingResponseSchema }),
+    ).resolves.toMatchObject({ planRevealed: false });
+
+    const theirs = await other.apiContext.post(views);
+    const first = await apiContext.post(views);
+    const again = await apiContext.post(views);
+
+    expect([theirs.status(), first.status(), again.status()]).toStrictEqual([404, 204, 204]);
+
+    await expect(
+      readBody({ response: await apiContext.get(onboarding), schema: onboardingResponseSchema }),
+    ).resolves.toMatchObject({ planRevealed: true });
+
+    await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
   });
 });

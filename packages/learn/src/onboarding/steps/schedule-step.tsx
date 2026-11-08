@@ -263,6 +263,7 @@ export function ScheduleStep({
     >
       <StepForm
         canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}
+        continueLabel={t("See your plan")}
         onContinue={() => {
           const answer = getScheduleAnswer({ exam, schedule });
 

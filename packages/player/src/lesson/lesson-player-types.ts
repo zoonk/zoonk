@@ -131,6 +131,8 @@ export type LessonPlayerRoutes = {
   /** Set when `exit` points to the lesson's chapter or language unit. */
   exitTo: "chapter" | "unit" | null;
   nextLesson: string | null;
+  /** The goal's setup, ending on its plan's reveal. */
+  seePlan: (goalId: string) => string;
   signUp: string;
   upgrade: string;
 };

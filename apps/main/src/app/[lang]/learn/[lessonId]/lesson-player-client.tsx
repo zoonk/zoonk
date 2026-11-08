@@ -197,7 +197,12 @@ function LessonPlayerVisit({
   const signUp = useSignUpHref();
 
   const routes = useMemo(
-    () => ({ ...routing, signUp, upgrade: "/subscription" }),
+    () => ({
+      ...routing,
+      seePlan: (planGoalId: string) => `/start/${planGoalId}`,
+      signUp,
+      upgrade: "/subscription",
+    }),
     [routing, signUp],
   );
 
