@@ -159,7 +159,8 @@ export function withKeptLessons({
 type KeptLesson = Pick<ExistingPlanItem, "kind" | "phase" | "scheduledFor"> &
   Partial<Pick<ExistingPlanItem, "completedAt" | "id" | "status">>;
 
-function getTaughtDay({
+/** The day the learner studied it: when a finished item ended, otherwise its planned day. */
+export function getTaughtDay({
   input,
   item,
 }: {
