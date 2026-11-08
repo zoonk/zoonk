@@ -1,0 +1,316 @@
+{
+  "modelId": "openai/gpt-6-luna:low",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The explanation gives a concrete cell range, valid =AVERAGE(A1:A5) syntax, and the correct displayed result of 85. The instructions work in both Google Sheets and Excel without tool-exclusive features.",
+          "score": 10,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The five scores, formula, and result are correct, and the screen stays focused on the mean. However, the requested explanation of adding the values is only implicit in “the total.”",
+          "score": 8,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen is short, beginner-friendly, and written in US English. Direct instructions address the learner naturally, with no introduction, filler, or unnecessary expansion.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2038,
+          "outputTokens": 807,
+          "reasoningTokens": 449
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The definition says “the total divided by the number of values,” but does not explicitly say to add the values, as requested. The addition step is implied rather than stated.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Briefly connect the spreadsheet result to the original calculation: the five scores add up to 425, and 425 ÷ 5 = 85.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tool-spreadsheet-mean-1",
+        "userInput": {
+          "key": "Spreadsheet (Google Sheets or Excel)",
+          "language": "en",
+          "lessonTitle": "The mean",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "The **mean** is the typical value: add all the values and divide by how many there are. Quiz scores of 80, 90, 75, 95 and 85 add up to 425, and 425 ÷ 5 = 85.",
+              "title": "Add, then divide"
+            },
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "Python is central, and the assignments are valid when executed sequentially. However, the required printed output is only described as a calculated value: there is no print call. The original calculation fields are also unfilled. The wrong-syntax/output cap is not triggered because the stated intermediate values are correct and are not explicitly labeled as printed output.",
+          "score": 7,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The ticket still increases from R$ 80 to R$ 100. The difference is 20, division by the starting price gives 0.25, and multiplication by 100 gives 25.0, correctly interpreted as a 25% increase. No unrelated lesson content or factual errors appear.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen uses natural Brazilian Portuguese, concise instructions directed to the learner, and four short steps. It has no introductory filler, promises, or wall of text. Decimal points occur appropriately inside Python values.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2241,
+          "outputTokens": 715,
+          "reasoningTokens": 275
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The example never uses print(percentual), so it does not demonstrate Python printing 25.0 as required; assignments alone print nothing. Also, every original step's math field is left null rather than filled, although the calculations appear in text.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Present the calculations as a short, sequential Python example ending with print(percentual), followed by the displayed output 25.0. Put the calculation content in the existing step fields rather than leaving them empty.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (a price going from R$ 80 to R$ 100) done in Python: the change divided by the starting value, such as `(100 - 80) / 80 * 100`, with what Python prints (25.0)\n      - Keeps 2 to 8 short steps, each one move, and the result is still a 25% increase\n      - Real Python syntax that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-tool-python-percent-change-1",
+        "userInput": {
+          "key": "Python",
+          "language": "pt",
+          "lessonTitle": "Variação percentual",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "problem": "Um ingresso foi de R$ 80 para R$ 100. Qual foi a variação percentual?",
+              "result": "O preço subiu 25%.",
+              "steps": [
+                {
+                  "math": "100 - 80 = 20",
+                  "text": "Calcule a variação: preço novo menos o antigo."
+                },
+                {
+                  "math": "\\frac{20}{80} = 0{,}25",
+                  "text": "Divida a variação pelo preço inicial."
+                },
+                {
+                  "math": "0{,}25 = 25\\%",
+                  "text": "Escreva como porcentagem."
+                }
+              ],
+              "title": "De R$ 80 para R$ 100"
+            },
+            "kind": "workedExample"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "Converts the device action into an imagined example rather than asking the learner to open or run anything. Shows the exact command and a valid example output, connects the output to Python being installed and its version, and never suggests the learner is missing out.",
+          "score": 10,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "Preserves the explanation screen, its title, and its focus on checking the Python version. Both original content fields are filled, and the command, example output, and explanation are accurate without introducing another lesson's ideas.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "Uses concise US English, addresses the learner as 'you,' and stays close to the original length. There is no introductory framing, filler, or promise of results.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1934,
+          "outputTokens": 547,
+          "reasoningTokens": 236
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-no-install-terminal-version-1",
+        "userInput": {
+          "key": "no-install",
+          "language": "en",
+          "lessonTitle": "Check your Python version",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "Open your terminal and type `python3 --version`, then press Enter. If Python is installed, you'll see its version, like `Python 3.13.1`. Try it now before moving on.",
+              "title": "Ask Python its version"
+            },
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "This remains a check about spreadsheet output, with the requested cells and formula. “Imagine” makes it a read-only scenario rather than an actual instruction to operate a device, so the no-install cap is not triggered. However, the typing language is less direct than the requested already-present formula, and several fields remain unfilled.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The original idea is preserved without unrelated material. SOMA(A1:A3) correctly returns 60 for 10, 20, and 30. Exactly one option is marked correct, every option has a reason, and both distractors reflect plausible mistakes: summing only two cells and treating the formula as displayed text.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen uses natural Brazilian Portuguese, addresses the learner as “você,” and stays concise and beginner-friendly. There is no introductory filler, promise of results, or excessive length.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2192,
+          "outputTokens": 786,
+          "reasoningTokens": 321
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The question frames the example as imaginary, but “Em A4, você digita” still describes learner typing instead of simply showing the formula already in A4. Also, context, image, visual, and option picture fields are null, so the requirement that every field be filled is not fully met.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a fully static question: “A planilha tem 10 em A1, 20 em A2 e 30 em A3. A4 contém a fórmula =SOMA(A1:A3). O que essa célula mostra?” Preserve the three options and their explanations.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-no-install-excel-check-1",
+        "userInput": {
+          "key": "no-install",
+          "language": "pt",
+          "lessonTitle": "Somar uma coluna na planilha",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "options": [
+                {
+                  "id": "sixty",
+                  "isCorrect": true,
+                  "reason": "SOMA junta 10 + 20 + 30 = 60.",
+                  "text": "60"
+                },
+                {
+                  "id": "thirty",
+                  "isCorrect": false,
+                  "reason": "Somou só A1 e A2.",
+                  "text": "30"
+                },
+                {
+                  "id": "formula",
+                  "isCorrect": false,
+                  "reason": "Com o sinal de igual, a planilha calcula.",
+                  "text": "=SOMA(A1:A3)"
+                }
+              ],
+              "question": "Abra o Excel, digite 10, 20 e 30 em A1, A2 e A3 e, em A4, digite =SOMA(A1:A3). O que aparece em A4?"
+            },
+            "kind": "check"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "step-variant"
+}

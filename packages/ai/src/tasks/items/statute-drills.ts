@@ -12,11 +12,12 @@ import { checkStatuteDrills } from "./statute-drill-checks";
 import rulesTemplate from "./statute-drills.prompt.md";
 
 /**
- * Drills are written once per law and shared, so the right law outweighs cost: Terra got every
- * drill right on the statute-drills eval where Luna keyed one wrong and misquoted two (30 Oct 2026).
+ * Drills are written once per law and shared, so the right law outweighs cost: on 6 cases (8 Nov
+ * 2026), Terra scored 9.81 at $8.54/1k and Sonnet 5.5 9.27 at $35.05/1k; Luna at high reasoning
+ * misquoted clauses and Flash Lite keyed supported statements false.
  */
 const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
+const fallbackModels = ["anthropic/claude-sonnet-5.5"] as const;
 
 const MIN_COUNT = 1;
 const MAX_COUNT = 20;

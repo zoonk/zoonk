@@ -1,0 +1,345 @@
+{
+  "modelId": "anthropic/claude-opus-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All three marked answers follow uniquely from the stimulus: the opening episode represents a broader cultural change, the repeated 'escolha' exposes constrained consumer freedom, and the thesis advocates repairability requirements for manufacturers. No competing option is defensible. The language-effect question quotes the relevant expression, but the full explanation concerning product-imposed constraints still depends on its context. Every evidence field copies text verbatim.",
+          "score": 10,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The everyday narrative develops a social argument suitable for ENEM Linguagens, with three clear questions and five options each. Distractors generally reflect recognizable reading errors, including confusing a counterargument with the thesis, overgeneralizing, and mistaking an example for the main point. However, the nominal inference question largely restates explicit content, and a few unsupported distractors are too easy to eliminate. These are localized weaknesses rather than grounds for finding the set out of place in the exam.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The text is a coherent, natural Brazilian Portuguese chronicle with an argumentative focus. It claims no real author or outlet, contains no fabricated facts about identifiable real entities, and uses no em dashes. The explanations and misconception labels are in Portuguese and consistently refer to what the stimulus states or omits. No concrete stimulus defect or applicable cap is evident.",
+          "score": 10,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3621,
+          "outputTokens": 754,
+          "reasoningTokens": 233
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The first question provides only a shallow inference task: its correct option closely paraphrases the explicit statement about discarding an entire relationship with objects. This weakens the requested distinction between identifying stated meaning and inferring implicit information.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Strengthen the inference question by targeting an unstated implication supported by multiple passages. Replace a few easily dismissed distractors, such as the phone being a gift from someone dear, with more plausible misreadings of details actually present in the text.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM Linguagens set in Brazilian Portuguese: an original text (a chronicle, an opinion piece or a report, never attributed to a real author or outlet) and 3 multiple-choice questions with 5 options each that need it: its main idea, an inference and the effect of a language choice. Distractors come from reading mistakes. Every question's evidence is copied from the text.",
+        "id": "pt-enem-linguagens-texto-tres-questoes-1",
+        "userInput": {
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "questionCount": 3,
+          "skills": [
+            {
+              "description": "Identificar a tese ou a ideia central de um texto argumentativo ou jornalístico.",
+              "level": "intermediate",
+              "name": "Ideia central do texto"
+            },
+            {
+              "description": "Inferir informações implícitas e o efeito de sentido de escolhas linguísticas.",
+              "level": "intermediate",
+              "name": "Inferência e efeitos de sentido"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "The judgments Certo, Errado, Errado, Certo are supported by the facts and standard Brazilian administrative-law rules. Urgency supports autoexecutoriedade; relative presumption does not itself require the municipality to prove everything before the act takes effect; revocation operates prospectively; and proven bad faith excludes the five-year protection under article 54. However, several statements reveal their decisive premises or test general rules independently of the case, triggering the maximum score of 7.",
+          "score": 7,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The hypothetical municipal setting, formal legal vocabulary, four shared Certo/Errado items, and two-true/two-false balance fit Cebraspe well. The items cover distinct administrative-law distinctions, and the revocation trap is credible. The requested trap repertoire is nevertheless incomplete: there is no meaningful absolute-word trap, and the statutory exception appears only in a correctly formulated application.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The case is clearly fictional, original in presentation, and naturally written in Brazilian Portuguese without em dashes. It provides concrete facts establishing urgency, a valid authorization withdrawn for convenience, and beneficiary fraud. The municipality's application of Law 9.784/1999 is expressly stipulated rather than incorrectly assumed to follow automatically. Explanations and misconceptions are in Portuguese and connect the legal distinctions to the case. No source attribution or fabricated factual claim about a real entity triggers a cap.",
+          "score": 10,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2680,
+          "outputTokens": 1009,
+          "reasoningTokens": 371
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several items do not genuinely require the case. Item 1 supplies the imminent health risk that justifies immediate enforcement; item 2 can be rejected from its general claim about the burden of proof; and item 3 can be rejected simply because revocation does not have retroactive effects. The four judgments are legally defensible, but repeated stimulus independence materially weakens the requested assessment.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The requested trap variety is incomplete. Item 3 clearly swaps revocation and annulment effects, but no item meaningfully tests an absolute-word trap. The bad-faith exception is correctly applied rather than used as a mistaken exception for the learner to detect.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the case supply the decisive facts instead of repeating them in the statements. For example, ask whether Débora's decision should invalidate Wesley's earlier use without labeling that decision as revocation, or ask whether Nayara benefits from the five-year deadline without restating her bad faith. Preserve the balanced answer distribution.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One Cebraspe set in Brazilian Portuguese on administrative law: an original hypothetical case (a public servant, an agency, an administrative act) and 4 statements judged Certo or Errado that need the case, about half true, with Cebraspe-style traps (a swapped concept, a wrong exception, an absolute word). No real law is misquoted: when a statement relies on a rule, it is the rule as Brazilian law states it.",
+        "id": "pt-cebraspe-caso-atos-administrativos-1",
+        "userInput": {
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "questionCount": 4,
+          "skills": [
+            {
+              "description": "Distinguir anulação e revogação de atos administrativos e seus efeitos.",
+              "level": "intermediate",
+              "name": "Anulação e revogação"
+            },
+            {
+              "description": "Reconhecer os atributos do ato administrativo: presunção de legitimidade, imperatividade e autoexecutoriedade.",
+              "level": "intermediate",
+              "name": "Atributos do ato administrativo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All four keys follow from the passage: FALSE for the explicitly rejected explanation of survey exclusion, TRUE for the greater plant-species variety, FALSE for the proposed replacement of bees, and NOT GIVEN for the unreported comparison of moth attraction under different streetlights. Each requires passage-specific information, and no second option is defensible in the intended reading. Evidence is copied verbatim from the passage.",
+          "score": 10,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The passage meets the requested 250–350-word range and uses an appropriate academic-popular register. Four statements share it, with exactly TRUE, FALSE and NOT GIVEN in the required order and fixedOrder true. They test distinct information and plausible reading mistakes. The repeated ungrammatical instruction and redundant per-question framing reduce exam polish, but the set does not look fundamentally out of place.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The passage is coherent, natural English without em dashes. It does not claim a named real source or present invented statistics about identifiable real entities. The explanations and misconceptions are in English and connect the answer choices to relevant passage content. No concrete originality or clarity problem is evident.",
+          "score": 10,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3197,
+          "outputTokens": 902,
+          "reasoningTokens": 449
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All four question prompts repeat the grammatical error “Do the following statement agree”. Use “Does the following statement agree” or a shared plural instruction.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Present the questions under one shared IELTS-style instruction defining TRUE, FALSE and NOT GIVEN, rather than repeating the instruction and “Statement:” label in every question.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One IELTS Academic Reading set in English: an original academic passage of 250 to 350 words and 4 True/False/Not Given statements, each a multiple-choice question whose options are exactly TRUE, FALSE and NOT GIVEN in that order with fixedOrder true, including at least one NOT GIVEN whose key is right because the passage doesn't say. Evidence is copied from the passage.",
+        "id": "en-ielts-academic-true-false-not-given-1",
+        "userInput": {
+          "examFormat": {
+            "name": "IELTS Academic Reading",
+            "optionCount": 3,
+            "style": "A long academic passage followed by question groups; True/False/Not Given statements are answered with the same three options in that order: TRUE if the statement agrees with the passage, FALSE if it contradicts it, NOT GIVEN if the passage doesn't say."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "questionCount": 4,
+          "skills": [
+            {
+              "description": "Tell whether a statement agrees with, contradicts or isn't covered by an academic text.",
+              "level": "advanced",
+              "name": "Identifying information (True/False/Not Given)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All three keys are uniquely correct and require the stimulus. The friction force is 8 N, giving acceleration (60−24−8)/10 = 2.8 m/s² and tension 43.2 N. At impact, A has speed squared 11.2 m²/s²; its subsequent deceleration is 8 m/s², giving total travel 2.7 m. Friction therefore dissipates 21.6 J. These values remain consistent across the questions, and no competing option is defensible.",
+          "score": 10,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The shared physics paragraph, three single-answer questions, four options each, and concise numerical presentation fit the requested format. Distractors correspond to genuine mistakes, including reversing friction, neglecting friction, and counting only one stage. However, the difficulty is closer to a standard textbook exercise than JEE Advanced: Q1 is routine, and Q3 becomes a direct friction-work calculation using Q2's answer. The set consequently triggers the at-most-7 cap for looking out of place in the named exam.",
+          "score": 7,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The setup is self-contained, clear, and naturally written in English. It supplies the masses, geometry, friction coefficient, travel limit, impact behavior, and gravitational acceleration needed for every calculation. It makes no source attribution or factual claims about real entities and contains no em dashes. The explanations and misconceptions are in English and refer accurately to the setup.",
+          "score": 10,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3255,
+          "outputTokens": 1014,
+          "reasoningTokens": 426
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The set falls short of the requested JEE Advanced difficulty. Q1 is a routine coupled-block calculation, while Q3 largely reuses Q2's total distance and multiplies it by friction. Q3 therefore adds little independent reasoning or use of a different part of the setup, rather than requiring a substantive work-energy analysis.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make the energy question probe a distinct feature of the experiment. For example, ask for the mechanical energy lost when B hits the floor, requiring the shared pre-impact speed and separation of collision loss from frictional dissipation. Strengthen the Newton's-laws question with an additional constraint or inference rather than merely requesting tension.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "One JEE Advanced paragraph-based physics set in English: one original experiment or setup (for example blocks on an incline joined over a pulley, then sliding onto a spring), stated once with every number the questions need, in SI units, and 3 single-answer multiple-choice questions with 4 options, one per skill (kinematics, Newton's laws, work and energy), each needing a different part of the setup. Every key follows from the stated numbers, the numbers agree across the questions (a speed one question computes is the speed the next one uses), and each wrong option comes from a real mistake (time to a mark instead of between marks, net force taken as friction, friction left out of an energy balance). Difficulty matches JEE Advanced's own paragraph questions, not a textbook's: each question needs several steps that combine at least two ideas (a result from one stage of the setup feeding the next, or two laws applied together), so no question is a single formula with numbers stated next to each other.",
+        "id": "en-jee-advanced-physics-case-1",
+        "userInput": {
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "questionCount": 3,
+          "skills": [
+            {
+              "description": "Describe straight-line motion with displacement, velocity and constant acceleration, and solve problems with the equations of motion.",
+              "level": "advanced",
+              "name": "Kinematics in one dimension"
+            },
+            {
+              "description": "Apply Newton's three laws to blocks, pulleys and inclines, with friction and free-body diagrams.",
+              "level": "advanced",
+              "name": "Newton's laws of motion"
+            },
+            {
+              "description": "Use work, kinetic and potential energy and power, and the work-energy theorem, in mechanics problems.",
+              "level": "advanced",
+              "name": "Work, energy and power"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "write-item-set"
+}

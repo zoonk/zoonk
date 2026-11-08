@@ -12,6 +12,8 @@ const SCORE_RANGE = 4;
 
 const MIN_QUOTED_SHARE = 0.6;
 
+const ENEM_C5_POINTS_PER_ELEMENT = 40;
+
 type Check = { name: string; passed: boolean; detail: string };
 
 function getBandLabel({ band, total }: { band: GradeEssayExpected["totalBand"]; total: number }) {
@@ -38,6 +40,26 @@ function checkElements({
       passed: found === present,
     };
   });
+}
+
+/** The rubric's exceptions to this level, a conditional or tangent proposal, aren't in these cases. */
+function checkC5Level(grade: EssayGrade): Check[] {
+  const elements = grade.enemInterventionElements;
+  const c5 = grade.criteria.find((criterion) => criterion.id === "c5");
+
+  if (!elements || !c5 || grade.zeroReason) {
+    return [];
+  }
+
+  const count = Object.values(elements).filter(Boolean).length;
+
+  return [
+    {
+      detail: `C5 ${c5.score} with ${count} valid element(s), whose level is ${ENEM_C5_POINTS_PER_ELEMENT * count}.`,
+      name: "c5-level",
+      passed: c5.score === ENEM_C5_POINTS_PER_ELEMENT * count,
+    },
+  ];
 }
 
 function checkNextStep({
@@ -86,6 +108,14 @@ function checkFeedback({
     (criterion) => criterion.quote && essay.includes(criterion.quote),
   );
 
+  const allFeedback = feedback.join(" ").toLowerCase();
+
+  const mentions = (expected.feedbackMentions ?? []).map((mention) => ({
+    detail: `Feedback mentions "${mention}".`,
+    name: `mentions-${mention}`,
+    passed: allFeedback.includes(mention.toLowerCase()),
+  }));
+
   return [
     {
       detail: `Feedback language: expected ${expected.feedbackLanguage}, detected ${language ?? "unknown"}.`,
@@ -102,6 +132,7 @@ function checkFeedback({
       name: "quotes",
       passed: quoted.length >= grade.criteria.length * MIN_QUOTED_SHARE,
     },
+    ...mentions,
   ];
 }
 
@@ -130,6 +161,7 @@ function getChecks({
     },
     checkNextStep({ expected, grade }),
     ...checkElements({ expected, grade }),
+    ...checkC5Level(grade),
     ...checkFeedback({ essay, expected, grade }),
   ];
 }

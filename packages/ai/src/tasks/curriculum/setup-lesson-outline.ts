@@ -11,11 +11,11 @@ import { LESSON_SIZE } from "../lesson-spec/lesson-spec-rules";
 import systemPrompt from "./setup-lesson-outline.prompt.md";
 
 /**
- * The learner waits after picking "I'll set it up": Luna met every rule on the setup-lesson-outline
- * eval at 4.0s p50 (27 Sep 2026).
+ * The learner waits after picking "I'll set it up": on 8 cases (8 Nov 2026), Luna met every rule
+ * at $0.2469/1k in 4.45 s p50; Haiku 5.5 (9.36, $0.1858/1k) broke a length or can-do rule on four.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({
   canDo: z.string(),

@@ -11,9 +11,12 @@ import { toSubjectQuestionsFinding } from "./subject-questions-finding";
 export type { SubjectQuestionsFinding } from "./subject-questions-finding";
 
 /**
- * The pair measured best at reading a page a search returns, at low reasoning: a plan waits on it.
+ * At low reasoning, since a plan waits on it: on 6 cases (8 Nov 2026), Luna and Flash each scored
+ * 9.67 (EN 10.00, PT 9.50) at $8.47/1k and $18.56/1k. The OAB case every model missed fails in the
+ * total check, not the model.
  */
-const defaultModel = "google/gemini-3.8-flash";
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["google/gemini-3.8-flash"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
@@ -70,6 +73,7 @@ export async function findSubjectQuestions({
 
   const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     libraryInput: true,
     maxSteps: MAX_STEPS,
     model,

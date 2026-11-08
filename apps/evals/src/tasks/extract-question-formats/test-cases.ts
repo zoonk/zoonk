@@ -103,4 +103,65 @@ export const TEST_CASES: FormatsCase[] = [
       exam: "Avaliação de geografia",
     },
   },
+  {
+    expected: {
+      absent: [{ kind: "essay" }],
+      present: [
+        { kind: "multipleChoice", options: 4, section: null, select: null },
+        { kind: "multipleChoice", options: 4, section: null, select: "all" },
+        { kind: "numeric", section: null },
+      ],
+    },
+    id: "en-jee-advanced-2026-paper-1",
+    userInput: {
+      documents: [
+        {
+          title: "JEE (Advanced) 2026 Paper 1 (English)",
+          url: "https://jeeadv.ac.in/documents/p1_english.pdf",
+        },
+      ],
+      exam: "JEE (Advanced) 2026, Paper 1",
+      parts: ["Physics", "Chemistry", "Mathematics"],
+    },
+  },
+  {
+    // The notice covers every role: Registro e Redação writes two discursive questions and a
+    // technical piece, while the engineers write three questions.
+    expected: {
+      absent: [{ kind: "multipleChoice" }],
+      present: [
+        { kind: "trueFalse" },
+        { description: /quest/iu, kind: "essay" },
+        { description: /peça/iu, kind: "essay" },
+      ],
+    },
+    id: "pt-camara-2026-registro-redacao",
+    userInput: {
+      documents: [
+        {
+          title: "Edital nº 1 – Câmara dos Deputados, de 2 de outubro de 2026",
+          url: "https://cdn.cebraspe.org.br/concursos/CD_26_ANALISTA/arquivos/BBE30D016054F40651E36AC7B302C3425BD148A39675CA840A5A0CCBFBB5F0F1.pdf",
+        },
+      ],
+      exam: "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+    },
+  },
+  {
+    // The notice also sets the second phase's piece and discursive questions, which aren't this
+    // test's formats.
+    expected: {
+      absent: [{ kind: "essay" }],
+      present: [{ kind: "multipleChoice", options: 4, select: null }],
+    },
+    id: "pt-oab-48-1a-fase",
+    userInput: {
+      documents: [
+        {
+          title: "Edital de abertura do 48º Exame de Ordem Unificado",
+          url: "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf",
+        },
+      ],
+      exam: "48º Exame de Ordem Unificado, 1ª fase",
+    },
+  },
 ];

@@ -1,0 +1,241 @@
+{
+  "codeChecks": {
+    "anthropic/claude-opus-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "anthropic/claude-sonnet-5.5": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    },
+    "openai/gpt-6.1-terra:high": {
+      "passed": 11,
+      "problems": [],
+      "total": 11
+    }
+  },
+  "expectations": "A bank of French passages and sentences as written and spoken in France (correct accents, \"vous\" and \"tu\" used as French speakers would) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.\n\nSCORE CATEGORIES:\n\n### Levels calibrated and increasing\n- Category ID: `calibration`\n- Weight: 40%\n- Expectations: Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.\n\n### One clearly right answer\n- Category ID: `answers`\n- Weight: 35%\n- Expectations: Every question has exactly one clearly right option that the passage supports (check the passage for each option); wrong options are plausible to a careless reader but clearly wrong; no option can be picked from general knowledge alone; options are similar in length. Answer indexes point at the right option. Score at most 4 when a question has two defensible answers or none, or the marked answer is wrong.\n\n### Languages and variety\n- Category ID: `language`\n- Weight: 25%\n- Expectations: Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.",
+  "judgedAt": "2026-11-08T16:10:24.867Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "A1 asks one stated fact and A2 asks simple facts. B1 targets the main point, a reason or an opinion; B2 targets attitude and purpose in denser text; C1 targets nuanced tone and implication. Speaking lengths fit their levels. A2 items lean on artificial ordering tricks, and the B1 room-10 question is close to detail-matching.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "I checked all 20 answer indexes against the passages and each is correct. Every question has a single defensible answer, and the distractors are plausible, close in length and not guessable from general knowledge. The B1 main-point distractors are stated details, but they are clearly not the main point.",
+              "score": 8.5,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The French is natural and correctly accented, and tu/vous use is appropriate. Listening passages read as real voicemails, announcements and radio talk, and situations vary with no brands. English questions and translations are natural US English. Small issues are the mixed curly and straight apostrophes and a few staged A1–A2 texts, such as the price list and the note listing every object's location.",
+              "score": 8,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "This is a well-built bank with a clear level progression and correct answer indexes throughout. The B2 and C1 items test attitude and implication well, and the speaking sentences grow cleanly from 5 to about 20 words. Minor weaknesses are the contrived sequencing and distractor-stuffed A1–A2 passages and some typographic inconsistency in apostrophes.\n\nIn the reverse order: The bank is strong and well graded. Levels progress clearly from stated facts (A1/A2) to the main point, reasons and opinion (B1), then attitude, purpose and implication (B2/C1). Speaking sentences grow from 5 to about 20 words. Every answer index checks out against its passage; the weaknesses are a few contrived A1 distractor setups and a B1 main-point item whose distractors are all true details.",
+          "score": 8.175
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 2894,
+        "cacheWriteTokens": 0,
+        "inputTokens": 18638,
+        "outputTokens": 2880,
+        "reasoningTokens": 1733
+      }
+    },
+    {
+      "judgeId": "google/gemini-4-argon",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Passages, questions, and speaking sentences progress smoothly from A1 to C1, strictly respecting word-count constraints and cognitive targets (including an explicit tone/register question in C1 listening 1).",
+              "score": 10,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "Every question has one clearly supported correct answer and plausible, well-balanced distractors of similar length.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The French is idiomatic and authentic to France, with a clear distinction between written texts and spoken audio messages, though the speaking sentences reuse Lyon and travel themes across four of the five levels.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "Model B delivers the most authentic, natural French passages across both written and spoken contexts, with excellent CEFR calibration and word-count compliance. Its C1 items effectively test tone, register shifts, and implication, though the speaking sentences could show slightly more thematic variety across levels.\n\nIn the reverse order: Model B delivers the most authentic and well-calibrated question bank across all five CEFR levels. Its listening passages genuinely sound like spoken French (voicemails, announcements, and interviews with natural discourse markers), and its C1 questions expertly test tone and implication. The only minor blemish is reusing the same structure and city in the A1 and A2 speaking sentences.",
+          "score": 9.75
+        },
+        {
+          "anonymousId": "Model A",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Difficulty increases clearly across all five levels and word counts are well respected, though C1 questions focus mostly on implication rather than explicitly testing tone.",
+              "score": 9,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "All questions have one indisputably right answer, matched option lengths, and well-constructed distractors drawn from the text.",
+              "score": 10,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "French and US English are accurate and varied across situations, but the A1 listening and reading texts read a bit like contrived lists created to supply four options.",
+              "score": 8.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "openai/gpt-6.1-terra:high",
+          "reasoning": "Model A shows strong CEFR progression, well-balanced options, and good thematic variety across its speaking sentences. However, its A1 passages feel slightly artificial in how they pack four list items into tiny texts just to feed the multiple-choice distractors, and C1 questions lean more on implication than tone.\n\nIn the reverse order: Model A provides unambiguous answers and adheres well to word counts and situations, but its passages feel slightly more textbook-like and contrived at A1/A2 than the other models. In addition, its C1 questions focus mostly on implied meaning rather than explicitly testing tone as well.",
+          "score": 9.225
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Levels are well calibrated from A1 stated facts to C1 tone and understatement, with only a negligible one-word overrun in A2 reading 1.",
+              "score": 9.5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "In A1 reading 1, the correct option is formatted as '$4 (4 €) a kilo' while the three distractors are formatted like '2 € a kilo', giving away the right answer through length and formatting.",
+              "score": 8,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "Passages and speaking sentences use natural France French and idiomatic US English across varied situations.",
+              "score": 10,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Model C has strong calibration and natural French prose, particularly at B2 and C1 where it captures tone and understatement very well. It ranks third due to a formatting flaw in A1 reading 1 where only the correct option includes a dollar conversion ('$4 (4 €) a kilo'), making it stand out visually from the distractors.\n\nIn the reverse order: Model C features exceptional French writing, authentic spoken registers, and very sharp C1 questions on tone and understatement. However, its first A1 question formats only the correct option with a dollar conversion ('$4 (4 €) a kilo') while the three distractors lack the dollar sign, creating a visual giveaway for test-takers.",
+          "score": 9.100000000000001
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 30158,
+        "outputTokens": 1787,
+        "reasoningTokens": 0
+      }
+    },
+    {
+      "judgeId": "openai/gpt-6-astra",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Reading and listening progress convincingly from stated facts to reasons, attitudes, and nuanced implications. Speaking progression is weaker: the B1 sentence closely resembles A2 in length and grammatical complexity, adding mainly a simple reason clause.",
+              "score": 8,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The marked answers are supported, and each question has a clearly best option. Distractors generally exploit genuine passage contrasts, such as current versus planned locations, without creating competing correct answers.",
+              "score": 9,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The French is natural for France, with appropriate informal messages, formal notices, and conversational listening passages. English questions and translations are idiomatic, and the bank covers varied situations without brands or identifiable real people.",
+              "score": 9,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-opus-5.5",
+          "reasoning": "The stronger bank overall: answers are well grounded, situations match the requested contexts, and advanced questions generally require interpreting attitude or implication. The main weakness is the limited progression between the A2 and B1 speaking sentences.\n\nIn the reverse order: The stronger bank overall, with well-supported answer keys, natural French, and a convincing progression toward nuanced interpretation. Minor passage-length overruns and a relatively simple B1 speaking sentence leave some room for refinement.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "categoryScores": [
+            {
+              "categoryId": "calibration",
+              "reasoning": "Most levels progress appropriately, but the C1 forecasting answer directly paraphrases the stated claim that real progress means expressing uncertainty. That question tests a stated opinion rather than tone or implication, triggering the wrong-level cap of 5.",
+              "score": 5,
+              "label": "Levels calibrated and increasing",
+              "weight": 40
+            },
+            {
+              "categoryId": "answers",
+              "reasoning": "The first marked option says \"$4 (4 €),\" although the passage supports only €4; dollars and euros are not interchangeable. This makes the marked answer inaccurate and triggers the cap of 4, despite otherwise largely clear answer sets.",
+              "score": 4,
+              "label": "One clearly right answer",
+              "weight": 35
+            },
+            {
+              "categoryId": "language",
+              "reasoning": "The bank generally uses idiomatic French, appropriate registers, and natural US English translations across varied situations. A few formulations are less polished, notably the appointment message's \"Votre rendez-vous de jeudi est changé,\" which sounds less natural than saying it has been moved.",
+              "score": 8.5,
+              "label": "Languages and variety",
+              "weight": 25
+            }
+          ],
+          "modelId": "anthropic/claude-sonnet-5.5",
+          "reasoning": "Most of the bank is useful and natural, with particularly effective advanced items about self-criticism and understatement. However, the first marked answer introduces an unsupported dollar price, and the C1 forecasting question tests an explicitly stated opinion rather than C1-level tone or implication.\n\nIn the reverse order: Much of this bank is strong, particularly its B2 implied attitudes and C1 irony and understatement. However, the first answer introduces an incorrect dollar price, and the C1 forecasting question tests an explicitly stated opinion rather than C1-level tone or implication.",
+          "score": 5.525
+        }
+      ],
+      "usage": {
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "inputTokens": 19372,
+        "outputTokens": 3017,
+        "reasoningTokens": 1860
+      }
+    }
+  ],
+  "outputs": {
+    "anthropic/claude-opus-5.5": "bf321bc7a7a008a2",
+    "anthropic/claude-sonnet-5.5": "daf2c269dd338203",
+    "openai/gpt-6.1-terra:high": "5c854decfaeae8ab"
+  },
+  "swapped": true,
+  "taskId": "level-test-bank",
+  "testCaseId": "en-fr-1"
+}
