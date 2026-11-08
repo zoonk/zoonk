@@ -3188,6 +3188,26 @@ msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Ders tamamlandı"
 
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "U_fdgH"
+msgid "What's next"
+msgstr "Sıradaki adımlar"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "Tezxsy"
+msgid "Your plan is ready"
+msgstr "Planın hazır"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "PBFmO0"
+msgid "Building your plan"
+msgstr "Planını hazırlıyoruz"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Planını gör"
+
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
 msgid "Finish"

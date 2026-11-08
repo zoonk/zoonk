@@ -11,6 +11,7 @@ import { useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { StepDots } from "../_components/step-dots";
 import { useFormatDuration } from "../_utils/time-format";
+import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { type FlowState, applyAnswer, openStep } from "./_utils/answered-step";
@@ -71,6 +72,7 @@ function DayTooShortWords({ goals, minutes }: DayTooShort) {
 
 export function StepsFlow({
   actions,
+  buddy,
   generation = null,
   initialPlan,
   isGuest,
@@ -80,6 +82,8 @@ export function StepsFlow({
   routes,
 }: {
   actions: OnboardingActions;
+  /** The learner's buddy as the page read it; a pick on these steps takes its place. */
+  buddy: LearnBuddy | null;
   generation?: GenerationRun | null;
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
@@ -91,6 +95,7 @@ export function StepsFlow({
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState<Failed | null>(null);
   const [scheduleDraft, setScheduleDraft] = useState<ScheduleDraft | null>(null);
+  const [pickedBuddy, setPickedBuddy] = useState<Pick<LearnBuddy, "kind" | "name"> | null>(null);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
@@ -138,6 +143,10 @@ export function StepsFlow({
         });
 
         return;
+      }
+
+      if (input.question === "buddy" && input.buddy) {
+        setPickedBuddy({ kind: input.buddy.kind, name: input.buddy.name ?? null });
       }
 
       // "Pass an exam" moved a language goal to an exam goal: the steps go on at the new goal's page.
@@ -219,6 +228,7 @@ export function StepsFlow({
           >
             <OnboardingStepScreen
               actions={actions}
+              buddy={pickedBuddy ? { ...resolveLearnBuddy(buddy), ...pickedBuddy } : buddy}
               isGuest={isGuest}
               onAnswer={answer}
               onPlacementDone={() => answer({ question: "placement" })}
@@ -229,11 +239,11 @@ export function StepsFlow({
                 isPending && sending !== null && (sending.open || sending.step === state.current)
               }
               plan={{ initialPlan: pagePlan, planActions }}
-              refreshPages={navigation.refreshPages}
               routes={routes}
               run={generation}
               schedule={{ draft: scheduleDraft, onChangeDate: changeDate }}
               step={state.current}
+              toToday={navigation.toToday}
               view={state.view}
             />
           </PlanStartNoticeProvider>

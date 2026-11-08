@@ -23,6 +23,7 @@ import {
   useLessonPlayer,
   useLessonPlayerConfig,
 } from "../lesson-player-context";
+import { LessonCompletionPlan, SeePlanAction } from "./lesson-completion-plan";
 
 function CompletionReadouts({
   answered,
@@ -117,6 +118,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { result } = completion;
   const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
+  const planReveal = isSaved ? (result?.planReveal ?? null) : null;
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
 
   if (completion.status === "failed") {
@@ -148,10 +150,15 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           />
         )}
 
+        {planReveal && <LessonCompletionPlan reveal={planReveal} />}
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
 
-      {!slots.completionActions && <CompletionLinks pending={!isSaved} />}
+      {planReveal ? (
+        <SeePlanAction reveal={planReveal} />
+      ) : (
+        !slots.completionActions && <CompletionLinks pending={!isSaved} />
+      )}
     </>
   );
 }

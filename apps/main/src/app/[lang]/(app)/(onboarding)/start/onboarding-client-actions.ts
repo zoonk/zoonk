@@ -36,6 +36,7 @@ import {
   stopPlacementMockAction,
 } from "./onboarding-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
+import { markPlanRevealedAction } from "./plan-reveal-action";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
 
 async function createAsGuest(
@@ -90,6 +91,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
       }
     },
   }),
+  markPlanRevealed: markPlanRevealedAction,
   readWarmUp: readWarmUpAction,
   recordPlanWait: (milliseconds) =>
     recordGenerationWaitAction({ contentKind: "curriculum", milliseconds }),

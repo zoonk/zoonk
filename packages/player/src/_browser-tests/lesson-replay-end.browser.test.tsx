@@ -8,6 +8,7 @@ const ROUTES = {
   exit: "/chapter",
   exitTo: "chapter" as const,
   nextLesson: "/learn/next",
+  seePlan: (goalId: string) => `/start/${goalId}`,
   signUp: "/login",
   upgrade: "/subscription",
 };

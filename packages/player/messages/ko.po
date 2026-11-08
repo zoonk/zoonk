@@ -3188,6 +3188,26 @@ msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "레슨 완료"
 
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "U_fdgH"
+msgid "What's next"
+msgstr "다음 할 일"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "Tezxsy"
+msgid "Your plan is ready"
+msgstr "계획이 준비됐어요"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "PBFmO0"
+msgid "Building your plan"
+msgstr "계획을 만들고 있어요"
+
+#: src/lesson/completion/lesson-completion-plan.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "내 계획 보기"
+
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
 msgid "Finish"

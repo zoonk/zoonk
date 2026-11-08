@@ -36,7 +36,14 @@ function PreviewLink({
 
 const noVoice: VoiceText = () => Promise.resolve({ limit: null, status: "failed" });
 
-const ROUTES = { exit: "/", exitTo: null, nextLesson: null, signUp: "/", upgrade: "/" } as const;
+const ROUTES = {
+  exit: "/",
+  exitTo: null,
+  nextLesson: null,
+  seePlan: () => "/",
+  signUp: "/",
+  upgrade: "/",
+} as const;
 
 function noop() {
   return null;
