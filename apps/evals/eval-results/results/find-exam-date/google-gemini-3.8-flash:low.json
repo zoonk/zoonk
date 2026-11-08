@@ -232,6 +232,83 @@
           "year": 2027
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "firstDate": "2026-11-01",
+          "officialDomains": [
+            "fuvest.br",
+            "usp.br"
+          ],
+          "status": "official"
+        },
+        "id": "pt-fuvest-2027-1",
+        "userInput": {
+          "exam": "Fuvest 2027, primeira fase",
+          "institution": "USP",
+          "language": "pt",
+          "role": null,
+          "today": "2026-10-05",
+          "words": null,
+          "year": 2027
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "firstDate": "2027-05-10",
+          "officialDomains": [
+            "collegeboard.org"
+          ],
+          "status": "official"
+        },
+        "id": "en-ap-calculus-ab-2027-1",
+        "userInput": {
+          "exam": "AP Calculus AB",
+          "institution": null,
+          "language": "en",
+          "role": null,
+          "today": "2026-10-05",
+          "words": null,
+          "year": 2027
+        }
+      }
     }
   ],
   "taskId": "find-exam-date"

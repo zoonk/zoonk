@@ -93,4 +93,39 @@ export const TEST_CASES: FindExamDateCase[] = [
       year: 2027,
     },
   },
+  {
+    // Fuvest first announced 15 November, then moved the first phase to 1 November 2026.
+    expected: {
+      firstDate: "2026-11-01",
+      officialDomains: ["fuvest.br", "usp.br"],
+      status: "official",
+    },
+    id: "pt-fuvest-2027",
+    userInput: {
+      exam: "Fuvest 2027, primeira fase",
+      institution: "USP",
+      language: "pt",
+      role: null,
+      today: TODAY,
+      words: null,
+      year: 2027,
+    },
+  },
+  {
+    expected: {
+      firstDate: "2027-05-10",
+      officialDomains: ["collegeboard.org"],
+      status: "official",
+    },
+    id: "en-ap-calculus-ab-2027",
+    userInput: {
+      exam: "AP Calculus AB",
+      institution: null,
+      language: "en",
+      role: null,
+      today: TODAY,
+      words: null,
+      year: 2027,
+    },
+  },
 ];
