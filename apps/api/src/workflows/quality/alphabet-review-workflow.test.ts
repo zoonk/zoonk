@@ -39,7 +39,7 @@ const CYRILLIC: AlphabetLessonContent = {
   title: "Primeiras letras russas",
 };
 
-const SILENT_H = { kind: "incorrect", problem: "The h of “hora” is silent.", screen: 2 } as const;
+const SILENT_H = { problem: "The h of “hora” is silent.", screen: 2 } as const;
 
 const X_CARD = 2;
 
@@ -51,15 +51,9 @@ function audioUrlOf(content: unknown): unknown {
   return content && typeof content === "object" && "audioUrl" in content ? content.audioUrl : null;
 }
 
-function review(
-  issues: { kind: "incorrect" | "jargon"; problem: string; screen: number | null }[],
-) {
+function review(issues: { problem: string; screen: number | null }[]) {
   return taskResult({
-    issues: issues.map((issue) => ({
-      ...issue,
-      fix: "Compare it with the r of “rato”.",
-      severity: "blocking" as const,
-    })),
+    issues: issues.map((issue) => ({ ...issue, fix: "Compare it with the r of “rato”." })),
   });
 }
 
@@ -156,9 +150,7 @@ describe(alphabetReviewWorkflow, () => {
   it("keeps a published lesson whose review finds nothing wrong", async () => {
     const lessonId = await publishCyrillic();
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(
-      review([{ kind: "jargon", problem: "“Fricção” is jargon.", screen: 2 }]),
-    );
+    vi.mocked(checkLessonQuality).mockResolvedValue(review([]));
 
     await expect(alphabetReviewWorkflow({ lessonId, version: 1 })).resolves.toBe("passed");
 
@@ -166,7 +158,6 @@ describe(alphabetReviewWorkflow, () => {
       expect.objectContaining({
         alphabet: true,
         courseTitle: "Russian",
-        reuse: "bounded",
         serviceTier: "flex",
         writerModel: "openai/gpt-6-luna",
       }),
@@ -185,11 +176,23 @@ describe(alphabetReviewWorkflow, () => {
     expect(checkLessonQuality).not.toHaveBeenCalled();
   });
 
+  it("sets aside a fixed candidate that fails its second review before voicing", async () => {
+    const lessonId = await publishCyrillic();
+    vi.mocked(checkLessonQuality).mockResolvedValue(review([SILENT_H]));
+    fixX({ audioText: "хо", pronunciation: "Como o r de rato; ouça хо (kho)." });
+    await expect(alphabetReviewWorkflow({ lessonId, version: 1 })).resolves.toBe("setAside");
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
+  });
+
   it("publishes a fix of the flagged letter as the lesson's next version, re-voicing only its new audio", async () => {
     const lessonId = await publishCyrillic();
     const published = await readSteps(lessonId);
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(review([SILENT_H]));
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(review([SILENT_H]))
+      .mockResolvedValue(review([]));
+
     fixX({ audioText: "хо", pronunciation: "Como o r de “rato”, mais áspero; ouça хо (kho)." });
 
     await expect(alphabetReviewWorkflow({ lessonId, version: 1 })).resolves.toBe("republished");
@@ -200,6 +203,7 @@ describe(alphabetReviewWorkflow, () => {
           {
             problem: "The h of “hora” is silent. Fix: Compare it with the r of “rato”.",
             screen: 2,
+            source: "review",
           },
         ],
         serviceTier: "flex",
@@ -246,9 +250,11 @@ describe(alphabetReviewWorkflow, () => {
       title: "Quatro letras russas",
     };
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(
-      review([{ kind: "incorrect", problem: "The title promises more letters.", screen: null }]),
-    );
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(
+        review([{ problem: "The title promises more letters.", screen: null }]),
+      )
+      .mockResolvedValue(review([]));
 
     vi.mocked(fixAlphabetLesson).mockImplementation(async ({ lesson }) =>
       taskResult({ ...lesson, ...words }),
@@ -275,7 +281,9 @@ describe(alphabetReviewWorkflow, () => {
   it("takes a wrong lesson out of play when its fix leaves the flagged letter as it was", async () => {
     const lessonId = await publishCyrillic();
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(review([SILENT_H]));
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(review([SILENT_H]))
+      .mockResolvedValue(review([]));
 
     vi.mocked(fixAlphabetLesson).mockImplementation(async ({ lesson }) =>
       taskResult(lesson, "openai/gpt-6-luna"),
@@ -290,7 +298,10 @@ describe(alphabetReviewWorkflow, () => {
   it("takes a wrong lesson out of play when its fix can't be voiced", async () => {
     const lessonId = await publishCyrillic();
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(review([SILENT_H]));
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(review([SILENT_H]))
+      .mockResolvedValue(review([]));
+
     fixX({ audioText: "хо", pronunciation: "Como o r de “rato”, mais áspero; ouça хо (kho)." });
 
     vi.mocked(generateLanguageAudio).mockResolvedValue({
@@ -305,7 +316,10 @@ describe(alphabetReviewWorkflow, () => {
   it("takes a wrong lesson out of play when its fix fails the lesson's checks", async () => {
     const lessonId = await publishCyrillic();
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(review([SILENT_H]));
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(review([SILENT_H]))
+      .mockResolvedValue(review([]));
+
     fixX({ pronunciation: "Como o r de “rato”; ouça ха (kha).", readingAid: "  " });
 
     await expect(alphabetReviewWorkflow({ lessonId, version: 1 })).resolves.toBe("setAside");

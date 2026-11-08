@@ -415,11 +415,13 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
           problem:
             "The explanation counts the 2 NADH as ATP and gives a net of 4 ATP per glucose; the slides give 4 − 2 = 2 ATP, and NADH carries electrons to the respiratory chain. Fix: Give the net as 2 ATP and say what NADH does.",
           screen: 2,
+          source: "check" as const,
         },
         {
           problem:
             "The check marks 'na mitocôndria' as where glycolysis happens; the slides say the cytoplasm, and the mitochondria only come in the Krebs cycle. Fix: Mark the cytoplasm as correct.",
           screen: 4,
+          source: "check" as const,
         },
       ],
       language: "pt",

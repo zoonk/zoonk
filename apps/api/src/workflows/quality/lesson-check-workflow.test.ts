@@ -13,17 +13,14 @@ import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockSession } from "../../../../../packages/core/src/_test-utils/mock-session";
+import { settlePublishedDraft } from "../../../../../packages/core/src/_test-utils/settle-published-draft";
 import { writeLessonContent } from "../../../../../packages/core/src/_test-utils/write-lesson-content";
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
-import {
-  type LessonCheckInput,
-  lessonCheckWorkflow,
-  settlePublishedLesson,
-} from "./lesson-check-workflow";
+import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
 import { checkPublishedLessonStep, citePublishedLessonStep } from "./steps/lesson-check-steps";
 import type * as CheckSteps from "./steps/lesson-check-steps";
 
@@ -45,10 +42,8 @@ const wrong = taskResult({
   issues: [
     {
       fix: "Say that vaccines train the immune system without causing the disease.",
-      kind: "incorrect" as const,
       problem: "Screen 3 says the vaccine gives a mild case of the disease.",
       screen: 2,
-      severity: "blocking" as const,
     },
   ],
 });
@@ -176,7 +171,10 @@ describe(lessonCheckWorkflow, () => {
 
   it("tags the fix of what its reviewer found and draws the pictures it lacks, keeping the version learners get until they settle", async () => {
     const { input, lesson } = await publishedLesson();
-    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(wrong)
+      .mockResolvedValue(taskResult({ issues: [] }));
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
       taskResult({ changedScreens: [2], lesson: fixedDraft }),
@@ -222,7 +220,10 @@ describe(lessonCheckWorkflow, () => {
 
   it("gives learners the fix five minutes after its text even when its pictures never settle", async () => {
     const { input, lesson } = await publishedLesson();
-    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(wrong)
+      .mockResolvedValue(taskResult({ issues: [] }));
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
       taskResult({ changedScreens: [2], lesson: fixedDraft }),
@@ -254,7 +255,10 @@ describe(lessonCheckWorkflow, () => {
 
   it("gives learners the fix five minutes after its text was saved, however late its wait starts", async () => {
     const { input, lesson } = await publishedLesson();
-    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(wrong)
+      .mockResolvedValue(taskResult({ issues: [] }));
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
       taskResult({ changedScreens: [2], lesson: fixedDraft }),
@@ -268,7 +272,8 @@ describe(lessonCheckWorkflow, () => {
 
     const { plan, ...check } = input;
     const context = { ...check, workflowRunId: randomUUID() };
-    const outcome = await checkPublishedLessonStep({ ...context, plan });
+
+    await settlePublishedDraft(await checkPublishedLessonStep({ ...context, plan }));
 
     const { createdAt } = await prisma.step.findFirstOrThrow({
       where: { lessonId: lesson.id, staged: true },
@@ -285,9 +290,7 @@ describe(lessonCheckWorkflow, () => {
       running: () => true,
     });
 
-    await expect(settlePublishedLesson({ context, outcome, version: plan.version })).resolves.toBe(
-      "republished",
-    );
+    await expect(lessonCheckWorkflow(input)).resolves.toMatchObject({ status: "republished" });
 
     expect(seen).not.toContain(true);
     expect(Date.now() - savedAt).toBeLessThanOrEqual(5 * 60_000 + 6000);
@@ -296,7 +299,10 @@ describe(lessonCheckWorkflow, () => {
 
   it("starts tagging and drawing a fix while its citations are still being found", async () => {
     const { input } = await publishedLesson();
-    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(wrong)
+      .mockResolvedValue(taskResult({ issues: [] }));
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
       taskResult({ changedScreens: [2], lesson: fixedDraft }),

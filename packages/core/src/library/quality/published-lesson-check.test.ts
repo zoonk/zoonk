@@ -13,6 +13,7 @@ import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
+import { settlePublishedDraft } from "../../_test-utils/settle-published-draft";
 import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import * as refresh from "../../plans/refresh-goal-plan";
 import { completeLessonContent } from "../generation/lesson-generation-state";
@@ -20,12 +21,20 @@ import { readLessonMap } from "../lessons/lesson-map";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import {
-  checkPublishedLesson,
   citePublishedLesson,
   publishFixedVersion,
-  redraftPublishedLesson,
-  setAsidePublishedLesson,
+  checkPublishedLesson as reviewPublished,
+  redraftPublishedLesson as writePublished,
 } from "./published-lesson-check";
+import { setAsidePublishedLesson } from "./set-aside-published-lesson";
+
+async function checkPublishedLesson(input: Parameters<typeof reviewPublished>[0]) {
+  return settlePublishedDraft(await reviewPublished(input));
+}
+
+async function redraftPublishedLesson(input: Parameters<typeof writePublished>[0]) {
+  return settlePublishedDraft(await writePublished(input));
+}
 
 type ReviewIssue = Awaited<ReturnType<typeof checkLessonQuality>>["data"]["issues"][number];
 
@@ -101,10 +110,8 @@ function explanation(text: string): WrittenScreen {
 
 const wrongRise: ReviewIssue = {
   fix: "Say that a rise moves up the thermometer.",
-  kind: "incorrect",
   problem: "The screen says a rise moves the mark down below zero.",
   screen: 4,
-  severity: "blocking",
 };
 
 const writtenWrong = () =>
@@ -162,6 +169,42 @@ function listSteps(lessonId: string) {
 }
 
 describe(checkPublishedLesson, () => {
+  it("reviews, fixes, rechecks and stages in separate calls", async () => {
+    const { lesson, plan, draft } = await publishLesson({ lesson: writtenWrong() });
+    mockReview([wrongRise]);
+
+    const reviewed = await reviewPublished({
+      lessonId: lesson.id,
+      plan,
+      workflowRunId: randomUUID(),
+    });
+
+    expect(reviewed.status).toBe("needsFix");
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    expect(fixLessonDraft).not.toHaveBeenCalled();
+
+    if (reviewed.status !== "needsFix") {
+      throw new Error("Expected findings");
+    }
+
+    mockFix({ changedScreens: [], lesson: writtenWrong() });
+    const { fixPublishedDraft, checkPublishedDraft } = await import("./published-lesson-check");
+    const fixed = await fixPublishedDraft({ state: reviewed.state });
+
+    expect(fixLessonDraft).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ model: draft.model }),
+    );
+
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    mockReview([wrongRise]);
+
+    await expect(checkPublishedDraft({ fixed: true, state: fixed })).resolves.toMatchObject({
+      status: "heldBack",
+    });
+
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
+  });
+
   it("leaves a version the reviewer passes as it is, reviewing it at flex", async () => {
     const { draft, lesson, plan } = await publishLesson();
     mockReview();
@@ -197,12 +240,13 @@ describe(checkPublishedLesson, () => {
 
     mockReview([wrongRise]);
     const fix = mockFix({ changedScreens: [4], lesson: { ...writtenRight(), summary: map } });
+    mockReview();
 
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
     ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
-    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
     expect(fixLessonDraft).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
 
     const readVersions = () =>
@@ -256,7 +300,6 @@ describe(checkPublishedLesson, () => {
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
     ).resolves.toMatchObject({
       draft: { problems: [expect.objectContaining({ screen: 1 })] },
-      incorrect: true,
       status: "heldBack",
     });
 
@@ -270,16 +313,18 @@ describe(checkPublishedLesson, () => {
     const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
     mockReview([wrongRise]);
     mockFix({ changedScreens: [], lesson: writtenWrong() });
+    mockReview([wrongRise]);
 
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
-    ).resolves.toMatchObject({ incorrect: true, status: "heldBack" });
+    ).resolves.toMatchObject({ status: "heldBack" });
   });
 
   it("answers a check run again with the fix it staged, and changes nothing once that fix took the lesson's place", async () => {
     const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
     mockReview([wrongRise]);
     mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview();
 
     const check = () =>
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
@@ -295,7 +340,7 @@ describe(checkPublishedLesson, () => {
     await publishFixedVersion({ lessonId: lesson.id, version: 2 });
     await expect(check()).resolves.toStrictEqual({ status: "replaced" });
 
-    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
   });
 
   it("keeps the pictures the replaced version had for screens asking for the same picture", async () => {
@@ -309,6 +354,7 @@ describe(checkPublishedLesson, () => {
 
     mockReview([wrongRise]);
     mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview();
     await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
 
     const fixed = await prisma.step.findFirstOrThrow({
@@ -343,7 +389,10 @@ describe(redraftPublishedLesson, () => {
     ).resolves.toStrictEqual({ savedAt: expect.any(Number), status: "republished", version: 2 });
 
     expect(writeLessonDraft).toHaveBeenLastCalledWith(
-      expect.objectContaining({ heldBackProblems: heldBack.problems, serviceTier: "flex" }),
+      expect.objectContaining({
+        heldBackProblems: heldBack.problems.map((problem) => ({ ...problem, source: "review" })),
+        serviceTier: "flex",
+      }),
     );
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();
@@ -543,6 +592,7 @@ describe(setAsidePublishedLesson, () => {
     const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
     mockReview([wrongRise]);
     mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview();
     await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
 
     await expect(

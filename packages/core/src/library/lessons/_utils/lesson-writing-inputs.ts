@@ -168,10 +168,3 @@ export async function loadPublishedLessonInputs(
 
   return state?.status === "ready" ? state.inputs : null;
 }
-
-export async function loadLessonWritingContext(
-  lessonId: string,
-): Promise<LessonWritingContext | null> {
-  const inputs = await loadPublishedLessonInputs(lessonId);
-  return inputs ? toWritingContext(inputs) : null;
-}

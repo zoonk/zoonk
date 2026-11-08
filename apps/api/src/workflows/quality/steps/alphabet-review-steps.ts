@@ -29,3 +29,8 @@ export async function publishAlphabetFixStep(
 
   return publishAlphabetFix(input);
 }
+
+export async function reviewAlphabetFixStep(input: Parameters<typeof reviewAlphabetLesson>[0]) {
+  "use step";
+  return reviewAlphabetLesson(input);
+}

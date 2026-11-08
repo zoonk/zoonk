@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
 import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
@@ -69,6 +70,40 @@ export const scoreLessonFix: TaskScorer<LessonFixExpected> = async ({ output, te
   }
 
   const { changedScreens, lesson } = JSON.parse(output) as FixOutput;
+
+  if (expected.real) {
+    const changed = lesson.screens.flatMap((screen, index) =>
+      isDeepStrictEqual(screen, input.lesson.screens[index]) ? [] : [index],
+    );
+
+    const summaryChanged = !isDeepStrictEqual(lesson.summary, input.lesson.summary);
+
+    if (expected.real === "citation") {
+      const kept =
+        JSON.stringify(lesson.screens[3]).includes("§ 2º") &&
+        changed.length === 0 &&
+        !summaryChanged;
+
+      return createFixedScore({
+        conclusion: kept
+          ? "Kept the correct citation and all content."
+          : "Changed correct content.",
+        score: kept ? 10 : 6,
+      });
+    }
+
+    const fixed =
+      [13, 15].every((index) => changed.includes(index)) &&
+      summaryChanged &&
+      changed.every((index) => index === 13 || index === 15);
+
+    return createFixedScore({
+      conclusion: fixed
+        ? "Updated both claims and the summary; inspect the factual correction."
+        : "Missed a repeated claim or changed unrelated screens.",
+      score: fixed ? 10 : 6,
+    });
+  }
 
   const checked = checkLesson(input, lesson);
 

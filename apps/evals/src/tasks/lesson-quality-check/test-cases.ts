@@ -1,9 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
-import {
-  type CheckLessonQualityParams,
-  type LessonQualityIssueKind,
-} from "@zoonk/ai/tasks/quality/lesson-check";
+import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/quality/lesson-check";
 import { ALPHABET_LESSONS, ALPHABET_SLIPS, type AlphabetCheckInput } from "./alphabet-lessons";
 import { BASE_LESSONS } from "./base-lessons";
 import { EXAM_PREP_BASE_LESSON } from "./exam-prep-lessons";
@@ -26,7 +23,7 @@ export type LessonQualityCheckInput = Pick<
 
 export type LessonQualityCheckExpected =
   | { verdict: "pass" }
-  | { kinds: LessonQualityIssueKind[]; screen: number | null; verdict: "fail" };
+  | { screen: number | null; verdict: "fail" };
 
 function plant(
   base: LessonQualityCheckInput,
@@ -69,12 +66,12 @@ export const TEST_CASES: TestCase<
     userInput: ALPHABET_LESSONS.cyrillic,
   },
   {
-    expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
+    expected: { screen: 8, verdict: "fail" },
     id: "pt-ru-alphabet-silent-h",
     userInput: ALPHABET_SLIPS.silentH,
   },
   {
-    expected: { kinds: ["incorrect"], screen: 7, verdict: "fail" },
+    expected: { screen: 7, verdict: "fail" },
     id: "en-ko-alphabet-book-vowel",
     userInput: ALPHABET_SLIPS.bookVowel,
   },
@@ -85,7 +82,7 @@ export const TEST_CASES: TestCase<
     userInput: EXAM_PREP_BASE_LESSON,
   },
   {
-    expected: { kinds: ["weakCheck", "level"], screen: 5, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-finalidades-oab-exam-prep-absurd-option",
     userInput: plant(EXAM_PREP_BASE_LESSON, 5, {
       basis: null,
@@ -120,7 +117,7 @@ export const TEST_CASES: TestCase<
   },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
   {
-    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
+    expected: { screen: 4, verdict: "fail" },
     id: "en-tax-deadlines-contradicts-source",
     userInput: plant(taxDeadlines, 4, {
       exampleLineIdea: null,
@@ -133,7 +130,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 2, verdict: "fail" },
+    expected: { screen: 2, verdict: "fail" },
     id: "pt-estabilidade-contradicts-source",
     userInput: plant(estabilidade, 2, {
       exampleLineIdea: null,
@@ -194,7 +191,7 @@ export const TEST_CASES: TestCase<
     userInput: { ...regra, lesson: regra.lesson },
   },
   {
-    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
+    expected: { screen: 4, verdict: "fail" },
     id: "en-temperature-wrong-math",
     userInput: plant(temperature, 4, {
       image: null,
@@ -210,7 +207,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["filler", "scope"], screen: 6, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-filler",
     userInput: plant(temperature, 6, {
       exampleLineIdea: null,
@@ -223,7 +220,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["decorativeActivity", "weakCheck", "unclear"], screen: 7, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-decorative-activity",
     userInput: plant(temperature, 7, {
       content: JSON.stringify({
@@ -249,7 +246,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["jargon", "unclear", "level"], screen: 2, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-regra-jargon",
     userInput: plant(regra, 2, {
       exampleLineIdea: null,
@@ -262,7 +259,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["scope"], screen: 5, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-regra-framed-around-one-exam",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -271,7 +268,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["unclear"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-case-before-shown",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -279,7 +276,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect", "scope"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-real-brand-failure",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -288,7 +285,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-wrong-answer-key",
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -324,7 +321,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["level", "jargon"], screen: 6, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "pt-eletron-formula-in-overview",
     userInput: plant(eletron, 6, {
       exampleLineIdea: null,
@@ -337,7 +334,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 6, verdict: "fail" },
+    expected: { screen: 6, verdict: "fail" },
     id: "pt-regra-worked-example-trap",
     userInput: plant(regra, 6, {
       image: null,
@@ -361,7 +358,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 9, verdict: "fail" },
+    expected: { screen: 9, verdict: "fail" },
     id: "en-temperature-mismatched-reason",
     userInput: plant(temperature, 9, {
       basis: null,
@@ -394,7 +391,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["unclear", "incorrect"], screen: 9, verdict: "fail" },
+    expected: { screen: 9, verdict: "fail" },
     id: "en-temperature-data-disagrees-with-options",
     userInput: plant(temperature, 9, {
       basis: null,
@@ -433,7 +430,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: null, verdict: "fail" },
+    expected: { screen: null, verdict: "fail" },
     id: "pt-regra-wrong-summary",
     userInput: {
       ...regra,
@@ -460,7 +457,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["incorrect"], screen: null, verdict: "fail" },
+    expected: { screen: null, verdict: "fail" },
     id: "pt-regra-over-broad-summary",
     userInput: {
       ...regra,
@@ -487,7 +484,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["incorrect"], screen: 9, verdict: "fail" },
+    expected: { screen: 9, verdict: "fail" },
     id: "en-temperature-two-right-options",
     userInput: plant(temperature, 9, {
       basis: null,
@@ -522,7 +519,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { kinds: ["incorrect"], screen: 5, verdict: "fail" },
+    expected: { screen: 5, verdict: "fail" },
     id: "pt-eletron-wrong-reason-on-right-option",
     userInput: plant(eletron, 5, {
       ...(screenOf(eletron, 5) as Extract<WrittenScreen, { kind: "check" }>),
@@ -560,7 +557,7 @@ export const TEST_CASES: TestCase<
     },
   },
   {
-    expected: { kinds: ["scope", "weakCheck"], screen: 9, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-repeats-earlier-lesson",
     userInput: {
       ...temperature,

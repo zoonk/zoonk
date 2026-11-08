@@ -3,18 +3,24 @@ import {
   MAX_LESSON_DRAFTS,
 } from "@zoonk/core/library/generation/held-back-drafts";
 import { type LessonCheckPlan } from "@zoonk/core/library/lessons/write-content";
-import { type PublishedLessonOutcome } from "@zoonk/core/library/quality/published-checks";
+import {
+  type PublishedDraftOutcome,
+  type PublishedLessonOutcome,
+} from "@zoonk/core/library/quality/published-checks";
 import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { markAndDraw } from "../lessons/mark-and-draw";
 import {
+  checkPublishedDraftStep,
   checkPublishedLessonStep,
   citePublishedLessonStep,
+  fixPublishedDraftStep,
   publishFixedVersionStep,
   readLessonImageScopeStep,
   redraftPublishedLessonStep,
   setAsidePublishedLessonStep,
+  stagePublishedDraftStep,
 } from "./steps/lesson-check-steps";
 
 export type LessonCheckInput = {
@@ -24,13 +30,42 @@ export type LessonCheckInput = {
   plan: LessonCheckPlan;
 };
 
-export type LessonCheckStatus = PublishedLessonOutcome["status"] | "setAside";
+type LessonCheckStatus = PublishedLessonOutcome["status"] | "setAside";
 
 export type LessonCheckResult = { cited: number; status: LessonCheckStatus };
 
 type CheckContext = Omit<LessonCheckInput, "plan"> & { workflowRunId: string };
 
 type Redraft = { drafts: HeldBackDraft[]; outcome: PublishedLessonOutcome };
+
+async function finishDraft(outcome: PublishedDraftOutcome): Promise<PublishedLessonOutcome> {
+  if (outcome.status === "drafted") {
+    return finishDraft(await checkPublishedDraftStep({ state: outcome.state }));
+  }
+
+  if (outcome.status === "needsFix") {
+    const state = await fixPublishedDraftStep({ state: outcome.state });
+    return finishDraft(await checkPublishedDraftStep({ fixed: true, state }));
+  }
+
+  if (outcome.status === "checked") {
+    const staged = await stagePublishedDraftStep(outcome);
+
+    if (
+      staged.status === "republished" &&
+      outcome.state.inputs.material.length + outcome.state.inputs.sources.length > 0
+    ) {
+      await citePublishedLessonStep({
+        ...outcome.state.context,
+        plan: { lesson: outcome.state.version.lesson, version: staged.version },
+      }).catch(() => 0);
+    }
+
+    return staged;
+  }
+
+  return outcome;
+}
 
 async function redraft({
   context,
@@ -41,7 +76,10 @@ async function redraft({
   drafts: HeldBackDraft[];
   version: number;
 }): Promise<Redraft> {
-  const outcome = await redraftPublishedLessonStep({ ...context, heldBackDrafts: drafts, version });
+  const outcome = await finishDraft(
+    await redraftPublishedLessonStep({ ...context, heldBackDrafts: drafts, version }),
+  );
+
   return { drafts: outcome.status === "heldBack" ? [...drafts, outcome.draft] : drafts, outcome };
 }
 
@@ -61,7 +99,7 @@ function redraftUntilPublished({
   });
 }
 
-export async function settlePublishedLesson({
+async function settlePublishedLesson({
   context,
   outcome,
   version,
@@ -88,7 +126,7 @@ export async function settlePublishedLesson({
     await publishFixedVersionStep({ lessonId, version: settled.version });
   }
 
-  if (settled.status === "heldBack" && outcome.status === "heldBack" && outcome.incorrect) {
+  if (settled.status === "heldBack" && outcome.status === "heldBack") {
     await setAsidePublishedLessonStep({ lessonId: context.lessonId, version });
     return "setAside";
   }
@@ -104,7 +142,7 @@ async function checkAndSettle({
   plan: LessonCheckPlan;
 }): Promise<LessonCheckStatus> {
   const outcome: PublishedLessonOutcome = plan.review
-    ? await checkPublishedLessonStep({ ...context, plan })
+    ? await finishDraft(await checkPublishedLessonStep({ ...context, plan }))
     : { status: "passed" };
 
   return settlePublishedLesson({ context, outcome, version: plan.version });

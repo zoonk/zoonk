@@ -3,6 +3,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { voiceAlphabetClips } from "../language/alphabet-lesson";
 import {
   publishAlphabetFixStep,
+  reviewAlphabetFixStep,
   reviewAlphabetLessonStep,
   writeAlphabetFixStep,
 } from "./steps/alphabet-review-steps";
@@ -46,6 +47,17 @@ export async function alphabetReviewWorkflow({
 
   if (fix.status !== "fixed") {
     return "replaced";
+  }
+
+  const remaining = await reviewAlphabetFixStep({ ...context, lesson: fix.lesson });
+
+  if (!remaining) {
+    return "replaced";
+  }
+
+  if (remaining.length > 0) {
+    const setAside = await setAsidePublishedLessonStep({ lessonId, version });
+    return setAside ? "setAside" : "replaced";
   }
 
   try {

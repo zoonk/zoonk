@@ -32,14 +32,14 @@ export type LessonWritingContext = {
 };
 
 /** `screen` is a 0-based index, or null for the whole lesson. */
-export type LessonProblem = { screen: number | null; problem: string };
+export type LessonProblem = { screen: number | null; problem: string; source: "check" | "review" };
 
 export function formatLessonProblems(problems: readonly LessonProblem[]): string {
   return problems
     .map((problem) =>
       problem.screen === null
-        ? `- Whole lesson: ${problem.problem}`
-        : `- Screen ${problem.screen + 1}: ${problem.problem}`,
+        ? `- Whole lesson (${problem.source === "check" ? "automatic check" : "reviewer"}): ${problem.problem}`
+        : `- Screen ${problem.screen + 1} (${problem.source === "check" ? "automatic check" : "reviewer"}): ${problem.problem}`,
     )
     .join("\n");
 }

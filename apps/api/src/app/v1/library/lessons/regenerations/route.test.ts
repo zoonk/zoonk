@@ -41,11 +41,9 @@ describe("POST /v1/library/lessons/regenerations", () => {
 
     expect(start).toHaveBeenCalledTimes(LESSON_IDS.length);
 
-    expect(start).toHaveBeenCalledWith(
-      lessonContentWorkflow,
-      [{ forceReview: true, lessonId: LESSON_IDS[0] }],
-      { experimental_hook: { token: `lesson-content:${LESSON_IDS[0]}` } },
-    );
+    expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [{ lessonId: LESSON_IDS[0] }], {
+      experimental_hook: { token: `lesson-content:${LESSON_IDS[0]}` },
+    });
   });
 
   it("rejects a request without a model or prompt version", async () => {

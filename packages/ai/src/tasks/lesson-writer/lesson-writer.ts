@@ -1,6 +1,5 @@
 import "server-only";
 import { generateText } from "ai";
-import { getModelFamily } from "../../_utils/model-family";
 import { schemaInPrompt } from "../../_utils/schema-in-prompt";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
@@ -53,7 +52,7 @@ export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
   return reuse === "personal" ? defaultModel : sharedLessonModel;
 }
 
-function getFallbackModels(model: string): string[] {
+export function getLessonWriterFallbackModels(model: string): string[] {
   return WRITER_MODELS.filter((candidate) => candidate !== model);
 }
 
@@ -66,16 +65,6 @@ export type WriteLessonDraftParams = LessonWritingContext & {
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
-
-/**
- * The first model of the writer's chain from a family that wrote none of the held-back drafts. The
- * reviewer follows the writer, so it stays from another family.
- */
-export function getLessonRewriteModel(heldBackModels: readonly string[]): string {
-  const families = new Set(heldBackModels.map((model) => getModelFamily(model)));
-
-  return WRITER_MODELS.find((model) => !families.has(getModelFamily(model))) ?? defaultModel;
-}
 
 const FIND_ERROR_TEMPLATE = "findError";
 
@@ -125,7 +114,7 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
   const userPrompt = formatWriterPrompt(params);
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: getFallbackModels(model),
+    fallbackModels: getLessonWriterFallbackModels(model),
     model,
     serviceTier,
     useFallback,

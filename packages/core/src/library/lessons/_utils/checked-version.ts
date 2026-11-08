@@ -4,18 +4,12 @@ import { type writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type CitedDocuments, citeMaterial } from "@zoonk/ai/tasks/material/cite";
-import { safeAsync } from "@zoonk/utils/error";
-import {
-  type LessonGateProblem,
-  type LessonWritingContext,
-  runLessonQualityGate,
-} from "../../quality/lesson-quality-gate";
+import { type LessonWritingContext, runLessonQualityGate } from "../../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../../quality/lesson-repairs";
 import { type SourceVersion, toSourceVersions } from "../../sources/content-review-flags";
 import { formatMaterialPages } from "../../sources/material-pages";
 import { addQuestionBases } from "../../steps/question-bases";
 import { type ConvertedScreen } from "../../steps/written-screens";
-import { getFixReach } from "./fix-reach";
 import { type LessonWritingInputs } from "./lesson-writing-inputs";
 import { type LessonScreenToSave, type ScreenProvenance } from "./save-lesson-content";
 import { type ScreenCitation, describeWrittenScreen, toScreenCitations } from "./screen-citations";
@@ -36,9 +30,12 @@ export type LessonGate = {
   writerModel: string;
 };
 
-export type CheckedVersion =
-  | { fixed: boolean; screens: ConvertedScreen[]; status: "passed"; version: WrittenVersion }
-  | { problems: LessonGateProblem[]; status: "heldBack" };
+export type CheckedVersion = {
+  fixed: boolean;
+  screens: ConvertedScreen[];
+  status: "passed";
+  version: WrittenVersion;
+};
 
 function getLessonDocumentKind(inputs: LessonWritingInputs): CitedDocuments {
   return inputs.material.length > 0 ? "material" : "sources";
@@ -107,7 +104,7 @@ type CiteScreensInput = {
   serviceTier?: ServiceTier;
 };
 
-/** Model failures throw so the citation step can retry; use `citeScreensIfPossible` when citations are optional. */
+/** Model failures throw so the citation step can retry. */
 export async function citeScreens({
   analytics,
   inputs,
@@ -135,47 +132,16 @@ export async function citeScreens({
   });
 }
 
-/** Citation failures are omitted; use `citeScreens` when the caller must retry them. */
-export async function citeScreensIfPossible(
-  input: CiteScreensInput,
-): Promise<(ScreenCitation | null)[]> {
-  const { data } = await safeAsync(() => citeScreens(input));
-  return data ?? [];
-}
-
 export async function checkFixedLesson({
-  draft,
-  first,
   fixed,
   gate,
   review,
 }: {
-  draft: WrittenLesson;
-  first: GateResult;
   fixed: WrittenLesson;
   gate: LessonGate;
   review: boolean;
 }): Promise<GateResult> {
-  const reach = getFixReach({
-    draft,
-    fixed,
-    incorrect: first.incorrect,
-    problems: [...first.blocking, ...first.minor],
-  });
-
-  const second = await runLessonQualityGate({
-    ...gate,
-    afterFix: true,
-    allowActivityFallback: true,
-    lesson: fixed,
-    review: review && reach.strayed,
-  });
-
-  return {
-    ...second,
-    blocking: reach.strayed ? second.blocking : [...second.blocking, ...reach.unfixed],
-    incorrect: reach.strayed ? second.incorrect : [...second.incorrect, ...reach.unfixed],
-  };
+  return runLessonQualityGate({ ...gate, allowActivityFallback: true, lesson: fixed, review });
 }
 
 export async function fixVersionDraft({
@@ -191,7 +157,11 @@ export async function fixVersionDraft({
     ...gate.context,
     analytics: gate.analytics,
     lesson: draft.lesson,
-    problems: [...first.blocking, ...first.minor],
+    model: gate.writerModel,
+    problems: first.blocking.map((problem) => ({
+      ...problem,
+      source: problem.source === "code" ? "check" : "review",
+    })),
     serviceTier: gate.serviceTier,
   });
 
@@ -211,63 +181,4 @@ export async function fixVersionDraft({
       (_, index) => (changed.has(index) ? fixed : draft.provenanceByScreen[index]) ?? fixed,
     ),
   };
-}
-
-export async function fixVersion({
-  draft,
-  first,
-  gate,
-  passes = 1,
-  review,
-}: {
-  draft: WrittenVersion;
-  first: GateResult;
-  gate: LessonGate;
-  passes?: number;
-  review: boolean;
-}): Promise<CheckedVersion> {
-  const version = await fixVersionDraft({ draft, first, gate });
-
-  const checked = await checkFixedLesson({
-    draft: draft.lesson,
-    first,
-    fixed: version.lesson,
-    gate,
-    review,
-  });
-
-  if (checked.blocking.length === 0) {
-    return { fixed: true, screens: checked.screens, status: "passed", version };
-  }
-
-  return passes > 1
-    ? fixVersion({ draft: version, first: checked, gate, passes: passes - 1, review })
-    : { problems: checked.blocking, status: "heldBack" };
-}
-
-export async function checkVersion({
-  draft: written,
-  fixPasses,
-  gate,
-  review,
-}: {
-  draft: WrittenVersion;
-  fixPasses?: number;
-  gate: LessonGate;
-  review: boolean;
-}): Promise<CheckedVersion> {
-  const lesson = repairWrittenLesson({
-    language: gate.context.language,
-    lesson: written.lesson,
-    spec: gate.context.spec,
-  });
-
-  const draft = { ...written, lesson };
-  const first = await runLessonQualityGate({ ...gate, lesson, review });
-
-  if (first.blocking.length === 0) {
-    return { fixed: false, screens: first.screens, status: "passed", version: draft };
-  }
-
-  return fixVersion({ draft, first, gate, passes: fixPasses, review });
 }

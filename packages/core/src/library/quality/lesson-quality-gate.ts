@@ -32,14 +32,13 @@ export type LessonWritingContext = Pick<
 
 type AiAnalytics = CheckLessonQualityParams["analytics"];
 
-/** Flaws a fix pass may not fully clear that still leave a lesson worth publishing. */
-const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
+/** Advisory codes never block publication or start a fix. */
+const ADVISORY_CODES = new Set<LessonCheckProblem["code"]>([
   "basis",
   "guessAnswer",
   "moneyFormat",
   "newTerms",
   "plannedVisual",
-  "rawMath",
   "readingLevel",
   "repeatedExample",
   "repeatedQuestion",
@@ -56,35 +55,29 @@ export type LessonGateProblem = {
 
 type LessonGateResult = {
   blocking: LessonGateProblem[];
-  incorrect: LessonGateProblem[];
   minor: LessonGateProblem[];
   screens: ConvertedScreen[];
 };
 
 async function reviewLesson({
-  afterFix,
   analytics,
   context,
   lesson,
-  reuse,
   screens,
   serviceTier,
   writerModel,
 }: {
-  afterFix: boolean;
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
-  reuse: CallReuse;
   screens: readonly ConvertedScreen[];
   serviceTier?: ServiceTier;
   writerModel: string;
-}): Promise<Pick<LessonGateResult, "blocking" | "incorrect" | "minor">> {
+}): Promise<Pick<LessonGateResult, "blocking" | "minor">> {
   const { data } = await checkLessonQuality({
     ...context,
     analytics,
     lesson: toReviewedLesson({ lesson, screens }),
-    reuse,
     serviceTier,
     writerModel,
   });
@@ -97,32 +90,18 @@ async function reviewLesson({
     source: "review",
   });
 
-  const isBlocking = (issue: Issue) =>
-    issue.severity === "blocking" && (!afterFix || issue.kind === "incorrect");
-
-  const blocking = data.issues.filter((issue) => isBlocking(issue));
-
-  return {
-    blocking: blocking.map((issue) => toProblem(issue)),
-    incorrect: blocking
-      .filter((issue) => issue.kind === "incorrect")
-      .map((issue) => toProblem(issue)),
-    minor: data.issues.filter((issue) => !isBlocking(issue)).map((issue) => toProblem(issue)),
-  };
+  return { blocking: data.issues.map(toProblem), minor: [] };
 }
 
 export async function runLessonQualityGate({
-  afterFix = false,
   allowActivityFallback = false,
   analytics,
   context,
   lesson,
-  reuse,
   review,
   serviceTier,
   writerModel,
 }: {
-  afterFix?: boolean;
   allowActivityFallback?: boolean;
   analytics?: AiAnalytics;
   context: LessonWritingContext;
@@ -148,20 +127,18 @@ export async function runLessonQualityGate({
     checkLessonPrograms(checked.screens),
     review
       ? reviewLesson({
-          afterFix,
           analytics,
           context,
           lesson,
-          reuse,
           screens: checked.screens,
           serviceTier,
           writerModel,
         })
-      : { blocking: [], incorrect: [], minor: [] },
+      : { blocking: [], minor: [] },
   ]);
 
   const codeProblems = [...checked.problems, ...programProblems].map((problem) => ({
-    isMinor: afterFix && LENIENT_AFTER_FIX.has(problem.code),
+    isMinor: ADVISORY_CODES.has(problem.code),
     problem: { problem: problem.problem, screen: problem.screen, source: "code" as const },
   }));
 
@@ -170,7 +147,6 @@ export async function runLessonQualityGate({
       ...codeProblems.filter((entry) => !entry.isMinor).map((entry) => entry.problem),
       ...reviewed.blocking,
     ],
-    incorrect: reviewed.incorrect,
     minor: [
       ...codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
       ...reviewed.minor,

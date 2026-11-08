@@ -203,7 +203,7 @@ describe("held-back lessons", () => {
     );
 
     expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].heldBackProblems).toStrictEqual([
-      { problem: "The option marked correct is wrong.", screen: 3 },
+      { problem: "The option marked correct is wrong.", screen: 3, source: "review" },
     ]);
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
