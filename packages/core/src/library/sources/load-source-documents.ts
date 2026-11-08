@@ -16,7 +16,7 @@ const OFFICE_TYPES = new Set<string>([DOCX_CONTENT_TYPE, PPTX_CONTENT_TYPE]);
 
 export type SourceDocument = {
   contentHash: string;
-  file: { data: Uint8Array | URL; mediaType: string } | null;
+  file: { data: Uint8Array; mediaType: string } | null;
   id: string;
   images: DocumentImage[];
   publisher: string | null;
@@ -25,7 +25,11 @@ export type SourceDocument = {
   url: string | null;
 };
 
-/** Only private uploads keep a file; a public source's is the publisher's, read where it lives. */
+/**
+ * Models get a file's bytes, never its address: publishers refuse many providers' downloads, and
+ * some provider routes take no URLs. Only private uploads keep a file; a public one is read where
+ * it lives.
+ */
 async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8Array | null> {
   if (blobUrl) {
     const blob = await readUploadedBlob(blobUrl);
@@ -50,10 +54,6 @@ async function loadSourceFiles(source: Source) {
 
   if (mediaType === PDF_CONTENT_TYPE && isCutText(source.extractedText)) {
     return { file: null, images: [] };
-  }
-
-  if (source.url && !source.blobUrl && NATIVE_FILE_TYPES.has(mediaType)) {
-    return { file: { data: new URL(source.url), mediaType }, images: [] };
   }
 
   const bytes =
