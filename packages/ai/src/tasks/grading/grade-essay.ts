@@ -17,12 +17,13 @@ import {
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * On the grade-essay eval, Flash, Sonnet and Opus put every total in its band while Luna and Sol
- * scored an error-filled essay a level too high; Flash was the fastest and cheapest (Sep 2026).
- * GPT-6 Sol stays a fallback because GPT-6.1 Sol put more totals above their band.
+ * On 11 essays (8 Nov 2026), Haiku 5.5 at high reasoning put every total in its band (EN 3/3, PT
+ * 8/8) at $2.29/1k, and Gemini 3.8 Flash at high did too at $16.59/1k; at default reasoning both
+ * missed one. Haiku still gave one essay a C5 score its own element count contradicts.
  */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["anthropic/claude-opus-5.5", "openai/gpt-6-sol"] as const;
+const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultReasoning: Reasoning = "high";
+const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
 /**
  * `ap`: each row is worth its own whole points. `custom`: every other written answer, each
@@ -173,7 +174,15 @@ ${essayBlock}
 
 /** Code enforces the rubric's rules; texts too short to grade are settled without a model. */
 export async function gradeEssay(params: GradeEssayParams) {
-  const { analytics, essay, model = defaultModel, reasoning, rubric, useFallback = true } = params;
+  const {
+    analytics,
+    essay,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    rubric,
+    useFallback = true,
+  } = params;
+
   const criteria = getEssayCriteria(rubric);
   const systemPrompt = getSystemPrompt(rubric);
   const userPrompt = buildUserPrompt({ criteria, params });

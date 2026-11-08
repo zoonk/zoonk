@@ -1,12 +1,18 @@
 import "server-only";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
-import { JEV_MODEL_ID } from "../../evaluate/evaluation-models";
 import decisionPrompt from "./exam-identity-decision.prompt.md";
 
 /** The Library identity decisions' cutoff; the exam eval can move it. */
 const MIN_PROBABILITY = 0.6;
-const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
+
+/**
+ * At this cutoff on 14 cases (8 Nov 2026), Decider Flash V1.2 and Mammoth got every pair right (EN
+ * 3/3, PT 10/10) at $0.0050 and $0.0506 per 1k decisions; Jev ($0.0299) took a stored exam with no
+ * phase for the first phase.
+ */
+const EVALUATION_MODEL = "perplexity/pplx-decider-flash-v1.2";
+const FALLBACK_EVALUATION_MODEL = "baseten/mammoth-1";
 
 export const EXAM_IDENTITY_INSTRUCTIONS: string = decisionPrompt;
 
@@ -37,7 +43,7 @@ function describeExam(exam: ExamDescription): ExamDescription {
 /** Both sides are delimited data, so a name claiming "same exam" can't move the verdict. */
 export async function evaluateExamIdentityPair({
   candidate,
-  model = JEV_MODEL_ID,
+  model = EVALUATION_MODEL,
   request,
 }: {
   candidate: ExamDescription;

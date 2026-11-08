@@ -31,8 +31,9 @@ function buildGatewayProviderOptions({
   useFallback: boolean;
 }): ProviderOptionsResult["gateway"] {
   const order = getGatewayProviderOrder(model);
+  const models = useFallback ? fallbackModels.filter((candidate) => candidate !== model) : [];
 
-  return { models: useFallback ? [...fallbackModels] : [], ...(order ? { order } : {}) };
+  return { models, ...(order ? { order } : {}) };
 }
 
 function getGatewayProviderOrder(model: string): GatewayProviderOptions["order"] {

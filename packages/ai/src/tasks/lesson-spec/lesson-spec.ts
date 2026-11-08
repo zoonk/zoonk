@@ -29,14 +29,13 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
- * The plan decides which screens show a visual. On 8 lessons across subjects and levels (4 Nov 2026),
- * with the same writer, Sol's plans scored 8.38 against Terra's 8.13, Opus's 8.00, Sonnet's 7.86
- * and Flash's 7.74, and 8.54 on visuals against Terra's 6.08: readers missed a visual on 5 to 14%
- * of screens instead of 18 to 31%, with 1 to 2% decorative. It costs about $0.06 a plan, Terra
- * $0.03. A learner's own lesson is planned by its scope's model (Luna).
+ * Shared plans: on 24 plans (8 Nov 2026), Terra scored 8.76 (EN 9.05, PT 8.79) at $22.77/1k against
+ * Sol's 8.52 at $57.57/1k, with one plan failing the shape checks against Sol's four; Sol drew
+ * setups better on some visual lessons, not enough for 2.5 times the cost. Opus, the other
+ * provider, last ran an older prompt. A learner's own lesson is planned with its scope's models.
  */
-const defaultModel = "openai/gpt-6.1-sol";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const defaultModel = "openai/gpt-6.1-terra";
+const defaultFallbackModels = ["openai/gpt-6.1-sol", "anthropic/claude-opus-5.5"] as const;
 
 const skillSchema = z.object({
   description: z.string(),
@@ -92,6 +91,7 @@ export type LessonSpecParams = {
   /** One short lesson summing up a skill's core ideas, which is never split. */
   quick?: boolean;
   model?: string;
+  fallbackModels?: readonly string[];
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -151,7 +151,15 @@ ${formatLessonDocuments({ material: params.material, sources: params.sources })}
 }
 
 async function planLesson(params: LessonSpecParams) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const {
+    analytics,
+    fallbackModels = defaultFallbackModels,
+    model = defaultModel,
+    reasoning,
+    serviceTier,
+    useFallback = true,
+  } = params;
+
   const instructions = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });

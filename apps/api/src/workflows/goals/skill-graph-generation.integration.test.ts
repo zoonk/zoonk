@@ -313,7 +313,7 @@ describe("durable skill graph generation", () => {
 
     expect(
       vi.mocked(generateWholeSkillGraph).mock.calls.map(([params]) => params.model),
-    ).toStrictEqual(["google/gemini-3.8-flash", undefined]);
+    ).toStrictEqual(["openai/gpt-6-luna", undefined]);
   });
 
   it.each(["learn", "language"] as const)(

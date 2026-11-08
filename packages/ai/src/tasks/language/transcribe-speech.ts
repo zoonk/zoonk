@@ -22,8 +22,10 @@ export const TRANSCRIPTION_MODELS = [
 export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
 
 /**
- * gpt-transcribe hears slips the way a listener would and matched 12 of 13 labeled clips at 1.0s
- * p50 (28 Sep 2026). It never gets the expected words: as `keywords` they hid three more mistakes.
+ * On the 15 MP3 clips both accepted (8 Nov 2026), gpt-transcribe kept the learner's words on 14
+ * (PT 2/3) and MAI Transcribe 2 on all 15 at about a third of the cost, but MAI can't read the WebM
+ * and MP4 learners record. The model never gets the expected words: as `keywords` they hid three
+ * more mistakes.
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
 

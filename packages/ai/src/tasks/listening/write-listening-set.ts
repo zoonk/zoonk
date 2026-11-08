@@ -17,7 +17,10 @@ import {
 } from "./listening-set-schema";
 import taskPrompt from "./write-listening-set.prompt.md";
 
-/** The item writer's model, whose eval chose it for right keys and exam realism. */
+/**
+ * On 7 cases (8 Nov 2026), Terra scored 9.07 at $13.69/1k, Opus 8.71 at $146.30/1k and Luna 8.43;
+ * both leaders still accept some answers that break the gap's word limit.
+ */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 

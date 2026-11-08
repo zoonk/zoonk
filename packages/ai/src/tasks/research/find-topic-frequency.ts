@@ -14,8 +14,13 @@ import {
 
 export type { TopicFrequencyFinding } from "./topic-frequency-finding";
 
-/** The other past-edition lookups' pair, at low reasoning. */
+/**
+ * Ratings are shared, so completeness wins: at low reasoning on 6 cases (8 Nov 2026), Flash scored
+ * 10.00 (EN and PT) at $26.66/1k, and the cheaper families 9.00 to 9.67, missing Biology or rating
+ * a brand-new syllabus as if it had a history. Terra also scored 10.00 on the current prompt.
+ */
 const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
@@ -92,6 +97,7 @@ export async function findTopicFrequency({
 
   const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     libraryInput: true,
     maxSteps: MAX_STEPS,
     model,

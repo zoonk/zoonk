@@ -16,7 +16,11 @@ import {
 import { formatMemory, formatToday, formatWeek } from "./plan-prompt-format";
 import systemPrompt from "./plan-routine-fit.prompt.md";
 
-/** Flash Lite got the routine cases right on the plan-edit-intent eval (27 Sep and 7 Oct 2026). */
+/**
+ * The learner waits on it: on 6 cases (8 Nov 2026), Flash Lite, Haiku 5.5 and Luna each passed
+ * every one (EN 3/3, PT 3/3), and Flash Lite's 1.03 s p50 against Luna's 2.22 s is worth more than
+ * Luna's $0.27 per 1k saving ($0.15 against $0.42).
+ */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
 

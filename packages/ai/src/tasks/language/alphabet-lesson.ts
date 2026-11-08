@@ -10,8 +10,9 @@ import fixPrompt from "./alphabet-lesson-fix.prompt.md";
 import systemPrompt from "./alphabet-lesson.prompt.md";
 
 /**
- * Written once per script and learner language and shared: Luna scored 9.21 on the alphabet-lesson
- * eval, ahead of Sol at a fraction of the cost (27 Sep 2026).
+ * Written once per script and learner language and shared: on 4 cases (8 Nov 2026), Luna scored
+ * 9.14 (EN 9.60, PT 8.69) at $2.12/1k against Terra's 9.22 at $8.76/1k. No other family passed the
+ * PT floor (Flash 7.94, Sonnet 7.90), so Flash is only an outage route.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6.1-terra", "google/gemini-3.8-flash"] as const;

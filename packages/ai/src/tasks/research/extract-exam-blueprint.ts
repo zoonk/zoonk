@@ -21,12 +21,12 @@ import { getReadingReasoning } from "./reading-reasoning";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
 
 /**
- * Flash read 32 of 32 facts on the extract-exam-blueprint eval; Gemini 4 Argon scored a little
- * higher at nearly twice the price (13 Oct 2026). Both stop on recitation now and then, which falls
- * back to Terra.
+ * On 12 notices (8 Nov 2026), Flash scored 9.61 on the 10 it read, at $149.75/1k, and kept the CGU
+ * specialty facts Luna (9.29 on 11, $21.59/1k) missed, which every learner of that exam would
+ * lose. Luna read the ENEM matrix Gemini stopped on; Haiku 5.5 parsed only 4.
  */
 const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
+const fallbackModels = ["openai/gpt-6-luna"] as const;
 
 /**
  * The reading streams, so a long one never waits on response headers (three SAT readings hit the

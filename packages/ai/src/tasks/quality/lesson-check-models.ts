@@ -2,23 +2,23 @@ import { pickReviewers } from "../../_utils/model-family";
 import { type CallReuse } from "../../provider-options";
 
 /**
- * Catching every real error matters most on a lesson many learners read: Sonnet 5.5 blocked all 20
- * planted mistakes on the lesson-quality-check eval (9 Oct 2026). Gemini 3.8 Flash let an
- * over-broad summary through, and Haiku blocked clean lessons, which costs fix passes.
+ * Catching every real error matters most: on 31 cases (8 Nov 2026), Sonnet 5.5 blocked all 22
+ * planted mistakes (EN 100%, PT 94.1%) at $29.70/1k. For a lesson Opus wrote, Sol (21 of 22,
+ * $13.36/1k) beats Gemini 3.8 Flash (20, $11.27/1k), though both miss the 85% floor.
  */
 const REUSED_LESSON_REVIEWERS = [
   "anthropic/claude-sonnet-5.5",
-  "google/gemini-3.8-flash",
   "openai/gpt-6.1-sol",
+  "google/gemini-3.8-flash",
 ] as const;
 
 /**
- * Gemini 3.8 Flash caught all 14 planted mistakes at about 40% of Sonnet's price (7 Oct 2026). A
- * lesson Gemini wrote gets the next reviewer from another family.
+ * A lesson one learner reads still can't teach a false rule: Gemini 3.8 Flash, at 38% of Sonnet's
+ * cost, passed a summary saying quantities are proportional whenever they move together.
  */
 const ONE_LEARNER_LESSON_REVIEWERS = [
-  "google/gemini-3.8-flash",
   "anthropic/claude-sonnet-5.5",
+  "google/gemini-3.8-flash",
   "openai/gpt-6.1-sol",
 ] as const;
 

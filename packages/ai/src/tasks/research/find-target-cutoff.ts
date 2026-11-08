@@ -12,8 +12,14 @@ import { toTargetCutoffFinding } from "./target-cutoff-finding";
 
 export type { TargetCutoffFinding } from "./target-cutoff-finding";
 
-/** `find-course-weights`'s pair for the same kind of lookup, at low reasoning. */
-const defaultModel = "google/gemini-3.8-flash";
+/**
+ * Chosen by reading the sources (8 Nov 2026, 6 cases, low reasoning): Haiku 5.5 scored 9.00 (EN
+ * 10.00, PT 8.80) at $10.89/1k but returned UFMG's real cutoff and left uncertain ones unknown,
+ * while Luna's and Flash Lite's 9.67 hid a maximum read as the cutoff and an old edition. Terra
+ * answered as Haiku did on the current prompt.
+ */
+const defaultModel = "anthropic/claude-haiku-5.5";
+const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
@@ -89,6 +95,7 @@ export async function findTargetCutoff({
 
   const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     maxSteps: MAX_STEPS,
     model,
     reasoning,

@@ -8,8 +8,9 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import systemPrompt from "./check-cited-facts.prompt.md";
 
 /**
- * Flash judged every planted fact right on the check-cited-facts eval; Haiku accepted an
- * unsupported one (8 Oct 2026).
+ * This gate decides which shared facts are kept: on 74 facts (8 Nov 2026), Flash accepted no
+ * unsupported one and rejected 2 supported ones, scoring 9.91 at $13.25/1k. Luna, the other
+ * provider, accepted an unsupported fact, so it's only an outage route.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna"] as const;

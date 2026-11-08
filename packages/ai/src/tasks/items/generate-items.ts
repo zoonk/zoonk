@@ -20,8 +20,9 @@ import {
 import { formatPastQuestions } from "./past-question-lines";
 
 /**
- * Terra matched Sol on the generate-items eval at 40% of the cost (30 Oct 2026); Flash wrote wrong
- * keys and a medical error, so it isn't a fallback (Sep 2026).
+ * On 28 cases (8 Nov 2026), Terra scored 9.09 (EN 9.22, PT 8.92) at $10.00/1k; Luna (8.71),
+ * Haiku 5.5 (8.46) and Flash Lite (7.66) cost less but wrote wrong keys or facts, and Flash Lite
+ * reversed a missed-dose instruction. Opus hasn't run the current prompt.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;

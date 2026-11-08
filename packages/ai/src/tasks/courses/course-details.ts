@@ -12,11 +12,12 @@ import { getVerbForm } from "../_utils/verb-form";
 import promptTemplate from "./course-details.prompt.md";
 
 /**
- * Luna, the cheapest candidate, scored 9.1 to 9.4 on the course-details eval (14 and 25 Oct 2026);
- * fallbacks come from other families.
+ * On 15 cases (8 Nov 2026), Luna scored 9.07 (EN 9.36, PT 8.96) at $0.87/1k pages and Haiku 5.5
+ * 8.78 at $1.38/1k; Flash Lite (7.97) promised a passing score and said contract disputes need no
+ * professional advice.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 /** Set by what a course is, never by a model. */
 const FORMAT_CATEGORIES: ReadonlySet<CourseCategory> = new Set(["exams", "languages"]);

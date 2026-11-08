@@ -10,8 +10,13 @@ import { runSearchTask } from "./run-search-task";
 
 export type { CourseWeightsFinding } from "./course-weights-finding";
 
-/** `find-subject-questions`'s pair for the same kind of lookup, at low reasoning. */
-const defaultModel = "google/gemini-3.8-flash";
+/**
+ * At low reasoning on 3 cases (8 Nov 2026), Luna and Flash each returned UFRJ's published weights
+ * and scored 10.00, at $7.46/1k and $13.77/1k. Flash Lite's 10.00 hid made-up equal weights, which
+ * the scorer doesn't check.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["google/gemini-3.8-flash"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
@@ -66,6 +71,7 @@ export async function findCourseWeights({
 
   const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     maxSteps: MAX_STEPS,
     model,
     reasoning,

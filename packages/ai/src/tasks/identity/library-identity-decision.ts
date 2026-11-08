@@ -22,8 +22,12 @@ import {
 /** The cutoff from the `library-identity-decision` eval's probabilities. */
 export const LIBRARY_IDENTITY_MIN_PROBABILITY = 0.6;
 
-/** The eval's runner-up. */
-const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
+/**
+ * On 43 cases (8 Nov 2026), Jev got 42 (EN 21/21, PT 21/22) at $0.1310 per 1k decisions; Elephant
+ * kept all 22 rejections and 19 of 21 reuses. Decider Flash cost $0.0292 but missed one more reuse,
+ * and each miss writes content the Library already has.
+ */
+const FALLBACK_EVALUATION_MODEL = "baseten/elephant-1";
 
 const REUSE_CRITERIA: Readonly<Record<LibraryIdentityKind, { false: string; true: string }>> = {
   chapter: {

@@ -1,4 +1,4 @@
-import { type CallReuse } from "@zoonk/ai/provider-options";
+import { type CallReuse, type Reasoning } from "@zoonk/ai/provider-options";
 import { type SearchTermsParams } from "@zoonk/ai/tasks/identity/search-terms";
 import { type CourseLevel } from "@zoonk/db";
 import { type CandidateExam } from "../exams/candidate-exams";
@@ -11,20 +11,35 @@ export type CurriculumScope = {
   targetLanguage: string | null;
 };
 
-const PRIVATE_CONTENT_MODEL = "google/gemini-3.8-flash";
+/**
+ * Private content can't spread its cost, so it takes the cheapest model that keeps quality. On the
+ * 8 Nov 2026 evals Luna beat Gemini 3.8 Flash on course outlines (8.88 to 8.71), skill graphs (8.53
+ * to 8.44) and challenges (8.34 to 7.36) at a sixth to a ninth of its cost; read side by side, its
+ * graphs fell behind Terra's on career-change and from-zero goals.
+ */
+const PRIVATE_CONTENT_MODEL = "openai/gpt-6-luna";
+
+type ScopeModels = { fallbackModels: readonly string[]; model: string; reasoning: Reasoning };
 
 /**
- * On 8 private lessons (4 Nov 2026), Luna's plans tied Terra's and Sol's (8.15, 8.18, 8.10) at a
- * tenth of Sol's price, ahead of Gemini 3.8 Flash (7.61).
+ * On 24 plans (8 Nov 2026), Luna at high reasoning scored 8.23 (EN 8.75, PT 8.09) at $9.84/1k; on
+ * the private case it scored 8.65 against 6.00 at its default reasoning (Terra 9.12 at $22.77/1k).
+ * Haiku 5.5 at high reasoning scored 8.11, its EN at the 8.00 floor.
  */
-const PRIVATE_LESSON_SPEC_MODEL = "openai/gpt-6-luna";
+const PRIVATE_LESSON_SPEC_MODELS: ScopeModels = {
+  fallbackModels: ["anthropic/claude-haiku-5.5"],
+  model: "openai/gpt-6-luna",
+  reasoning: "high",
+};
 
 export function getScopeModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {
   return scope.ownerId ? PRIVATE_CONTENT_MODEL : undefined;
 }
 
-export function getLessonSpecModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {
-  return scope.ownerId ? PRIVATE_LESSON_SPEC_MODEL : undefined;
+export function getLessonSpecModels(
+  scope: Pick<CurriculumScope, "ownerId">,
+): ScopeModels | undefined {
+  return scope.ownerId ? PRIVATE_LESSON_SPEC_MODELS : undefined;
 }
 
 export function getContentReuse({

@@ -11,14 +11,13 @@ import {
   isOnSearchedHost,
 } from "./research-search-tools";
 
-const fallbackModels = ["openai/gpt-6.1-terra"] as const;
-
 /**
  * A page on a site no search returned was invented, so a task keeps only what `isSearched` passes.
  */
 export async function runSearchTask<T>({
   abortSignal,
   analytics,
+  fallbackModels,
   libraryInput,
   maxSteps,
   model,
@@ -33,6 +32,7 @@ export async function runSearchTask<T>({
 }: {
   abortSignal?: AbortSignal;
   analytics?: AiGenerationContext;
+  fallbackModels: readonly string[];
   /** The prompt holds public documents alone (see `runTaskGeneration`). */
   libraryInput?: boolean;
   maxSteps: number;

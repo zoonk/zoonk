@@ -10,9 +10,14 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { getVerbForm } from "../_utils/verb-form";
 import systemPrompt from "./topic-skill-names.prompt.md";
 
-/** The plan edits' small model: the learner waits on the buddy's card. */
-const defaultModel = "google/gemini-3.5-flash-lite";
-const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
+/**
+ * The learner waits on the buddy's card (3 s p50, 6 s p95). On 10 cases (8 Nov 2026), Luna at
+ * minimal reasoning and Haiku 5.5 without reasoning each scored 10.00, at $0.1114/1k in 1.71/2.89 s
+ * and $0.1246/1k in 1.57/2.30 s; Flash Lite cost $0.3576/1k.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const defaultReasoning: Reasoning = "minimal";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const MAX_NAME_LENGTH = 80;
 const MAX_DESCRIPTION_LENGTH = 200;
@@ -97,7 +102,13 @@ export async function nameTopicSkills(
   usage: LanguageModelUsage;
   userPrompt: string;
 }> {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    useFallback = true,
+  } = params;
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

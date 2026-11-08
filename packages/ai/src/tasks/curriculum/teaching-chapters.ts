@@ -10,9 +10,13 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "./_utils/course-levels";
 import template from "./teaching-chapters.prompt.md";
 
-/** Terra placed every skill in its chapter, as Sonnet did, at a fifth of the cost (30 Oct 2026). */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-sonnet-5.5", "google/gemini-3.8-flash"] as const;
+/**
+ * On 5 cases (8 Nov 2026), Luna and Flash Lite placed all 34 skills where expected, Luna at
+ * $0.52/1k against Terra's $3.10; Haiku 5.5 also scored 10.00 but appended continued skills after
+ * the last chapter, which the scorer misses.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-sonnet-5.5"] as const;
 
 const answerSchema = z.object({ after: z.number(), chapter: z.number().nullable() });
 

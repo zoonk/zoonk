@@ -89,7 +89,7 @@ export async function checkWarmUpCards(params: CheckWarmUpCardsParams) {
   const model = params.model ?? models.model;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: models.fallbackModels.filter((candidate) => candidate !== model),
+    fallbackModels: models.fallbackModels,
     model,
     serviceTier,
     useFallback,

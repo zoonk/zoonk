@@ -9,8 +9,11 @@ import {
 import { formatMemoryFact } from "./memory-facts";
 import instructions from "./memory-gate.prompt.md";
 
-/** The memory-gate eval's runner-up. */
-const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
+/**
+ * On 36 cases (8 Nov 2026), Jev and Mammoth each passed every one (EN 21/21, PT 15/15), at $0.1229
+ * and $0.2736 per 1k; the cheaper Deciders kept a fact naming the learner's AA meetings.
+ */
+const FALLBACK_EVALUATION_MODEL = "baseten/mammoth-1";
 
 export const memoryGateClassifier = {
   questions: {

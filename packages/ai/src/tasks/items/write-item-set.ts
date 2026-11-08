@@ -15,6 +15,11 @@ import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { formatPastQuestions } from "./past-question-lines";
 import taskPrompt from "./write-item-set.prompt.md";
 
+/**
+ * On 4 cases (8 Nov 2026), Terra scored 8.94 at $12.25/1k and Opus 9.19 at $121.32/1k, too small a
+ * gain for ten times the cost; Luna, Haiku 5.5 and Flash Lite keyed answers the passage doesn't
+ * support.
+ */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 

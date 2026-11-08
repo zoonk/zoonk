@@ -8,9 +8,13 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import { type ChangingFactsTopic } from "./changing-facts";
 import systemPrompt from "./research-plan.prompt.md";
 
-/** All three candidates named every exam right on the research-plan eval; Flash was cheapest. */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
+/**
+ * On 10 cases (8 Nov 2026), Luna scored 9.92 (EN 9.60, PT 10.00) at $0.33/1k against Flash's 10.00
+ * at $2.37/1k and kept the CGU specialty; its one miss gives the SAT no country, a label still to
+ * review. Haiku 5.5 scored 9.85.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const MAX_DOMAINS = 5;
 const MAX_QUERIES = 4;

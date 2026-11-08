@@ -14,9 +14,13 @@ import { partialCreditSchema } from "./partial-credit";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
 import { withWrittenTestSubjects } from "./written-test-subjects";
 
-/** Low reasoning: it reads after the blueprint reading, whose parts it ties formats to, so it adds to the wait. */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6.1-sol"] as const;
+/**
+ * Low reasoning, since it reads after the blueprint reading and adds to the wait. On 4 cases (8 Nov
+ * 2026), Luna scored 10.00 at $2.39/1k and Gemini 3.8 Flash 9.85 at $9.88/1k, missing a GRE fact;
+ * Haiku 5.5 (9.71) misnamed two GRE formats.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["google/gemini-3.8-flash"] as const;
 const defaultReasoning: Reasoning = "low";
 
 /** A short read: past this, the blueprint reading's own formats stand alone. */

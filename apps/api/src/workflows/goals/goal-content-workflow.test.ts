@@ -1769,9 +1769,7 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id });
 
-    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].model).toBe(
-      "google/gemini-3.8-flash",
-    );
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].model).toBe("openai/gpt-6-luna");
 
     await expect(
       prisma.goal.findUniqueOrThrow({ include: { primaryCourse: true }, where: { id: goal.id } }),

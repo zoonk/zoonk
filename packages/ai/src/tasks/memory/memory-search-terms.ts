@@ -8,7 +8,11 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./memory-search-terms.prompt.md";
 
-/** Runs before a task that may be waiting: Flash Lite found the same facts three times faster. */
+/**
+ * Runs before a task that may be waiting, and Flash Lite answers in about 1 s. On 10 cases (8 Nov
+ * 2026) it, Luna, Haiku 5.5 and Gemini 3.8 Flash each found 8, all missing the same two facts whose
+ * words none guessed: a recall limit of the prompt, not of the model.
+ */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
 

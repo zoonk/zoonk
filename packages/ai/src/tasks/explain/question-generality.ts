@@ -1,10 +1,16 @@
 import "server-only";
 import { decideBoolean } from "../../evaluate/decisions";
 import { type EvaluationRunDetails, evaluateQuestions } from "../../evaluate/evaluate-questions";
+import { JEV_MODEL_ID } from "../../evaluate/evaluation-models";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import instructions from "./question-generality.prompt.md";
 
-const fallbackModel = "openai/gpt-6-luna";
+/**
+ * At the 0.6 cutoff on 16 cases (8 Nov 2026), Microsoft Decision-1 matched Jev on every label (EN
+ * 6/6, PT 10/10) at $0.0181 against $0.0281 per 1k decisions. Cheaper Joey left a personal answer
+ * 0.004 under the cutoff, and both Deciders shared a personal one.
+ */
+const EVALUATION_MODEL = "microsoft/microsoft-decision-1";
 
 /**
  * Sharing a personal answer with strangers is worse than generating one more
@@ -37,10 +43,11 @@ export async function classifyQuestionGenerality({
 }): Promise<QuestionGenerality> {
   const { answers, ...run } = await evaluateQuestions({
     analytics,
-    fallbackModel,
+    fallbackModel: JEV_MODEL_ID,
     input: questionGeneralityClassifier.toInput({ question }),
     // The question is stored with the goal that asked it.
     keepInput: true,
+    model: EVALUATION_MODEL,
     questions: { isGeneral: questionGeneralityClassifier.question },
     task: "question-generality",
   });

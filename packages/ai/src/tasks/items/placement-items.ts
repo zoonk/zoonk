@@ -17,9 +17,9 @@ import typedCheck from "./placement-items-typed-check.prompt.md";
 import taskPrompt from "./placement-items.prompt.md";
 
 /**
- * Placement questions are kept per skill and reused, so right keys outweigh a longer first wait: at
- * high reasoning Terra wrote every key right at about half Sol's cost, and at its default reasoning
- * it slipped on two of six sets (30 Oct 2026).
+ * Placement questions are kept per skill and reused, so right keys outweigh a longer first wait: on
+ * 10 cases (8 Nov 2026), Terra at high reasoning scored 8.86 (EN 9.38, PT 8.73) at $25.52/1k
+ * against Luna's 8.34, but still keyed one energy bill wrong. Opus hasn't run the current prompt.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const defaultReasoning: Reasoning = "high";

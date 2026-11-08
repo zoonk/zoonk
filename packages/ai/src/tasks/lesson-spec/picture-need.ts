@@ -4,13 +4,17 @@ import { evaluateQuestions } from "../../evaluate/evaluate-questions";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import instructions from "./picture-need.prompt.md";
 
-/** The picture-need eval's runner-up after Jev (4 Nov 2026): 79% of 63 cases, Luna 76%. */
-const fallbackModel = "anthropic/claude-haiku-5.5";
+/**
+ * At the 0.35 cutoff on 63 cases (8 Nov 2026), Jev got 59 (EN 35/37, PT 24/26) at $0.0637 per 1k
+ * and Elephant 55, keeping the same 40 teaching pictures. Mammoth kept all 42 but passed 9
+ * decorative ones, each an image to pay for.
+ */
+const fallbackModel = "baseten/elephant-1";
 
 /**
- * On Jev's two eval runs (4 Nov 2026, 63 cases, scenes' and questions' pictures included), this
- * kept 39 and 40 of 42 pictures that teach and caught 19 of 21 decorative ones; 0.3 caught 2 fewer
- * and 0.4 dropped 1 or 2 more that teach.
+ * On Jev's 63 cases (8 Nov 2026, scenes' and questions' pictures included), this kept 40 of 42
+ * pictures that teach and caught 19 of 21 decorative ones; 0.3 caught 2 fewer and 0.4 dropped one
+ * more that teaches.
  */
 const TEACHES_AT = 0.35;
 

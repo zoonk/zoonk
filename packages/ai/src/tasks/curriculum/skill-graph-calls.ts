@@ -17,11 +17,12 @@ import { type ExamOutline, formatExamOutline } from "./exam-outline";
 import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-system-prompt";
 
 /**
- * Terra scored a little above Sol on the skill-graph eval at half the cost (30 Oct 2026); Flash
- * missed whole areas on huge goals, so it's only the last fallback.
+ * On 37 cases (8 Nov 2026), Terra scored 8.73 (EN 8.94, PT 8.69) at $56.40/1k against Luna's 8.49
+ * at $6.06/1k, and 8.70 to 8.30 on the ten huge goals, keeping foundations Luna dropped. Haiku 5.5
+ * scored 8.46 on a 15-case sample.
  */
 const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
 
 const courseSchema = z.object({
   key: z.string(),

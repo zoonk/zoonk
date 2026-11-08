@@ -25,11 +25,12 @@ import { readStreamedChapter } from "./_utils/streamed-chapter";
 import template from "./course-outline.prompt.md";
 
 /**
- * Terra scored a little above Sol on the course-outline eval at under half the cost (30 Oct 2026);
- * Luna's cheaper overviews left out foundations (7 Oct 2026).
+ * Shared courses are reused, so coverage is worth paying for: on 20 cases (8 Nov 2026), Terra
+ * scored 9.20 (EN 9.51, PT 9.07) at $32.24/1k and covered every required area, where Luna (8.88,
+ * $2.62/1k) left four ENEM extensions out. Haiku 5.5 scored 8.64.
  */
 const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({ chapters: z.array(chapterSchema) });
 

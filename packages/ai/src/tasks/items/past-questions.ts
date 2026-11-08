@@ -10,11 +10,12 @@ import { GENERATED_ITEM_SCHEMAS } from "./item-schemas";
 import systemPrompt from "./past-questions.prompt.md";
 
 /**
- * The answer must copy long papers exactly: on the past-questions eval every quoted part matched
- * its paper and every key was right (27 Sep 2026).
+ * The answer must copy papers exactly: on 3 cases (8 Nov 2026), Luna copied all 7 expected
+ * questions with right keys, 9.74 at $0.79/1k, and Haiku 5.5 did too, 9.58 at $1.92/1k; Gemini 3.8
+ * Flash (9.64, $13.79/1k) left a question out. Long real papers aren't in the eval yet.
  */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6.1-sol"] as const;
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.8-flash"] as const;
 
 const DEFAULT_COUNT = 10;
 const MAX_COUNT = 20;

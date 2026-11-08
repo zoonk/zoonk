@@ -15,8 +15,9 @@ import systemPrompt from "./understand-goal.prompt.md";
 export type { GoalUnderstanding, UnderstoodGoal } from "./normalize-goal-understanding";
 
 /**
- * Flash Lite and Luna got every route and fact right on the understand-goal eval (7 Oct 2026);
- * Flash Lite answers in 1.6s p50 against Luna's 3.8s, the first wait a new learner sees.
+ * The first wait a new learner sees: Flash Lite passed every check on 53 of 58 goals in 1.59 s p50
+ * at $1.41/1k (stored current-prompt run), Luna at minimal reasoning on 55 in 3.98 s at $0.16/1k,
+ * and Haiku 5.5 without reasoning on 46, dropping a learner's second goal (8 Nov 2026).
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;

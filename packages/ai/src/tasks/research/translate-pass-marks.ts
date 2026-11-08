@@ -9,8 +9,12 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { toPassMarkTranslations } from "./pass-mark-translations";
 import systemPrompt from "./translate-pass-marks.prompt.md";
 
+/**
+ * On 3 nine-language cases (8 Nov 2026), Luna kept every number and line at $0.50/1k, scoring 9.83
+ * (EN 10.00, PT 9.67) for two awkward phrasings; Haiku 5.5 scored 10.00 at $1.04/1k.
+ */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({
   language: z.string(),

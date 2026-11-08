@@ -8,8 +8,13 @@ import { type ResearchSearchTool } from "./research-search-tools";
 import { runSearchTask } from "./run-search-task";
 import { type ProductHints } from "./source-research-plan";
 
-/** As `find-official-sources`: Flash with Parallel, Terra as the fallback. */
-const defaultModel = "google/gemini-3.8-flash";
+/**
+ * With Parallel on 8 cases (8 Nov 2026), Haiku 5.5 scored 9.90 (EN 10.00, PT 9.80) at $10.62/1k
+ * against Flash's 10.00 at $19.17/1k; its one miss was a generic product page, and it still found
+ * the exact release notes.
+ */
+const defaultModel = "anthropic/claude-haiku-5.5";
+const fallbackModels = ["google/gemini-3.8-flash"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 
 const MAX_STEPS = 8;
@@ -73,6 +78,7 @@ export async function findProductPages({
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     maxSteps: MAX_STEPS,
     model,
     reasoning,

@@ -25,13 +25,12 @@ import {
 } from "./written-lesson-schema";
 
 /**
- * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: Luna fixed 4
- * of 5 cases and Terra all 5 (30 Oct 2026). Opus keeps another family in the chain; on the one case
- * that could be scored cleanly (3 Nov 2026) it fixed the flagged screen but left a 921-character
- * screen over the 750 limit, a new problem the next check catches.
+ * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: on 6 cases
+ * (8 Nov 2026), Luna, Haiku 5.5 and Terra repaired all 5 English ones at $1.19/1k, $2.33/1k and
+ * $10.95/1k, while Flash Lite broke a quote. The Portuguese case fails on screens no one flagged.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6.1-terra"] as const;
 
 /**
  * Each fixed screen comes back as `LESSON` shows it, its number among its fields: with the screen

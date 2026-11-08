@@ -8,8 +8,12 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./memory-session-patterns.prompt.md";
 
+/**
+ * One learner's patterns, so the cheapest that holds: on 5 cases (8 Nov 2026), Luna, Haiku 5.5 and
+ * Flash Lite each scored 10.00, Luna at $0.1474/1k against $0.2725 and $0.3269.
+ */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const sessionPatternSchema = z.object({ evidence: z.string(), statement: z.string() });
 const schema = z.object({ patterns: z.array(sessionPatternSchema) });
