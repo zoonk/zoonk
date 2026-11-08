@@ -1,10 +1,13 @@
 import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
+import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { checkWarmUp } from "./check-warm-up";
 import { type WarmUpClaim, claimWarmUp, failWarmUp, readWarmUpStatus } from "./claim-warm-up";
 import { saveWarmUp } from "./save-warm-up";
@@ -109,6 +112,42 @@ describe("shared warm-up writing", () => {
         "anthropic/claude-haiku-5.5",
       ),
     );
+  });
+
+  it("records one deck save when the successful save is replayed", async () => {
+    const { goals, scope } = await newGoals();
+    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+    const claim = await claimWarmUp(request);
+
+    if (claim.status !== "claimed") {
+      throw new Error("Expected the test to own this deck");
+    }
+
+    const written = result({ cards: toWarmUpCards(rawCards()) });
+
+    const checked = result({
+      verdicts: written.data.cards.map(({ id }) => ({ id, keep: true, problem: null })),
+    });
+
+    const input = {
+      checked: { ...checked.data, provenance: checked.provenance },
+      goalId: request.goalId,
+      id: claim.id,
+      workflowRunId: request.workflowRunId,
+      written: { ...written.data, provenance: written.provenance },
+    };
+
+    const flush = runDeferredWork();
+
+    await expect(saveWarmUp(input)).resolves.toBe(claim.id);
+    await expect(saveWarmUp(input)).resolves.toBe(claim.id);
+    await flush();
+
+    expect(
+      analytics.trackServerEvent.mock.calls.filter(
+        ([event]) => event.properties.stage === "deck_saved",
+      ),
+    ).toHaveLength(1);
   });
 
   it("admits one writer for simultaneous goals, then links both when they observe ready", async () => {

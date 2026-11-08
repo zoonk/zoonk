@@ -12,7 +12,7 @@ export async function claimWarmUpStep(input: Parameters<typeof claimWarmUp>[0]) 
   if (claim.status !== "none") {
     trackOnboardingProgress({
       at: Date.now(),
-      cache: claim.status === "claimed" ? "cold" : "warm",
+      cache: claim.status === "ready" ? "warm" : "cold",
       deck_id: claim.id,
       goalId: input.goalId,
       platform: null,

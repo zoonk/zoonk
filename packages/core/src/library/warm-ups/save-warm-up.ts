@@ -27,7 +27,7 @@ export async function saveWarmUp({
     .slice(0, WARM_UP_DECK_SIZE.max)
     .map((card) => ({ ...card, id: `${id}:${card.id}` }));
 
-  await prisma.warmUp.updateMany({
+  const saved = await prisma.warmUp.updateMany({
     data: {
       cards,
       checkerModel: checked.provenance.model,
@@ -40,7 +40,7 @@ export async function saveWarmUp({
 
   const result = await readWarmUpStatus({ goalId, id });
 
-  if (result.status === "ready") {
+  if (saved.count > 0 && result.status === "ready") {
     trackOnboardingProgress({
       at: Date.now(),
       deck_id: id,
