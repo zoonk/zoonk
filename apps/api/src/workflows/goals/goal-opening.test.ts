@@ -26,7 +26,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
@@ -34,6 +34,7 @@ import * as outlineSteps from "../courses/steps/course-outline-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as openingSteps from "./steps/goal-opening-steps";
+import * as progressSteps from "./steps/goal-progress-step";
 
 type SkillGraph = Awaited<ReturnType<typeof generateWholeSkillGraph>>["data"];
 type Opening = Awaited<ReturnType<typeof generateGoalOpening>>["data"];
@@ -163,6 +164,7 @@ describe("a learn goal's opening", () => {
 
   it("writes the first lesson through the learner's own start, fast, and plans from it", async () => {
     const { goal, user } = await newGoal();
+    const progress = vi.spyOn(progressSteps, "goalProgressStep");
 
     // The graph is the slower call, so the first lesson is saved by the time it's written.
     vi.mocked(generateWholeSkillGraph).mockImplementation(async () => {
@@ -217,6 +219,11 @@ describe("a learn goal's opening", () => {
       prisma.course.findFirstOrThrow({ where: { title: opening.graph.courses[0]?.title } }),
     ).resolves.toMatchObject({ outlineStatus: "completed" });
 
+    expect(progress).toHaveBeenCalledWith(
+      { entityId: goal.id, lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
+      { cache: "cold" },
+    );
+
     const firstLessonEvents = getStreamedEvents().filter(
       ({ step }) => step === "writeFirstLesson" || step === "firstLessonReady",
     );
@@ -232,6 +239,32 @@ describe("a learn goal's opening", () => {
       { entityId: goal.id, lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
     ]);
   });
+
+  it.each([
+    { cache: "cold", contentStatus: "pending", status: "start" },
+    { cache: "cold", contentStatus: "running", status: "generating" },
+    { cache: "warm", contentStatus: "completed", status: "ready" },
+  ] as const)(
+    "classifies an old $contentStatus lesson as $cache when requested",
+    async ({ cache, contentStatus, status }) => {
+      const user = await userFixture();
+
+      const lesson = await libraryLessonFixture({
+        contentRunId: "active-lesson-run",
+        contentStatus,
+        createdAt: new Date("2026-11-01"),
+      });
+
+      vi.mocked(getRun).mockReturnValue({
+        exists: Promise.resolve(true),
+        status: Promise.resolve("running"),
+      } as never);
+
+      await expect(
+        openingSteps.requestOpeningLessonStep({ lessonId: lesson.id, userId: user.id }),
+      ).resolves.toMatchObject({ cache, status });
+    },
+  );
 
   it("saves the opening chapter before starting the graph", async () => {
     const { goal } = await newGoal();

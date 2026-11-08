@@ -24,23 +24,12 @@ export function trackOnboardingProgress({
         return;
       }
 
-      const lesson =
-        progress.step === "firstLessonReady" && progress.lesson_id
-          ? await prisma.lesson.findUnique({ where: { id: progress.lesson_id } })
-          : null;
-
-      const warm =
-        lesson && lesson.createdAt < goal.createdAt && lesson.contentStatus === "completed";
-
-      const cache = warm ? "warm" : "cold";
-
       await trackLearnerEvents({
         events: [
           {
             name: "Onboarding Progressed",
             properties: {
               ...progress,
-              ...(lesson && { cache }),
               goal_id: goal.id,
               onboarding_id: getString(goal.details, "onboardingId") ?? undefined,
             },

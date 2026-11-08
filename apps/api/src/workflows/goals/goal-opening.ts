@@ -17,6 +17,7 @@ import { type GoalRunContext } from "./goal-run-context";
 import { saveGoalSkillsStep } from "./steps/goal-curriculum-steps";
 import {
   type OpeningLesson,
+  type OpeningLessonRequest,
   type WrittenOpening,
   findOpeningLessonStep,
   readSavedGoalOpeningStep,
@@ -205,6 +206,8 @@ async function followLesson(lessonId: string): Promise<boolean> {
   return status === "ready";
 }
 
+type OpeningLessonWriting = { cache: OpeningLessonRequest["cache"]; ready: () => Promise<boolean> };
+
 /** The goal's run goes on into the lesson's, so no follow-up is owed for it. */
 async function writeOpeningLesson({
   context,
@@ -216,7 +219,7 @@ async function writeOpeningLesson({
   goalId: string;
   lesson: OpeningLesson;
   userId: string;
-}): Promise<() => Promise<boolean>> {
+}): Promise<OpeningLessonWriting> {
   await goalProgressStep({
     entityId: goalId,
     lessonId: lesson.id,
@@ -235,35 +238,33 @@ async function writeOpeningLesson({
     // A lesson run claims the lesson's token itself, as a plan's do, and a duplicate ends busy.
     const run = await start(lessonContentWorkflow, [request.input]);
 
-    return async () => {
-      const result = await run.returnValue;
-      return result.status === "busy" ? followLesson(lesson.id) : result.status === "ready";
+    return {
+      cache: request.cache,
+      ready: async () => {
+        const result = await run.returnValue;
+        return result.status === "busy" ? followLesson(lesson.id) : result.status === "ready";
+      },
     };
   }
 
   if (request.status === "generating") {
-    return () => followLesson(lesson.id);
+    return { cache: request.cache, ready: () => followLesson(lesson.id) };
   }
 
-  return async () => request.status === "ready";
+  return { cache: request.cache, ready: async () => request.status === "ready" };
 }
 
 async function reportReady({
+  cache,
   goalId,
   lessonId,
   ready,
-}: {
-  goalId: string;
-  lessonId: string;
-  ready: () => Promise<boolean>;
-}): Promise<void> {
+}: OpeningLessonWriting & { goalId: string; lessonId: string }): Promise<void> {
   if (await ready()) {
-    await goalProgressStep({
-      entityId: goalId,
-      lessonId,
-      status: "completed",
-      step: "firstLessonReady",
-    });
+    await goalProgressStep(
+      { entityId: goalId, lessonId, status: "completed", step: "firstLessonReady" },
+      { cache },
+    );
   }
 }
 
@@ -311,7 +312,7 @@ export function openGoal({
   );
 
   const settled = Promise.all([lesson, writing]).then(([saved, ready]) =>
-    saved && ready ? reportReady({ goalId: goal.id, lessonId: saved.id, ready }) : null,
+    saved && ready ? reportReady({ ...ready, goalId: goal.id, lessonId: saved.id }) : null,
   );
 
   return {
