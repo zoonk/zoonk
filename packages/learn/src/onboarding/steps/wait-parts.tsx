@@ -8,7 +8,7 @@ import { PlayIcon } from "lucide-react";
 import { type ReactNode } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { LearnLink } from "../../learn-link";
-import { useWaitPlace, useWaitScreen } from "../../wait/wait-screen";
+import { useWaitBack, useWaitPlace } from "../../wait/wait-screen";
 import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
 import {
   OnboardingScreenProvider,
@@ -66,15 +66,15 @@ export function WaitBar({
 /** The bar's Back and Esc close the progress as the browser's Back does, instead of leaving. */
 export function WaitBackToQuiz({ children }: { children: ReactNode }) {
   const screen = useOnboardingScreen();
-  const { backToQuiz, opened, quiz, view } = useWaitScreen();
+  const back = useWaitBack();
   const host = useOnboardingHost();
 
-  if (!opened || view !== "progress" || !quiz || host?.kind !== "page") {
+  if (!back || host?.kind !== "page") {
     return children;
   }
 
   return (
-    <OnboardingScreenProvider value={{ ...screen, bar: { ...screen.bar, onBack: backToQuiz } }}>
+    <OnboardingScreenProvider value={{ ...screen, bar: { ...screen.bar, onBack: back } }}>
       {children}
     </OnboardingScreenProvider>
   );

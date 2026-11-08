@@ -6,7 +6,8 @@ import { useExtracted } from "next-intl";
 import { ProgressRing } from "../_components/progress-ring";
 import { useFormatShare } from "../_utils/percent";
 import { type GenerationFirstLesson } from "../generation/generation-run";
-import { WAIT_NARROW_ONLY_CLASS, useWaitScreen } from "./wait-screen";
+import { WAIT_NARROW_ONLY_CLASS } from "./use-wait-view";
+import { useWaitScreen } from "./wait-screen";
 
 const MARK_CLASS = "col-start-1 flex h-5 items-center justify-center";
 

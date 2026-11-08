@@ -16,6 +16,7 @@ import {
   type TaskSegment,
 } from "../_components/task-header";
 import { LearnLink } from "../learn-link";
+import { WaitTopBarBack } from "../wait/wait-screen";
 import { type SessionQueueRow } from "./session-queue-rows";
 
 const PERCENT = 100;
@@ -98,19 +99,21 @@ export function SessionHeader({
     <TaskHeader className="bg-background sticky top-0" data-slot="session-header">
       <TaskHeaderBar>
         <TaskHeaderSide align="start">
-          <LearnLink
-            aria-keyshortcuts="Escape"
-            aria-label={t("Back to Today")}
-            className={cn(
-              buttonVariants({ size: "icon", variant: "ghost" }),
-              TASK_HEADER_ICON_CLASS.start,
-            )}
-            href={exitHref}
-            prefetch={false}
-            ref={closeRef}
-          >
-            <XIcon aria-hidden="true" />
-          </LearnLink>
+          <WaitTopBarBack>
+            <LearnLink
+              aria-keyshortcuts="Escape"
+              aria-label={t("Back to Today")}
+              className={cn(
+                buttonVariants({ size: "icon", variant: "ghost" }),
+                TASK_HEADER_ICON_CLASS.start,
+              )}
+              href={exitHref}
+              prefetch={false}
+              ref={closeRef}
+            >
+              <XIcon aria-hidden="true" />
+            </LearnLink>
+          </WaitTopBarBack>
         </TaskHeaderSide>
 
         <TaskHeaderTitle title={t("Today's session")} />
