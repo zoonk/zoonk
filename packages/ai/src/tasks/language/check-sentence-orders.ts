@@ -10,10 +10,12 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import basePrompt from "./check-sentence-orders.prompt.md";
 
 /**
- * No fallback: reviewing Terra's candidates, other providers' models kept 5 to 13 times more wrong
- * orders (7 Nov 2026), and a failed review only leaves the lesson owing its orders for a later run.
+ * Reviewing Terra's candidates for 12 lessons, Gemini 3.8 Flash kept the most right orders and
+ * rejected the fewest; Opus 5.5 kept fewer wrong ones but rejected more right ones, at about four
+ * times the cost. OpenAI's models kept nearly every candidate at every tier (8 Nov 2026).
  */
-const defaultModel = "google/gemini-4-argon";
+const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const verdicts = z.array(z.boolean());
 
@@ -98,12 +100,7 @@ export async function checkSentenceOrders(params: CheckSentenceOrdersParams) {
 
   const userPrompt = buildUserPrompt({ params, sameLanguage });
 
-  const providerOptions = buildProviderOptions({
-    fallbackModels: [],
-    model,
-    serviceTier,
-    useFallback,
-  });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

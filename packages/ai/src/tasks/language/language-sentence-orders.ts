@@ -10,11 +10,12 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import basePrompt from "./language-sentence-orders.prompt.md";
 
 /**
- * Finds candidates generously, since `checkSentenceOrders` reviews each one: with that reviewer,
- * Terra's candidates kept the most valid orders for the fewest errors (7 Nov 2026).
+ * Finds candidates generously, since `checkSentenceOrders` reviews each one. Over 12 lessons Terra
+ * found every right order any other generator found; Gemini 4 Argon, the best from another
+ * provider, found 91% (8 Nov 2026).
  */
 const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+const fallbackModels = ["google/gemini-4-argon"] as const;
 
 const orders = z.array(z.string());
 
