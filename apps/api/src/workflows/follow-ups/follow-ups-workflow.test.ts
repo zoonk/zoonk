@@ -63,13 +63,17 @@ describe(followUpsWorkflow, () => {
 
     await followUpsWorkflow({ userId: user.id });
 
-    expect(getStartMock()).toHaveBeenCalledWith(chapterMindMapWorkflow, [
-      {
-        analytics: { distinctId: user.id, goalId: goal.id, platform: null },
-        chapterId: chapter.id,
-        lessons: { forExam: false, ids: [] },
-      },
-    ]);
+    expect(getStartMock()).toHaveBeenCalledWith(
+      chapterMindMapWorkflow,
+      [
+        {
+          analytics: { distinctId: user.id, goalId: goal.id, platform: null },
+          chapterId: chapter.id,
+          lessons: { forExam: false, ids: [] },
+        },
+      ],
+      { experimental_hook: { token: `mind-map:${chapter.id}` } },
+    );
 
     await expect(
       prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),

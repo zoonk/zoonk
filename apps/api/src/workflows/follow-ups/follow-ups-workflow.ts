@@ -7,6 +7,7 @@ import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { getChapterMindMapToken } from "../mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
@@ -56,7 +57,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       const making = await requestOwedMindMapStep({ ...followUp.input, userId });
 
       if (making) {
-        await start(chapterMindMapWorkflow, [making]);
+        await startOnce(chapterMindMapWorkflow, [making], getChapterMindMapToken(making.chapterId));
       }
 
       return;
