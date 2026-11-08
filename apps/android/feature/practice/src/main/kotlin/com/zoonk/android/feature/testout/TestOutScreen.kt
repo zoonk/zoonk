@@ -433,7 +433,7 @@ internal fun TestOutResult(
             outcome.reached?.takeIf { ui.celebrate }?.let { reached ->
                 DayMoment(missions = null, reached = reached, ceremony = outcome.ceremony?.kind, buddy = buddy.look, buddyName = buddy.name)
             }
-            outcome.finishedChapter?.let { FinishedChapterMoment(it, app, navigate) }
+            outcome.finishedChapter?.takeUnless { undone }?.let { FinishedChapterMoment(it, app, navigate) }
         }
     }
 }
