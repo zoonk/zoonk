@@ -82,10 +82,12 @@ function applyLessonFixes({
 }
 
 /**
- * The lesson's own writer fixes it: Luna, trusting a reviewer over the lesson, turned a correct
- * "art. 4º, § 2º" into "§ 1º". On those two real cases (8 Nov 2026), Luna broke the citation again,
- * while Terra and Opus kept it, and all three fixed a claim the lesson repeated on three screens.
- * Returns the indexes of the screens it changed, so callers can record which run wrote each.
+ * The owner keeps the writer's own model as fixer: Luna broke the correct § 2º into § 1º.
+ * On the citation/term cases (8 Nov 2026), Luna scored 6 and 10 ($0.00189, 15.06s / $0.00238,
+ * 30.85s); Terra scored 10 on both ($0.01161, 3.55s / $0.01554, 19.06s); Opus scored 6 and 10
+ * ($0.08849, 9.65s / $0.12343, 16.75s): it kept § 2º but harmlessly filled another screen's
+ * empty basis. All three corrected the repeated term claim; Terra left the citation lesson intact.
+ * Returns changed screen indexes for provenance.
  */
 export async function fixLessonDraft(params: FixLessonDraftParams) {
   const { analytics, lesson, model, reasoning, serviceTier, useFallback = true } = params;
