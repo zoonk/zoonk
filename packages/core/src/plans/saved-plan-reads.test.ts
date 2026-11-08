@@ -322,7 +322,7 @@ describe("saved plan reads", () => {
       vi.setSystemTime(new Date("2020-10-05T12:00:00Z"));
 
       const before = await prisma.plan.findUniqueOrThrow({
-        include: { items: true },
+        include: { items: { orderBy: { position: "asc" } } },
         where: { goalId: goal.id },
       });
 
@@ -341,7 +341,10 @@ describe("saved plan reads", () => {
       expect(build).not.toHaveBeenCalled();
 
       await expect(
-        prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { goalId: goal.id } }),
+        prisma.plan.findUniqueOrThrow({
+          include: { items: { orderBy: { position: "asc" } } },
+          where: { goalId: goal.id },
+        }),
       ).resolves.toStrictEqual(before);
     },
   );

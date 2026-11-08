@@ -70,7 +70,7 @@ describe("past-date notice eligibility", () => {
       const fixture = await returnAfterTarget({ fullCourse: false, kind });
 
       const before = await prisma.plan.findUniqueOrThrow({
-        include: { items: true },
+        include: { items: { orderBy: { position: "asc" } } },
         where: { id: fixture.plan.id },
       });
 
@@ -88,7 +88,10 @@ describe("past-date notice eligibility", () => {
       expect(read.result.today.planChange).toBeNull();
 
       await expect(
-        prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: fixture.plan.id } }),
+        prisma.plan.findUniqueOrThrow({
+          include: { items: { orderBy: { position: "asc" } } },
+          where: { id: fixture.plan.id },
+        }),
       ).resolves.toStrictEqual(before);
 
       await expect(

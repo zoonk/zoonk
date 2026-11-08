@@ -41,7 +41,11 @@ function teachingDays(item: PlanItem): string[] {
 }
 
 async function readPlan(goalId: string) {
-  const plan = await prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { goalId } });
+  const plan = await prisma.plan.findUniqueOrThrow({
+    include: { items: { orderBy: { position: "asc" } } },
+    where: { goalId },
+  });
+
   const lessons = plan.items.filter((item) => item.kind === "lesson" && item.status === "todo");
   return { funding: parsePlanSettings(plan.settings).mockFunding, lessons, plan };
 }
