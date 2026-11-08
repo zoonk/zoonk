@@ -103,9 +103,10 @@ extension APIClientFactory {
   /// run a join names. A stream that closes without its last event reopens after the last event
   /// received: after a moment while the run works, and once more at once after it ended, for the
   /// events it wrote just before. A dropped connection resumes the same way. A run that stops
-  /// without saying so may leave its stream open (vercel/workflow#964), so its status is read as
-  /// it's followed and every `stopCheck` after. A dropped connection waits `backoff` for each drop
-  /// in a row before it resumes, and a stream that closed while its run works waits 1.5 times it.
+  /// without saying so may leave its stream open (vercel/workflow#964), so its status is read once
+  /// its stream opens and every `stopCheck` after. A dropped connection waits `backoff` for each
+  /// drop in a row before it resumes, and a stream that closed while its run works waits 1.5 times
+  /// it.
   func generationEvents(
     id: String,
     token: String?,
@@ -162,15 +163,20 @@ extension APIClientFactory {
     var dropsWithoutEvents = 0
     /// Once a status read the run ended, the next connection reads its stream to the end.
     var runEnded = false
-    var watch = watchForStop(of: run, token: token, every: stopCheck, continuation)
-    defer { watch.cancel() }
+    var watch: Task<Void, Never>?
+    defer { watch?.cancel() }
 
     while true {
       let before = received
       let end: StreamEnd
 
       do {
-        end = try await read(run, token: token, received: &received, continuation)
+        end = try await read(run, token: token, received: &received, continuation) {
+          // Once its stream is open, so the steps it replays at once come before a stop.
+          if watch == nil {
+            watch = watchForStop(of: run, token: token, every: stopCheck, continuation)
+          }
+        }
       } catch {
         let error = apiError(from: error)
 
@@ -202,8 +208,8 @@ extension APIClientFactory {
         run = joined
         received = 0
         runEnded = false
-        watch.cancel()
-        watch = watchForStop(of: run, token: token, every: stopCheck, continuation)
+        watch?.cancel()
+        watch = nil
       case .closed(.working):
         try await Task.sleep(for: backoff * 1.5)
       case .closed:
@@ -217,10 +223,12 @@ extension APIClientFactory {
     _ run: String,
     token: String?,
     received: inout Int,
-    _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
+    _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation,
+    opened: () -> Void
   ) async throws -> StreamEnd {
     let (events, clockOffset) = try await openGenerationEvents(
       id: run, token: token, startIndex: received)
+    opened()
 
     for try await var event in events {
       received += 1
