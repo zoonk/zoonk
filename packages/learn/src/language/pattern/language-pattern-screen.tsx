@@ -209,7 +209,9 @@ export function LanguagePatternScreen({
       exitToApp
       footer={
         <>
-          {drill.failed && <AnswersSaveError onRetry={drill.retry} />}
+          {drill.failures > 0 && !drill.isSaving && (
+            <AnswersSaveError failures={drill.failures} onRetry={drill.retry} />
+          )}
           <TaskActions>
             {checked ? (
               <TaskMainButton busy={drill.isSaving} onClick={drill.next} {...FORWARD_ICON}>

@@ -136,6 +136,8 @@ export type LessonPlayerRoutes = {
 };
 
 export type LessonPlayerCompletionState = {
+  /** Saves that failed in a row. */
+  failures: number;
   result: LibraryLessonCompletion | null;
   status: "failed" | "saved" | "saving";
   /** True when I know this passed every check and skipped the rest. */

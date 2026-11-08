@@ -44,7 +44,7 @@ export type LessonPlayerState = {
   checkIssue: CheckIssue | null;
   completion:
     | LessonPlayerCompletionState
-    | { result: null; status: "ready"; testedOut: boolean }
+    | { failures: number; result: null; status: "ready"; testedOut: boolean }
     | null;
   /** The learner pressed or typed in the player on this page, so a late run start leaves them where they are. */
   engaged: boolean;
@@ -136,7 +136,8 @@ export function createInitialState(
     answers: {},
     checkFailed: false,
     checkIssue: null,
-    completion: queue.length === 0 ? { result: null, status: "ready", testedOut: false } : null,
+    completion:
+      queue.length === 0 ? { failures: 0, result: null, status: "ready", testedOut: false } : null,
     engaged: false,
     firstVerdicts: {},
     hasMap: lesson.hasMap,

@@ -7,7 +7,7 @@ import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
-import { AnswersSaveError } from "../_components/save-error";
+import { type UnsentAnswers } from "../_components/save-error";
 import {
   StepCard,
   StepDetail,
@@ -212,20 +212,20 @@ function TestOutQuestions({
   chapterTitle,
   closeHref,
   draftKey,
-  error,
   lessonsLeft,
   onFinish,
   pending,
   test,
+  unsent,
 }: {
   chapterTitle: string;
   closeHref: string;
   draftKey?: string;
-  error: React.ReactNode;
   lessonsLeft: number | null;
   onFinish: (answers: ChoiceQuestionAnswer[]) => void;
   pending: boolean;
   test: TestOutTest;
+  unsent: UnsentAnswers<ChoiceQuestionAnswer[]> | null;
 }) {
   const t = useExtracted();
   const rule = useTestOutRule(test.passMark);
@@ -235,7 +235,6 @@ function TestOutQuestions({
     <ChoiceQuestionsRun
       aside={aside}
       draftKey={draftKey}
-      error={error}
       header={{
         closeHref,
         screen: "test-out",
@@ -246,6 +245,7 @@ function TestOutQuestions({
       pending={pending}
       questions={test.questions}
       trueFalseLabels={test.trueFalseLabels}
+      unsent={unsent}
     />
   );
 }
@@ -282,7 +282,7 @@ export function TestOutRun({
   test: TestOutTest | null;
 }) {
   const [outcome, setOutcome] = useState<GradedTestOut | null>(null);
-  const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
+  const [unsent, setUnsent] = useState<UnsentAnswers<ChoiceQuestionAnswer[]> | null>(null);
   const [isPending, startTransition] = useTransition();
   const ownId = useMemo(() => crypto.randomUUID(), []);
 
@@ -296,7 +296,7 @@ export function TestOutRun({
         clearAnswerDraft(draftKey);
       }
 
-      setUnsent(graded ? null : answers);
+      setUnsent((last) => (graded ? null : { answers, failures: (last?.failures ?? 0) + 1 }));
       setOutcome(graded);
     });
 
@@ -326,11 +326,11 @@ export function TestOutRun({
         chapterTitle={chapterTitle}
         closeHref={closeHref}
         draftKey={draftKey}
-        error={unsent && !isPending && <AnswersSaveError onRetry={() => submit(unsent)} />}
         lessonsLeft={lessonsLeft}
         onFinish={submit}
         pending={isPending}
         test={test}
+        unsent={unsent}
       />
     )
   );

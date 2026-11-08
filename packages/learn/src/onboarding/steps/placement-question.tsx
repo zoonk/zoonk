@@ -11,6 +11,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { AnswersSaveError } from "../../_components/save-error";
+import { getSentDurationMs } from "../../mistakes/drill/drill-types";
 import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
@@ -134,41 +135,48 @@ function TypedAnswerField({
   );
 }
 
+type PlacementControl = "confirm" | "dontKnow" | "stop";
+
 function PlacementActions({
   canConfirm,
   dontKnowLabel,
+  failures,
   onDontKnow,
-  onRetry,
   onStop,
   pending,
+  pressed,
 }: {
   canConfirm: boolean;
   dontKnowLabel: string;
+  failures: number;
   onDontKnow: () => void;
-  onRetry: (() => void) | null;
   onStop: () => void;
   pending: boolean;
+  pressed: PlacementControl | null;
 }) {
   const t = useExtracted();
+  const busy = pending ? pressed : null;
 
   return (
     <OnboardingFooter>
-      {onRetry && <AnswersSaveError onRetry={onRetry} />}
+      {failures > 0 && !pending && <AnswersSaveError failures={failures} />}
 
       <div className="flex flex-wrap-reverse gap-2">
         <Button
+          busy={busy === "dontKnow"}
           className="grow"
           disabled={pending}
           focusableWhenDisabled
+          icon={<CircleHelpIcon aria-hidden="true" />}
           onClick={onDontKnow}
           size="lg"
           type="button"
           variant="outline"
         >
-          <CircleHelpIcon aria-hidden="true" />
           {dontKnowLabel}
         </Button>
         <OnboardingPrimaryButton
+          busy={busy === "confirm"}
           className="grow-999 basis-40"
           disabled={!canConfirm || pending}
           type="submit"
@@ -178,6 +186,7 @@ function PlacementActions({
       </div>
 
       <Button
+        busy={busy === "stop"}
         className="self-center"
         disabled={pending}
         focusableWhenDisabled
@@ -193,7 +202,7 @@ function PlacementActions({
 
 export function PlacementQuestionScreen({
   dontKnowLabel,
-  failed = false,
+  failures,
   media,
   number,
   onAnswer,
@@ -205,7 +214,8 @@ export function PlacementQuestionScreen({
   trueFalseLabels = "trueFalse",
 }: {
   dontKnowLabel?: string;
-  failed?: boolean;
+  /** Saves from this screen (answers and Stop) that failed in a row. */
+  failures: number;
   media?: React.ReactNode;
   number?: number;
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
@@ -221,21 +231,32 @@ export function PlacementQuestionScreen({
   const spoken = useSpokenText();
   const choices = useQuestionChoices({ question, trueFalseLabels });
   const [value, setValue] = useState<string | null>(null);
-  const [shownAt, setShownAt] = useState(() => Date.now());
-  const [sent, setSent] = useState<{ answer: PlacementAnswer; durationMs: number } | null>(null);
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the question opens, never updated.
+  const [shownAt] = useState(() => Date.now());
+  // A saved answer opens the next question as a new screen (keyed by its item), so a send kept
+  // here never saved.
+  const [unsaved, setUnsaved] = useState<{ answer: PlacementAnswer; durationMs: number } | null>(
+    null,
+  );
+
+  const [pressed, setPressed] = useState<PlacementControl | null>(null);
   const canConfirm = value !== null && value.trim().length > 0;
 
-  // The next question is a new screen (keyed by its item), so the pick stays while this one saves.
-  const send = (answer: PlacementAnswer) => {
-    const now = Date.now();
-    setShownAt(now);
-    setSent({ answer, durationMs: now - shownAt });
-    onAnswer(answer, now - shownAt);
+  const send = (answer: PlacementAnswer, control: PlacementControl) => {
+    const durationMs = getSentDurationMs({
+      answer,
+      failed: unsaved,
+      measuredMs: Date.now() - shownAt,
+    });
+
+    setPressed(control);
+    setUnsaved({ answer, durationMs });
+    onAnswer(answer, durationMs);
   };
 
   const confirm = () => {
     if (value !== null && canConfirm && !pending) {
-      send(toAnswer({ question, value }));
+      send(toAnswer({ question, value }), "confirm");
     }
   };
 
@@ -279,12 +300,14 @@ export function PlacementQuestionScreen({
           <PlacementActions
             canConfirm={canConfirm}
             dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
-            onDontKnow={() => send({ dontKnow: true })}
-            onRetry={
-              failed && sent && !pending ? () => onAnswer(sent.answer, sent.durationMs) : null
-            }
-            onStop={onStop}
+            failures={failures}
+            onDontKnow={() => send({ dontKnow: true }, "dontKnow")}
+            onStop={() => {
+              setPressed("stop");
+              onStop();
+            }}
             pending={pending}
+            pressed={pressed}
           />
         </form>
       </OnboardingColumn>

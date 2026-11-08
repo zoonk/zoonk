@@ -5,13 +5,25 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
 
-export function AnswersSaveError({ onRetry }: { onRetry?: () => void }) {
+/** Answers a save didn't take, kept for Try again, with the saves that failed in a row. */
+export type UnsentAnswers<Answers> = { answers: Answers; failures: number };
+
+/** `failures` counts the saves that failed in a row, so a retry that fails again reads differently. */
+export function AnswersSaveError({
+  failures,
+  onRetry,
+}: {
+  failures: number;
+  onRetry?: () => void;
+}) {
   const t = useExtracted();
   const space = useSentenceSpace();
 
   return (
     <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't go through. Your answers are kept.")}
+      {failures > 1
+        ? t("Still not going through. You can come back later.")
+        : t("That didn't go through. Your answers are kept.")}
       {onRetry && (
         <>
           {space}

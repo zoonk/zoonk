@@ -469,6 +469,11 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Das hat nicht geklappt. Versuch es gleich noch einmal."
 
 #: src/_components/save-error.tsx
+msgctxt "71Gfs0"
+msgid "Still not going through. You can come back later."
+msgstr "Das klappt immer noch nicht. Du kannst später wiederkommen."
+
+#: src/_components/save-error.tsx
 msgctxt "7i_b3c"
 msgid "That didn't go through. Your answers are kept."
 msgstr "Das hat nicht geklappt. Deine Antworten bleiben erhalten."

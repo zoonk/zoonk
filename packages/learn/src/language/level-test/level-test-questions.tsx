@@ -42,7 +42,7 @@ export function LevelTestQuestion({
   targetLanguage: string;
 }) {
   const t = useExtracted();
-  const [failed, setFailed] = useState(false);
+  const [failures, setFailures] = useState(0);
   const [isPending, startTransition] = useTransition();
   const speech = useSpokenAudio(targetLanguage);
   const isListening = question.skill === "listening";
@@ -52,7 +52,7 @@ export function LevelTestQuestion({
   return (
     <PlacementQuestionScreen
       dontKnowLabel={isListening ? listeningOut : undefined}
-      failed={failed}
+      failures={failures}
       key={question.id}
       media={
         isListening ? (
@@ -76,11 +76,12 @@ export function LevelTestQuestion({
             ...(skipped && { skipped }),
           }).catch(() => null);
 
-          setFailed(!view);
-
-          if (view) {
-            onView(view);
+          if (!view) {
+            setFailures((count) => count + 1);
+            return;
           }
+
+          onView(view);
         })
       }
       onStop={onStop}

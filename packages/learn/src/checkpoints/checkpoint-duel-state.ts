@@ -18,6 +18,7 @@ export type CheckpointDuelState = {
   completion: StudyBlockCompletionView | null;
   confirmed: CheckpointAnswer | null;
   error: DuelError | null;
+  failures: number;
   feedback: { answer: CheckpointAnswer; isCorrect: boolean; itemId: string } | null;
   pending: boolean;
   phase: DuelPhase;
@@ -56,6 +57,7 @@ export function createDuelState(checkpoint: CheckpointView): CheckpointDuelState
     completion: null,
     confirmed: null,
     error: null,
+    failures: 0,
     feedback: null,
     pending: false,
     phase:
@@ -77,7 +79,13 @@ export function checkpointDuelReducer(
     case "confirm":
       return { ...state, confirmed: action.answer, error: null, pending: true };
     case "failed":
-      return { ...state, confirmed: null, error: action.error, pending: false };
+      return {
+        ...state,
+        confirmed: null,
+        error: action.error,
+        failures: state.failures + 1,
+        pending: false,
+      };
     case "select":
       return state.feedback || state.pending ? state : { ...state, selected: action.answer };
     case "answered": {
@@ -86,6 +94,7 @@ export function checkpointDuelReducer(
       return {
         ...state,
         confirmed: null,
+        failures: 0,
         feedback: answer ? { answer, isCorrect: action.isCorrect, itemId: action.itemId } : null,
         pending: false,
         reinforcementLessons: action.reinforcementLessons ?? state.reinforcementLessons,
@@ -102,6 +111,7 @@ export function checkpointDuelReducer(
       return {
         ...state,
         completion: action.completion,
+        failures: 0,
         feedback: null,
         pending: false,
         phase: "result",

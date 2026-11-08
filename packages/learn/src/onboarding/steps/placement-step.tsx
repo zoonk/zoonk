@@ -36,6 +36,7 @@ type Phase =
   | { kind: "intro" | "loading" | "unavailable" | "waiting" }
   | {
       answered: number;
+      failures: number;
       kind: "question";
       question: PlacementQuestion;
       /** 0 to 1. */
@@ -57,12 +58,17 @@ function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
   return outcome.next && !outcome.complete
     ? {
         answered,
+        failures: 0,
         kind: "question",
         question: outcome.next,
         spent: Math.max(outcome.dayBudgetSpent, shown.spent),
         trueFalseLabels: outcome.trueFalseLabels,
       }
     : { answered, forToday: outcome.dayBudgetUsed, kind: "done" };
+}
+
+function countSave(phase: Phase, saved: boolean): Phase {
+  return phase.kind === "question" ? { ...phase, failures: saved ? 0 : phase.failures + 1 } : phase;
 }
 
 function toResumedPhase({
@@ -179,7 +185,6 @@ export function PlacementStep({
   });
 
   const [buildFailed, setBuildFailed] = useState(false);
-  const [answerFailed, setAnswerFailed] = useState(false);
   // Questions that arrived while the learner waited show once the wait moves on.
   const [questionsReady, setQuestionsReady] = useState<ReadyOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -193,7 +198,9 @@ export function PlacementStep({
         saveFinish({ actions, fromScratch, goalId, stopMockId }),
       );
 
-      onFinishFailed(!saved);
+      // A Stop on the question screen fails on that screen's line, counted with its answers.
+      onFinishFailed(!saved && phase.kind !== "question");
+      setPhase((current) => countSave(current, Boolean(saved)));
 
       if (saved) {
         onDone();
@@ -233,7 +240,7 @@ export function PlacementStep({
           .answerPlacement({ answer: choice, durationMs, goalId, itemId: question.itemId })
           .catch((): PlacementOutcome => ({ status: "failed" }));
 
-        setAnswerFailed(outcome.status === "failed");
+        setPhase((current) => countSave(current, outcome.status !== "failed"));
 
         if (outcome.status === "failed") {
           return;
@@ -290,7 +297,7 @@ export function PlacementStep({
     case "question":
       return (
         <PlacementQuestionScreen
-          failed={answerFailed}
+          failures={phase.failures}
           key={phase.question.itemId}
           number={phase.answered + 1}
           onAnswer={answer(phase.question, phase.answered)}

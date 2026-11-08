@@ -68,6 +68,7 @@ type PracticePhase =
  */
 type PracticeState = {
   answerIds: string[];
+  failures: number;
   fixedIds: string[];
   index: number;
   phase: PracticePhase;
@@ -113,6 +114,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
 
   return {
     answerIds: [],
+    failures: 0,
     fixedIds: [],
     index: 0,
     phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
@@ -167,6 +169,7 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
   return {
     ...state,
     answerIds: [...state.answerIds, action.feedback.answerId],
+    failures: 0,
     fixedIds: getFixedIds(state, action),
     phase: { ...phase, feedback: action.feedback, kind: "feedback" as const },
     reached: mergeReached(state.reached, action.feedback.reached),
@@ -202,7 +205,11 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
       return answered(state, action);
     case "answerFailed":
       return state.phase.kind === "checking"
-        ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+        ? {
+            ...state,
+            failures: state.failures + 1,
+            phase: { ...state.phase, kind: "answerFailed" },
+          }
         : state;
     case "retry":
       return state.phase.kind === "answerFailed"

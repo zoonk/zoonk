@@ -143,8 +143,8 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   return (
     <>
       <StatusLine gradesLeft={writer.gradesLeft} status={writer.status} />
-      {finishing.failed && !finishing.pending && (
-        <AnswersSaveError onRetry={() => void finishing.finish()} />
+      {finishing.failures > 0 && !finishing.pending && (
+        <AnswersSaveError failures={finishing.failures} onRetry={() => void finishing.finish()} />
       )}
       <TaskActions>
         {drafts.length > 0 && (

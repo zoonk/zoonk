@@ -307,7 +307,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
       }
       finalOptions={
         <>
-          {finishing.failed && (
+          {finishing.failures > 0 && (
             <p className="text-destructive-text text-sm" role="alert">
               {t("That didn't go through. Try again in a moment.")}
             </p>

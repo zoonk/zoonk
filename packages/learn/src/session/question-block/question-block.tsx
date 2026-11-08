@@ -259,6 +259,7 @@ export function QuestionBlock({
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
           <QuestionBlockStatus
+            failures={run.state.failures}
             onRetryAnswer={run.retry}
             onRetryFinish={run.retryFinish}
             phase={phase}

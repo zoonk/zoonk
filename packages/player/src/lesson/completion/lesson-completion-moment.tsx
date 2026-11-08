@@ -120,7 +120,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
 
   if (completion.status === "failed") {
-    return <FailedMoment onRetry={onRetry} title={title} />;
+    return <FailedMoment failures={completion.failures} onRetry={onRetry} title={title} />;
   }
 
   return (

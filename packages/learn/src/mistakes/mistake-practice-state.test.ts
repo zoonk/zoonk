@@ -269,7 +269,12 @@ describe(practiceReducer, () => {
         sender,
       });
 
-      expect(reduce(failed, { type: "retry" }).phase).toStrictEqual(checking.phase);
+      const retrying = reduce(failed, { type: "retry" });
+      expect(retrying.phase).toStrictEqual(checking.phase);
+
+      expect([failed.failures, reduce(retrying, { type: "answerFailed" }).failures]).toStrictEqual([
+        1, 2,
+      ]);
     },
   );
 });

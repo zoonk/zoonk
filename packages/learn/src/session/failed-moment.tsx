@@ -6,14 +6,22 @@ import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout
 import { TaskMainButton } from "../shell/task-frame";
 import { MomentHeader } from "./moment-header";
 
-export function FailedMoment({ onRetry, title }: { onRetry: () => void; title: string }) {
+export function FailedMoment({
+  failures,
+  onRetry,
+  title,
+}: {
+  failures: number;
+  onRetry: () => void;
+  title: string;
+}) {
   const t = useExtracted();
 
   return (
     <>
       <TaskBody data-slot="failed-moment">
         <MomentHeader title={title}>
-          <AnswersSaveError />
+          <AnswersSaveError failures={failures} />
         </MomentHeader>
       </TaskBody>
 

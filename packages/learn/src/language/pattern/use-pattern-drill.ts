@@ -32,26 +32,22 @@ export function usePatternDrill({
   const [step, setStep] = useState<DrillStep>({ kind: "intro" });
   const [answers, setAnswers] = useState<string[]>([]);
   const [picked, setPicked] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [failures, setFailures] = useState(0);
   const [isSaving, startSaving] = useTransition();
 
   const index = step.kind === "question" ? step.index : 0;
   const question = step.kind === "question" ? drill[step.index] : undefined;
   const answer = answers[index] ?? null;
 
-  const save = (finished: string[]) => {
-    setFailed(false);
-
+  const save = (finished: string[]) =>
     startSaving(async () => {
       const result = await practice({ answers: finished, requestId }).catch(() => null);
+      setFailures((count) => (result ? 0 : count + 1));
 
       if (result) {
         setStep({ kind: "result", result });
-      } else {
-        setFailed(true);
       }
     });
-  };
 
   const segments = drill.map((item, position): TaskSegment => {
     const checked = answers[position];
@@ -70,7 +66,7 @@ export function usePatternDrill({
         setAnswers([...answers.slice(0, index), picked]);
       }
     },
-    failed,
+    failures,
     index,
     isSaving,
     next: () => {

@@ -1675,9 +1675,12 @@ describe(lessonPlayerReducer, () => {
       ],
     );
 
-    expect([done.run, done.completion?.status]).toStrictEqual([
+    expect([done.run, done.completion?.status, done.completion?.failures]).toStrictEqual([
       { carriedStepIds: [], hyperdrive, replay: false, runId: "run-1", status: "started" },
       "saving",
+      1,
     ]);
+
+    expect(lessonPlayerReducer(done, { type: "completionFailed" }).completion?.failures).toBe(2);
   });
 });
