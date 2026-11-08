@@ -102,7 +102,6 @@ fun planOf(
     numbers: String? = null,
     endDate: LocalDate? = null,
     examChoices: String = "[]",
-    nextDays: String = revealDaysOf(),
 ): Plan {
     val weekStart = LocalDate.now()
     return ApiJson.decodeFromString(
@@ -119,7 +118,7 @@ fun planOf(
            "shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":30,"weekend":null,"weekendDays":[]},
            "weekdayMinutes":[0,30,30,30,30,30,0]${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}},
          "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
-         "languageAim":null,"nextDays":$nextDays,"tools":[],"week":{"days":[],"startDate":"$weekStart","endDate":"${weekStart.plusDays(
+         "languageAim":null,"tools":[],"week":{"days":[],"startDate":"$weekStart","endDate":"${weekStart.plusDays(
             6,
         )}"},
          "weekTime":{"studiedMinutes":0,"targetMinutes":150}}
@@ -230,8 +229,7 @@ fun revealDaysOf(): String {
     val today = LocalDate.now()
     val titles =
         listOf(
-            "How birds use sound",
-            "How birds use sound",
+            "Songs and calls",
             "Pitch, rhythm and tone",
             "Who sings, and when",
             "The dawn chorus",
@@ -241,16 +239,16 @@ fun revealDaysOf(): String {
     return titles
         .mapIndexed { index, title ->
             """{"date":"${today.plusDays(
-                index.toLong(),
-            )}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":"${if (index <= 1) "019a482c-6a00-7000-8000-000000000011" else "019a482c-6a00-7000-8000-00000000001$index"}",
+                index.toLong() + 1,
+            )}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":"${"019a482c-6a00-7000-8000-00000000002$index"}",
           "minutes":6,"requiresPlus":false,"scheduledFor":"${today.plusDays(
-                index.toLong(),
+                index.toLong() + 1,
             )}","skillId":null,"status":"todo","title":"$title","writing":false}],
           "minutes":6,"mockFunding":null,"state":"${if (index == 0) "today" else "upcoming"}"}"""
         }.joinToString(",", "[", "]")
 }
 
-fun revealTodayOf(): com.zoonk.api.models.StudyDay {
+fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
     val today = LocalDate.now().toString()
     val blocks =
         listOf(
@@ -278,17 +276,26 @@ fun revealTodayOf(): com.zoonk.api.models.StudyDay {
                 "estimatedMinutes" to 5,
             ),
         )
-    return com.zoonk.android.feature.session.decodeFixture(
-        "unstarted-study-day",
-        "localDate" to today,
-        "blocks" to kotlinx.serialization.json.JsonArray(blocks),
-        "nextPosition" to 0,
-        "state" to "underway",
-        "minutes" to
-            kotlinx.serialization.json.buildJsonObject {
-                put("dailyGoal", kotlinx.serialization.json.JsonPrimitive(0))
-                put("done", kotlinx.serialization.json.JsonPrimitive(0))
-                put("planned", kotlinx.serialization.json.JsonPrimitive(15))
-            },
+    val todayDay =
+        com.zoonk.android.feature.session.decodeFixture<com.zoonk.api.models.StudyDay>(
+            "unstarted-study-day",
+            "localDate" to today,
+            "blocks" to kotlinx.serialization.json.JsonArray(blocks),
+            "nextPosition" to 0,
+            "state" to "underway",
+            "minutes" to
+                kotlinx.serialization.json.buildJsonObject {
+                    put("dailyGoal", kotlinx.serialization.json.JsonPrimitive(0))
+                    put("done", kotlinx.serialization.json.JsonPrimitive(0))
+                    put("planned", kotlinx.serialization.json.JsonPrimitive(15))
+                },
+        )
+    return com.zoonk.api.models.PlanRevealToday(
+        today = todayDay,
+        minutes = 15,
+        nextDays = ApiJson.decodeFromString(revealDaysOf()),
+        week =
+            com.zoonk.api.models
+                .PlanRevealTodayWeek(days = 7, minutes = 51),
     )
 }

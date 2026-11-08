@@ -230,21 +230,18 @@ internal fun ColumnScope.PlanEditorBody(
 ) {
     val aimDates by produceState<Map<String, java.time.LocalDate?>>(emptyMap(), page.plan) {
         value = emptyMap()
-        if (page.plan.schedule.targetDate != null) return@produceState
         val aim = page.plan.languageAim
         value =
             aim
                 ?.choices
                 .orEmpty()
-                .filterNot { it.aim.value == aim?.aim?.value }
                 .map { choice ->
                     async {
                         val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
                         choice.aim.value to
                             preview
                                 ?.takeIf { it.ready }
-                                ?.effect
-                                ?.endDateAfter
+                                ?.finishDate
                                 ?.toJavaLocalDate()
                     }
                 }.awaitAll()
@@ -304,10 +301,7 @@ internal fun ColumnScope.PlanEditorBody(
                     failed = edits.hasFailed(PlanPart.Aim),
                     note = stringResource(R.string.onboarding_aim_description),
                     dates = { aimDates },
-                    endDate =
-                        page.plan.estimate.endDate
-                            ?.takeIf { page.plan.schedule.targetDate == null }
-                            ?.toJavaLocalDate(),
+                    endDate = aimDates[aim.value],
                 )
             }
         }

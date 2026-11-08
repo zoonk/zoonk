@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -42,9 +43,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -53,6 +56,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
@@ -64,6 +68,7 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.GenerationFailureNotice
+import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.rememberMoveFocus
@@ -101,16 +106,29 @@ class WaitQuizState internal constructor(
         private set
     var deck by mutableStateOf<WarmUpDeck?>(null)
         internal set
+    var coming by mutableStateOf(false)
+        internal set
     val card get() = deck?.cards?.getOrNull(index)
     val hasQuiz get() = card != null
+    val canShowQuiz get() = hasQuiz || coming
     val hasNext get() = picked != null && index + 1 < (deck?.cards?.size ?: 0)
 
     fun open() {
         if (opened) return
         opened = true
         if (picked == null) index = maxOf(index, warmUpId?.let { warmUps?.next(it) } ?: 0)
-        showingProgress = !hasQuiz
-        visitedQuiz = hasQuiz
+        showingProgress = !canShowQuiz
+        visitedQuiz = canShowQuiz
+    }
+
+    internal fun receive(
+        loaded: WarmUpDeck?,
+        coming: Boolean,
+    ) {
+        val wasComing = this.coming
+        deck = loaded
+        this.coming = coming && loaded == null
+        if (wasComing && !this.coming && !hasQuiz) showingProgress = true
     }
 
     fun showProgress(hold: ReadyHold) {
@@ -149,6 +167,7 @@ class WaitQuizState internal constructor(
 fun rememberWaitQuiz(
     warmUpId: String?,
     warmUps: WarmUpStore?,
+    coming: Boolean = false,
 ): WaitQuizState {
     val saver =
         remember(warmUps) {
@@ -183,16 +202,10 @@ fun rememberWaitQuiz(
             WaitQuizState(warmUpId, warmUps, warmUpId?.let { warmUps?.next(it) } ?: 0, showingProgress = true)
         }
     val id = warmUpId ?: quiz.warmUpId
-    val loaded =
-        if (id != null && warmUps != null) {
-            warmUps.decks[id]
-                .collectShown()
-                .value.value
-        } else {
-            null
-        }
+    val read = if (id != null && warmUps != null) warmUps.decks[id].collectShown().value else null
+    val loading = read == LoadState.Idle || read == LoadState.Loading
     quiz.warmUpId = id
-    quiz.deck = loaded
+    quiz.receive(read?.value, coming || loading)
     return quiz
 }
 
@@ -225,10 +238,10 @@ fun WaitContent(
         if (previousView != quiz.showingProgress) moveFocus(if (quiz.showingProgress) progressFocus else stripFocus)
         previousView = quiz.showingProgress
     }
-    val showingProgress = quiz.showingProgress && quiz.hasQuiz && !progressBeside
+    val showingProgress = quiz.showingProgress && quiz.canShowQuiz && !progressBeside
     BackHandler(enabled = showingProgress) { quiz.back() }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        if (!progressBeside && quiz.hasQuiz && !quiz.showingProgress) {
+        if (!progressBeside && quiz.canShowQuiz && !quiz.showingProgress) {
             val failure = run.failure
             if (failure != null) {
                 GenerationFailureNotice(failure, onRetry)
@@ -247,7 +260,7 @@ fun WaitContent(
             HorizontalDivider()
         }
         AnimatedContent(
-            targetState = !progressBeside && (quiz.showingProgress || !quiz.hasQuiz),
+            targetState = !progressBeside && (quiz.showingProgress || !quiz.canShowQuiz),
             transitionSpec = {
                 fadeIn(tween(150, easing = ZoonkMotion.EaseOut)) togetherWith
                     fadeOut(tween(150, easing = ZoonkMotion.EaseOut)) using
@@ -329,7 +342,7 @@ fun WaitQuizAction(
 ) {
     val label =
         when {
-            !quiz.hasQuiz -> return
+            !quiz.canShowQuiz -> return
             quiz.showingProgress && !progressBeside -> if (quiz.visitedQuiz) R.string.warm_up_back_to_quiz else R.string.warm_up_play_quiz
             quiz.hasNext -> R.string.warm_up_next
             else -> return
@@ -346,7 +359,11 @@ private fun QuizCard(
     hold: ReadyHold,
     goalId: String? = null,
 ) {
-    val card = quiz.card ?: return
+    val card = quiz.card
+    if (card == null) {
+        if (quiz.coming) QuizSkeleton()
+        return
+    }
     val tracker = LocalEventTracker.current
     LifecycleResumeEffect(quiz.warmUpId) {
         if (!quiz.shown) {
@@ -363,6 +380,22 @@ private fun QuizCard(
             quiz.pick(option, hold)
             tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, quiz.index + 1, option.correct))
         }
+    }
+}
+
+@Composable
+private fun QuizSkeleton() {
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Title()
+        MediaPending(
+            Modifier.fillMaxWidth().heightIn(min = 80.dp).semantics { progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate },
+        ) {}
+        repeat(3) { MediaPending(Modifier.fillMaxWidth().heightIn(min = 56.dp)) {} }
+        Text(
+            stringResource(R.string.warm_up_guess_hint),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
 

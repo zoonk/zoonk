@@ -24,6 +24,19 @@ class WaitQuizRestorationTest {
     @get:Rule val rule = createComposeRule()
 
     @Test
+    fun aClaimedDeckOpensTheQuizBeforeItsCardsArrive() {
+        lateinit var quiz: WaitQuizState
+        rule.setContent { quiz = rememberWaitQuiz(null, null, coming = true) }
+        rule.runOnIdle {
+            quiz.open()
+            org.junit.Assert.assertFalse(quiz.showingProgress)
+            assertTrue(quiz.visitedQuiz)
+            quiz.receive(null, coming = false)
+            assertTrue(quiz.showingProgress)
+        }
+    }
+
+    @Test
     fun aColdRunReplayKeepsTheAnsweredCardAndViewAndContinuesFromIt() {
         val restore = StateRestorationTester(rule)
         lateinit var quiz: WaitQuizState

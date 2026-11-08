@@ -406,6 +406,23 @@ class OnboardingScreenshots {
                 "reveal-reading" to {
                     Reveal(setupPlanApi().apply { shownPlan = planOf(notice = "reading") })
                 },
+                "wait-claimed" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup =
+                                {
+                                    setupView(
+                                        listOf("plan"),
+                                        planReady = false,
+                                        warmUp = """{"id":"019a482c-6a00-7000-8000-000000000001","status":"writing"}""",
+                                    )
+                                }
+                            generationId = { "claimed-run" }
+                            events = kotlinx.coroutines.flow.flow { kotlinx.coroutines.awaitCancellation() }
+                        },
+                        setupPlanApi().apply { shownPlan = planOf(ready = false) },
+                    )
+                },
                 "setup-language-reason" to {
                     Setup(
                         FakeOnboardingApi().apply {
@@ -593,9 +610,19 @@ class OnboardingScreenshots {
         }
 
         @Composable
-        private fun Setup(api: FakeOnboardingApi) {
+        private fun Setup(
+            api: FakeOnboardingApi,
+            plans: FakePlanApi = setupPlanApi(),
+        ) {
             val store = rememberStore(api)
-            GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, rememberPlans(), rememberMocks(), isGuest = false, rememberAppNavigator())
+            GoalSetupScreen(
+                AppRoute.GoalSetup(GOAL_ID),
+                store,
+                rememberPlans(plans),
+                rememberMocks(),
+                isGuest = false,
+                rememberAppNavigator(),
+            )
         }
 
         @Composable
@@ -649,7 +676,7 @@ class OnboardingScreenshots {
                 remember {
                     val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
                     AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-                        .resource<com.zoonk.api.models.StudyDay>(com.zoonk.android.data.Audience.SignedIn) { revealTodayOf() }
+                        .resource<com.zoonk.api.models.PlanRevealToday>(com.zoonk.android.data.Audience.SignedIn) { revealTodayOf() }
                 }
             SetupColumn {
                 PlanRevealStep(

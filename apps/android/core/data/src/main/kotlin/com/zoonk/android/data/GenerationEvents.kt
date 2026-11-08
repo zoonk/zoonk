@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.Transient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.sse.EventSource
@@ -30,6 +31,8 @@ data class GenerationEvent(
     val warmUpId: String? = null,
     val lessonId: String? = null,
     val lessonTitle: String? = null,
+    /** Transport metadata from this connection, never an event timestamp. */
+    @Transient val clockOffsetMillis: Long? = null,
 )
 
 /**
@@ -78,6 +81,15 @@ private fun ApiClients.openGenerationEvents(
         val client = session?.let { streamingHttp.withBearer(it.bearerToken) } ?: streamingHttp
         val listener =
             object : EventSourceListener() {
+                private var clockOffsetMillis: Long? = null
+
+                override fun onOpen(
+                    eventSource: EventSource,
+                    response: Response,
+                ) {
+                    clockOffsetMillis = response.headers.getDate("Date")?.let { System.currentTimeMillis() - it.time }
+                }
+
                 override fun onEvent(
                     eventSource: EventSource,
                     id: String?,
@@ -85,7 +97,7 @@ private fun ApiClients.openGenerationEvents(
                     data: String,
                 ) {
                     try {
-                        trySendBlocking(ApiJson.decodeFromString<GenerationEvent>(data))
+                        trySendBlocking(ApiJson.decodeFromString<GenerationEvent>(data).copy(clockOffsetMillis = clockOffsetMillis))
                     } catch (e: SerializationException) {
                         close(ApiException(ApiError.Unavailable))
                     }

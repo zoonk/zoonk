@@ -134,10 +134,16 @@ fun GoalSetupScreen(
     val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
-    val quiz = key(vm.goalId) { rememberWaitQuiz(run.warmUpId, warmUps) }
+    val claimed = state.value?.warmUp
+    val deckId = run.warmUpId ?: claimed?.takeIf { it.status.value == "ready" }?.id?.toString()
+    val coming =
+        (claimed != null || deckId != null) &&
+            (run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following) &&
+            run.steps["warmUpFailed"] != com.zoonk.android.data.StepState.Completed
+    val quiz = key(vm.goalId) { rememberWaitQuiz(deckId, warmUps, coming) }
     TrackDeckReceived(
         vm.goalId,
-        run.warmUpId,
+        deckId,
         state.value
             ?.goal
             ?.details

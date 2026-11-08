@@ -8,7 +8,7 @@ import org.junit.Test
 class PlanPreviewTest {
     private val operations = listOf<PlanOp>(PlanOp.DailyMinutes(60))
     private val request = PlanPreviewState.Loading(operations, plan())
-    private val unchanged = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
+    private val unchanged = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = true, unchanged = true)
 
     @Test
     fun aValidUnchangedResultIsntAFailure() {

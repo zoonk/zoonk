@@ -27,7 +27,7 @@ fun plan(extra: String = ""): Plan {
                  "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,
                   "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
                  "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
-                 "tools":[],"languageAim":null,"nextDays":[],"week":{"days":[],"endDate":"2026-11-01","startDate":"2026-10-26"},
+                 "tools":[],"languageAim":null,"week":{"days":[],"endDate":"2026-11-01","startDate":"2026-10-26"},
                  "weekTime":{"studiedMinutes":0,"targetMinutes":100}}
                 """.trimIndent(),
             ).jsonObject
@@ -141,7 +141,7 @@ internal fun learnPlan(): Plan =
         "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
           "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":true,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":30,"weekendDays":[0,6]},"weekdayMinutes":[30,20,20,20,20,20,30]},
         "status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null},
-        "languageAim":null,"nextDays":[],"week":{"startDate":"2026-10-26","endDate":"2026-11-01","days":[
+        "languageAim":null,"week":{"startDate":"2026-10-26","endDate":"2026-11-01","days":[
           {"date":"2026-10-26","items":[],"minutes":20,"state":"done"},
           {"date":"2026-10-27","items":[],"minutes":20,"state":"missed"},
           {"date":"2026-10-28","items":[],"minutes":20,"state":"today"},

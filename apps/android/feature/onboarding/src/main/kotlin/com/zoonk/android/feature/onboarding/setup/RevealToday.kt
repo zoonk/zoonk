@@ -59,6 +59,7 @@ internal fun RevealHero(
     plan: Plan,
     goal: Goal,
     play: Boolean,
+    today: LocalDate,
 ) {
     val buddy = LocalRevealBuddy.current
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -114,13 +115,7 @@ internal fun RevealHero(
                     pluralStringResource(R.plurals.onboarding_reveal_lessons, total.coerceAtMost(Int.MAX_VALUE.toLong()).toInt())
                 },
             )
-            val facts =
-                plan.revealFacts(
-                    plan.nextDays
-                        .firstOrNull()
-                        ?.date
-                        ?.toJavaLocalDate() ?: LocalDate.now(),
-                )
+            val facts = plan.revealFacts(today)
             val aim = plan.languageAim?.takeIf { facts.days == null && it.choices.any { choice -> choice.aim.value == it.aim?.value } }
             when {
                 aim != null -> {
@@ -174,6 +169,7 @@ private fun RevealReadout(
 @Composable
 internal fun RevealToday(
     day: com.zoonk.android.feature.session.DayView,
+    minutes: Long,
     play: Boolean,
 ) {
     val started = day.steps.any { it.isFinished }
@@ -184,7 +180,7 @@ internal fun RevealToday(
             detail =
                 listOf(
                     formatDate(day.localDate.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDayShort),
-                    formatMinutes(day.minutes.planned.toInt(), currentLocale()),
+                    formatMinutes(minutes.toInt(), currentLocale()),
                 ).factsLine(),
         )
         ordered.forEachIndexed { index, step ->
@@ -212,25 +208,18 @@ internal fun RevealToday(
 }
 
 @Composable
-internal fun RevealWeek(
-    plan: Plan,
-    today: com.zoonk.android.feature.session.DayView?,
-) {
-    val listed =
-        today
-            ?.steps
-            .orEmpty()
-            .mapNotNull { it.lessonId }
-            .toSet()
-    val days =
-        plan.nextDays
-            .drop(1)
-            .map { day ->
-                day.copy(items = day.items.filter { it.lessonId == null || it.lessonId !in listed })
-            }.filter { it.items.isNotEmpty() || it.minutes == 0.0 }
+internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
+    val days = reveal.nextDays
     if (days.none { it.items.isNotEmpty() }) return
     Column {
-        SectionHeader(stringResource(R.string.onboarding_reveal_first_week))
+        SectionHeader(
+            stringResource(R.string.onboarding_reveal_first_week),
+            detail =
+                listOf(
+                    pluralStringResource(R.plurals.onboarding_days, reveal.week.days.toInt(), reveal.week.days.toInt()),
+                    formatMinutes(reveal.week.minutes.toInt(), currentLocale()),
+                ).factsLine(),
+        )
         days.forEach { day ->
             ListRow(
                 verticalAlignment = androidx.compose.ui.Alignment.Top,
