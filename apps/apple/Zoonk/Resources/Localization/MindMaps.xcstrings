@@ -183,13 +183,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wir erstellen zuerst %lld Lektion, die auf deine kostenlosen Lektionen angerechnet wird."
+                  "value" : "Wir erstellen zuerst %lld Lektion und rechnen sie auf deine kostenlosen Lektionen an."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wir erstellen zuerst %lld Lektionen, die auf deine kostenlosen Lektionen angerechnet werden."
+                  "value" : "Wir erstellen zuerst %lld Lektionen und rechnen sie auf deine kostenlosen Lektionen an."
                 }
               }
             }
@@ -219,13 +219,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Primero se prepara %lld lección y se descuenta de tus lecciones gratis."
+                  "value" : "Primero se prepara %lld lección y cuenta para tu límite de lecciones gratis."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Primero se preparan %lld lecciones y se descuentan de tus lecciones gratis."
+                  "value" : "Primero se preparan %lld lecciones y cuentan para tu límite de lecciones gratis."
                 }
               }
             }
@@ -237,13 +237,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçon est d’abord préparée et décomptée de ton quota de leçons gratuites."
+                  "value" : "On prépare d’abord %lld leçon, qui est décomptée de tes leçons gratuites."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçons sont d’abord préparées et décomptées de ton quota de leçons gratuites."
+                  "value" : "On prépare d’abord %lld leçons, qui sont décomptées de tes leçons gratuites."
                 }
               }
             }
@@ -255,13 +255,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prima prepariamo %lld lezione, che viene conteggiata tra le tue lezioni gratuite."
+                  "value" : "Prima prepariamo %lld lezione e la conteggiamo tra le tue lezioni gratuite."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Prima prepariamo %lld lezioni, che vengono conteggiate tra le tue lezioni gratuite."
+                  "value" : "Prima prepariamo %lld lezioni e le conteggiamo tra le tue lezioni gratuite."
                 }
               }
             }
@@ -273,7 +273,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "まず%lldレッスンを作成します。無料レッスンの利用数に含まれます。"
+                  "value" : "まず%lldレッスンを作成します。作成分は無料レッスンの利用数に含まれます。"
                 }
               }
             }
@@ -285,7 +285,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "레슨 %lld개를 먼저 만들고, 이 레슨도 무료 레슨 한도에 포함돼요."
+                  "value" : "레슨 %lld개를 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
                 }
               }
             }
@@ -294,22 +294,22 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Najpierw przygotujemy %lld lekcje, które wliczą się do limitu bezpłatnych lekcji."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Najpierw przygotujemy %lld lekcję, która wliczy się do limitu bezpłatnych lekcji."
+                  "value" : "Najpierw przygotujemy %lld lekcję i wliczymy ją do twojej puli bezpłatnych lekcji."
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcje i wliczymy je do twojej puli bezpłatnych lekcji."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Najpierw przygotujemy %lld lekcji, które wliczą się do limitu bezpłatnych lekcji."
+                  "value" : "Najpierw przygotujemy %lld lekcji i wliczymy je do twojej puli bezpłatnych lekcji."
                 }
               }
             }
@@ -339,7 +339,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Önce %lld ders hazırlanır ve ücretsiz ders hakkından düşer."
+                  "value" : "Önce %lld ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz."
                 }
               }
             }
@@ -356,13 +356,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wir erstellen zuerst %lld Lektion. Deshalb dauert es ein paar Minuten."
+                  "value" : "Wir erstellen zuerst %lld Lektion. Das dauert ein paar Minuten."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wir erstellen zuerst %lld Lektionen. Deshalb dauert es ein paar Minuten."
+                  "value" : "Wir erstellen zuerst %lld Lektionen. Das dauert ein paar Minuten."
                 }
               }
             }
@@ -392,13 +392,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Primero se prepara %lld lección, así que tarda unos minutos."
+                  "value" : "Primero se prepara %lld lección, lo que toma unos minutos."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Primero se preparan %lld lecciones, así que tarda unos minutos."
+                  "value" : "Primero se preparan %lld lecciones, lo que toma unos minutos."
                 }
               }
             }
@@ -410,13 +410,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçon est d’abord préparée, ce qui prend quelques minutes."
+                  "value" : "On prépare d’abord %lld leçon, ce qui prend quelques minutes."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçons sont d’abord préparées, ce qui prend quelques minutes."
+                  "value" : "On prépare d’abord %lld leçons, ce qui prend quelques minutes."
                 }
               }
             }
@@ -494,13 +494,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld aula é criada primeiro, por isso demora alguns minutos."
+                  "value" : "%lld aula é criada primeiro, o que leva alguns minutos."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld aulas são criadas primeiro, por isso demora alguns minutos."
+                  "value" : "%lld aulas são criadas primeiro, o que leva alguns minutos."
                 }
               }
             }
@@ -512,7 +512,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Önce %lld ders hazırlanır, bu yüzden birkaç dakika sürer."
+                  "value" : "Önce %lld ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor."
                 }
               }
             }
@@ -529,13 +529,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektion zu erstellen"
+                  "value" : "Noch %lld Lektion zu erstellen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektionen zu erstellen"
+                  "value" : "Noch %lld Lektionen zu erstellen"
                 }
               }
             }
