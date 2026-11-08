@@ -158,7 +158,10 @@ function getDateProblem({
   return noSitting ? { kind: "noSitting", ...noSitting } : null;
 }
 
-const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
+/** Daily time doesn't change what the goal is about, so the plan's wait before it can offer one. */
+const SUBJECT_QUESTIONS = new Set<OnboardingStep>(
+  ONBOARDING_QUESTIONS.filter((question) => question !== "schedule"),
+);
 
 const COURSE_KINDS = new Set(["exam", "learn"]);
 
@@ -172,7 +175,7 @@ async function findLibraryCourse({
   steps: OnboardingStep[];
   subject: string;
 }): Promise<OnboardingLibraryCourse | null> {
-  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => QUESTIONS.has(step))) {
+  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => SUBJECT_QUESTIONS.has(step))) {
     return null;
   }
 
