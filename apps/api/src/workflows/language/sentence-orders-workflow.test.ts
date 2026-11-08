@@ -181,6 +181,19 @@ describe(sentenceOrdersWorkflow, () => {
         },
       ],
     ],
+    [
+      "the review duplicates a candidate instead of judging the next one",
+      RENT_CANDIDATES,
+      [
+        {
+          ...RENT_REVIEW[0]!,
+          translationCandidates: [
+            { candidate: "O aluguel é quanto?", keep: true },
+            { candidate: "O aluguel é quanto?", keep: true },
+          ],
+        },
+      ],
+    ],
   ])("keeps the lesson owing its orders when %s", async (_case, generated, reviewed) => {
     const owed = await owedLessonFixture();
     mockGenerated(generated);

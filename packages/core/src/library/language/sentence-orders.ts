@@ -97,13 +97,14 @@ function keepApproved({
   candidates: readonly string[];
   verdicts?: Verdicts["sentenceCandidates"];
 }): string[] {
-  if (verdicts.length !== candidates.length) {
+  if (
+    verdicts.length !== candidates.length ||
+    verdicts.some((verdict, index) => verdict.candidate !== candidates[index])
+  ) {
     throw new Error("The review must judge every candidate, in order.");
   }
 
-  return candidates.filter(
-    (candidate, index) => verdicts[index]?.keep && verdicts[index].candidate === candidate,
-  );
+  return candidates.filter((_candidate, index) => verdicts[index]?.keep);
 }
 
 /** The candidates a native teacher accepts, as the screen's tiles; a lesson without any skips the review. */

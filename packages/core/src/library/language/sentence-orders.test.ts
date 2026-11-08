@@ -20,6 +20,43 @@ function mockReview(keep: boolean) {
 }
 
 describe(checkOrderCandidates, () => {
+  it.each([
+    ["duplicate", ["In many places plants grow", "In many places plants grow"]],
+    ["reordered", ["Plants in many places grow", "In many places plants grow"]],
+    ["unexpected", ["In many places plants grow", "Many plants grow in places"]],
+  ])(
+    "rejects %s candidate echoes instead of silently dropping an unreviewed order",
+    async (_name, echoes) => {
+      const candidates = [
+        {
+          otherOrders: ["In many places plants grow", "Plants in many places grow"],
+          otherTranslationOrders: [],
+        },
+      ];
+
+      vi.mocked(checkSentenceOrders).mockResolvedValue({
+        data: {
+          sentences: [
+            { sentenceCandidates: echoes.map((candidate) => ({ candidate, keep: true })) },
+          ],
+        },
+        provenance: {} as never,
+        systemPrompt: "",
+        usage: {} as never,
+        userPrompt: "",
+      });
+
+      await expect(
+        checkOrderCandidates({
+          candidates,
+          learnerLanguage: "en",
+          sentences: [SENTENCE],
+          targetLanguage: "en",
+        }),
+      ).rejects.toThrow("The review must judge every candidate, in order.");
+    },
+  );
+
   it("in the learner's own language, reviews the sentence's orders once and gives them to the translation", async () => {
     const candidates = toOrderCandidates({
       generated: { sentences: [{ otherOrders: ["In many places plants grow"] }] },
