@@ -92,6 +92,7 @@ class LessonStartTest {
             vm.open(lesson)
             runCurrent()
 
+            vm.act()
             vm.dispatch(LessonAction.Continue)
             assertEquals(
                 typed,
@@ -147,6 +148,7 @@ class LessonStartTest {
             vm.open(lesson)
             runCurrent()
 
+            vm.act()
             vm.dispatch(LessonAction.Continue)
             api.startGate!!.complete(Unit)
             advanceUntilIdle()
@@ -160,7 +162,8 @@ class LessonStartTest {
             )
         }
 
-    @Test fun aSelectionKeepsItsScreenWhenTheRunResumesElsewhere() =
+    /** Code answering a screen on its own, such as a screen putting back what Android saved, isn't the learner acting. */
+    @Test fun anAnswerSetWithoutTheLearnerDoesNotKeepTheScreen() =
         runTest(dispatcher) {
             lesson = playable(listOf(checkStep(ONE), checkStep(TWO), explanationStep(LAST)))
             api.load = LessonLoad.Ready(lesson)
@@ -175,16 +178,10 @@ class LessonStartTest {
             advanceUntilIdle()
 
             assertEquals(
-                ONE,
+                LAST,
                 vm.state.value
                     ?.currentStep
                     ?.id,
-            )
-            assertEquals(
-                LessonAnswer.Check("wrong"),
-                vm.state.value
-                    ?.answers
-                    ?.get(ONE),
             )
         }
 
@@ -206,6 +203,7 @@ class LessonStartTest {
             vm.open(lesson)
             runCurrent()
 
+            vm.act()
             val grading =
                 async {
                     vm.gradeSpoken(
@@ -230,6 +228,32 @@ class LessonStartTest {
                     ?.id,
             )
             assertEquals(LessonPhase.Feedback, vm.state.value?.phase)
+        }
+
+    /** Android closed the app in the background, then the learner typed and cleared answers before the run started. */
+    @Test fun whatTheLearnerEnteredBeforeTheRunWinsOverRestoredWork() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(typedAnswerStep(ONE), typedAnswerStep(TWO), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
+            val old = ApiJson.encodeToString(LessonAnswer.serializer(), LessonAnswer.Typed("An older draft"))
+            val saved = SavedStateHandle(mapOf("answers" to hashMapOf(ONE to old, TWO to old)))
+            val vm = player(null, tapped = true, saved = saved)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.dispatch(LessonAction.SelectAnswer(ONE, LessonAnswer.Typed("What I typed now")))
+            vm.dispatch(LessonAction.SelectAnswer(TWO, LessonAnswer.Typed("Typed, then cleared")))
+            vm.dispatch(LessonAction.SelectAnswer(TWO, null))
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+
+            val answers =
+                vm.state.value
+                    ?.answers
+                    .orEmpty()
+            assertEquals(LessonAnswer.Typed("What I typed now"), answers[ONE])
+            assertEquals(null, answers[TWO])
         }
 
     /** Android closed the app in the background: the typed draft comes back on its screen once the run places the learner. */
@@ -282,6 +306,7 @@ class LessonStartTest {
             val vm = player(null, tapped = true)
             vm.open(lesson)
             runCurrent()
+            vm.act()
             vm.dispatch(LessonAction.Continue)
             val answer = LessonAnswer.Typed("Because it maps chances.")
             vm.dispatch(LessonAction.SelectAnswer(typed, answer))
@@ -470,6 +495,7 @@ class LessonStartTest {
             vm.open(lesson)
             runCurrent()
 
+            vm.act()
             vm.dispatch(LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")))
             vm.check()
             assertEquals(
@@ -514,6 +540,7 @@ class LessonStartTest {
             vm.open(lesson)
             runCurrent()
 
+            vm.act()
             vm.dispatch(LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")))
             vm.check()
             vm.dispatch(LessonAction.Continue)

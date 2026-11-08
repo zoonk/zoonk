@@ -114,15 +114,16 @@ internal fun MatchColumnsView(
                 val right = content.pairs.any { it.left == lefts[attempt.left] && it.right == rightItems[attempt.right] }
                 if (right) {
                     haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                    matched = matched + (attempt.left to attempt.right)
+                    val next = matched + (attempt.left to attempt.right)
+                    matched = next
+                    if (next.size == content.pairs.size) {
+                        onAnswer(LessonAnswer.MatchColumns(next.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes))
+                    }
                 } else {
                     haptics.performHapticFeedback(HapticFeedbackType.Reject)
                     mistakes += 1
                     flashing = attempt
                 }
-                // Every try goes to the player, which counts it as the learner's work; only a full board is an answer.
-                val answer = LessonAnswer.MatchColumns(matched.map { (l, r) -> lefts[l] to rightItems[r] }, mistakes)
-                onAnswer(answer.takeIf { matched.size == content.pairs.size })
             }
         }
     }

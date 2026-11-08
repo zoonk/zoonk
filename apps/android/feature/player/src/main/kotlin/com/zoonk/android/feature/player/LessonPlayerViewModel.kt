@@ -261,8 +261,14 @@ class LessonPlayerViewModel(
     private var writingExampleLines by mutableStateOf(false)
     private var abandonSent = false
 
-    /** Whether the learner did anything in the lesson on this visit: a run that starts after that keeps their screen. */
+    /**
+     * Set the first time the learner taps or types in the lesson on this visit ([act]). A run that starts after that keeps
+     * their screen; one that starts before resumes them at their furthest screen.
+     */
     private var acted = false
+
+    /** Screens the learner answered or cleared on this visit, which work restored from the device leaves alone. */
+    private val answeredHere = mutableSetOf<String>()
     private val encodedAnswers = HashMap<String, Pair<LessonAnswer, String?>>()
 
     /**
@@ -280,6 +286,7 @@ class LessonPlayerViewModel(
         owner = session
         admittedRunId = null
         acted = false
+        answeredHere.clear()
         heldDeviceVerdicts.clear()
         unsaved.clear()
         screenLocks.clear()
@@ -351,8 +358,8 @@ class LessonPlayerViewModel(
         }
     }
 
-    /** The learner's own action in the lesson; a tap that only starts the run ([activate]) isn't one. */
-    private fun act() {
+    /** The learner tapped or typed in the lesson, seen once at the player's root ([LearnerInput]). */
+    fun act() {
         acted = true
         activate()
     }
@@ -361,10 +368,11 @@ class LessonPlayerViewModel(
         when (action) {
             LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
             LessonAction.RestoreWriting, is LessonAction.SelectAnswer, is LessonAction.DontKnow, is LessonAction.SkipWriting,
-            -> act()
+            -> activate()
 
             else -> Unit
         }
+        if (action is LessonAction.SelectAnswer) answeredHere += action.stepId
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
         if (action == LessonAction.Continue) resendAnswers()
         val before = mutableState.value
@@ -443,7 +451,7 @@ class LessonPlayerViewModel(
         val spoken = step?.content as? StepContent.SpokenAnswer
 
         if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
-        act()
+        activate()
         dispatch(LessonAction.CheckStarted(stepId))
         if (!awaitRun()) {
             dispatch(LessonAction.CheckFailed(stepId))
@@ -491,7 +499,7 @@ class LessonPlayerViewModel(
      * their verdict at once and are recorded in the background, and the rest wait for the server.
      */
     fun check() {
-        act()
+        activate()
         val state = mutableState.value ?: return
         val step = state.currentStep ?: return
         val answer = state.answers[step.id] ?: return
@@ -736,15 +744,18 @@ class LessonPlayerViewModel(
         listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
         // After the server's answers rebuild the run, what the learner did and hadn't checked comes back, under the round
-        // it was saved in, when Android closed the app in the background.
+        // it was saved in, when Android closed the app in the background; what they entered on this visit stays.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty()
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
-            saved.get<Map<String, String>>(ANSWERS).orEmpty().mapValues { (_, json) ->
-                ApiJson.decodeFromString(LessonAnswer.serializer(), json)
-            }
+            saved
+                .get<Map<String, String>>(ANSWERS)
+                .orEmpty()
+                .mapValues { (_, json) ->
+                    ApiJson.decodeFromString(LessonAnswer.serializer(), json)
+                }.filterKeys { it !in answeredHere }
         val resumed = state.withFirstAnswer(started)
-        return resumed.copy(answers = resumed.answers + answers, revealed = resumed.revealed + revealed, rounds = resumed.rounds + rounds)
+        return resumed.copy(answers = resumed.answers + answers, revealed = revealed + resumed.revealed, rounds = resumed.rounds + rounds)
     }
 
     /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */

@@ -48,7 +48,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -73,7 +72,6 @@ class LanguageStepsFlowTest {
 
     private val session = FakeSession(AuthenticatedSession(ANA, "token-a", "local-a"))
     private lateinit var api: FakeLessonPlayerApi
-    private lateinit var viewModel: LessonPlayerViewModel
 
     private val exits =
         object : LessonPlayerExits {
@@ -84,17 +82,14 @@ class LanguageStepsFlowTest {
             override fun replace(route: AppRoute) = Unit
         }
 
-    private fun play(
-        steps: List<LessonStep>,
-        configure: FakeLessonPlayerApi.() -> Unit = {},
-    ) {
+    private fun play(steps: List<LessonStep>) {
         val lesson = playable(steps).copy(language = "en", targetLanguage = "es")
-        api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
+        api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
         val drafts = DraftStore(folder.newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ANA) } }
-        viewModel =
+        val viewModel =
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,
                 studySessionId = null,
@@ -122,7 +117,7 @@ class LanguageStepsFlowTest {
                 }
             }
         }
-        rule.waitUntil { if (api.startGate != null) api.startOpenings.isNotEmpty() else viewModel.state.value?.run is LessonRun.Started }
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
     }
 
     private fun tap(text: String) =
@@ -136,36 +131,6 @@ class LanguageStepsFlowTest {
         rule.waitForIdle()
         val input = api.checks.last { it.first == stepId }.second
         return Json.parseToJsonElement(ApiJson.encodeToString(input)).jsonObject.getValue("answer")
-    }
-
-    @Test
-    fun aPartialMatchKeepsItsScreenWhenTheRunResumesElsewhere() {
-        val stepId = "00000000-0000-4000-8000-000000000102"
-        play(listOf(matchColumns(stepId), summaryStep("end"))) {
-            startGate = CompletableDeferred()
-            runAnswers = """[{"answeredAt":"2026-10-28T09:59:00Z","isCorrect":true,"stepId":"$stepId"}]"""
-        }
-        tap("hola")
-        tap("hello")
-
-        api.startGate!!.complete(Unit)
-        rule.waitUntil { viewModel.state.value?.run is LessonRun.Started }
-
-        assertEquals(
-            stepId,
-            viewModel.state.value
-                ?.currentStep
-                ?.id,
-        )
-        tap("gato")
-        tap("cat")
-        tap("Check")
-        assertEquals(
-            Json.parseToJsonElement(
-                """{"kind":"matchColumns","mistakes":0,"userPairs":[{"left":"hola","right":"hello"},{"left":"gato","right":"cat"}]}""",
-            ),
-            sent(stepId),
-        )
     }
 
     @Test

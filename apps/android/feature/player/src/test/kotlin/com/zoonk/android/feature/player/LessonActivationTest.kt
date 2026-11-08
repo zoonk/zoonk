@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.player
 
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -88,8 +87,7 @@ class LessonActivationTest {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    val activation = Modifier.lessonActivation(viewModel::activate)
-                    Box(activation.testTag("activation")) {
+                    LearnerInput(viewModel::act, Modifier.testTag("activation")) {
                         LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator())
                     }
                 }

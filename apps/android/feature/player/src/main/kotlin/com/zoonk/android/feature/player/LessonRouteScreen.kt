@@ -1,5 +1,8 @@
 package com.zoonk.android.feature.player
 
+import android.view.View
+import android.view.ViewGroup
+import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -18,11 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -216,7 +223,7 @@ internal fun PlayingLesson(
             null
         }
 
-    Box(Modifier.lessonActivation(viewModel::activate)) {
+    LearnerInput(viewModel::act) {
         CompositionLocalProvider(
             LocalLessonSpeech provides app.speech,
             LocalCodeSandbox provides app.codeSandbox,
@@ -242,17 +249,51 @@ internal fun PlayingLesson(
     }
 }
 
-internal fun Modifier.lessonActivation(activate: () -> Unit): Modifier =
-    pointerInput(activate) {
-        awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = false)
-            val up = waitForUpOrCancellation()
-            if (up != null && (up.position - down.position).getDistance() <= viewConfiguration.touchSlop) activate()
-        }
-    }.onPreviewKeyEvent {
-        if (it.type == KeyEventType.KeyDown) activate()
-        false
+/**
+ * Calls [onInput] for each of the learner's own inputs in [content], without taking any: a tap (lifted within touch slop of
+ * where it went down, from any pointer), a key press, or a click from TalkBack or Switch Access. Scrolls and drags don't count.
+ */
+@Composable
+internal fun LearnerInput(
+    onInput: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val currentOnInput by rememberUpdatedState(onInput)
+    val host = LocalView.current.parent as? ViewGroup
+
+    // Accessibility services click through the screen's semantics, which no pointer input sees; Compose reports each of
+    // those clicks to the view's parent.
+    DisposableEffect(host) {
+        host?.accessibilityDelegate =
+            object : View.AccessibilityDelegate() {
+                override fun onRequestSendAccessibilityEvent(
+                    host: ViewGroup,
+                    child: View,
+                    event: AccessibilityEvent,
+                ): Boolean {
+                    if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) currentOnInput()
+                    return super.onRequestSendAccessibilityEvent(host, child, event)
+                }
+            }
+        onDispose { host?.accessibilityDelegate = null }
     }
+
+    Box(
+        modifier
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    // Before the screen's own controls take the touch.
+                    val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                    val up = waitForUpOrCancellation(PointerEventPass.Initial)
+                    if (up != null && (up.position - down.position).getDistance() <= viewConfiguration.touchSlop) currentOnInput()
+                }
+            }.onPreviewKeyEvent {
+                if (it.type == KeyEventType.KeyDown) currentOnInput()
+                false
+            },
+    ) { content() }
+}
 
 /** A task's frame for what shows before the lesson's screens: its title, and leaving. */
 @Composable
