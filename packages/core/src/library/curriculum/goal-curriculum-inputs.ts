@@ -50,8 +50,6 @@ const OMITTED_CONTEXT_FIELDS = new Set([
   "purpose",
 ]);
 
-const CURRICULUM_QUESTIONS = new Set<OnboardingQuestion>(["followUps", "level", "purpose", "role"]);
-
 export type GoalCurriculumInputs = {
   goal: Pick<
     Goal,
@@ -73,7 +71,7 @@ export type GoalCurriculumInputs = {
   hasMaterial: boolean;
   hasPlanGraph: boolean;
   usesTools: boolean;
-  awaitingAnswers: boolean;
+  unansweredQuestions: OnboardingQuestion[];
   isGuest: boolean;
   knownSubjects: string[];
   ownMaterialTest: boolean;
@@ -202,12 +200,6 @@ function getUnansweredQuestions(
   });
 }
 
-function isAwaitingAnswers(goal: Pick<Goal, "kind" | "targetDate">, details: Details): boolean {
-  return getUnansweredQuestions(goal, details).some((question) =>
-    CURRICULUM_QUESTIONS.has(question),
-  );
-}
-
 export type ReferenceSyllabusNeed = "awaitingPurpose" | "needed" | "notNeeded";
 
 export function getReferenceSyllabusNeed(
@@ -281,7 +273,6 @@ export async function loadGoalCurriculumInputs(
   const product = toGoalProduct(goal);
 
   return {
-    awaitingAnswers: isAwaitingAnswers(goal, details),
     blueprintReference: blueprint,
     examIdentity: goal.kind === "exam" ? toExamIdentity({ details, exams }) : null,
     exams,
@@ -321,6 +312,7 @@ export async function loadGoalCurriculumInputs(
     references,
     sharedContext: toSharedContext(details),
     startedCourse: toStartedCourse({ course: goal.primaryCourse, details }),
+    unansweredQuestions: getUnansweredQuestions(goal, details),
     usesTools: usesTools({ examStructure: goal.examBlueprint?.structure ?? null, kind: goal.kind }),
   };
 }

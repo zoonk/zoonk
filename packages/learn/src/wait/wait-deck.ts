@@ -12,7 +12,7 @@ const read = new Map<string, WarmUpDeck>();
  * Read once while the page is open: every wait of this onboarding deals from the same deck, and one
  * read while the learner still answers questions has the card there as the wait opens.
  */
-export function preloadDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId: string }) {
+function preloadDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId: string }) {
   const known = reading.get(warmUpId);
 
   if (known) {
@@ -34,6 +34,21 @@ export function preloadDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUp
 
   reading.set(warmUpId, next);
   return next;
+}
+
+/** While the learner answers questions, so the quiz is there as soon as a wait opens. */
+export function usePreloadedDeck({
+  readDeck,
+  warmUpId,
+}: {
+  readDeck: ReadDeck;
+  warmUpId?: string;
+}) {
+  useEffect(() => {
+    if (warmUpId) {
+      void preloadDeck({ readDeck, warmUpId });
+    }
+  }, [readDeck, warmUpId]);
 }
 
 export function useDeck({ readDeck, warmUpId }: { readDeck: ReadDeck; warmUpId?: string }) {

@@ -544,19 +544,31 @@ describe(lessonContentWorkflow, () => {
     });
   });
 
-  it("keeps the lesson generating until its marks and pictures settle, reporting each as it does", async () => {
+  it("reports marks and pictures as their runs end, without waiting on a timer", async () => {
     const lesson = await outlinedLesson();
     const states: (string | undefined)[] = [];
+    const runs = new Map<string, string>();
 
-    const runs = new Map([
-      ["marks-run", "running"],
-      ["pictures-run", "running"],
-    ]);
+    const readState = async () => {
+      const state = await getLessonGenerationState(lesson.id);
+      states.push(state?.status);
+    };
 
-    getStartMock().mockImplementation(
-      async (workflow) =>
-        ({ runId: workflow === lessonMarksWorkflow ? "marks-run" : "pictures-run" }) as never,
-    );
+    const ends = new Map<string, () => void>();
+
+    getStartMock().mockImplementation(async (workflow) => {
+      const runId = workflow === lessonMarksWorkflow ? "marks-run" : "pictures-run";
+      runs.set(runId, "running");
+
+      const returnValue = new Promise<null>((resolve) => {
+        ends.set(runId, () => {
+          runs.set(runId, "completed");
+          resolve(null);
+        });
+      });
+
+      return { returnValue, runId } as never;
+    });
 
     vi.mocked(getRun).mockImplementation(
       (runId) =>
@@ -566,34 +578,29 @@ describe(lessonContentWorkflow, () => {
         }) as never,
     );
 
-    vi.mocked(sleep).mockImplementation(async () => {
-      const state = await getLessonGenerationState(lesson.id);
-      states.push(state?.status);
+    // The picture wait's deadline never comes: only the runs' ends move the lesson on.
+    vi.mocked(sleep).mockImplementation(() => new Promise(() => {}));
 
-      if (states.length === 1) {
-        await prisma.step.updateMany({
-          data: {
-            marks: {
-              example: null,
-              iconId: null,
-              iconPending: false,
-              ideaIndex: 0,
-              underline: null,
-            },
-          },
-          where: { lessonId: lesson.id },
-        });
-      } else {
-        runs.set("marks-run", "completed").set("pictures-run", "completed");
-      }
+    const written = lessonContentWorkflow({ lessonId: lesson.id });
+
+    await vi.waitFor(() => {
+      expect(ends.size).toBe(2);
     });
 
-    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
-      lessonId: lesson.id,
-      status: "ready",
+    await readState();
+    ends.get("marks-run")?.();
+
+    await vi.waitFor(() => {
+      expect(getStreamedEvents().map((event) => event.step)).toContain("markLesson");
     });
+
+    await readState();
+    ends.get("pictures-run")?.();
+
+    await expect(written).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
     expect(states).toStrictEqual(["generating", "generating"]);
+    expect(sleep).toHaveBeenCalledExactlyOnceWith(expect.any(Date));
 
     expect(
       getStreamedEvents().map((event) => `${String(event.step)}:${String(event.status)}`),
@@ -629,14 +636,14 @@ describe(lessonContentWorkflow, () => {
     getStartMock().mockImplementation(async () => {
       savedAt ??= Date.now();
       vi.setSystemTime(Date.now() + 60_000);
-      return { runId: "started-run" } as never;
+      return { returnValue: new Promise(() => {}), runId: "started-run" } as never;
     });
 
-    let polledAt = 0;
+    let wokeAt = 0;
 
-    vi.mocked(sleep).mockImplementation(async (ms) => {
-      polledAt = Date.now() + ms + 1000;
-      vi.setSystemTime(polledAt);
+    vi.mocked(sleep).mockImplementation(async (until: unknown) => {
+      wokeAt = until instanceof Date ? until.getTime() : Date.now();
+      vi.setSystemTime(wokeAt);
     });
 
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
@@ -644,8 +651,7 @@ describe(lessonContentWorkflow, () => {
       status: "ready",
     });
 
-    // The lesson opens right after its last poll; a sampled lesson check may start later.
-    expect(polledAt - (savedAt ?? polledAt)).toBeLessThanOrEqual(5 * 60_000 + 6000);
+    expect(wokeAt - (savedAt ?? wokeAt)).toBeLessThanOrEqual(5 * 60_000);
 
     expect(
       getStreamedEvents()

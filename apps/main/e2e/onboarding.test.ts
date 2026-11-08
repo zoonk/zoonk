@@ -8,6 +8,8 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { getString } from "@zoonk/utils/json";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 import { mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
@@ -36,6 +38,8 @@ const QUANTUM: Understanding = {
 
 test.describe("Onboarding from a typed goal", () => {
   test("a visitor goes from a goal in their words to a plan", async ({ page }) => {
+    const events = await captureAnalytics(page);
+
     const goal = await storeUnderstanding(page, {
       result: QUANTUM,
       words: "i want to understand quantum physics",
@@ -53,6 +57,12 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
     await page.getByRole("radio", { name: /Change careers/u }).click();
 
+    await expect(
+      page.getByRole("heading", { name: "How much do you already know?" }),
+    ).toBeVisible();
+
+    await page.getByRole("radio", { name: /^The basics/u }).click();
+
     await expect(page.getByRole("heading", { name: "Where are you headed?" })).toBeVisible();
     await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
     await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
@@ -63,12 +73,6 @@ test.describe("Onboarding from a typed goal", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "No date" }).click();
-
-    await expect(
-      page.getByRole("heading", { name: "How much do you already know?" }),
-    ).toBeVisible();
-
-    await page.getByRole("radio", { name: /^The basics/u }).click();
 
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
@@ -97,6 +101,42 @@ test.describe("Onboarding from a typed goal", () => {
     });
 
     expect(saved.user.isAnonymous).toBe(true);
+
+    const typed = events.find((event) => event.name === "Goal Typed");
+    expect(typed?.data.submitted_at).toEqual(expect.any(Number));
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          attempt_id: typed?.data.attempt_id,
+          onboarding_id: getString(saved.details, "onboardingId"),
+          stage: "attempt_linked",
+        }),
+        name: "Onboarding Progressed",
+      }),
+    );
+
+    await expect
+      .poll(() => [
+        ...new Set(
+          events
+            .filter((event) => event.data.stage === "question_shown")
+            .map((event) => event.data.question),
+        ),
+      ])
+      .toEqual(["purpose", "level", "role", "targetDate", "buddy", "placement", "schedule"]);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          goal_id: created.id,
+          milliseconds: expect.any(Number),
+          surface: "planWait",
+        }),
+        name: "Generation Waited",
+      }),
+    );
+
     expect(saved.dailyMinutes).toBe(30);
 
     await expect(
@@ -168,11 +208,11 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   const created = await prisma.goal.findFirstOrThrow({ where: { prompt: words } });
 
   await page.getByRole("radio", { name: /Change careers/u }).click();
+  await page.getByRole("radio", { name: /^The basics/u }).click();
   await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
   await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await page.getByRole("button", { name: "No date" }).click();
-  await page.getByRole("radio", { name: /^The basics/u }).click();
   await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();

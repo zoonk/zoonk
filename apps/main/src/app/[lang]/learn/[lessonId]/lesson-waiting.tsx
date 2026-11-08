@@ -2,16 +2,16 @@
 
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { Link, useRouter } from "@/i18n/navigation";
-import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
+import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
-import { useAppLocale } from "@zoonk/learn/locale";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/wait";
@@ -20,7 +20,7 @@ import { LessonWaitStatus } from "@zoonk/learn/wait/lesson-status";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { ChevronRightIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { LessonRouteFrame } from "./lesson-route-frame";
 
 type ReadyAlternative = NonNullable<
@@ -89,30 +89,9 @@ function useIsLate() {
 }
 
 /** The wait is measured until the lesson is ready; it opens once the learner moves on. */
-function useOpenWhenReady({ open, ready }: { open: boolean; ready: boolean }) {
+function useOpenWhenReady(open: boolean) {
   const router = useRouter();
-  const locale = useAppLocale();
-  const startedAt = useRef<number | null>(null);
-
-  const recordWait = useEffectEvent(() => {
-    void recordGenerationWaitAction({
-      contentKind: "lesson",
-      locale,
-      milliseconds: Date.now() - (startedAt.current ?? Date.now()),
-    });
-  });
-
   const readAgain = useEffectEvent(() => router.refresh());
-
-  useEffect(() => {
-    startedAt.current ??= Date.now();
-  }, []);
-
-  useEffect(() => {
-    if (ready) {
-      recordWait();
-    }
-  }, [ready]);
 
   useEffect(() => {
     if (!open) {
@@ -125,7 +104,7 @@ function useOpenWhenReady({ open, ready }: { open: boolean; ready: boolean }) {
   }, [open]);
 }
 
-type LessonFrame = { exitHref: string; lesson: LessonOutline };
+type LessonFrame = { goalId: string | null; exitHref: string; lesson: LessonOutline };
 
 function WritingProgress({
   holding,
@@ -213,10 +192,17 @@ function WritingWait({
   const holding = hold.status === "hold";
   const progress = <WritingProgress holding={holding} run={run} since={since} />;
 
-  useOpenWhenReady({ open: hold.status === "go", ready });
+  useOpenWhenReady(hold.status === "go");
+
+  useVisibleWait({
+    contentKind: "lesson",
+    goalId: frame.goalId,
+    surface: "lessonWait",
+    track: trackEvent,
+  });
 
   return (
-    <WaitScreen deck={warmUp} hold={hold} surface="lessonWait">
+    <WaitScreen deck={warmUp} goalId={frame.goalId} hold={hold} surface="lessonWait">
       <LessonRouteFrame {...frame} footer={<WritingWaitBar footer={footer} holding={holding} />}>
         {children}
 
@@ -273,12 +259,14 @@ function isWriting(request: LessonRequest): boolean {
 }
 
 export function LessonWaiting({
+  goalId,
   alternative,
   exitHref,
   initialRequest,
   lesson,
   warmUp,
 }: {
+  goalId: string | null;
   alternative: ReadyAlternative | null;
   exitHref: string;
   initialRequest: LessonRequest;
@@ -289,9 +277,9 @@ export function LessonWaiting({
   const { request } = writing;
   const [starting, setStarting] = useState(false);
   const signUpHref = useSignUpHref();
-  const frame = { exitHref, lesson };
+  const frame = { exitHref, goalId, lesson };
 
-  useOpenWhenReady({ open: request.status === "ready", ready: request.status === "ready" });
+  useOpenWhenReady(request.status === "ready");
 
   const start = () => {
     setStarting(true);

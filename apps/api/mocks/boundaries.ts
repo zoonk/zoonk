@@ -17,6 +17,7 @@ export const boundaries = {
     streamCourseOutline: vi.fn(),
   },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
+  "@zoonk/ai/tasks/curriculum/goal-opening": { generateGoalOpening: vi.fn() },
   "@zoonk/ai/tasks/curriculum/skill-graph-calls": {
     generateSkillGraphFrame: vi.fn(),
     generateSkillGraphSection: vi.fn(),

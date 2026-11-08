@@ -1,4 +1,3 @@
-import { needsCoverageCheck } from "@zoonk/core/library/curriculum/add-coverage-skills";
 import {
   pinGraphToCourse,
   toStartedCourseIds,
@@ -10,19 +9,22 @@ import {
   toGoalCourses,
 } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
+import {
+  type GoalOpeningPin,
+  pinGraphToOpening,
+} from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { updateCoursesBehind } from "../products/product-releases";
-import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
+import { isBuiltBeforeResearch } from "./goal-content-inputs";
 import { findGoalCourses } from "./goal-courses";
+import { type BuiltGraph, buildGraph } from "./goal-graph";
 import { startOutlines } from "./goal-outlines";
 import { prepareGraphPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
-import { buildGoalSkillGraph } from "./goal-skill-graph";
 import { setUpPlan } from "./plan-setup";
 import { setGoalPrimaryCourseStep } from "./steps/goal-course-steps";
 import {
-  checkGraphCoverageStep,
   linkSkillPrerequisitesStep,
   saveExamSkillGraphStep,
   saveGoalSkillsStep,
@@ -34,7 +36,6 @@ import {
 } from "./steps/goal-lookahead-steps";
 import { createGoalPlanStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
-import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
 import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan-steps";
 
 /** Skills go to the Library in slices, so every step stays short and retries alone. */
@@ -45,35 +46,6 @@ export function toSlices<T>(items: readonly T[]): T[][] {
     items.slice(index * SKILL_SLICE, (index + 1) * SKILL_SLICE),
   );
 }
-
-async function buildGraph({
-  context,
-  inputs,
-  researchId,
-  scope,
-}: {
-  context: GoalRunContext;
-  inputs: GoalCurriculumInputs;
-  researchId?: string | null;
-  scope: CurriculumScope;
-}) {
-  const [built, references] = await Promise.all([
-    buildGoalSkillGraph({ ...context, inputs, scope }),
-    loadGoalReferences({ inputs, researchId }),
-  ]);
-
-  const outline = inputs.graphPrompt.examBlueprint;
-
-  const covered = needsCoverageCheck({ graph: built.graph, outline, references })
-    ? await checkGraphCoverageStep({ ...context, graph: built.graph, inputs, references, scope })
-    : built;
-
-  const graph = await mergeSkillTwinsStep({ ...context, graph: covered.graph, scope });
-
-  return { ...built, graph };
-}
-
-type BuiltGraph = Awaited<ReturnType<typeof buildGraph>>;
 
 export type BuiltCurriculum = BuiltGraph & {
   courseIdsByKey: Record<string, string>;
@@ -204,11 +176,15 @@ function saveBuiltGraph({
   scope: CurriculumScope;
 }): SavingCurriculum {
   const { goal, startedCourse } = inputs;
-  const { graph, provenance } = built;
+  const { graph, provenance, savedSkillIds = {} } = built;
+  const toSave = graph.skills.filter((skill) => !savedSkillIds[skill.key]);
 
-  const slices = toSlices(graph.skills).map((skills) =>
-    saveGoalSkillsStep({ ...context, provenance, scope, skills }),
-  );
+  const slices = [
+    ...toSlices(toSave).map((skills) =>
+      saveGoalSkillsStep({ ...context, provenance, scope, skills }),
+    ),
+    Promise.resolve(savedSkillIds),
+  ];
 
   const skillIds = Promise.all(slices).then((saved) =>
     Object.fromEntries(saved.flatMap((slice) => Object.entries(slice))),
@@ -243,12 +219,14 @@ function toReused(curriculum: BuiltCurriculum): PreparedCurriculum {
 async function prepareCurriculum({
   context,
   inputs,
+  opening,
   rebuild,
   researchId,
   scope,
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
+  opening: Promise<GoalOpeningPin | null>;
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
@@ -256,12 +234,19 @@ async function prepareCurriculum({
   const reused = rebuild ? null : await reuseCurriculumStep({ inputs, scope });
 
   if (reused) {
+    const pinned = pinGraphToOpening({ graph: reused.graph, pin: await opening });
     await goalProgressStep({ entityId: inputs.goal.id, status: "started", step: "saveSkills" });
-    return toReused(reused);
+
+    return toReused({
+      ...reused,
+      courseIdsByKey: { ...reused.courseIdsByKey, ...pinned.courseIdsByKey },
+      graph: pinned.graph,
+      idsByKey: { ...reused.idsByKey, ...pinned.idsByKey },
+    });
   }
 
   const built = pinStartedCourse({
-    built: await buildGraph({ context, inputs, researchId, scope }),
+    built: await buildGraph({ context, inputs, opening, researchId, scope }),
     startedCourse: inputs.startedCourse,
   });
 
@@ -290,12 +275,15 @@ async function prepareCurriculum({
 export async function buildCurriculum({
   context,
   inputs,
+  opening = Promise.resolve(null),
   rebuild,
   researchId,
   scope,
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
+  /** The learner's first skill and course, which the graph keeps as its start. */
+  opening?: Promise<GoalOpeningPin | null>;
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
@@ -305,6 +293,7 @@ export async function buildCurriculum({
   const { built, reused, saved, skillIds } = await prepareCurriculum({
     context,
     inputs,
+    opening,
     rebuild,
     researchId,
     scope,

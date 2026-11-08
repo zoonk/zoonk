@@ -1,6 +1,7 @@
 import "server-only";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
+import { trackOnboardingProgress } from "../../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -64,6 +65,42 @@ async function followSavedPlan(goalId: string): Promise<void> {
   });
 }
 
+function trackAnswer({
+  goal,
+  input,
+  changed,
+}: {
+  goal: { id: string; userId: string };
+  input: OnboardingAnswerInput;
+  changed: boolean;
+}): void {
+  if (changed) {
+    trackOnboardingProgress({
+      at: Date.now(),
+      goalId: goal.id,
+      question: input.question,
+      stage: "question_answered",
+    });
+  }
+
+  if (input.question === "buddy" && input.buddy) {
+    const buddy = input.buddy;
+
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Buddy Chosen",
+            properties: { buddy: buddy.kind, renamed: Boolean(buddy.name?.trim()) },
+          },
+        ],
+        goalId: goal.id,
+        userId: goal.userId,
+      }),
+    );
+  }
+}
+
 /** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason names a certificate moves to an exam goal for it. */
 export async function answerOnboardingQuestion({
   goalId,
@@ -104,22 +141,7 @@ export async function answerOnboardingQuestion({
     return { status: saved.status };
   }
 
-  if (input.question === "buddy" && input.buddy) {
-    const buddy = input.buddy;
-
-    after(() =>
-      trackLearnerEvents({
-        events: [
-          {
-            name: "Buddy Chosen",
-            properties: { buddy: buddy.kind, renamed: Boolean(buddy.name?.trim()) },
-          },
-        ],
-        goalId,
-        userId: goal.userId,
-      }),
-    );
-  }
+  trackAnswer({ changed: saved.goalIds.includes(goalId), goal, input });
 
   revalidateCacheTags([
     getGoalsCacheTag(goal.userId),

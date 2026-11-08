@@ -15,6 +15,7 @@ import { VerdictLabel } from "../_components/verdict-label";
 import { tabStorage } from "../_utils/device-storage";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useLearnAnalytics } from "../learn-context";
+import { useOnboardingClock } from "../onboarding/onboarding-clock";
 import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 
 type Dealt = { pickedId: string | null; position: number };
@@ -48,16 +49,21 @@ export type WaitQuizRefs = {
  */
 export function useWaitQuiz({
   deck,
+  goalId,
   onGuess,
   refs,
   surface,
 }: {
   deck: WarmUpDeck | null;
+  goalId?: string | null;
   onGuess: () => void;
   refs: WaitQuizRefs;
   surface: WarmUpSurface;
 }): WaitQuizState | null | undefined {
   const { track } = useLearnAnalytics();
+  const clock = useOnboardingClock();
+  const eventGoalId = goalId ?? clock?.goalId;
+  const deckId = deck?.id;
   const moved = useRef(false);
   const mounted = useIsMounted();
   const [dealt, setDealt] = useState<Dealt | null>(null);
@@ -68,9 +74,18 @@ export function useWaitQuiz({
 
   useEffect(() => {
     if (card) {
-      track({ name: "Warm-Up Shown", properties: { card_count: cardCount, surface } });
+      track({
+        name: "Warm-Up Shown",
+        properties: {
+          at: Date.now(),
+          card_count: cardCount,
+          deck_id: deckId,
+          goal_id: eventGoalId,
+          surface,
+        },
+      });
     }
-  }, [card, cardCount, surface, track]);
+  }, [card, cardCount, deckId, eventGoalId, surface, track]);
 
   // Focus follows the learner: to the way to the next card after a guess (the question when
   // there's none), and to the new question after it.

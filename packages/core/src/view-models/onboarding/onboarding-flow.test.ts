@@ -183,7 +183,7 @@ describe("onboarding a new goal", () => {
         generationId: null,
         goal: { id: goal?.id },
         goalIds: [goal?.id],
-        steps: ["purpose", "targetDate", "level", "buddy", "placement", "schedule", "plan"],
+        steps: ["purpose", "level", "targetDate", "buddy", "placement", "schedule", "plan"],
         timeChoices: expect.arrayContaining([{ minutes: 60, split: null }]),
       },
       status: "ready",
@@ -326,7 +326,7 @@ describe("onboarding a new goal", () => {
 
     await answerOnboardingQuestion({ goalId, input: { purpose: "work", question: "purpose" } });
     const afterPurpose = await getSteps(goalId);
-    expect(afterPurpose.slice(0, 2)).toStrictEqual(["role", "targetDate"]);
+    expect(afterPurpose.slice(0, 2)).toStrictEqual(["level", "role"]);
 
     await answerOnboardingQuestion({ goalId, input: { question: "role", role: null } });
     await answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } });

@@ -3,6 +3,7 @@ import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
+import { after } from "next/server";
 import {
   type AnalyticsGoalKind,
   type AnalyticsPlatform,
@@ -149,20 +150,26 @@ export async function completeDraft({
   });
 
   if (saved.changed) {
-    await trackLearnerEvents({
-      events: [
-        {
-          name: "Goal Classified",
-          properties: {
-            duration_ms: Math.max(0, Date.now() - saved.draft.createdAt.getTime()),
-            result: getClassifiedKind(view),
+    const at = Date.now();
+
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          {
+            name: "Goal Classified",
+            properties: {
+              at,
+              duration_ms: Math.max(0, at - saved.draft.createdAt.getTime()),
+              onboarding_id: draft.id,
+              result: getClassifiedKind(view),
+            },
           },
-        },
-      ],
-      locale: draft.language,
-      platform,
-      userId: draft.userId,
-    });
+        ],
+        locale: draft.language,
+        platform,
+        userId: draft.userId,
+      }),
+    );
   }
 
   return saved.draft;

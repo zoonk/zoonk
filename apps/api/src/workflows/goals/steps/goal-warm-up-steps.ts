@@ -1,3 +1,4 @@
+import { trackOnboardingProgress } from "@zoonk/core/analytics/track-onboarding-progress";
 import { checkWarmUp } from "@zoonk/core/library/warm-ups/check";
 import { claimWarmUp, failWarmUp, readWarmUpStatus } from "@zoonk/core/library/warm-ups/claim";
 import { saveWarmUp } from "@zoonk/core/library/warm-ups/save";
@@ -6,7 +7,20 @@ import { writeWarmUp } from "@zoonk/core/library/warm-ups/write";
 export async function claimWarmUpStep(input: Parameters<typeof claimWarmUp>[0]) {
   "use step";
 
-  return claimWarmUp(input);
+  const claim = await claimWarmUp(input);
+
+  if (claim.status !== "none") {
+    trackOnboardingProgress({
+      at: Date.now(),
+      cache: claim.status === "claimed" ? "cold" : "warm",
+      deck_id: claim.id,
+      goalId: input.goalId,
+      platform: null,
+      stage: "deck_claimed",
+    });
+  }
+
+  return claim;
 }
 
 export async function writeWarmUpStep(input: Parameters<typeof writeWarmUp>[0]) {

@@ -202,19 +202,28 @@ export function WaitScreen({
   aside = false,
   children,
   deck,
+  goalId,
   hold,
   surface,
 }: {
   aside?: boolean;
   children: ReactNode;
   deck: WarmUpDeck | null;
+  /** Outside onboarding, which knows its goal, the goal whose deck this is. */
+  goalId?: string | null;
   hold: ReadyHoldControl;
   surface: WarmUpSurface;
 }) {
   const nextRef = useRef<HTMLButtonElement>(null);
   const questionRef = useRef<HTMLHeadingElement>(null);
 
-  const quiz = useWaitQuiz({ deck, onGuess: hold.engage, refs: { nextRef, questionRef }, surface });
+  const quiz = useWaitQuiz({
+    deck,
+    goalId,
+    onGuess: hold.engage,
+    refs: { nextRef, questionRef },
+    surface,
+  });
 
   const view = useWaitView({ hasQuiz: quiz !== null, hold, questionRef });
   const picked = typeof quiz?.pickedId === "string";

@@ -21,6 +21,7 @@ import {
 } from "../../wait/wait-screen";
 import { WaitStatus } from "../../wait/wait-status";
 import { type OnboardingActions } from "../onboarding-actions";
+import { useOnboardingWait } from "../onboarding-clock";
 import {
   OnboardingColumn,
   OnboardingPrimaryButton,
@@ -215,6 +216,7 @@ export function PlacementWaiting({
   const hold = useReadyHold(questionsReady);
   const deck = useDeck({ readDeck: readWarmUp, warmUpId: run?.warmUpId });
   const aside = useOnboardingHost()?.kind === "page";
+  useOnboardingWait("placementWait", hold.status !== "go");
   const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
   const showQuestions = useEffectEvent(onQuestions);
   const holding = hold.status === "hold";

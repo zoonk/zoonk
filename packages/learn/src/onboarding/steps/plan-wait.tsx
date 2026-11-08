@@ -23,6 +23,7 @@ import {
 import { FirstLessonLine, WaitStatus } from "../../wait/wait-status";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions } from "../onboarding-actions";
+import { useOnboardingWait } from "../onboarding-clock";
 import { OnboardingColumn, OnboardingPrimaryButton } from "../onboarding-frame";
 import { useOnboardingHost } from "../onboarding-host";
 import { useOnboardingRail } from "../onboarding-rail";
@@ -237,6 +238,8 @@ function ScreenWait({
   const hold = useReadyHold(ready);
   const deck = useDeck({ readDeck: readWarmUp, warmUpId: run.warmUpId });
   const aside = useOnboardingHost()?.kind === "page";
+  // The ready screen counts while a learner who played holds it.
+  useOnboardingWait(screen === "notice" ? "examNotice" : "planWait", hold.status !== "go");
 
   if (hold.status === "go") {
     return children;
