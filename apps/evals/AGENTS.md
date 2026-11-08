@@ -19,10 +19,10 @@ An eval's job is to find the cheapest model that matches a higher tier's quality
 - First say what matters most for this task: quality when it needs the best output, cost when keeping spend down comes first, or latency when speed is critical. Then pick the best balance.
 - Private content serves one learner and can't spread its cost, so it takes the cheapest model that keeps good quality. Shared content is reused, so it can afford a pricier model when quality needs it.
 - When a cheaper model reaches the same or very similar quality, use it. It's usually faster too.
-- Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected.
+- Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected. A decision that would rest on a handful of cases first adds cases that cover the task's fields and edge cases.
 - Compare models by their measured cost per run on the task, never by per-token price: models spend very different token counts on the same input.
-- Read the outputs, don't just trust the scores: always the leading models' outputs and every case where they differ. When a score doesn't hold up, fix the eval (case, scorer or rubric) before choosing.
-- A model's labels tend to favor its own family. When hand labels decide between models, label blind with two families, then read the outputs where the leading models differ.
+- Read the outputs, don't just trust the scores: the leading models' outputs on every case where they differ and, before switching a task's model, the old and new models' outputs on every case. Read them blind, paired in random order, and see which model wrote which only after judging every case. When a read disagrees with a score, fix the eval (expectations, scorer or rubric) or add the case that shows it, before choosing.
+- A model tends to favor its own family, as a judge, a labeler or a reader. When the judge or the leading models share a family, a reviewer from another family reads the outputs; when hand labels decide between models, label blind with two families.
 - The comment beside a model says why it was chosen: the eval evidence and any judgment beyond the scores.
 
 ## Regression cases
