@@ -227,7 +227,8 @@ private struct LessonPlayerContent: View {
         case .waiting(let holding):
           LessonWaitingView(
             outline: warmUp.outline, writing: writing, progress: store.writingProgress,
-            alternative: store.alternative, warmUpID: warmUp.deckID, holding: holding
+            alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
+            holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -268,7 +269,7 @@ private struct LessonPlayerContent: View {
     case .waiting(let outline, let writing):
       LessonWaitingView(
         outline: outline, writing: writing, progress: store.writingProgress,
-        alternative: store.alternative
+        alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
       }
