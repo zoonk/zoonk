@@ -134,7 +134,12 @@ private struct LessonPlayerContent: View {
     }
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
     .onDisappear { store.cancelStart() }
-    .simultaneousGesture(TapGesture().onEnded { store.activate() })
+    // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
+    .simultaneousGesture(TapGesture().onEnded { store.act() })
+    .onKeyPress(phases: .down) { _ in
+      store.act()
+      return .ignored
+    }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
         .zoonkStyles()

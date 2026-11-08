@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UIKit
 
 /// Every result is published only for the session that asked for it.
 @MainActor
@@ -42,8 +43,9 @@ final class LessonPlayerStore {
   private(set) var studySessionId: String?
   private let opening: LessonOpening?
   private var activated: Bool
-  /// Whether the learner did anything in the lesson on this visit: a run that starts after that
-  /// keeps their screen.
+  /// Set the first time the learner taps or presses a key in the lesson on this visit (`act`). A
+  /// run that starts after that keeps their screen; one that starts before resumes them at their
+  /// furthest screen.
   private var acted = false
   private let onOpened: @MainActor (StudyBlockOpening) -> Void
   private var starting: Task<Void, Never>?
@@ -290,11 +292,16 @@ final class LessonPlayerStore {
   func activate() {
     // A restored lesson or deep link cannot owe preparation until a learner acts.
     activated = true
+    // VoiceOver and Switch Control run a control's action with no touch for the player's root to
+    // see, so with them each of the learner's actions counts.
+    if UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning {
+      acted = true
+    }
     beginStart()
   }
 
-  /// The learner's own action in the lesson; a tap that only starts the run (`activate`) isn't one.
-  private func act() {
+  /// The learner tapped or pressed a key in the lesson, seen once at the player's root.
+  func act() {
     acted = true
     activate()
   }
@@ -305,7 +312,7 @@ final class LessonPlayerStore {
   }
 
   func ensureRun() async -> Bool {
-    act()
+    activate()
     await starting?.value
     return state?.runId != nil && !Task.isCancelled
   }
@@ -577,13 +584,13 @@ final class LessonPlayerStore {
   }
 
   func select(_ answer: LessonAnswer?) {
-    act()
+    activate()
     guard let stepId = state?.currentStep?.id else { return }
     state?.select(answer, for: stepId)
   }
 
   func continueLesson() {
-    act()
+    activate()
     writeExampleLinesOnce()
     sendHeldAnswers()
     state?.continueLesson()
@@ -591,30 +598,28 @@ final class LessonPlayerStore {
   }
 
   func goBack() {
-    act()
     state?.goBack()
   }
 
   func explainFirst() {
-    act()
+    activate()
     writeExampleLinesOnce()
     state?.explainFirst()
   }
 
   func knowThis() {
-    act()
+    activate()
     writeExampleLinesOnce()
     state?.knowThis()
   }
 
   func dontKnow() {
     guard let stepId = state?.currentStep?.id else { return }
-    act()
     state?.dontKnow(stepId)
   }
 
   func skipWriting() {
-    act()
+    activate()
     choices.setChosenToday(.cantWrite, true)
     state?.skipWriting()
     finishIfCompleted()
@@ -632,7 +637,6 @@ final class LessonPlayerStore {
   }
 
   func restoreWriting() {
-    act()
     choices.setChosenToday(.cantWrite, false)
     state?.restoreWriting()
   }
@@ -646,7 +650,7 @@ final class LessonPlayerStore {
       return
     }
 
-    act()
+    activate()
     writeExampleLinesOnce()
     let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)

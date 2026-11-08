@@ -231,6 +231,36 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.state?.currentStep?.id, "three")
   }
 
+  /// A canvas or field answering on its own, with no touch or key from the learner, isn't the learner acting.
+  func testAnAnswerSetWithoutTheLearnerDoesNotKeepTheScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.select(.check(optionId: "wrong"))
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  /// A first miss on a match board or a take still recording changes no answer; the tap that
+  /// started it is the learner acting.
+  func testATapThatChangesNoAnswerKeepsItsScreen() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
+    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    let loading = Task { await store.load() }
+    await startRequested(transport)
+
+    store.act()
+    await transport.release()
+    await loading.value
+
+    XCTAssertEqual(store.state?.currentStep?.id, "one")
+    XCTAssertEqual(store.state?.runId, "run")
+  }
+
   func testACanvasWritingItsOwnStateDoesNotKeepTheScreen() async throws {
     let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
     let store = try openingPlayer(
@@ -258,6 +288,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
       let loading = Task { await store.load() }
       await startRequested(transport)
 
+      store.act()
       store.select(input)
       await transport.release()
       await loading.value
@@ -275,6 +306,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let loading = Task { await store.load() }
     await startRequested(transport)
 
+    store.act()
     store.select(.spokenAnswer(text: "Bonjour"))
     let checking = Task { await store.check() }
     await waitUntil { store.state?.phase == .checking }
@@ -292,6 +324,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
+    store.act()
     store.select(.check(optionId: "right"))
     await transport.release()
     await loading.value
@@ -316,6 +349,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let loading = Task { await store.load() }
     await startRequested(transport)
 
+    store.act()
     let take = Task {
       guard await store.ensureRun() else { return }
       store.resolveSpoken(
