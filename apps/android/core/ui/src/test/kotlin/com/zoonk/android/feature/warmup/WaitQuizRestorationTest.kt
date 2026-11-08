@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.warmup
 
+import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,15 +17,54 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 
 @RunWith(AndroidJUnit4::class)
 class WaitQuizRestorationTest {
     @get:Rule val rule = createComposeRule()
+
+    @Test
+    fun processDeathOnTodayKeepsThePlanWaitClaimForLessonOne() {
+        val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
+
+        fun store() =
+            WarmUpStore(
+                { _, _ -> beekeepingDeck() },
+                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                session,
+            )
+        val first = store()
+        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup()
+        first.registerSavedState(activity.get().savedStateRegistry)
+        assertTrue(first.claimShown(WARM_UP_ID))
+        first.answered(WARM_UP_ID, 0)
+        val saved = Bundle()
+        activity
+            .pause()
+            .saveInstanceState(saved)
+            .stop()
+            .destroy()
+        val restoredActivity =
+            Robolectric
+                .buildActivity(ComponentActivity::class.java)
+                .create(saved)
+                .start()
+                .resume()
+        val restored = store()
+        restored.registerSavedState(restoredActivity.get().savedStateRegistry)
+        lateinit var lesson: WaitQuizState
+        rule.setContent { lesson = rememberWaitQuiz(WARM_UP_ID, restored) }
+        rule.waitForIdle()
+        rule.runOnIdle {
+            assertFalse(lesson.claimShown())
+            assertEquals(1, lesson.index)
+        }
+        restoredActivity.pause().stop().destroy()
+    }
 
     @Test
     fun aClaimedDeckOpensTheQuizBeforeItsCardsArrive() {
@@ -42,17 +83,15 @@ class WaitQuizRestorationTest {
     fun aColdRunReplayKeepsTheAnsweredCardAndViewAndContinuesFromIt() {
         val restore = StateRestorationTester(rule)
         val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
-        lateinit var warmUps: WarmUpStore
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        var warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
+        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup()
+        warmUps.registerSavedState(activity.get().savedStateRegistry)
         lateinit var quiz: WaitQuizState
         lateinit var hold: ReadyHold
         lateinit var receiveDeck: () -> Unit
         restore.setContent {
             var id by remember { mutableStateOf<String?>(null) }
-            warmUps =
-                remember {
-                    val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-                    WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
-                }
             receiveDeck = { id = WARM_UP_ID }
             quiz = rememberWaitQuiz(id, warmUps)
             hold = rememberReadyHold(false)
@@ -68,12 +107,29 @@ class WaitQuizRestorationTest {
             quiz.showProgress(hold)
         }
         val answer = quiz.picked
-        val firstStore = warmUps
+        val saved = Bundle()
+        activity
+            .pause()
+            .saveInstanceState(saved)
+            .stop()
+            .destroy()
+        val restoredActivity =
+            Robolectric
+                .buildActivity(ComponentActivity::class.java)
+                .create(saved)
+                .start()
+                .resume()
+        warmUps =
+            WarmUpStore(
+                { _, _ -> beekeepingDeck() },
+                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                session,
+            )
+        warmUps.registerSavedState(restoredActivity.get().savedStateRegistry)
         restore.emulateSavedInstanceStateRestore()
         rule.runOnIdle { receiveDeck() }
         rule.waitForIdle()
         rule.runOnIdle {
-            assertNotSame(firstStore, warmUps)
             assertFalse(quiz.claimShown())
             assertFalse(warmUps.claimShown(WARM_UP_ID))
             assertEquals(1, quiz.index)
@@ -82,5 +138,6 @@ class WaitQuizRestorationTest {
             quiz.next()
             assertEquals(2, quiz.index)
         }
+        restoredActivity.pause().stop().destroy()
     }
 }
