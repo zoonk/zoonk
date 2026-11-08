@@ -9,12 +9,13 @@ import { runSearchTask } from "./run-search-task";
 import { type ProductHints } from "./source-research-plan";
 
 /**
- * With Parallel on 8 cases (8 Nov 2026), Haiku 5.5 scored 9.90 (EN 10.00, PT 9.80) at $10.62/1k
- * against Flash's 10.00 at $19.17/1k; its one miss was a generic product page, and it still found
- * the exact release notes.
+ * With Parallel on 12 cases (8 Nov 2026), Flash scored 10.00 at $17.43/1k and Haiku 5.5 9.87 at
+ * $11.22/1k. Read blind, Haiku gave iPhone's iOS update notes as its model list, TOTVS's generic
+ * systems page as Protheus's, and a release page when none was named: these pages feed a product
+ * many learners share, so the saving isn't worth it. Haiku is the fallback.
  */
-const defaultModel = "anthropic/claude-haiku-5.5";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 
 const MAX_STEPS = 8;
