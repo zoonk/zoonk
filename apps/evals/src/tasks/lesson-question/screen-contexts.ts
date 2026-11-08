@@ -556,3 +556,154 @@ export const SUBJECT_HEAD_SCREEN = {
   step: SUBJECT_HEAD_EXPLANATION,
   version: 1,
 } satisfies LessonScopeContext;
+
+const MOBILITY_GUESS = {
+  answerable: false,
+  content: {
+    options: [
+      { id: "a", isCorrect: false, text: "Diminui" },
+      { id: "b", isCorrect: false, text: "Aumenta" },
+      { id: "c", isCorrect: true, text: "Permanece igual" },
+    ],
+    question:
+      "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?",
+    reveal:
+      "A vantagem da origem alta permanece igual nos dois períodos, mesmo com mais filhos de origem baixa chegando ao topo.",
+    variant: "guess",
+  },
+  kind: "hook",
+  sentence: null,
+  stepNumber: 3,
+  word: null,
+} satisfies LessonQuestionStepContext;
+
+const MOBILITY_TEACHING = [
+  {
+    answerable: false,
+    content: {
+      text: "Leandro passou num concurso e hoje ganha bem mais que os pais, que eram faxineiros. Mas os cargos de chefia do órgão continuam com filhos das mesmas famílias. Se mais gente sobe, as chances ficaram mais iguais?",
+      variant: "text",
+    },
+    kind: "hook",
+    sentence: null,
+    stepNumber: 1,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      text: "Imagine 100 filhos comparados aos pais. Se 30 estão numa posição social diferente, para cima ou para baixo, a mudança atingiu 30% deles. Essa proporção se chama **mobilidade absoluta**.",
+      title: "Quantos mudaram de lugar",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 2,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      text: "Em B, mais filhos de origem baixa chegaram ao topo, mas a vantagem de quem vem de cima não mudou. Comparar a chance de chegar ao topo conforme a origem é medir a **mobilidade relativa**. Quanto menos a origem pesa, maior ela é.",
+      title: "A origem ainda pesa",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 4,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      text: "Na origem baixa do período A, 10 filhos chegaram ao topo e 90 não chegaram. A razão entre quem chega e quem não chega é $10/90 = 1/9$. Essa razão se chama **odds**.",
+      title: "Chances em forma de razão",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 5,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      problem: "No período A, quantas vezes as odds da origem alta superam as da baixa?",
+      result: "A origem alta tem nove vezes as odds da origem baixa.",
+      steps: [
+        { math: String.raw`\frac{50}{50}=1`, text: "Alta: 50 chegam e 50 não." },
+        { math: String.raw`\frac{10}{90}=\frac{1}{9}`, text: "Baixa: 10 chegam e 90 não." },
+        { math: String.raw`1\div\frac{1}{9}=9`, text: "Divida as odds da alta pelas da baixa." },
+      ],
+      title: "A vantagem no período A",
+    },
+    kind: "workedExample",
+    sentence: null,
+    stepNumber: 6,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      exampleLineSlot: {
+        idea: "uma notícia sobre mais jovens de famílias pobres entrando na universidade ou no serviço público",
+      },
+      text: "De A para B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25. Mas a vantagem da origem alta seguiu em nove vezes. Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem.",
+      title: "Mais subidas, mesma vantagem",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 8,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      text: "Iara dirige uma empresa aos 40 anos. Com a mesma idade, a mãe dela trabalhava como diarista. Comparar a posição dos filhos com a dos pais é analisar a **mobilidade intergeracional**.",
+      title: "Filha e mãe aos 40 anos",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 10,
+    word: null,
+  },
+  {
+    answerable: false,
+    content: {
+      text: "Nayara entrou numa empresa como auxiliar e hoje é gerente. Mesmo sem saber nada dos pais dela, dá para ver uma mudança. Comparar posições da mesma pessoa ao longo da vida é analisar a **mobilidade intrageracional**.",
+      title: "A mesma pessoa, anos depois",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 11,
+    word: null,
+  },
+] satisfies LessonQuestionStepContext[];
+
+/**
+ * A production guess, asked from its screen: by the ratio of shares it falls (5 to 3), by the gap
+ * it grows (40 to 50 points), and only by the odds ratio, which the later screens teach, it stays.
+ */
+export const MOBILITY_GUESS_SCREEN = {
+  answer: null,
+  chapter: {
+    description:
+      "Examine como posições sociais e instituições influenciam oportunidades e cidadania no Brasil.",
+    title: "Estratificação, mobilidade e cidadania",
+  },
+  course: {
+    description:
+      "Administração Pública trata de como o Estado se organiza, toma decisões e presta serviços. Você vai percorrer políticas públicas, orçamento, trabalho no setor público, compras, contratos, controle, ética e uso de tecnologia e dados para acompanhar a gestão pública e participar de conversas mais bem informadas sobre ela.",
+    language: "pt",
+    targetLanguage: null,
+    title: "Administração Pública",
+  },
+  lesson: {
+    description:
+      "Mobilidade entre gerações e ao longo da vida pode ocorrer sem alterar a desigualdade de oportunidades.",
+    kind: "library",
+    language: "pt",
+    title: "Mobilidade social e oportunidades",
+  },
+  lessonSteps: [...MOBILITY_TEACHING.slice(0, 2), MOBILITY_GUESS, ...MOBILITY_TEACHING.slice(2)],
+  scope: { kind: "step" },
+  step: MOBILITY_GUESS,
+  version: 1,
+} satisfies LessonScopeContext;

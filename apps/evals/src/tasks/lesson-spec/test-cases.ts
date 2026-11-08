@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
+import { MOBILITY_LESSON } from "../lesson-writer/mobility-lesson-spec";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 import { BROAD_SAMPLE_CASES } from "./broad-sample-cases";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
@@ -44,6 +45,7 @@ function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonSpecParams {
 const UNANSWERABLE_GUESS = `
   - Right after the first explanation, one guess predicts something a beginner could get wrong, followed by another explanation or worked example
   - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
+  - No option but the tempting one is right under another common reading, and a later screen says why the tempting one's reasoning doesn't give the answer
 `;
 
 export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
@@ -1195,6 +1197,30 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     `,
     id: "pt-registros-financeiros-guess",
     userInput: budgetLesson("pt-registros-financeiros-beginner"),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
+      ${UNANSWERABLE_GUESS}
+      - The guess's brief gives its question, its options, the right one and the tempting one
+      - A regression to avoid (production, 8 Nov 2026): the plan's guess asked how the high origin's advantage changed from period A (10 and 50 of 100 reach the top) to B (25 and 75), with "diminui", "permanece igual" (right) and "aumenta". By the ratio of the shares it falls (5 to 3), by the gap it grows (40 to 50 points), and only by the odds the lesson teaches it stays at 9, while no later screen said why dividing the shares doesn't give the lesson's answer. When the planned guess compares how much one group leads another, no option but the tempting one comes out right under another common measure, and a later brief says why the tempting one's measure doesn't give the lesson's answer
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-mobilidade-guess-other-measure",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: MOBILITY_LESSON.chapterLessons,
+      chapterTitle: MOBILITY_LESSON.chapterTitle,
+      courseTitle: MOBILITY_LESSON.courseTitle,
+      exams: MOBILITY_LESSON.exams,
+      language: "pt",
+      lessonCanDo: MOBILITY_LESSON.spec.canDo,
+      lessonDescription: MOBILITY_LESSON.spec.description,
+      lessonTitle: MOBILITY_LESSON.spec.title,
+      level: "intermediate",
+      skills: ["Distinguir tipos de mobilidade social"],
+    },
   },
   {
     expectations: `

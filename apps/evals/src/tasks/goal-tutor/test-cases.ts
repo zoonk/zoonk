@@ -8,6 +8,7 @@ import { type GenerateGoalTutorAnswerParams } from "@zoonk/ai/tasks/tutor/goal-t
 import {
   ACCOUNTING_PLAN,
   ENEM_PLAN,
+  MOBILITY_GUESS_SCREEN,
   QUANTUM_PLAN,
   SUBJECT_HEAD_SCREEN,
 } from "../lesson-question/screen-contexts";
@@ -1747,6 +1748,29 @@ export const TEST_CASES: GoalTutorCase[] = [
       "Asked from a lesson screen that only teaches (an explanation, with nothing to answer). The learner checks their understanding of it. The answer confirms plainly, in its first sentence, that yes, the núcleo is “envio”, then says why in a sentence or two: it's what was late, “dos relatórios” only says which envio, and the verb agrees with it in the singular. Not confirming, answering with a question back, or telling them to work it out or check it on the next screen is a major error (cap 4.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
     id: "pt-screen-lesson-explanation-confirms",
     question: "o núcleo aqui é o envio, correto?",
+  }),
+  goalCase({
+    context: { ...CONCURSO_PLAN, screen: MOBILITY_GUESS_SCREEN },
+    expectations:
+      "Asked from a guess that doesn't count, after its answer was revealed (production, 8 Nov 2026): the learner argues with \"permanece igual\" by dividing the shares that reach the top. The answer confirms their division in a sentence (50 ÷ 10 = 5 in A, 75 ÷ 25 = 3 in B, so by that ratio the advantage falls), then explains the measure the lesson's next screens use: odds, those who reach the top against those who don't, with the lesson's numbers (high origin 50/50 = 1 and low 10/90 = 1/9 in A, so 9; 75/25 = 3 and 25/75 = 1/3 in B, so 9 again). It says why the ratio of shares shrinks: when more people of every origin reach the top, both shares rise toward 100% and their ratio closes even though origin weighs the same, which the odds show. It may point to the next screens, which teach this. Stopping at \"you're right, the question is ambiguous\" or saying the screen is wrong without explaining the odds is a major error (cap 5.0); calling the learner's division wrong is a major error (cap 4.0). Any wrong number is a wrong fact. Answers in Portuguese, without grading their pick. proposedChange is null.",
+    id: "pt-screen-guess-other-measure",
+    question:
+      "Por que permanece igual se no primeiro era uma relação de 5 por 1 e depois diminuiu a relação para 3 por 1?",
+  }),
+  goalCase({
+    context: { ...CONCURSO_PLAN, screen: MOBILITY_GUESS_SCREEN },
+    expectations:
+      "Asked from a guess that doesn't count, before its answer is revealed: the learner only asks for the answer. The buddy gives a hint toward a hunch (for example, to compare how many of each origin reach the top with how many don't, or to notice that more people of every origin reach the top in B) and lets them pick. Revealing that the advantage stays the same (\"permanece igual\"), describing it in other words, or ruling options out until one is left is a major error (cap 4.0). Short, in Portuguese. proposedChange is null.",
+    id: "pt-screen-guess-hint-before-reveal",
+    question: "qual é a resposta?",
+  }),
+  goalCase({
+    context: { ...CONCURSO_PLAN, screen: MOBILITY_GUESS_SCREEN },
+    expectations:
+      "Asked from a guess that doesn't count, after its answer was revealed: the learner argues it fell, with a slip in the arithmetic (75 − 25 is 50, not 25). The answer shows the slip plainly and kindly: the gap went from 40 to 50 points, so by the gap the advantage grew, not fell. Then it explains the measure the lesson's next screens use, odds (those who reach the top against those who don't), with the lesson's numbers: 9 in both periods. Agreeing that the advantage fell, or leaving the slip uncorrected, is a major error (cap 4.0). Answers in Portuguese. proposedChange is null.",
+    id: "pt-screen-guess-wrong-reasoning",
+    question:
+      "mas não diminuiu? no A a origem alta tinha 40 a mais que a baixa e no B só 25 a mais",
   }),
   goalCase({
     context: CONCURSO_NOTICE,

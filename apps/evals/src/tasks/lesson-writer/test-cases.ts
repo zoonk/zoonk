@@ -10,6 +10,7 @@ import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
 import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
+import { MOBILITY_LESSON } from "./mobility-lesson-spec";
 import { NOVICE_LESSON_SPECS } from "./novice-lesson-specs";
 import { RECORDED_POWERS_OF_TEN_SPEC, SCIENTIFIC_NOTATION_SPEC } from "./number-lesson-spec";
 import { SETUP_LESSON_SPEC } from "./setup-lesson-spec";
@@ -56,6 +57,7 @@ function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonWriterInput 
 const UNANSWERABLE_GUESS = `
   - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
   - The guess keeps its plan's idea, the one the next screen explains, and one wrong option is what a beginner's intuition says
+  - No option but the tempting one is right under another common reading, and a later screen says why the tempting one's reasoning doesn't give the answer
 `;
 
 const BROAD_EXPECTATIONS = `
@@ -658,6 +660,18 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-piramide-energia-guess",
     userInput: toInput(WALK_LESSONS["pt-piramide-energia"]),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
+      ${UNANSWERABLE_GUESS}
+      - A regression to avoid (production, 8 Nov 2026): the plan's guess asked how the high origin's advantage changed from period A (10 and 50 of 100 reach the top) to B (25 and 75), with "diminui", "permanece igual" (right) and "aumenta". By the ratio of the shares it falls (5 to 3), by the gap it grows (40 to 50 points), and only by the odds the lesson teaches it stays at 9, while no later screen said why dividing the shares doesn't give the lesson's answer. The written guess drops or replaces \`aumenta\`, so no option but the tempting one comes out right under another common measure; it may keep \`diminui\` as the tempting option only because a later screen says, with the numbers, why dividing the shares (5 to 3) doesn't give the lesson's answer, and that screen exists
+      - The \`reveal\` says the answer holds by the measure the next screens use, without naming or explaining it yet (no odds in the reveal)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-mobilidade-guess-other-measure",
+    userInput: toInput(MOBILITY_LESSON),
   },
   {
     expectations: `
