@@ -81,7 +81,8 @@ internal fun LessonPlayerState.fillUntouched(
                 it.stepId !in results
         }
 
-    if (saved.isEmpty()) return this
+    val hydrated = copy(firstVerdicts = firstVerdicts + runVerdicts(answers))
+    if (saved.isEmpty()) return hydrated
 
     val lessonQueue = quickCheck?.returnQueue ?: queue
     val owed =
@@ -92,13 +93,13 @@ internal fun LessonPlayerState.fillUntouched(
             .filter { id -> lessonQueue.count { it == id } == 1 }
     val filled = saved.map(RunAnswer::stepId).toSet()
 
-    return copy(
-        firstVerdicts = runVerdicts(saved) + firstVerdicts,
-        queue = if (quickCheck == null) queue + owed else queue,
-        quickCheck = quickCheck?.copy(returnQueue = lessonQueue + owed),
-        retried = (retried + retriedIn(saved) + owed).distinct(),
-        rounds = rounds + filled.associateWith { round(it) + 1 },
-    ).answeredAs(saved)
+    return hydrated
+        .copy(
+            queue = if (quickCheck == null) queue + owed else queue,
+            quickCheck = quickCheck?.copy(returnQueue = lessonQueue + owed),
+            retried = (retried + retriedIn(saved) + owed).distinct(),
+            rounds = rounds + filled.associateWith { round(it) + 1 },
+        ).answeredAs(saved)
 }
 
 /** "I don't know yet": an open answer's sample, or the guess's answer with no pick, without a verdict; neither counts. */

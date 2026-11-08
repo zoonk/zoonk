@@ -1038,6 +1038,10 @@ struct LessonPlayerState: Equatable, Sendable {
   /// they haven't touched, other than the one in play, show the run's answers, and a check it
   /// missed once comes back at the end.
   private mutating func fillUntouched(from known: [LessonRunAnswer], workedStepIds: Set<String>) {
+    for answer in known.reversed() {
+      firstVerdicts[answer.stepId] = answer.isCorrect
+      firstVerdictAttemptIds[answer.stepId] = answer.result.attemptId
+    }
     let inPlay = currentStep.flatMap { results[$0.id] == nil ? $0.id : nil }
     let saved = known.filter {
       $0.stepId != inPlay && !workedStepIds.contains($0.stepId) && answers[$0.stepId] == nil
@@ -1068,8 +1072,6 @@ struct LessonPlayerState: Equatable, Sendable {
     }
 
     for first in firsts {
-      firstVerdicts[first.stepId] = first.isCorrect
-      firstVerdictAttemptIds[first.stepId] = first.result.attemptId
       rounds[first.stepId, default: 0] += 1
     }
 

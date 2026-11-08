@@ -900,7 +900,23 @@ class LessonPlayerReducerTest {
         val answeredHere =
             play(steps, LessonAction.Continue, *answerCheck("q1", false), started(saved("q1", true)).copy(keepsScreen = true))
         assertEquals(LessonPhase.Feedback, answeredHere.phase)
-        assertEquals(mapOf("q1" to false), answeredHere.firstVerdicts)
+        assertEquals(mapOf("q1" to true), answeredHere.firstVerdicts)
+    }
+
+    @Test
+    fun aLateRunsFirstMissSurvivesCheckingAPreservedCorrectDraft() {
+        val steps = listOf(checkStep("q1"), checkStep("q2"))
+        val draft =
+            play(
+                steps,
+                LessonAction.SelectAnswer("q1", LessonAnswer.Check("right")),
+                started(saved("q1", false)).copy(keepsScreen = true),
+            )
+        assertEquals(LessonAnswer.Check("right"), draft.answers["q1"])
+        assertNull(draft.results["q1"])
+        val checked = draft.then(LessonAction.CheckResolved("q1", stepResult(true), counts = true))
+        assertEquals(false, checked.firstVerdicts["q1"])
+        assertEquals(true, checked.results["q1"]?.isCorrect)
     }
 
     @Test
@@ -912,7 +928,7 @@ class LessonPlayerReducerTest {
         assertEquals("q1" to LessonPhase.Feedback, acted.currentId to acted.phase)
         assertEquals(LessonAnswer.Check("right") to stepResult(true, "q1-attempt"), acted.answers["q1"] to acted.results["q1"])
         assertEquals(LessonAnswer.Check("right") to stepResult(true), acted.answers["q2"] to acted.results["q2"])
-        assertEquals(mapOf("q1" to true, "q2" to true, "q3" to false), acted.firstVerdicts)
+        assertEquals(mapOf("q1" to false, "q2" to true, "q3" to false), acted.firstVerdicts)
         assertEquals(steps.map(LessonStep::id) + "q3", acted.queue)
     }
 
