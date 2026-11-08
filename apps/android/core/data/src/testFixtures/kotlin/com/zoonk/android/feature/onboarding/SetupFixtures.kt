@@ -231,7 +231,7 @@ fun revealDaysOf(): String {
     val titles =
         listOf(
             "How birds use sound",
-            "Songs and calls",
+            "How birds use sound",
             "Pitch, rhythm and tone",
             "Who sings, and when",
             "The dawn chorus",
@@ -240,7 +240,9 @@ fun revealDaysOf(): String {
         )
     return titles
         .mapIndexed { index, title ->
-            """{"date":"${today.plusDays(index.toLong())}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":null,
+            """{"date":"${today.plusDays(
+                index.toLong(),
+            )}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":"${if (index <= 1) "019a482c-6a00-7000-8000-000000000011" else "019a482c-6a00-7000-8000-00000000001$index"}",
           "minutes":6,"requiresPlus":false,"scheduledFor":"${today.plusDays(
                 index.toLong(),
             )}","skillId":null,"status":"todo","title":"$title","writing":false}],
@@ -257,6 +259,7 @@ fun revealTodayOf(): com.zoonk.api.models.StudyDay {
                 "kind" to "learn",
                 "position" to 0,
                 "title" to "How birds use sound",
+                "lessonId" to "019a482c-6a00-7000-8000-000000000011",
                 "subject" to "Birdsong basics",
                 "estimatedMinutes" to 6,
                 "screen" to "lesson",
@@ -283,7 +286,7 @@ fun revealTodayOf(): com.zoonk.api.models.StudyDay {
         "state" to "underway",
         "minutes" to
             kotlinx.serialization.json.buildJsonObject {
-                put("dailyGoal", kotlinx.serialization.json.JsonPrimitive(15))
+                put("dailyGoal", kotlinx.serialization.json.JsonPrimitive(0))
                 put("done", kotlinx.serialization.json.JsonPrimitive(0))
                 put("planned", kotlinx.serialization.json.JsonPrimitive(15))
             },

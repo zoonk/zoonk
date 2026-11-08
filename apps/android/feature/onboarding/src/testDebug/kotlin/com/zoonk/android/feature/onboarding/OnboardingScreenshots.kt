@@ -406,6 +406,30 @@ class OnboardingScreenshots {
                 "reveal-reading" to {
                     Reveal(setupPlanApi().apply { shownPlan = planOf(notice = "reading") })
                 },
+                "setup-language-reason" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup =
+                                { setupView(listOf("reason", "level", "schedule", "plan"), kind = "language", targetLanguage = "fr") }
+                        },
+                    )
+                },
+                "setup-language-schedule" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup =
+                                {
+                                    setupView(
+                                        listOf("schedule", "plan"),
+                                        kind = "language",
+                                        targetLanguage = "fr",
+                                        languageAim = languageAimOf("B1"),
+                                    )
+                                }
+                            advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2029, 11, 6), targetDate = null) }
+                        },
+                    )
+                },
                 "setup-purpose" to
                     { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("purpose", "level", "schedule", "plan")) } }) },
                 "setup-level" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("level", "schedule", "plan")) } }) },
@@ -631,7 +655,6 @@ class OnboardingScreenshots {
                 PlanRevealStep(
                     examGoal(),
                     isGuest,
-                    libraryCourse = null,
                     run,
                     onRetryRun = {},
                     rememberPlans(api),

@@ -9,6 +9,7 @@
   "onboarding_aim_by_month": "8821a9447d5f6337619998c53d524300e2ee75f1f5ddb5cfbe5d542a653eb739",
   "onboarding_aim_change": "8146e604d16a766277aa5091b21e0e67d5fd8ca87052aec6c3b3ebdbdc18b0d5",
   "onboarding_aim_changed": "d7a9144e8981971b229196bd5b8bffaed4a99afc95e725edaa1e27f372502e3c",
+  "onboarding_aim_description": "788d63711e1a12694ceae6e754c02ed4a6d3a037542b20448831bc5ddfe78429",
   "onboarding_aim_finish": "e44e8df4c4e22a3174583b39d868aeb4489cbf1ccc69dfdbcf23de7748c53b67",
   "onboarding_aim_fluent": "9fb446e4280b44cd98c99707d2605a3f4c545c91ac0318c71a483f4a962f2824",
   "onboarding_aim_from_advanced": "ef8196bbb2ec1fad77bbf55513177f65c0942a0cf55b74d4069ad60fb0d00b11",
@@ -258,6 +259,7 @@
   "onboarding_read_limit_plus": "b6ee871f2468115c69c8cd9b5ade0f8e3f40ad6c95afd50e3490870ce7805b6b",
   "onboarding_reason_certificate": "6b64bd63bf03cb8820711b5e4f9dcaa845bb29d68c780a727bd1bfcd92caaeda",
   "onboarding_reason_certificate_description": "b7b4705b86a47e7a2838e44286ec7a074b40e3c4a360bcf23138eccfc9414cef",
+  "onboarding_reason_choices": "0269456a1529b47b517f6588c3400da014cd73868589f31b2df098e2a523d30d",
   "onboarding_reason_description": "883081788963ff2227fabfa190138512f456431088187e15b928873550ae4cc8",
   "onboarding_reason_exam": "ea211528092f56e15637a3f8f6ce6860919b23b7ed01b64177fabefe82b1bd44",
   "onboarding_reason_exam_plan": "cafe676456becc71a08cf863ec6280e12e4b491e86d6e0952e136494236ecf83",
@@ -466,7 +468,7 @@
   "onboarding_your_text": "786603ffcb8cd94b0c1fd1c029521c6e8ba21bb704cf3a316152d616c57be7da"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Title of the screen where a learner writes their goal. -->
     <string name="onboarding_start_title">무엇을 이루고 싶나요?</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -1080,10 +1082,13 @@
     <string name="onboarding_aim_from_intermediate">중급부터 하루에 %1$s씩 공부해요.</string>
     <string name="onboarding_aim_from_advanced">고급부터 하루에 %1$s씩 공부해요.</string>
     <string name="onboarding_aim_from_level">%1$s부터 하루에 %2$s씩 공부해요.</string>
-    <plurals name="onboarding_reveal_lessons">
+    <!-- The count is the separate animated readout above this noun. -->
+    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
         <item quantity="other">레슨</item>
     </plurals>
     <plurals name="onboarding_reveal_lessons_done">
         <item quantity="other">레슨, %1$s개 완료</item>
     </plurals>
+    <string name="onboarding_reason_choices">배우는 이유</string>
+    <string name="onboarding_aim_description">코스에서 어디까지 배울지에 따라 계획 기간이 정해져요.</string>
 </resources>

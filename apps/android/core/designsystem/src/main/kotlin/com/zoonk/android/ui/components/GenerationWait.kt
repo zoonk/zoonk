@@ -71,6 +71,7 @@ fun GenerationWait(
     modifier: Modifier = Modifier,
     /** When the wait began ([System.currentTimeMillis]), so a screen that takes over another's wait goes on from its bar. */
     since: Long? = null,
+    share: Float? = null,
     header: @Composable ColumnScope.() -> Unit = {},
 ) {
     val progress = kind.progress(run)
@@ -87,7 +88,16 @@ fun GenerationWait(
             } else {
                 WaitProgress(
                     name = stringResource(kind.label),
-                    share = driftedShare(progress.share, progress.target, progress.activeMillis, following, now, since),
+                    share =
+                        share
+                            ?: driftedShare(
+                                progress.share,
+                                progress.target,
+                                progress.activeMillis,
+                                following,
+                                now,
+                                progress.activeSince ?: since,
+                            ),
                     weights = progress.phases.map { it.phase.seconds },
                 )
             }
@@ -104,6 +114,27 @@ fun GenerationWait(
             }
         }
     }
+}
+
+@Composable
+fun rememberGenerationProgress(
+    kind: GenerationKind,
+    run: GenerationRun,
+): Float {
+    val opened =
+        androidx.compose.runtime.saveable
+            .rememberSaveable { System.currentTimeMillis() }
+    val progress = kind.progress(run)
+    val following = run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following
+    val now by ticking(following)
+    return driftedShare(
+        progress.share,
+        progress.target,
+        progress.activeMillis,
+        following,
+        now,
+        progress.activeSince ?: opened,
+    ).coerceAtLeast(0.08f)
 }
 
 /** Main's `WritingWait`: [hint] says what happens once it's written, so a failed run leaves it out. */
@@ -382,12 +413,17 @@ private fun driftedShare(
     now: Long,
     since: Long?,
 ): Float {
-    val drift = remember { Drift(shown = share, base = share, startedAt = since ?: now, share = share, target = target) }
+    val drift = remember { Drift(shown = share, base = share, startedAt = since ?: now, share = share, target = target, since = since) }
     if (share != drift.share || target != drift.target) {
-        drift.base = if (share < drift.share) share else maxOf(drift.shown, share)
-        drift.startedAt = now
+        if (share < drift.share) drift.shown = share
+        drift.base = maxOf(drift.shown, share)
+        drift.startedAt = since ?: now
         drift.share = share
         drift.target = target
+    }
+    if (since != drift.since) {
+        if (since != null) drift.startedAt = since
+        drift.since = since
     }
     val ceiling = minOf(target, DRIFT_CAP)
     val constant = (activeMillis?.takeIf { it > 0 } ?: DEFAULT_ESTIMATE_MILLIS) / 2.0
@@ -397,7 +433,7 @@ private fun driftedShare(
             drift.base >= ceiling -> drift.base
             else -> drift.base + (ceiling - drift.base) * (1 - exp(-(now - drift.startedAt).coerceAtLeast(0) / constant)).toFloat()
         }
-    return maxOf(drifted, share).also { drift.shown = it }
+    return (if (following) maxOf(drifted, share, drift.shown) else share).also { drift.shown = it }
 }
 
 /** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
@@ -422,6 +458,7 @@ private class Drift(
     var startedAt: Long,
     var share: Float,
     var target: Float,
+    var since: Long?,
 )
 
 private fun elapsed(

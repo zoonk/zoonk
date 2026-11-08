@@ -224,8 +224,6 @@ sealed class AnalyticsEvent(
         PlanWait("planWait"),
         PlacementWait("placementWait"),
         LessonWait("lessonWait"),
-        ExamNotice("examNotice"),
-        NextStop("nextStop"),
     }
 
     enum class PublicPage(

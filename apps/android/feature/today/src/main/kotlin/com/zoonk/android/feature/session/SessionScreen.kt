@@ -524,14 +524,21 @@ internal fun NextStop(
                                     } else {
                                         run
                                     }
+                                quiz.open()
+                                val share =
+                                    com.zoonk.android.ui.components.rememberGenerationProgress(
+                                        GenerationKind.Lesson,
+                                        shown,
+                                    )
                                 WaitContent(
                                     quiz,
                                     hold,
-                                    AnalyticsEvent.WarmUpSurface.NextStop,
+                                    AnalyticsEvent.WarmUpSurface.LessonWait,
                                     GenerationKind.Lesson,
                                     shown,
                                     stringResource(if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note),
                                     goalId = goalId?.toString(),
+                                    progressShare = share,
                                     onRetry = { retry() },
                                 ) {
                                     LessonWritingProgress(
@@ -546,6 +553,7 @@ internal fun NextStop(
                                             }
                                         },
                                         stringResource(R.string.session_next_writing_note),
+                                        progressShare = share,
                                     )
                                 }
                             }

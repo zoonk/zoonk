@@ -109,39 +109,41 @@ internal fun ColumnScope.StepForm(
     skipLabel: String? = null,
     content: @Composable ColumnScope.(continueStep: () -> Unit) -> Unit = {},
 ) {
-    var sender by rememberSaveable { mutableStateOf<StepSender?>(null) }
-    // A save something else starts (a pick, "Use this date") has no sender, and a press that saves nothing keeps none.
-    LaunchedEffect(sender, pending) { if (!pending) sender = null }
-    val send = { by: StepSender, action: () -> Unit ->
-        sender = by
-        action()
-    }
-    val continueStep = { send(StepSender.Continue, onContinue) }
-
-    StepHeading(title, description, subject)
-    content(continueStep)
-    OnboardingActions {
-        PlanStartNotice()
-        Button(
-            busy = pending && sender == StepSender.Continue,
-            onClick = continueStep,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = canContinue && !pending,
-            focusableWhenDisabled = pending,
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(continueLabel ?: stringResource(R.string.onboarding_continue))
+    SetupContent {
+        var sender by rememberSaveable { mutableStateOf<StepSender?>(null) }
+        // A save something else starts (a pick, "Use this date") has no sender, and a press that saves nothing keeps none.
+        LaunchedEffect(sender, pending) { if (!pending) sender = null }
+        val send = { by: StepSender, action: () -> Unit ->
+            sender = by
+            action()
         }
-        if (onSkip != null) {
-            TextButton(
-                busy = pending && sender == StepSender.Skip,
-                onClick = { send(StepSender.Skip, onSkip) },
+        val continueStep = { send(StepSender.Continue, onContinue) }
+
+        StepHeading(title, description, subject)
+        content(continueStep)
+        OnboardingActions {
+            PlanStartNotice()
+            Button(
+                busy = pending && sender == StepSender.Continue,
+                onClick = continueStep,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !pending,
+                enabled = canContinue && !pending,
                 focusableWhenDisabled = pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
-                Text(skipLabel ?: stringResource(R.string.onboarding_skip))
+                Text(continueLabel ?: stringResource(R.string.onboarding_continue))
+            }
+            if (onSkip != null) {
+                TextButton(
+                    busy = pending && sender == StepSender.Skip,
+                    onClick = { send(StepSender.Skip, onSkip) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !pending,
+                    focusableWhenDisabled = pending,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                ) {
+                    Text(skipLabel ?: stringResource(R.string.onboarding_skip))
+                }
             }
         }
     }

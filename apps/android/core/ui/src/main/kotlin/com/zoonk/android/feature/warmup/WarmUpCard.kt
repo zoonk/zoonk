@@ -76,14 +76,17 @@ import com.zoonk.api.models.WarmUpDeckCardsInnerOptionsInner
 
 @Stable
 class WaitQuizState internal constructor(
-    val warmUpId: String?,
+    warmUpId: String?,
     private val warmUps: WarmUpStore?,
     index: Int,
     picked: String? = null,
     showingProgress: Boolean,
     visitedQuiz: Boolean = !showingProgress,
     shown: Boolean = false,
+    opened: Boolean = false,
 ) {
+    var warmUpId by mutableStateOf(warmUpId)
+        internal set
     var index by mutableIntStateOf(index)
         private set
     var picked by mutableStateOf(picked)
@@ -94,19 +97,31 @@ class WaitQuizState internal constructor(
         private set
     var shown by mutableStateOf(shown)
         internal set
+    internal var opened by mutableStateOf(opened)
+        private set
     var deck by mutableStateOf<WarmUpDeck?>(null)
         internal set
     val card get() = deck?.cards?.getOrNull(index)
     val hasQuiz get() = card != null
-    val hasNext get() = picked != null && (warmUpId?.let { warmUps?.next(it) } ?: Int.MAX_VALUE) < (deck?.cards?.size ?: 0)
+    val hasNext get() = picked != null && index + 1 < (deck?.cards?.size ?: 0)
+
+    fun open() {
+        if (opened) return
+        opened = true
+        if (picked == null) index = maxOf(index, warmUpId?.let { warmUps?.next(it) } ?: 0)
+        showingProgress = !hasQuiz
+        visitedQuiz = hasQuiz
+    }
 
     fun showProgress(hold: ReadyHold) {
         hold.guess()
+        opened = true
         showingProgress = true
     }
 
     fun showQuiz(hold: ReadyHold) {
         hold.guess()
+        opened = true
         showingProgress = false
         visitedQuiz = true
     }
@@ -125,7 +140,7 @@ class WaitQuizState internal constructor(
     }
 
     fun next() {
-        index = warmUpId?.let { warmUps?.next(it) } ?: index + 1
+        index = maxOf(index + 1, warmUpId?.let { warmUps?.next(it) } ?: 0)
         picked = null
     }
 }
@@ -135,35 +150,49 @@ fun rememberWaitQuiz(
     warmUpId: String?,
     warmUps: WarmUpStore?,
 ): WaitQuizState {
-    val loaded =
-        if (warmUpId != null && warmUps != null) {
-            val read by warmUps.decks[warmUpId].collectShown()
-            read.value
-        } else {
-            null
-        }
     val saver =
-        remember(warmUpId, warmUps) {
+        remember(warmUps) {
             listSaver<WaitQuizState, Any>(
-                save = { listOf(it.index, it.picked.orEmpty(), it.showingProgress, it.visitedQuiz, it.shown) },
+                save = {
+                    listOf(
+                        it.index,
+                        it.picked.orEmpty(),
+                        it.showingProgress,
+                        it.visitedQuiz,
+                        it.shown,
+                        it.warmUpId.orEmpty(),
+                        it.opened,
+                    )
+                },
                 restore = {
                     WaitQuizState(
-                        warmUpId,
+                        (it[5] as String).ifEmpty { null },
                         warmUps,
                         it[0] as Int,
                         (it[1] as String).ifEmpty { null },
                         it[2] as Boolean,
                         it[3] as Boolean,
                         it[4] as Boolean,
+                        it[6] as Boolean,
                     )
                 },
             )
         }
     val quiz =
-        rememberSaveable(warmUpId, saver = saver) {
-            WaitQuizState(warmUpId, warmUps, warmUpId?.let { warmUps?.next(it) } ?: 0, showingProgress = loaded == null)
+        rememberSaveable(saver = saver) {
+            WaitQuizState(warmUpId, warmUps, warmUpId?.let { warmUps?.next(it) } ?: 0, showingProgress = true)
         }
-    SideEffect { quiz.deck = loaded }
+    val id = warmUpId ?: quiz.warmUpId
+    val loaded =
+        if (id != null && warmUps != null) {
+            warmUps.decks[id]
+                .collectShown()
+                .value.value
+        } else {
+            null
+        }
+    quiz.warmUpId = id
+    quiz.deck = loaded
     return quiz
 }
 
@@ -180,9 +209,14 @@ fun WaitContent(
     lessonLine: String? = null,
     lessonReady: Boolean = false,
     progressBeside: Boolean = false,
+    progressShare: Float? = null,
     onRetry: (() -> Unit)? = null,
     progress: @Composable () -> Unit,
 ) {
+    quiz.open()
+    val share =
+        progressShare ?: com.zoonk.android.ui.components
+            .rememberGenerationProgress(kind, run)
     val stripFocus = remember { FocusRequester() }
     val progressFocus = remember { FocusRequester() }
     val moveFocus = rememberMoveFocus()
@@ -201,7 +235,7 @@ fun WaitContent(
             } else {
                 WaitStrip(
                     title,
-                    kind.progress(run).share.coerceAtLeast(0.08f),
+                    share,
                     run.status == GenerationRun.Status.Ready,
                     lessonLine,
                     lessonReady,

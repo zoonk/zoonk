@@ -41,8 +41,12 @@ fun TrackOnboardingQuestion(
     onboardingId: String? = null,
 ) {
     val tracker = LocalEventTracker.current
+    var shown by rememberSaveable(goalId, question) { mutableStateOf(false) }
     LifecycleResumeEffect(goalId, question) {
-        tracker.track(AnalyticsEvent.OnboardingProgressed("question_shown", goalId, onboardingId, question = question))
+        if (!shown) {
+            shown = true
+            tracker.track(AnalyticsEvent.OnboardingProgressed("question_shown", goalId, onboardingId, question = question))
+        }
         onPauseOrDispose {}
     }
 }

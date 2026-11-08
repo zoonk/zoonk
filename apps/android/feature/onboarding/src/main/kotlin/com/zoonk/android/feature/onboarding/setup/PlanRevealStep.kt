@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -96,7 +97,6 @@ import kotlin.time.Duration.Companion.milliseconds
 internal fun ColumnScope.PlanRevealStep(
     goal: Goal,
     isGuest: Boolean,
-    libraryCourse: OnboardingLibraryCourse?,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     plans: PlanStore,
@@ -169,11 +169,7 @@ internal fun ColumnScope.PlanRevealStep(
                     onRetry = if (poll.stopped) poll::restart else onRetryRun,
                     hold = hold,
                     next = PlanNext.Plan,
-                ) {
-                    libraryCourse?.let { course ->
-                        LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
-                    }
-                }
+                )
             } else {
                 val syllabus by plans.syllabus[goal.id].collectShown()
                 val todayState = today?.collectShown()?.value
@@ -209,12 +205,11 @@ internal fun ColumnScope.PlanRevealStep(
 internal enum class PlanNext { TimeQuestion, Plan }
 
 @Composable
-internal fun PlanBuilding(
+internal fun ColumnScope.PlanBuilding(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     hold: ReadyHold? = null,
     next: PlanNext = PlanNext.Plan,
-    offer: @Composable () -> Unit = {},
 ) {
     val held = hold ?: rememberReadyHold(false)
     val shown = if (held.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
@@ -227,9 +222,8 @@ internal fun PlanBuilding(
         stringResource(if (next == PlanNext.Plan) R.string.focustest_see_plan else R.string.onboarding_continue),
         onRetry,
         next,
-        offer,
-    ) {
-        GenerationWait(GenerationKind.Curriculum, shown, onRetry) {
+    ) { share ->
+        GenerationWait(GenerationKind.Curriculum, shown, onRetry, share = share) {
             if (held.holding) {
                 PlanReadyHeading(next)
             } else {
@@ -276,7 +270,7 @@ internal fun LibraryCourseOffer(
  * its [onRetry] show in place of the bar, so the card keeps its place under them.
  */
 @Composable
-internal fun NoticeReading(
+internal fun ColumnScope.NoticeReading(
     document: ExamDocument,
     lastEdition: Boolean,
     warmUpId: String?,
@@ -306,14 +300,15 @@ internal fun NoticeReading(
     SetupWait(
         shown,
         kind,
-        AnalyticsEvent.WarmUpSurface.ExamNotice,
+        AnalyticsEvent.WarmUpSurface.PlanWait,
         title,
         hold,
         stringResource(if (next == PlanNext.Plan) R.string.focustest_see_plan else R.string.onboarding_continue),
         onRetry,
         next,
-    ) {
-        GenerationWait(kind, shown, onRetry) {
+        waitSurface = "examNotice",
+    ) { share ->
+        GenerationWait(kind, shown, onRetry, share = share) {
             if (holding) {
                 PlanReadyHeading(next)
             } else {
@@ -333,7 +328,7 @@ internal fun NoticeReading(
 }
 
 @Composable
-private fun RevealBody(
+private fun ColumnScope.RevealBody(
     plan: Plan,
     studyDay: com.zoonk.android.feature.session.DayView?,
     goal: Goal,
@@ -348,60 +343,71 @@ private fun RevealBody(
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
 ) {
-    val today = remember { LocalDate.now() }
-    val coverage = revealCoverage(plan, goal.kind, syllabus)
+    SetupContent {
+        val today = remember { LocalDate.now() }
+        val coverage = revealCoverage(plan, goal.kind, syllabus)
 
-    RevealHero(plan, goal, playMoment)
-    PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
-    PaceLine(plan, goal.kind)
-    NoticeDayLine(plan)
-    studyDay?.let { RevealToday(it, playMoment) }
-    RevealWeek(plan)
+        RevealHero(plan, goal, playMoment)
+        PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
+        PaceLine(plan, goal.kind)
+        NoticeDayLine(plan)
+        studyDay?.let { RevealToday(it, playMoment) }
+        RevealWeek(plan, studyDay)
 
-    val hold = rememberReadyHold(false)
-    val started = studyDay?.steps?.any { it.isFinished } == true
-    PageWaitActions(hold) {
-        if (saveFailed) Text(stringResource(R.string.onboarding_save_failed), color = MaterialTheme.colorScheme.error)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onAdjust, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.onboarding_reveal_adjust)) }
-            Button(
-                busy = starting,
-                onClick = onStart,
-                modifier = Modifier.weight(2f),
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-            ) {
-                Text(stringResource(if (started) R.string.onboarding_continue else R.string.onboarding_reveal_start))
+        val started = studyDay?.steps?.any { it.isFinished } == true
+        PageWaitActions {
+            if (saveFailed) {
+                Text(
+                    stringResource(R.string.onboarding_save_failed),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite },
+                )
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onAdjust, modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.onboarding_reveal_adjust))
+                }
+                Button(
+                    busy = starting,
+                    onClick = onStart,
+                    modifier = Modifier.weight(2f),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                ) {
+                    Text(
+                        stringResource(if (started) R.string.onboarding_continue else R.string.onboarding_reveal_start),
+                    )
+                }
+            }
+            if (isGuest) {
+                Text(
+                    stringResource(R.string.onboarding_reveal_save_note),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
             }
         }
-        if (isGuest) {
+
+        if (plan.roadmapPhases.size >= 2) {
+            PlanPhases(plan, today)
+        } else {
+            plan.revealChapters().takeIf { it.isNotEmpty() }?.let { RevealChapters(it) }
+        }
+
+        if (plan.notice == Plan.Notice.USUAL) {
             Text(
-                stringResource(R.string.onboarding_reveal_save_note),
+                stringResource(R.string.onboarding_reveal_usual_structure),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )
-            TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
         }
+
+        syllabus?.areaWeights()?.let { AreaWeightList(it) }
+
+        // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
+        // topics) and choices (bases, study everything) go with this.
+        coverage?.let { CoverageWords(it, plan, onSeePlus) }
     }
-
-    if (plan.roadmapPhases.size >= 2) {
-        PlanPhases(plan, today)
-    } else {
-        plan.revealChapters().takeIf { it.isNotEmpty() }?.let { RevealChapters(it) }
-    }
-
-    if (plan.notice == Plan.Notice.USUAL) {
-        Text(
-            stringResource(R.string.onboarding_reveal_usual_structure),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
-    }
-
-    syllabus?.areaWeights()?.let { AreaWeightList(it) }
-
-    // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
-    // topics) and choices (bases, study everything) go with this.
-    coverage?.let { CoverageWords(it, plan, onSeePlus) }
 }
 
 @Composable

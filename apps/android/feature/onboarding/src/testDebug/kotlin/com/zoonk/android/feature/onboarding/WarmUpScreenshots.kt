@@ -147,7 +147,6 @@ class WarmUpScreenshots {
                                         PlanRevealStep(
                                             examGoal(),
                                             isGuest = false,
-                                            libraryCourse = null,
                                             run = MAPPING,
                                             onRetryRun = {},
                                             plans = plans,
@@ -166,7 +165,6 @@ class WarmUpScreenshots {
                                             PlanRevealStep(
                                                 examGoal(),
                                                 isGuest = false,
-                                                libraryCourse = null,
                                                 run = MAPPING,
                                                 onRetryRun = {},
                                                 plans = readingPlans,

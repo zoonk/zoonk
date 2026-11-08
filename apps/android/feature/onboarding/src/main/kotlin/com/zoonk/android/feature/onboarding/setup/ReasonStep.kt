@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,6 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.onboarding.Choice
+import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.plan.reasonTitleResource
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -55,12 +56,13 @@ internal fun ColumnScope.ReasonStep(
             }
         },
     ) {
-        aim?.reasons?.forEach { row ->
-            val key = row.reason.value
-            ListRow(
-                headline = { Text(stringResource(requireNotNull(reasonTitleResource(key)))) },
-                supporting = {
-                    Text(
+        ChoiceList(
+            choices =
+                aim?.reasons.orEmpty().map { row ->
+                    val key = row.reason.value
+                    Choice(
+                        key,
+                        stringResource(requireNotNull(reasonTitleResource(key))),
                         stringResource(
                             when (key) {
                                 "travel" -> R.string.onboarding_reason_travel_description
@@ -71,50 +73,46 @@ internal fun ColumnScope.ReasonStep(
                                 else -> R.string.onboarding_reason_other_description
                             },
                         ),
-                    )
-                },
-                leading = { RadioButton(selected = reason == key, onClick = null, enabled = !pending) },
-                meta = {
-                    Text(
                         listOfNotNull(
                             row.aim?.value,
                             row.hours?.let {
                                 stringResource(R.string.onboarding_aim_hours, formatNumber(it.toDouble(), currentLocale()))
                             },
-                        ).factsLine()
-                            .ifEmpty { stringResource(R.string.onboarding_reason_exam) },
+                        ).factsLine().ifEmpty { stringResource(R.string.onboarding_reason_exam) },
                     )
                 },
-                enabled = !pending,
-                onClick = {
-                    if (reason != key) {
-                        reason = key
-                        typed = ""
-                    }
-                },
-                chevron = false,
-            )
-            if (reason == key && (certificate || key == "other")) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = typed,
-                        onValueChange = { typed = it },
-                        enabled = !pending,
-                        label =
-                            stringResource(
-                                if (certificate) R.string.onboarding_reason_which_exam else R.string.onboarding_reason_your_words,
-                            ),
-                    )
-                    if (certificate) {
-                        Text(
-                            stringResource(R.string.onboarding_reason_exam_plan),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            value = reason,
+            label = stringResource(R.string.onboarding_reason_choices),
+            readOnly = pending,
+            onChange = { key ->
+                if (reason != key) {
+                    reason = key
+                    typed = ""
+                }
+            },
+            afterChoice = { key ->
+                if (reason == key && (certificate || key == "other")) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = typed,
+                            onValueChange = { typed = it },
+                            enabled = !pending,
+                            label =
+                                stringResource(
+                                    if (certificate) R.string.onboarding_reason_which_exam else R.string.onboarding_reason_your_words,
+                                ),
                         )
+                        if (certificate) {
+                            Text(
+                                stringResource(R.string.onboarding_reason_exam_plan),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
-            }
-        }
+            },
+        )
         Text(
             stringResource(R.string.onboarding_reason_hours_note),
             style = MaterialTheme.typography.bodySmall,

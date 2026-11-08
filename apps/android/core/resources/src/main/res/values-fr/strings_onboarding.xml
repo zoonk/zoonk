@@ -9,6 +9,7 @@
   "onboarding_aim_by_month": "e675f0231f55a5a23a3574d3040265d714a78e7614e10c66a0faaef3289b16ad",
   "onboarding_aim_change": "4bd8eba6f8237f2133fb6e63b917b39ea6e5f4cabfbe06e71a6d636e35c253df",
   "onboarding_aim_changed": "a504d7b7ec36ec0e68423fb73c4fcc6cddab280bddcc02e8b04f458adef3437d",
+  "onboarding_aim_description": "6e6ae7b2a3e65f29fd5c0d0a8c53fe99f05225c74c1b2ee4fe38934e72319f7e",
   "onboarding_aim_finish": "72d5a0be5414657fdba1c44532a2271032484984f2161e3f889b3d91723bdcbe",
   "onboarding_aim_fluent": "6f7bd2743ce37c4483d33f3bd34598a80aae8ee720ca5969e8a396a4731ab6aa",
   "onboarding_aim_from_advanced": "c476b38801dc719125d5a26a9a49e72b7e6af99bb589138b9598aceccabd3259",
@@ -258,6 +259,7 @@
   "onboarding_read_limit_plus": "f97cbadbdac3a004c124b5e6d2738516d9eee86daceb7a258f21855ac54b1d6e",
   "onboarding_reason_certificate": "675f3702457bfb24dceb97f3725f6cfa3a846624fa66280b73363902614524d8",
   "onboarding_reason_certificate_description": "9e522025abdaca61181bc061aea722f95c53e81341f5dd0e322b211ab5faf893",
+  "onboarding_reason_choices": "670dbf8a5f2c180eaa541ad70272a20fe7e57ec14f947c312c9ef5101b9b9d94",
   "onboarding_reason_description": "12a1095702fd6a01746f12b6f6f179cc434198d91c798a00b5f7254a0f6236eb",
   "onboarding_reason_exam": "3161c8bb13ddfa7d9589e808beaf070f1d77b8718719b1611147bfc239067096",
   "onboarding_reason_exam_plan": "7a0036d96dc37565e3a7f016921a0ce257bbf74b9cafb9690637c143d7b3a882",
@@ -1126,6 +1128,7 @@
     <string name="onboarding_aim_from_intermediate">En partant d’un niveau intermédiaire, avec %1$s par jour.</string>
     <string name="onboarding_aim_from_advanced">En partant d’un niveau avancé, avec %1$s par jour.</string>
     <string name="onboarding_aim_from_level">En partant de %1$s, avec %2$s par jour.</string>
+    <!-- The count is the separate animated readout above this noun. -->
     <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
         <item quantity="one">leçon</item>
         <item quantity="many">leçons</item>
@@ -1136,4 +1139,6 @@
         <item quantity="many">leçons, %1$s à ton actif</item>
         <item quantity="other">leçons, %1$s à ton actif</item>
     </plurals>
+    <string name="onboarding_reason_choices">Pourquoi tu apprends cette langue</string>
+    <string name="onboarding_aim_description">Le niveau visé par ton cours détermine la durée de ton plan.</string>
 </resources>

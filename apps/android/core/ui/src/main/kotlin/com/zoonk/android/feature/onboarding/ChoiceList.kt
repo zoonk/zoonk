@@ -34,6 +34,7 @@ data class Choice<T>(
     val value: T,
     val label: String,
     val description: String? = null,
+    val meta: String? = null,
 )
 
 /** Main's `OnboardingAnnouncer`: the setup reads this out above its steps, so the next step doesn't cut it off. */
@@ -53,6 +54,8 @@ fun <T> ChoiceList(
     modifier: Modifier = Modifier,
     onPick: ((T) -> Unit)? = null,
     readOnly: Boolean = false,
+    busyValue: T? = null,
+    afterChoice: @Composable (T) -> Unit = {},
 ) {
     val announce = LocalOnboardingAnnounce.current
     val resources = LocalResources.current
@@ -88,6 +91,8 @@ fun <T> ChoiceList(
             val selected = choice.value == value
             ListRow(
                 headline = { Text(choice.label) },
+                busy = busyValue != null && choice.value == busyValue,
+                meta = choice.meta?.let { { Text(it) } },
                 modifier =
                     Modifier
                         .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
@@ -95,6 +100,7 @@ fun <T> ChoiceList(
                 supporting = choice.description?.let { { Text(it) } },
                 trailing = { RadioButton(selected = selected, onClick = null) },
             )
+            afterChoice(choice.value)
         }
     }
 }

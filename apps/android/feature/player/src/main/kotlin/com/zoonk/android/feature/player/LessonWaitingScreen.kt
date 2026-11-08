@@ -150,6 +150,10 @@ fun LessonWaitingScreen(
                 LessonWriting.Writing, LessonWriting.Ready -> {
                     val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
                     val failed = shown.status == GenerationRun.Status.Failed
+                    quiz.open()
+                    val share =
+                        com.zoonk.android.ui.components
+                            .rememberGenerationProgress(GenerationKind.Lesson, shown)
                     WaitContent(
                         quiz,
                         hold,
@@ -158,12 +162,14 @@ fun LessonWaitingScreen(
                         shown,
                         stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
                         goalId = goalId,
+                        progressShare = share,
                         onRetry = viewModel::retry,
                     ) {
                         LessonWritingProgress(
                             shown,
                             viewModel::retry,
                             stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
+                            progressShare = share,
                         )
                     }
                     if (!hold.holding && (late || failed)) alternative?.let { Alternative(it, instead = false, exits) }
@@ -206,8 +212,9 @@ fun LessonWritingProgress(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     note: String?,
+    progressShare: Float? = null,
 ) {
-    GenerationWait(GenerationKind.Lesson, run, onRetry)
+    GenerationWait(GenerationKind.Lesson, run, onRetry, share = progressShare)
     if (note != null && run.status != GenerationRun.Status.Failed) {
         Text(
             note,

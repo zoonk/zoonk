@@ -50,6 +50,7 @@ data class GenerationFirstLesson(
     val id: String,
     val title: String? = null,
     val ready: Boolean = false,
+    val done: Boolean = false,
 )
 
 interface GenerationSource {

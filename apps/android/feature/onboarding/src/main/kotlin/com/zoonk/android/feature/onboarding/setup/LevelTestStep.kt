@@ -188,38 +188,40 @@ private fun ColumnScope.LevelTestIntro(
     onStart: () -> Unit,
     onSkip: () -> Unit,
 ) {
-    OnboardingHeading(
-        stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
-        stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
-    )
-    if (showAlphabetNote) {
-        Text(
-            stringResource(R.string.onboarding_language_test_new_alphabet),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+    SetupContent {
+        OnboardingHeading(
+            stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
+            stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
         )
-    }
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = starting,
-            onClick = onStart,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !pending,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_start))
+        if (showAlphabetNote) {
+            Text(
+                stringResource(R.string.onboarding_language_test_new_alphabet),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
-        TextButton(
-            busy = pending,
-            onClick = onSkip,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !starting,
-            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-        ) {
-            Text(stringResource(R.string.onboarding_language_test_skip))
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = starting,
+                onClick = onStart,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_start))
+            }
+            TextButton(
+                busy = pending,
+                onClick = onSkip,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !starting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
+                Text(stringResource(R.string.onboarding_language_test_skip))
+            }
+            InterfaceOffer(language)
         }
-        InterfaceOffer(language)
     }
 }
 
@@ -260,8 +262,8 @@ private fun ColumnScope.LevelTestWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-    ) {
-        GenerationWait(GenerationKind.LevelTestBank, run, onRetry) {
+    ) { share ->
+        GenerationWait(GenerationKind.LevelTestBank, run, onRetry, share = share) {
             OnboardingHeading(
                 title,
                 stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
@@ -481,25 +483,27 @@ private fun ColumnScope.LevelTestDone(
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
-    Icon(
-        painterResource(R.drawable.ic_check_circle),
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-    )
-    OnboardingHeading(
-        stringResource(R.string.onboarding_language_test_done_title),
-        stringResource(R.string.onboarding_language_test_done_description),
-    )
-    if (levels.isNotEmpty()) LevelRows(levels)
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = pending,
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(stringResource(R.string.onboarding_language_test_build_plan))
+    SetupContent {
+        Icon(
+            painterResource(R.drawable.ic_check_circle),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+        )
+        OnboardingHeading(
+            stringResource(R.string.onboarding_language_test_done_title),
+            stringResource(R.string.onboarding_language_test_done_description),
+        )
+        if (levels.isNotEmpty()) LevelRows(levels)
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = pending,
+                onClick = onContinue,
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+            ) {
+                Text(stringResource(R.string.onboarding_language_test_build_plan))
+            }
         }
     }
 }

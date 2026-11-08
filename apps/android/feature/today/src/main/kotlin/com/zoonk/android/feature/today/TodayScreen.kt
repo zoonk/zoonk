@@ -202,7 +202,6 @@ private fun TodayRead(
                 }
 
                 is TodayRead.Preparing -> {
-                    LaunchedEffect(read.goalId) { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }
                     Preparing(app, navigator, read, padding)
                 }
 

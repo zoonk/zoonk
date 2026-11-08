@@ -9,6 +9,7 @@
   "onboarding_aim_by_month": "b04716d0fc346f07af8a0523116088ed88dbff418fd2885245e7744d899ba58f",
   "onboarding_aim_change": "06dcf7835c37e8393137ecc8dddfbf3a52775fc40bfc51a8daf54fbb8c92ab06",
   "onboarding_aim_changed": "ee1962bf1a0229ff74f7905fafa1dd03232b28229844e43b8a4d76f486fccd42",
+  "onboarding_aim_description": "91d16d5665305f13df6148d48d18d3ac3d1d121a63be5df12b8ba3e424914838",
   "onboarding_aim_finish": "728b777296e621093ebaba9e060c171a7b7817b30bfbe13977c7dfaa205345e8",
   "onboarding_aim_fluent": "c55e90fe88db9e214ca97903f34e834fce3b58838f73a853857e7acac233a153",
   "onboarding_aim_from_advanced": "8c20e44feec793dafd723914dff1274f61c1085aadc7f27c3d80f1de61a598c5",
@@ -258,6 +259,7 @@
   "onboarding_read_limit_plus": "aca95c4e2cfeec1e708df3c79d7968a1ba8569a061263c73597c3f984e989266",
   "onboarding_reason_certificate": "089e7acffdd747b90e8d7d925ffa433629b53ddaada13c36c319a9a82fb24547",
   "onboarding_reason_certificate_description": "25c0e8bbec75fa1634d1fc6705afa586bac650baf294ebc85c231f574b1dddfa",
+  "onboarding_reason_choices": "1ff90c92b30ff3b1a86bf044d7cbbf66fa0729463e4bc74cd678b6e72f295129",
   "onboarding_reason_description": "901975b7828d382ac84327a1de94fb190ef91ab5d7a30c88a3386ec6566a9684",
   "onboarding_reason_exam": "87be15af05be30f82aea5e7d8e7628717485b7c3cd91ea1f76f347b329b14474",
   "onboarding_reason_exam_plan": "c19e6f1672269be1269d06225a5e57d33afd45895b8c2b20a1816897313453d0",
@@ -1126,6 +1128,7 @@
     <string name="onboarding_aim_from_intermediate">A partir de um nível intermediário, com %1$s por dia.</string>
     <string name="onboarding_aim_from_advanced">A partir de um nível avançado, com %1$s por dia.</string>
     <string name="onboarding_aim_from_level">A partir de %1$s, com %2$s por dia.</string>
+    <!-- The count is the separate animated readout above this noun. -->
     <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
         <item quantity="one">aula</item>
         <item quantity="many">aulas</item>
@@ -1136,4 +1139,6 @@
         <item quantity="many">aulas, você já concluiu %1$s</item>
         <item quantity="other">aulas, você já concluiu %1$s</item>
     </plurals>
+    <string name="onboarding_reason_choices">Por que você está aprendendo esse idioma</string>
+    <string name="onboarding_aim_description">Até onde seu curso vai, o que define a duração do seu plano.</string>
 </resources>

@@ -9,6 +9,7 @@
   "onboarding_aim_by_month": "d2ab1d5371bcdcbe606d8682c08d4e3ba0a88a6e88ea0c20e035baaad1387824",
   "onboarding_aim_change": "8dea3e4c220c46dfe31f216635ab735a559bded91e4b5d1a1373e04345b15e53",
   "onboarding_aim_changed": "4a253c7d1784d76bf83a847c48b9557633a4537b87c4e55f187b4b4c9920b11d",
+  "onboarding_aim_description": "8541cd8ebcacd93cb65b61f067f2d9e52045a10ebbfb6fb7b84ff740287fc65e",
   "onboarding_aim_finish": "f5103ece4d5b5b295af8d5d79767f31856276640dc7969571cf1a6070d0f8a08",
   "onboarding_aim_fluent": "905a1e4a8dde12006f4eb09ca0111da364dd8e9d704b6b6b04ef419cd4ced35f",
   "onboarding_aim_from_advanced": "771322c7b1ed24d5acd4f7120f4d41b6983e17978759ec74ef8e27d970e2e29a",
@@ -258,6 +259,7 @@
   "onboarding_read_limit_plus": "0465838f4ad8845d65a5857fbe44a510a6c6aafb7ebd91797bfcb51f07ce4fdb",
   "onboarding_reason_certificate": "9a4934e169220c3e6859d6fc95bad5d4ba0cc8639a9ab2c41a535f8ee8e6de2b",
   "onboarding_reason_certificate_description": "608964eec14f4fb993d0c04b3284171421b6a9c0cb0c297d662a266067f9f330",
+  "onboarding_reason_choices": "f1b3607fee636e20d4d85579d2fed10fa77a996d52adf8980a080e22c4582bbd",
   "onboarding_reason_description": "f0b19d33f630824cf10840511abd7c50150b3d61f2ea9a2afe609e66926b4e84",
   "onboarding_reason_exam": "fae1bf60294575bf465d5744cb59808b84d217d352334e575465ae4282fc2b45",
   "onboarding_reason_exam_plan": "abb402b8c3c957289b01a37cb08540962aed4c494306aaf74600d2cae919b0b2",
@@ -466,7 +468,7 @@
   "onboarding_your_text": "b133c3241598d50f9be7fd8cbb580ca59b2f5958e1c83b8a70701c62ac86151c"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Title of the screen where a learner writes their goal. -->
     <string name="onboarding_start_title">どんなことを達成したいですか？</string>
     <!-- Under the title. "Tell us in your own words" asks the learner to describe their goal. -->
@@ -1080,10 +1082,13 @@
     <string name="onboarding_aim_from_intermediate">中級から、1日%1$sずつ学びます。</string>
     <string name="onboarding_aim_from_advanced">上級から、1日%1$sずつ学びます。</string>
     <string name="onboarding_aim_from_level">%1$sから、1日%2$sずつ学びます。</string>
-    <plurals name="onboarding_reveal_lessons">
+    <!-- The count is the separate animated readout above this noun. -->
+    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
         <item quantity="other">レッスン</item>
     </plurals>
     <plurals name="onboarding_reveal_lessons_done">
         <item quantity="other">レッスン、%1$s完了</item>
     </plurals>
+    <string name="onboarding_reason_choices">学ぶ理由</string>
+    <string name="onboarding_aim_description">コースで目指すレベルによって、学習計画の期間が決まります。</string>
 </resources>

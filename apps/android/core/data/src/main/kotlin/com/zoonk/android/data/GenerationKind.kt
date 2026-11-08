@@ -478,6 +478,7 @@ data class RunProgress(
     val target: Float,
     /** The active phase's usual duration, null when nothing is running. */
     val activeMillis: Long?,
+    val activeSince: Long? = null,
 )
 
 /**
@@ -529,6 +530,12 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
         share = share(finished + active.sumOf { finishedShare(it.id, run).toDouble() * it.seconds }.toFloat(), total),
         target = share(finished + active.sumOf { it.seconds }.toFloat(), total),
         activeMillis = running.maxOfOrNull { it.seconds * 1000L }?.takeIf { run.status != GenerationRun.Status.Failed },
+        activeSince =
+            active
+                .flatMap { stepsOf(it.id) }
+                .mapNotNull { run.stepTimes[it]?.started }
+                .minOrNull()
+                ?.plus(run.clockOffsetMillis ?: 0L),
     )
 }
 

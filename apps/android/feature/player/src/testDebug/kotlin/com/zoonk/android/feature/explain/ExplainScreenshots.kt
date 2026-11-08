@@ -180,11 +180,6 @@ class ExplainScreenshots {
                     session: AuthenticatedSession,
                     goalId: String,
                 ) = "gen-2"
-
-                override suspend fun recordWait(
-                    session: AuthenticatedSession,
-                    milliseconds: Long,
-                ) = Unit
             }
         val writing =
             object : GenerationSource {
