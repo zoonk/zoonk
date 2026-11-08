@@ -9,13 +9,17 @@ import {
   chapterMindMapSchema,
   chapterMindMapStatusSchema,
 } from "@zoonk/core/mind-maps/contract";
-import { type MindMapActions, type MindMapRequestOutcome } from "@zoonk/learn/mind-maps";
+import {
+  type MindMapActions,
+  type MindMapLimit,
+  type MindMapRequestOutcome,
+} from "@zoonk/learn/mind-maps";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { useMemo } from "react";
 
 const HTTP_UNPROCESSABLE = 422;
 
-const LESSON_RESOURCES = new Set(["generatedLessons", "lessonStart"]);
+const LIMIT_RESOURCES = ["aiSpend", "generatedLessons", "lessonStart", "mindMap"] as const;
 
 function chapterPath({ chapterId, goalId }: { chapterId: string; goalId: string }) {
   return `/v1/goals/${encodeURIComponent(goalId)}/chapters/${encodeURIComponent(chapterId)}/mind-map` as const;
@@ -25,11 +29,10 @@ function getError(body: unknown) {
   return isJsonObject(body) && isJsonObject(body.error) ? body.error : null;
 }
 
-/** The map is refused when the lessons it writes first ran out, not only the maps. */
-function ranOutOfLessons(body: unknown): boolean {
+function readLimitResource(body: unknown): MindMapLimit["resource"] {
   const details = getError(body)?.details;
-  const limit = isJsonObject(details) ? details.limit : null;
-  return LESSON_RESOURCES.has(getString(limit, "resource") ?? "");
+  const resource = getString(isJsonObject(details) ? details.limit : null, "resource");
+  return LIMIT_RESOURCES.find((candidate) => candidate === resource);
 }
 
 async function requestMindMap(target: {
@@ -51,7 +54,7 @@ async function requestMindMap(target: {
   const limit = readRefusedLimit({ body, status: response.status });
 
   if (limit) {
-    return { limit: { ...limit, lessons: ranOutOfLessons(body) }, status: "refused" };
+    return { limit: { ...limit, resource: readLimitResource(body) }, status: "refused" };
   }
 
   if (response.status === HTTP_UNPROCESSABLE) {
