@@ -12,6 +12,8 @@ import {
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
+import { startOnce } from "../_shared/run-token";
+import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
 import { findGoalCourses } from "./goal-courses";
@@ -309,6 +311,17 @@ export async function buildCurriculum({
     researchId,
     scope,
   });
+
+  // A language graph's new skills get their levels; a failed start leaves them to the daily sweep.
+  if (!reused && inputs.goal.kind === "language") {
+    await Promise.allSettled([
+      startOnce(
+        skillLevelsWorkflow,
+        [{ analytics: context.analytics, skillIds: Object.values(await skillIds), wait: "soon" }],
+        getSkillLevelsToken(context.workflowRunId),
+      ),
+    ]);
+  }
 
   const waitsForNotice = !rebuild && isBuiltBeforeResearch({ inputs, researchId });
 

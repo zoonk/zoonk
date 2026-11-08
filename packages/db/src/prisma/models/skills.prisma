@@ -32,6 +32,8 @@ model Skill {
   level          CourseLevel?
   /// A language skill's level within its band (`level`); null until tagged.
   cefrLevel      CefrLevel?          @map("cefr_level")
+  /// Tries at tagging `cefrLevel`, a step's retries included; a skill at the cap isn't tried again.
+  cefrAttempts   Int                 @default(0) @map("cefr_attempts") @db.SmallInt
   /// Null until the item writer was asked for typed-number questions, false when it found none.
   isQuantitative Boolean?            @map("is_quantitative")
   mergedIntoId   String?             @map("merged_into_id") @db.Uuid
