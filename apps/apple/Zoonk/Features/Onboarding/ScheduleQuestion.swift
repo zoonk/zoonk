@@ -395,11 +395,11 @@ struct ScheduleQuestion: View {
       }
     }
     .sheet(isPresented: $changesAim) {
+      let key = shown.adviceKey
+
       AimChoicesSheet(
         languageAim: languageAim,
         fromLine: shown.minutes.map { aimFromLine(level: levelDetail, minutes: $0) },
-      let key = shown.adviceKey
-
         currentEnd: finishDate(shown),
         readEnd: { [onboarding, goalID = view.goal.id] aim in
           let advice = try? await onboarding.timeAdvice(
