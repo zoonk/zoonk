@@ -35,7 +35,6 @@
   "mindmaps_row_title": "66858ed33aa31d5d49a19b4bae7e37ede863966cfc751847b8e3a66eb67bf318",
   "mindmaps_save_failed": "2be82fcc902724856b6c4488a3f0b35c50e6df79da37f9f83919293e512babd7",
   "mindmaps_saved": "f8435eb144f3491959b63b6b3b2c8a80dc068fee0f7b39e63b8db33433c19e71",
-  "mindmaps_see_plus": "b2479492805e39a45a21c2763e11feb3add422b9e34015d237ff30401a6dedd5",
   "mindmaps_try_again": "e05a81989159a7ba3ffef11ce37878ea3778d45391e8c9d01f87fbc921a4e3f3",
   "mindmaps_try_again_spoken": "64218c17f6700b02a63ebf6b367b1eed731ac0e346c567ffaa1792908023de55",
   "mindmaps_unreachable": "c4bff4f3499af906ccc80bdd53c987f1928186e0965d8efc95bf4d7337d0072e",
@@ -100,8 +99,6 @@
     <!-- Opens a chapter's mind map. -->
     <string name="mindmaps_open">Aç</string>
     <string name="mindmaps_try_again">Tekrar dene</string>
-    <!-- Opens the Plus plans, on a mind map whose chapter is Plus-only. -->
-    <string name="mindmaps_see_plus">Plus’ı incele</string>
     <!-- What screen readers say for a row's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">%1$s için zihin haritası oluştur</string>
     <!-- What screen readers say for a row's Open, naming its chapter. -->

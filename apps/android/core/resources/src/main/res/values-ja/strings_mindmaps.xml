@@ -35,7 +35,6 @@
   "mindmaps_row_title": "ca87cfc326c43b8e006d542244d318580d0f062a3db6da5b8fcdc14817412497",
   "mindmaps_save_failed": "8a884e1f8793d596248094d48824eb635f74793dcee74f2f5d3fdef58c6d343c",
   "mindmaps_saved": "94bb487abd006eede8dd8525985e40e6dbbc107fff9cd735212b9518a87a839b",
-  "mindmaps_see_plus": "52d6f1764fe33317699e222804edba1069e6718e50e5818b1ce7978e69054d5b",
   "mindmaps_try_again": "0084ff78e11bba0480a92380c3f6b03d17f7733a09e05b8ae2278ec775c60b74",
   "mindmaps_try_again_spoken": "6f746677bb9f9a77f935b26760c990abc0d2df5c994c4920b13bd65270c25e76",
   "mindmaps_unreachable": "d59eb654ef04e1a12532ece86b2ad37f1e4d6c047433b94aa03885e35813577d",
@@ -98,8 +97,6 @@
     <!-- Opens a chapter's mind map. -->
     <string name="mindmaps_open">開く</string>
     <string name="mindmaps_try_again">もう一度試す</string>
-    <!-- Opens the Plus plans, on a mind map whose chapter is Plus-only. -->
-    <string name="mindmaps_see_plus">Plusの詳細を見る</string>
     <!-- What screen readers say for a row's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">%1$sのマインドマップを作成する</string>
     <!-- What screen readers say for a row's Open, naming its chapter. -->

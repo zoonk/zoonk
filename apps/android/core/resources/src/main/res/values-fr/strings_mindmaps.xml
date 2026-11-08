@@ -35,7 +35,6 @@
   "mindmaps_row_title": "9646c5603d66f99b8c793ae7c246bd115d30af4ffdb4af7259231cf12d14ac88",
   "mindmaps_save_failed": "bd3abe0f108ef4f213e0a32d48c58914657a1212879b84d411bbb7a08fb02532",
   "mindmaps_saved": "3fb1b0719b06d6ce11db29ad441d6ca5ce2d80e2a7d35f916bce8627367232da",
-  "mindmaps_see_plus": "61094236ec4ec0fd4f8e73cbf59791135690a37afc06ad10abd4386d635a1b3d",
   "mindmaps_try_again": "c857ca9901e7a42834c355837041707fa8c4b71adc1b98ac65fb68671fd0dca7",
   "mindmaps_try_again_spoken": "71c34b315a73f16d6c74f7b1ee43225542c12b406570494d55288ef7a26c5467",
   "mindmaps_unreachable": "369a62ec75b009718488b4940629d1d454f68633ca94170aff4170a575fd1d18",
@@ -102,8 +101,6 @@
     <!-- Opens a chapter's mind map. -->
     <string name="mindmaps_open">Ouvrir</string>
     <string name="mindmaps_try_again">Réessayer</string>
-    <!-- Opens the Plus plans, on a mind map whose chapter is Plus-only. -->
-    <string name="mindmaps_see_plus">Découvrir Plus</string>
     <!-- What screen readers say for a row's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">Créer la carte mentale de %1$s</string>
     <!-- What screen readers say for a row's Open, naming its chapter. -->

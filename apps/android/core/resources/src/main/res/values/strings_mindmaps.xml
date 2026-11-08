@@ -53,8 +53,6 @@
     <!-- Opens a chapter's mind map. -->
     <string name="mindmaps_open">Open</string>
     <string name="mindmaps_try_again">Try again</string>
-    <!-- Opens the Plus plans, on a mind map whose chapter is Plus-only. -->
-    <string name="mindmaps_see_plus">See Plus</string>
     <!-- What screen readers say for a row's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">Create the mind map of %1$s</string>
     <!-- What screen readers say for a row's Open, naming its chapter. -->

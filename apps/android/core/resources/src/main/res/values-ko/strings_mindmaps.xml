@@ -35,7 +35,6 @@
   "mindmaps_row_title": "ea5cdbe5619dc623adc6a0a0ebd68f71a88c59d770b1733e5dd5257ea47599ba",
   "mindmaps_save_failed": "17c4703fd5a84f9d07a6f3228e65f79a5f28fbd7f3b19349b0a95076df0c989a",
   "mindmaps_saved": "7fd83126608cef0876e4c35f610c15265b3e411e424a16685d09a923a4cff0dd",
-  "mindmaps_see_plus": "1244e5d5a31d8b40f07a779cf3f9d6e33e17441e53fa671899fd37db49f5468c",
   "mindmaps_try_again": "3fc5f500977d86f201aea97265926ad9734c744db3133d4e6441900105cc9165",
   "mindmaps_try_again_spoken": "cacc114ffb8d259fda645f14cf33d23e76fcd357be982cd41bd4c6ca74c58842",
   "mindmaps_unreachable": "99e6c001c997627cd95f63048c61a29e1189e9dffcbfe3d7e64fcf0e6545e45e",
@@ -98,8 +97,6 @@
     <!-- Opens a chapter's mind map. -->
     <string name="mindmaps_open">열기</string>
     <string name="mindmaps_try_again">다시 시도</string>
-    <!-- Opens the Plus plans, on a mind map whose chapter is Plus-only. -->
-    <string name="mindmaps_see_plus">Plus 알아보기</string>
     <!-- What screen readers say for a row's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">%1$s의 마인드맵 만들기</string>
     <!-- What screen readers say for a row's Open, naming its chapter. -->
