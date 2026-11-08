@@ -60,6 +60,9 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getWritable, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
+import { loadPlacementPlan } from "../../../../../packages/core/src/learner/_utils/goal-skill-graph";
+import { loadPlacementState } from "../../../../../packages/core/src/learner/placement/_utils/load-placement-state";
+import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
@@ -466,6 +469,66 @@ describe(goalContentWorkflow, () => {
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
     );
+  });
+
+  it("prepares placement and first lessons on retry after the graph saved but its run crashed", async () => {
+    const { goal } = await newGoal({
+      details: { answered: ["purpose"], onboardingId: crypto.randomUUID(), purpose: "overview" },
+      planRevealedAt: null,
+    });
+
+    await saveAnswerInputs({ goal, input: { level: "basic", question: "level" } });
+
+    const owed = await prisma.followUp.findMany({
+      where: { kind: "preparePlacementItems", userId: goal.userId },
+    });
+
+    if (owed.length > 0) {
+      await placementItemsWorkflow({ goalId: goal.id });
+    }
+
+    const write = getWorkflowWriteMock();
+
+    write.mockImplementation(async (chunk) => {
+      if (
+        typeof chunk === "string" &&
+        chunk.includes('"step":"createPlan"') &&
+        chunk.includes('"status":"completed"')
+      ) {
+        throw new Error("The run crashed after saving its graph");
+      }
+    });
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).rejects.toThrow(
+      "The run crashed after saving its graph",
+    );
+
+    const plan = await loadPlacementPlan(goal.id);
+
+    await expect(
+      loadPlacementState({ goalId: goal.id, plan, userId: goal.userId }),
+    ).resolves.toMatchObject({ status: "waitingForQuestions" });
+
+    write.mockReset().mockResolvedValue(null);
+    getStartMock().mockClear();
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      status: "prepared",
+    });
+
+    expect(getStartMock()).toHaveBeenCalledWith(
+      placementItemsWorkflow,
+      [expect.objectContaining({ goalId: goal.id })],
+      expect.any(Object),
+    );
+
+    expect(getStreamedEvents()).toContainEqual(
+      expect.objectContaining({ status: "started", step: "prepareFirstLessons" }),
+    );
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
   });
 
   it.each(["ready", "failed"] as const)(

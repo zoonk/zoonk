@@ -4,8 +4,9 @@ import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -98,11 +99,40 @@ async function getSteps(goalId: string) {
 }
 
 describe("onboarding a new goal", () => {
+  it("does not owe placement from the first level answer while the graph is still empty", async () => {
+    const user = await useLearner();
+
+    const goal = await goalFixture({
+      details: { answered: ["purpose"], onboardingId: crypto.randomUUID(), purpose: "overview" },
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await planFixture({ goalId: goal.id });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { level: "basic", question: "level" },
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: null });
+  });
+
   it("owes new placement items when the exam level changes after preparation", async () => {
     const user = await useLearner();
     const goal = await goalFixture({ kind: "exam", planRevealedAt: null, userId: user.id });
 
-    await prisma.plan.create({ data: { goalId: goal.id, placementPreparedAt: new Date() } });
+    const skill = await skillFixture();
+
+    await planFixture({
+      goalId: goal.id,
+      graph: { phases: [{ milestone: null, name: "Foundations" }], skills: plannedSkills([skill]) },
+      placementPreparedAt: new Date(),
+    });
 
     await answerOnboardingQuestion({
       goalId: goal.id,

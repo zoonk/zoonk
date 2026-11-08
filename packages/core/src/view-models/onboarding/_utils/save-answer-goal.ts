@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import { type Goal, type Plan, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
+import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 
 function withoutAnswered(details: unknown) {
@@ -38,7 +39,12 @@ export async function saveAnswerGoal({
     return true;
   }
 
-  const placement = input.question === "level" && current.plan;
+  const placement =
+    input.question === "level" &&
+    current.plan &&
+    parsePlanGraph(current.plan.graph).skills.length > 0
+      ? current.plan
+      : null;
 
   const rebuild =
     current.curriculumQuestions.includes(input.question) &&
