@@ -59,6 +59,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
+import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
@@ -127,6 +128,25 @@ private data class PendingCheck(
     val attemptId: String get() = input.attemptId.toString()
 
     val progress: RunAnswer? get() = isCorrect?.let { correct -> answeredAt?.let { RunAnswer(stepId, correct, it) } }
+}
+
+private data class HeldDeviceVerdict(
+    val stepId: String,
+    val answer: LessonStepAnswer,
+    val attemptId: UUID,
+    val durationMs: Long,
+    val usedHelp: Boolean,
+    val answeredAt: Instant,
+    val isCorrect: Boolean,
+    val timeZone: String,
+) {
+    fun inRun(runId: UUID) =
+        PendingCheck(
+            stepId,
+            LessonStepCheckInput(answer, durationMs, runId, attemptId, timeZone, usedHelp),
+            isCorrect,
+            answeredAt,
+        )
 }
 
 @Serializable
@@ -228,7 +248,8 @@ class LessonPlayerViewModel(
     private var work = openScope()
     private var starting: Job? = null
     private val checksAwaitingRun = mutableListOf<Job>()
-    private var admitted = false
+    private var admittedRunId: UUID? = null
+    private val heldDeviceVerdicts = mutableListOf<HeldDeviceVerdict>()
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
     private val screenLocks = mutableMapOf<String, Mutex>()
@@ -254,7 +275,8 @@ class LessonPlayerViewModel(
         work = openScope()
         this.lesson = lesson
         owner = session
-        admitted = false
+        admittedRunId = null
+        heldDeviceVerdicts.clear()
         unsaved.clear()
         screenLocks.clear()
         resending = null
@@ -480,17 +502,38 @@ class LessonPlayerViewModel(
         val durationMs = state.answerDurationMs()
         val answeredAt = Instant.fromEpochMilliseconds(now())
         val local = if (isServerGradedAnswer(answer, step)) null else gradeOnDevice(step, answer)
-        if (local == null) {
-            dispatch(LessonAction.CheckStarted(step.id))
-        } else {
+        if (local != null) {
             countActivity(step)
             dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = attemptId.toString()), counts = true))
+            val held =
+                HeldDeviceVerdict(
+                    step.id,
+                    apiAnswer,
+                    attemptId,
+                    durationMs,
+                    step.id in state.helped,
+                    answeredAt,
+                    local.isCorrect,
+                    timeZone(),
+                )
+            val runId = admittedRunId
+            if (runId == null) {
+                heldDeviceVerdicts += held
+            } else {
+                unsaved.getOrPut(step.id) { mutableListOf() } += held.inRun(runId)
+                work.launch {
+                    keepUnsent()
+                    saveScreen(step.id)
+                }
+            }
+            return
         }
+        dispatch(LessonAction.CheckStarted(step.id))
         checksAwaitingRun.removeAll { it.isCompleted }
         checksAwaitingRun +=
             work.launch {
                 if (!awaitRun()) {
-                    if (local == null) dispatch(LessonAction.CheckFailed(step.id))
+                    dispatch(LessonAction.CheckFailed(step.id))
                     return@launch
                 }
                 val run = mutableState.value?.run as? LessonRun.Started ?: return@launch
@@ -503,14 +546,8 @@ class LessonPlayerViewModel(
                         timeZone = timeZone(),
                         usedHelp = step.id in state.helped,
                     )
-                val pending = PendingCheck(step.id, input, local?.isCorrect, answeredAt)
-                if (local == null) {
-                    if (mutableState.value?.currentStep?.id == step.id) gradeOnServer(step, pending, answer.writtenText)
-                } else {
-                    unsaved.getOrPut(step.id) { mutableListOf() } += pending
-                    keepUnsent()
-                    saveScreen(step.id)
-                }
+                val pending = PendingCheck(step.id, input, answeredAt = answeredAt)
+                if (mutableState.value?.currentStep?.id == step.id) gradeOnServer(step, pending, answer.writtenText)
             }
     }
 
@@ -595,7 +632,10 @@ class LessonPlayerViewModel(
                 if (outcome == null) return@launch
                 when (outcome) {
                     is StartOutcome.Started -> {
-                        admitted = true
+                        val runId = outcome.run.runId
+                        admittedRunId = runId
+                        heldDeviceVerdicts.forEach { held -> unsaved.getOrPut(held.stepId) { mutableListOf() } += held.inRun(runId) }
+                        heldDeviceVerdicts.clear()
                         sendUnsent()
                         reading.await()
                         if (sessions.current != owner) return@launch
@@ -797,7 +837,7 @@ class LessonPlayerViewModel(
     }
 
     fun resendAnswers() {
-        if (!admitted) return
+        if (admittedRunId == null) return
         if (unsaved.isNotEmpty() && resending?.isActive != true) work.launch { sendUnsent() }
     }
 
@@ -840,7 +880,7 @@ class LessonPlayerViewModel(
     }
 
     private suspend fun send(pending: PendingCheck): CheckOutcome {
-        if (!admitted && !awaitRun()) return CheckOutcome.Failed
+        if (admittedRunId == null && !awaitRun()) return CheckOutcome.Failed
         val result =
             cache.mutate(replacing = { markStarted(recorded = (it as? CheckOutcome.Checked)?.result?.checked == true) }) { session ->
                 if (session != owner) return@mutate CheckOutcome.Failed

@@ -7,7 +7,10 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.player.engine.LessonAction
+import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRun
+import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.GOAL
@@ -220,5 +223,73 @@ class LessonStartTest {
             assertEquals(2, api.startOpenings.size)
             assertEquals(api.startOpenings.first(), api.startOpenings.last())
             assertTrue(vm.state.value?.run is LessonRun.Refused)
+        }
+
+    @Test fun aDeviceVerdictHeldThroughAFailedStartIsRecordedAfterTryAgain() =
+        runTest(dispatcher) {
+            api.startGate = CompletableDeferred()
+            api.startFailures = 1
+            lesson = playable(listOf(checkStep("quiz"), explanationStep("next"), explanationStep("last")))
+            api.load = LessonLoad.Ready(lesson)
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.dispatch(LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")))
+            vm.check()
+            assertEquals(
+                true,
+                vm.state.value
+                    ?.results
+                    ?.get("quiz")
+                    ?.isCorrect,
+            )
+            vm.dispatch(LessonAction.Continue)
+            assertEquals(
+                "next",
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertTrue("start failed", vm.state.value?.run is LessonRun.Refused)
+
+            vm.retryStart()
+            advanceUntilIdle()
+            assertTrue("retry started the run", vm.state.value?.run is LessonRun.Started)
+            assertEquals(
+                "the learner keeps their place past the answered screen",
+                "next",
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals("the held answer is recorded once the run exists", listOf("quiz"), api.checks.map { it.first })
+        }
+
+    @Test fun aDeviceVerdictHeldThroughAFailedStartBlocksNothingAtTheEnd() =
+        runTest(dispatcher) {
+            api.startGate = CompletableDeferred()
+            api.startFailures = 1
+            lesson = playable(listOf(checkStep("quiz"), explanationStep("next"), explanationStep("last")))
+            api.load = LessonLoad.Ready(lesson)
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            runCurrent()
+
+            vm.dispatch(LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")))
+            vm.check()
+            vm.dispatch(LessonAction.Continue)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            vm.retryStart()
+            advanceUntilIdle()
+            vm.dispatch(LessonAction.Continue)
+            vm.dispatch(LessonAction.Continue)
+            advanceUntilIdle()
+            assertEquals(LessonPhase.Completed, vm.state.value?.phase)
+            assertEquals("completion records the held answer", listOf("quiz"), api.checks.map { it.first })
         }
 }
