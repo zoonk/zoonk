@@ -1,5 +1,7 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs, loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { getGraphQuestions, isAwaitingGraphAnswers } from "./shared-graph-prompt";
@@ -35,4 +37,19 @@ export async function beginGoalCurriculum({
 
   // An earlier edit is in this read; a later edit sees the recorded questions and owes a rebuild.
   return loadGoalCurriculumInputs(goalId);
+}
+
+export async function readGoalGraphState(
+  goalId: string,
+): Promise<"building" | "missing" | "saved"> {
+  const goal = await prisma.goal.findUnique({
+    select: { kind: true, plan: { select: { graph: true } } },
+    where: { id: goalId },
+  });
+
+  if (!goal || goal.kind === "explain") {
+    return "missing";
+  }
+
+  return parsePlanGraph(goal.plan?.graph).skills.length > 0 ? "saved" : "building";
 }

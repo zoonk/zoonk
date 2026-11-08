@@ -21,6 +21,6 @@ export async function findOwedPlanReveal({
     return null;
   }
 
-  const readiness = await readPlanReadiness(goal.id);
+  const readiness = await readPlanReadiness({ goalId: goal.id, userId });
   return { goalId: goal.id, goalTitle: goal.title, planReady: readiness?.ready ?? false };
 }

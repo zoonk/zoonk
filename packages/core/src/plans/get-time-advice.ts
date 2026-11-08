@@ -136,7 +136,7 @@ async function loadAskedPlan(
     return owned;
   }
 
-  const readiness = await readPlanReadiness(goalId);
+  const readiness = await readPlanReadiness({ goalId, userId: owned.userId });
 
   if (readiness && !readiness.ready) {
     return { readingNotice: readiness.readingNotice, ready: false };

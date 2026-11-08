@@ -1,7 +1,7 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
 import { createHook } from "workflow";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
@@ -47,7 +47,8 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     case "rebuildGoalCurriculum": {
       const ask = `goal-rebuild:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
-      await startOnce(rebuildGoalCurriculumWorkflow, [followUp.input], ask);
+      const runId = await startOnce(rebuildGoalCurriculumWorkflow, [followUp.input], ask);
+      await getRun(runId).returnValue;
       return;
     }
     case "preparePlacementItems": {

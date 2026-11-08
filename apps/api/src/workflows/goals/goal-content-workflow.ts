@@ -62,7 +62,7 @@ async function reportBuildFailure({
       },
       { last },
     ),
-    recordGoalBuildFailureStep(goalId),
+    recordGoalBuildFailureStep({ generationId: context.workflowRunId, goalId }),
     trackGenerationFailedStep({
       analytics: context.analytics,
       contentKind: "curriculum",

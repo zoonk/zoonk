@@ -339,12 +339,38 @@ describe(pickPlacementItemSkills, () => {
   it("records when placement's questions for the goal's plan were written", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
-    await planFixture({ goalId: goal.id });
+    const saved = await planFixture({ goalId: goal.id });
 
-    await recordPlacementPrepared(goal.id);
+    await recordPlacementPrepared({ goalId: goal.id, planRunId: saved.runId });
 
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     expect(plan.placementPreparedAt).toBeInstanceOf(Date);
+  });
+
+  it("finishes placement after a layout update of the same curriculum", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id, runId: "same-graph" });
+    await prisma.plan.update({ data: { version: { increment: 1 } }, where: { id: plan.id } });
+
+    await recordPlacementPrepared({ goalId: goal.id, planRunId: plan.runId });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      placementPreparedAt: expect.any(Date),
+    });
+  });
+
+  it("does not let old placement writing mark a swapped plan prepared", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await prisma.plan.update({ data: { runId: "rebuilt-graph" }, where: { id: plan.id } });
+
+    await recordPlacementPrepared({ goalId: goal.id, planRunId: plan.runId });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      placementPreparedAt: null,
+    });
   });
 
   it("writes an exam goal's questions the way the exam asks them", async () => {

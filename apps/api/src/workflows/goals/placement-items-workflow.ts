@@ -9,7 +9,10 @@ import {
   shortPlanPracticeWorkflow,
 } from "./short-plan-practice-workflow";
 import { readPlacementExamWaitStep } from "./steps/exam-format-step";
-import { recordPlacementPreparedStep } from "./steps/goal-build-outcome-steps";
+import {
+  readPlacementPlanRunIdStep,
+  recordPlacementPreparedStep,
+} from "./steps/goal-build-outcome-steps";
 import { readShortPlanPracticeStep } from "./steps/short-plan-practice-step";
 
 export type PlacementItemsInput = {
@@ -62,6 +65,8 @@ export async function placementItemsWorkflow(
     }
   }
 
+  const planRunId = await readPlacementPlanRunIdStep(goalId);
+
   const { failed, written } = await preparePlacementItems({
     analytics,
     forPlacement: true,
@@ -72,7 +77,7 @@ export async function placementItemsWorkflow(
 
   const [practice] = await Promise.all([
     readShortPlanPracticeStep(goalId),
-    recordPlacementPreparedStep({ failed, goalId, written }),
+    recordPlacementPreparedStep({ failed, goalId, planRunId, written }),
     failed > 0
       ? trackGenerationFailedStep({
           analytics,

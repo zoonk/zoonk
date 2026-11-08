@@ -207,6 +207,7 @@
     "./learner/placement/answer": "./src/learner/placement/answer-placement-question.ts",
     "./learner/placement/contract": "./src/learner/placement/placement-contract.ts",
     "./learner/placement/finish": "./src/learner/placement/finish-goal-placement.ts",
+    "./learner/placement/request": "./src/learner/placement/request-goal-placement.ts",
     "./learner/placement/get": "./src/learner/placement/get-goal-placement.ts",
     "./learner/placement/placement-limits": "./src/learner/placement/placement-limits.ts",
     "./learner/review-schedule": "./src/learner/get-current-user-review-schedule.ts",
