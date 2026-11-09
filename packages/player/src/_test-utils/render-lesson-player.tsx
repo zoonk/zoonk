@@ -86,6 +86,7 @@ export const LEARNER_ID = "learner";
 
 export function startedRun({
   answers = [],
+  clockId = null,
   hyperdrive = { knownStepIds: [], streak: 0 },
   learnerId = LEARNER_ID,
   optionalStepIds,
@@ -95,6 +96,7 @@ export function startedRun({
 }: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
   return {
     answers,
+    clockId,
     hyperdrive,
     learnerId,
     optionalStepIds,

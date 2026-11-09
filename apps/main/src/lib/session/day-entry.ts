@@ -9,7 +9,13 @@ const ENTRY_TTL_MS = 60_000;
 type ShownDay = {
   day: Pick<
     StudyDay,
-    "blocks" | "dayEndsAt" | "lessonsComing" | "localDate" | "nextPosition" | "sessionBar"
+    | "blocks"
+    | "dayEndsAt"
+    | "lessonsComing"
+    | "localDate"
+    | "minutes"
+    | "nextPosition"
+    | "sessionBar"
   >;
   goalId: string;
   userId: string;

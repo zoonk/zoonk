@@ -12909,6 +12909,11 @@ msgid "Net score {net}"
 msgstr "差し引き後のスコア {net}"
 
 #: src/session/study-moment.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, other {#レッスンを別の日に移して}}、今日の学習時間が{time}に収まるようにしました。"
+
+#: src/session/study-moment.tsx
 #: src/today/today-action.tsx
 #: src/today/today-day-status.tsx
 msgctxt "sCfpTF"

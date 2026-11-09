@@ -17,9 +17,9 @@ import {
   type PlayableLibraryStep,
 } from "./lesson-player-types";
 import { useLessonRun } from "./use-lesson-run";
+import { usePageLifecycle } from "./use-page-lifecycle";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
-import { useWhenBack } from "./use-when-back";
 
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
@@ -65,9 +65,10 @@ function useCompletionSave({
   dispatch,
   ensureRun,
   flushChecks,
+  startRun,
   state,
 }: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
-  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushChecks">) {
+  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushChecks" | "startRun">) {
   const saveCompletion = useEffectEvent(async () => {
     const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
 
@@ -91,7 +92,7 @@ function useCompletionSave({
     const [restarted, pictures] =
       outcome?.status === "incomplete"
         ? await Promise.all([
-            adapters.startLesson(run ? { runId: run.runId } : undefined).catch(() => null),
+            startRun(run ? { runId: run.runId } : undefined).catch(() => null),
             adapters.getLessonPictures?.().catch(() => []) ?? Promise.resolve([]),
           ])
         : [null, []];
@@ -119,10 +120,12 @@ function useCompletionSave({
     }
   }, [isSaving]);
 
-  useWhenBack(() => {
-    if (state.phase === "completed" && state.completion?.status === "failed") {
-      dispatch({ type: "completionRetried" });
-    }
+  usePageLifecycle({
+    onBack: () => {
+      if (state.phase === "completed" && state.completion?.status === "failed") {
+        dispatch({ type: "completionRetried" });
+      }
+    },
   });
 }
 

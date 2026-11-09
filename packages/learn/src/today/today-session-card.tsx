@@ -13,6 +13,7 @@ import { FoldRow } from "./today-fold-row";
 import { TodayFreshStart } from "./today-fresh-start";
 import { SESSION_LIST_ID } from "./today-ids";
 import { splitTodayQueue } from "./today-queue";
+import { getFoldMinutes } from "./today-time";
 import { TodayUpNext } from "./today-up-next";
 
 const PHONE_DONE_ROWS = 2;
@@ -20,10 +21,6 @@ const PHONE_DONE_ROWS = 2;
 const PHONE_UPCOMING_ROWS = 6;
 
 const WIDE_UPCOMING_ROWS = 12;
-
-function sumMinutes(blocks: readonly DayStep[]): number {
-  return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
-}
 
 type UpcomingRows = { phone: number; wide: number };
 
@@ -46,7 +43,7 @@ function getUpcomingFold({
 function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, lessonsComing, lessonsToPrepare, plusLessons } = today.session;
+  const { blocks, lessonsComing, lessonsToPrepare, minutes, plusLessons } = today.session;
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const countsTowardMission = useCountsTowardMission();
@@ -64,6 +61,9 @@ function SessionQueue({ next }: { next: DayStep }) {
   const upcoming = after.length + coming + plusLessons.length;
   const phoneMore = Math.max(0, upcoming - rows.phone);
   const wideMore = Math.max(0, upcoming - rows.wide);
+
+  const foldMinutes = (shownAfter: number) =>
+    getFoldMinutes({ left: minutes.left, shown: [...before, next, ...after.slice(0, shownAfter)] });
 
   return (
     <div className="flex flex-col" data-slot="today-session-list">
@@ -121,7 +121,7 @@ function SessionQueue({ next }: { next: DayStep }) {
           className="sm:hidden"
           done={false}
           label={t("{count, plural, one {+# more} other {+# more}}", { count: phoneMore })}
-          minutes={sumMinutes(after.slice(rows.phone))}
+          minutes={foldMinutes(rows.phone)}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />
@@ -132,7 +132,7 @@ function SessionQueue({ next }: { next: DayStep }) {
           className="max-sm:hidden"
           done={false}
           label={t("{count, plural, one {+# more} other {+# more}}", { count: wideMore })}
-          minutes={sumMinutes(after.slice(rows.wide))}
+          minutes={foldMinutes(rows.wide)}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />

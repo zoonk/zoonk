@@ -12909,6 +12909,11 @@ msgid "Net score {net}"
 msgstr "Wynik netto {net}"
 
 #: src/session/study-moment.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "Przeniesiono {count, plural, one {# lekcję} few {# lekcje} other {# lekcji}} na inny dzień, żeby dziś zmieścić się w {time} nauki."
+
+#: src/session/study-moment.tsx
 #: src/today/today-action.tsx
 #: src/today/today-day-status.tsx
 msgctxt "sCfpTF"

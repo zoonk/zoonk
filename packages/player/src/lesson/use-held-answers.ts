@@ -15,7 +15,7 @@ import {
   type LessonPlayerLesson,
   type LessonRunAnswers,
 } from "./lesson-player-types";
-import { useWhenBack } from "./use-when-back";
+import { usePageLifecycle } from "./use-page-lifecycle";
 
 export type StartedRun = { learnerId: string; runId: string };
 
@@ -231,7 +231,7 @@ export function useHeldAnswers({
     return resendHeld();
   }, [ensureRun, holdKept, resendHeld]);
 
-  useWhenBack(() => void resendHeld());
+  usePageLifecycle({ onBack: () => void resendHeld() });
 
   return { hold, reopen, resendHeld, resendKept };
 }
