@@ -73,6 +73,10 @@ export const memoryExportSchema = z
       memoryFactSchema.extend({
         deletedAt: z.iso.datetime().nullable(),
         lastUsedAt: z.iso.datetime().nullable(),
+        profileAnswer: z
+          .json()
+          .nullable()
+          .meta({ description: "Structured profile answer; cleared when its fact is reworded" }),
         status: z.enum(MemoryFactStatus),
         supersededById: uuidSchema()
           .nullable()

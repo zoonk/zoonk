@@ -78,6 +78,9 @@ export async function exportCurrentUserData() {
     language,
     start,
     usage,
+    profileAnswers,
+    conditions,
+    learningProfile,
   ] = await Promise.all([
     prisma.user.findUniqueOrThrow({
       select: { createdAt: true, email: true, image: true, name: true, username: true },
@@ -95,19 +98,34 @@ export async function exportCurrentUserData() {
     loadLanguageExport(userId),
     loadStartExport(userId),
     loadUsageExport(userId),
+    prisma.profileAnswer.findMany({ orderBy: { question: "asc" }, where: { userId } }),
+    prisma.learnerCondition.findMany({ orderBy: { condition: "asc" }, where: { userId } }),
+    readLearningProfile(userId),
   ]);
 
   return {
     account,
     answers: { attempts },
     buddy,
+    conditions: conditions.map(({ condition, note, createdAt }) => ({
+      condition,
+      createdAt,
+      note,
+    })),
     exportedAt: await getRequestInstant(),
     feedback: { messages: feedbackMessages },
     goals,
     language,
     learnerModel: { certificates, milestones, mistakes, skills },
+    learningNeeds: learningProfile?.learningNeeds ?? [],
     memory,
     profile,
+    profileAnswers: profileAnswers.map(({ question, outcome, version, answeredAt }) => ({
+      answeredAt,
+      outcome,
+      question,
+      version,
+    })),
     progress: { daily: dailyProgress, learningEvents, totals: progress },
     start,
     study,

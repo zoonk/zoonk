@@ -1,3 +1,4 @@
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import "server-only";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
@@ -21,6 +22,7 @@ import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
+import { answerProfileOnboardingQuestion } from "./_utils/answer-profile-onboarding-question";
 import { saveAnswerInputs } from "./_utils/save-onboarding-answer";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 
@@ -35,6 +37,8 @@ export type OnboardingAnswerResult =
   | { movedTo: { created: boolean; goal: GoalView } | null; status: "saved" }
   | { goals: number; minutes: number; status: "dayTooShort" }
   | { status: "invalid" }
+  | { status: "memoryOff" }
+  | { status: "consentRequired" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -109,7 +113,9 @@ function trackAnswer({
 export async function answerOnboardingQuestion({
   goalId,
   input,
+  locale = "en",
 }: {
+  locale?: SupportedLocale;
   goalId: string;
   input: OnboardingAnswerInput;
 }): Promise<OnboardingAnswerResult> {
@@ -120,6 +126,10 @@ export async function answerOnboardingQuestion({
   }
 
   const { goal } = owned;
+
+  if (input.question === "skipProfile" || "answer" in input) {
+    return answerProfileOnboardingQuestion({ goalId, input, locale });
+  }
 
   // A stale tab's reason answer follows the exam goal without writing to the archived one,
   // even when the learner picked a different reason after the move.
@@ -153,7 +163,7 @@ export async function answerOnboardingQuestion({
     getLearnerModelCacheTag(goal.userId),
   ]);
 
-  // Schedule is last: personalization can read all answers and the age-based memory choice before first lessons.
+  // Schedule is last: personalization can read every answer before the first lessons.
   if (input.question === "schedule") {
     await settleNewPlan({ goalId });
 

@@ -3,7 +3,7 @@ import { toUTCMidnight } from "@zoonk/utils/date";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
 
 export async function memoryFactFixture(
-  attrs: FixtureAttrs<MemoryFact, "sourceRef"> & Pick<MemoryFact, "userId">,
+  attrs: FixtureAttrs<MemoryFact, "sourceRef" | "profileAnswer"> & Pick<MemoryFact, "userId">,
 ) {
   return prisma.memoryFact.create({
     data: { category: "goals", origin: "said", statement: "Wants to pass a test exam", ...attrs },

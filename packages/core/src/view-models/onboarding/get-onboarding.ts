@@ -1,6 +1,7 @@
-import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { getNoSitting } from "../../exams/_utils/notice-day";
@@ -17,6 +18,8 @@ import { readGoalOpening } from "../../goals/goal-opening";
 import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readLearningProfile } from "../../learner/facts/learning-profile";
+import { readProfileQuestionState } from "../../learner/facts/profile-questions";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { readWarmUpState } from "../../library/warm-ups/claim-warm-up";
@@ -25,6 +28,8 @@ import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
+import { toProfileQuestionsView } from "../../profile/questions/_utils/profile-question-state";
+import { toOnboardingGoalView } from "./_utils/onboarding-goal-view";
 import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
 import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
 import {
@@ -35,7 +40,6 @@ import {
   type OnboardingView,
 } from "./onboarding-contract";
 import {
-  getAnsweredQuestions,
   getFollowUpQuestions,
   getOnboardingSteps,
   isClassTest,
@@ -206,7 +210,13 @@ async function findLibraryCourse({
 }
 
 /** Requires ownership; uncached so every answer immediately changes the remaining screens. */
-export async function getOnboarding({ goalId }: { goalId: string }): Promise<OnboardingResult> {
+export async function getOnboarding({
+  goalId,
+  locale = "en",
+}: {
+  goalId: string;
+  locale?: SupportedLocale;
+}): Promise<OnboardingResult> {
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
@@ -221,15 +231,16 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp] =
+  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp, profileState] =
     await Promise.all([
-      findLearningProfileView(userId),
+      findLearningProfileView(userId, readLearningProfile(userId)),
       findActiveGoalId(userId),
       findOnboardingGoalIds(goal),
       findExamNotice({ details, goal, goalDate, today }),
       readPlanReadiness({ goalId: goal.id, userId }),
       readGoalOpening({ lessonId: goal.openingLessonId, userId }),
       readWarmUpState(goal.warmUpId),
+      readProfileQuestionState(userId).then((state) => toProfileQuestionsView({ locale, state })),
     ]);
 
   const [earlierGoals, [view]] = await Promise.all([
@@ -297,16 +308,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       firstLesson,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
-      goal:
-        goal.kind !== "language" && getAnsweredQuestions(details).includes("reason")
-          ? {
-              ...view,
-              details: {
-                ...view.details,
-                answered: getAnsweredQuestions(details).filter((question) => question !== "reason"),
-              },
-            }
-          : view,
+      goal: toOnboardingGoalView({ kind: goal.kind, view }),
       goalIds,
       languageAim:
         goal.kind === "language"
@@ -315,6 +317,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       planRevealed: !isPlanRevealOwed(goal),
+      profile: profileState,
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,

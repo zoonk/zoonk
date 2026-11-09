@@ -20,9 +20,13 @@ model UserLearningProfile {
   id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String       @unique @map("user_id") @db.Uuid
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interests      Json?
-  preferences    Json?
-  instructions   String?
+  /// Unused.
+  interests      Json? @ignore
+  /// Unused.
+  preferences    Json? @ignore
+  /// Unused.
+  instructions   String? @ignore
+  learningNeeds LearningNeed[] @default([]) @map("learning_needs")
   buddyKind      BuddyKind?   @map("buddy_kind")
   buddyName      String?      @map("buddy_name")
   buddyGlasses   BuddyGlasses @default(round) @map("buddy_glasses")

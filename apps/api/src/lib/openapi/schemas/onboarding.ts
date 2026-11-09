@@ -1,6 +1,7 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { languageAimViewSchema, languageReasonViewSchema } from "@zoonk/core/language/aims/schemas";
 import { daySplitSchema, planReadinessSchema } from "@zoonk/core/plans/time-advice-contract";
+import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
@@ -10,9 +11,10 @@ import { z } from "zod";
 import { goalSchema } from "./goals";
 import { playableLibraryLessonResponseSchema } from "./library-lessons";
 import { noSittingSchema } from "./notice-dates";
+import { profileQuestionsResponseSchema } from "./profile-questions";
 
 const onboardingStepSchema = z
-  .enum([...ONBOARDING_QUESTIONS, "buddy", "placement", "plan"])
+  .enum([...ONBOARDING_QUESTIONS, ...PROFILE_QUESTIONS, "buddy", "placement", "plan"])
   .meta({ id: "OnboardingStep" });
 
 const dateProblemSchema = z
@@ -146,6 +148,7 @@ export const onboardingResponseSchema = z
         description:
           "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state",
       }),
+    profile: profileQuestionsResponseSchema,
     quickTestMinutes: z
       .int()
       .positive()
