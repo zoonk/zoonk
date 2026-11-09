@@ -50,6 +50,45 @@ final class GenerationEventsTests: XCTestCase {
       event, GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
   }
 
+  func testAReadyPlanKeepsReadingUntilItsFirstLessonIsReady() async throws {
+    let written =
+      [
+        #"data: {"lessonId":"lesson","lessonTitle":"Dawn","status":"started","step":"writeFirstLesson"}"#,
+        #"data: {"status":"completed","step":"goalReady"}"#,
+        #"data: {"lessonId":"lesson","status":"completed","step":"firstLessonReady"}"#,
+      ].joined(separator: "\n\n") + "\n\n"
+    let transport = RunsTransport(events: ["/v1/generations/run-1/events?startIndex=0": [written]])
+    let clients = APIClientFactory(
+      baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
+    var steps: [String] = []
+    for try await event in clients.generationEvents(id: "run-1", token: nil) {
+      steps.append(event.step)
+    }
+    XCTAssertEqual(steps, ["writeFirstLesson", "goalReady", "firstLessonReady"])
+    let requests = await transport.requests
+    XCTAssertEqual(requests, ["/v1/generations/run-1/events?startIndex=0"])
+  }
+
+  func testAClosedReadyPlanDoesNotReopenWhileItsRunKeepsWorking() async throws {
+    let written =
+      [
+        #"data: {"lessonId":"lesson","lessonTitle":"Dawn","status":"started","step":"writeFirstLesson"}"#,
+        #"data: {"status":"completed","step":"goalReady"}"#,
+      ].joined(separator: "\n\n") + "\n\n"
+    let transport = RunsTransport(
+      events: ["/v1/generations/run-1/events?startIndex=0": [written]],
+      statuses: ["/v1/generations/run-1": ["running"]])
+    let clients = APIClientFactory(
+      baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
+    var steps: [String] = []
+    for try await event in clients.generationEvents(id: "run-1", token: nil) {
+      steps.append(event.step)
+    }
+    XCTAssertEqual(steps, ["writeFirstLesson", "goalReady"])
+    let requests = await transport.requests
+    XCTAssertEqual(requests, ["/v1/generations/run-1/events?startIndex=0"])
+  }
+
   func testDecodesTheWarmUpDeckAGoalsRunReports() throws {
     let event = try JSONDecoder().decode(
       GenerationEvent.self,

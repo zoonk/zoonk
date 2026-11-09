@@ -814,7 +814,7 @@ struct GenerationFollower<Content: View>: View {
         }
       }
 
-      return onRunEnd == nil ? .ready : .ended
+      return current.isDone ? .ended : .ready
     } catch is GenerationStopped {
       return .stopped
     } catch {

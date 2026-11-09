@@ -90,6 +90,20 @@ extension APIClientFactory {
     "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]
 
+  private struct GoalProgress {
+    var ready = false
+    var writingLesson = false
+
+    mutating func record(_ event: GenerationEvent) {
+      switch (event.step, event.status) {
+      case ("writeFirstLesson", "started"): writingLesson = true
+      case ("firstLessonReady", "completed"): writingLesson = false
+      case ("goalReady", "completed"): ready = true
+      default: break
+      }
+    }
+  }
+
   private enum StreamEnd {
     case ready
     case stopped
@@ -159,6 +173,7 @@ extension APIClientFactory {
   ) async throws {
     var run = id
     var received = 0
+    var goal = GoalProgress()
     var dropsWithoutEvents = 0
     /// Once a status read the run ended, the next connection reads its stream to the end.
     var runEnded = false
@@ -170,7 +185,7 @@ extension APIClientFactory {
       let end: StreamEnd
 
       do {
-        end = try await read(run, token: token, received: &received, continuation)
+        end = try await read(run, token: token, received: &received, goal: &goal, continuation)
       } catch {
         let error = apiError(from: error)
 
@@ -201,6 +216,7 @@ extension APIClientFactory {
       case .joined(let joined):
         run = joined
         received = 0
+        goal = GoalProgress()
         runEnded = false
         watch.cancel()
         watch = watchForStop(of: run, token: token, every: stopCheck, continuation)
@@ -217,6 +233,7 @@ extension APIClientFactory {
     _ run: String,
     token: String?,
     received: inout Int,
+    goal: inout GoalProgress,
     _ continuation: AsyncThrowingStream<GenerationEvent, Error>.Continuation
   ) async throws -> StreamEnd {
     let (events, clockOffset) = try await openGenerationEvents(
@@ -234,15 +251,22 @@ extension APIClientFactory {
         return .joined(joined)
       }
 
+      goal.record(event)
       continuation.yield(event)
 
-      if Self.readySteps.contains(event.step), event.status == "completed" {
+      if goal.ready && !goal.writingLesson {
+        return .ready
+      }
+      if Self.readySteps.contains(event.step), event.status == "completed",
+        !(event.step == "goalReady" && goal.writingLesson)
+      {
         return .ready
       }
     }
 
     // A cancelled iteration ends like a closed stream.
     try Task.checkCancellation()
+    if goal.ready { return .ready }
     return .closed(try await generationStatus(id: run, token: token))
   }
 
