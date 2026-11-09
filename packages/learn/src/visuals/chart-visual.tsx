@@ -1,22 +1,26 @@
 "use client";
 
 import { type ChartVisual } from "@zoonk/core/library/steps/contract";
+import { placeChartUnit } from "@zoonk/core/library/steps/contract/chart-unit";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
-import { createLinearScale, niceDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useFormatNumber } from "../_utils/use-format-number";
-import { type CategoryLabelLayout, getCategoryLabels } from "./_utils/category-labels";
+import {
+  HEIGHT,
+  LABEL_GAP,
+  LABEL_LINE_HEIGHT,
+  type Layout,
+  PADDING,
+  fitsLabel,
+  getChartHeight,
+  getLayout,
+} from "./_utils/chart-layout";
 
 const FALLBACK_WIDTH = 318;
-const HEIGHT = 208;
-const PADDING = { bottom: 26, left: 48, right: 8, top: 22 } as const;
-const TICK_COUNT = 4;
 const GROUP_SHARE = 0.68;
 const MIN_LABEL_WIDTH = 30;
 const MIN_POINT_LABEL_BAND = 45;
-const LABEL_GAP = 6;
-const LABEL_LINE_HEIGHT = 14;
 const LABEL_OFFSET = 16;
 const DOT_RADIUS = 3.5;
 
@@ -30,52 +34,15 @@ function getTone(index: number) {
   return SERIES_TONES[index % SERIES_TONES.length] ?? SERIES_TONES[0];
 }
 
-type Layout = {
-  band: number;
-  center: (index: number) => number;
-  labels: CategoryLabelLayout;
-  y: ReturnType<typeof createLinearScale>;
-  yTicks: number[];
-};
-
-function getLayout({ visual, width }: { visual: ChartVisual; width: number }): Layout {
-  const values = visual.series.flatMap((series) => series.values);
-  const anchors = visual.axisStart === null ? values : [...values, visual.axisStart];
-  const nice = niceDomain(anchors, { includeZero: visual.chart === "bar" });
-
-  const yDomain = visual.axisStart === null ? nice : ([visual.axisStart, nice[1]] as const);
-  const plotWidth = Math.max(width - PADDING.left - PADDING.right, 1);
-  const band = plotWidth / visual.categories.length;
-
-  const wholeNumbers = values.every((value) => Number.isInteger(value));
-
-  return {
-    band,
-    center: (index) => PADDING.left + band * index + band / 2,
-    labels: getCategoryLabels({ band, categories: visual.categories }),
-    y: createLinearScale({ domain: yDomain, range: [HEIGHT - PADDING.bottom, PADDING.top] }),
-    yTicks: niceTicks(yDomain, TICK_COUNT).filter(
-      (tick) => !wholeNumbers || Number.isInteger(tick),
-    ),
-  };
-}
-
-function getChartHeight(layout: Layout): number {
-  const lines = Math.max(...layout.labels.lines.map((label) => label.length));
-  return HEIGHT + (lines - 1) * LABEL_LINE_HEIGHT;
-}
-
-function Grid({ layout, unit, width }: { layout: Layout; unit: string | null; width: number }) {
-  const format = useFormatNumber();
-
+function Grid({ layout, width }: { layout: Layout; width: number }) {
   return layout.yTicks.map((tick) => {
-    const y = layout.y.toPixel(tick);
+    const y = layout.y.toPixel(tick.value);
 
     return (
-      <g key={tick}>
+      <g key={tick.value}>
         <line
           className="stroke-viz-grid"
-          x1={PADDING.left}
+          x1={layout.left}
           x2={width - PADDING.right}
           y1={y}
           y2={y}
@@ -84,10 +51,10 @@ function Grid({ layout, unit, width }: { layout: Layout; unit: string | null; wi
           className="fill-muted-foreground"
           dominantBaseline="middle"
           textAnchor="end"
-          x={PADDING.left - LABEL_GAP}
+          x={layout.left - LABEL_GAP}
           y={y}
         >
-          {format(tick, { compact: true, unit: unit ?? undefined })}
+          {tick.label}
         </text>
       </g>
     );
@@ -116,12 +83,27 @@ function CategoryLabels({ layout, visual }: { layout: Layout; visual: ChartVisua
   );
 }
 
-function Bars({ layout, visual }: { layout: Layout; visual: ChartVisual }) {
+function Bars({
+  layout,
+  unit,
+  visual,
+}: {
+  layout: Layout;
+  unit: string | null;
+  visual: ChartVisual;
+}) {
   const format = useFormatNumber();
   const group = layout.band * GROUP_SHARE;
   const barWidth = group / visual.series.length;
   const zero = layout.y.toPixel(Math.max(layout.y.domain[0], 0));
-  const showValues = barWidth >= MIN_LABEL_WIDTH;
+
+  const showValues =
+    barWidth >= MIN_LABEL_WIDTH &&
+    visual.series.every((series) =>
+      series.values.every((value) =>
+        fitsLabel(format(value, { unit: unit ?? undefined }), barWidth),
+      ),
+    );
 
   return visual.series.flatMap((series, seriesIndex) =>
     series.values.map((value, index) => {
@@ -146,7 +128,7 @@ function Bars({ layout, visual }: { layout: Layout; visual: ChartVisual }) {
               x={x + barWidth / 2}
               y={Math.min(zero, top) - LABEL_GAP}
             >
-              {format(value, { unit: visual.unit ?? undefined })}
+              {format(value, { unit: unit ?? undefined })}
             </text>
           )}
         </g>
@@ -155,9 +137,23 @@ function Bars({ layout, visual }: { layout: Layout; visual: ChartVisual }) {
   );
 }
 
-function Lines({ layout, visual }: { layout: Layout; visual: ChartVisual }) {
+function Lines({
+  layout,
+  unit,
+  visual,
+}: {
+  layout: Layout;
+  unit: string | null;
+  visual: ChartVisual;
+}) {
   const format = useFormatNumber();
-  const showValues = visual.series.length === 1 && layout.band >= MIN_POINT_LABEL_BAND;
+
+  const showValues =
+    visual.series.length === 1 &&
+    layout.band >= MIN_POINT_LABEL_BAND &&
+    visual.series[0]?.values.every((value) =>
+      fitsLabel(format(value, { unit: unit ?? undefined }), layout.band),
+    );
 
   return visual.series.map((series, seriesIndex) => {
     const tone = getTone(seriesIndex);
@@ -187,7 +183,7 @@ function Lines({ layout, visual }: { layout: Layout; visual: ChartVisual }) {
                   x={point.x}
                   y={point.y - LABEL_GAP - DOT_RADIUS}
                 >
-                  {format(series.values[index] ?? 0, { unit: visual.unit ?? undefined })}
+                  {format(series.values[index] ?? 0, { unit: unit ?? undefined })}
                 </text>
               )}
             </g>
@@ -254,8 +250,16 @@ export function ChartVisualView({
   visual: ChartVisual;
 }) {
   const t = useExtracted();
+  const format = useFormatNumber();
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
-  const layout = getLayout({ visual, width });
+  const { numberUnit, valueLabel } = placeChartUnit(visual);
+
+  const layout = getLayout({
+    formatTick: (tick) => format(tick, { compact: true, unit: numberUnit ?? undefined }),
+    visual,
+    width,
+  });
+
   const height = getChartHeight(layout);
 
   return (
@@ -271,7 +275,7 @@ export function ChartVisualView({
 
       <div className="flex flex-col gap-1">
         <p aria-hidden="true" className="text-muted-foreground text-xs">
-          {visual.valueLabel}
+          {valueLabel}
         </p>
 
         <div className="w-full" ref={ref}>
@@ -282,11 +286,11 @@ export function ChartVisualView({
             viewBox={`0 0 ${width} ${height}`}
             width={width}
           >
-            <Grid layout={layout} unit={visual.unit} width={width} />
+            <Grid layout={layout} width={width} />
             {visual.chart === "bar" ? (
-              <Bars layout={layout} visual={visual} />
+              <Bars layout={layout} unit={numberUnit} visual={visual} />
             ) : (
-              <Lines layout={layout} visual={visual} />
+              <Lines layout={layout} unit={numberUnit} visual={visual} />
             )}
             <CategoryLabels layout={layout} visual={visual} />
           </svg>

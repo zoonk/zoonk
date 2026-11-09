@@ -4,7 +4,7 @@ const LABEL_GAP = 6;
 
 export type CategoryLabelLayout = { lines: string[][]; step: number };
 
-function getLabelWidth(text: string): number {
+export function getLabelWidth(text: string): number {
   return text.length * LABEL_CHAR_WIDTH + LABEL_GAP;
 }
 

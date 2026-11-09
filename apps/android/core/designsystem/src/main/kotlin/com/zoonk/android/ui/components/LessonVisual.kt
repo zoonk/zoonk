@@ -87,7 +87,7 @@ private fun ChartVisual(
             if (visual.series.size > 1) Legend(visual.series)
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(text = visual.valueLabel, modifier = Modifier.clearAndSetSemantics {}, color = muted, style = quiet)
+                Text(text = visual.unitLabel, modifier = Modifier.clearAndSetSemantics {}, color = muted, style = quiet)
                 ChartCanvas(visual)
                 Text(
                     text = visual.categoryLabel,
@@ -102,6 +102,13 @@ private fun ChartVisual(
         }
     }
 }
+
+/** Core's `placeChartUnit`: a unit past its target is shown once beside the value label, not after every number. */
+private val LessonVisual.Chart.numberUnit: String?
+    get() = unit?.takeIf { it.length <= UNIT_TARGET }
+
+private val LessonVisual.Chart.unitLabel: String
+    get() = if (unit != null && numberUnit == null) "$valueLabel ($unit)" else valueLabel
 
 @Composable
 private fun Legend(series: List<LessonVisual.Chart.Series>) {
@@ -217,7 +224,7 @@ private class ChartLayout(
 
     val ticks =
         niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.map {
-            it to text.label(formatAmount(it, text.locale, visual.unit, compact = true))
+            it to text.label(formatAmount(it, text.locale, visual.numberUnit, compact = true))
         }
 
     val left = (ticks.maxOfOrNull { it.second.size.width } ?: 0) + gap
@@ -251,7 +258,7 @@ private class ChartLayout(
 
     val valueLabels: List<List<TextLayoutResult>>? =
         visual.series
-            .map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.unit)) } }
+            .map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.numberUnit)) } }
             .takeIf { labels ->
                 val room = if (visual.chart == LessonVisual.Chart.Kind.Bar) barWidth + gap else band
                 (visual.chart == LessonVisual.Chart.Kind.Bar || visual.series.size == 1) && labels.flatten().all { it.size.width <= room }
@@ -427,6 +434,7 @@ private val LABEL_GAP = 6.dp
 private val PLOT_END = 8.dp
 private val PLOT_HEIGHT = 160.dp
 private const val PLOT_LINES = 6
+private const val UNIT_TARGET = 12
 private val BAR_RADIUS = 3.dp
 private val LINE_WIDTH = 2.dp
 private val DOT_RADIUS = 3.5.dp
