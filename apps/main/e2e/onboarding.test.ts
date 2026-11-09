@@ -208,7 +208,10 @@ test("a learner who starts another goal from Today lands on it, never on the goa
 
   await page.getByRole("link", { name: "Start" }).press("Enter");
   await expect(page).toHaveURL(/\/today$/u);
-  await expect(page.getByRole("main").getByText("Nothing new for today.")).toBeVisible();
+
+  await expect(
+    page.getByRole("main").getByRole("button", { name: "Get today's lessons" }),
+  ).toBeVisible();
 
   const newSwitcher = page.getByRole("button", {
     name: /^Understand quantum physics.*Switch goal$/u,
