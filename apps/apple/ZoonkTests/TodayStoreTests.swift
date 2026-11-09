@@ -20,19 +20,20 @@ final class TodayStoreTests: XCTestCase {
       let session = try timedDay(
         left: 61.5, coming: coming, preparing: preparing, estimates: [61])
       XCTAssertEqual(session.meterParts.count, coming || preparing ? 2 : 1)
+      XCTAssertEqual(session.showsDayProgress, coming || preparing)
     }
 
     let fullyListed = try timedDay(left: 61, coming: true, estimates: [61])
-    XCTAssertEqual(fullyListed.meterParts.count, 1)
+    XCTAssertFalse(fullyListed.showsDayProgress)
     let overListed = try timedDay(left: 60, coming: true, estimates: [61])
-    XCTAssertEqual(overListed.meterParts.count, 1)
+    XCTAssertFalse(overListed.showsDayProgress)
   }
 
-  func testAWaitingDayCanShowItsReservedTimeBeforeAnyLessonIsListed() throws {
+  func testAWaitingDayHasNoMeterBeforeAnyLessonIsListed() throws {
     let session = try timedDay(left: 240, coming: true, estimates: [], state: "waiting")
 
     XCTAssertEqual(session.minutes.left, 240)
-    XCTAssertEqual(session.meterParts.map(\.weight), [240])
+    XCTAssertFalse(session.showsDayProgress)
   }
 
   func testFoldedTimeIncludesReservedMinutesAndOnlySubtractsUnfinishedShownRows() throws {

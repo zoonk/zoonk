@@ -1053,7 +1053,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ para outro dia, para caber nas suas %2$@ de hoje."
+            "value" : "%#@lessons@ para outro dia, para o estudo de hoje caber em %2$@."
           },
           "substitutions" : {
             "lessons" : {

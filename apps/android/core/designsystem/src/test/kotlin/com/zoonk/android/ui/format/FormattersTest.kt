@@ -72,8 +72,9 @@ class FormattersTest {
     @Test fun fractionalMinutesRoundOnlyForDisplay() {
         assertEquals(formatMinutes(240, pt), formatMinutes(240.4, pt))
         assertEquals(formatMinutes(241, pt), formatMinutes(240.5, pt))
-        assertEquals(formatMinutes(1, en), formatMinutes(0.5, en))
-        assertEquals(formatMinutes(0, en), formatMinutes(0.25, en))
+        assertEquals("30 sec", formatMinutes(0.5, en))
+        assertEquals("15 sec", formatMinutes(0.25, en))
+        assertEquals("18 sec", formatMinutes(0.3, en))
     }
 
     @Test

@@ -140,6 +140,8 @@ struct StudyDay: Decodable, Equatable, Sendable {
     blocks.contains { $0.status != .pending }
   }
 
+  var showsDayProgress: Bool { !blocks.isEmpty && meterParts.count >= 2 }
+
   var meterParts: [MeterParts.Part] {
     var parts = blocks.map { block in
       let weight = Double(max(block.estimatedMinutes, 1))

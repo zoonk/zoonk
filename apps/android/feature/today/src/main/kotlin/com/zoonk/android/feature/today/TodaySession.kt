@@ -113,7 +113,7 @@ internal fun LazyListScope.todaySession(
 
     freshStartItem(model)
 
-    if (day.steps.size >= 2 || day.heldMinutes > 0) {
+    if (day.steps.isNotEmpty() && (day.steps.size >= 2 || day.heldMinutes > 0)) {
         item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
@@ -274,7 +274,7 @@ private fun LazyListScope.sessionQueue(
                 label = pluralStringResource(R.plurals.today_more_count, more, more),
                 done = false,
                 open = folds.moreOpen,
-                minutes = model.day.minutesAfter(queue.before + next + queue.after.take(rows)),
+                minutes = model.day.minutesAfter(queue.before + next + queue.after.take(rows)).takeIf { queue.after.size + coming > rows },
                 onToggle = folds.toggleMore,
                 modifier = Modifier.pageItem(),
             )
