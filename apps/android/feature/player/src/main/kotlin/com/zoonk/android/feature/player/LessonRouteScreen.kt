@@ -61,6 +61,7 @@ import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -229,6 +230,7 @@ internal fun PlayingLesson(
             LocalCodeSandbox provides app.codeSandbox,
             LocalChallengeTeam provides team,
         ) {
+            val saveReport = rememberSaveFailureReport(app, "lesson-end")
             LessonPlayer(
                 load.lesson,
                 state,
@@ -238,6 +240,7 @@ internal fun PlayingLesson(
                 navigator,
                 endSlot,
                 buddy = summary.value?.buddy,
+                onReportSaveFailure = saveReport::open,
                 ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
                 tutor = tutor,
                 certificatesMoment = { awarded, onClose ->

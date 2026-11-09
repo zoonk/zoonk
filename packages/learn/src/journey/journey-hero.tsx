@@ -18,8 +18,6 @@ import { useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { ListGroup } from "../_components/list-group";
 import { useFormatGoalProgress, useFormatShare } from "../_utils/percent";
-import { getLeadingSkill } from "../language/_utils/level-scale";
-import { useSkillName } from "../language/_utils/use-skill-name";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
@@ -64,28 +62,10 @@ function WeekGain({ gain }: { gain: number }) {
   );
 }
 
-function useLeadingSkill() {
-  const t = useExtracted();
-  const skillName = useSkillName();
-
-  return function leadingSkill(levels: LanguageProgressView["levels"]): string | null {
-    const lead = getLeadingSkill(levels);
-
-    if (!lead) {
-      return null;
-    }
-
-    return lead.kind === "even"
-      ? t("Even across skills")
-      : t("{skill} leads", { skill: skillName(lead.skill) });
-  };
-}
-
 function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const formatGoalProgress = useFormatGoalProgress();
-  const leadingSkill = useLeadingSkill();
 
   if (standing.kind === "preparation" && standing.forExam) {
     return {
@@ -115,13 +95,13 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
     };
   }
 
-  const { level, levels, target } = standing.language;
+  const { level } = standing.language;
 
   return {
-    detail: leadingSkill(levels),
+    detail: null,
     label: t("Level"),
     numeric: level !== null,
-    value: <LevelValue label={level ?? t("Not yet")} target={target?.label ?? null} />,
+    value: <LevelValue label={level?.label ?? t("Not yet")} target={level?.target ?? null} />,
   };
 }
 

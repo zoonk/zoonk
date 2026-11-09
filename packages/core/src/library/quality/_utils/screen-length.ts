@@ -125,7 +125,7 @@ function weighStrings(value: unknown): unknown {
  * Each text a screen shows (an option, a label, a template's text) against its own limit in the
  * step contract, counted the way the screen cap counts: a contract limit counts characters, so a
  * Japanese option within it can still weigh twice as much. Callers report these under the screen
- * cap's code, so like a long screen they guide the fix pass but never hold a lesson back after it:
+ * cap's advisory code and never hold a lesson back:
  * the text is within its contract's own limit, so the screen still works, and the weight is a
  * reading target.
  */

@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it, vi } from "vitest";
 import { taskResult } from "../../_test-utils/recorded-outputs";
-import { prepareExamFormatItemsStep } from "./exam-format-items-step";
+import { prepareSkillExamFormatItems } from "./exam-format-items-step";
 
 async function pickFor(answerFormat: ExamFormatPick["answerFormat"]): Promise<ExamFormatPick> {
   const skill = await skillFixture({ name: `History ${crypto.randomUUID()}` });
@@ -26,7 +26,7 @@ async function pickFor(answerFormat: ExamFormatPick["answerFormat"]): Promise<Ex
   };
 }
 
-describe(prepareExamFormatItemsStep, () => {
+describe(prepareSkillExamFormatItems, () => {
   it("remembers a skill the writer found no number to work out in, and only for numbers", async () => {
     vi.mocked(generateItems).mockResolvedValue(taskResult({ items: [] }));
 
@@ -42,7 +42,7 @@ describe(prepareExamFormatItemsStep, () => {
 
     await Promise.all(
       [numeric, severalPicks].map((pick) =>
-        prepareExamFormatItemsStep({ pick, workflowRunId: crypto.randomUUID() }),
+        prepareSkillExamFormatItems({ pick, workflowRunId: crypto.randomUUID() }),
       ),
     );
 

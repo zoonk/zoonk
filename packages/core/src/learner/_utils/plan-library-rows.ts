@@ -147,7 +147,7 @@ export function readSkillLevels(skillIds: readonly string[], from: LibrarySource
   return from === "shared"
     ? getSkillLevelRows(toIdKey(skillIds))
     : from.skill.findMany({
-        select: { id: true, level: true },
+        select: { cefrLevel: true, id: true, level: true },
         where: { id: { in: [...skillIds] } },
       });
 }

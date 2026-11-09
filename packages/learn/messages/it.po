@@ -469,6 +469,14 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Non ha funzionato. Riprova tra poco."
 
 #: src/_components/save-error.tsx
+#: src/feedback/feedback-form-dialog.tsx
+#: src/feedback/report-problem-item.tsx
+#: src/journey/journey-menu.tsx
+msgctxt "feedback.Hf_X9X"
+msgid "Report a problem"
+msgstr "Segnala un problema"
+
+#: src/_components/save-error.tsx
 msgctxt "71Gfs0"
 msgid "Still not going through. You can come back later."
 msgstr "L’invio non è riuscito neanche questa volta. Puoi tornare più tardi."
@@ -806,6 +814,12 @@ msgstr "Non controllata questa volta"
 msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "Tempo di studio diverso nel fine settimana"
+
+#: src/_utils/time-format.ts
+#: src/today/today-day-progress.tsx
+msgctxt "RQRGjK"
+msgid "{time} studied"
+msgstr "{time} di studio"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.kZw3xs"
@@ -1693,9 +1707,9 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "I livelli sono in linea con il CEFR, il Quadro comune europeo di riferimento per le lingue. Non è il risultato di un esame ufficiale."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "X1QrOq"
-msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
-msgstr "Zoonk misura ogni abilità (lettura, ascolto, parlato, scrittura) in base alle risposte date durante le lezioni e le esercitazioni. Un livello è completo quando tutte le abilità migliorate con quelle risposte raggiungono il livello successivo. Questo certificato è stato quindi rilasciato quando ciascuna ha raggiunto {level}."
+msgctxt "iO6aKW"
+msgid "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons."
+msgstr "Zoonk rilascia questo certificato a chi completa un livello studiando almeno la metà delle lezioni."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "j5jrUM"
@@ -1947,9 +1961,9 @@ msgid "Certificates"
 msgstr "Certificati"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "Ek6qb7"
-msgid "Comes when every skill you practice reaches the next level"
-msgstr "Lo ottieni quando passi al livello successivo in tutte le abilità che alleni"
+msgctxt "OqErrx"
+msgid "Comes when you finish a level, studying at least half of it"
+msgstr "Lo ottieni quando completi un livello, dopo averne studiato almeno metà"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "ojltlj"
@@ -3844,13 +3858,6 @@ msgstr "Spiegazione rapida · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
-msgctxt "feedback.Hf_X9X"
-msgid "Report a problem"
-msgstr "Segnala un problema"
-
-#: src/feedback/feedback-form-dialog.tsx
-#: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
 msgstr "Invia feedback"
@@ -3875,6 +3882,11 @@ msgctxt "feedback.IVDs_9"
 msgid "Your email, for our reply"
 msgstr "La tua email, per risponderti"
 
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.hBQCdX"
+msgid "Your email, if you'd like a reply"
+msgstr "La tua email, se vuoi una risposta"
+
 #. An example email address in an empty field. Adapt it to the language.
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.OiSL94"
@@ -3885,6 +3897,11 @@ msgstr "lamiaemail@gmail.com"
 msgctxt "feedback.Xx0WZV"
 msgid "Send message"
 msgstr "Invia messaggio"
+
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.f7aJd1"
+msgid "I couldn't save my answers."
+msgstr "Non riesco a salvare le mie risposte."
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.T7Ry38"
@@ -4597,16 +4614,6 @@ msgstr "+{points, number} questa settimana"
 msgctxt "dqj4Ei"
 msgid "{points, number} this week"
 msgstr "{points, number} questa settimana"
-
-#: src/journey/journey-hero.tsx
-msgctxt "iuIhWr"
-msgid "Even across skills"
-msgstr "Equilibrato tra le abilità"
-
-#: src/journey/journey-hero.tsx
-msgctxt "3JHj0V"
-msgid "{skill} leads"
-msgstr "{skill} è in testa"
 
 #: src/journey/journey-hero.tsx
 #: src/language/exam-speaking/prep-timer.tsx
@@ -6566,6 +6573,46 @@ msgid "Goal {level}"
 msgstr "Obiettivo {level}"
 
 #: src/language/progress/skill-levels-card.tsx
+msgctxt "Mc3CoH"
+msgid "Estimated listening level: {level}"
+msgstr "Livello stimato di ascolto: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "0EWsJk"
+msgid "Estimated reading level: {level}"
+msgstr "Livello stimato di lettura: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "8qPntS"
+msgid "Estimated speaking level: {level}"
+msgstr "Livello stimato nella parte orale: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "damvcS"
+msgid "Estimated writing level: {level}"
+msgstr "Livello stimato di scrittura: {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "tli5KO"
+msgid "Your listening estimate went up to {level}"
+msgstr "Il tuo livello stimato di ascolto è salito a {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "NHA9sL"
+msgid "Your reading estimate went up to {level}"
+msgstr "Il tuo livello stimato di lettura è salito a {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "BYWqip"
+msgid "Your speaking estimate went up to {level}"
+msgstr "Il tuo livello stimato nella parte orale è salito a {level}"
+
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "rafLc9"
+msgid "Your writing estimate went up to {level}"
+msgstr "Il tuo livello stimato di scrittura è salito a {level}"
+
+#: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
 msgid "up since the level test"
 msgstr "in aumento rispetto al test di livello"
@@ -6575,25 +6622,27 @@ msgctxt "LPKiOF"
 msgid "down since the level test"
 msgstr "in calo rispetto al test di livello"
 
+#. Two or more skills' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".
+#: src/language/progress/skill-levels-card.tsx
+msgctxt "kzq7R0"
+msgid "{skills} estimates went up"
+msgstr "I livelli stimati per {skills} sono saliti"
+
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "K_24wg"
 msgid "Levels move as you practice. They get more accurate every week."
 msgstr "I livelli cambiano con la pratica. Diventano più precisi ogni settimana."
 
+#. Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "iQhtOC"
-msgid "{skill} went up to {level} since the level test."
-msgstr "Il livello di {skill} è salito a {level} rispetto al test di livello."
+msgctxt "JinbRe"
+msgid "Practice estimates"
+msgstr "Livelli stimati per le esercitazioni"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "EZzhCX"
-msgid "{skills} went up since the level test."
-msgstr "I livelli di {skills} sono saliti rispetto al test di livello."
-
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "hZMjM-"
-msgid "Level by skill"
-msgstr "Livello per abilità"
+msgctxt "Ep338j"
+msgid "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan."
+msgstr "Queste stime servono a regolare la difficoltà degli esercizi. I certificati si basano sulle lezioni completate nel tuo piano."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
@@ -13860,11 +13909,6 @@ msgstr "Ci stiamo mettendo più tempo del solito"
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# su {total, number} completati} one {# completato su {total, number}} other {# completati su {total, number}}}"
-
-#: src/today/today-day-progress.tsx
-msgctxt "RQRGjK"
-msgid "{time} studied"
-msgstr "{time} di studio"
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"

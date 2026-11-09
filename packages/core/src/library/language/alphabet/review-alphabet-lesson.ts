@@ -14,7 +14,6 @@ import { type LibraryProvenance } from "../../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { CURRENT_STEPS, lockCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { BACKGROUND_TIER } from "../../quality/_utils/published-versions";
-import { toLaterReviewProblems } from "../../quality/later-reviews";
 import { parseStepContent } from "../../steps/contract/step-contract";
 import { toAlphabetLessonCheck } from "./alphabet-lesson-check";
 import { buildAlphabetLessonSteps } from "./alphabet-lesson-steps";
@@ -116,7 +115,9 @@ function toTaskAnalytics({ analytics, workflowRunId }: ReviewContext): Analytics
 }
 
 /** Internal workflow bridge: null when `version` is no longer the published version. */
-export async function reviewAlphabetLesson(context: ReviewContext): Promise<Problems | null> {
+export async function reviewAlphabetLesson(
+  context: ReviewContext & { lesson?: PublishedAlphabetLesson },
+): Promise<Problems | null> {
   const published = await loadPublishedAlphabetLesson(context.lessonId);
 
   if (published?.version !== context.version) {
@@ -126,16 +127,19 @@ export async function reviewAlphabetLesson(context: ReviewContext): Promise<Prob
   const { data } = await checkLessonQuality({
     ...toAlphabetLessonCheck({
       learnerLanguage: published.learnerLanguage,
-      lesson: published.content,
+      lesson: context.lesson ?? published.content,
       targetLanguage: published.targetLanguage,
     }),
     analytics: toTaskAnalytics(context),
-    reuse: "bounded",
     serviceTier: BACKGROUND_TIER,
     writerModel: published.writerModel,
   });
 
-  return toLaterReviewProblems(data.issues);
+  return data.issues.map((issue) => ({
+    problem: `${issue.problem} Fix: ${issue.fix}`,
+    screen: issue.screen,
+    source: "review" as const,
+  }));
 }
 
 /**

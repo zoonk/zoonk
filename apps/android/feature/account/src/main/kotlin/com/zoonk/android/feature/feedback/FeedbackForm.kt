@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 
@@ -95,7 +96,16 @@ fun FeedbackForm(
                     Modifier
                         .fillMaxWidth()
                         .semantics { contentType = ContentType.EmailAddress },
-                label = stringResource(R.string.feedback_email),
+                label =
+                    stringResource(
+                        if (form.target.reportType ==
+                            FeedbackSubmissionContext.ReportType.SAVE_FAILURE
+                        ) {
+                            R.string.feedback_email_optional
+                        } else {
+                            R.string.feedback_email
+                        },
+                    ),
                 placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
                 singleLine = true,
                 readOnly = isSending,
@@ -155,6 +165,12 @@ fun rememberReportProblem(
 ): FeedbackSheet = rememberFeedbackSheet(app, target, app.feedback, isReport = true)
 
 @Composable
+fun rememberSaveFailureReport(
+    app: AppContainer,
+    screen: String,
+): FeedbackSheet = rememberReportProblem(app, FeedbackTarget(screen, reportType = FeedbackSubmissionContext.ReportType.SAVE_FAILURE))
+
+@Composable
 fun rememberSendFeedback(
     app: AppContainer,
     screen: String,
@@ -173,7 +189,15 @@ private fun rememberFeedbackSheet(
     var opening by rememberSaveable { mutableStateOf<String?>(null) }
 
     opening?.let { id ->
-        val form = viewModel(key = "feedback:$id") { FeedbackViewModel(sender, target) }
+        val initialMessage =
+            if (target.reportType ==
+                FeedbackSubmissionContext.ReportType.SAVE_FAILURE
+            ) {
+                stringResource(R.string.feedback_save_failure_message)
+            } else {
+                ""
+            }
+        val form = viewModel(key = "feedback:$id") { FeedbackViewModel(sender, target, initialMessage) }
 
         LaunchedEffect(form) {
             snapshotFlow { form.status }.first { it == FeedbackStatus.Sent }

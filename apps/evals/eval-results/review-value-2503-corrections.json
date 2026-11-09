@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-08",
+  "newModelCalls": 0,
+  "addedCostUsd": 0,
+  "historicalReport": "review-value-2503-follow-up.json",
+  "repairs": [
+    {
+      "caseId": "en-tax-deadlines-sourced-clean",
+      "expectation": "pass",
+      "change": "State the fixed April 15 payment deadline without assuming when Mia files.",
+      "sources": [
+        "https://www.irs.gov/filing/get-an-extension-to-file-your-tax-return",
+        "https://www.irs.gov/filing/individuals/when-to-file"
+      ]
+    },
+    {
+      "caseId": "pt-estabilidade-sourced-clean",
+      "expectation": "pass",
+      "change": "Specify appointment by concurso to a permanent post, three years of effective service, and distinguish taking office from starting service in the rendered explanation, question and summary.",
+      "sources": [
+        "https://legis.senado.gov.br/norma/579494/publicacao/16434817",
+        "https://www.gov.br/servidor/pt-br/acesso-a-informacao/gestao-de-pessoas/lei-8112-anotada/titulo-ii-do-provimento-vacancia-remocao-redistribuicao-e-substituicao/capitulo-i-do-provimento/secao-iv-da-posse-e-do-exercicio"
+      ],
+      "unusedGuessNote": "The edit to the raw screen-0 guess was reverted: openOnScene replaces that screen through rewrites: { 0: lostPostGuess }, so it never affected the eval input."
+    },
+    {
+      "caseId": "en-doorways-picture-options-clean",
+      "expectation": "pass",
+      "change": "Attribute Gothic building structure to arches, vaults and buttresses together; identify style without treating it as a construction date. The hook ends without pointing at a door no screen shows.",
+      "sources": [
+        "https://www.metmuseum.org/essays/gothic-art",
+        "https://www.riba.org/explore/riba-collections/architectural-styles/gothic-revival-movement/"
+      ]
+    },
+    {
+      "caseId": "pt-regra-framed-around-one-exam",
+      "expectation": "pass",
+      "change": "Keep the exam-specific setting as an explicit mock exam; remove the invented notice subsection and email appeal route. The exact invented notice could not be verified; an official Cebraspe notice requires its electronic appeal system and rejects email submissions.",
+      "sources": [
+        "https://cdn.cebraspe.org.br/concursos/agsus_26_acolhedora/arquivos/477CF5B2D0B2D069B53F24F5702099EBC4B951E1124A7E198638D7BD7BB36B3B.html"
+      ]
+    },
+    {
+      "caseId": "pt-eletron-formula-in-overview",
+      "expectation": "pass",
+      "change": "Limit the energy expression to a simplified hydrogen model while preserving its difficulty as an overview control.",
+      "sources": [
+        "https://openstax.org/books/chemistry-atoms-first/pages/3-2-the-bohr-model"
+      ]
+    }
+  ],
+  "relabels": [
+    {
+      "caseId": "en-temperature-data-disagrees-with-options",
+      "previousExpected": "fail",
+      "expected": "pass",
+      "verification": "A: -6 + 9 = 3; B: -4 + 3 = -1; C: -2 + 1 = -1; D: -5 + 3 = -2; E: -8 + 2 = -6. A is the sole station above zero. Omitting E from the options does not create an error.",
+      "rescore": {
+        "model": "openai/gpt-6-astra",
+        "inputUnchanged": true,
+        "predicted": "pass",
+        "score": 10
+      }
+    }
+  ],
+  "verificationLimit": "The repaired shared fixtures and their dependent cases have not been run through a model again. Their recorded outputs and scores remain evidence about the previous inputs; no passing results are inferred for the repaired inputs."
+}

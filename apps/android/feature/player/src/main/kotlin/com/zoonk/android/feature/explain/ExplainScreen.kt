@@ -449,7 +449,7 @@ internal fun ExplainEnding(
             if (saving) {
                 Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
             } else {
-                LessonReadouts(state, withReview = false)
+                LessonReadouts(state, withFacts = false)
             }
 
             if (explanation.recap.isNotEmpty()) {

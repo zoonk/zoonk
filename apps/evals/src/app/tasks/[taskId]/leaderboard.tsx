@@ -1,6 +1,8 @@
 "use client";
 
+import { CaseCount, FailureCounts, KeyFlawCount } from "@/components/eval-counts";
 import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
+import { HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatLatencyVerdict, formatPercent, formatSeconds } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
 import {
@@ -40,7 +42,7 @@ export function Leaderboard({ taskId, entries }: { taskId: string; entries: Lead
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const sortedEntries = sortLeaderboardEntries(entries, sortKey, sortDirection);
-  const categories = entries[0]?.categoryScores ?? [];
+  const categories = entries.find((entry) => entry.categoryScores.length > 0)?.categoryScores ?? [];
   const showAccuracy = entries.some((entry) => entry.accuracy !== null);
   const showJudgeCost = entries.some((entry) => entry.judgeCost > 0);
   const showBudget = entries.some((entry) => entry.meetsLatencyBudget !== null);
@@ -65,6 +67,7 @@ export function Leaderboard({ taskId, entries }: { taskId: string; entries: Lead
         <h2 className="text-lg font-semibold">Leaderboard</h2>
         <LeaderboardExport entries={sortedEntries} taskId={taskId} />
       </div>
+      <p className="text-muted-foreground text-sm">{HISTORICAL_ATTEMPTS_NOTE}</p>
 
       <Table>
         <TableHeader>
@@ -84,9 +87,15 @@ export function Leaderboard({ taskId, entries }: { taskId: string; entries: Lead
             </TableHead>
 
             <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
-              Avg Score{" "}
+              Avg score (scored outputs){" "}
               {getSortArrow({ direction: sortDirection, isActive: sortKey === "averageScore" })}
             </TableHead>
+
+            <TableHead>Attempted (recorded)</TableHead>
+            <TableHead>Generated</TableHead>
+            <TableHead>Scored outputs</TableHead>
+            <TableHead>Generation failures</TableHead>
+            <TableHead>Judge-flagged key flaws</TableHead>
 
             {categories.map((category) => (
               <TableHead key={category.categoryId}>{category.label}</TableHead>
@@ -127,7 +136,34 @@ export function Leaderboard({ taskId, entries }: { taskId: string; entries: Lead
               </TableCell>
               <TableCell>{entry.provider}</TableCell>
               <TableCell>{entry.reasoning}</TableCell>
-              <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
+              <TableCell>{entry.averageScore?.toFixed(2) ?? "Unscored"}</TableCell>
+              <TableCell>
+                <CaseCount
+                  caseIds={entry.summary.caseIds.attempted}
+                  count={entry.summary.attempted}
+                  model={{ modelId: entry.modelId, taskId }}
+                />
+              </TableCell>
+              <TableCell>
+                <CaseCount
+                  caseIds={entry.summary.caseIds.generated}
+                  count={entry.summary.generated}
+                  model={{ modelId: entry.modelId, taskId }}
+                />
+              </TableCell>
+              <TableCell>
+                <CaseCount
+                  caseIds={entry.summary.caseIds.scored}
+                  count={entry.summary.scored}
+                  model={{ modelId: entry.modelId, taskId }}
+                />
+              </TableCell>
+              <TableCell>
+                <FailureCounts model={{ modelId: entry.modelId, taskId }} summary={entry.summary} />
+              </TableCell>
+              <TableCell>
+                <KeyFlawCount model={{ modelId: entry.modelId, taskId }} summary={entry.summary} />
+              </TableCell>
               {categories.map((category) => {
                 const categoryScore = entry.categoryScores.find(
                   (score) => score.categoryId === category.categoryId,

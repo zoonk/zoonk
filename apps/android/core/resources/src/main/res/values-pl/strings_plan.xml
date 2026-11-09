@@ -245,7 +245,6 @@
   "plan_estimate_based_on_last": "c8c179b311fc90f9718d1091bc0d622bbce1ec382746e494b0cfb7931e1cc33f",
   "plan_estimate_waits": "a61a3822d2a51cab236e31103e33d26c0b923e8f7dd3b228c69fdcb741acfca6",
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
-  "plan_even_across_skills": "f252d4fce591706c6b78157946d3dc2ce6d250e9669d071d731d325360777303",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
   "plan_everything": "86fc959e46220580cc0979bffb6eb63c5ce2abc50de2627797b59e315df25c42",
   "plan_exam_choice_left_out": "cbc749876318b1398bafb32a259ea465c4ccda52cff408b64cc6c040e017c318",
@@ -454,7 +453,6 @@
   "plan_short_mock_and_practice": "3b8bd473f9d5fa8fa1127dd6bac8bb67153dfb0039151323ece20642cdbc8d13",
   "plan_short_mock_and_review": "745ed7163f3497acf4887ffcfaa7c0fd419eb7039ee86709537393e796cab5d6",
   "plan_show_fewer_chapters": "af400bad352410461e4a6896028982702492f7930676e2db6f6d5d163c907a7f",
-  "plan_skill_leads": "fa75a09b426680ba512f93c405cd31c33b8a55eb8e649e3ee520195c900046be",
   "plan_skills_you_know": "3d2909fcd86c68673ad163268ba7ad99b75761df9f7e8b1be6c941fec9c23c42",
   "plan_skipped": "d368b8b742588bbd92159ec50d1cafcdb02bdd904d53e38d77581f587983d377",
   "plan_skipped_known": "19f924a5a7ae81aacc08250abe5b2ddfc7ae1a4701546db8c8be692388889c70",
@@ -940,10 +938,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">Poziom</string>
     <string name="plan_your_level">Twój poziom</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">Równo we wszystkich umiejętnościach</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">%1$s na prowadzeniu</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Nie opanowano jeszcze żadnej lekcji</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->

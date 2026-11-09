@@ -79,6 +79,8 @@ import { readProductPagesTask } from "./read-product-pages/task";
 import { researchPlanTask } from "./research-plan/task";
 import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
 import { skillGraphTask } from "./skill-graph/task";
+import { skillLevelsTask } from "./skill-levels/task";
+import { solveItemsTask } from "./solve-items/task";
 import { sourceChangeNoticeTask } from "./source-change-notice/task";
 import { sourceResearchPlanTask } from "./source-research-plan/task";
 import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
@@ -134,6 +136,7 @@ export const TASKS: readonly RegisteredTask[] = [
   generateItemsTask,
   placementItemsTask,
   statuteDrillsTask,
+  solveItemsTask,
   writeListeningSetTask,
   writeItemSetTask,
   pastQuestionsTask,
@@ -146,6 +149,7 @@ export const TASKS: readonly RegisteredTask[] = [
   questionGeneralityTask,
   skillGraphTask,
   goalOpeningTask,
+  skillLevelsTask,
   courseOutlineTask,
   courseDetailsTask,
   courseIconTask,

@@ -44,7 +44,6 @@ export type LessonWriteStage = LessonWriteOutcome | Extract<WriteResult, { statu
 export type WriteInput = {
   analytics?: ContentAnalytics;
   forExam?: boolean;
-  forceReview?: boolean;
   lessonId: string;
   wait?: CallWait;
   workflowRunId: string;

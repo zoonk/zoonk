@@ -44,7 +44,6 @@ export type LessonContentInput = {
   planManifest?: PlanGenerationManifest | null;
   analytics?: ContentAnalytics;
   forExam?: boolean;
-  forceReview?: boolean;
   wait?: CallWait;
 };
 

@@ -19,6 +19,7 @@ struct LevelTestStep: View {
   @State private var isSaving = false
   @State private var isStarting = false
   @State private var saveFailures = 0
+  @State private var showsSaveReport = false
   @State private var failedAnswer: SentAnswer?
 
   private enum Phase {
@@ -60,6 +61,9 @@ struct LevelTestStep: View {
       }
     }
     .task { await resume() }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "level-test", reportType: .saveFailure), isReport: true)
   }
 
   private func preparing(_ generationID: String) -> some View {
@@ -146,6 +150,7 @@ struct LevelTestStep: View {
             "I don't know yet", table: "Onboarding",
             comment: "Answers a placement question without guessing"),
       isSaving: isSaving, failures: saveFailures,
+      onReport: { showsSaveReport = true },
       onAnswer: { answer(question, with: $0, skips: skips) },
       onStop: stop,
       media: {

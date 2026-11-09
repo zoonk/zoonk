@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { type CourseLevel, type PlanItem } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
+import { type CountedLesson, type UnwrittenLessons } from "../../plans/_utils/half-studied";
 import { type CertifiableItem, type LevelChapter, listCertificateUnits } from "./certificate-units";
 
 const COURSE = "course";
@@ -23,12 +25,12 @@ function lesson({
     chapterId,
     completedAt: status === "todo" ? null : AFTER,
     kind: "lesson",
-    lessonId: null,
+    lessonId: chapterId ? randomUUID() : null,
     lessons: null,
     level,
     minutes: 5,
     phase,
-    skillId: null,
+    skillId: chapterId ? `${chapterId}-skill` : null,
     status,
   };
 }
@@ -58,21 +60,52 @@ const TWO_LEVELS = {
 
 function units({
   chapters = TWO_LEVELS.chapters,
+  extraSkills = [],
   goal = GOAL,
   heldKeys = [],
   items = TWO_LEVELS.items,
+  taught = [],
   levelCourseId = COURSE,
+  missing = [],
   phases = [{}, {}],
   studiesPastTarget = false,
 }: {
   chapters?: LevelChapter[];
+  /** Graph skills the plan holds no item of. */
+  extraSkills?: Pick<CertifiableItem, "level" | "skillId">[];
   goal?: Parameters<typeof listCertificateUnits>[0]["goal"];
   heldKeys?: string[];
   items?: CertifiableItem[];
+  /** Lessons and what they teach, over each item's own skill. */
+  taught?: CountedLesson[];
   levelCourseId?: string | null;
+  missing?: UnwrittenLessons[];
   phases?: { challengeLeftOut?: boolean }[];
   studiesPastTarget?: boolean;
 } = {}) {
+  const taughtIds = new Set(taught.map((entry) => entry.lessonId));
+
+  const held = items.flatMap((entry) =>
+    entry.lessonId && !taughtIds.has(entry.lessonId)
+      ? [
+          {
+            chapterId: entry.chapterId,
+            lessonId: entry.lessonId,
+            skillIds: entry.skillId ? [entry.skillId] : [],
+          },
+        ]
+      : [],
+  );
+
+  const graphSkills = [...items, ...extraSkills].filter((entry) => entry.skillId);
+  const skillIds = [...new Set(graphSkills.flatMap((entry) => entry.skillId ?? []))];
+
+  const skillLevels = new Map(
+    graphSkills.flatMap((entry) =>
+      entry.skillId && entry.level ? [[entry.skillId, [entry.level]] as const] : [],
+    ),
+  );
+
   return listCertificateUnits({
     goal,
     heldKeys: new Set(heldKeys),
@@ -81,6 +114,13 @@ function units({
     levelCourseId,
     phases,
     planCreatedAt: PLAN_CREATED_AT,
+    scope: {
+      graphSkillIds: skillIds,
+      keptSkills: skillIds.map((skillId) => ({ skillId })),
+      lessons: [...held, ...taught],
+      unwritten: missing,
+    },
+    skillLevels,
     studiesPastTarget,
   });
 }
@@ -134,6 +174,63 @@ describe(listCertificateUnits, () => {
     );
 
     expect(finished(units({ items: allTestedOut }))).toStrictEqual([]);
+  });
+
+  it("needs half of its skills' lessons studied, written or not, not half of what the plan kept", () => {
+    const items = TWO_LEVELS.items.map((entry) =>
+      entry.phase === 1 && entry.kind === "lesson" ? { ...entry, skillId: "waves" } : entry,
+    );
+
+    const taught = Array.from({ length: 3 }, () => ({
+      chapterId: null,
+      lessonId: randomUUID(),
+      skillIds: ["waves"],
+    }));
+
+    expect(finished(units({ items, taught }))).toStrictEqual(["course:overview", "goal"]);
+
+    expect(finished(units({ items, missing: [{ lessons: 3, skillId: "waves" }] }))).toStrictEqual([
+      "course:overview",
+      "goal",
+    ]);
+
+    expect(finished(units({ items, missing: [{ lessons: 2, skillId: "waves" }] }))).toStrictEqual([
+      "course:overview",
+      "course:beginner",
+    ]);
+  });
+
+  it("sizes a level by its graph skills, so one a dated plan left wholly out still counts", () => {
+    const leftOut = { level: "beginner", skillId: "interference" } as const;
+
+    expect(
+      finished(
+        units({ extraSkills: [leftOut], missing: [{ lessons: 10, skillId: "interference" }] }),
+      ),
+    ).toStrictEqual(["course:overview"]);
+  });
+
+  it("credits a level's lessons that another level holds, as they size it", () => {
+    const items = TWO_LEVELS.items.map((entry) =>
+      entry.chapterId === "o2" ? { ...entry, status: "testedOut" as const } : entry,
+    );
+
+    const taught = items.flatMap((entry) =>
+      entry.level === "beginner" && entry.lessonId && entry.skillId
+        ? [
+            {
+              chapterId: entry.chapterId,
+              lessonId: entry.lessonId,
+              skillIds: [entry.skillId, "o1-skill"],
+            },
+          ]
+        : [],
+    );
+
+    expect(finished(units({ items, taught }))).toStrictEqual([
+      "course:overview",
+      "course:beginner",
+    ]);
   });
 
   it("certifies a level started past its first chapter with the plan, and the next level whole", () => {

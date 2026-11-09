@@ -9,7 +9,11 @@ const cachedListFeedbackMessages = cacheAdminData(
 
     const [rows, total] = await Promise.all([
       prisma.feedback.findMany({
-        include: { user: { select: { email: true, id: true, name: true, username: true } } },
+        include: {
+          user: {
+            select: { email: true, id: true, isAnonymous: true, name: true, username: true },
+          },
+        },
         omit: { message: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         skip: offset,

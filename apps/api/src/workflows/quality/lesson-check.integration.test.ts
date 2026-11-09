@@ -66,7 +66,7 @@ async function publishedLesson() {
   });
 
   await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
-  const written = await writeLessonContent({ forExam: true, lessonId: lesson.id, workflowRunId });
+  const written = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
   if (written.status !== "published") {
     throw new Error(`The test lesson wasn't published: ${written.status}`);
@@ -98,19 +98,19 @@ describe("a fixed lesson version", () => {
 
     const { lesson, plan } = await publishedLesson();
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(
+    vi.mocked(checkLessonQuality).mockResolvedValueOnce(
       taskResult({
         issues: [
           {
             fix: "Say that vaccines train the immune system without causing the disease.",
-            kind: "incorrect" as const,
             problem: "Screen 3 says the vaccine gives a mild case of the disease.",
             screen: 2,
-            severity: "blocking" as const,
           },
         ],
       }),
     );
+
+    vi.mocked(checkLessonQuality).mockResolvedValue(taskResult({ issues: [] }));
 
     const run = await start(lessonCheckWorkflow, [{ lessonId: lesson.id, plan }]);
     await expect(run.returnValue).resolves.toMatchObject({ status: "republished" });
@@ -124,5 +124,6 @@ describe("a fixed lesson version", () => {
     expect(JSON.stringify(steps.map((step) => step.content))).toContain(FIX);
     expect(steps.some((step) => step.marks !== null)).toBe(true);
     expect(tagLesson).toHaveBeenCalledOnce();
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
   }, 60_000);
 });

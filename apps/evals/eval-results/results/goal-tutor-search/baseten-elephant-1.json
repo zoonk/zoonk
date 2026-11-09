@@ -1,0 +1,503 @@
+{
+  "modelId": "baseten/elephant-1",
+  "results": [
+    {
+      "classification": {
+        "expected": "answer",
+        "predicted": "answer"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": false
+        },
+        "id": "pt-screen-grammar-points-at-step-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação",
+          "question": "o núcleo aqui é o envio, correto?",
+          "screen": {
+            "answer": null,
+            "chapter": {
+              "description": null,
+              "title": "Sintaxe do período simples"
+            },
+            "course": {
+              "description": null,
+              "language": "pt",
+              "targetLanguage": null,
+              "title": "Língua Portuguesa"
+            },
+            "lesson": {
+              "description": null,
+              "kind": "explanation",
+              "language": "pt",
+              "title": "Sujeito e predicado"
+            },
+            "lessonSteps": [
+              {
+                "answerable": false,
+                "content": {
+                  "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
+                },
+                "kind": "static",
+                "sentence": null,
+                "stepNumber": 2,
+                "word": null
+              }
+            ],
+            "scope": {
+              "kind": "step"
+            },
+            "step": {
+              "answerable": false,
+              "content": {
+                "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
+              },
+              "kind": "static",
+              "sentence": null,
+              "stepNumber": 2,
+              "word": null
+            },
+            "version": 1
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "search",
+        "predicted": "search"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": true
+        },
+        "id": "pt-screen-exam-rule-off-screen-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação",
+          "question": "o edital deste ano ainda cobra redação oficial na discursiva?",
+          "screen": {
+            "answer": null,
+            "chapter": {
+              "description": null,
+              "title": "Sintaxe do período simples"
+            },
+            "course": {
+              "description": null,
+              "language": "pt",
+              "targetLanguage": null,
+              "title": "Língua Portuguesa"
+            },
+            "lesson": {
+              "description": null,
+              "kind": "explanation",
+              "language": "pt",
+              "title": "Sujeito e predicado"
+            },
+            "lessonSteps": [
+              {
+                "answerable": false,
+                "content": {
+                  "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
+                },
+                "kind": "static",
+                "sentence": null,
+                "stepNumber": 2,
+                "word": null
+              }
+            ],
+            "scope": {
+              "kind": "step"
+            },
+            "step": {
+              "answerable": false,
+              "content": {
+                "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
+              },
+              "kind": "static",
+              "sentence": null,
+              "stepNumber": 2,
+              "word": null
+            },
+            "version": 1
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "search",
+        "predicted": "search"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": true
+        },
+        "id": "pt-screen-law-points-at-step-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "Passar na 1ª fase da OAB",
+          "question": "isso ainda vale?",
+          "screen": {
+            "answer": null,
+            "chapter": {
+              "description": null,
+              "title": "Honorários advocatícios"
+            },
+            "course": {
+              "description": null,
+              "language": "pt",
+              "targetLanguage": null,
+              "title": "Estatuto da Advocacia"
+            },
+            "lesson": {
+              "description": null,
+              "kind": "explanation",
+              "language": "pt",
+              "title": "Honorários de sucumbência do advogado empregado"
+            },
+            "lessonSteps": [
+              {
+                "answerable": false,
+                "content": {
+                  "text": "Na relação de emprego, os honorários de sucumbência são devidos aos advogados empregados (art. 21 da Lei 8.906/94)."
+                },
+                "kind": "static",
+                "sentence": null,
+                "stepNumber": 2,
+                "word": null
+              }
+            ],
+            "scope": {
+              "kind": "step"
+            },
+            "step": {
+              "answerable": false,
+              "content": {
+                "text": "Na relação de emprego, os honorários de sucumbência são devidos aos advogados empregados (art. 21 da Lei 8.906/94)."
+              },
+              "kind": "static",
+              "sentence": null,
+              "stepNumber": 2,
+              "word": null
+            },
+            "version": 1
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "search",
+        "predicted": "search"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": true
+        },
+        "id": "pt-law-no-screen-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "Passar na 1ª fase da OAB",
+          "question": "o contrato pode dizer que a sucumbência vai pra empresa?"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "answer",
+        "predicted": "answer"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": false
+        },
+        "id": "pt-plan-no-screen-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "Passar na 1ª fase da OAB",
+          "question": "dá pra passar a aula de amanhã pra sexta?"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "answer",
+        "predicted": "answer"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": false
+        },
+        "id": "en-screen-math-points-at-step-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "SAT in March",
+          "question": "so there's no answer here because it's negative?",
+          "screen": {
+            "answer": null,
+            "chapter": {
+              "description": null,
+              "title": "Quadratics"
+            },
+            "course": {
+              "description": null,
+              "language": "en",
+              "targetLanguage": null,
+              "title": "SAT Math"
+            },
+            "lesson": {
+              "description": null,
+              "kind": "explanation",
+              "language": "en",
+              "title": "The discriminant"
+            },
+            "lessonSteps": [
+              {
+                "answerable": false,
+                "content": {
+                  "text": "For x² + 2x + 5 = 0, b² − 4ac = 4 − 20 = −16. A negative discriminant means the equation has no real solutions."
+                },
+                "kind": "static",
+                "sentence": null,
+                "stepNumber": 2,
+                "word": null
+              }
+            ],
+            "scope": {
+              "kind": "step"
+            },
+            "step": {
+              "answerable": false,
+              "content": {
+                "text": "For x² + 2x + 5 = 0, b² − 4ac = 4 − 20 = −16. A negative discriminant means the equation has no real solutions."
+              },
+              "kind": "static",
+              "sentence": null,
+              "stepNumber": 2,
+              "word": null
+            },
+            "version": 1
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "search",
+        "predicted": "search"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected search; got search.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": true
+        },
+        "id": "en-screen-law-points-at-step-1",
+        "userInput": {
+          "earlierQuestion": null,
+          "goal": "Pass the California bar exam in July",
+          "question": "does this apply to registered domestic partners too?",
+          "screen": {
+            "answer": null,
+            "chapter": {
+              "description": null,
+              "title": "Community property"
+            },
+            "course": {
+              "description": null,
+              "language": "en",
+              "targetLanguage": null,
+              "title": "California Bar: Essay Subjects"
+            },
+            "lesson": {
+              "description": null,
+              "kind": "explanation",
+              "language": "en",
+              "title": "What counts as community property"
+            },
+            "lessonSteps": [
+              {
+                "answerable": false,
+                "content": {
+                  "text": "Property either spouse acquires during the marriage while domiciled in California is community property (Family Code § 760)."
+                },
+                "kind": "static",
+                "sentence": null,
+                "stepNumber": 2,
+                "word": null
+              }
+            ],
+            "scope": {
+              "kind": "step"
+            },
+            "step": {
+              "answerable": false,
+              "content": {
+                "text": "Property either spouse acquires during the marriage while domiciled in California is community property (Family Code § 760)."
+              },
+              "kind": "static",
+              "sentence": null,
+              "stepNumber": 2,
+              "word": null
+            },
+            "version": 1
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "answer",
+        "predicted": "answer"
+      },
+      "steps": [
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected answer; got answer.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "needsCurrentSource": false
+        },
+        "id": "en-follow-up-concept-1",
+        "userInput": {
+          "earlierQuestion": "what's the difference between community and separate property?",
+          "goal": "Pass the California bar exam in July",
+          "question": "and can you give me an easy way to remember it?"
+        }
+      }
+    }
+  ],
+  "taskId": "goal-tutor-search"
+}

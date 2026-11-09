@@ -23,7 +23,9 @@ export const TEST_CASES: TestCase<FindProductPagesExpected, FindProductPagesPara
       docsUrl: ["support.apple.com"],
       productUrl: ["apple.com/iphone"],
       releaseUrl: ["support.apple.com", "apple.com"],
-      releasesUrl: ["support.apple.com", "apple.com"],
+      // Apple's "Identify your iPhone model" lists every model with its year; its iOS update
+      // notes list software releases, not models.
+      releasesUrl: ["support.apple.com/en-us/108044", "support.apple.com/108044"],
     },
     id: "iphone-13",
     language: "en",
@@ -122,6 +124,66 @@ export const TEST_CASES: TestCase<FindProductPagesExpected, FindProductPagesPara
     userInput: {
       hints: { brand: "Brightwave Dental", name: "Brightwave Scheduler", release: null },
       officialDomains: [],
+    },
+  },
+  {
+    expected: {
+      brandUrl: ["figma.com"],
+      docsUrl: ["help.figma.com", "developers.figma.com"],
+      productUrl: ["figma.com"],
+      releasesUrl: ["figma.com/release-notes", "figma.com/whats-new"],
+    },
+    id: "figma",
+    language: "en",
+    userInput: {
+      hints: { brand: "Figma", name: "Figma", release: null },
+      officialDomains: ["figma.com"],
+    },
+  },
+  {
+    // One product among many on its maker's site: the product page is Excel's own, not
+    // Microsoft 365's or the home page.
+    expected: {
+      brandUrl: ["microsoft.com"],
+      docsUrl: ["support.microsoft.com", "learn.microsoft.com"],
+      productUrl: [
+        "microsoft.com/en-us/microsoft-365/excel",
+        "microsoft.com/en-US/microsoft-365/excel",
+        "microsoft.com/microsoft-365/excel",
+        "microsoft.com/en/microsoft-365/excel",
+      ],
+    },
+    id: "excel",
+    language: "en",
+    userInput: {
+      hints: { brand: "Microsoft", name: "Excel", release: null },
+      officialDomains: ["microsoft.com"],
+    },
+  },
+  {
+    expected: {
+      brandUrl: ["samsung.com"],
+      productUrl: ["samsung.com"],
+      releaseUrl: ["samsung.com"],
+    },
+    id: "galaxy-s24",
+    language: "pt",
+    userInput: {
+      hints: { brand: "Samsung", name: "Galaxy S", release: "Galaxy S24" },
+      officialDomains: ["samsung.com"],
+    },
+  },
+  {
+    expected: {
+      brandUrl: ["rdstation.com"],
+      docsUrl: ["ajuda.rdstation.com", "developers.rdstation.com"],
+      productUrl: ["rdstation.com/produtos/marketing", "rdstation.com/marketing"],
+    },
+    id: "rd-station-marketing",
+    language: "pt",
+    userInput: {
+      hints: { brand: "RD Station", name: "RD Station Marketing", release: null },
+      officialDomains: ["rdstation.com"],
     },
   },
 ];

@@ -27,6 +27,14 @@ struct ZoonkButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
   }
+
+  static func horizontalPadding(_ controlSize: ControlSize) -> CGFloat {
+    switch controlSize {
+    case .mini, .small: 10
+    case .regular: 12
+    default: 16
+    }
+  }
 }
 
 extension ButtonStyle where Self == ZoonkButtonStyle {
@@ -56,7 +64,7 @@ private struct ZoonkButton: View {
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, isIcon ? 0 : horizontalPadding)
+      .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
       .padding(.vertical, isIcon ? 0 : 6)
       .frame(minWidth: isIcon ? height : nil, minHeight: height)
       .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
@@ -89,14 +97,6 @@ private struct ZoonkButton: View {
     case .small: 30
     case .regular: 36
     default: 44
-    }
-  }
-
-  private var horizontalPadding: CGFloat {
-    switch controlSize {
-    case .mini, .small: 10
-    case .regular: 12
-    default: 16
     }
   }
 

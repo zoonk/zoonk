@@ -24,6 +24,15 @@ export const categorizedScoreSchema = scoreSchema.extend({
   categoryScores: z.array(judgeCategoryScoreSchema),
 });
 
+export const keyFlawSchema = z.object({
+  itemLocator: z.string(),
+  keyedAnswer: z.string(),
+  kind: z.enum(["wrongKey", "noCorrectOption", "twoDefensible", "factualError"]),
+  workedAnswer: z.string(),
+});
+
+export type KeyFlaw = z.infer<typeof keyFlawSchema>;
+
 type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 export type JudgeCategoryScore = z.infer<typeof judgeCategoryScoreSchema>;
@@ -133,6 +142,8 @@ export type TaskScoreResult = {
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
   judge?: JudgeRun;
+  keyFlaws?: KeyFlaw[];
+  itemsScored?: number;
 };
 
 type TaskScoreParams<TExpected = unknown> = { output: string; testCase: TestCase<TExpected> };
@@ -147,6 +158,7 @@ export type CodeCheckResult = {
   total: number;
   problems: string[];
   judgedOutput: string;
+  keyFlawLocators?: string[];
 };
 
 export type TaskCodeChecks<TExpected = unknown> = (
@@ -168,6 +180,8 @@ export type EvalResult = TokenUsage & {
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
   judge?: JudgeRun;
+  keyFlaws?: KeyFlaw[];
+  itemsScored?: number;
   duration: number;
 };
 
@@ -175,6 +189,7 @@ export type TaskEvalResults = {
   taskId: string;
   modelId: string;
   results: EvalResult[];
+  outputs: OutputEntry[];
   failedRuns?: FailedRun[];
 };
 
@@ -218,7 +233,13 @@ export type OutputEntry = TokenUsage & {
   probabilities?: Record<string, number>;
 };
 
-export type FailedRun = Pick<OutputEntry, "calls" | "extraCalls" | "testCaseId">;
+export type FailureReason = "schema" | "provider" | "other";
+
+export type FailedRun = Pick<OutputEntry, "calls" | "extraCalls" | "testCaseId"> & {
+  /** Unset on failures saved before failure reporting. */
+  reason?: FailureReason;
+  message?: string;
+};
 
 export type ModelOutputs = {
   taskId: string;
@@ -243,6 +264,8 @@ export type ScoredResult = {
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
   judge?: JudgeRun;
+  keyFlaws?: KeyFlaw[];
+  itemsScored?: number;
 };
 
 export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };

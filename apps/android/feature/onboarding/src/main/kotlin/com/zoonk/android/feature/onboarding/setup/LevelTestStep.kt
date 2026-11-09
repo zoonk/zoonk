@@ -100,6 +100,7 @@ fun ColumnScope.LanguageLevelTestStep(
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle()) }
     val test by store.levelTests[goalId].collectShown()
@@ -165,7 +166,7 @@ fun ColumnScope.LanguageLevelTestStep(
                 FinishFailed(vm.finishFailed)
                 key(shown.question.id) {
                     val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
-                    TestQuestion(shown.question, targetLanguage, audioPending, vm, navigator)
+                    TestQuestion(shown.question, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
                 }
             }
         }
@@ -310,6 +311,7 @@ private fun ColumnScope.TestQuestion(
     audioPending: Boolean,
     vm: LevelTestViewModel,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit,
 ) {
     val listening = question.skill == LanguageLevelTestOneOf1NextOneOfQuestion.Skill.LISTENING
     val audio = LocalSetupSpeech.current?.let { rememberSpokenAudio(it, targetLanguage) }
@@ -329,6 +331,7 @@ private fun ColumnScope.TestQuestion(
         typedWords = null,
         pending = vm.isSaving,
         saveFailures = vm.saveFailures,
+        onReportSaveFailure = onReportSaveFailure,
         onAnswer = { answer, durationMs ->
             val index = answer.selectedIndex()
             vm.answer(question.id, index, durationMs, skipped = noAudio && index == null)

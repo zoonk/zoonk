@@ -18,11 +18,11 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.LanguageTodayLevel
+import com.zoonk.api.models.LanguagePlanLevel
 
 @Composable
 fun LanguageLevelCard(
-    level: LanguageTodayLevel,
+    level: LanguagePlanLevel,
     onOpenPlan: () -> Unit,
     modifier: Modifier = Modifier,
     ladder: @Composable () -> Unit = {},

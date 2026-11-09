@@ -34,22 +34,30 @@ function checkWriteListeningSetOutput(
 
   const setProblems = findListeningSetProblems(set, request);
 
-  const checked = set.questions.map((question) => {
+  const checked = set.questions.map((question, index) => {
     const optionCount = question.format === "multipleChoice" ? (input.optionCount ?? null) : null;
     const language = input.scriptLanguage;
     const item = repairItem({ item: toListeningItem(question), language, optionCount });
 
-    return { problems: checkItem({ item, language, optionCount }), question };
+    return {
+      itemLocator: `set.questions[${index}]`,
+      problems: checkItem({ item, language, optionCount }),
+      question,
+    };
   });
 
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
     judgedOutput: JSON.stringify(
-      { ...set, questions: passing.map((entry) => entry.question) },
+      {
+        ...set,
+        questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })),
+      },
       null,
       2,
     ),
+    keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length === 0 ? 0 : passing.length + (setProblems.length === 0 ? SET_CHECKS : 0),
     problems: [...setProblems, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,

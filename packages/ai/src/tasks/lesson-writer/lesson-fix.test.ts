@@ -10,6 +10,9 @@ import type * as Ai from "ai";
 /** Where the schema the answer follows starts, after the fix's rules. */
 const OUTPUT_FORMAT = "\n\n# Output format";
 
+vi.mock("./lesson-writer.prompt.md", () => ({ default: "" }));
+vi.mock("../items/item-rules/typed-question.prompt.md", () => ({ default: "" }));
+
 vi.mock("server-only", () => ({}));
 
 vi.mock("./lesson-fix.prompt.md", () => ({
@@ -79,7 +82,8 @@ function fix(params: { screenCount: number; shortAnswers?: boolean }) {
     language: "en",
     lesson,
     level: "beginner",
-    problems: [{ problem: "Too long.", screen: 1 }],
+    model: "anthropic/claude-opus-5.5",
+    problems: [{ problem: "Too long.", screen: 1, source: "check" }],
     shortAnswers: params.shortAnswers,
     spec: spec(params.screenCount),
   });
@@ -122,7 +126,7 @@ describe(fixLessonDraft, () => {
 
     const { data, userPrompt } = await fix({ screenCount: 3 });
 
-    expect(userPrompt).toContain("Screen 2: Too long.");
+    expect(userPrompt).toContain("Screen 2 (automatic check): Too long.");
     expect(userPrompt).toContain("\nMONEY: $2,400.00 or $2,400\n");
     expect(data.changedScreens).toStrictEqual([1]);
 
@@ -140,10 +144,8 @@ describe(fixLessonDraft, () => {
     await fix({ screenCount: 3 });
 
     expect(vi.mocked(generateText).mock.calls[0]?.[0]).toMatchObject({
-      model: "openai/gpt-6-luna",
-      providerOptions: {
-        gateway: { models: ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] },
-      },
+      model: "anthropic/claude-opus-5.5",
+      providerOptions: { gateway: { models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] } },
     });
   });
 

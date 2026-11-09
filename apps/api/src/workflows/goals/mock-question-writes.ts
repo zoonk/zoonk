@@ -6,7 +6,7 @@ import {
   voiceListeningSetStep,
 } from "../listening/steps/listening-sets-steps";
 import { type PlacementItemsWritten, preparePlacementItems } from "./placement-items";
-import { prepareExamFormatItemsStep } from "./steps/exam-format-items-step";
+import { prepareSkillExamFormatItems } from "./steps/exam-format-items-step";
 import { loadMockWritingSkillsStep } from "./steps/mock-question-steps";
 
 function countItemWrites(results: readonly PromiseSettledResult<number>[]): PlacementItemsWritten {
@@ -74,7 +74,7 @@ export async function writeMockQuestions({
         skills
           .filter((skill) => write.skillIds.includes(skill.id))
           .map((skill) =>
-            prepareExamFormatItemsStep({
+            prepareSkillExamFormatItems({
               analytics,
               count: write.questionsPerSkill,
               pick: { answerFormat, skill, style: write.format.style },

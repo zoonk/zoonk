@@ -4,17 +4,21 @@ import { collectJsonStrings } from "@zoonk/utils/json";
 import { logError } from "@zoonk/utils/logger";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
+import { JEV_MODEL_ID } from "../../evaluate/evaluation-models";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { type TutorScreenContext } from "../lessons/lesson-question-context";
 import instructions from "./goal-tutor-search.prompt.md";
 
-/** The runner-up after Jev. */
-const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
+/**
+ * On 8 cases (8 Nov 2026), Decider Flash V1.2 matched Jev on every one (EN 3/3, PT 5/5) at $0.0070
+ * against $0.0385 per 1k, in 0.29 s p50 and 0.50 s p95 under shared load.
+ */
+const EVALUATION_MODEL = "perplexity/pplx-decider-flash-v1.2";
 const THRESHOLD = 0.5;
 
 /**
- * Jev answers in about half a second. A decision slower than this leaves the search to the
- * buddy's own judgment, so a slow or failing classifier never holds the answer back.
+ * A decision slower than this leaves the search to the buddy's own judgment, so a slow or failing
+ * classifier never holds the answer back.
  */
 const DECISION_DEADLINE_MS = 2500;
 
@@ -80,10 +84,11 @@ type SearchDecisionInput = Parameters<typeof goalTutorSearchClassifier.toInput>[
 async function decideSearch({ analytics, ...input }: SearchDecisionInput): Promise<boolean> {
   const { answers } = await evaluateQuestions({
     analytics,
-    fallbackModel: FALLBACK_EVALUATION_MODEL,
+    fallbackModel: JEV_MODEL_ID,
     input: goalTutorSearchClassifier.toInput(input),
     // The question and its screen are saved in the learner's conversation anyway.
     keepInput: true,
+    model: EVALUATION_MODEL,
     questions: { needsCurrentSource: goalTutorSearchClassifier.question },
     task: "goal-tutor-search",
   });

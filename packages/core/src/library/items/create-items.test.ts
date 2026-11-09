@@ -25,6 +25,7 @@ import {
   generatedMultipleChoice,
   generatedProvenance,
   generatedTypedItem,
+  keyChecked,
 } from "./_test-utils/generated-items";
 import { discountMath, discountQuestion } from "./_test-utils/math-problems";
 import { createItems } from "./create-items";
@@ -343,7 +344,7 @@ describe(createItems, () => {
 
     const { created } = await createItems({
       format: "trueFalse",
-      items: [drill],
+      items: [keyChecked(drill)],
       language: "pt",
       provenance: generatedProvenance(),
       skillId: skill.id,
@@ -363,7 +364,7 @@ describe(createItems, () => {
 
     const { created, rejected } = await createItems({
       format: "multipleChoice",
-      items: [twoCorrect, good, generatedTypedItem()],
+      items: [twoCorrect, good, keyChecked(generatedTypedItem())],
       language: "en",
       provenance: generatedProvenance(),
       skillId: skill.id,

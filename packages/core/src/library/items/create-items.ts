@@ -5,13 +5,19 @@ import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write
 import { type ImageAnalytics } from "../media/_utils/draw-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
 import { type SourceVersion, reconcileItemReviewFlags } from "../sources/content-review-flags";
+import { type KeyCheckedItem, type KeyedFormat } from "./check-item-keys";
 import { checkItem } from "./item-checks";
 import { type ItemAnswerFormat, toStoredItem } from "./item-content";
 import { repairItem } from "./item-repairs";
 
 export type RejectedItem = { index: number; problems: string[] };
 
-type CheckedItem = { index: number; item: GeneratedItem };
+type CheckedItem<Written extends GeneratedItem = GeneratedItem> = { index: number; item: Written };
+
+/** A format whose key a blind solve can check takes only the items `checkItemKeys` kept. */
+type ItemsToStore =
+  | { format: Exclude<ItemFormat, KeyedFormat>; items: readonly GeneratedItem[] }
+  | { format: ItemFormat; items: readonly KeyCheckedItem[] };
 
 type ItemRows = {
   answerFormat: ItemAnswerFormat;
@@ -81,7 +87,7 @@ async function storeBatch({
   });
 }
 
-export function toCheckedItem({
+export function toCheckedItem<Written extends GeneratedItem>({
   answerFormat,
   format,
   index,
@@ -93,11 +99,11 @@ export function toCheckedItem({
   answerFormat: ItemAnswerFormat;
   format: ItemFormat;
   index: number;
-  item: GeneratedItem;
+  item: Written;
   language: string;
   optionCount: number | null;
   optionLanguage?: string | null;
-}): CheckedItem & { problems: string[] } {
+}): CheckedItem<Written> & { problems: string[] } {
   const item = repairItem({ item: written, language: optionLanguage ?? language, optionCount });
 
   const problems = checkItem({
@@ -161,21 +167,20 @@ export async function createItems({
   source = null,
   sourceCitation = null,
   optionLanguage = null,
-}: ItemAnswerFormat & {
-  analytics?: ImageAnalytics;
-  examBlueprintId?: string | null;
-  field?: string | null;
-  format: ItemFormat;
-  items: readonly GeneratedItem[];
-  language: string;
-  optionCount?: number | null;
-  provenance: LibraryProvenance;
-  skillId: string;
-  source?: SourceVersion | null;
-  sourceCitation?: string | null;
-  /** A language goal's options are in the practiced language, so their numbers are read its way. */
-  optionLanguage?: string | null;
-}): Promise<{ created: Item[]; rejected: RejectedItem[]; unchecked: string[] }> {
+}: ItemAnswerFormat &
+  ItemsToStore & {
+    analytics?: ImageAnalytics;
+    examBlueprintId?: string | null;
+    field?: string | null;
+    language: string;
+    optionCount?: number | null;
+    provenance: LibraryProvenance;
+    skillId: string;
+    source?: SourceVersion | null;
+    sourceCitation?: string | null;
+    /** A language goal's options are in the practiced language, so their numbers are read its way. */
+    optionLanguage?: string | null;
+  }): Promise<{ created: Item[]; rejected: RejectedItem[]; unchecked: string[] }> {
   const answerFormat = { entry, select };
 
   const checked = items.map((item, index) =>

@@ -20,9 +20,9 @@ export const PAST_QUESTIONS_SCORE_CATEGORIES = defineScoreCategories([
     weight: 25,
   },
   {
-    expectations: `Each citation names the exam, the edition or year and the question's number as the paper gives them, in the requested language, and support texts keep the credit line of their author or source. Score at most 7 when a support text lost its credit line.`,
+    expectations: `Each citation names the exam, the edition or year and the question's number as the paper gives them, in the requested language, and support texts keep the credit line of their author or source. The quoted parts read as the paper prints them, with a space between words even where the paper's text came out with words glued together. Score at most 7 when a support text lost its credit line; at most 5 when a quoted part keeps words glued together.`,
     id: "citation",
-    label: "Citation and credit",
+    label: "Citation, credit and copy",
     weight: 20,
   },
 ]);
