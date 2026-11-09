@@ -238,12 +238,12 @@ describe("an exam window's challenge", () => {
     ).toStrictEqual(["algebra"]);
   });
 
-  it("asks what its phase studied when no skill has its core in by its day yet", () => {
+  it("asks nothing when no skill's core comes before the challenge", () => {
     const longer = graphSkills.map((skill) =>
       skill.skillId === "algebra" ? { ...skill, lessons: 6 } : skill,
     );
 
-    expect(askedBy("w0", { graphSkills: longer })).toStrictEqual(["algebra", "geometry"]);
+    expect(askedBy("w0", { graphSkills: longer })).toStrictEqual([]);
   });
 });
 

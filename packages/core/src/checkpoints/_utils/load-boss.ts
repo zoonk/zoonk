@@ -152,6 +152,10 @@ async function loadBoss({
     targetDate: goal.targetDate,
   });
 
+  if (skillIds.length === 0) {
+    return NO_BOSS;
+  }
+
   if (goal.kind === "language") {
     return {
       checkpoint: {

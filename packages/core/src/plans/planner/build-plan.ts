@@ -28,7 +28,11 @@ import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
-import { listChallengesLeftOut, listTaughtPhases } from "./phase-checkpoints";
+import {
+  listChallengesLeftOut,
+  listTaughtPhases,
+  withoutUntestableChallenges,
+} from "./phase-checkpoints";
 import { placeItemsInPhaseTime } from "./phase-time";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
@@ -101,7 +105,10 @@ export type { BuiltPlan } from "./built-plan";
 
 /** Pure: the same inputs always give the same plan. */
 export function buildPlan(given: BuildPlanInput) {
-  return settlePlannedBosses({ build: buildWithBosses, input: given });
+  return withoutUntestableChallenges({
+    built: settlePlannedBosses({ build: buildWithBosses, input: given }),
+    input: given,
+  });
 }
 
 function buildWithBosses(given: BuildPlanInput): BuiltPlan {

@@ -151,8 +151,6 @@ function pickBossSkillIds({
     finished.filter((skillId) => ownPhase.has(skillId)),
     finished.filter((skillId) => !asked.has(skillId)),
     finished,
-    phase,
-    studied,
   ]);
 }
 
