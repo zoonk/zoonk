@@ -56,7 +56,6 @@ export function savedSelection({
   };
 }
 
-/** After days away, Today and Start both offer the saved plan's day without the events Start's settle moves. */
 function selectSavedDay({
   context,
   left,

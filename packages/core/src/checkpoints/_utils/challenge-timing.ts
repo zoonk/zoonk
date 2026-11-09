@@ -118,7 +118,6 @@ export function getChallengeTimings({
     (_, index) => addDays(today, index),
   );
 
-  // Today's left work also counts lessons given ahead, which needs a carry snapshot these views don't read.
   const todayItems = hasOverduePlanWork({ items, today })
     ? dropSettledEvents({ items, settings, today })
     : items;
