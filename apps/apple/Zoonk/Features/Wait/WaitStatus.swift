@@ -89,6 +89,10 @@ private struct FirstLessonLine: View {
         Text(
           "Your first lesson is ready", tableName: "Onboarding",
           comment: "Under the plan's status while it's built: the goal's first lesson can start")
+      } else if lesson.isStopped {
+        Text(
+          "Something went wrong on our side.", tableName: "Onboarding",
+          comment: "A generation failed")
       } else {
         Text(
           "Writing your first lesson: \(Text(lesson.title).foregroundStyle(Color(.foreground)))",
@@ -110,14 +114,17 @@ struct FirstLessonSection: View {
   let lesson: GenerationWait.FirstLesson
   let clockOffset: TimeInterval?
 
+  @State private var stoppedAt: Date?
+
   @ScaledMetric(relativeTo: .subheadline) private var markWidth = 16.0
   @ScaledMetric(relativeTo: .subheadline) private var lineHeight = 20.0
 
   var body: some View {
     Section {
-      TimelineView(.periodic(from: .now, by: 1)) { context in
+      TimelineView(.animation(minimumInterval: 1, paused: lesson.isReady || lesson.isStopped)) {
+        context in
         HStack(alignment: .top, spacing: 12) {
-          WaitMark(isDone: lesson.isReady, share: share(at: context.date))
+          WaitMark(isDone: lesson.isReady, share: share(at: stoppedAt ?? context.date))
             .frame(width: markWidth, height: lineHeight)
 
           VStack(alignment: .leading, spacing: 2) {
@@ -132,6 +139,10 @@ struct FirstLessonSection: View {
                 Text(
                   "Ready to start", tableName: "Onboarding",
                   comment: "Under the goal's first lesson once it's written")
+              } else if lesson.isStopped {
+                Text(
+                  "Something went wrong on our side.", tableName: "Onboarding",
+                  comment: "A generation failed")
               } else {
                 Text(
                   "Writing about 5 short screens", tableName: "Onboarding",
@@ -143,7 +154,7 @@ struct FirstLessonSection: View {
           }
           .frame(maxWidth: .infinity, alignment: .leading)
 
-          if let seconds = seconds(at: context.date) {
+          if let seconds = seconds(at: stoppedAt ?? context.date) {
             Text(GenerationClock.text(seconds))
               .typeStyle(.data)
               .foregroundStyle(.mutedForeground)
@@ -158,6 +169,9 @@ struct FirstLessonSection: View {
         Text(
           "Your first lesson", tableName: "Onboarding",
           comment: "Header over the goal's first lesson in the plan's progress"))
+    }
+    .onChange(of: lesson.isStopped, initial: true) { _, stopped in
+      stoppedAt = stopped ? .now : nil
     }
   }
 

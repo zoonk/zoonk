@@ -57,6 +57,7 @@ struct GenerationWait: Equatable, Sendable {
     var isReady: Bool
     /// The learner finished it, which only the onboarding read knows: it's not offered again.
     var isDone = false
+    var isStopped = false
     /// The server's times, as each phase keeps them.
     var startedAt: Date?
     var endedAt: Date?
@@ -115,13 +116,14 @@ struct GenerationWait: Equatable, Sendable {
       return read
     }
 
-    guard let read, read.id == live.id, read.isReady else {
+    guard let read, read.id == live.id else {
       return live
     }
 
     var merged = live
-    merged.isReady = true
-    merged.isDone = read.isDone
+    merged.isReady = live.isReady || read.isReady || live.isDone || read.isDone
+    merged.isDone = live.isDone || read.isDone
+    merged.isStopped = !merged.isReady && read.isStopped
     return merged
   }
 
@@ -681,6 +683,8 @@ enum GenerationFailure: Equatable, Sendable {
 
 /// A run as a wait shows it, and what it reported on the side.
 struct FollowedRun {
+  var id: String? = nil
+  var ended = false
   let wait: GenerationWait
   let failure: GenerationFailure?
   /// The goal's warm-up deck, once the run reported it.
@@ -737,10 +741,14 @@ struct GenerationFollower<Content: View>: View {
     let connection: Int
   }
 
+  @State private var hasEnded = false
+
   var body: some View {
     let runID = followedID ?? generationID
     let run = FollowedRun(
-      wait: wait ?? GenerationWait(kind: kind).started, failure: failure, warmUpID: warmUpID,
+      id: runID, ended: hasEnded, wait: wait ?? GenerationWait(kind: kind).started,
+      failure: failure,
+      warmUpID: warmUpID,
       isRestarting: isRestarting,
       retry: failure.flatMap { failure -> (() -> Void)? in
         failure == .connection || restart != nil ? { retry(failure) } : nil
@@ -749,6 +757,7 @@ struct GenerationFollower<Content: View>: View {
     content(run)
       .announcesStatus(run.workingLabel)
       .taskThroughPush(id: Following(id: runID, connection: connection)) {
+        hasEnded = false
         failure = nil
 
         if let runID {
@@ -791,7 +800,7 @@ struct GenerationFollower<Content: View>: View {
         wait = current
 
         if current.isDone, !wasDone {
-          guard onRunEnd != nil else {
+          if onRunEnd == nil && current.firstLesson?.isReady != false {
             return .ready
           }
 
@@ -808,6 +817,10 @@ struct GenerationFollower<Content: View>: View {
   }
 
   private func finish(_ ending: Ending) async {
+    switch ending {
+    case .lost: break
+    default: hasEnded = true
+    }
     switch ending {
     case .ready:
       await read()

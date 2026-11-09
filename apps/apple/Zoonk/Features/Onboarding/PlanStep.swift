@@ -173,6 +173,29 @@ struct PlanBuilding: View {
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
 
+  @Environment(\.scenePhase) private var scenePhase
+
+  private struct LessonFollow: Equatable {
+    let id: String?
+    let active: Bool
+  }
+
+  private func followFirstLesson() async {
+    let resource = onboarding.onboarding(goalID: view.goal.id)
+    let deadline = ContinuousClock.now + .seconds(600)
+    var failures = 0
+    while ContinuousClock.now < deadline && failures < 3 && !Task.isCancelled {
+      do { try await Task.sleep(for: .seconds(3)) } catch { return }
+      let before = resource.revision
+      await resource.refresh()
+      failures = resource.revision == before ? failures + 1 : 0
+      if let lesson = resource.value?.firstLesson, lesson.status == .ready || lesson.status == .done
+      {
+        return
+      }
+    }
+  }
+
   var body: some View {
     GenerationFollower(
       generationID: view.generationId,
@@ -238,6 +261,16 @@ struct PlanBuilding: View {
 
         if let firstLesson {
           FirstLessonSection(lesson: firstLesson, clockOffset: run.wait.clockOffset)
+            .task(
+              id: LessonFollow(
+                id: run.id,
+                active: (run.ended || run.isStopped) && !firstLesson.isReady
+                  && scenePhase == .active)
+            ) {
+              guard (run.ended || run.isStopped) && !firstLesson.isReady && scenePhase == .active
+              else { return }
+              await followFirstLesson()
+            }
         }
       }
     }
@@ -291,7 +324,8 @@ struct PlanBuilding: View {
 extension GenerationWait.FirstLesson {
   init(_ read: Components.Schemas.Onboarding.FirstLessonPayload) {
     self.init(
-      id: read.id, title: read.title, isReady: read.status != .writing, isDone: read.status == .done
+      id: read.id, title: read.title, isReady: read.status == .ready || read.status == .done,
+      isDone: read.status == .done, isStopped: read.status == .stopped
     )
   }
 }

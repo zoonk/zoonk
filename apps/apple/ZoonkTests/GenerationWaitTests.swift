@@ -196,4 +196,29 @@ final class GenerationWaitTests: XCTestCase {
 
     XCTAssertEqual(wait, fresh)
   }
+  func testStoppedLessonOutranksReplayedWriting() {
+    var wait = GenerationWait(kind: .curriculum)
+    wait.apply(
+      GenerationEvent(
+        lessonID: "lesson", lessonTitle: "Dawn", status: "started", step: "writeFirstLesson"))
+    let stopped = GenerationWait.FirstLesson(
+      .init(id: "lesson", status: .stopped, title: "Dawn"))
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, true)
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isReady, false)
+  }
+
+  func testReadyFromEitherSourceOutranksStoppedAndANewerReadRecoversWriting() {
+    var wait = GenerationWait(kind: .curriculum)
+    wait.apply(
+      GenerationEvent(
+        lessonID: "lesson", lessonTitle: "Dawn", status: "started", step: "writeFirstLesson"))
+    let stopped = GenerationWait.FirstLesson(.init(id: "lesson", status: .stopped, title: "Dawn"))
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, true)
+    let writing = GenerationWait.FirstLesson(.init(id: "lesson", status: .writing, title: "Dawn"))
+    XCTAssertEqual(wait.firstLesson(read: writing)?.isStopped, false)
+    wait.apply(GenerationEvent(lessonID: "lesson", status: "completed", step: "firstLessonReady"))
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isReady, true)
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, false)
+  }
+
 }
