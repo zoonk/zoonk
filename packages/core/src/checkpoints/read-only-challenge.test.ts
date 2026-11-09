@@ -17,7 +17,7 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
-import { toBlockPayload } from "../sessions/block-payload";
+import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 import { buildSessionBlocks } from "../sessions/session-builder";
 import { getPassMark } from "./checkpoint-rules";
 import { getChallenge } from "./get-challenge";
@@ -162,6 +162,68 @@ describe("a challenge intro is a read", () => {
     await expect(readIntro(boss.id)).resolves.toMatchObject({
       date: "2026-10-01",
       status: "upcoming",
+    });
+  });
+
+  it("previews only the later phase topics Start asks once reached", async () => {
+    const user = await userFixture();
+
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
+      itemsPerSkill: 10,
+      userId: user.id,
+    });
+
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+    await prisma.planItem.update({
+      data: { completedAt: SESSION_NOW, status: "done" },
+      where: { id: planItems[0]!.id },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { phase: 1 },
+      where: { id: { in: [planItems[1]!.id, planItems[2]!.id] } },
+    });
+
+    const boss = await checkpointItemFixture({
+      kind: "boss",
+      phase: 1,
+      planId: plan.id,
+      position: 3,
+    });
+
+    const { bosses } = await layOutPlanFixture(plan.id);
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: SESSION_NOW, status: "done" },
+      where: { id: { in: bosses.map((earlier) => earlier.id) } },
+    });
+
+    mockSession(user.id);
+
+    const preview = await readIntro(boss.id);
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: SESSION_NOW, status: "done" },
+      where: { id: { in: [planItems[1]!.id, planItems[2]!.id] } },
+    });
+
+    const started = await startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id });
+
+    if (started.status !== "ready") {
+      throw new Error(`Expected Start to open the real checkpoint, got ${started.status}`);
+    }
+
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({
+      where: { id: started.destination.blockId },
+    });
+
+    const names = new Map(skills.map((skill) => [skill.id, skill.name]));
+    const asked = readBlockPayload(block).skillIds.map((id) => names.get(id));
+
+    expect({ asked, previewed: preview.topics.map((topic) => topic.name) }).toStrictEqual({
+      asked,
+      previewed: asked,
     });
   });
 

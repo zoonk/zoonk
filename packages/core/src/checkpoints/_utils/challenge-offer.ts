@@ -5,9 +5,10 @@ import {
   type SavedItemFacts,
   readSelectedItemFacts,
 } from "../../plans/_utils/selected-item-contract";
-import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { parsePlanGraph, parsePlanPhases } from "../../plans/planner/plan-state";
+import { getSkippedSkillIds } from "../../sessions/_utils/review-skills";
 import { getBossQuestionSkills } from "../checkpoint-minutes";
-import { isBossTeachingItem } from "../checkpoint-rules";
+import { getBossSkillIds } from "../checkpoint-rules";
 import { isChallengeReached } from "./challenge-reach";
 import { type OwnedChallenge } from "./owned-challenge";
 
@@ -43,16 +44,27 @@ function getPreviewSkillIds(challenge: OwnedChallenge): string[] {
     return offer && !offer.waiting ? offer.testedSkillIds : [];
   }
 
-  return [
-    ...new Set(
-      challenge.items
-        .filter((item) => item.position < challenge.item.position && isBossTeachingItem(item))
-        .flatMap(
-          (item) =>
-            readSelectedItemFacts(item.facts)?.skillIds ?? (item.skillId ? [item.skillId] : []),
-        ),
-    ),
-  ];
+  const graph = parsePlanGraph(challenge.plan.graph);
+  const skipped = getSkippedSkillIds({ graph, settings: challenge.plan.settings });
+
+  const itemSkillIds = new Map(
+    challenge.items.map((item) => [
+      item.id,
+      readSelectedItemFacts(item.facts)?.skillIds ?? (item.skillId ? [item.skillId] : []),
+    ]),
+  );
+
+  return getBossSkillIds({
+    boss: challenge.item,
+    graphSkills: graph.skills,
+    itemSkillIds,
+    items: challenge.items,
+    phases: parsePlanPhases(challenge.plan.phases),
+    skills: [...new Set([...itemSkillIds.values()].flat())]
+      .filter((id) => !skipped.has(id))
+      .map((id) => ({ id })),
+    targetDate: challenge.goal.targetDate,
+  });
 }
 
 export function getOfferSkillIds(challenge: OwnedChallenge): string[] {
