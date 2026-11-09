@@ -1,5 +1,5 @@
-import { type Goal } from "@zoonk/db";
 import "server-only";
+import { type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getExamBlueprintCacheTag } from "../../cache/tags";

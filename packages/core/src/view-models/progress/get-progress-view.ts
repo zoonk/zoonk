@@ -1,5 +1,5 @@
-import { type Goal } from "@zoonk/db";
 import "server-only";
+import { type Goal } from "@zoonk/db";
 import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { listCurrentUserSkills } from "../../learner/list-current-user-skills";
 import { countGoalMistakes } from "../../mistakes/count-goal-mistakes";
@@ -16,9 +16,7 @@ type Preparation = Extract<GoalPreparationResult, { status: "ready" }>["preparat
 
 /** Estimated exam scores require a completed mock. */
 export type ProgressView = {
-  goal: Pick<Goal, "id" | "kind" | "title"> & { displayName: string } & {
-    targetDate: string | null;
-  };
+  goal: Pick<Goal, "id" | "kind" | "title"> & { displayName: string; targetDate: string | null };
   mistakes: { open: number };
   /** Null for a quick explanation: one answer, not a goal to prepare for. */
   preparation: Preparation | null;
