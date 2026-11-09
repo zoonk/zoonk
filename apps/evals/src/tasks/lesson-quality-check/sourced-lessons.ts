@@ -120,7 +120,7 @@ const estabilidade: WrittenLesson = {
         { isCorrect: false, text: "5 anos" },
       ],
       question:
-        "Ana foi nomeada por concurso para um cargo efetivo. Sem valer ponto: depois de quanto tempo de efetivo exercício ela pode ganhar a garantia de não ser mandada embora?",
+        "Ana passou num concurso e tomou posse. Sem valer ponto: depois de quanto tempo trabalhando no cargo ela pode ganhar a garantia de não ser mandada embora?",
       reveal: "São 3 anos, e ainda falta uma condição. As próximas telas mostram qual.",
       visual: null,
     },

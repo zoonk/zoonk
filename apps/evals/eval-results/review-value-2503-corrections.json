@@ -16,11 +16,12 @@
     {
       "caseId": "pt-estabilidade-sourced-clean",
       "expectation": "pass",
-      "change": "Specify appointment by concurso to a permanent post, three years of effective service, and distinguish taking office from starting service.",
+      "change": "Specify appointment by concurso to a permanent post, three years of effective service, and distinguish taking office from starting service in the rendered explanation, question and summary.",
       "sources": [
         "https://legis.senado.gov.br/norma/579494/publicacao/16434817",
         "https://www.gov.br/servidor/pt-br/acesso-a-informacao/gestao-de-pessoas/lei-8112-anotada/titulo-ii-do-provimento-vacancia-remocao-redistribuicao-e-substituicao/capitulo-i-do-provimento/secao-iv-da-posse-e-do-exercicio"
-      ]
+      ],
+      "unusedGuessNote": "The edit to the raw screen-0 guess was reverted: openOnScene replaces that screen through rewrites: { 0: lostPostGuess }, so it never affected the eval input."
     },
     {
       "caseId": "en-doorways-picture-options-clean",
