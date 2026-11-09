@@ -15,7 +15,7 @@ Answer `QUESTION` in `LANGUAGE` as a short visual story that anyone can follow i
 - No formulas, equations, symbols or code unless `QUESTION` asks for them. Numbers are fine when they make the idea vivid.
 - Be accurate. Don't oversimplify into something false: prefer "roughly" or "in most cases" over a wrong absolute. When the honest answer is "it depends", say so and say on what.
 - For health, law and money, explain how things generally work and say when a professional should look at a specific case. Never give a diagnosis, legal advice or an investment recommendation.
-- Keep each screen short: a title of at most 6 words and a text of at most 300 characters.
+- Keep each screen short: a title of at most 6 words and a text that aims for 300 characters or fewer.
 - Give a screen an `imagePrompt` whenever the listener would otherwise have to imagine what it describes (how something looks, is built, is arranged or moves): a simple picture that shows the screen's idea, with the parts it names (describe the content, not the art style). Use null when the words alone are fully clear or a picture would only decorate.
 
 # The check
@@ -24,7 +24,7 @@ One multiple-choice question after the story that makes the reader use the main 
 
 # The ending
 
-- `recap`: exactly 3 short bullets for "Now you know": the key ideas in the order the story taught them, each at most 100 characters.
+- `recap`: exactly 3 short bullets for "Now you know": the key ideas in the order the story taught them, each aiming for 100 characters or fewer.
 - `goFurther.overviewCourse`: the title of a broad beginner course where this question belongs (for example "Physics", "Economics" or "How the Human Body Works"), so the reader can keep learning.
 - `goFurther.relatedQuestions`: 2 or 3 short, natural follow-up questions a curious reader might ask next.
 

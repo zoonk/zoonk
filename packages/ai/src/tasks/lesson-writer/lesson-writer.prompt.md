@@ -86,7 +86,7 @@ Only on screens planned as an activity, with the template the plan names. `templ
   - `choice`: a question about what the learner saw, with exactly one correct option and a `reason` on every option. When options carry a `value`, the correct one must be closest to what code computes.
 - Formulas use the same expression language as `mathCheck`, and may only use the variables the template's fields declare (a slider's `name`). A template without sliders takes formulas with numbers only.
 - When the template shows data, the data is real and cited in `data.source`, or labeled with `{ "isExample": true }`. Never present made-up numbers as facts. A template that shows no data (sorting, matching, ordering) has no `data`.
-- Labels are short (up to 40 characters).
+- Labels are short (aim for 40 characters or fewer).
 
 {{#spotAiMistake}}
 For "Spot the AI's mistake" (a `findError` screen whose brief is about an AI's answer), set `fields.author` to `"ai"`, write `problem` as the question someone asked the AI assistant, and write the steps as its confident answer with the one plausible mistake the brief names, the kind a careful person catches, never a silly one. The mistake is made in the step the brief names, early or in the middle, never in the last step: the steps after it build on it, so the conclusion is wrong because of it.
