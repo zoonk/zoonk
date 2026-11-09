@@ -121,18 +121,9 @@ export function getChallengeTimings({
         const nextSession =
           !savedDay && next && funded.has(id) && next.getTime() === nextStudy?.getTime();
 
-        const blockedNext =
-          next && nextStudy && next > nextStudy && isChallengeReached({ boss, items });
-
-        const estimate = blockedNext
-          ? next
-          : new Date(
-              Math.max(
-                tomorrow.getTime(),
-                isChallengeReached({ boss, items }) ? 0 : (boss.scheduledFor?.getTime() ?? 0),
-                isChallengeReached({ boss, items }) ? (future?.getTime() ?? 0) : 0,
-              ),
-            );
+        const estimate = isChallengeReached({ boss, items })
+          ? (future ?? tomorrow)
+          : new Date(Math.max(tomorrow.getTime(), boss.scheduledFor?.getTime() ?? 0));
 
         return [
           id,
