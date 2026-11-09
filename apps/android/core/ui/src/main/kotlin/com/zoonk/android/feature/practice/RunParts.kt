@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +26,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,13 +40,16 @@ import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.plainItemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.leadingIconInset
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -288,15 +293,31 @@ fun ListeningSet(set: ItemSet) {
 fun SaveErrorText(
     failures: Int,
     onRetry: (() -> Unit)? = null,
+    onReport: () -> Unit,
+    firstFailureMessage: String = stringResource(R.string.practice_save_error),
+    retryLabel: String = stringResource(R.string.practice_try_again),
+    liveRegion: LiveRegionMode = LiveRegionMode.Polite,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(if (failures > 1) R.string.practice_save_error_repeat else R.string.practice_save_error),
-            modifier = Modifier.weight(1f, fill = false).semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = if (failures > 1) stringResource(R.string.practice_save_error_repeat) else firstFailureMessage,
+                modifier = Modifier.weight(1f, fill = false).semantics { this.liveRegion = liveRegion },
+                color = MaterialTheme.colorScheme.error,
+                style = textStyle,
+            )
+            onRetry?.let { TextButton(onClick = it) { Text(retryLabel) } }
+        }
+        if (failures > 1) {
+            TextButton(
+                onClick = onReport,
+                modifier = Modifier.offset(x = -LocalButtonSize.current.leadingIconInset),
+                leadingIcon = { ButtonIcon(R.drawable.ic_flag) },
+            ) {
+                Text(stringResource(R.string.feedback_report_problem))
+            }
+        }
     }
 }
 

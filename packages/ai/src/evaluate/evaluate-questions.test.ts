@@ -1,3 +1,4 @@
+import { Experimental_DecisionLanguageModel } from "@ai-sdk/provider-utils/experimental-decision";
 import { experimental_decide } from "ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { blockTestGatewayFetch } from "../_utils/block-test-gateway-fetch";
@@ -54,6 +55,28 @@ describe(evaluateQuestions, () => {
 
     await expect(evaluateQuestions(evaluation)).rejects.toBe(blocked);
     expect(experimental_decide).toHaveBeenCalledOnce();
+  });
+
+  it("asks a native fallback through the gateway's decision model, not the language adapter", async () => {
+    vi.mocked(experimental_decide)
+      .mockRejectedValueOnce(new Error("The provider refused the request"))
+      .mockResolvedValueOnce({
+        answers: { same: { probability: 0.9, type: "boolean" } },
+        providerMetadata: undefined,
+        response: { modelId: "baseten/mammoth-1", timestamp: new Date() },
+        rounding: undefined,
+        usage: { inputTokens: 100, outputTokens: 1, totalTokens: 101 },
+        warnings: [],
+      });
+
+    await expect(
+      evaluateQuestions({ ...evaluation, fallbackModel: "baseten/mammoth-1" }),
+    ).resolves.toMatchObject({ model: "baseten/mammoth-1" });
+
+    const fallbackModel = vi.mocked(experimental_decide).mock.calls[1]?.[0].model;
+
+    expect(fallbackModel).toMatchObject({ modelId: "baseten/mammoth-1" });
+    expect(fallbackModel).not.toBeInstanceOf(Experimental_DecisionLanguageModel);
   });
 
   it("keeps any other failure as the provider reported it", async () => {

@@ -320,14 +320,13 @@ struct PracticeSecondaryButton: View {
 
 struct PracticeSaveError: View {
   let failures: Int
+  let onReport: () -> Void
   let retry: () -> Void
 
   var body: some View {
     HStack {
-      FailureLine(
-        message: Self.message(failures: failures)
-      )
-      .typeStyle(.body)
+      SaveFailureNotice(failures: failures, onReport: onReport)
+        .typeStyle(.body)
 
       Spacer()
 
@@ -337,18 +336,43 @@ struct PracticeSaveError: View {
       .buttonStyle(.outline)
     }
   }
+}
 
-  static let repeatedMessage = LocalizedStringResource(
-    "Still not going through. You can come back later.", table: "Practice",
-    comment: "Second or later save failure in a row; the learner can retry or return later")
+struct SaveFailureNotice<Line: View>: View {
+  let failures: Int
+  let firstMessage: LocalizedStringResource
+  let onReport: () -> Void
+  @ViewBuilder var line: (LocalizedStringResource) -> Line
 
-  static func message(failures: Int) -> LocalizedStringResource {
-    failures > 1
-      ? repeatedMessage
-      : LocalizedStringResource(
-        "That didn't go through. Your answers are kept.", table: "Practice",
-        comment: "An answer or finish didn't reach the server; the learner's answers stay on screen"
-      )
+  var body: some View {
+    let isRepeated = failures > 1
+    VStack(alignment: .leading, spacing: 4) {
+      line(
+        isRepeated
+          ? LocalizedStringResource(
+            "Still not going through. You can come back later.", table: "Practice",
+            comment: "Second or later save failure in a row; the learner can retry or return later")
+          : firstMessage)
+
+      if isRepeated {
+        SaveFailureReportButton(action: onReport)
+      }
+    }
+  }
+}
+
+extension SaveFailureNotice where Line == FailureLine {
+  init(
+    failures: Int,
+    firstMessage: LocalizedStringResource = LocalizedStringResource(
+      "That didn't go through. Your answers are kept.", table: "Practice",
+      comment: "An answer or finish didn't reach the server; the learner's answers stay on screen"
+    ),
+    onReport: @escaping () -> Void
+  ) {
+    self.init(failures: failures, firstMessage: firstMessage, onReport: onReport) {
+      FailureLine(message: $0)
+    }
   }
 }
 

@@ -52,7 +52,7 @@ function fix(problems: { problem: string; screen: number | null }[]) {
   return fixAlphabetLesson({
     learnerLanguage: "en",
     lesson: published,
-    problems,
+    problems: problems.map((problem) => ({ ...problem, source: "review" as const })),
     targetLanguage: "ru",
   });
 }
@@ -69,7 +69,7 @@ describe(fixAlphabetLesson, () => {
 
     const { data, userPrompt } = await fix([{ problem: "The h is silent.", screen: 2 }]);
 
-    expect(userPrompt).toContain("Screen 3: The h is silent.");
+    expect(userPrompt).toContain("Screen 3 (reviewer): The h is silent.");
     expect(userPrompt).toContain('"screen": 3');
 
     expect(data).toStrictEqual({

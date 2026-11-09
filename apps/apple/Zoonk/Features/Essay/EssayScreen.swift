@@ -64,6 +64,7 @@ private struct EssayContent: View {
   @State private var finishing = false
   @State private var finishFailures = 0
   @State private var confirmsLeave = false
+  @State private var showsSaveReport = false
   @State private var openCriteria: Set<String> = []
   @FocusState private var isBoxFocused: Bool
 
@@ -146,6 +147,10 @@ private struct EssayContent: View {
       }
     }
     .interactiveDismissDisabled(writer.isWriting && writer.unsent)
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "essay", reportType: .saveFailure), isReport: true
+    )
     .confirmationDialog(
       Text("Leave for now?", tableName: "Essay", comment: "Leaving with unsent text"),
       isPresented: $confirmsLeave, titleVisibility: .visible
@@ -306,19 +311,19 @@ private struct EssayContent: View {
   private var statusLine: some View {
     Group {
       if finishFailures > 0, !finishing {
-        FailureLine(
-          message: finishFailures > 1
-            ? PracticeSaveError.repeatedMessage
-            : LocalizedStringResource(
-              "That didn't go through. Try again in a moment.", table: "Essay",
-              comment: "Finishing the block failed"))
+        SaveFailureNotice(
+          failures: finishFailures,
+          firstMessage: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Essay",
+            comment: "Finishing the block failed"),
+          onReport: { showsSaveReport = true })
       } else if writer.status == .failed {
-        FailureLine(
-          message: writer.saveFailures > 1
-            ? PracticeSaveError.repeatedMessage
-            : LocalizedStringResource(
-              "That didn't go through. Your text is still here. Try again in a moment.",
-              table: "Essay", comment: "Grading failed"))
+        SaveFailureNotice(
+          failures: writer.saveFailures,
+          firstMessage: LocalizedStringResource(
+            "That didn't go through. Your text is still here. Try again in a moment.",
+            table: "Essay", comment: "Grading failed"),
+          onReport: { showsSaveReport = true })
       } else if writer.isWriting, writer.status == .signUpRequired {
         HelpLimitNotice(limit: .signUpRequired)
       } else if let statusNote {

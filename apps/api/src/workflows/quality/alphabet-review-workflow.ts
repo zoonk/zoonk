@@ -48,6 +48,17 @@ export async function alphabetReviewWorkflow({
     return "replaced";
   }
 
+  const remaining = await reviewAlphabetLessonStep({ ...context, lesson: fix.lesson });
+
+  if (!remaining) {
+    return "replaced";
+  }
+
+  if (remaining.length > 0) {
+    const setAside = await setAsidePublishedLessonStep({ lessonId, version });
+    return setAside ? "setAside" : "replaced";
+  }
+
   try {
     const audioUrls = await voiceAlphabetClips({
       clips: fix.clips,

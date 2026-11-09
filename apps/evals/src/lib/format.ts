@@ -4,11 +4,19 @@ export function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
-export function formatSeconds(value: number): string {
+export function formatSeconds(value: number | null): string {
+  if (value === null) {
+    return "—";
+  }
+
   return `${value.toFixed(2)}s`;
 }
 
-export function formatDollars(value: number): string {
+export function formatDollars(value: number | null): string {
+  if (value === null) {
+    return "—";
+  }
+
   return value >= 1 ? `$${value.toFixed(2)}` : `$${value.toFixed(4)}`;
 }
 

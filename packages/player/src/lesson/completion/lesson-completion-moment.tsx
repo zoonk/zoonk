@@ -17,6 +17,7 @@ import {
   TaskActions,
   TaskBody,
 } from "@zoonk/learn/task-layout";
+import { useStudyTimeFact } from "@zoonk/learn/time-format";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
@@ -33,19 +34,23 @@ function CompletionReadouts({
   brainPower,
   correct,
   reviewAt,
+  seconds,
 }: {
   answered: number;
   brainPower: number;
   correct: number;
   reviewAt: string | null;
+  seconds: number;
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const studied = useStudyTimeFact(seconds);
 
   return (
     <MomentReadouts
       brainPower={brainPower}
       facts={[
+        studied,
         reviewAt &&
           t("Review on {date}", {
             date: format.dateTime(new Date(reviewAt), { day: "numeric", month: "short" }),
@@ -137,6 +142,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
               brainPower={celebration?.brainPower ?? 0}
               correct={correctCount}
               reviewAt={result?.nextReviewAt ?? null}
+              seconds={result?.seconds ?? 0}
             />
           )}
         </MomentHeader>

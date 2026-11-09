@@ -14,6 +14,7 @@ struct PatternScreen: View {
   @State private var checked: Int?
   @State private var isSaving = false
   @State private var saveFailures = 0
+  @State private var showsSaveReport = false
   @State private var showsRule = false
   /// One id for this drill, sent again by Try again, so a retry after a lost response counts once.
   @State private var requestId = UUID().uuidString.lowercased()
@@ -45,6 +46,9 @@ struct PatternScreen: View {
       certificates: finished?.certificates ?? [], ceremony: finished?.ceremony?.value1
     )
     .task(id: session.authenticatedSession) { await read() }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "mistake-pattern", reportType: .saveFailure), isReport: true)
   }
 
   private var finished: Components.Schemas.MistakePatternPracticeResult? {
@@ -156,7 +160,9 @@ struct PatternScreen: View {
       }
     } actions: {
       if saveFailures > 0, !isSaving {
-        PracticeSaveError(failures: saveFailures) { Task { await save(pattern) } }
+        PracticeSaveError(
+          failures: saveFailures, onReport: { showsSaveReport = true },
+          retry: { Task { await save(pattern) } })
       }
 
       if result != nil {

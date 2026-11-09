@@ -42,6 +42,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.activities.ActivityAnnouncement
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -85,6 +86,8 @@ fun GoalSetupScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val placementReport = rememberSaveFailureReport(app, "placement-question")
+    val levelTestReport = rememberSaveFailureReport(app, "level-test-question")
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
     CompositionLocalProvider(
@@ -100,6 +103,8 @@ fun GoalSetupScreen(
             navigator,
             warmUps = app.warmUps,
             prepareToday = { app.today.today.refresh() },
+            onReportPlacement = placementReport::open,
+            onReportLevelTest = levelTestReport::open,
         )
     }
 }
@@ -114,6 +119,8 @@ fun GoalSetupScreen(
     navigator: AppNavigator,
     warmUps: WarmUpStore? = null,
     prepareToday: suspend () -> Unit = {},
+    onReportPlacement: () -> Unit = {},
+    onReportLevelTest: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId) }
@@ -225,6 +232,8 @@ fun GoalSetupScreen(
                                             warmUps,
                                             prepareToday,
                                             announce,
+                                            onReportPlacement,
+                                            onReportLevelTest,
                                         )
                                     }
                                 if (it == OnboardingStep.SCHEDULE) schedule.SaveableStateProvider(it.value, setupStep) else setupStep()
@@ -263,6 +272,8 @@ private fun ColumnScope.SetupStep(
     warmUps: WarmUpStore?,
     prepareToday: suspend () -> Unit,
     announce: (String) -> Unit,
+    onReportPlacement: () -> Unit,
+    onReportLevelTest: () -> Unit,
 ) {
     val subject = view.subject()
     val pending = vm.isSaving
@@ -292,6 +303,8 @@ private fun ColumnScope.SetupStep(
             onRetryRun,
             asideBeside,
             prepareToday,
+            onReportPlacement,
+            onReportLevelTest,
         )
     }
 }
@@ -313,6 +326,8 @@ private fun ColumnScope.QuestionStep(
     onRetryRun: (() -> Unit)?,
     asideBeside: Boolean,
     prepareToday: suspend () -> Unit,
+    onReportPlacement: () -> Unit,
+    onReportLevelTest: () -> Unit,
 ) {
     when (step) {
         OnboardingStep.PURPOSE -> {
@@ -412,6 +427,7 @@ private fun ColumnScope.QuestionStep(
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },
                     onDone = placed,
+                    onReportSaveFailure = onReportLevelTest,
                 )
             } else {
                 PlacementStep(
@@ -425,6 +441,7 @@ private fun ColumnScope.QuestionStep(
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },
                     onDone = placed,
+                    onReportSaveFailure = onReportPlacement,
                 )
             }
         }

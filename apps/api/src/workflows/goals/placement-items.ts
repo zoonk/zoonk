@@ -1,10 +1,15 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
-import { type ContentAnalytics } from "../_shared/content-analytics";
+import { type ContentAnalytics, toContentAnalytics } from "../_shared/content-analytics";
+import { checkItemKeysStep } from "./steps/item-keys-step";
 import {
+  type CheckedSkillItems,
   DEFAULT_QUICK_COUNT,
+  type PlacementBatch,
   type PlacementItemsRequest,
+  getQuickOptionCount,
   isGoalInPlacementWeekStep,
   pickPlacementBatchesStep,
+  storePlacementBatchStep,
   writePlacementBatchStep,
 } from "./steps/placement-items-steps";
 
@@ -36,6 +41,44 @@ function countWritten({
   );
 }
 
+/** The batch's key check runs at the batch's own wait, so the first question stays a learner's call. */
+async function preparePlacementBatch(batch: PlacementBatch & { wait: CallWait }): Promise<number> {
+  const { analytics, quickFormat, skills, wait, workflowRunId } = batch;
+  const [first] = skills;
+  const written = await writePlacementBatchStep(batch);
+
+  if (!first || !written) {
+    return 0;
+  }
+
+  const quick = written.items.flatMap((items, skill) =>
+    items.quick.map((item) => ({ item, skill })),
+  );
+
+  const { kept } = await checkItemKeysStep({
+    analytics: toContentAnalytics({ analytics, scope: first, workflowRunId }),
+    items: quick.map(({ item }) => item),
+    language: first.language,
+    optionCount: getQuickOptionCount({ quickFormat, skill: first }),
+    optionLanguage: first.targetLanguage,
+    wait,
+  });
+
+  const items: CheckedSkillItems[] = written.items.map(({ typed }, skill) => ({
+    quick: kept.filter(({ index }) => quick[index]?.skill === skill).map(({ item }) => item),
+    typed,
+  }));
+
+  return storePlacementBatchStep({
+    analytics,
+    items,
+    provenance: written.provenance,
+    quickFormat,
+    skills,
+    workflowRunId,
+  });
+}
+
 export async function preparePlacementItems(
   request: PlacementItemsRequest,
 ): Promise<PlacementItemsWritten> {
@@ -44,7 +87,7 @@ export async function preparePlacementItems(
 
   const results = await Promise.allSettled(
     batches.map((skills, index) =>
-      writePlacementBatchStep({
+      preparePlacementBatch({
         analytics,
         confirmingCount,
         quickCount,

@@ -469,6 +469,14 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Non ha funzionato. Riprova tra poco."
 
 #: src/_components/save-error.tsx
+#: src/feedback/feedback-form-dialog.tsx
+#: src/feedback/report-problem-item.tsx
+#: src/journey/journey-menu.tsx
+msgctxt "feedback.Hf_X9X"
+msgid "Report a problem"
+msgstr "Segnala un problema"
+
+#: src/_components/save-error.tsx
 msgctxt "71Gfs0"
 msgid "Still not going through. You can come back later."
 msgstr "L’invio non è riuscito neanche questa volta. Puoi tornare più tardi."
@@ -801,6 +809,12 @@ msgstr "Non controllata questa volta"
 msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "Tempo di studio diverso nel fine settimana"
+
+#: src/_utils/time-format.ts
+#: src/today/today-day-progress.tsx
+msgctxt "RQRGjK"
+msgid "{time} studied"
+msgstr "{time} di studio"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.kZw3xs"
@@ -3836,13 +3850,6 @@ msgstr "Spiegazione rapida · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
-msgctxt "feedback.Hf_X9X"
-msgid "Report a problem"
-msgstr "Segnala un problema"
-
-#: src/feedback/feedback-form-dialog.tsx
-#: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
 msgstr "Invia feedback"
@@ -3867,6 +3874,11 @@ msgctxt "feedback.IVDs_9"
 msgid "Your email, for our reply"
 msgstr "La tua email, per risponderti"
 
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.hBQCdX"
+msgid "Your email, if you'd like a reply"
+msgstr "La tua email, se vuoi una risposta"
+
 #. An example email address in an empty field. Adapt it to the language.
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.OiSL94"
@@ -3877,6 +3889,11 @@ msgstr "lamiaemail@gmail.com"
 msgctxt "feedback.Xx0WZV"
 msgid "Send message"
 msgstr "Invia messaggio"
+
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.f7aJd1"
+msgid "I couldn't save my answers."
+msgstr "Non riesco a salvare le mie risposte."
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.T7Ry38"
@@ -13686,11 +13703,6 @@ msgstr "Ci stiamo mettendo più tempo del solito"
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# su {total, number} completati} one {# completato su {total, number}} other {# completati su {total, number}}}"
-
-#: src/today/today-day-progress.tsx
-msgctxt "RQRGjK"
-msgid "{time} studied"
-msgstr "{time} di studio"
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"

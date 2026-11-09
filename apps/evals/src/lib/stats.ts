@@ -9,9 +9,9 @@ import { type TaskEvalResults } from "./types";
 export type TaskStats = {
   averageInputTokens: number;
   averageOutputTokens: number;
-  latencyP50: number;
-  latencyP95: number;
-  costPer1000Runs: number;
+  latencyP50: number | null;
+  latencyP95: number | null;
+  costPer1000Runs: number | null;
   runCost: number;
   judgeCost: number;
   extraCost: number;
@@ -48,6 +48,7 @@ export function getStatsFromResults({
       : results.map((result) => getRunCost({ model, prices, run: result }));
 
   const latency = summarizeLatency(results.map((result) => result.duration));
+  const scored = results.length > 0;
 
   return {
     averageInputTokens: average(results.map((result) => result.inputTokens)),
@@ -55,14 +56,14 @@ export function getStatsFromResults({
     classification: summarizeClassification(
       results.flatMap((result) => (result.classification ? [result.classification] : [])),
     ),
-    costPer1000Runs: estimateCostPer1000Runs({ failedCost, runCosts }),
+    costPer1000Runs: scored ? estimateCostPer1000Runs({ failedCost, runCosts }) : null,
     extraCost: getCallsCost({
       calls: [...results, ...failedRuns].flatMap((run) => run.extraCalls ?? []),
       prices,
     }),
     judgeCost: getCallsCost({ calls: results.flatMap((result) => result.judge ?? []), prices }),
-    latencyP50: latency.p50,
-    latencyP95: latency.p95,
+    latencyP50: scored ? latency.p50 : null,
+    latencyP95: scored ? latency.p95 : null,
     runCost: sum(runCosts) + failedCost,
   };
 }

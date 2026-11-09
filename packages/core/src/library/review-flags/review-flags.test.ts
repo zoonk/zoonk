@@ -11,6 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
+import { keyChecked } from "../items/_test-utils/generated-items";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
 import { createSourceChangeNotice } from "../sources/content-review-flags";
 import { recordSourceChangeNotice } from "../sources/source-change-notices";
@@ -246,7 +247,7 @@ describe("the flag sweep", () => {
 
     const rewritten = await replaceFlaggedDrills({
       drills: [
-        {
+        keyChecked({
           context: null,
           difficulty: "medium",
           format: "trueFalse",
@@ -257,7 +258,7 @@ describe("the flag sweep", () => {
           reference: "Art. 13",
           statement: "A posse ocorrerá no prazo de trinta dias contados da publicação do ato.",
           visual: null,
-        },
+        }),
       ],
       group,
       optionCount: 4,

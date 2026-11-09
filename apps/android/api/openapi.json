@@ -11212,7 +11212,7 @@
     },
     "/feedback": {
       "post": {
-        "description": "Stores the message with its context, plus the model and prompt version behind the content it's about when known, and emails it to the team. Anyone can send one; a signed-in learner's message is linked to their account.",
+        "description": "Stores the message with its context, plus the model and prompt version behind the content it's about when known, and emails it to the team. Anyone can send one without an email; a signed-in learner's message is linked to their account, including guests. Reports about answers that keep failing to save carry `context.reportType: saveFailure`.",
         "operationId": "createFeedback",
         "security": [
           {},
@@ -26912,6 +26912,12 @@
                   "web"
                 ]
               },
+              "reportType": {
+                "type": "string",
+                "enum": [
+                  "saveFailure"
+                ]
+              },
               "screen": {
                 "type": "string",
                 "maxLength": 100
@@ -26934,10 +26940,9 @@
           }
         },
         "required": [
-          "email",
           "message"
         ],
-        "description": "A feedback or contact message. `context` says where it was written: the screen, page, content, platform and app version."
+        "description": "A feedback or contact message with an optional reply email. `context` says where it was written: the screen, page, content, platform and app version. A report about answers that keep failing to save carries `context.reportType: saveFailure`."
       },
       "EmailSignInCodeRequest": {
         "type": "object",

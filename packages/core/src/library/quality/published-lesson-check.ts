@@ -1,24 +1,14 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
-import { prisma } from "@zoonk/db";
-import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
-import { safeAsync } from "@zoonk/utils/error";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
-import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
-import {
-  moveOnWithoutLesson,
-  readHeldPlanIds,
-  refreshPlansWithoutLesson,
-} from "../generation/hold-back-lesson";
 import {
   type CheckedVersion,
   type GateResult,
-  checkVersion,
-  citeScreens,
+  checkFixedLesson,
   citeScreensIfPossible,
-  fixVersion,
+  fixVersionDraft,
   readLessonSources,
   toScreensToSave,
 } from "../lessons/_utils/checked-version";
@@ -33,17 +23,13 @@ import {
   stageLessonVersion,
 } from "../lessons/_utils/save-lesson-content";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
-import {
-  CURRENT_STEPS,
-  lockCurrentLessonVersion,
-  readCurrentLessonVersion,
-  readStagedLessonVersion,
-  retireUnaskedQuestions,
-} from "../lessons/lesson-versions";
+import { readCurrentLessonVersion, readStagedLessonVersion } from "../lessons/lesson-versions";
 import { type LessonCheckPlan } from "../lessons/write-lesson-content";
 import {
   BACKGROUND_TIER,
   type CheckContext,
+  type PublishedDraftState,
+  type PublishedFix,
   keepPictures,
   loadCheck,
   loadVersionSteps,
@@ -52,11 +38,12 @@ import {
   toTaskAnalytics,
 } from "./_utils/published-versions";
 import { runLessonQualityGate } from "./lesson-quality-gate";
+import { repairWrittenLesson } from "./lesson-repairs";
 
 export type PublishedLessonOutcome =
   | { status: "passed" | "replaced" }
   | { savedAt: number; status: "republished"; version: number }
-  | { draft: HeldBackDraft; incorrect: boolean; status: "heldBack" };
+  | { draft: HeldBackDraft; status: "heldBack" };
 
 async function stageFixedVersion({
   checked,
@@ -105,21 +92,11 @@ async function readStagedFix(lessonId: string): Promise<PublishedLessonOutcome |
   return staged && { ...staged, status: "republished" };
 }
 
-function toReviewFindings(gate: GateResult): GateResult {
-  const fromCode = gate.blocking.filter((problem) => problem.source === "code");
-
-  return {
-    ...gate,
-    blocking: gate.blocking.filter((problem) => problem.source === "review"),
-    minor: [...gate.minor, ...fromCode],
-  };
-}
-
 /** Internal workflow bridge; not an app authorization boundary. */
 export async function checkPublishedLesson({
   plan,
   ...context
-}: CheckContext & { plan: LessonCheckPlan }): Promise<PublishedLessonOutcome> {
+}: CheckContext & { plan: LessonCheckPlan }): Promise<PublishedDraftOutcome> {
   const staged = await readStagedFix(context.lessonId);
 
   if (staged) {
@@ -134,9 +111,12 @@ export async function checkPublishedLesson({
 
   const { gate, inputs } = loaded;
 
-  const first = toReviewFindings(
-    await runLessonQualityGate({ ...gate, lesson: plan.lesson, review: true }),
-  );
+  const checked = await runLessonQualityGate({ ...gate, lesson: plan.lesson, review: true });
+
+  const first = {
+    ...checked,
+    blocking: checked.blocking.filter((problem) => problem.source === "review"),
+  };
 
   if (first.blocking.length === 0) {
     return { status: "passed" };
@@ -144,26 +124,144 @@ export async function checkPublishedLesson({
 
   const previous = await loadVersionSteps({ lessonId: context.lessonId, version: plan.version });
 
-  const checked = await fixVersion({
-    draft: { lesson: plan.lesson, provenanceByScreen: previous.map((step) => toProvenance(step)) },
+  return {
     first,
-    gate,
+    state: {
+      context,
+      gate,
+      inputs,
+      live: true,
+      replaces: plan.version,
+      version: {
+        lesson: plan.lesson,
+        provenanceByScreen: previous.map((step) => toProvenance(step)),
+      },
+    },
+    status: "needsFix",
+  };
+}
+
+export type PublishedDraftOutcome =
+  | PublishedLessonOutcome
+  | { first: GateResult; status: "needsFix"; state: PublishedDraftState }
+  | { status: "drafted"; state: PublishedDraftState }
+  | {
+      status: "checked";
+      state: PublishedDraftState;
+      checked: Extract<CheckedVersion, { status: "passed" }>;
+    };
+
+export async function fixPublishedDraft({
+  first,
+  state,
+}: {
+  first: GateResult;
+  state: PublishedDraftState;
+}): Promise<PublishedFix> {
+  const version = await fixVersionDraft({ draft: state.version, first, gate: state.gate });
+  const before = state.version.lesson;
+  const after = version.lesson;
+
+  const flaggedScreens = first.blocking
+    .filter((problem) => problem.source === "review")
+    .map((problem) => problem.screen);
+
+  return state.live && isDeepStrictEqual(before, after)
+    ? { status: "passed" }
+    : { before, flaggedScreens, state: { ...state, version }, status: "fixed" };
+}
+
+export async function checkPublishedDraft({
+  state,
+}: {
+  state: PublishedDraftState;
+}): Promise<
+  Extract<PublishedDraftOutcome, { status: "checked" | "needsFix" }> | { status: "replaced" }
+> {
+  if ((await readCurrentLessonVersion(state.context.lessonId)) !== state.replaces) {
+    return { status: "replaced" };
+  }
+
+  const checked = await runLessonQualityGate({
+    ...state.gate,
+    lesson: state.version.lesson,
     review: true,
   });
 
-  if (checked.status === "heldBack") {
-    return {
-      draft: toHeldBackDraft({
-        model: plan.writerModel,
-        problems: checked.problems,
-        workflowRunId: context.workflowRunId,
-      }),
-      incorrect: first.incorrect.length > 0,
-      status: "heldBack",
-    };
+  return checked.blocking.length > 0
+    ? { first: checked, state, status: "needsFix" }
+    : {
+        checked: { screens: checked.screens, status: "passed", version: state.version },
+        state,
+        status: "checked",
+      };
+}
+
+export async function recheckPublishedDraft({
+  before,
+  flaggedScreens,
+  state,
+}: {
+  before: WrittenLesson;
+  flaggedScreens: (number | null)[];
+  state: PublishedDraftState;
+}): Promise<
+  Extract<PublishedDraftOutcome, { status: "checked" | "heldBack" }> | { status: "replaced" }
+> {
+  if ((await readCurrentLessonVersion(state.context.lessonId)) !== state.replaces) {
+    return { status: "replaced" };
   }
 
-  return stageFixedVersion({ checked, context, inputs, replaces: plan.version });
+  const checked = await checkFixedLesson({
+    fixed: state.version.lesson,
+    gate: state.gate,
+    review: !isDeepStrictEqual(before, state.version.lesson),
+  });
+
+  // A finding the writer saw on a screen it left unchanged is final, matched by screen, not wording.
+  // A lesson-wide finding always blocks: nothing ties it to what the writer kept.
+  const blocking = checked.blocking.filter(
+    (problem) =>
+      problem.source === "code" ||
+      problem.screen === null ||
+      !flaggedScreens.includes(problem.screen) ||
+      !isDeepStrictEqual(
+        before.screens[problem.screen],
+        state.version.lesson.screens[problem.screen],
+      ),
+  );
+
+  return blocking.length > 0
+    ? {
+        draft: toHeldBackDraft({
+          model: state.gate.writerModel,
+          problems: blocking,
+          workflowRunId: state.context.workflowRunId,
+        }),
+        status: "heldBack",
+      }
+    : {
+        checked: { screens: checked.screens, status: "passed", version: state.version },
+        state,
+        status: "checked",
+      };
+}
+
+export async function stagePublishedDraft({
+  state,
+  checked,
+}: Extract<PublishedDraftOutcome, { status: "checked" }>): Promise<PublishedLessonOutcome> {
+  const staged = await readStagedFix(state.context.lessonId);
+
+  return (
+    staged ??
+    stageFixedVersion({
+      checked,
+      context: state.context,
+      inputs: state.inputs,
+      replaces: state.replaces,
+    })
+  );
 }
 
 /** Internal workflow bridge; not an app authorization boundary. */
@@ -174,7 +272,7 @@ export async function redraftPublishedLesson({
 }: CheckContext & {
   heldBackDrafts: HeldBackDraft[];
   version: number;
-}): Promise<PublishedLessonOutcome> {
+}): Promise<PublishedDraftOutcome> {
   const [inputs, current, staged, analytics, reuse] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
     readCurrentLessonVersion(context.lessonId),
@@ -207,31 +305,27 @@ export async function redraftPublishedLesson({
     return { status: "replaced" };
   }
 
-  const checked = await checkVersion({
-    draft: {
-      lesson: draft.data,
-      provenanceByScreen: draft.data.screens.map(() => ({
-        ...draft.provenance,
-        sources: readLessonSources(inputs),
-      })),
+  return {
+    state: {
+      context,
+      gate: loaded.gate,
+      inputs: loaded.inputs,
+      live: false,
+      replaces: version,
+      version: {
+        lesson: repairWrittenLesson({
+          language: inputs.language,
+          lesson: draft.data,
+          spec: inputs.spec,
+        }),
+        provenanceByScreen: draft.data.screens.map(() => ({
+          ...draft.provenance,
+          sources: readLessonSources(inputs),
+        })),
+      },
     },
-    gate: loaded.gate,
-    review: true,
-  });
-
-  if (checked.status === "heldBack") {
-    return {
-      draft: toHeldBackDraft({
-        model: draft.provenance.model,
-        problems: checked.problems,
-        workflowRunId: context.workflowRunId,
-      }),
-      incorrect: false,
-      status: "heldBack",
-    };
-  }
-
-  return stageFixedVersion({ checked, context, inputs: loaded.inputs, replaces: version });
+    status: "drafted",
+  };
 }
 
 /** Internal workflow bridge: makes a staged fix the version learners get. */
@@ -243,117 +337,4 @@ export async function publishFixedVersion({
   version: number;
 }): Promise<boolean> {
   return (await publishStagedLessonVersion({ lessonId, version })) !== null;
-}
-
-/** Internal workflow bridge; a failed citation call throws so the workflow step can retry. */
-export async function citePublishedLesson({
-  plan,
-  ...context
-}: CheckContext & { plan: Pick<LessonCheckPlan, "lesson" | "version"> }): Promise<number> {
-  const inputs = await loadPublishedLessonInputs(context.lessonId);
-
-  if (!inputs) {
-    return 0;
-  }
-
-  const citations = await citeScreens({
-    analytics: await toTaskAnalytics(context),
-    inputs,
-    lesson: plan.lesson,
-    serviceTier: BACKGROUND_TIER,
-  });
-
-  const cited = citations.flatMap((citation, position) =>
-    citation ? [{ citation, position }] : [],
-  );
-
-  const updates = await prisma.$transaction(
-    cited.map(({ citation, position }) =>
-      prisma.step.updateMany({
-        data: { sourceId: citation.sourceId, sourcePage: citation.page },
-        where: { lessonId: context.lessonId, position, version: plan.version, ...CURRENT_STEPS },
-      }),
-    ),
-  );
-
-  const count = updates.reduce((total, update) => total + update.count, 0);
-
-  if (count > 0) {
-    revalidateCacheTags([getLibraryLessonCacheTag(context.lessonId)]);
-  }
-
-  return count;
-}
-
-class PublishedLessonReplacedError extends Error {
-  override name = "PublishedLessonReplacedError";
-}
-
-/** Returns false if `version` was replaced or has a fix staged; callers must leave the newer version playable. */
-export async function setAsidePublishedLesson({
-  lessonId,
-  version,
-}: {
-  lessonId: string;
-  version: number;
-}): Promise<boolean> {
-  const holdKey = `${lessonId}:published:${version}`;
-
-  const { data: heldBack, error } = await safeAsync(() =>
-    writePlanInputs(async (tx) => {
-      const existing = await tx.step.findFirst({
-        select: { lesson: { select: { contentStatus: true, setAsideAt: true } }, version: true },
-        where: { lessonId, ...CURRENT_STEPS },
-      });
-
-      if (existing?.version !== version) {
-        return null;
-      }
-
-      if (existing.lesson.contentStatus !== "completed") {
-        return existing.lesson.setAsideAt
-          ? { changed: false, planIds: await readHeldPlanIds(tx, holdKey) }
-          : null;
-      }
-
-      const dependentPlanIds = await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
-      await markLockedPlanInputsChanged(tx, { planIds: dependentPlanIds });
-
-      if (
-        (await lockCurrentLessonVersion(tx, lessonId)) !== version ||
-        (await readStagedLessonVersion(lessonId, tx))
-      ) {
-        throw new PublishedLessonReplacedError();
-      }
-
-      await tx.lesson.update({
-        data: { contentStatus: "failed", setAsideAt: new Date() },
-        where: { id: lessonId },
-      });
-
-      await retireUnaskedQuestions(tx, { lessonId });
-      return { changed: true, planIds: await moveOnWithoutLesson(tx, lessonId, holdKey) };
-    }),
-  );
-
-  if (error instanceof PublishedLessonReplacedError) {
-    return false;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  if (!heldBack) {
-    return false;
-  }
-
-  const userIds = await refreshPlansWithoutLesson(heldBack.planIds);
-
-  revalidateCacheTags([
-    getLibraryLessonCacheTag(lessonId),
-    ...userIds.map((userId) => getGoalsCacheTag(userId)),
-  ]);
-
-  return heldBack.changed;
 }

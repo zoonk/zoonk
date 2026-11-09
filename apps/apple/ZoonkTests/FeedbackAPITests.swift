@@ -5,6 +5,27 @@ import XCTest
 @testable import Zoonk
 
 final class FeedbackAPITests: XCTestCase {
+  func testSaveReportOmitsAnEmptyEmailAndSendsItsReportType() async throws {
+    let api = makeFeedbackAPI(
+      transport: FeedbackResponseTransport(
+        expectedAuthorization: "Bearer guest-session",
+        expectedBody: [
+          "context": [
+            "appVersion": "2.0 (7)", "platform": "ios", "screen": "placement-question",
+            "reportType": "saveFailure",
+          ],
+          "message": "I couldn't save my answers.",
+        ],
+        responseBody: #"{"message":"Feedback received"}"#,
+        status: .ok))
+
+    try await api.submit(
+      FeedbackSubmission(
+        context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
+        email: nil, message: "I couldn't save my answers."),
+      token: "guest-session")
+  }
+
   func testSubmitFeedbackSendsItsContextAndLinksTheSignedInAccount() async throws {
     let api = makeFeedbackAPI(
       transport: FeedbackResponseTransport(

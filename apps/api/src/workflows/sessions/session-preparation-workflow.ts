@@ -16,7 +16,7 @@ import {
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
-  prepareFieldItemsStep,
+  prepareSkillFieldItems,
   readGoalField,
 } from "../goals/steps/field-items-steps";
 import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
@@ -74,7 +74,7 @@ async function preparePersonalLayer({
   ]);
 
   await Promise.allSettled([
-    ...fieldItems.map((target) => prepareFieldItemsStep({ ...context, target })),
+    ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
     ...versions.tools.map((target) => prepareToolVersionStep({ ...context, target })),
     ...versions.challenges.map((target) => prepareFieldChallengeStep({ ...context, target })),
   ]);

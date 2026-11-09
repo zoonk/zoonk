@@ -3,44 +3,20 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import {
-  type CallReuse,
-  type Reasoning,
-  type ServiceTier,
-  buildProviderOptions,
-} from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonWritingContext, formatLessonPlan } from "../lesson-writer/format-lesson-plan";
 import { type LessonMap } from "../lesson-writer/written-lesson-schema";
 import { getLessonCheckModels } from "./lesson-check-models";
 import promptTemplate from "./lesson-quality-check.prompt.md";
 
-const QUALITY_ISSUE_KINDS = [
-  "incorrect",
-  "jargon",
-  "unclear",
-  "filler",
-  "level",
-  "decorativeActivity",
-  "weakCheck",
-  "scope",
-] as const;
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: where and what before how to fix it. */
 const schema = z.object({
   issues: z.array(
-    z.object({
-      screen: z.number().int().nullable(),
-      kind: z.enum(QUALITY_ISSUE_KINDS),
-      severity: z.enum(["blocking", "minor"]),
-      problem: z.string(),
-      fix: z.string(),
-    }),
+    z.object({ screen: z.number().int().nullable(), problem: z.string(), fix: z.string() }),
   ),
 });
 /* oxlint-enable eslint/sort-keys */
-
-export type LessonQualityIssueKind = (typeof QUALITY_ISSUE_KINDS)[number];
 
 /** `screen` is a 0-based index, or null for the whole lesson. */
 export type LessonQualityIssue = z.infer<typeof schema>["issues"][number];
@@ -51,7 +27,6 @@ export type CheckLessonQualityParams = LessonWritingContext & {
   /** A script's first letters, shown as letter cards instead of planned screens. */
   alphabet?: boolean;
   lesson: ReviewedLesson;
-  reuse: CallReuse;
   writerModel: string;
   model?: string;
   serviceTier?: ServiceTier;
@@ -77,14 +52,18 @@ function toIssue({
   return { ...issue, screen: index !== null && index >= 0 && index < screenCount ? index : null };
 }
 
-/** A lesson passes when no issue is `blocking`. */
 export async function checkLessonQuality(params: CheckLessonQualityParams) {
-  const { analytics, lesson, reasoning, reuse, serviceTier, useFallback = true } = params;
-  const models = getLessonCheckModels({ reuse, writerModel: params.writerModel });
+  const { analytics, lesson, reasoning, serviceTier, useFallback = true } = params;
+
+  const models = getLessonCheckModels({
+    alphabet: params.alphabet,
+    writerModel: params.writerModel,
+  });
+
   const model = params.model ?? models.model;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: models.fallbackModels.filter((candidate) => candidate !== model),
+    fallbackModels: models.fallbackModels,
     model,
     serviceTier,
     useFallback,

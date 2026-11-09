@@ -2,35 +2,23 @@ import { describe, expect, it } from "vitest";
 import { getLessonCheckModels } from "./lesson-check-models";
 
 describe(getLessonCheckModels, () => {
-  it("checks a lesson very likely read again with the strongest reviewer from another family", () => {
-    expect(
-      getLessonCheckModels({ reuse: "bounded", writerModel: "openai/gpt-6-sol" }),
-    ).toStrictEqual({
-      fallbackModels: ["google/gemini-3.8-flash"],
-      model: "anthropic/claude-sonnet-5.5",
+  it("uses Astra then Sol for Opus, and Opus for OpenAI writers", () => {
+    expect(getLessonCheckModels({ writerModel: "anthropic/claude-opus-5.5" })).toStrictEqual({
+      fallbackModels: ["openai/gpt-6.1-sol"],
+      model: "openai/gpt-6-astra",
     });
 
-    expect(
-      getLessonCheckModels({ reuse: "bounded", writerModel: "anthropic/claude-opus-5.5" }),
-    ).toStrictEqual({ fallbackModels: ["openai/gpt-6.1-sol"], model: "google/gemini-3.8-flash" });
+    expect(getLessonCheckModels({ writerModel: "openai/gpt-6.1-terra" })).toStrictEqual({
+      fallbackModels: [],
+      model: "anthropic/claude-opus-5.5",
+    });
   });
 
-  it("checks a lesson that may serve one learner with the cheaper reviewer from another family", () => {
+  it("keeps the alphabet chain", () => {
     expect(
-      (["library", "personal"] as const).map((reuse) =>
-        getLessonCheckModels({ reuse, writerModel: "openai/gpt-6-sol" }),
-      ),
-    ).toStrictEqual([
-      { fallbackModels: ["anthropic/claude-sonnet-5.5"], model: "google/gemini-3.8-flash" },
-      { fallbackModels: ["anthropic/claude-sonnet-5.5"], model: "google/gemini-3.8-flash" },
-    ]);
-
-    // A lesson Gemini wrote (a last draft after other families' were held back) never gets a
-    // Gemini reviewer.
-    expect(
-      getLessonCheckModels({ reuse: "personal", writerModel: "google/gemini-3.8-flash" }),
+      getLessonCheckModels({ alphabet: true, writerModel: "openai/gpt-6-luna" }),
     ).toStrictEqual({
-      fallbackModels: ["openai/gpt-6.1-sol"],
+      fallbackModels: ["google/gemini-3.8-flash"],
       model: "anthropic/claude-sonnet-5.5",
     });
   });

@@ -8,9 +8,12 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type ResearchTopic, formatResearchGoal, normalizeResearchPlan } from "./research-plan";
 import promptTemplate from "./source-research-plan.prompt.md";
 
-/** Flash was cheapest and fastest on the research-plan eval. */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
+/**
+ * On 12 cases (8 Nov 2026), Luna and Flash Lite each scored 10.00 at $0.26/1k and $0.59/1k, both
+ * leaving the learner's employer out of the shared identity and keeping the release they named.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 const schema = z.object({
   country: z.string(),

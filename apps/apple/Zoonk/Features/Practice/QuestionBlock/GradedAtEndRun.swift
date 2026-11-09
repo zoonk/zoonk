@@ -14,6 +14,7 @@ struct GradedAtEndRun: View {
   var upcomingLimit: HelpLimit?
   var isPending: Bool
   var failures: Int
+  let onReport: () -> Void
   let onFinish: ([PracticeChoiceAnswer]) -> Void
 
   @State private var answers: [PracticeChoiceAnswer] = []
@@ -95,7 +96,7 @@ struct GradedAtEndRun: View {
       }
     } actions: {
       if failures > 0, !isPending {
-        PracticeSaveError(failures: failures) { onFinish(answers) }
+        PracticeSaveError(failures: failures, onReport: onReport, retry: { onFinish(answers) })
       }
 
       if question != nil {

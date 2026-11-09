@@ -19,7 +19,7 @@ import {
   loadLessonSpecInputs,
 } from "@zoonk/core/library/curriculum/lesson-spec-inputs";
 import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-specs";
-import { getLessonSpecModel } from "@zoonk/core/library/curriculum/scope";
+import { getLessonSpecModels } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import { prisma } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
@@ -90,7 +90,7 @@ async function planLesson({
   const { data, provenance } = await generateLessonSpec({
     ...inputs.prompt,
     analytics: context,
-    model: getLessonSpecModel(inputs.scope),
+    ...getLessonSpecModels(inputs.scope),
     serviceTier: chooseServiceTier({ wait }),
   });
 

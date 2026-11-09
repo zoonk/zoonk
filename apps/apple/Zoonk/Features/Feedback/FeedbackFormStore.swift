@@ -32,6 +32,15 @@ final class FeedbackFormStore {
     self.token = token
     self.defaultEmail = defaultEmail?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     email = self.defaultEmail
+    if isSaveReport {
+      message = String(
+        localized: "I couldn't save my answers.", table: "Feedback",
+        comment: "Editable starting message when reporting repeated answer save failures")
+    }
+  }
+
+  var isSaveReport: Bool {
+    context?.reportType == .saveFailure
   }
 
   var attachesScreen: Bool {
@@ -49,7 +58,7 @@ final class FeedbackFormStore {
       && !emailParts[0].isEmpty
       && emailParts[1].contains(".")
 
-    return isEmailValid && !normalizedMessage.isEmpty
+    return (isEmailValid || (isSaveReport && normalizedEmail.isEmpty)) && !normalizedMessage.isEmpty
   }
 
   func submit() async {
@@ -63,7 +72,7 @@ final class FeedbackFormStore {
       try await api.submit(
         FeedbackSubmission(
           context: context,
-          email: normalizedEmail,
+          email: normalizedEmail.isEmpty ? nil : normalizedEmail,
           message: normalizedMessage),
         token: token)
       state = .sent

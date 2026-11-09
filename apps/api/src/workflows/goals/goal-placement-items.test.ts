@@ -8,6 +8,7 @@ import {
   generatePlacementItems,
 } from "@zoonk/ai/tasks/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { uploadImage } from "@zoonk/core/images/upload";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
@@ -22,6 +23,7 @@ import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { solveAsKeyed } from "../_test-utils/solved-items";
 import { TEST_IMAGE, imageProvenance, sceneFor } from "../images/_test-utils/image-results";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { prepareGraphPlacement } from "./goal-placement-items";
@@ -280,6 +282,44 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
+  it("never stores a quick question whose key a blind solve doesn't reach, and keeps the one written beside it", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 1 });
+
+    const noRightOption = {
+      ...QUICK_ITEMS.multipleChoice,
+      question: `Which answer is right? ${randomUUID()}`,
+    };
+
+    vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
+      taskResult({
+        skills: params.skills.map(() => ({
+          quick: [noRightOption, QUICK_ITEMS.multipleChoice],
+          typed: [],
+        })),
+      }),
+    );
+
+    vi.mocked(solveItems).mockImplementation(async ({ items }) =>
+      taskResult({
+        solutions: items.map((item) =>
+          item.format === "multipleChoice" && item.question === noRightOption.question
+            ? { format: "multipleChoice" as const, picks: [], work: "No option is right." }
+            : solveAsKeyed(item),
+        ),
+      }),
+    );
+
+    await expect(
+      placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
+    ).resolves.toStrictEqual({ failed: 0, status: "written", written: 1 });
+
+    await expect(
+      prisma.item.findMany({ select: { content: true }, where: { skillId: { in: skillIds } } }),
+    ).resolves.toStrictEqual([
+      { content: expect.objectContaining({ question: QUICK_ITEMS.multipleChoice.question }) },
+    ]);
+  });
+
   it("writes the picked skills a few per call, with the quick questions that confirm a right pick", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 7 });
 
@@ -299,6 +339,13 @@ describe(placementItemsWorkflow, () => {
     expect(
       vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
     ).toStrictEqual(["priority", undefined, undefined, undefined]);
+
+    expect(vi.mocked(solveItems).mock.calls.map(([params]) => params.serviceTier)).toStrictEqual([
+      "priority",
+      undefined,
+      undefined,
+      undefined,
+    ]);
 
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(14);
     await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);

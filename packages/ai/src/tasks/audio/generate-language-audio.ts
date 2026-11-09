@@ -21,7 +21,7 @@ import { generateSpeechWithProvider } from "./speech-provider";
 const TASK = "language-audio";
 const MS_PER_SECOND = 1000;
 
-/** A check usually takes about 3s; one took 43s in its eval (11 Oct 2026). */
+/** Flash Lite checks a clip in 1.5 s p95; one MiMo check took 186 s in its eval (8 Nov 2026). */
 const PRONUNCIATION_CHECK_TIMEOUT_MS = 15_000;
 const PRONUNCIATION_LISTENS = 2;
 
@@ -58,8 +58,8 @@ type LookAlike = { [Key in keyof WordIpa]: NonNullable<WordIpa[Key]> };
 /**
  * Each automatic model is tried once: the next one is the retry. An explicit model gets a second
  * attempt, since transport retries can't see silent or malformed audio. A word English spells the
- * same only goes to Gemini Flash, which read 27 of 27 with its IPA and two listens (11 Oct 2026);
- * Flash Lite follows the IPA less, and MAI-Voice can't take it.
+ * same only goes to Gemini Flash: in the 8 Nov 2026 eval Flash Lite misread two such words and
+ * MAI-Voice read three the English way.
  */
 function getSpeechModels({
   lookAlike,

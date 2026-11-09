@@ -14,11 +14,11 @@ import toolPrompt from "./step-variant-tool.prompt.md";
 import basePrompt from "./step-variant.prompt.md";
 
 /**
- * Luna outscored Gemini 3.8 Flash on the step-variant eval at a tenth of the cost (26 Sep 2026).
+ * At low reasoning on 4 cases (8 Nov 2026), Luna scored 9.32 (EN 9.65, PT 9.00) at $0.24/1k,
+ * Gemini 3.8 Flash 8.96 at $1.52/1k and Terra 9.38 at $2.08/1k, too small a lead for nine times
+ * the cost.
  */
 const defaultModel = "openai/gpt-6-luna";
-
-/** Low reasoning keeps the scores up: 8.94 on the 4 tool screens (6 Oct 2026). */
 const defaultReasoning: Reasoning = "low";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-terra"] as const;
 

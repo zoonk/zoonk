@@ -48,7 +48,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
+          "reasoning": "All 7 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -64,8 +64,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Strengthen the no-signaling lesson by explicitly stating that changing the distant measurement choice cannot change locally observable outcome frequencies; uncontrollable individual outcomes alone do not establish this. A concrete, limited comparison would also help make the quantum processor platforms lesson actionable within four minutes.",
           "kind": "potentialImprovements",
@@ -172,7 +180,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Two lessons are too broad for their allotted time: “Ciclos econômicos e crises financeiras” combines recession-credit feedback with bank runs and payment-system instability; “Instituições e política industrial” combines institutional foundations of development with evaluating industrial policy. Also, the AI lessons discuss economic impacts but never teach learners to review or challenge AI-generated economic analysis.",
           "kind": "minorErrors",
@@ -187,7 +199,11 @@
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview: 3 to 6 chapters of big ideas in plain words, no formulas or equations\n      - Big ideas: scarcity and choices, supply and demand and prices, money, banks and interest rates, inflation, GDP, growth and unemployment, the government's role (taxes, spending, public debt), international trade and exchange rates, and how people really decide (behavioral economics); Brazilian examples are welcome\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-economia-overview-1",
-        "userInput": { "courseTitle": "Economia", "language": "pt", "level": "overview" }
+        "userInput": {
+          "courseTitle": "Economia",
+          "language": "pt",
+          "level": "overview"
+        }
       }
     },
     {
@@ -271,9 +287,15 @@
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Beginner band of statistics: types of data and variables, tables and charts, measures of center and spread, percentiles and box plots, distributions and the normal curve, basic probability, sampling and bias, correlation vs causation, an introduction to estimation (confidence intervals) and to hypothesis tests only at a beginner depth\n      - Practical work with spreadsheets and real data should appear, and a field AI is changing should include checking analyses and charts made with AI tools\n      - Formulas may appear where the idea needs them, explained in everyday words\n\n      \n  - The output is one level band of a shared course: chapters (title, description, objectives, skillKeys, tools) with every lesson's title, description, can-do line, estimated minutes and skills, plus uncoveredSkillKeys (required skills no chapter tagged)\n  - A chapter's tools are what the learner uses on their own device; code checks score them, so don't judge them\n  - A non-empty uncoveredSkillKeys means a required skill was missed\n  - The outline is shared by every learner of this course level, so it must not be tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "tool": "planilha|excel|sheets|calc" },
+        "expected": {
+          "tool": "planilha|excel|sheets|calc"
+        },
         "id": "pt-estatistica-beginner-1",
-        "userInput": { "courseTitle": "Estatística", "language": "pt", "level": "beginner" }
+        "userInput": {
+          "courseTitle": "Estatística",
+          "language": "pt",
+          "level": "beginner"
+        }
       }
     }
   ],

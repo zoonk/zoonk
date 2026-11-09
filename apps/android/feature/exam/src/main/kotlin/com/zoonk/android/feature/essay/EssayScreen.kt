@@ -72,6 +72,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
@@ -186,6 +187,7 @@ private fun EssayLoaded(
     LaunchedEffect(move.leaving) { move.leaving?.let(navigator::leaveTaskFor) }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
+    val saveReport = rememberSaveFailureReport(app, "essay")
     val grade = ui.grade
     val finishing = ui.finishing || move.busy
     val finishFailures = maxOf(ui.finishFailures, if (move.failed != null) 1 else 0)
@@ -199,11 +201,22 @@ private fun EssayLoaded(
         }
 
         (ui.mode == EssayMode.Grade || ui.closed) && grade != null -> {
-            EssayGradeSteps(essay, grade, ui.finished, ui.closed, ui.switched, finishing, finishFailures, viewModel, navigator)
+            EssayGradeSteps(
+                essay,
+                grade,
+                ui.finished,
+                ui.closed,
+                ui.switched,
+                finishing,
+                finishFailures,
+                viewModel,
+                navigator,
+                onReportSaveFailure = saveReport::open,
+            )
         }
 
         else -> {
-            EssayWrite(essay, ui, finishing, finishFailures, viewModel, navigator)
+            EssayWrite(essay, ui, finishing, finishFailures, viewModel, navigator, onReportSaveFailure = saveReport::open)
         }
     }
 }
@@ -216,6 +229,7 @@ internal fun EssayWrite(
     finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val rubric = EssayRubric.of(essay.rubric.value)
     val texts = essay.context?.takeIf { isLongText(it) }
@@ -247,7 +261,7 @@ internal fun EssayWrite(
         bottomBar = {
             TaskActionBar {
                 StatusLine(ui.send, ui.gradesLeft, navigator)
-                if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish)
+                if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish, onReport = onReportSaveFailure)
                 TaskActions { width ->
                     if (rewriting) {
                         OutlinedButton(
@@ -546,6 +560,7 @@ internal fun EssayGradeSteps(
     finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     ResultScreen {
         val rubric = EssayRubric.of(essay.rubric.value)
@@ -614,19 +629,11 @@ internal fun EssayGradeSteps(
                         }
                         if (pages || shown == count - 1) {
                             if (finishFailures > 0 && !finishing) {
-                                Text(
-                                    stringResource(
-                                        if (finishFailures >
-                                            1
-                                        ) {
-                                            R.string.practice_save_error_repeat
-                                        } else {
-                                            R.string.essay_finish_failed
-                                        },
-                                    ),
-                                    Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                SaveErrorText(
+                                    failures = finishFailures,
+                                    firstFailureMessage = stringResource(R.string.essay_finish_failed),
+                                    liveRegion = LiveRegionMode.Assertive,
+                                    onReport = onReportSaveFailure,
                                 )
                             }
                             if (!tooShort && !beside) {

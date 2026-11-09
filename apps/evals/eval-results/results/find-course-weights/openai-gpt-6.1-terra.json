@@ -3,12 +3,33 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "atLeast": [{ "part": 3, "than": 2 }], "status": "found" },
+        "expected": {
+          "status": "found",
+          "weights": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
         "id": "pt-enem-medicina-ufmg-1",
         "userInput": {
           "course": "Medicina",
@@ -27,12 +48,33 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Weights 1, 1, 1, 1, 1 differ from the published 2, 1, 4, 2, 4",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Weights 1, 1, 1, 1, 1 differ from the published 2, 1, 4, 2, 4",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Weights 1, 1, 1, 1, 1 differ from the published 2, 1, 4, 2, 4",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
-        "expected": { "atLeast": [{ "part": 3, "than": 2 }], "status": "found" },
+        "expected": {
+          "status": "found",
+          "weights": [
+            2,
+            1,
+            4,
+            2,
+            4
+          ]
+        },
         "id": "en-enem-medicine-ufrj-1",
         "language": "en",
         "userInput": {
@@ -52,12 +94,26 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "atLeast": [], "status": "unknown" },
+        "expected": {
+          "status": "unknown"
+        },
         "id": "pt-enem-instituicao-inexistente-1",
         "userInput": {
           "course": "Direito",

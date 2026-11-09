@@ -12,14 +12,12 @@ import {
 } from "../language/sentence-orders-workflow";
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { updateCoursesBehind } from "../products/product-releases";
-import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
-  listLessonsForLaterReviewStep,
   listOwedPictureChecksStep,
   listOwedSentenceOrdersStep,
   listOwedSkillLevelsStep,
@@ -42,7 +40,6 @@ type SweepCounts = {
   freshnessChecks: number;
   guestsDeleted: number;
   itemsRecalibrated: number;
-  laterReviews: number;
   memoryFactsPurged: number;
   pictureChecks: number;
   retiredStepsDeleted: number;
@@ -139,16 +136,6 @@ async function rewriteFlaggedContent(): Promise<boolean> {
   return true;
 }
 
-async function startLaterReviews(): Promise<number> {
-  const lessonIds = await listLessonsForLaterReviewStep();
-
-  if (lessonIds.length > 0) {
-    await start(laterReviewWorkflow, [{ lessonIds }]);
-  }
-
-  return lessonIds.length;
-}
-
 async function sweep(): Promise<SweepCounts> {
   const [
     checks,
@@ -156,7 +143,6 @@ async function sweep(): Promise<SweepCounts> {
     facts,
     runs,
     items,
-    reviews,
     flagged,
     retired,
     verifications,
@@ -172,7 +158,6 @@ async function sweep(): Promise<SweepCounts> {
     purgeMemoryFactsStep(),
     purgeEvaluationRunsStep(),
     recalibrateItemDifficultiesStep(),
-    startLaterReviews(),
     rewriteFlaggedContent(),
     deleteRetiredStepsStep(),
     purgeExpiredVerificationsStep(),
@@ -194,7 +179,6 @@ async function sweep(): Promise<SweepCounts> {
     freshnessChecks: countOf(checks),
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),
-    laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
     pictureChecks: countOf(pictures),
     retiredStepsDeleted: countOf(retired),

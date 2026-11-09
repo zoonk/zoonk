@@ -292,11 +292,13 @@ export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
       problem:
         "Its problem, steps and result, shown together reads as 251 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
       screen: 8,
+      source: "check" as const,
     },
     {
       problem:
         "Asks the question of screen 8 again with other numbers or names. Keep this screen's idea but ask something new about it: the reverse question, a harder case, a mistake to spot or a decision in a real situation.",
       screen: 9,
+      source: "check" as const,
     },
   ],
   setup: false,
