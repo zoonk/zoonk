@@ -331,3 +331,40 @@ test("a learner whose first lesson is written before the plan starts it from the
   await page.getByRole("link", { name: "Start lesson 1" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
 });
+
+test("a failed first lesson stops writing even when the goal replays its start", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const lesson = await libraryLessonFixture({
+    contentStatus: "failed",
+    title: "Why birds sing at dawn",
+  });
+
+  await openPlanWait({
+    events: [
+      {
+        at: Date.now(),
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        status: "started",
+        step: "writeFirstLesson",
+      },
+      { reason: "aiGenerationFailed", status: "error", step: "workflowError" },
+    ],
+    openingLessonId: lesson.id,
+    page,
+    userId: noProgressUser.id,
+  });
+
+  const row = page.locator('[data-slot="first-lesson-row"]');
+  await expect(row.getByText("Something went wrong on our side.")).toBeVisible();
+  await expect(row.getByText("Writing about 5 short screens")).toHaveCount(0);
+  await expect(row.getByText("Ready to start")).toHaveCount(0);
+  const clock = row.locator(".font-mono");
+  const stoppedTime = await clock.textContent();
+  await page.clock.install();
+  await page.clock.runFor(3000);
+  await expect(clock).toHaveText(stoppedTime ?? "");
+  await expect(page.getByRole("button", { exact: true, name: "Try again" })).toBeVisible();
+});

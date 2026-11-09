@@ -54,7 +54,19 @@ export function getFirstLesson({
     return read;
   }
 
-  return read?.id === live.id && read.status !== "writing" ? read : live;
+  if (!read || read.id !== live.id) {
+    return live;
+  }
+
+  if (read.status === "done" || read.status === "ready") {
+    return read;
+  }
+
+  if (live.status === "done" || live.status === "ready") {
+    return live;
+  }
+
+  return read;
 }
 
 /**

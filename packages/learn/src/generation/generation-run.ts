@@ -9,11 +9,13 @@ export type GenerationFailure = "connection" | "generation" | "notStarted";
 /** A learn goal's first lesson, which its plan's run writes before the plan. */
 export type GenerationFirstLesson = {
   id: string;
-  status: "done" | "ready" | "writing";
+  status: "done" | "ready" | "stopped" | "writing";
   title: string;
 };
 
 export type GenerationRun = {
+  ended?: boolean;
+  id?: string | null;
   /** This device's clock minus the server's. */
   clockOffsetMs?: number;
   failure: GenerationFailure | null;

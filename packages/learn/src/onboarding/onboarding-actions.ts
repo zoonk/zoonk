@@ -145,6 +145,7 @@ export type RevealedPlan = {
 export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "failed" };
 
 export type OnboardingActions = {
+  readFirstLesson: (goalId: string) => Promise<OnboardingView["firstLesson"]>;
   answer: (input: { goalId: string; input: OnboardingAnswerInput }) => Promise<AnswerOutcome>;
   attach: GoalAttachActions;
   /** The onboarding as it is after the aim moved; null when it couldn't be changed. */

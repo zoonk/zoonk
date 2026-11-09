@@ -276,4 +276,36 @@ describe(getRunStatus, () => {
       getRunStatus({ runId: "run", state: run(lostConnections(MAX_LOST_CONNECTIONS + 1)) }),
     ).toBe("failed");
   });
+
+  it("keeps lesson events after the plan is ready until the lesson settles", () => {
+    const state = run([
+      event({
+        lessonId: "lesson",
+        lessonTitle: "Dawn",
+        status: "started",
+        step: "writeFirstLesson",
+      }),
+      event({ status: "completed", step: "goalReady" }),
+      event({ lessonId: "lesson", status: "completed", step: "firstLessonReady" }),
+    ]);
+
+    expect(state.ready).toBe(true);
+    expect(state.firstLesson?.status).toBe("ready");
+  });
+
+  it("marks a failed goal ended even after its plan became ready", () => {
+    const state = run([
+      event({
+        lessonId: "lesson",
+        lessonTitle: "Dawn",
+        status: "started",
+        step: "writeFirstLesson",
+      }),
+      event({ status: "completed", step: "goalReady" }),
+      event({ status: "error", step: "workflowError" }),
+    ]);
+
+    expect(state.ready).toBe(true);
+    expect(state.ended).toBe(true);
+  });
 });

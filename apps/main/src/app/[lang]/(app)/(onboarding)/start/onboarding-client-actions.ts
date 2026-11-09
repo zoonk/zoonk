@@ -34,7 +34,7 @@ import {
   startOverAction,
   stopPlacementMockAction,
 } from "./onboarding-actions";
-import { changeOnboardingAimAction } from "./onboarding-aim-actions";
+import { changeOnboardingAimAction, readFirstLessonAction } from "./onboarding-aim-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { markPlanRevealedAction } from "./plan-reveal-action";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
@@ -93,6 +93,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
     },
   }),
   markPlanRevealed: markPlanRevealedAction,
+  readFirstLesson: readFirstLessonAction,
   readWarmUp: readWarmUpAction,
   startOver: startOverAction,
   stopPlacementMock: (mockId) => stopPlacementMockAction(mockId, getLocalTimeZone()),

@@ -4,7 +4,7 @@ import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { use, useState } from "react";
 import {
   type GenerationFirstLesson,
   type GenerationRun,
@@ -25,7 +25,7 @@ import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions } from "../onboarding-actions";
 import { useOnboardingWait } from "../onboarding-clock";
 import { OnboardingColumn, OnboardingPrimaryButton } from "../onboarding-frame";
-import { useOnboardingHost } from "../onboarding-host";
+import { FirstLessonReadContext, useOnboardingHost } from "../onboarding-host";
 import { useOnboardingRail } from "../onboarding-rail";
 import { NoticeReading, useNoticeProgress, useNoticeTitle } from "./notice-reading";
 import { PlanBuilding, type PlanNext } from "./plan-building";
@@ -199,6 +199,7 @@ function PlanWaitPage({
 
   return (
     <WaitBackToQuiz>
+      {use(FirstLessonReadContext)}
       <OnboardingColumn
         bar={
           <PlanWaitBar

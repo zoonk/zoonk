@@ -1,7 +1,7 @@
 "use client";
 
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { PageSectionTitle } from "../_components/page";
@@ -45,9 +45,17 @@ function getLessonTimes(run: GenerationRun) {
   };
 }
 
-function LessonMark({ ready, startedAt }: { ready: boolean; startedAt: number | null }) {
+function LessonMark({
+  ready,
+  stopped,
+  startedAt,
+}: {
+  ready: boolean;
+  stopped: boolean;
+  startedAt: number | null;
+}) {
   const value = useAnimatedProgress({
-    active: !ready,
+    active: !ready && !stopped,
     estimatedMs: LESSON_MS,
     progress: ready ? 100 : 0,
     since: startedAt ?? undefined,
@@ -56,18 +64,24 @@ function LessonMark({ ready, startedAt }: { ready: boolean; startedAt: number | 
 
   return (
     <span aria-hidden="true" className="row-span-2 flex h-5 items-center justify-center">
-      {ready ? (
-        <CheckIcon className="text-success size-4" />
-      ) : (
-        <ProgressRing className="size-4" share={value / 100} />
-      )}
+      {ready && <CheckIcon className="text-success size-4" />}
+      {stopped && <CircleAlertIcon className="text-muted-foreground size-4" />}
+      {!ready && !stopped && <ProgressRing className="size-4" share={value / 100} />}
     </span>
   );
 }
 
-function LessonTime({ ready, run }: { ready: boolean; run: GenerationRun }) {
+function LessonTime({
+  ready,
+  stopped,
+  run,
+}: {
+  ready: boolean;
+  stopped: boolean;
+  run: GenerationRun;
+}) {
   const { endedAt, startedAt } = getLessonTimes(run);
-  const now = useNow(!ready && startedAt !== null);
+  const now = useNow(!ready && !stopped && startedAt !== null);
   const end = ready ? endedAt : now;
 
   if (startedAt === null || end === null) {
@@ -94,7 +108,8 @@ export function FirstLessonRow({
 }) {
   const t = useExtracted();
   const titleId = useId();
-  const ready = lesson.status !== "writing";
+  const ready = lesson.status === "ready" || lesson.status === "done";
+  const stopped = lesson.status === "stopped";
 
   return (
     <section
@@ -105,12 +120,13 @@ export function FirstLessonRow({
       <PageSectionTitle id={titleId}>{t("Your first lesson")}</PageSectionTitle>
 
       <div className="grid grid-cols-[1rem_minmax(0,1fr)_auto] gap-x-3">
-        <LessonMark ready={ready} startedAt={getLessonTimes(run).startedAt} />
+        <LessonMark stopped={stopped} ready={ready} startedAt={getLessonTimes(run).startedAt} />
         <span className="col-start-2 text-sm leading-5 font-medium">{lesson.title}</span>
-        <LessonTime ready={ready} run={run} />
+        <LessonTime stopped={stopped} ready={ready} run={run} />
         <span className="text-muted-foreground col-start-2 text-xs">
           {lesson.status === "done" && t("Done")}
           {lesson.status === "ready" && t("Ready to start")}
+          {stopped && t("Something went wrong on our side.")}
           {lesson.status === "writing" && t("Writing about 5 short screens")}
         </span>
       </div>

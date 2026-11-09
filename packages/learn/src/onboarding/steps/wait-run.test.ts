@@ -123,4 +123,24 @@ describe(getFirstLesson, () => {
 
     expect(getFirstLesson({ read: done, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(done);
   });
+
+  it("keeps a stopped lesson stopped when the goal replays writing", () => {
+    const read = { id: "lesson", status: "stopped" as const, title: "Dawn" };
+
+    expect(
+      getFirstLesson({
+        read,
+        run: { ...WAITING_RUN, firstLesson: { ...read, status: "writing" } },
+      }),
+    ).toBe(read);
+  });
+
+  it("lets live readiness recover a stopped read", () => {
+    expect(
+      getFirstLesson({
+        read: { ...writing, status: "stopped" },
+        run: { ...WAITING_RUN, firstLesson: ready },
+      }),
+    ).toBe(ready);
+  });
 });

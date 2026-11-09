@@ -23,6 +23,7 @@ const MAX_RECONNECT_DELAY_MS = 16_000;
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
 
 export type WorkflowRunState = {
+  ended: boolean;
   /** From the stream's `Date` header as it opened: a replayed event arrives long after its time. */
   clockOffsetMs: number | null;
   /** A new number changes the events URL, so a fresh connection opens. */
@@ -55,6 +56,7 @@ export type WorkflowRunAction =
 export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   clockOffsetMs: null,
   connection: 0,
+  ended: false,
   failure: null,
   firstLesson: null,
   joined: null,
@@ -70,7 +72,7 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
 };
 
 function isSettled(state: WorkflowRunState): boolean {
-  return state.ready || state.failure !== null;
+  return (state.ready && state.firstLesson?.status !== "writing") || state.failure !== null;
 }
 
 /** A joining run's stream ends as it hands over, so its status says nothing about the wait. */
@@ -159,7 +161,7 @@ function applyEvent({
   }
 
   if (meaning === "error" || message.status === "error") {
-    return { ...connected, failure: "generation" };
+    return { ...connected, ended: true, failure: "generation" };
   }
 
   const recorded = recordStep(connected, { ...message, status: message.status });
@@ -171,15 +173,17 @@ function applyEvent({
 /** A run still running behind a closed stream had its connection cut (a function timeout). */
 function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRunState {
   if (isSettled(state)) {
-    return state;
+    return status === "completed" || status === "failed" || status === "cancelled"
+      ? { ...state, ended: true }
+      : state;
   }
 
   if (status === "completed") {
-    return { ...state, lostConnections: 0, ready: true };
+    return { ...state, ended: true, lostConnections: 0, ready: true };
   }
 
   if (status === "failed" || status === "cancelled") {
-    return { ...state, failure: "generation", lostConnections: 0 };
+    return { ...state, ended: true, failure: "generation", lostConnections: 0 };
   }
 
   return { ...state, lostConnections: 0, reconnectIn: REOPEN_DELAY_MS };

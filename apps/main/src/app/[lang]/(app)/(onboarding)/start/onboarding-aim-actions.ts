@@ -26,3 +26,15 @@ export async function changeOnboardingAimAction(
   const onboarding = await getOnboarding({ goalId });
   return onboarding.status === "ready" ? onboarding.onboarding : null;
 }
+
+export async function readFirstLessonAction(
+  goalId: string,
+): Promise<OnboardingView["firstLesson"]> {
+  const result = await getOnboarding({ goalId });
+
+  if (result.status !== "ready") {
+    throw new Error("Could not read onboarding");
+  }
+
+  return result.onboarding.firstLesson;
+}

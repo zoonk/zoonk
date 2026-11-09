@@ -8,10 +8,11 @@ import {
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
 import { useExtracted } from "next-intl";
-import { useRef, useState, useTransition } from "react";
+import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { StepDots } from "../_components/step-dots";
 import { useFormatDuration } from "../_utils/time-format";
+import { usePoll } from "../_utils/use-poll";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
@@ -28,12 +29,14 @@ import { OnboardingAnnouncer } from "./onboarding-announcer";
 import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
 import { OnboardingClock } from "./onboarding-clock";
 import { OnboardingFrame } from "./onboarding-frame";
+import { FirstLessonReadContext } from "./onboarding-host";
 import { OnboardingRailProvider } from "./onboarding-rail";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
 import { PlanReceipt } from "./plan-receipt";
 import { StartOverMenu } from "./start-over-menu";
 import { PlanStartNoticeProvider } from "./steps/plan-start-notice";
 import { type ScheduleDraft } from "./steps/use-schedule";
+import { getFirstLesson, isRunStopped } from "./steps/wait-run";
 
 const STEP_SCREENS = new Set<string>([
   "purpose",
@@ -107,6 +110,72 @@ type StepsFlowProps = {
   planActions: PlanActions;
   routes: OnboardingRoutes;
 };
+
+function FirstLessonRead({
+  actions,
+  generation,
+  state,
+  setState,
+}: {
+  actions: OnboardingActions;
+  generation: GenerationRun | null;
+  state: FlowState;
+  setState: (update: (current: FlowState) => FlowState) => void;
+}) {
+  const firstLesson = getFirstLesson({ read: state.view.firstLesson, run: generation });
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const changed = () => setVisible(document.visibilityState === "visible");
+    changed();
+    document.addEventListener("visibilitychange", changed);
+    return () => document.removeEventListener("visibilitychange", changed);
+  }, []);
+
+  usePoll({
+    active:
+      visible &&
+      (generation?.ended || isRunStopped(generation)) &&
+      (firstLesson?.status === "stopped" || firstLesson?.status === "writing"),
+    intervalMs: 3000,
+    key: `${state.view.goal.id}:${generation?.id ?? state.view.generationId}`,
+    onPoll: async (signal) => {
+      const opened = state.view;
+      const goalId = opened.goal.id;
+      const read = await actions.readFirstLesson(goalId);
+
+      setState((current) =>
+        !signal.aborted && current.view === opened
+          ? { ...current, view: { ...current.view, firstLesson: read } }
+          : current,
+      );
+    },
+  });
+
+  return null;
+}
+
+function StepsFlowFrame({
+  children,
+  ...props
+}: Parameters<typeof FirstLessonRead>[0] & { children: ReactNode }) {
+  const { state, generation } = props;
+
+  return (
+    <FirstLessonReadContext value={<FirstLessonRead {...props} />}>
+      <OnboardingClock
+        goalId={state.view.goal.id}
+        onboardingId={getString(state.view.goal.details, "onboardingId") ?? undefined}
+        run={generation}
+        step={state.current}
+      >
+        <OnboardingRailProvider rail={<PlanReceipt goal={state.view.goal} />}>
+          <OnboardingAnnouncer>{children}</OnboardingAnnouncer>
+        </OnboardingRailProvider>
+      </OnboardingClock>
+    </FirstLessonReadContext>
+  );
+}
 
 export function StepsFlow({
   actions,
@@ -231,58 +300,49 @@ export function StepsFlow({
   const progress = getSetupProgress(state);
 
   return (
-    <OnboardingClock
-      goalId={state.view.goal.id}
-      onboardingId={getString(state.view.goal.details, "onboardingId") ?? undefined}
-      run={generation}
-      step={state.current}
-    >
-      <OnboardingRailProvider rail={<PlanReceipt goal={state.view.goal} />}>
-        <OnboardingAnnouncer>
-          <OnboardingFrame
-            bar={{
-              end: isPlan ? null : <StartOverMenu disabled={isPending} onStartOver={startOver} />,
-              middle: progress && (
-                <StepDots
-                  className={BAR_MIDDLE_CLASS}
-                  current={progress.current}
-                  total={progress.total}
-                />
-              ),
-              // Answers change in "Adjust" now, not by going back through the questions.
-              onBack: state.history.length > 0 && !isPlan ? back : undefined,
-            }}
-            notice={<StepSaveError current={state.current} failed={failed} />}
-          >
-            {/* Placement follows the run itself, so only the questions say it stopped. */}
-            <PlanStartNoticeProvider
-              run={showDots && state.current !== "placement" ? generation : null}
-            >
-              <OnboardingStepScreen
-                actions={actions}
-                buddy={shownBuddy.buddy}
-                isGuest={isGuest}
-                onAnswer={answer}
-                onPlacementDone={() => answer({ question: "placement" }, { quiet: true })}
-                onPlacementFinishFailed={(finishFailed) =>
-                  setFailed(finishFailed ? { dayTooShort: null, step: "placement" } : null)
-                }
-                onViewChange={(view) => setState((previous) => ({ ...previous, view }))}
-                pending={
-                  isPending && sending !== null && (sending.open || sending.step === state.current)
-                }
-                plan={{ initialPlan: pagePlan, planActions }}
-                routes={routes}
-                run={generation}
-                schedule={{ draft: scheduleDraft, onChangeDate: changeDate }}
-                step={state.current}
-                toToday={navigation.toToday}
-                view={state.view}
-              />
-            </PlanStartNoticeProvider>
-          </OnboardingFrame>
-        </OnboardingAnnouncer>
-      </OnboardingRailProvider>
-    </OnboardingClock>
+    <StepsFlowFrame actions={actions} generation={generation} setState={setState} state={state}>
+      <OnboardingFrame
+        bar={{
+          end: isPlan ? null : <StartOverMenu disabled={isPending} onStartOver={startOver} />,
+          middle: progress && (
+            <StepDots
+              className={BAR_MIDDLE_CLASS}
+              current={progress.current}
+              total={progress.total}
+            />
+          ),
+          // Answers change in "Adjust" now, not by going back through the questions.
+          onBack: state.history.length > 0 && !isPlan ? back : undefined,
+        }}
+        notice={<StepSaveError current={state.current} failed={failed} />}
+      >
+        {/* Placement follows the run itself, so only the questions say it stopped. */}
+        <PlanStartNoticeProvider
+          run={showDots && state.current !== "placement" ? generation : null}
+        >
+          <OnboardingStepScreen
+            actions={actions}
+            buddy={shownBuddy.buddy}
+            isGuest={isGuest}
+            onAnswer={answer}
+            onPlacementDone={() => answer({ question: "placement" }, { quiet: true })}
+            onPlacementFinishFailed={(finishFailed) =>
+              setFailed(finishFailed ? { dayTooShort: null, step: "placement" } : null)
+            }
+            onViewChange={(view) => setState((previous) => ({ ...previous, view }))}
+            pending={
+              isPending && sending !== null && (sending.open || sending.step === state.current)
+            }
+            plan={{ initialPlan: pagePlan, planActions }}
+            routes={routes}
+            run={generation}
+            schedule={{ draft: scheduleDraft, onChangeDate: changeDate }}
+            step={state.current}
+            toToday={navigation.toToday}
+            view={state.view}
+          />
+        </PlanStartNoticeProvider>
+      </OnboardingFrame>
+    </StepsFlowFrame>
   );
 }
