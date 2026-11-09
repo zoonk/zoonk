@@ -82,6 +82,7 @@ export async function loadUnstartedDayView({
   const missions = missionViews.map((mission) => asDayMission(mission));
 
   const reserved = hasSessionLessonReservation({
+    access: examAccess,
     plan: day.plan,
     prerequisites: day.plan.prerequisites,
     session: {
@@ -92,7 +93,6 @@ export async function loadUnstartedDayView({
       plannedMinutes: day.plannedMinutes,
       status: "planned",
     },
-    trialEnded: examAccess.trialEnded,
   });
 
   const fields = toDayViewFields({

@@ -1,13 +1,16 @@
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getChallengeTimings } from "../checkpoints/_utils/challenge-timing";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getItemKey } from "../plans/planner/plan-items";
+import { sessionGoalFixture } from "./_test-utils/session-goal";
 import { planStudyDay } from "./_utils/plan-study-day";
 import { selectDayPlan } from "./_utils/selected-day-plan";
 import { answerStudyQuestion } from "./answer-study-question";
@@ -20,13 +23,89 @@ const START = new Date("2026-09-28T12:00:00Z");
 const NOW = new Date("2026-09-30T12:00:00Z");
 const TODAY = new Date("2026-09-30");
 
-describe("a selected review that has no persisted ID yet", () => {
+describe("a selected review day", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(START);
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("keeps a retained overdue review out of today's phase challenge offer", async () => {
+    const user = await userFixture();
+
+    const fixture = await sessionGoalFixture({
+      goal: { kind: "exam", targetDate: new Date("2026-10-04") },
+      userId: user.id,
+    });
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: START, status: "done" },
+      where: { planId: fixture.plan.id },
+    });
+
+    const boss = await planItemFixture({
+      facts: {
+        boss: {
+          kind: "text",
+          minutes: 10,
+          questions: 10,
+          testedKeys: [],
+          testedSkillIds: [fixture.skills[0]!.id],
+          waiting: false,
+        },
+        minutes: 10,
+        parts: { checkpoint: 10, practice: 0, unwritten: 0, written: 0 },
+        schemaVersion: 1,
+        skillIds: [],
+      },
+      kind: "boss",
+      planId: fixture.plan.id,
+      position: fixture.planItems.length + 1,
+      scheduledFor: new Date("2026-10-02"),
+    });
+
+    const review = await planItemFixture({
+      kind: "review",
+      planId: fixture.plan.id,
+      position: boss.position + 1,
+      scheduledFor: new Date("2026-09-29"),
+    });
+
+    vi.setSystemTime(NOW);
+    mockSession(user.id);
+    const selection = await selectDayPlan({ goal: fixture.goal, now: NOW, timeZone: "UTC" });
+
+    if (!selection) {
+      throw new Error("Expected the retained plan");
+    }
+
+    expect(selection.items.find((item) => item.id === review.id)).toMatchObject({
+      scheduledFor: new Date("2026-09-29"),
+      status: "todo",
+    });
+
+    const planned = await planStudyDay({
+      goal: fixture.goal,
+      localDate: TODAY,
+      now: NOW,
+      selection,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(planned.input.reviewPlanItemId).toBe(review.id);
+    expect(planned.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+
+    expect(
+      getChallengeTimings({
+        goal: fixture.goal,
+        items: selection.items,
+        settings: selection.state.settings,
+        today: TODAY,
+      }).get(boss.id),
+    ).toStrictEqual({ date: "2026-10-01", when: "date" });
+  });
 
   it("keeps review-day behavior and binds its practice to the review saved by Open", async () => {
     const user = await userFixture();

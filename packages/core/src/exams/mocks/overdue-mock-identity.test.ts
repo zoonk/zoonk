@@ -231,6 +231,7 @@ describe("an overdue scheduled mock's canonical identity", () => {
 
     expect(
       hasSessionLessonReservation({
+        access: { includesMockExams: true, trialEnded: false },
         plan: saved,
         session: {
           blocks: blocks.map((block) => ({ ...block, status: "completed" })),

@@ -197,12 +197,12 @@ export async function refitSessionLessons(
   });
 
   const candidates = getSessionLessonCandidates({
+    access,
     blocks,
     goal: session.goal,
     localDate: session.localDate,
     plan,
     prerequisites,
-    trialEnded: access.trialEnded,
   });
 
   const writingMinutes = getUnwrittenMinutesOn({ items: candidates, today: session.localDate });
@@ -217,13 +217,13 @@ export async function refitSessionLessons(
       : [];
 
   const { checkpoints, stretch } = await fitRefillStretch({
+    access,
     blocks,
     budget: room - writingMinutes,
     leaving,
     lessons,
     plan,
     session: { ...session, goal: session.goal },
-    trialEnded: access.trialEnded,
     tx,
   });
 
@@ -252,12 +252,7 @@ export async function refitSessionLessons(
 
   const current = { ...session, blocks: [...blocks, ...added] };
 
-  const reserved = hasSessionLessonReservation({
-    plan,
-    prerequisites,
-    session: current,
-    trialEnded: access.trialEnded,
-  });
+  const reserved = hasSessionLessonReservation({ access, plan, prerequisites, session: current });
 
   if (
     !reserved &&

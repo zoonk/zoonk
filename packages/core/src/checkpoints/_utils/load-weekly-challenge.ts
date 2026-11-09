@@ -36,6 +36,25 @@ export function findNextWeeklyItem<Item extends Pick<PlanItem, "kind" | "status"
   return items.find((item) => isWeeklyChallengeItem(item) && item.status === "todo");
 }
 
+export function isPlusOnlyMockDay({
+  includesMockExams,
+  items,
+  today,
+}: {
+  includesMockExams: boolean;
+  items: readonly Pick<PlanItem, "kind" | "scheduledFor" | "status">[];
+  today: Date;
+}): boolean {
+  const item = findNextWeeklyItem(items);
+
+  return (
+    !includesMockExams &&
+    item?.kind === "mock" &&
+    item.scheduledFor !== null &&
+    item.scheduledFor <= today
+  );
+}
+
 async function loadMockItems({
   goal,
   identity: selectedIdentity,
@@ -157,7 +176,7 @@ export async function loadSessionWeeklyChallenge({
 
   const isMock = item.kind === "mock";
 
-  if (isMock && !includesMockExams) {
+  if (isPlusOnlyMockDay({ includesMockExams, items, today })) {
     return { checkpoint: null, plusRequired: true };
   }
 

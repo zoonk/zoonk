@@ -63,10 +63,10 @@ export async function loadCompletionQueue({
     : new Map();
 
   const reserved = hasSessionLessonReservation({
+    access: access ?? { includesMockExams: true, trialEnded: false },
     plan,
     prerequisites,
     session,
-    trialEnded: access?.trialEnded,
   });
 
   const total = getVisibleSessionTotal({

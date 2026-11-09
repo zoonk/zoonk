@@ -61,16 +61,38 @@ describe(getChallengeTimings, () => {
     expect(timings.get("a")).toStrictEqual({ date: "2026-11-09", when: "nextSession" });
   });
 
-  it("holds reached challenges until after a planned review day", () => {
+  it.each(["2026-11-08", "2026-11-09"])(
+    "holds reached challenges until after a planned review due on %s",
+    (date) => {
+      const timings = getChallengeTimings({
+        ...base,
+        items: [
+          { ...boss, scheduledFor: new Date("2026-11-08") },
+          { ...boss, id: "review", kind: "review", position: 2, scheduledFor: new Date(date) },
+        ],
+      });
+
+      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    },
+  );
+
+  it("does not reserve today for a finished past review", () => {
     const timings = getChallengeTimings({
       ...base,
       items: [
-        { ...boss, scheduledFor: new Date("2026-11-08") },
-        { ...boss, id: "review", kind: "review", position: 2, scheduledFor: TODAY },
+        boss,
+        {
+          ...boss,
+          id: "review",
+          kind: "review",
+          position: 2,
+          scheduledFor: new Date("2026-11-08"),
+          status: "done",
+        },
       ],
     });
 
-    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    expect(timings.get("a")?.when).toBe("nextSession");
   });
 
   it("does not promise a challenge lost earlier today for the next session", () => {
