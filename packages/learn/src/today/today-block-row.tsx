@@ -9,6 +9,7 @@ import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
+import { useWaitLine } from "../missions/mission-copy";
 import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
@@ -26,17 +27,11 @@ export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
 
 function useWaitLabel() {
   const t = useExtracted();
+  const waitLine = useWaitLine();
 
-  return (block: DayStep, wait: "challenge" | "lessons"): string => {
+  return (block: DayStep): string => {
     const phase = getChallengePhase(block);
-
-    if (wait === "lessons") {
-      return phase ? t("{phase} · after today's lessons", { phase }) : t("After today's lessons");
-    }
-
-    return phase
-      ? t("{phase} · after the challenge before it", { phase })
-      : t("After the challenge before it");
+    return phase ? t("{phase} · after this phase's lessons", { phase }) : waitLine();
   };
 }
 
@@ -102,15 +97,7 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
 const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
 
-function RowLines({
-  block,
-  isNext,
-  wait,
-}: {
-  block: DayStep;
-  isNext: boolean;
-  wait: "challenge" | "lessons" | null;
-}) {
+function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const detail = useBlockDetail();
@@ -120,7 +107,7 @@ function RowLines({
   const reviewDetail = block.weakest || block.fullReview ? detail(block) : null;
 
   const label = isBeingWritten(block) ? t("Being written for you…") : rowLabel(block);
-  const line = wait ? waitLabel(block, wait) : label;
+  const line = block.waitReason ? waitLabel(block) : label;
 
   return (
     <>
@@ -216,7 +203,6 @@ export function BlockRow({
 }) {
   const finished = isFinished(block);
   const countsTowardMission = useCountsTowardMission()(block);
-  const wait = block.waitReason;
   const lessonAgainId = getLessonAgainId(block);
 
   return (
@@ -242,7 +228,7 @@ export function BlockRow({
             opens={opens}
           />
 
-          {!finished && <RowLines block={block} isNext={isNext} wait={wait} />}
+          {!finished && <RowLines block={block} isNext={isNext} />}
         </div>
 
         {!finished && (

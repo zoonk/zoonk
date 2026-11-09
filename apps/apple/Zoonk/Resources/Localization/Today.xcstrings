@@ -398,120 +398,61 @@
         }
       }
     },
-    "%@ · after the challenge before it" : {
-      "comment" : "A phase challenge waiting for the one before it",
+    "%@ · after this phase's lessons" : {
+      "comment" : "A phase challenge waiting for its phase's lessons, after the phase's name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · nach der vorherigen Herausforderung"
+            "value" : "%@ · nach den Lektionen dieser Phase"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · después del desafío anterior"
+            "value" : "%@ · después de las lecciones de esta fase"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · après le défi précédent"
+            "value" : "%@ · après les leçons de cette phase"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · dopo la sfida precedente"
+            "value" : "%@ · dopo le lezioni di questa fase"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@・前のチャレンジが終わったら"
+            "value" : "%@・このフェーズのレッスン終了後"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · 이전 챌린지 완료 후"
+            "value" : "%@ · 이 단계의 레슨을 마친 후"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · po poprzednim wyzwaniu"
+            "value" : "%@ · po lekcjach tego etapu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · depois do desafio anterior"
+            "value" : "%@ · depois das aulas desta fase"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · önceki meydan okumadan sonra"
-          }
-        }
-      }
-    },
-    "%@ · after today's lessons" : {
-      "comment" : "A phase challenge waiting for the day's lessons",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · nach den heutigen Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · después de las lecciones de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · après les leçons du jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · dopo le lezioni di oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@・今日のレッスンが終わったら"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · 오늘 레슨 완료 후"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · po dzisiejszych lekcjach"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · depois das aulas de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · bugünkü derslerden sonra"
+            "value" : "%@ · bu aşamanın derslerinden sonra"
           }
         }
       }
@@ -5617,120 +5558,61 @@
         }
       }
     },
-    "After the challenge before it" : {
-      "comment" : "A challenge waiting for the one before it\nMission waits",
+    "After this phase's lessons" : {
+      "comment" : "A phase challenge waiting for its phase's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach der vorherigen Herausforderung"
+            "value" : "Nach den Lektionen dieser Phase"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después del desafío anterior"
+            "value" : "Después de las lecciones de esta fase"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Après le défi précédent"
+            "value" : "Après les leçons de cette phase"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dopo la sfida precedente"
+            "value" : "Dopo le lezioni di questa fase"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前のチャレンジを終えた後"
+            "value" : "このフェーズのレッスン終了後"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이전 챌린지 완료 후"
+            "value" : "이 단계의 레슨을 마친 후"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Po poprzednim wyzwaniu"
+            "value" : "Po lekcjach tego etapu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Depois do desafio anterior"
+            "value" : "Depois das aulas desta fase"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Önceki meydan okumadan sonra"
-          }
-        }
-      }
-    },
-    "After today's lessons" : {
-      "comment" : "A challenge waiting for the day's lessons\nMission waits",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach den heutigen Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después de las lecciones de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Après les leçons du jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopo le lezioni di oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のレッスンを終えた後"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 레슨 완료 후"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po dzisiejszych lekcjach"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois das aulas de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü derslerden sonra"
+            "value" : "Bu aşamanın derslerinden sonra"
           }
         }
       }

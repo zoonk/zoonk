@@ -487,8 +487,14 @@ struct NextOnPathSection: View {
       $0.kind != .afterExam && ($0.state == .current || $0.state == .upcoming)
     }
     let mockDate = ahead.lazy.compactMap(\.mocks.nextDate).first
-    let checkpoint = ahead.lazy.compactMap(\.checkpoint).first { $0.state == .upcoming }
+    let checkpointPhase = ahead.first { $0.checkpoint?.state == .upcoming }
+    let checkpoint = checkpointPhase?.checkpoint
     let chapter = isExam ? nil : plan.nextChapter
+    let chapterPhase = plan.phases.first { $0.chapters.contains { $0.state == .current } }
+    // A challenge in the next session comes before the next phase's lessons, as on Today.
+    let challengeFirst =
+      checkpoint?.when == .nextSession
+      && (checkpointPhase?.index ?? 0) < (chapterPhase?.index ?? -1)
 
     if mockDate != nil || chapter?.chapterId != nil || checkpoint != nil || isExam {
       PageSection {
@@ -501,6 +507,10 @@ struct NextOnPathSection: View {
                 "Mock exam", tableName: "Plan", comment: "The next mock exam on the path"),
               detail: Text(PlanDate.text(mockDate, today: plan.today)), kind: .mock)
           }
+        }
+
+        if challengeFirst, let checkpoint {
+          checkpointRow(checkpoint)
         }
 
         if let chapter, let chapterId = chapter.chapterId {
@@ -521,14 +531,8 @@ struct NextOnPathSection: View {
           }
         }
 
-        if let checkpoint {
-          Button {
-            router.open(.challenge(planItemId: checkpoint.planItemId))
-          } label: {
-            PlanChallengeLabel(
-              when: checkpointWhen(checkpoint), explains: true,
-              isLanguage: context.goal.kind == .language)
-          }
+        if !challengeFirst, let checkpoint {
+          checkpointRow(checkpoint)
         }
 
         finishRow
@@ -541,6 +545,16 @@ struct NextOnPathSection: View {
     }
   }
 
+  private func checkpointRow(_ checkpoint: PlanPhase.Checkpoint) -> some View {
+    Button {
+      router.open(.challenge(planItemId: checkpoint.planItemId))
+    } label: {
+      PlanChallengeLabel(
+        when: checkpoint.whenText(today: context.plan.today), explains: true,
+        isLanguage: context.goal.kind == .language)
+    }
+  }
+
   private func row(title: Text, detail: Text?, kind: LearnKind) -> some View {
     IconLabeledContent {
       detail
@@ -550,19 +564,6 @@ struct NextOnPathSection: View {
       KindMark(kind: kind)
     }
     .disclosureChevron()
-  }
-
-  private func checkpointWhen(_ checkpoint: PlanPhase.Checkpoint) -> Text? {
-    switch checkpoint.when {
-    case .nextSession:
-      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
-    case .queued:
-      Text(
-        "After the challenge before it", tableName: "Plan",
-        comment: "When the phase's challenge comes")
-    case .date:
-      checkpoint.date.map { PlanDate.estimateText($0, today: context.plan.today) }
-    }
   }
 
   @ViewBuilder

@@ -120,14 +120,10 @@ extension StudyMission {
 
   /// Mirrors main's `useMissionStep`: only Today knows the block a mission opens.
   func step(block: StudyBlock?) -> String? {
-    switch waitReason {
-    case .lessons:
-      return String(localized: "After today's lessons", table: "Today", comment: "Mission waits")
-    case .challenge:
+    if waitReason != nil {
       return String(
-        localized: "After the challenge before it", table: "Today", comment: "Mission waits")
-    case nil:
-      break
+        localized: "After this phase's lessons", table: "Today",
+        comment: "A phase challenge waiting for its phase's lessons")
     }
 
     switch kind {

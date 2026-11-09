@@ -344,15 +344,29 @@ private struct PlanPhaseRow: View {
       return nil
     }
 
-    if (phase.kind == .learn || phase.kind == .afterExam) && phase.state == .upcoming {
-      return Text(
-        "until ~\(PlanDate.monthText(endDate, today: context.plan.today))", tableName: "Plan",
-        comment: "When a phase ends, about")
+    let learns = phase.kind == .learn || phase.kind == .afterExam
+    let today = context.plan.today
+
+    if learns && phase.state == .upcoming {
+      return about(PlanDate.monthText(endDate, today: today))
+    }
+
+    // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+    if learns && phase.checkpoint?.state == .upcoming {
+      return about(PlanDate.text(endDate, today: today))
     }
 
     return Text(
-      "until \(PlanDate.text(endDate, today: context.plan.today))", tableName: "Plan",
+      "until \(PlanDate.text(endDate, today: today))", tableName: "Plan",
       comment: "When a phase ends; the argument is a date like 'May 5'")
+  }
+
+  private func about(_ date: String) -> Text {
+    Text("until ~\(date)", tableName: "Plan", comment: "When a phase ends, about")
+      .accessibilityLabel(
+        Text(
+          "until about \(date)", tableName: "Plan",
+          comment: "When a phase ends, about, read aloud; the argument is a day or a month"))
   }
 }
 
@@ -483,16 +497,20 @@ private struct PlanCheckpointRow: View {
       return Text("Won", tableName: "Plan", comment: "A phase challenge the learner won")
     }
 
-    switch checkpoint.when {
+    return checkpoint.whenText(today: today)
+  }
+}
+
+extension PlanPhase.Checkpoint {
+  /// When it comes. Dated today, the next session is today's, which may already be under way.
+  func whenText(today: String) -> Text? {
+    switch when {
+    case .nextSession where date == today:
+      Text("Today", tableName: "Plan", comment: "When the phase's challenge comes")
     case .nextSession:
-      return Text(
-        "In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
-    case .queued:
-      return Text(
-        "After the challenge before it", tableName: "Plan",
-        comment: "When the phase's challenge comes")
-    case .date:
-      return checkpoint.date.map { PlanDate.estimateText($0, today: today) }
+      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+    case .date, .queued:
+      date.map { PlanDate.estimateText($0, today: today) }
     }
   }
 }

@@ -446,6 +446,7 @@ class TodayScreenshots {
                 buildJsonObject {
                     put("dailyGoal", dailyGoal)
                     put("done", 0)
+                    put("left", dailyGoal)
                     put("planned", dailyGoal)
                 }
             val week =

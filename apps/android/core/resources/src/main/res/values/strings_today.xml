@@ -70,11 +70,9 @@
     <string name="today_step_catching_up_subject">Catching up · %1$s</string>
     <string name="today_step_often_tested">Often tested</string>
     <string name="today_step_often_tested_label">%1$s · often tested</string>
-    <string name="today_step_after_lessons">After today\'s lessons</string>
+    <string name="today_step_after_lessons">After this phase\'s lessons</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · after today\'s lessons</string>
-    <string name="today_step_after_challenge">After the challenge before it</string>
-    <string name="today_step_after_challenge_phase">%1$s · after the challenge before it</string>
+    <string name="today_step_after_lessons_phase">%1$s · after this phase\'s lessons</string>
 
     <string name="today_done">Today\'s session is complete.</string>
     <string name="today_done_day_off">You studied on your day off.</string>

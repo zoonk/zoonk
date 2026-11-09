@@ -132,14 +132,9 @@ private fun StepLines(
     val phase = step.challengePhase
     val line =
         when {
-            wait == StudyBlock.WaitReason.LESSONS -> {
+            wait != null -> {
                 phase?.let { stringResource(R.string.today_step_after_lessons_phase, it) }
                     ?: stringResource(R.string.today_step_after_lessons)
-            }
-
-            wait == StudyBlock.WaitReason.CHALLENGE -> {
-                phase?.let { stringResource(R.string.today_step_after_challenge_phase, it) }
-                    ?: stringResource(R.string.today_step_after_challenge)
             }
 
             !writingStalled && step.isBeingWritten(lessonStatus) -> {
