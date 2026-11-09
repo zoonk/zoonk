@@ -49,6 +49,7 @@ import com.zoonk.android.data.TrackDeckReceived
 import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.data.withRead
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
@@ -135,6 +136,7 @@ fun GoalSetupScreen(
     val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
+    val first = run.firstLesson.withRead(state.value?.firstLesson)
     val claimed = state.value?.warmUp
     val deckId = run.warmUpId ?: claimed?.takeIf { it.status.value == "ready" }?.id?.toString()
     val coming =
@@ -152,6 +154,13 @@ fun GoalSetupScreen(
     )
     val view = (state as? LoadState.Loaded)?.value
     val step = vm.flow.current
+    rememberPoll(
+        active =
+            (run.ended || run.isStopped) && (step == OnboardingStep.PLAN || step == OnboardingStep.SCHEDULE) && first != null &&
+                !first.ready &&
+                !first.done,
+        key = run.id,
+    ) { store.onboardings[vm.goalId].refreshed() }
     val inQuestions = step != null && step != OnboardingStep.PLAN
     val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
     val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.history.isNotEmpty() }
@@ -300,22 +309,7 @@ private fun ColumnScope.SetupStep(
     ) {
         TrackOnboardingQuestion(view.goal.id.toString(), step.value, onboardingId)
     }
-    val savedFirst = view.firstLesson
-    val liveFirst = run.firstLesson
-    val firstLesson =
-        if (savedFirst != null &&
-            (liveFirst == null || (savedFirst.id.toString() == liveFirst.id && savedFirst.status.value != "writing"))
-        ) {
-            GenerationFirstLesson(
-                savedFirst.id.toString(),
-                savedFirst.title,
-                ready = savedFirst.status.value == "ready",
-                done =
-                    savedFirst.status.value == "done",
-            )
-        } else {
-            liveFirst?.copy(title = liveFirst.title ?: savedFirst?.title)
-        }
+    val firstLesson = run.firstLesson.withRead(view.firstLesson)
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 

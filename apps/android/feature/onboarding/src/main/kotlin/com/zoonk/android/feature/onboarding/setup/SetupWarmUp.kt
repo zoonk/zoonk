@@ -104,6 +104,8 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
         first?.takeUnless { it.done }?.let {
             if (it.ready) {
                 stringResource(R.string.warm_up_first_lesson_ready)
+            } else if (it.stopped) {
+                stringResource(R.string.generation_failed_description)
             } else {
                 it.title?.let { name -> stringResource(R.string.warm_up_first_lesson_writing, name) }
             }
@@ -178,8 +180,8 @@ internal fun FirstLessonRow(
     val started = run.stepTimes["writeFirstLesson"]?.started
     val finished = run.stepTimes["firstLessonReady"]?.completed
     val settled = lesson.ready || lesson.done
-    LaunchedEffect(settled, started) {
-        if (started != null && !settled) {
+    LaunchedEffect(settled, lesson.stopped, started) {
+        if (started != null && !settled && !lesson.stopped) {
             while (true) {
                 kotlinx.coroutines.delay(1_000)
                 now = System.currentTimeMillis()
@@ -192,7 +194,7 @@ internal fun FirstLessonRow(
             if (settled) {
                 com.zoonk.android.ui.components
                     .DoneMark()
-            } else {
+            } else if (!lesson.stopped) {
                 androidx.compose.material3.CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
@@ -207,6 +209,7 @@ internal fun FirstLessonRow(
                     when {
                         lesson.done -> R.string.lessons_done
                         lesson.ready -> R.string.warm_up_ready_to_start
+                        lesson.stopped -> R.string.generation_failed_description
                         else -> R.string.warm_up_first_lesson_screens
                     },
                 ),

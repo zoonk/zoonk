@@ -42,6 +42,8 @@ data class GenerationRun(
     /** The goal's deck of guesses, once the run reports it ready; a restart writes the same goal, so it keeps it. */
     val warmUpId: String? = null,
     val firstLesson: GenerationFirstLesson? = null,
+    val id: String? = null,
+    val ended: Boolean = false,
 ) {
     enum class Status { Waiting, Following, Ready, Failed }
 }
@@ -51,6 +53,7 @@ data class GenerationFirstLesson(
     val title: String? = null,
     val ready: Boolean = false,
     val done: Boolean = false,
+    val stopped: Boolean = false,
 )
 
 interface GenerationSource {
@@ -143,10 +146,10 @@ class GenerationFollower(
         var id = followed ?: awaitId() ?: return
         while (true) {
             followed = id
-            state.update { it.copy(status = GenerationRun.Status.Following) }
+            state.update { it.copy(id = id, ended = false, status = GenerationRun.Status.Following) }
             when (val ending = stream(id)) {
                 Ending.Ready -> {
-                    return state.update { it.copy(status = GenerationRun.Status.Ready) }
+                    return state.update { it.copy(ended = true, status = GenerationRun.Status.Ready) }
                 }
 
                 Ending.Stopped -> {
@@ -163,7 +166,7 @@ class GenerationFollower(
 
                 Ending.Closed -> {
                     when (readStatus(id)) {
-                        Generation.Status.COMPLETED -> return state.update { it.copy(status = GenerationRun.Status.Ready) }
+                        Generation.Status.COMPLETED -> return state.update { it.copy(ended = true, status = GenerationRun.Status.Ready) }
                         Generation.Status.FAILED, Generation.Status.CANCELLED -> return fail(GenerationFailure.Generation)
                         null -> return fail(GenerationFailure.Connection)
                         Generation.Status.PENDING, Generation.Status.RUNNING -> delay(REOPEN_DELAY)
@@ -275,7 +278,7 @@ class GenerationFollower(
     private suspend fun readStatus(id: String): Generation.Status? = runCatchingApi { source.status(id) }
 
     private fun fail(failure: GenerationFailure) {
-        state.update { it.copy(status = GenerationRun.Status.Failed, failure = failure) }
+        state.update { it.copy(status = GenerationRun.Status.Failed, failure = failure, ended = failure != GenerationFailure.Connection) }
     }
 
     private sealed interface Ending {
@@ -311,3 +314,21 @@ private suspend fun <T> runCatchingApi(read: suspend () -> T): T? =
     } catch (e: Exception) {
         null
     }
+
+fun GenerationFirstLesson?.withRead(read: com.zoonk.api.models.OnboardingFirstLesson?): GenerationFirstLesson? {
+    if (read == null) return this
+    val saved =
+        GenerationFirstLesson(
+            read.id.toString(),
+            read.title,
+            ready = read.status.value == "ready",
+            done =
+                read.status.value == "done",
+            stopped = read.status.value == "stopped",
+        )
+    if (this == null) return saved
+    if (read.id.toString() != id) return this
+    if (saved.done || saved.ready) return saved
+    if (done || ready) return this
+    return saved
+}
