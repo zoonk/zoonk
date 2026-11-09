@@ -8,7 +8,7 @@ final class OnboardingStore {
   private(set) var sentGoal: SentGoal?
   let resume: Resource<OnboardingResume>
   /// What each goal run's stream said of its deck: ready (its id), or nil once the run ended its
-  /// deck step without one. A wait trusts this over an onboarding read that may be older.
+  /// deck step without one. A ready onboarding read wins; a writing one may be older.
   private var decks: [String: String?] = [:]
 
   @ObservationIgnored private let api: OnboardingAPI
@@ -111,15 +111,15 @@ final class OnboardingStore {
   /// The deck a wait deals from, and whether one is on its way: the onboarding read names the
   /// deck at open, and the run's stream says when it's ready or that none is coming.
   func waitDeck(for view: GoalOnboarding) -> WaitDeck {
+    if view.warmUp?.status == .ready {
+      return WaitDeck(id: view.warmUp?.id, isComing: false)
+    }
+
     if let generationID = view.generationId, let heard = decks[generationID] {
       return WaitDeck(id: heard, isComing: false)
     }
 
-    switch view.warmUp?.status {
-    case .ready?: return WaitDeck(id: view.warmUp?.id, isComing: false)
-    case .writing?: return WaitDeck(id: nil, isComing: true)
-    case nil: return WaitDeck(id: nil, isComing: false)
-    }
+    return WaitDeck(id: nil, isComing: view.warmUp?.status == .writing)
   }
 
   /// Follows a goal's run until it says whether its deck is ready, so every wait after it knows.
