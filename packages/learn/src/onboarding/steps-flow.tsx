@@ -141,7 +141,7 @@ function FirstLessonRead({
     active:
       visible &&
       (generation?.ended || isRunStopped(generation)) &&
-      (firstLesson?.status === "stopped" || firstLesson?.status === "writing"),
+      firstLesson?.status === "writing",
     intervalMs: 3000,
     key: `${state.view.goal.id}:${generation?.id ?? state.view.generationId}`,
     onPoll: async (signal) => {

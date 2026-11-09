@@ -158,7 +158,8 @@ fun GoalSetupScreen(
         active =
             (run.ended || run.isStopped) && (step == OnboardingStep.PLAN || step == OnboardingStep.SCHEDULE) && first != null &&
                 !first.ready &&
-                !first.done,
+                !first.done &&
+                !first.stopped,
         key = run.id,
     ) { store.onboardings[vm.goalId].refreshed() }
     val inQuestions = step != null && step != OnboardingStep.PLAN

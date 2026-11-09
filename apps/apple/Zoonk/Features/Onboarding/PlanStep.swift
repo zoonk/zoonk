@@ -189,8 +189,7 @@ struct PlanBuilding: View {
       let before = resource.revision
       await resource.refresh()
       failures = resource.revision == before ? failures + 1 : 0
-      if let lesson = resource.value?.firstLesson, lesson.status == .ready || lesson.status == .done
-      {
+      if resource.revision != before && resource.value?.firstLesson?.status != .writing {
         return
       }
     }
@@ -266,9 +265,12 @@ struct PlanBuilding: View {
               id: LessonFollow(
                 id: run.id,
                 active: (run.ended || run.isStopped) && !firstLesson.isReady
+                  && !firstLesson.isStopped
                   && scenePhase == .active)
             ) {
-              guard (run.ended || run.isStopped) && !firstLesson.isReady && scenePhase == .active
+              guard
+                (run.ended || run.isStopped) && !firstLesson.isReady && !firstLesson.isStopped
+                  && scenePhase == .active
               else { return }
               await followFirstLesson()
             }
