@@ -284,7 +284,6 @@ struct PlanToolbar: ViewModifier {
     }
   }
 
-  /// A name that didn't save opens the dialog again with what was typed.
   private func rename() {
     let displayName = trimmedName
 

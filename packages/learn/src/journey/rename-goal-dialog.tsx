@@ -70,9 +70,9 @@ export function RenameGoalDialog({
           <div className="my-6 grid gap-2">
             <Label htmlFor={id}>
               {t({
+                description: "A learning goal's name, not a person's name",
                 id: "goalDisplayName",
                 message: "Name",
-                description: "A learning goal's name, not a person's name",
               })}
             </Label>
             <Input

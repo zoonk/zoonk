@@ -144,7 +144,6 @@ private fun PlanMenu(
     rename?.dialog?.let { RenameGoalDialog(page.goal.displayName, it, rename) }
 }
 
-/** The Plan menu's Rename goal, whose dialog is open while [dialog] isn't null. */
 internal class GoalRename(
     val dialog: RenameDialog?,
     val onOpen: () -> Unit,
@@ -152,7 +151,6 @@ internal class GoalRename(
     val onSave: (String) -> Unit,
 )
 
-/** Only the goal's name changes; a failed save keeps the dialog and what was typed. */
 @Composable
 private fun RenameGoalDialog(
     displayName: String,

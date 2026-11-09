@@ -43,7 +43,6 @@ enum class PlanPart { Aim, Date, Schedule, ExamChoices, Bases, Activities, Writi
 /** [Started] stays: the new goal becomes the active one, which the Plan then shows. */
 enum class NextLevelStart { Idle, Starting, Started, Failed }
 
-/** The open Rename dialog: its name is [saving], or [failed] to save and waits for another try. */
 data class RenameDialog(
     val saving: Boolean = false,
     val failed: Boolean = false,

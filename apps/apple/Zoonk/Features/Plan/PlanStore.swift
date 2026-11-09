@@ -151,7 +151,6 @@ final class PlanStore {
     }
   }
 
-  /// Only the goal's name changes: its plan stays as it is.
   func rename(goalId: String, displayName: String) async -> MutationResult<Bool> {
     await write { api, token in
       try await api.rename(token: token, goalId: goalId, displayName: displayName)
