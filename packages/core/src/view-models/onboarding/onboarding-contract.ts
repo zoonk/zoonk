@@ -215,7 +215,7 @@ export type OnboardingDateProblem =
  */
 export type OnboardingFirstLesson = {
   id: string;
-  status: "done" | "ready" | "writing";
+  status: "done" | "ready" | "stopped" | "writing";
   title: string;
 };
 

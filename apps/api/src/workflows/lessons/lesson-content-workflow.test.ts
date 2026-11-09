@@ -46,6 +46,8 @@ import {
 import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
+import * as pictures from "./mark-and-draw";
+import * as finishing from "./steps/lesson-ready-steps";
 import { writeLessonContentStep } from "./steps/write-lesson-content-step";
 import { saveLessonSpecStep } from "./steps/write-lesson-spec-step";
 
@@ -96,6 +98,29 @@ describe(lessonContentWorkflow, () => {
       taskResult({ issues: [] }, "anthropic/claude-opus-5.5"),
     );
   });
+
+  it.each(["pictures", "completion"] as const)(
+    "releases its lesson claim when the %s tail throws",
+    async (stage) => {
+      const lesson = await outlinedLesson();
+      const failure = new Error("Exhausted tail step retries");
+
+      const spy =
+        stage === "pictures"
+          ? vi.spyOn(pictures, "markAndDraw").mockRejectedValue(failure)
+          : vi.spyOn(finishing, "completeLessonContentStep").mockRejectedValue(failure);
+
+      try {
+        await expect(lessonContentWorkflow({ lessonId: lesson.id })).rejects.toThrow(failure);
+
+        await expect(
+          prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+        ).resolves.toMatchObject({ contentStatus: "failed" });
+      } finally {
+        spy.mockRestore();
+      }
+    },
+  );
 
   it.each(["learn", "exam", "language"] as const)(
     "writes a %s goal's first lesson fast",

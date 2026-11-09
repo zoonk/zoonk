@@ -6,6 +6,7 @@ import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { holdBackLessonDraft } from "../../library/generation/hold-back-lesson";
 import { getOnboarding } from "./get-onboarding";
 
 async function readFirstLesson(goalId: string) {
@@ -46,9 +47,55 @@ describe(getOnboarding, () => {
       [
         { id: writing.id, status: "writing", title: "Why birds sing at dawn" },
         { id: ready.id, status: "ready", title: ready.title },
-        null,
+        { id: setAside.id, status: "stopped", title: setAside.title },
       ],
     );
+  });
+
+  it.each([
+    ["pending", "writing"],
+    ["running", "writing"],
+    ["failed", "stopped"],
+    ["completed", "ready"],
+  ] as const)(
+    "reads persisted %s lesson state without inspecting its run",
+    async (contentStatus, expected) => {
+      const user = await userFixture();
+      const lesson = await libraryLessonFixture({ contentStatus });
+      const goal = await goalFixture({ openingLessonId: lesson.id, userId: user.id });
+      mockSession(user.id);
+
+      await expect(readFirstLesson(goal.id)).resolves.toMatchObject({ status: expected });
+    },
+  );
+
+  it("keeps a held-back lesson writing between redrafts, but stops a set-aside lesson", async () => {
+    const user = await userFixture();
+
+    const lesson = await libraryLessonFixture({
+      contentRunId: "redrafting",
+      contentStatus: "running",
+    });
+
+    const goal = await goalFixture({ openingLessonId: lesson.id, userId: user.id });
+    mockSession(user.id);
+
+    await holdBackLessonDraft({
+      lessonId: lesson.id,
+      model: "test/fixture",
+      problems: [],
+      workflowRunId: "redrafting",
+    });
+
+    await expect(readFirstLesson(goal.id)).resolves.toMatchObject({ status: "writing" });
+
+    const setAside = await libraryLessonFixture({
+      contentStatus: "failed",
+      setAsideAt: new Date(),
+    });
+
+    const stopped = await goalFixture({ openingLessonId: setAside.id, userId: user.id });
+    await expect(readFirstLesson(stopped.id)).resolves.toMatchObject({ status: "stopped" });
   });
 
   it("reports the goal's first lesson as done once this learner finished it, not a capsule of it", async () => {

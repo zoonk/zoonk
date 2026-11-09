@@ -81,10 +81,10 @@ export const onboardingResponseSchema = z
       .object({
         id: uuidSchema().meta({ description: "Open it at GET /v1/library/lessons/{lessonId}" }),
         status: z
-          .enum(["done", "ready", "writing"])
+          .enum(["done", "ready", "stopped", "writing"])
           .meta({
             description:
-              "`writing` until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again",
+              "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again",
           }),
         title: z.string(),
       })

@@ -10,20 +10,25 @@ type OpeningLesson = { id: string; title: string };
 function getOpeningStatus({
   finished,
   written,
+  stopped,
 }: {
   finished: boolean;
   written: boolean;
+  stopped: boolean;
 }): OnboardingFirstLesson["status"] {
   if (finished) {
     return "done";
   }
 
-  return written ? "ready" : "writing";
+  if (written) {
+    return "ready";
+  }
+
+  return stopped ? "stopped" : "writing";
 }
 
 /**
- * Internal: authorize the goal first; `userId` is its owner's. A lesson no run will write again is
- * no lesson to offer.
+ * Internal: authorize the goal first; `userId` is its owner's.
  */
 export async function readGoalOpening({
   lessonId,
@@ -44,13 +49,17 @@ export async function readGoalOpening({
     hasFinishedLesson({ lessonId, userId }),
   ]);
 
-  if (!lesson || lesson.setAsideAt) {
+  if (!lesson) {
     return null;
   }
 
   return {
     id: lesson.id,
-    status: getOpeningStatus({ finished, written: lesson.contentStatus === "completed" }),
+    status: getOpeningStatus({
+      finished,
+      stopped: lesson.contentStatus === "failed" || lesson.setAsideAt !== null,
+      written: lesson.contentStatus === "completed",
+    }),
     title: lesson.title,
   };
 }
