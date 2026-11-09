@@ -99,14 +99,15 @@ struct MistakePracticeScreen: View {
     if state.phase == .idea, let lesson = drill.lesson {
       DrillIdeaView(drill: drill, lesson: lesson)
     } else {
-      if drill.kind == .readCarefully
-        ? step.isFirstOfEntry : !drill.isIdeaFirst || !step.isFirstOfEntry
-      {
+      let lastAnswer =
+        step.isMistakeQuestion
+        ? TrueFalseWords.savedAnswer(step.entry.snapshotAnswer, labels: labels) : nil
+
+      if drill.isIdeaFirst ? lastAnswer != nil : step.isFirstOfEntry {
         DrillNoteView(
           drill: drill,
-          lastAnswer: step.isMistakeQuestion
-            ? TrueFalseWords.savedAnswer(step.entry.snapshotAnswer, labels: labels) : nil,
-          isAnswered: graded != nil)
+          lastAnswer: lastAnswer,
+          isAnswered: graded != nil || drill.isIdeaFirst)
       }
 
       if let seconds = drill.timeLimitSeconds, state.phase == .answering {
