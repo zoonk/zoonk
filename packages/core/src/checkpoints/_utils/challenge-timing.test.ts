@@ -165,6 +165,13 @@ describe(getChallengeTimings, () => {
 
     expect(timings.get("a")?.when).toBe("nextSession");
     expect(timings.get("b")?.when).toBe("date");
+    expect(timings.get("b")?.date).toBe("2026-11-10");
+  });
+
+  it("dates a reached locked challenge from the next capable day, ignoring its saved estimate", () => {
+    const timings = getChallengeTimings({ ...base, items: [boss], savedDay: true });
+
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
   });
 
   it("clamps a past estimate to tomorrow unless today's saved session holds it", () => {

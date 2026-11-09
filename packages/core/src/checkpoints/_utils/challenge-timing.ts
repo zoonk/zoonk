@@ -129,7 +129,7 @@ export function getChallengeTimings({
           : new Date(
               Math.max(
                 tomorrow.getTime(),
-                boss.scheduledFor?.getTime() ?? 0,
+                isChallengeReached({ boss, items }) ? 0 : (boss.scheduledFor?.getTime() ?? 0),
                 isChallengeReached({ boss, items }) ? (future?.getTime() ?? 0) : 0,
               ),
             );

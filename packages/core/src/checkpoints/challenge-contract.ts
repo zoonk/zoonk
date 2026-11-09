@@ -44,7 +44,7 @@ export type ChallengeView = {
   blockId: string | null;
   call: ChallengeCall | null;
   canMove: boolean;
-  /** The learner-local day it's planned for, YYYY-MM-DD. */
+  /** A reached phase challenge's next capable day when it waits; the real day for calendar challenges. Null before a phase challenge is reached. */
   date: string | null;
   /** Real learner pace, capped at minutes; defaults to exam pace and is null when size is unknown. */
   estimatedMinutes: number | null;

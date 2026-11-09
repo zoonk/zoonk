@@ -145,7 +145,7 @@ export const challengeResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Null for a phase challenge, which opens after its preceding lessons finish. Weekly challenges and mocks keep their real calendar date.",
+          "A reached phase challenge's next capable day when it is upcoming, from the same estimate the Plan shows. Null before its preceding lessons finish or when it is offered in the next session. Weekly challenges and mocks keep their real calendar date.",
       }),
     estimatedMinutes: unknownSizeSchema.meta({
       description:

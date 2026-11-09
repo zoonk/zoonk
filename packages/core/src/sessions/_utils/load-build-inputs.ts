@@ -104,20 +104,29 @@ function toReviewInput({
 }
 
 /** Weakest-topic review fills otherwise empty days, but cannot invent review material for a learner who studied nothing. */
-async function withWeakestReview({
+async function finalizeBuildInput({
   input,
+  keepsBlocks,
+  plan,
   review,
+  today,
 }: {
   input: SessionBuildInput;
+  keepsBlocks: boolean;
+  plan: Awaited<ReturnType<typeof loadDayPlan>>;
   review: Parameters<typeof loadReviewCapsules>[0];
+  today: Date;
 }): Promise<SessionBuildInput> {
-  if (buildSessionBlocks(input).blocks.length > 0) {
-    return input;
+  const { blocks } = buildSessionBlocks(input);
+  const ready = { ...input, freshStart: getDayFreshStart({ blocks, plan, today }) };
+
+  if (keepsBlocks || blocks.length > 0) {
+    return ready;
   }
 
   const capsules = await loadReviewCapsules({ ...review, weakest: true });
 
-  return capsules.length > 0 ? { ...input, capsules, weakestReview: true } : input;
+  return capsules.length > 0 ? { ...ready, capsules, weakestReview: true } : ready;
 }
 
 type SessionBuildContext = BuildContext & {
@@ -293,5 +302,5 @@ export async function loadSessionBuildInput(
     writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
   };
 
-  return keepsBlocks ? input : withWeakestReview({ input, review });
+  return finalizeBuildInput({ input, keepsBlocks, plan, review, today: localDate });
 }

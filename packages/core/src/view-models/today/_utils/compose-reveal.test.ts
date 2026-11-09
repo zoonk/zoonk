@@ -27,9 +27,20 @@ const block = (
   lessonId: string | null,
   estimatedMinutes: number,
   chapterId: string | null = null,
-) => ({ chapterId, estimatedMinutes, lessonId });
+) => ({ chapterId, estimatedMinutes, lessonId, planItemId: null });
 
 describe(composeRevealDays, () => {
+  it("lists a challenge Today pulled ahead of its saved day only once", () => {
+    const challenge = lesson("challenge", { kind: "boss", lessonId: null });
+
+    const reveal = composeRevealDays({
+      blocks: [{ ...block(null, 15), planItemId: challenge.id }],
+      days: [day("2026-11-09", []), day("2026-11-10", [challenge])],
+    });
+
+    expect(reveal.nextDays).toStrictEqual([]);
+  });
+
   it("moves a lesson Today leaves out to tomorrow and lists each lesson once after that", () => {
     const days = [
       day("2026-11-08", [lesson("a"), lesson("b"), lesson("split")]),

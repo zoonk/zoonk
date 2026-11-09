@@ -142,6 +142,57 @@ describe("a challenge intro is a read", () => {
 
   afterEach(() => vi.useRealTimers());
 
+  it("dates a reached challenge left outside today's saved session from the Plan's timing", async () => {
+    const { boss, goal, user } = await dueBossFixture((skillIds) => ({
+      kind: "text",
+      minutes: 15,
+      questions: 10,
+      testedKeys: [],
+      testedSkillIds: skillIds,
+      waiting: false,
+    }));
+
+    await prisma.planItem.update({
+      data: { scheduledFor: new Date("2027-01-16") },
+      where: { id: boss.id },
+    });
+
+    await studySessionFixture({ goalId: goal.id, localDate: SESSION_TODAY, userId: user.id });
+
+    await expect(readIntro(boss.id)).resolves.toMatchObject({
+      date: "2026-10-01",
+      status: "upcoming",
+    });
+  });
+
+  it("previews unskipped teaching before an unreached challenge without expanding a reached offer", async () => {
+    const { boss, plan, skills } = await dueBossFixture(() => ({
+      kind: "text",
+      minutes: 0,
+      questions: 0,
+      testedKeys: [],
+      testedSkillIds: [],
+      waiting: true,
+    }));
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: null, status: "todo" },
+      where: { kind: "lesson", planId: plan.id },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { status: "skipped" },
+      where: { kind: "lesson", planId: plan.id, skillId: skills[1]!.id },
+    });
+
+    const challenge = await readIntro(boss.id);
+
+    expect(challenge.topics.map((topic) => topic.name)).toStrictEqual([
+      skills[0]!.name,
+      skills[2]!.name,
+    ]);
+  });
+
   it("keeps a legacy offer waiting without writing, then establishes its queue on Start", async () => {
     const { boss, goal, plan, user } = await dueBossFixture();
     const before = await readPlan(plan.id);
@@ -180,7 +231,7 @@ describe("a challenge intro is a read", () => {
   });
 
   it("keeps an unknown-size checkpoint upcoming before its day, not waiting", async () => {
-    const { boss } = await dueBossFixture();
+    const { boss, skills } = await dueBossFixture();
 
     await prisma.planItem.update({
       data: { scheduledFor: new Date(SESSION_NOW.getTime() + 2 * DAY_MS) },
@@ -195,7 +246,7 @@ describe("a challenge intro is a read", () => {
     await expect(readIntro(boss.id)).resolves.toMatchObject({
       questions: null,
       status: "upcoming",
-      topics: [],
+      topics: skills.map((skill) => ({ name: skill.name, subject: null })),
     });
   });
 
