@@ -43,15 +43,19 @@ export async function replaceProfileFacts({
     userId,
   };
 
-  const removed = await tx.memoryFact.updateMany({
+  await tx.memoryFact.updateMany({
     data: { deletedAt: new Date(), status: "superseded" },
-    where: { ...questionFacts, id: { notIn: kept }, status: "active" },
+    where: {
+      ...questionFacts,
+      OR: [{ status: "active" }, { deletedAt: null, status: "superseded" }],
+      id: { notIn: kept },
+    },
   });
 
-  // A newer profile answer closes earlier Memory deletions to undo, without moving their purge dates.
+  // A newer profile answer closes earlier Memory undos without moving existing purge dates.
   await tx.memoryFact.updateMany({
-    data: { status: "superseded" },
-    where: { ...questionFacts, status: "deleted" },
+    data: { status: "superseded", supersededById: null },
+    where: { ...questionFacts, status: { in: ["deleted", "superseded"] } },
   });
 
   const created = await tx.memoryFact.createManyAndReturn({
@@ -84,7 +88,7 @@ export async function replaceProfileFacts({
     });
   }
 
-  if (removed.count > 0 || created.length > 0) {
+  if (existing.some((fact) => !kept.includes(fact.id)) || created.length > 0) {
     await forgetExampleLines({ client: tx, userId });
   }
 
