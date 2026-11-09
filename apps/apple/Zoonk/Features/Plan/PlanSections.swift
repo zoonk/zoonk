@@ -526,7 +526,7 @@ struct NextOnPathSection: View {
             router.open(.challenge(planItemId: checkpoint.planItemId))
           } label: {
             PlanChallengeLabel(
-              when: checkpointWhen(checkpoint), explains: true,
+              when: checkpoint.whenText(today: context.plan.today), explains: true,
               isLanguage: context.goal.kind == .language)
           }
         }
@@ -550,19 +550,6 @@ struct NextOnPathSection: View {
       KindMark(kind: kind)
     }
     .disclosureChevron()
-  }
-
-  private func checkpointWhen(_ checkpoint: PlanPhase.Checkpoint) -> Text? {
-    switch checkpoint.when {
-    case .nextSession:
-      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
-    case .queued:
-      Text(
-        "After the challenge before it", tableName: "Plan",
-        comment: "When the phase's challenge comes")
-    case .date:
-      checkpoint.date.map { PlanDate.estimateText($0, today: context.plan.today) }
-    }
   }
 
   @ViewBuilder

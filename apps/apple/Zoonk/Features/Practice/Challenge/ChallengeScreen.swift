@@ -327,20 +327,9 @@ struct ChallengeScreen: View {
   /// Main's footer line for a challenge with nothing to start yet. A dated one already says its day
   /// above.
   private func waitLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
-    if [.ready, .started].contains(challenge.status), let waitReason = challenge.waitReason {
-      return switch waitReason {
-      case .lessons:
-        LocalizedStringResource(
-          "After today's lessons", table: "Today",
-          comment: "A challenge waiting for the day's lessons")
-      case .challenge:
-        LocalizedStringResource(
-          "After the challenge before it", table: "Today",
-          comment: "A challenge waiting for the one before it")
-      }
-    }
+    let waits = [.ready, .started].contains(challenge.status) && challenge.waitReason != nil
 
-    guard challenge.status == .upcoming, challenge.date == nil else {
+    guard waits || (challenge.status == .upcoming && challenge.date == nil) else {
       return nil
     }
 
