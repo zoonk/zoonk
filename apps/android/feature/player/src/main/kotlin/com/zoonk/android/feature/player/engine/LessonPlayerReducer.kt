@@ -184,11 +184,11 @@ fun reduce(
         }
 
         is LessonAction.CompletionSaved -> {
-            state.withCompletion { it.copy(status = CompletionStatus.Saved, result = action.result) }
+            state.withCompletion { it.copy(status = CompletionStatus.Saved, result = action.result, saveFailures = 0) }
         }
 
         LessonAction.CompletionFailed -> {
-            state.withCompletion { it.copy(status = CompletionStatus.Failed) }
+            state.withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
         }
 
         LessonAction.CompletionRetried -> {
@@ -298,7 +298,7 @@ private fun LessonPlayerState.resync(
     val started = run as? LessonRun.Started
 
     if (started != null && action.runId != null && action.runId != started.runId) {
-        return withCompletion { it.copy(status = CompletionStatus.Failed) }
+        return withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
     }
 
     val available = skipSteps(action.optionalStepIds, now)
@@ -310,7 +310,8 @@ private fun LessonPlayerState.resync(
                 unavailableStepIds = available.unavailableStepIds - drawn.keys,
             ).resumeFrom(action.answers, now)
     val missing = resumed.queue.distinct().filter { resumed.steps[it]?.isAnswerable == true && it !in resumed.results }
-    val first = missing.firstOrNull() ?: return withCompletion { it.copy(status = CompletionStatus.Failed) }
+    val first =
+        missing.firstOrNull() ?: return withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
     val recovery = missing.associateWith { if (it in drawn) LessonNotice.PictureReady else LessonNotice.AnswerNotSaved }
 
     return resumed.copy(recovery = recovery).enterPosition(resumed.queue.indexOf(first), now)

@@ -59,6 +59,13 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
 
 const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [
   { gatewayModelId: JEV_MODEL_ID, name: "jev" },
+  { gatewayModelId: "typesafe-ai/jev-1.14.0", name: "jev-1.14.0" },
+  { gatewayModelId: "baseten/joey-1", name: "joey-1" },
+  { gatewayModelId: "baseten/elephant-1", name: "elephant-1" },
+  { gatewayModelId: "baseten/mammoth-1", name: "mammoth-1" },
+  { gatewayModelId: "microsoft/microsoft-decision-1", name: "microsoft-decision-1" },
+  { gatewayModelId: "perplexity/pplx-decider-flash-v1.2", name: "pplx-decider-flash-v1.2" },
+  { gatewayModelId: "perplexity/pplx-decider-v1.2", name: "pplx-decider-v1.2" },
   { gatewayModelId: LUNA_DECISIONS_MODEL_ID, name: "gpt-6-luna-decisions" },
   { gatewayModelId: "liquid/d1", name: "liquid-d1" },
   { gatewayModelId: "openai/gpt-6-luna", name: "gpt-6-luna (evaluation)" },

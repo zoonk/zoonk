@@ -6,14 +6,14 @@ import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout
 import { TaskMainButton } from "../shell/task-frame";
 import { MomentHeader } from "./moment-header";
 
-export function FailedMoment({ onRetry }: { onRetry: () => void }) {
+export function FailedMoment({ failures, onRetry }: { failures: number; onRetry: () => void }) {
   const t = useExtracted();
 
   return (
     <>
       <TaskBody data-slot="failed-moment">
         <MomentHeader title={t("Your lesson isn't saved yet")}>
-          <AnswersSaveError />
+          <AnswersSaveError failures={failures} />
         </MomentHeader>
       </TaskBody>
 

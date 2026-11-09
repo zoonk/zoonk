@@ -189,7 +189,6 @@
   "onboarding_placement_stop_mock": "25d863689186ff047ab889a0c3e7afc8f5afe8e8a9d31cbef416c2f697b2d34a",
   "onboarding_placement_title": "acdb6700b66da4d5e1e1928dccae0dbc60e7d6612aa36ceb1b4b89a4bb772350",
   "onboarding_placement_true": "c872e46fbdc965984b41d78a1cda86d2de3279be370c0667d4eada144bc5772c",
-  "onboarding_placement_try_again": "c8ab77c835f9529dc806c96682cf610a58f428b4a32b0f2add5afa0048d59514",
   "onboarding_placement_unavailable_description": "a919acc588eb2e5d4ecbc8301bb75285d822b5d9425ea5ba58f2c7ecc3b9f57c",
   "onboarding_placement_unavailable_title": "53fc3229175254059a1b3d8ddbe4ceae90a0b8cdc3c24cca9b681922f55a2f7f",
   "onboarding_placement_waiting_material": "13875ae4c16f03be4fb4dccdbfabaa776c31fbb9b1bb3d013e6c23f3b8c015c3",
@@ -640,7 +639,6 @@
     <string name="onboarding_placement_confirm">확인</string>
     <string name="onboarding_placement_stop">여기서 멈추고 내 계획 보기</string>
     <string name="onboarding_placement_answer_failed">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
-    <string name="onboarding_placement_try_again">다시 시도</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">참</string>
     <string name="onboarding_placement_false">거짓</string>

@@ -4,7 +4,7 @@ Report only these:
 
 1. A wrong fact, number, date, name, unit, formula, law article or paragraph, or citation, including made-up data presented as real or a made-up failure, fault or misdeed pinned on a real company, product or person.
 2. A calculation or worked step that doesn't give the result the screen states.
-3. A question whose marked answer is wrong, where another option is also defensible from what the screen shows, or that has no defensible answer from what the learner has been shown.
+3. A question whose marked answer is wrong, where another option is also defensible from what the screen shows, or that has no defensible answer from what the learner has been shown. On a guess, another option is also defensible when another common reading of its question (another measure, definition or convention) makes it right, unless it's the tempting option and a later screen says why that reading doesn't give the answer.
 4. A reason or feedback that contradicts its option, the marked answer or another screen.
 5. A screen that refers to something no screen shows: a case, a person, a place, an earlier example or a picture.
 6. A rule stated so broadly that it's false, for example one the lesson's own example breaks.

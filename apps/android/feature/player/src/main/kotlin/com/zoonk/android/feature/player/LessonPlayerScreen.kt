@@ -234,6 +234,7 @@ fun LessonPlayer(
     ceremony: MomentCeremony? = null,
     tutor: LessonTutor? = null,
     certificatesMoment: CertificatesMoment? = null,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -470,6 +471,7 @@ fun LessonPlayer(
                             help,
                             touches,
                             canvasWork,
+                            onReportSaveFailure,
                         )
                     }
                 }
@@ -579,6 +581,7 @@ private fun Content(
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
+    onReportSaveFailure: () -> Unit,
 ) {
     val run = state.run
 
@@ -592,7 +595,7 @@ private fun Content(
         state.phase == LessonPhase.Completed -> {
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
-                if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
+                if (ownEnd == null) LessonCompletionView(state, ending, buddy, onReportSaveFailure) else ownEnd.body(state)
             }
         }
 

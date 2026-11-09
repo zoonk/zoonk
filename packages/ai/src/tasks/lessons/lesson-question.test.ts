@@ -16,6 +16,10 @@ vi.mock("./lesson-question-lesson.prompt.md", () => ({
     "{{#questionScreen}}Hint, never reveal.{{/questionScreen}}{{#teachingScreen}}Answer directly.{{/teachingScreen}}",
 }));
 
+vi.mock("./lesson-screen-rules.prompt.md", () => ({
+  default: "{{#guessScreen}}Hint until it's revealed.{{/guessScreen}}Weigh their reasoning.",
+}));
+
 vi.mock("./lesson-question-beyond.prompt.md", () => ({ default: "Beyond a lesson." }));
 vi.mock("./lesson-question-chapter.prompt.md", () => ({ default: "Chapter rules." }));
 vi.mock("./lesson-question-mock.prompt.md", () => ({ default: "Mock rules." }));
@@ -55,15 +59,14 @@ const MOCK = {
   version: 1,
 } satisfies Snapshot;
 
-function lessonSnapshot(kind: "answer" | "lesson" | "step", answerable = true): LessonScopeContext {
-  const step = {
-    answerable,
-    content: {},
-    kind: "check",
-    sentence: null,
-    stepNumber: 1,
-    word: null,
-  };
+const CHECK_SCREEN = { content: {}, kind: "check" };
+
+function lessonSnapshot(
+  kind: "answer" | "lesson" | "step",
+  answerable = true,
+  screen: { content: object; kind: string } = CHECK_SCREEN,
+): LessonScopeContext {
+  const step = { answerable, ...screen, sentence: null, stepNumber: 1, word: null };
 
   return {
     answer: null,
@@ -100,15 +103,25 @@ describe(generateLessonQuestionAnswer, () => {
 
   it("sends each scope only its own rules after the shared ones", async () => {
     await expect(getInstructions(lessonSnapshot("step"))).resolves.toBe(
-      "Tutor in US English.\nHint, never reveal.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
     );
 
     await expect(getInstructions(lessonSnapshot("answer"))).resolves.toBe(
-      "Tutor in US English.\nHint, never reveal.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
+    );
+
+    await expect(getInstructions(lessonSnapshot("lesson"))).resolves.toBe(
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
     );
 
     await expect(getInstructions(lessonSnapshot("step", false))).resolves.toBe(
-      "Tutor in US English.\nAnswer directly.",
+      "Tutor in US English.\nAnswer directly.\nWeigh their reasoning.",
+    );
+
+    const guess = { content: { variant: "guess" }, kind: "hook" };
+
+    await expect(getInstructions(lessonSnapshot("step", false, guess))).resolves.toBe(
+      "Tutor in US English.\n\nHint until it's revealed.Weigh their reasoning.",
     );
 
     await expect(getInstructions(CHAPTER)).resolves.toBe(
@@ -128,6 +141,6 @@ describe(generateLessonQuestionAnswer, () => {
         ...snapshot,
         course: { ...snapshot.course, language: "pt", targetLanguage: "it", title: "Italiano" },
       }),
-    ).resolves.toBe("Tutor in Português Brasileiro.\nHint, never reveal.");
+    ).resolves.toBe("Tutor in Português Brasileiro.\nHint, never reveal.\nWeigh their reasoning.");
   });
 });

@@ -188,7 +188,9 @@ export function PronunciationReviewScreen({
       exitToApp
       footer={
         <>
-          {round.failed && <AnswersSaveError onRetry={round.retryFinish} />}
+          {round.failures > 0 && !round.isPending && (
+            <AnswersSaveError failures={round.failures} onRetry={round.retryFinish} />
+          )}
           <WordActions
             available={mic.available}
             graded={graded}

@@ -15,7 +15,7 @@ import {
 } from "./format-lesson-plan";
 import fixPrompt from "./lesson-fix.prompt.md";
 import { normalizeLessonMap } from "./lesson-map";
-import { getLessonWriterFallbackModels } from "./lesson-writer";
+import { WRITER_MODELS } from "./lesson-writer";
 import { getScreenCharacterLimit } from "./screen-length";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import {
@@ -93,7 +93,7 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
   const { analytics, lesson, model, reasoning, serviceTier, useFallback = true } = params;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: getLessonWriterFallbackModels(model),
+    fallbackModels: WRITER_MODELS,
     model,
     serviceTier,
     useFallback,

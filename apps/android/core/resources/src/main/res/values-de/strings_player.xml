@@ -170,6 +170,7 @@
   "player_stop_for_today": "043063d23dd9b7dc637f9ef660b3b0b44c26380ef10adfc1a74417ec6ea05142",
   "player_summary": "c9948aea0fc2f66f20c56d44f9f820d3eedf155673b2cf098077f293e08cad9c",
   "player_summary_ideas": "107b97c9f1cb79aefb3f136599e3fafa88dea703f9844cfcabaed4c2ee610a3b",
+  "player_time_studied": "a0bb81d4cc87e2b700ed5685920aad21ef29b5469765e79e2238139cc8ae56c4",
   "player_try_again": "e398898ca3f1e201967a7472ef2d7608b41664dff48d5da275cc910f6b39c62c",
   "player_unchecked_compare": "7c13938a88c91acde9ff098101a5a53b53c4d5b943c8c5d9d3bbaee45b573830",
   "player_verdict_almost": "998ad7e176ee97c8f2ce2ee289800811bed33b34c66b1f8921633a99c148a2ea",
@@ -412,6 +413,8 @@
     <string name="player_saving_progress">Wir speichern deinen Fortschritt…</string>
     <string name="player_save_failed">Das hat nicht geklappt. Deine Antworten bleiben erhalten.</string>
     <string name="player_lesson_not_saved">Deine Lektion ist noch nicht gespeichert</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s gelernt</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Wiederholung am %1$s</string>
     <string name="player_next_lesson">Nächste Lektion</string>

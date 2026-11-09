@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import { solveLikeTheKeys } from "../src/workflows/_test-utils/solved-items";
 
 /**
  * Test files share workers, so these are mocked once per worker and reset for each file. A new
@@ -38,6 +39,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/items/generate": { generateItems: vi.fn() },
   "@zoonk/ai/tasks/items/past-questions": { extractPastQuestions: vi.fn() },
   "@zoonk/ai/tasks/items/placement-items": { generatePlacementItems: vi.fn() },
+  "@zoonk/ai/tasks/items/solve": { solveItems: vi.fn(solveLikeTheKeys) },
   "@zoonk/ai/tasks/items/statute-drills": { generateStatuteDrills: vi.fn() },
   "@zoonk/ai/tasks/items/work-field": { classifyWorkField: vi.fn() },
   "@zoonk/ai/tasks/items/write-set": { writeItemSet: vi.fn() },
@@ -50,6 +52,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/language/language-lesson": { generateLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/language/language-sentence-orders": { generateLanguageSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
+  "@zoonk/ai/tasks/language/skill-levels": { classifySkillLevels: vi.fn() },
   "@zoonk/ai/tasks/lesson-marks": { tagLesson: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec": { generateLessonSpec: vi.fn() },
   "@zoonk/ai/tasks/lesson-spec/picture-need": { judgePicture: vi.fn() },

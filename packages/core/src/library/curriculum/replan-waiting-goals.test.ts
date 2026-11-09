@@ -256,7 +256,7 @@ describe(replanGoalsWaitingOnSkills, () => {
     const lessons = await outlineSkill(skill);
 
     const before = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
+      include: { items: { orderBy: { position: "asc" } } },
       where: { id: plan.id },
     });
 
@@ -265,7 +265,10 @@ describe(replanGoalsWaitingOnSkills, () => {
     ).resolves.toStrictEqual([lessons.slice(0, 2)]);
 
     await expect(
-      prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: plan.id },
+      }),
     ).resolves.toStrictEqual(before);
   });
 });

@@ -189,7 +189,6 @@
   "onboarding_placement_stop_mock": "5b6c9d3274c97653a2c1fa9e200fec173ea10d429a097b92d1ac4fb6b08b4ac3",
   "onboarding_placement_title": "45e03a12db525e25a1f640a92c44bebe6a061aa812def140346abb6523ca4c87",
   "onboarding_placement_true": "16af2dbe9cbfa732b57c0254dc7dd79181c68e689831cd827beaa49528778b10",
-  "onboarding_placement_try_again": "54ed56af178d8c67d93773fa9dbd4dd343635254ac0c763bb7dbf79249a4f539",
   "onboarding_placement_unavailable_description": "9a26d37c833460a6a828c806c716279dc5aa2813dcf935705c2238906b8c5929",
   "onboarding_placement_unavailable_title": "7133a6d3913d7d2555dc551f91794f90d1052f8138b28045db10503e49a2f95b",
   "onboarding_placement_waiting_material": "84e4973bca178ebd749fb3088f9c796477a45b1136860a52953bd8e0e3b9c8f7",
@@ -643,7 +642,6 @@
     <string name="onboarding_placement_confirm">Onayla</string>
     <string name="onboarding_placement_stop">Burada bitir ve planını gör</string>
     <string name="onboarding_placement_answer_failed">Gönderilemedi. Cevapların saklanıyor.</string>
-    <string name="onboarding_placement_try_again">Tekrar dene</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">Doğru</string>
     <string name="onboarding_placement_false">Yanlış</string>

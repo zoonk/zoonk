@@ -213,7 +213,7 @@ class TestOutViewModelTest {
 
             questions.forEach { viewModel.answer(questions, it, Answer.Choice(1)) }
             advanceUntilIdle()
-            assertTrue(viewModel.ui.value.sendFailed)
+            assertEquals(1, viewModel.ui.value.sendFailures)
             assertEquals(
                 3,
                 viewModel.ui.value.answers

@@ -907,7 +907,7 @@ struct TodayProgressSection: View {
 
       card(
         title: Text("Level", tableName: "Today", comment: "Title of a language goal's level card"),
-        value: standing.value?.levelText, detail: standing.value?.leadingSkill.map { Text($0) }
+        value: standing.value?.levelText, detail: nil
       ) {
         EmptyView()
       }

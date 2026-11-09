@@ -6,7 +6,7 @@ import { pullLessonStep } from "../review-flags/steps/pull-lesson-step";
 import {
   prepareFlaggedContentStep,
   recordFailedDrillRewriteStep,
-  rewriteFlaggedDrillsStep,
+  rewriteFlaggedDrills,
 } from "./steps/flagged-content-steps";
 
 export type FlaggedContentResult = { drillsRewritten: number; lessonsPulled: string[] };
@@ -39,9 +39,7 @@ export async function flaggedContentWorkflow({
         startOnce(lessonContentWorkflow, [{ lessonId }], getLessonContentHookToken(lessonId)),
       ),
     ),
-    Promise.allSettled(
-      drillGroups.map((group) => rewriteFlaggedDrillsStep({ group, workflowRunId })),
-    ),
+    Promise.allSettled(drillGroups.map((group) => rewriteFlaggedDrills({ group, workflowRunId }))),
   ]);
 
   await Promise.all(

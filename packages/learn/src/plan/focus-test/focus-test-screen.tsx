@@ -9,7 +9,7 @@ import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
-import { AnswersSaveError } from "../../_components/save-error";
+import { type UnsentAnswers } from "../../_components/save-error";
 import { StatusRegion } from "../../_components/status-region";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { TaskMeta } from "../../_components/task-meta";
@@ -220,7 +220,7 @@ function FocusTestRun({
 }) {
   const t = useExtracted();
   const requestId = useMemo(() => crypto.randomUUID(), []);
-  const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
+  const [unsent, setUnsent] = useState<UnsentAnswers<ChoiceQuestionAnswer[]> | null>(null);
   const [outcome, setOutcome] = useState<FocusTestOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
   const questions = useArrivingQuestions(test.questions);
@@ -243,7 +243,7 @@ function FocusTestRun({
   const submit = (answers: ChoiceQuestionAnswer[]) =>
     startTransition(async () => {
       const graded = await onSubmit({ answers, requestId }).catch(() => null);
-      setUnsent(graded ? null : answers);
+      setUnsent((last) => (graded ? null : { answers, failures: (last?.failures ?? 0) + 1 }));
       setOutcome(graded);
     });
 
@@ -262,13 +262,13 @@ function FocusTestRun({
 
   return (
     <ChoiceQuestionsRun
-      error={unsent && !isPending && <AnswersSaveError onRetry={() => submit(unsent)} />}
       header={{ closeHref, screen: "focus-test", title: t("Focus test") }}
       hint={(question) => question.area}
       onFinish={submit}
       pending={isPending}
       questions={questions}
       trueFalseLabels={test.trueFalseLabels}
+      unsent={unsent}
       upcoming={upcoming}
     />
   );

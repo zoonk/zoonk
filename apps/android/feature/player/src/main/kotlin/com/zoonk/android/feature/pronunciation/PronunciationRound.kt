@@ -54,7 +54,7 @@ class PronunciationRound(
     var pending by mutableStateOf(false)
         private set
 
-    var finishFailed by mutableStateOf(false)
+    var finishFailures by mutableStateOf(0)
         private set
 
     private var hasAnswers = false
@@ -134,12 +134,18 @@ class PronunciationRound(
             return
         }
         pending = true
-        finishFailed = false
         try {
             when (val result = complete(roundId)) {
-                is MutationResult.Done -> step = RoundStep.Result(result.value)
-                is MutationResult.Failed -> finishFailed = true
-                MutationResult.Obsolete -> Unit
+                is MutationResult.Done -> {
+                    finishFailures = 0
+                    step = RoundStep.Result(result.value)
+                }
+
+                is MutationResult.Failed -> {
+                    finishFailures++
+                }
+
+                MutationResult.Obsolete -> {}
             }
         } finally {
             pending = false

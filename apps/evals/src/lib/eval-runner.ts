@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
@@ -111,7 +111,9 @@ async function scoreOutput({
   return {
     categoryScores: scoreResult.categoryScores,
     classification: scoreResult.classification,
+    itemsScored: scoreResult.itemsScored,
     judge: scoreResult.judge,
+    keyFlaws: scoreResult.keyFlaws,
     steps: scoreResult.steps,
     testCase: testCaseWithRun,
   };
@@ -214,7 +216,9 @@ function combineOutputsAndResults(
       extraCalls: output.extraCalls,
       images: output.images,
       inputTokens: output.inputTokens,
+      itemsScored: scored.itemsScored,
       judge: scored.judge,
+      keyFlaws: scored.keyFlaws,
       output: output.output,
       outputTokens: output.outputTokens,
       reasoningTokens: output.reasoningTokens,
@@ -223,11 +227,27 @@ function combineOutputsAndResults(
     };
   });
 
-  return { failedRuns, modelId, results, taskId };
+  return { failedRuns, modelId, outputs, results, taskId };
 }
 
 export const getTaskResults = cache(
-  async (taskId: string, modelId: string): Promise<TaskEvalResults | null> => {
+  async (
+    taskId: string,
+    modelId: string,
+    runIds?: ReadonlySet<string>,
+  ): Promise<TaskEvalResults | null> => {
+    const task = getTaskById(taskId);
+
+    if (!task) {
+      return null;
+    }
+
+    const currentRunIds =
+      runIds ??
+      new Set(
+        getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
+      );
+
     const modelOutputs = await loadModelOutputs(taskId, modelId);
 
     if (!modelOutputs) {
@@ -236,10 +256,14 @@ export const getTaskResults = cache(
 
     const scoredResults = await loadExistingScoredResults(taskId, modelId);
 
-    if (scoredResults.length === 0) {
-      return null;
-    }
-
-    return combineOutputsAndResults(taskId, modelId, modelOutputs, scoredResults);
+    return combineOutputsAndResults(
+      taskId,
+      modelId,
+      {
+        failedRuns: modelOutputs.failedRuns?.filter((run) => currentRunIds.has(run.testCaseId)),
+        outputs: modelOutputs.outputs.filter((output) => currentRunIds.has(output.testCaseId)),
+      },
+      scoredResults.filter((result) => currentRunIds.has(result.testCase.id)),
+    );
   },
 );

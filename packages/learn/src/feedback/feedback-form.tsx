@@ -51,14 +51,24 @@ function useViewerEmail({
   return feedback ? viewerEmail : null;
 }
 
-function EmailField({ onChange, value }: { onChange: (email: string) => void; value: string }) {
+function EmailField({
+  onChange,
+  required,
+  value,
+}: {
+  onChange: (email: string) => void;
+  required: boolean;
+  value: string;
+}) {
   const t = useExtracted("feedback");
   const emailId = useId();
 
   return (
     <Field>
       <FieldContent>
-        <FieldLabel htmlFor={emailId}>{t("Your email, for our reply")}</FieldLabel>
+        <FieldLabel htmlFor={emailId}>
+          {required ? t("Your email, for our reply") : t("Your email, if you'd like a reply")}
+        </FieldLabel>
         <Input
           autoComplete="email"
           id={emailId}
@@ -68,7 +78,7 @@ function EmailField({ onChange, value }: { onChange: (email: string) => void; va
             description: "An example email address in an empty field. Adapt it to the language.",
             message: "myemail@gmail.com",
           })}
-          required
+          required={required}
           type="email"
           value={value}
         />
@@ -93,7 +103,7 @@ async function sendMessage({
   const sent = await adapters
     .sendMessage({
       context: { ...context, platform: adapters.platform, url: globalThis.location.pathname },
-      email,
+      email: email || undefined,
       message,
     })
     .catch(() => false);
@@ -141,6 +151,7 @@ export function FeedbackForm({
   const viewerEmail = useViewerEmail({ defaultEmail, feedback });
   const [typedEmail, setTypedEmail] = useState("");
   const email = (viewerEmail ?? typedEmail).trim();
+  const isSaveReport = context.reportType === "saveFailure";
 
   // React clears the form after every send, so a failed one gives the message back as its default.
   const [{ message: unsentMessage, status }, formAction, isPending] = useActionState<
@@ -150,7 +161,7 @@ export function FeedbackForm({
     async (_state, formData) => {
       const message = parseFormField(formData, "message") ?? "";
 
-      if (!feedback || !email || !message) {
+      if (!feedback || (!isSaveReport && !email) || !message) {
         return { message, status: "error" };
       }
 
@@ -163,7 +174,7 @@ export function FeedbackForm({
 
       return { message, status: result };
     },
-    { message: "", status: "idle" },
+    { message: isSaveReport ? t("I couldn't save my answers.") : "", status: "idle" },
   );
 
   return (
@@ -203,7 +214,9 @@ export function FeedbackForm({
         </FieldContent>
       </Field>
 
-      {viewerEmail === null && <EmailField onChange={setTypedEmail} value={typedEmail} />}
+      {viewerEmail === null && (
+        <EmailField onChange={setTypedEmail} required={!isSaveReport} value={typedEmail} />
+      )}
 
       {layout === "page" ? (
         <div className="flex flex-col items-end border-t pt-3">

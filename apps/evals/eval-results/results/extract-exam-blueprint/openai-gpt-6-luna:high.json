@@ -1,0 +1,912 @@
+{
+  "modelId": "openai/gpt-6-luna:high",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 10/11 (read 11). passages found 86/86. problems left 1. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}",
+          "kind": "majorErrors",
+          "score": 9.709090909090909
+        },
+        {
+          "conclusion": "Facts kept 10/11 (read 11). passages found 86/86. problems left 1. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}",
+          "kind": "minorErrors",
+          "score": 9.709090909090909
+        },
+        {
+          "conclusion": "Facts kept 10/11 (read 11). passages found 86/86. problems left 1. missing: {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}",
+          "kind": "potentialImprovements",
+          "score": 9.709090909090909
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "groups": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ],
+              "kind": "groupedSubjects"
+            },
+            {
+              "kind": "subject",
+              "name": "Prova discursiva"
+            },
+            {
+              "kind": "markingRow",
+              "part": [
+                "P3"
+              ],
+              "points": 2,
+              "wrongPoints": 2
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 8
+              },
+              "part": [
+                "P1"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 12
+              },
+              "part": [
+                "P2"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 54
+              },
+              "part": [
+                "P3"
+              ],
+              "questions": 90
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 50
+              },
+              "part": [
+                "P4",
+                "discursiva"
+              ]
+            },
+            {
+              "kind": "totalMinimum",
+              "minimum": {
+                "unit": "points",
+                "value": 78
+              }
+            },
+            {
+              "kind": "finalShare",
+              "parts": [
+                "P1",
+                "P2",
+                "P3"
+              ],
+              "share": 0.5
+            },
+            {
+              "kind": "finalShare",
+              "parts": [
+                "discursiva"
+              ],
+              "share": 0.5
+            }
+          ]
+        },
+        "id": "cgu-2026-affc-ti-points-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 12/13 (read 13). passages found 72/72. problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 9.753846153846155
+        },
+        {
+          "conclusion": "Facts kept 12/13 (read 13). passages found 72/72. problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 9.753846153846155
+        },
+        {
+          "conclusion": "Facts kept 12/13 (read 13). passages found 72/72. problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 9.753846153846155
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 5/5 (read 5). passages found 52/52. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 5/5 (read 5). passages found 52/52. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 5/5 (read 5). passages found 52/52. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Ciências da Natureza e suas Tecnologias"
+            },
+            {
+              "kind": "topic",
+              "subject": "Ciências da Natureza e suas Tecnologias",
+              "topic": "Moléculas, células e tecidos"
+            },
+            {
+              "kind": "topic",
+              "subject": "Ciências da Natureza e suas Tecnologias",
+              "topic": "Hereditariedade e diversidade da vida"
+            },
+            {
+              "kind": "topic",
+              "subject": "Matemática e suas Tecnologias",
+              "topic": "Conhecimentos numéricos"
+            },
+            {
+              "kind": "topic",
+              "subject": "Ciências Humanas e suas Tecnologias",
+              "topic": "Diversidade cultural, conflitos e vida em sociedade"
+            }
+          ]
+        },
+        "id": "enem-2026-matriz-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Matriz de Referência Enem",
+              "url": "https://download.inep.gov.br/download/enem/matriz_referencia.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 151/151. problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "majorErrors",
+          "score": 9.127272727272729
+        },
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 151/151. problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "minorErrors",
+          "score": 9.127272727272729
+        },
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 151/151. problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "potentialImprovements",
+          "score": 9.127272727272729
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 150
+            },
+            {
+              "kind": "section",
+              "questions": 35
+            },
+            {
+              "kind": "section",
+              "questions": 45
+            },
+            {
+              "kind": "section",
+              "questions": 70
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "wrongPenalty",
+              "value": 1
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 240
+            },
+            {
+              "date": "2026-11-22",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-08-26",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-17",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "tcdf-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/7971F586B9A9CE2C60801C731D8A1CD87F4C5136CA1F1E346C27C5C743773A73.pdf"
+            }
+          ],
+          "exam": "Concurso TCDF, Analista Administrativo de Controle Externo"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/7 (read 5). passages found 109/109. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Desenvolvimento de Sistemas\",\"questions\":90}; {\"kind\":\"topic\",\"subject\":\"Desenvolvimento de Sistemas\",\"topic\":\"1.2 Requisitos funcionais e não funcionais\"}; {\"kind\":\"topic\",\"subject\":\"Infraestrutura\",\"topic\":\"1.1 Modelos TCP/IP e OSI; IPv4 e IPv6, DNS, DHCP, roteamento, segmentação, balanceamento e qualidade de serviço\"}",
+          "kind": "majorErrors",
+          "score": 8.628571428571428
+        },
+        {
+          "conclusion": "Facts kept 4/7 (read 5). passages found 109/109. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Desenvolvimento de Sistemas\",\"questions\":90}; {\"kind\":\"topic\",\"subject\":\"Desenvolvimento de Sistemas\",\"topic\":\"1.2 Requisitos funcionais e não funcionais\"}; {\"kind\":\"topic\",\"subject\":\"Infraestrutura\",\"topic\":\"1.1 Modelos TCP/IP e OSI; IPv4 e IPv6, DNS, DHCP, roteamento, segmentação, balanceamento e qualidade de serviço\"}",
+          "kind": "minorErrors",
+          "score": 8.628571428571428
+        },
+        {
+          "conclusion": "Facts kept 4/7 (read 5). passages found 109/109. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Desenvolvimento de Sistemas\",\"questions\":90}; {\"kind\":\"topic\",\"subject\":\"Desenvolvimento de Sistemas\",\"topic\":\"1.2 Requisitos funcionais e não funcionais\"}; {\"kind\":\"topic\",\"subject\":\"Infraestrutura\",\"topic\":\"1.1 Modelos TCP/IP e OSI; IPv4 e IPv6, DNS, DHCP, roteamento, segmentação, balanceamento e qualidade de serviço\"}",
+          "kind": "potentialImprovements",
+          "score": 8.628571428571428
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "choice",
+              "options": [
+                "Auditoria",
+                "Ciência de Dados",
+                "Infraestrutura",
+                "Desenvolvimento de Sistemas"
+              ]
+            },
+            {
+              "kind": "subject",
+              "name": "Desenvolvimento de Sistemas",
+              "questions": 90
+            },
+            {
+              "group": "P3",
+              "kind": "group",
+              "subject": "Desenvolvimento de Sistemas"
+            },
+            {
+              "kind": "topic",
+              "subject": "Desenvolvimento de Sistemas",
+              "topic": "1.2 Requisitos funcionais e não funcionais"
+            },
+            {
+              "kind": "topic",
+              "subject": "Infraestrutura",
+              "topic": "1.1 Modelos TCP/IP e OSI; IPv4 e IPv6, DNS, DHCP, roteamento, segmentação, balanceamento e qualidade de serviço"
+            },
+            {
+              "group": "P1",
+              "kind": "group",
+              "subject": "Estado, Democracia, Direitos e Ciência Política"
+            },
+            {
+              "group": "P2",
+              "kind": "group",
+              "subject": "Fundamentos de Auditoria Governamental"
+            }
+          ]
+        },
+        "id": "cgu-2026-auditor-specialties-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU – AFFC, de 8 de outubro de 2026 (versão atualizada)",
+              "url": "https://cdn.cebraspe.org.br/concursos/cgu_26_affc/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "Concurso CGU 2026, Auditor Federal de Finanças e Controle"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 12/13 (read 13). passages found 124/124. problems left 0. missing: {\"group\":\"P2\",\"kind\":\"group\",\"subject\":\"Linguística\"}",
+          "kind": "majorErrors",
+          "score": 9.753846153846155
+        },
+        {
+          "conclusion": "Facts kept 12/13 (read 13). passages found 124/124. problems left 0. missing: {\"group\":\"P2\",\"kind\":\"group\",\"subject\":\"Linguística\"}",
+          "kind": "minorErrors",
+          "score": 9.753846153846155
+        },
+        {
+          "conclusion": "Facts kept 12/13 (read 13). passages found 124/124. problems left 0. missing: {\"group\":\"P2\",\"kind\":\"group\",\"subject\":\"Linguística\"}",
+          "kind": "potentialImprovements",
+          "score": 9.753846153846155
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "date": "2027-01-17",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 180
+            },
+            {
+              "kind": "subject",
+              "name": "Língua Portuguesa"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguística"
+            },
+            {
+              "kind": "subject",
+              "name": "Ciência Política"
+            },
+            {
+              "group": "P1",
+              "kind": "group",
+              "subject": "Língua Portuguesa"
+            },
+            {
+              "group": "P2",
+              "kind": "group",
+              "subject": "Linguística"
+            },
+            {
+              "kind": "topic",
+              "subject": "Língua Portuguesa",
+              "topic": "5.7 Emprego do sinal indicativo de crase"
+            },
+            {
+              "kind": "topic",
+              "subject": "Língua Portuguesa",
+              "topic": "6.4 Reescrita de textos de diferentes gêneros e níveis de formalidade"
+            },
+            {
+              "kind": "topic",
+              "subject": "Linguística",
+              "topic": "12 Noções básicas de lógica: conectivos, argumentos e notação"
+            },
+            {
+              "kind": "topic",
+              "subject": "Ciência Política",
+              "topic": "11 História do voto e dos partidos no Brasil"
+            }
+          ]
+        },
+        "id": "camara-2026-registro-redacao-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – Câmara dos Deputados, de 2 de outubro de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/CD_26_ANALISTA/arquivos/BBE30D016054F40651E36AC7B302C3425BD148A39675CA840A5A0CCBFBB5F0F1.pdf"
+            }
+          ],
+          "exam": "Câmara dos Deputados, Analista Legislativo – Registro e Redação"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 8/9 (read 9). passages found 142/142. problems left 0. missing: {\"kind\":\"scoring\",\"method\":\"raw\"}",
+          "kind": "majorErrors",
+          "score": 9.644444444444446
+        },
+        {
+          "conclusion": "Facts kept 8/9 (read 9). passages found 142/142. problems left 0. missing: {\"kind\":\"scoring\",\"method\":\"raw\"}",
+          "kind": "minorErrors",
+          "score": 9.644444444444446
+        },
+        {
+          "conclusion": "Facts kept 8/9 (read 9). passages found 142/142. problems left 0. missing: {\"kind\":\"scoring\",\"method\":\"raw\"}",
+          "kind": "potentialImprovements",
+          "score": 9.644444444444446
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "raw"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "date": "2026-06-01",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-08",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-06",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-10-18",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-12-03",
+              "dateKind": "results",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "oab-47-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/10 (read 7). passages found 43/43. problems left 1. missing: {\"kind\":\"subject\",\"name\":\"Direito Civil\"}; {\"kind\":\"subject\",\"name\":\"Direito Processual Penal\"}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}; {\"date\":\"2027-02-28\",\"dateKind\":\"other\",\"kind\":\"date\"}",
+          "kind": "majorErrors",
+          "score": 8.719999999999999
+        },
+        {
+          "conclusion": "Facts kept 6/10 (read 7). passages found 43/43. problems left 1. missing: {\"kind\":\"subject\",\"name\":\"Direito Civil\"}; {\"kind\":\"subject\",\"name\":\"Direito Processual Penal\"}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}; {\"date\":\"2027-02-28\",\"dateKind\":\"other\",\"kind\":\"date\"}",
+          "kind": "minorErrors",
+          "score": 8.719999999999999
+        },
+        {
+          "conclusion": "Facts kept 6/10 (read 7). passages found 43/43. problems left 1. missing: {\"kind\":\"subject\",\"name\":\"Direito Civil\"}; {\"kind\":\"subject\",\"name\":\"Direito Processual Penal\"}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}; {\"date\":\"2027-02-28\",\"dateKind\":\"other\",\"kind\":\"date\"}",
+          "kind": "potentialImprovements",
+          "score": 8.719999999999999
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Ética"
+            },
+            {
+              "kind": "subject",
+              "name": "Direitos Humanos"
+            },
+            {
+              "kind": "subject",
+              "name": "Filosofia do Direito"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Eleitoral"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Civil"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Processual Penal"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-01-10",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-02-28",
+              "dateKind": "other",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "oab-48-1a-fase-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 70/70. problems left 1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 70/70. problems left 1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 70/70. problems left 1",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Ética"
+            },
+            {
+              "kind": "subject",
+              "name": "Direitos Humanos"
+            },
+            {
+              "kind": "subject",
+              "name": "Direito Civil"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 80
+            }
+          ]
+        },
+        "id": "oab-48-1a-fase-told-ethics-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "leftOut": [
+            {
+              "citation": {
+                "passage": "Direito Eleitoral, bem como Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB.",
+                "sourceId": "document-1"
+              },
+              "kind": "missingSubject",
+              "name": "Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 7/8 (read 8). passages found 36/36. problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 9.600000000000001
+        },
+        {
+          "conclusion": "Facts kept 7/8 (read 8). passages found 36/36. problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 9.600000000000001
+        },
+        {
+          "conclusion": "Facts kept 7/8 (read 8). passages found 36/36. problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 9.600000000000001
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 98
+            },
+            {
+              "kind": "section",
+              "minutes": 64,
+              "questions": 54
+            },
+            {
+              "kind": "section",
+              "minutes": 70,
+              "questions": 44
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 134
+            },
+            {
+              "kind": "breakAfter",
+              "minutes": 10
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-03-06",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-02-19",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "sat-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "SAT Test Structure",
+              "url": "https://satsuite.collegeboard.org/sat/whats-on-the-test/structure"
+            },
+            {
+              "title": "SAT Suite Test Dates and Deadlines",
+              "url": "https://satsuite.collegeboard.org/sat/dates-deadlines"
+            }
+          ],
+          "exam": "SAT"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/7 (read 5). passages found 25/25. problems left 1. missing: {\"kind\":\"questionCount\",\"value\":48}; {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 8.628571428571428
+        },
+        {
+          "conclusion": "Facts kept 4/7 (read 5). passages found 25/25. problems left 1. missing: {\"kind\":\"questionCount\",\"value\":48}; {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 8.628571428571428
+        },
+        {
+          "conclusion": "Facts kept 4/7 (read 5). passages found 25/25. problems left 1. missing: {\"kind\":\"questionCount\",\"value\":48}; {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 8.628571428571428
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 48
+            },
+            {
+              "kind": "section",
+              "minutes": 100,
+              "questions": 42
+            },
+            {
+              "kind": "section",
+              "minutes": 90,
+              "questions": 6
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 190
+            },
+            {
+              "kind": "tools",
+              "mentions": "calculator"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "date": "2027-05-10",
+              "dateKind": "exam",
+              "kind": "date"
+            }
+          ]
+        },
+        "id": "ap-calculus-ab-2027-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "AP Calculus AB: About the Exam",
+              "url": "https://apstudents.collegeboard.org/courses/ap-calculus-ab/assessment"
+            },
+            {
+              "title": "2027 AP Exam Dates",
+              "url": "https://apstudents.collegeboard.org/exam-dates"
+            }
+          ],
+          "exam": "AP Calculus AB 2027"
+        }
+      }
+    }
+  ],
+  "taskId": "extract-exam-blueprint"
+}

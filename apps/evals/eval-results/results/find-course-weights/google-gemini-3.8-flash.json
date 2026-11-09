@@ -3,12 +3,33 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "atLeast": [{ "part": 3, "than": 2 }], "status": "found" },
+        "expected": {
+          "status": "found",
+          "weights": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
         "id": "pt-enem-medicina-ufmg-1",
         "userInput": {
           "course": "Medicina",
@@ -27,8 +48,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Missed the published weights", "kind": "majorErrors", "score": 8 },
-        { "conclusion": "Missed the published weights", "kind": "minorErrors", "score": 8 },
+        {
+          "conclusion": "Missed the published weights",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Missed the published weights",
+          "kind": "minorErrors",
+          "score": 8
+        },
         {
           "conclusion": "Missed the published weights",
           "kind": "potentialImprovements",
@@ -36,7 +65,16 @@
         }
       ],
       "testCase": {
-        "expected": { "atLeast": [{ "part": 3, "than": 2 }], "status": "found" },
+        "expected": {
+          "status": "found",
+          "weights": [
+            2,
+            1,
+            4,
+            2,
+            4
+          ]
+        },
         "id": "en-enem-medicine-ufrj-1",
         "language": "en",
         "userInput": {
@@ -56,12 +94,26 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "atLeast": [], "status": "unknown" },
+        "expected": {
+          "status": "unknown"
+        },
         "id": "pt-enem-instituicao-inexistente-1",
         "userInput": {
           "course": "Direito",

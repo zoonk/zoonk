@@ -2,13 +2,14 @@ import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messages";
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
-import { feedbackContentKindLabels } from "../_utils/feedback-labels";
+import { feedbackContentKindLabels, feedbackReportTypeLabels } from "../_utils/feedback-labels";
 import { MessageSender } from "./message-sender";
 import { MessageStatusBadge } from "./message-status-badge";
 
 /** Rows show where a message came from, never its text: that stays on the detail page. */
 export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
   const { context } = message;
+  const contentLabel = context.contentKind ? feedbackContentKindLabels[context.contentKind] : "—";
 
   return (
     <AdminTableRow>
@@ -30,7 +31,7 @@ export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
         {[context.platform, context.appVersion].filter(Boolean).join(" · ") || "—"}
       </TableCell>
       <TableCell className="text-xs">
-        {context.contentKind ? feedbackContentKindLabels[context.contentKind] : "—"}
+        {context.reportType ? feedbackReportTypeLabels[context.reportType] : contentLabel}
       </TableCell>
     </AdminTableRow>
   );

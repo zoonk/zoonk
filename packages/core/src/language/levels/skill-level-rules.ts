@@ -1,7 +1,12 @@
 import { type CourseLevel, type LanguageSkill, type StepKind } from "@zoonk/db";
-import { clampCefrScore, formatCefrScore, parseCefrScore } from "@zoonk/utils/cefr";
+import {
+  CEFR_LEVELS,
+  type CefrLevel,
+  clampCefrScore,
+  formatCefrScore,
+  parseCefrScore,
+} from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
-import { CERTIFIED_LEVELS, type CertifiedLevel } from "../../certificates/certificate-contract";
 
 export const LANGUAGE_SKILLS = [
   "reading",
@@ -20,12 +25,27 @@ const HALF_STEP = 0.5;
 
 const DEFAULT_START_SCORE = 0;
 
-export const CEFR_BANDS: Readonly<Record<CourseLevel, string>> = {
-  advanced: "C1–C2",
-  beginner: "A1–A2",
-  intermediate: "B1–B2",
-  overview: "A1–A2",
+export const BAND_LEVELS: Readonly<Record<CourseLevel, readonly [CefrLevel, CefrLevel]>> = {
+  advanced: ["C1", "C2"],
+  beginner: ["A1", "A2"],
+  intermediate: ["B1", "B2"],
+  overview: ["A1", "A2"],
 };
+
+/** One level when they all match ("B1"), the span they cover ("A2–B1"), or the band without any. */
+export function formatLevels({
+  band,
+  levels,
+}: {
+  band: CourseLevel;
+  levels: readonly CefrLevel[];
+}): string {
+  const shown = new Set(levels.length > 0 ? levels : BAND_LEVELS[band]);
+  const [lowest = "", ...higher] = CEFR_LEVELS.filter((level) => shown.has(level));
+  const highest = higher.at(-1);
+
+  return highest ? `${lowest}–${highest}` : lowest;
+}
 
 const CONTENT_CEILINGS: Readonly<Record<CourseLevel, number>> = {
   advanced: 5,
@@ -138,27 +158,4 @@ export function getOverallLevel(scores: readonly number[]): string | null {
   }
 
   return formatCefrScore(scores.reduce((sum, score) => sum + score, 0) / scores.length);
-}
-
-/**
- * What certificates count: the lowest score among skills the learner's answers raised. A typed or
- * tested start counts only once evidence raises it, and a raised skill keeps counting after a fall,
- * so the level moves half a band per raise at most and never skips a band.
- */
-export function getEarnedLanguageLevel(
-  skills: readonly { raisedAt: Date | null; score: number }[],
-): number | null {
-  const raised = skills.filter((skill) => skill.raisedAt !== null).map((skill) => skill.score);
-  return raised.length > 0 ? Math.min(...raised) : null;
-}
-
-/** Reaching a band finishes the one below it: reaching A2 finishes A1. */
-export function getFinishedBands({
-  after,
-  before,
-}: {
-  after: number;
-  before: number;
-}): CertifiedLevel[] {
-  return CERTIFIED_LEVELS.filter((_level, band) => before < band + 1 && after >= band + 1);
 }

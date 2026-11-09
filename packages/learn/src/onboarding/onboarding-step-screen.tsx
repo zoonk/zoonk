@@ -191,7 +191,7 @@ export function OnboardingStepScreen({
   actions: OnboardingActions;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => void;
-  onPlacementDone: () => void;
+  onPlacementDone: () => Promise<boolean>;
   onPlacementFinishFailed: (failed: boolean) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };

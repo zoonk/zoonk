@@ -11,20 +11,36 @@ export type CurriculumScope = {
   targetLanguage: string | null;
 };
 
-const PRIVATE_CONTENT_MODEL = "google/gemini-3.8-flash";
+/**
+ * Private content can't spread its cost, so it takes the cheapest model that keeps quality. On the
+ * 8 Nov 2026 evals Luna beat Gemini 3.8 Flash on course outlines (8.86 to 8.72), skill graphs (8.53
+ * to 8.44) and challenges (8.34 to 7.36) at a sixth to a ninth of its cost; read side by side, its
+ * graphs fell behind Terra's on career-change and from-zero goals.
+ */
+const PRIVATE_CONTENT_MODEL = "openai/gpt-6-luna";
+
+type ScopeModels = { fallbackModels: readonly string[]; model: string };
 
 /**
- * On 8 private lessons (4 Nov 2026), Luna's plans tied Terra's and Sol's (8.15, 8.18, 8.10) at a
- * tenth of Sol's price, ahead of Gemini 3.8 Flash (7.61).
+ * On 5 plans built from a learner's own job, notes or goal (8 Nov 2026), Terra scored 8.96 (EN
+ * 8.63, PT 9.18) at $21.65/1k in 28 s p50, and Luna at high reasoning 7.86 (PT 7.69, under the
+ * floor) at $9.27/1k in 144 s. Read blind, Terra won 4 and tied 1: Luna split one-lesson topics in
+ * two and filled the new hook and application with placeholders. Opus is an outage route with no
+ * run on these cases.
  */
-const PRIVATE_LESSON_SPEC_MODEL = "openai/gpt-6-luna";
+const PRIVATE_LESSON_SPEC_MODELS: ScopeModels = {
+  fallbackModels: ["anthropic/claude-opus-5.5"],
+  model: "openai/gpt-6.1-terra",
+};
 
 export function getScopeModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {
   return scope.ownerId ? PRIVATE_CONTENT_MODEL : undefined;
 }
 
-export function getLessonSpecModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {
-  return scope.ownerId ? PRIVATE_LESSON_SPEC_MODEL : undefined;
+export function getLessonSpecModels(
+  scope: Pick<CurriculumScope, "ownerId">,
+): ScopeModels | undefined {
+  return scope.ownerId ? PRIVATE_LESSON_SPEC_MODELS : undefined;
 }
 
 export function getContentReuse({

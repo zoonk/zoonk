@@ -8,7 +8,11 @@ import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./goal-specificity.prompt.md";
 
-/** Claude Haiku 5.5 got all 16 goal-specificity cases at 1.7s p50; Luna got 14 (7 Oct 2026). */
+/**
+ * Haiku 5.5 got all 16 stored current-prompt cases at $0.0796/1k and 1.67 s p50; Luna and Flash
+ * Lite got 15. Jev decided all 21 cases at half the cost (8 Nov 2026) but can't write the shareable
+ * goal and the personal details apart.
+ */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const defaultReasoning: Reasoning = "none";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;

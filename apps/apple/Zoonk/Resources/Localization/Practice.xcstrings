@@ -8469,6 +8469,124 @@
         }
       }
     },
+    "Still not going through. You can come back later." : {
+      "comment" : "Second or later save failure in a row; the learner can retry or return later",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das klappt immer noch nicht. Du kannst später wiederkommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no se pudo guardar. Puedes volver más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça ne marche toujours pas. Tu peux revenir plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’invio non è riuscito neanche questa volta. Puoi tornare più tardi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今回も送信できませんでした。時間をおいて、また戻ってきてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번에도 전송하지 못했어요. 나중에 다시 와도 돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znowu nie udało się przesłać odpowiedzi. Możesz wrócić później."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não deu certo. Você pode voltar mais tarde."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yine gönderilemedi. Daha sonra geri dönebilirsin."
+          }
+        }
+      }
+    },
+    "That didn't go through. Your answers are kept." : {
+      "comment" : "An answer or finish didn't reach the server; the learner's answers stay on screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das hat nicht geklappt. Deine Antworten bleiben erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo guardar. Conservamos tus respuestas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça n’a pas marché. Tes réponses sont conservées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’invio non è riuscito. Le tue risposte sono al sicuro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送信できませんでした。回答はそのまま残っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전송하지 못했어요. 답은 그대로 남아 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się przesłać odpowiedzi. Nic nie przepadło."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu certo. Suas respostas foram mantidas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gönderilemedi. Cevapların saklanıyor."
+          }
+        }
+      }
+    },
     "net %lld" : {
       "comment" : "A net-scored block's score: right answers minus wrong ones.",
       "localizations" : {
@@ -17327,65 +17445,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevabın"
-          }
-        }
-      }
-    },
-    "Your answer wasn't saved. Check your connection." : {
-      "comment" : "Shown over a run's actions when an answer or the finish didn't reach the server.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Antwort wurde nicht gespeichert. Überprüfe deine Verbindung."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu respuesta no se guardó. Revisa tu conexión."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta réponse n’a pas été enregistrée. Vérifie ta connexion."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua risposta non è stata salvata. Controlla la connessione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "回答を保存できませんでした。通信状況を確認してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "답이 저장되지 않았어요. 인터넷 연결을 확인해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie zapisano twojej odpowiedzi. Sprawdź połączenie z internetem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua resposta não foi salva. Confira sua conexão."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevabın kaydedilemedi. Bağlantını kontrol et."
           }
         }
       }

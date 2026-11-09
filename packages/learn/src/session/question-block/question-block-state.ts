@@ -21,6 +21,7 @@ export type QuestionBlockPhase =
 
 export type QuestionBlockState = {
   answers: Record<string, { answer: StudyQuestionAnswer; blank: boolean; isCorrect: boolean }>;
+  failures: number;
   hyperdrive: number;
   index: number;
   phase: QuestionBlockPhase;
@@ -47,6 +48,7 @@ export function createQuestionBlockState(detail: StudyBlockDetail): QuestionBloc
 
   return {
     answers: {},
+    failures: 0,
     hyperdrive: 1,
     index,
     phase: index >= detail.questions.length ? { kind: "finishReady" } : { kind: "answering" },
@@ -89,23 +91,28 @@ export function questionBlockReducer(
               isCorrect: action.feedback.isCorrect,
             },
           },
+          failures: 0,
           hyperdrive: action.feedback.hyperdrive.level,
           phase: { answer: action.answer, feedback: action.feedback, kind: "feedback" },
         };
       case "next":
         return advance({ state, total });
       case "alreadyAnswered":
-        return { ...state, phase: { kind: "alreadyAnswered" } };
+        return { ...state, failures: 0, phase: { kind: "alreadyAnswered" } };
       case "answerFailed":
         return state.phase.kind === "checking"
-          ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+          ? {
+              ...state,
+              failures: state.failures + 1,
+              phase: { ...state.phase, kind: "answerFailed" },
+            }
           : state;
       case "finish":
         return { ...state, phase: { kind: "finishing" } };
       case "finishFailed":
-        return { ...state, phase: { kind: "finishFailed" } };
+        return { ...state, failures: state.failures + 1, phase: { kind: "finishFailed" } };
       case "finished":
-        return { ...state, phase: { kind: "finished", moment: action.moment } };
+        return { ...state, failures: 0, phase: { kind: "finished", moment: action.moment } };
       default:
         return state;
     }

@@ -24,16 +24,7 @@ export const TEXT = {
 
 export const SHEET = {
   brand: { gap: 10, logo: 30, size: 22 },
-  covered: {
-    above: 34,
-    labelGap: 6,
-    labelSize: 12,
-    listGap: 10,
-    moreGap: 4,
-    readoutGap: 56,
-    readoutSize: 40,
-    rowGap: 8,
-  },
+  covered: { above: 34, labelSize: 12, listGap: 10, moreGap: 4, rowGap: 8 },
   footer: {
     above: 30,
     columnGap: 28,

@@ -1,3 +1,10 @@
+import {
+  type EvalSummary,
+  HISTORICAL_ATTEMPTS_NOTE,
+  formatFailureCounts,
+  formatKeyFlaws,
+  getCaseHref,
+} from "@/lib/eval-summary";
 import { type ReviewExportEntry } from "@/lib/review-export";
 
 const PRINT_STYLES = `
@@ -207,7 +214,14 @@ function createReviewOutput({
     text: formatReadableValue(parseOutput(entry.output)),
   });
 
-  output.append(header, content);
+  const flaws = createTextElement({
+    className: "output-content",
+    printDocument,
+    tagName: "pre",
+    text: `Judge-flagged key flaws: ${entry.keyFlaws === undefined ? "not recorded" : entry.keyFlaws.length}\n${(entry.keyFlaws ?? []).map((flaw) => `${flaw.itemLocator}: ${flaw.kind}\nKeyed answer: ${flaw.keyedAnswer}\nJudge's worked answer: ${flaw.workedAnswer}`).join("\n\n")}`,
+  });
+
+  output.append(header, flaws, content);
   return output;
 }
 
@@ -215,16 +229,52 @@ function populatePrintDocument({
   entries,
   printDocument,
   taskName,
+  summary,
+  modelId,
+  taskId,
 }: {
   entries: ReviewExportEntry[];
   printDocument: Document;
   taskName: string;
+  summary: EvalSummary;
+  modelId: string;
+  taskId: string;
 }) {
   const charset = printDocument.createElement("meta");
   charset.setAttribute("charset", "utf8");
   const style = printDocument.createElement("style");
   style.textContent = PRINT_STYLES;
   const content = createTextElement({ printDocument, tagName: "main" });
+
+  const summarySection = createTextElement({ printDocument, tagName: "section" });
+
+  summarySection.append(
+    createTextElement({ printDocument, tagName: "h1", text: `${taskName}: all saved runs` }),
+  );
+
+  summarySection.append(
+    createTextElement({
+      className: "output-content",
+      printDocument,
+      tagName: "pre",
+      text: [
+        `Average score (scored outputs): ${summary.averageScore?.toFixed(2) ?? "Unscored"}`,
+        `Attempted (recorded): ${summary.attempted}; generated: ${summary.generated}; scored: ${summary.scored}`,
+        `Generation failures: ${formatFailureCounts(summary)}`,
+        `Judge-flagged key flaws: ${formatKeyFlaws(summary)}`,
+        HISTORICAL_ATTEMPTS_NOTE,
+      ].join("\n"),
+    }),
+  );
+
+  for (const caseId of summary.caseIds.attempted) {
+    const link = printDocument.createElement("a");
+    link.href = new URL(getCaseHref({ caseId, modelId, taskId }), globalThis.location.origin).href;
+    link.textContent = caseId;
+    summarySection.append(link, printDocument.createElement("br"));
+  }
+
+  content.append(summarySection);
 
   content.append(
     ...entries.map((entry, index) =>
@@ -240,9 +290,15 @@ function populatePrintDocument({
 export function printReviewOutputs({
   entries,
   taskName,
+  summary,
+  modelId,
+  taskId,
 }: {
   entries: ReviewExportEntry[];
   taskName: string;
+  summary: EvalSummary;
+  modelId: string;
+  taskId: string;
 }): boolean {
   const printWindow = window.open("", "_blank", "popup");
 
@@ -250,7 +306,15 @@ export function printReviewOutputs({
     return false;
   }
 
-  populatePrintDocument({ entries, printDocument: printWindow.document, taskName });
+  populatePrintDocument({
+    entries,
+    modelId,
+    printDocument: printWindow.document,
+    summary,
+    taskId,
+    taskName,
+  });
+
   printWindow.opener = null;
   printWindow.addEventListener("afterprint", () => printWindow.close(), { once: true });
 

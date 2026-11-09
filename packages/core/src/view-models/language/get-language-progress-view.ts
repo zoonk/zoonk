@@ -8,11 +8,11 @@ import {
   getTargetLevel,
   loadLanguageSkillLevels,
 } from "../../language/levels/language-skill-levels";
-import { getOverallLevel } from "../../language/levels/skill-level-rules";
 import { loadDoneUnitIds } from "../../language/units/can-do-events";
 import { type LanguageUnit, findCurrentUnit } from "../../language/units/language-units";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { loadLanguageGoalContext } from "./_utils/language-goal-context";
+import { readPlanLevel } from "./_utils/plan-level";
 import { type LanguageProgressView } from "./language-view-contract";
 
 const DONE_UNITS_SHOWN = 2;
@@ -50,8 +50,10 @@ export async function getLanguageProgressView(
 
   const { goal, units, userId } = loaded.context;
   const details = readGoalDetails(goal);
+  const target = getTargetLevel(details);
 
-  const [levels, doneIds, allowance] = await Promise.all([
+  const [level, levels, doneIds, allowance] = await Promise.all([
+    readPlanLevel({ goalId: goal.id, target, userId }),
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
     loadDoneUnitIds({ units, userId }),
     getAllowance(),
@@ -72,12 +74,12 @@ export async function getLanguageProgressView(
         targetLanguage: goal.targetLanguage,
         title: goal.title,
       },
-      level: getOverallLevel(levels.map((level) => level.score)),
+      level,
       levels,
       speaking,
       speakingMock: getSpeakingMockExam(goal),
       speakingMockPaused: getSpeakingMockExam(goal) !== null && !isLiveCallAvailable(),
-      target: getTargetLevel(details),
+      target,
     },
     status: "ready",
   };

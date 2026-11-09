@@ -189,7 +189,6 @@
   "onboarding_placement_stop_mock": "65d74f19e73c0107ddf61bc5c8e5aba928c554d29767a3e86af42aada8d04ea0",
   "onboarding_placement_title": "1ea7c6822a80aa5a1d551efe289e8b2bfe06a57fd4e994d4be25d8d8facd4dac",
   "onboarding_placement_true": "e3e29bb9f64665ee96ab1dd95664e876795c3c6f8204415bdca3cc5163ce026c",
-  "onboarding_placement_try_again": "e8a231f2685b02cf55ba4c9f528b74e4faa4520ad49990b9867103153c85329f",
   "onboarding_placement_unavailable_description": "793b12bd0a743fd88aa9a8345a71a5742329fb3bd24c7a72f2d18c389691195a",
   "onboarding_placement_unavailable_title": "527740a15d443aa212bfdfa62815a561ace78a39532db9b682929fff1459c484",
   "onboarding_placement_waiting_material": "4ebd954d7477dff6d59c6c0ab986d3e9ad96cae84421672c2f195fce38e724c8",
@@ -640,7 +639,6 @@
     <string name="onboarding_placement_confirm">確定する</string>
     <string name="onboarding_placement_stop">ここで終えて学習計画を見る</string>
     <string name="onboarding_placement_answer_failed">送信できませんでした。回答はそのまま残っています。</string>
-    <string name="onboarding_placement_try_again">もう一度試す</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">正しい</string>
     <string name="onboarding_placement_false">間違っている</string>

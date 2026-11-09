@@ -54,7 +54,6 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
 import com.zoonk.android.feature.language.LevelValue
 import com.zoonk.android.feature.language.SkillLevelsCard
-import com.zoonk.android.feature.language.skillName
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPracticeRow
 import com.zoonk.android.feature.subscription.PlusMark
@@ -83,7 +82,7 @@ import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalProgressStillNeeded
-import com.zoonk.api.models.LanguageSkillLevel
+import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
@@ -100,7 +99,7 @@ private data class PlanNumber(
     val detail: String?,
     val share: Float? = null,
     val numeric: Boolean = true,
-    val target: String? = null,
+    val level: LanguagePlanLevel? = null,
 )
 
 private enum class NumberSheet { Standing, Pace }
@@ -199,18 +198,13 @@ private fun standingNumber(standing: Standing): PlanNumber {
         }
 
         is Standing.Language -> {
-            val language = standing.progress
+            val level = standing.progress.level
             PlanNumber(
                 label = stringResource(R.string.plan_level),
-                value = language.level ?: stringResource(R.string.plan_not_yet),
-                detail =
-                    when (val lead = skillLead(language.levels)) {
-                        SkillLead.Even -> stringResource(R.string.plan_even_across_skills)
-                        is SkillLead.Leads -> stringResource(R.string.plan_skill_leads, skillName(lead.skill))
-                        null -> null
-                    },
-                numeric = language.level != null,
-                target = language.target?.label,
+                value = level?.label ?: stringResource(R.string.plan_not_yet),
+                detail = null,
+                numeric = false,
+                level = level,
             )
         }
     }
@@ -234,27 +228,6 @@ fun lessonsStudied(
     done: Long,
     known: Long,
 ): Long = (done - known).coerceAtLeast(0)
-
-internal sealed interface SkillLead {
-    data object Even : SkillLead
-
-    data class Leads(
-        val skill: LanguageSkillLevel.Skill,
-    ) : SkillLead
-}
-
-/** The highest skill, when one is ahead of the others; none when the highest are tied or fewer than two are measured. */
-internal fun skillLead(levels: List<LanguageSkillLevel>): SkillLead? {
-    if (levels.size < 2) return null
-    val sorted = levels.sortedByDescending { it.score }
-    val first = sorted.first()
-    val rest = sorted.drop(1)
-    return when {
-        rest.all { it.score == first.score } -> SkillLead.Even
-        rest.first().score == first.score -> null
-        else -> SkillLead.Leads(first.skill)
-    }
-}
 
 @Composable
 private fun weekGain(gain: Double): String {
@@ -338,9 +311,9 @@ private fun NumberButton(
             Text(number.label, style = MaterialTheme.zoonkType.sectionTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         val style = MaterialTheme.typography.headlineSmall
-        val target = number.target
+        val level = number.level
         when {
-            target != null -> LevelValue(number.value, target, style)
+            level != null -> LevelValue(level.label, level.target, style)
             number.numeric -> Readout(number.value, style = style)
             else -> Text(number.value, style = style.copy(fontWeight = FontWeight.SemiBold))
         }

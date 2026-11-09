@@ -89,6 +89,7 @@ private struct PronunciationRoundView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var round: PronunciationRound?
   @State private var recorder = VoiceRecorder()
+  @State private var showsSaveReport = false
 
   let reviews: Components.Schemas.PronunciationReviews
 
@@ -104,6 +105,10 @@ private struct PronunciationRoundView: View {
     .onAppear {
       round = round ?? PronunciationRound(words: reviews.words, actions: actions)
     }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "pronunciation", reportType: .saveFailure), isReport: true
+    )
     .onDisappear {
       recorder.cancel()
       voice.player.stop(owner: reviews.goalId)
@@ -150,7 +155,7 @@ private struct PronunciationRoundView: View {
           wordStatus(state)
         } actions: {
           VStack(spacing: 12) {
-            if round.finishFailed {
+            if round.finishFailures > 0, !round.isPending {
               finishError(round)
             }
 
@@ -207,8 +212,14 @@ private struct PronunciationRoundView: View {
       } else if case .limit(let limit) = notice {
         HelpLimitNotice(limit: limit)
       } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
-        FailureLine(message: statusLine(notice))
-          .typeStyle(.note)
+        SaveFailureNotice(
+          failures: round?.answerFailures ?? 0,
+          firstMessage: LocalizedStringResource(
+            "That didn't go through. Try again.", table: "Voice",
+            comment: "Grading a word failed"),
+          onReport: { showsSaveReport = true }
+        )
+        .typeStyle(.note)
       } else {
         Text(statusLine(notice))
           .typeStyle(.note)
@@ -265,11 +276,7 @@ private struct PronunciationRoundView: View {
       return String(
         localized: "We couldn't hear the word. Try again a little closer.", table: "Voice",
         comment: "A recording had no word in it")
-    case .failed:
-      return String(
-        localized: "That didn't go through. Try again.", table: "Voice",
-        comment: "Grading a word failed")
-    case .limit, nil:
+    case .failed, .limit, nil:
       return String(
         localized: "Press Record and say the word out loud", table: "Voice",
         comment: "Asks the learner to say the word")
@@ -336,10 +343,12 @@ private struct PronunciationRoundView: View {
 
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
-      FailureLine(
-        message: LocalizedStringResource(
+      SaveFailureNotice(
+        failures: round.finishFailures,
+        firstMessage: LocalizedStringResource(
           "We couldn't save your answers.", table: "Voice",
-          comment: "Finishing the round failed")
+          comment: "Finishing the round failed"),
+        onReport: { showsSaveReport = true }
       )
       .typeStyle(.body)
 

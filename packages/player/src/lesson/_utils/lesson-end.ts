@@ -6,7 +6,7 @@ function complete(
 ): LessonPlayerState {
   return {
     ...state,
-    completion: { result: null, status, testedOut: state.quickCheck !== null },
+    completion: { failures: 0, result: null, status, testedOut: state.quickCheck !== null },
     phase: "completed",
   };
 }
@@ -44,5 +44,12 @@ export function setCompletionStatus(
   state: LessonPlayerState,
   status: "failed" | "saving",
 ): LessonPlayerState {
-  return state.completion ? { ...state, completion: { ...state.completion, status } } : state;
+  const { completion } = state;
+
+  if (!completion) {
+    return state;
+  }
+
+  const failures = status === "failed" ? completion.failures + 1 : completion.failures;
+  return { ...state, completion: { ...completion, failures, status } };
 }

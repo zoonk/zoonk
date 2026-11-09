@@ -11,5 +11,8 @@ export function CheckpointFrame(props: Omit<React.ComponentProps<typeof TaskFram
 
 export function CheckpointError() {
   const { duel } = useCheckpointScreen();
-  return duel.state.error ? <AnswersSaveError onRetry={() => void duel.retry()} /> : null;
+
+  return duel.state.error ? (
+    <AnswersSaveError failures={duel.state.failures} onRetry={() => void duel.retry()} />
+  ) : null;
 }

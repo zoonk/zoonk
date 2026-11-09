@@ -2,38 +2,92 @@
   "modelId": "typesafe-ai/jev",
   "results": [
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "en-replace-changed-goal-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Wants Medicine" },
-            { "category": "goals", "statement": "Needs 700+ in the essay" }
+            {
+              "category": "goals",
+              "statement": "Wants Medicine"
+            },
+            {
+              "category": "goals",
+              "statement": "Needs 700+ in the essay"
+            }
           ],
-          "fact": { "category": "goals", "statement": "Wants Law", "intent": "remember" }
+          "fact": {
+            "category": "goals",
+            "statement": "Wants Law",
+            "intent": "remember"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "en-replace-more-detail-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Wants Law" },
-            { "category": "goals", "statement": "Has the ENEM on November 8" }
+            {
+              "category": "goals",
+              "statement": "Wants Law"
+            },
+            {
+              "category": "goals",
+              "statement": "Has the ENEM on November 8"
+            }
           ],
           "fact": {
             "category": "goals",
@@ -44,18 +98,40 @@
       }
     },
     {
-      "classification": { "expected": "ignore", "predicted": "ignore" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["ignore"] },
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
         "id": "en-ignore-already-known-1",
         "userInput": {
           "existing": [
-            { "category": "preferences", "statement": "Likes examples about football and futsal" }
+            {
+              "category": "preferences",
+              "statement": "Likes examples about football and futsal"
+            }
           ],
           "fact": {
             "category": "preferences",
@@ -66,17 +142,41 @@
       }
     },
     {
-      "classification": { "expected": "add", "predicted": "add" },
+      "classification": {
+        "expected": "add",
+        "predicted": "add"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["add"] },
+        "expected": {
+          "actions": [
+            "add"
+          ]
+        },
         "id": "en-add-both-true-1",
         "userInput": {
-          "existing": [{ "category": "routine", "statement": "Studies after 8 pm on weekdays" }],
+          "existing": [
+            {
+              "category": "routine",
+              "statement": "Studies after 8 pm on weekdays"
+            }
+          ],
           "fact": {
             "category": "routine",
             "statement": "Studies in the morning on weekends",
@@ -86,19 +186,44 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "en-replace-corrected-amount-1",
         "userInput": {
           "existing": [
-            { "category": "routine", "statement": "Studies 1 hour a day" },
-            { "category": "routine", "statement": "Studies after 8 pm" }
+            {
+              "category": "routine",
+              "statement": "Studies 1 hour a day"
+            },
+            {
+              "category": "routine",
+              "statement": "Studies after 8 pm"
+            }
           ],
           "fact": {
             "category": "routine",
@@ -109,36 +234,90 @@
       }
     },
     {
-      "classification": { "expected": "remove", "predicted": "remove" },
+      "classification": {
+        "expected": "remove",
+        "predicted": "remove"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["remove_1"] },
+        "expected": {
+          "actions": [
+            "remove_1"
+          ]
+        },
         "id": "en-remove-forget-request-1",
         "userInput": {
           "existing": [
-            { "category": "context", "statement": "Plays football on weekends" },
-            { "category": "preferences", "statement": "Likes chess examples" }
+            {
+              "category": "context",
+              "statement": "Plays football on weekends"
+            },
+            {
+              "category": "preferences",
+              "statement": "Likes chess examples"
+            }
           ],
-          "fact": { "category": "context", "statement": "Plays football", "intent": "forget" }
+          "fact": {
+            "category": "context",
+            "statement": "Plays football",
+            "intent": "forget"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "remove", "predicted": "remove" },
+      "classification": {
+        "expected": "remove",
+        "predicted": "remove"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["remove_1", "replace_1"] },
+        "expected": {
+          "actions": [
+            "remove_1",
+            "replace_1"
+          ]
+        },
         "id": "en-remove-no-longer-true-1",
         "userInput": {
-          "existing": [{ "category": "context", "statement": "Plays football on weekends" }],
+          "existing": [
+            {
+              "category": "context",
+              "statement": "Plays football on weekends"
+            }
+          ],
           "fact": {
             "category": "context",
             "statement": "No longer plays football",
@@ -148,19 +327,44 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "en-replace-graduated-1",
         "userInput": {
           "existing": [
-            { "category": "background", "statement": "Is a nursing student" },
-            { "category": "context", "statement": "Lives in Toronto" }
+            {
+              "category": "background",
+              "statement": "Is a nursing student"
+            },
+            {
+              "category": "context",
+              "statement": "Lives in Toronto"
+            }
           ],
           "fact": {
             "category": "background",
@@ -171,52 +375,129 @@
       }
     },
     {
-      "classification": { "expected": "add", "predicted": "add" },
+      "classification": {
+        "expected": "add",
+        "predicted": "add"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["add"] },
+        "expected": {
+          "actions": [
+            "add"
+          ]
+        },
         "id": "en-add-unrelated-1",
         "userInput": {
           "existing": [
-            { "category": "context", "statement": "Lives in Toronto" },
-            { "category": "background", "statement": "Works as a nurse" }
+            {
+              "category": "context",
+              "statement": "Lives in Toronto"
+            },
+            {
+              "category": "background",
+              "statement": "Works as a nurse"
+            }
           ],
-          "fact": { "category": "context", "statement": "Has a dog", "intent": "remember" }
+          "fact": {
+            "category": "context",
+            "statement": "Has a dog",
+            "intent": "remember"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "ignore", "predicted": "ignore" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["ignore"] },
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
         "id": "en-ignore-forget-no-match-1",
         "userInput": {
           "existing": [
-            { "category": "background", "statement": "Works in Toronto" },
-            { "category": "goals", "statement": "Wants Law" }
+            {
+              "category": "background",
+              "statement": "Works in Toronto"
+            },
+            {
+              "category": "goals",
+              "statement": "Wants Law"
+            }
           ],
-          "fact": { "category": "context", "statement": "Lives in Montreal", "intent": "forget" }
+          "fact": {
+            "category": "context",
+            "statement": "Lives in Montreal",
+            "intent": "forget"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "ignore", "predicted": "ignore" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["ignore"] },
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
         "id": "en-ignore-same-difficulty-1",
         "userInput": {
           "existing": [
@@ -234,19 +515,44 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "en-injection-extra-instruction-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Wants Medicine" },
-            { "category": "preferences", "statement": "Likes chess examples" }
+            {
+              "category": "goals",
+              "statement": "Wants Medicine"
+            },
+            {
+              "category": "preferences",
+              "statement": "Likes chess examples"
+            }
           ],
           "fact": {
             "category": "goals",
@@ -257,33 +563,81 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "pt-replace-changed-goal-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Quer Medicina na USP" },
-            { "category": "routine", "statement": "Estuda à noite" }
+            {
+              "category": "goals",
+              "statement": "Quer Medicina na USP"
+            },
+            {
+              "category": "routine",
+              "statement": "Estuda à noite"
+            }
           ],
-          "fact": { "category": "goals", "statement": "Quer Direito", "intent": "remember" }
+          "fact": {
+            "category": "goals",
+            "statement": "Quer Direito",
+            "intent": "remember"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "ignore", "predicted": "ignore" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["ignore"] },
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
         "id": "pt-ignore-already-known-1",
         "userInput": {
           "existing": [
@@ -301,36 +655,133 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
-        "id": "pt-replace-moved-1",
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
+        "id": "pt-ignore-goal-paraphrase-1",
         "userInput": {
           "existing": [
-            { "category": "context", "statement": "Mora em Recife" },
-            { "category": "background", "statement": "Trabalha como professora" }
+            {
+              "category": "goals",
+              "statement": "Quer criar portfólio com caso de matrícula online"
+            }
           ],
-          "fact": { "category": "context", "statement": "Mora em São Paulo", "intent": "remember" }
+          "fact": {
+            "category": "goals",
+            "statement": "Quer criar portfólio com estudo de matrícula online",
+            "intent": "remember"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
+        "id": "pt-replace-moved-1",
+        "userInput": {
+          "existing": [
+            {
+              "category": "context",
+              "statement": "Mora em Recife"
+            },
+            {
+              "category": "background",
+              "statement": "Trabalha como professora"
+            }
+          ],
+          "fact": {
+            "category": "context",
+            "statement": "Mora em São Paulo",
+            "intent": "remember"
+          }
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "pt-replace-more-detail-1",
         "userInput": {
-          "existing": [{ "category": "background", "statement": "Trabalha como professora" }],
+          "existing": [
+            {
+              "category": "background",
+              "statement": "Trabalha como professora"
+            }
+          ],
           "fact": {
             "category": "background",
             "statement": "Trabalha como professora de inglês",
@@ -340,19 +791,44 @@
       }
     },
     {
-      "classification": { "expected": "remove", "predicted": "remove" },
+      "classification": {
+        "expected": "remove",
+        "predicted": "remove"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["remove_1"] },
+        "expected": {
+          "actions": [
+            "remove_1"
+          ]
+        },
         "id": "pt-remove-forget-request-1",
         "userInput": {
           "existing": [
-            { "category": "preferences", "statement": "Gosta de exemplos de futebol" },
-            { "category": "preferences", "statement": "Prefere explicações curtas" }
+            {
+              "category": "preferences",
+              "statement": "Gosta de exemplos de futebol"
+            },
+            {
+              "category": "preferences",
+              "statement": "Prefere explicações curtas"
+            }
           ],
           "fact": {
             "category": "preferences",
@@ -363,35 +839,88 @@
       }
     },
     {
-      "classification": { "expected": "add", "predicted": "add" },
+      "classification": {
+        "expected": "add",
+        "predicted": "add"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["add"] },
+        "expected": {
+          "actions": [
+            "add"
+          ]
+        },
         "id": "pt-add-unrelated-1",
         "userInput": {
-          "existing": [{ "category": "context", "statement": "Mora em Recife" }],
-          "fact": { "category": "context", "statement": "Tem um gato", "intent": "remember" }
+          "existing": [
+            {
+              "category": "context",
+              "statement": "Mora em Recife"
+            }
+          ],
+          "fact": {
+            "category": "context",
+            "statement": "Tem um gato",
+            "intent": "remember"
+          }
         }
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "pt-replace-contradiction-1",
         "userInput": {
           "existing": [
-            { "category": "preferences", "statement": "Prefere explicações curtas" },
-            { "category": "preferences", "statement": "Gosta de exemplos de futebol" }
+            {
+              "category": "preferences",
+              "statement": "Prefere explicações curtas"
+            },
+            {
+              "category": "preferences",
+              "statement": "Gosta de exemplos de futebol"
+            }
           ],
           "fact": {
             "category": "preferences",
@@ -402,17 +931,41 @@
       }
     },
     {
-      "classification": { "expected": "add", "predicted": "add" },
+      "classification": {
+        "expected": "add",
+        "predicted": "add"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["add"] },
+        "expected": {
+          "actions": [
+            "add"
+          ]
+        },
         "id": "pt-add-similar-numbers-1",
         "userInput": {
-          "existing": [{ "category": "routine", "statement": "Estuda depois das 20h" }],
+          "existing": [
+            {
+              "category": "routine",
+              "statement": "Estuda depois das 20h"
+            }
+          ],
           "fact": {
             "category": "routine",
             "statement": "Estuda 20 minutos por dia",
@@ -422,20 +975,48 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_2"] },
+        "expected": {
+          "actions": [
+            "replace_2"
+          ]
+        },
         "id": "en-persona-maya-replace-day-shifts-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Wants to read papers about quantum computers" },
-            { "category": "background", "statement": "Works as a nurse, mostly on night shifts" },
-            { "category": "routine", "statement": "Studies at 7:30 am, right after a night shift" },
+            {
+              "category": "goals",
+              "statement": "Wants to read papers about quantum computers"
+            },
+            {
+              "category": "background",
+              "statement": "Works as a nurse, mostly on night shifts"
+            },
+            {
+              "category": "routine",
+              "statement": "Studies at 7:30 am, right after a night shift"
+            },
             {
               "category": "learning",
               "statement": "Does better with a worked example before trying alone"
@@ -450,20 +1031,48 @@
       }
     },
     {
-      "classification": { "expected": "ignore", "predicted": "ignore" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["ignore"] },
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
         "id": "en-persona-maya-ignore-papers-again-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Wants to read papers about quantum computers" },
-            { "category": "background", "statement": "Works as a nurse, mostly on night shifts" },
-            { "category": "routine", "statement": "Studies at 7:30 am, right after a night shift" },
+            {
+              "category": "goals",
+              "statement": "Wants to read papers about quantum computers"
+            },
+            {
+              "category": "background",
+              "statement": "Works as a nurse, mostly on night shifts"
+            },
+            {
+              "category": "routine",
+              "statement": "Studies at 7:30 am, right after a night shift"
+            },
             {
               "category": "learning",
               "statement": "Does better with a worked example before trying alone"
@@ -478,20 +1087,48 @@
       }
     },
     {
-      "classification": { "expected": "remove", "predicted": "remove" },
+      "classification": {
+        "expected": "remove",
+        "predicted": "remove"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["remove_4"] },
+        "expected": {
+          "actions": [
+            "remove_4"
+          ]
+        },
         "id": "en-persona-maya-remove-worked-examples-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Wants to read papers about quantum computers" },
-            { "category": "background", "statement": "Works as a nurse, mostly on night shifts" },
-            { "category": "routine", "statement": "Studies at 7:30 am, right after a night shift" },
+            {
+              "category": "goals",
+              "statement": "Wants to read papers about quantum computers"
+            },
+            {
+              "category": "background",
+              "statement": "Works as a nurse, mostly on night shifts"
+            },
+            {
+              "category": "routine",
+              "statement": "Studies at 7:30 am, right after a night shift"
+            },
             {
               "category": "learning",
               "statement": "Does better with a worked example before trying alone"
@@ -506,18 +1143,40 @@
       }
     },
     {
-      "classification": { "expected": "add", "predicted": "add" },
+      "classification": {
+        "expected": "add",
+        "predicted": "add"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["add"] },
+        "expected": {
+          "actions": [
+            "add"
+          ]
+        },
         "id": "en-persona-sam-add-owns-shares-1",
         "userInput": {
           "existing": [
-            { "category": "context", "statement": "Just started investing through an index fund" }
+            {
+              "category": "context",
+              "statement": "Just started investing through an index fund"
+            }
           ],
           "fact": {
             "category": "context",
@@ -528,20 +1187,48 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "pt-persona-ana-replace-two-universities-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Quer cursar Medicina na UFMG" },
-            { "category": "routine", "statement": "Estuda à noite, depois da escola" },
-            { "category": "routine", "statement": "Faz cursinho aos sábados de manhã" },
+            {
+              "category": "goals",
+              "statement": "Quer cursar Medicina na UFMG"
+            },
+            {
+              "category": "routine",
+              "statement": "Estuda à noite, depois da escola"
+            },
+            {
+              "category": "routine",
+              "statement": "Faz cursinho aos sábados de manhã"
+            },
             {
               "category": "learning",
               "statement": "Vai melhor em Ciências Humanas do que em Ciências da Natureza"
@@ -556,20 +1243,48 @@
       }
     },
     {
-      "classification": { "expected": "ignore", "predicted": "ignore" },
+      "classification": {
+        "expected": "ignore",
+        "predicted": "ignore"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["ignore"] },
+        "expected": {
+          "actions": [
+            "ignore"
+          ]
+        },
         "id": "pt-persona-ana-ignore-saturday-course-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Quer cursar Medicina na UFMG" },
-            { "category": "routine", "statement": "Estuda à noite, depois da escola" },
-            { "category": "routine", "statement": "Faz cursinho aos sábados de manhã" },
+            {
+              "category": "goals",
+              "statement": "Quer cursar Medicina na UFMG"
+            },
+            {
+              "category": "routine",
+              "statement": "Estuda à noite, depois da escola"
+            },
+            {
+              "category": "routine",
+              "statement": "Faz cursinho aos sábados de manhã"
+            },
             {
               "category": "learning",
               "statement": "Vai melhor em Ciências Humanas do que em Ciências da Natureza"
@@ -584,21 +1299,52 @@
       }
     },
     {
-      "classification": { "expected": "replace", "predicted": "replace" },
+      "classification": {
+        "expected": "replace",
+        "predicted": "replace"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["replace_1"] },
+        "expected": {
+          "actions": [
+            "replace_1"
+          ]
+        },
         "id": "pt-persona-marcos-replace-move-date-1",
         "userInput": {
           "existing": [
-            { "category": "goals", "statement": "Vai se mudar para Toronto em março com a esposa" },
-            { "category": "background", "statement": "Trabalha com TI" },
-            { "category": "routine", "statement": "Estuda às 7h, antes do trabalho" },
-            { "category": "learning", "statement": "Lê melhor do que fala" }
+            {
+              "category": "goals",
+              "statement": "Vai se mudar para Toronto em março com a esposa"
+            },
+            {
+              "category": "background",
+              "statement": "Trabalha com TI"
+            },
+            {
+              "category": "routine",
+              "statement": "Estuda às 7h, antes do trabalho"
+            },
+            {
+              "category": "learning",
+              "statement": "Lê melhor do que fala"
+            }
           ],
           "fact": {
             "category": "goals",
@@ -609,20 +1355,48 @@
       }
     },
     {
-      "classification": { "expected": "remove", "predicted": "remove" },
+      "classification": {
+        "expected": "remove",
+        "predicted": "remove"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["remove_2"] },
+        "expected": {
+          "actions": [
+            "remove_2"
+          ]
+        },
         "id": "pt-persona-lucas-remove-sci-fi-1",
         "userInput": {
           "existing": [
-            { "category": "preferences", "statement": "Prefere explicações sem contas" },
-            { "category": "preferences", "statement": "Gosta de ficção científica" },
-            { "category": "routine", "statement": "Estuda à noite, antes de dormir" }
+            {
+              "category": "preferences",
+              "statement": "Prefere explicações sem contas"
+            },
+            {
+              "category": "preferences",
+              "statement": "Gosta de ficção científica"
+            },
+            {
+              "category": "routine",
+              "statement": "Estuda à noite, antes de dormir"
+            }
           ],
           "fact": {
             "category": "preferences",
@@ -633,17 +1407,41 @@
       }
     },
     {
-      "classification": { "expected": "add", "predicted": "add" },
+      "classification": {
+        "expected": "add",
+        "predicted": "add"
+      },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "actions": ["add"] },
+        "expected": {
+          "actions": [
+            "add"
+          ]
+        },
         "id": "pt-persona-pedro-add-school-year-1",
         "userInput": {
-          "existing": [{ "category": "goals", "statement": "Quer aprender a investir a mesada" }],
+          "existing": [
+            {
+              "category": "goals",
+              "statement": "Quer aprender a investir o primeiro salário"
+            }
+          ],
           "fact": {
             "category": "background",
             "statement": "Está no primeiro ano do ensino médio",
