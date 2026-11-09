@@ -1,4 +1,5 @@
 import "server-only";
+import { type StudySessionBlock } from "@zoonk/db";
 import { getExamName } from "../exams/exam-name";
 import { getWrongPenalty } from "../exams/scoring/mock-scoring";
 import { readChallengeResults } from "../learner/facts/challenge-results";
@@ -97,7 +98,7 @@ function getChallengePassMark({
   kind,
   size,
 }: {
-  block: ChallengeBlock | null;
+  block: Pick<StudySessionBlock, "payload"> | null;
   call: ChallengeCall | null;
   kind: CheckpointKind;
   size: { questions: number | null };
@@ -129,8 +130,7 @@ function isOfferedBeforeOpen({
   heldToday: boolean;
   plusRequired: boolean;
 }): boolean {
-  const offerable = heldToday && !plusRequired && challenge.goal.status === "active";
-  return offerable && !readBossOffer(challenge)?.waiting;
+  return heldToday && !plusRequired && challenge.goal.status === "active";
 }
 
 /** The day Today plans while Start hasn't built today; only a phase challenge's offer reads it. */
@@ -201,10 +201,10 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
     ? savedDay.blocks.find((row) => row.id === todayBlock?.id)
     : previewBlocks.find((row) => row.payload.planItemId === item.id);
 
-  // An earlier day's block isn't the one Start opens today: the offer is sized as its item keeps it.
   return {
     ...getWaitingTiming({ challenge, due, status, timing }),
     lastResult: results.get(item.id) ?? null,
+    plannedBlock: offered ? heldBlock : undefined,
     plusRequired,
     previewBlock: offered ? null : block,
     todayBlock,
@@ -216,7 +216,7 @@ function loadRecordings({
   block,
   challenge,
 }: {
-  block: ChallengeBlock | null;
+  block: Pick<StudySessionBlock, "payload"> | null;
   challenge: OwnedChallenge;
 }) {
   if (challenge.item.kind === "mock") {
@@ -250,17 +250,26 @@ export async function getChallenge({
   const kind = getKind(challenge);
   const isMock = item.kind === "mock";
 
-  const { date, lastResult, plusRequired, previewBlock, status, todayBlock, waitReason } =
-    await loadChallengeDay(challenge);
+  const {
+    date,
+    lastResult,
+    plannedBlock,
+    plusRequired,
+    previewBlock,
+    status,
+    todayBlock,
+    waitReason,
+  } = await loadChallengeDay(challenge);
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
+  const questionBlock = plannedBlock ?? previewBlock;
 
   const [size, canMoveIt, counts, recordings, topics, call, moved] = await Promise.all([
-    loadChallengeSize({ block: previewBlock, challenge }),
+    loadChallengeSize({ block: previewBlock, challenge, plannedBlock }),
     status !== "plusRequired" && canMove({ challenge, todayBlock }),
     loadMilestoneCounts(userId),
-    loadRecordings({ block: previewBlock, challenge }),
-    loadChallengeTopics({ block: previewBlock, challenge }),
+    loadRecordings({ block: questionBlock, challenge }),
+    loadChallengeTopics({ block: questionBlock, challenge }),
     loadChallengeCall({ blockId, challenge }),
     movedBy ? loadMoveEffect({ changeId: movedBy, planId: item.planId }) : null,
   ]);
@@ -285,7 +294,7 @@ export async function getChallenge({
       mock: isMock,
       netScored: size.netScored,
       number: size.number,
-      passMark: getChallengePassMark({ block: previewBlock, call, kind, size }),
+      passMark: getChallengePassMark({ block: questionBlock, call, kind, size }),
       phase: findPhase(challenge),
       planItemId: item.id,
       questions: size.questions,

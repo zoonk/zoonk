@@ -27,7 +27,7 @@ import { finishStudyBlock } from "../sessions/finish-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { requestChallengeQuestions } from "./challenge-questions";
 import { getCheckpointMinutes } from "./checkpoint-minutes";
-import { MIN_CHECKPOINT_QUESTIONS } from "./checkpoint-rules";
+import { MIN_CHECKPOINT_QUESTIONS, getPassMark } from "./checkpoint-rules";
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
@@ -121,9 +121,9 @@ describe("a phase checkpoint's challenge", () => {
       canMove: false,
       goalId: goal.id,
       kind: "boss",
-      passMark: 7,
+      passMark: getPassMark(6),
       phase: { index: 0, name: "Basics" },
-      questions: 10,
+      questions: 6,
       rematch: false,
       reward: { badge: true, brainPower: BRAIN_POWER_BONUS.phaseBoss },
       status: "ready",
@@ -145,6 +145,9 @@ describe("a phase checkpoint's challenge", () => {
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
       blockId: started.destination.blockId,
+      minutes: intro.minutes,
+      passMark: intro.passMark,
+      questions: intro.questions,
       status: "started",
     });
 

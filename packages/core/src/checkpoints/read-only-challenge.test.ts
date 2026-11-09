@@ -1,14 +1,18 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { listeningBlueprintFixture } from "@zoonk/testing/fixtures/listening";
+import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
+import { listeningBlueprintFixture, listeningSetFixture } from "@zoonk/testing/fixtures/listening";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { lockPlanSourceWrite, writePlanInputs } from "../library/_utils/plan-input-write";
 import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import {
@@ -143,6 +147,115 @@ describe("a challenge intro is a read", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("offers Today's admitted recording after its saved waiting offer becomes stale", async () => {
+    const { boss, goal, plan, skills, user } = await dueBossFixture((skillIds) => ({
+      kind: "recording",
+      minutes: 0,
+      questions: null,
+      testedKeys: [],
+      testedSkillIds: skillIds,
+      waiting: true,
+    }));
+
+    const blueprint = await listeningBlueprintFixture({ name: `Listening ${crypto.randomUUID()}` });
+
+    const [currentGoal, recording] = await Promise.all([
+      prisma.goal.update({
+        data: { examBlueprintId: blueprint.id, kind: "exam", targetLanguage: "en" },
+        where: { id: goal.id },
+      }),
+      listeningSetFixture({ examBlueprintId: blueprint.id }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ name: "Basics" }],
+            skills: skills.map((skill) => ({
+              area: "Listening",
+              lessons: 1,
+              name: skill.name,
+              phase: 0,
+              skillId: skill.id,
+              weight: null,
+            })),
+          },
+        },
+        where: { id: plan.id },
+      }),
+    ]);
+
+    await Promise.all(
+      Array.from({ length: 5 }, (_, setPosition) =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          format: "multipleChoice",
+          setId: recording.id,
+          setPosition,
+          skillId: skills[0]!.id,
+        }),
+      ),
+    );
+
+    const unheard = await readStudyDay({
+      goal: currentGoal,
+      now: SESSION_NOW,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(unheard?.session.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+
+    await expect(readIntro(boss.id)).resolves.toMatchObject({
+      minutes: 0,
+      questions: 0,
+      status: "waiting",
+    });
+
+    const audio = await mediaAssetFixture({ durationMs: 40_000, kind: "audio" });
+
+    await writePlanInputs(async (tx) => {
+      await lockPlanSourceWrite(tx, { blueprintIds: [blueprint.id], skillIds: [skills[0]!.id] });
+
+      await tx.itemSet.updateMany({
+        data: { mediaAssetId: audio.id },
+        where: { id: recording.id, mediaAssetId: null },
+      });
+    });
+
+    const before = await readPlan(plan.id);
+
+    const read = await countDatabaseStatements(async () => {
+      const [today, view, screen] = await Promise.all([
+        readStudyDay({ goal: currentGoal, now: SESSION_NOW, timeZone: "UTC", userId: user.id }),
+        getGoalPlan(goal.id),
+        readIntro(boss.id),
+      ]);
+
+      return { screen, today, view };
+    });
+
+    expect(read.writes).toBe(0);
+    await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+    const held = read.result.today?.session.blocks.find((block) => block.kind === "checkpoint");
+    expect(held?.estimatedMinutes).toBe(8);
+    expect(read.result.screen).toMatchObject({ minutes: 8, questions: 5, status: "ready" });
+
+    if (read.result.view.status !== "ready") {
+      throw new Error("Expected the Plan");
+    }
+
+    expect(read.result.view.plan.phases.flatMap((phase) => phase.checkpoint ?? [])).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ planItemId: boss.id, when: "nextSession" }),
+      ]),
+    );
+
+    const started = await startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id });
+    expect(started.status).toBe("ready");
+    await expect(readIntro(boss.id)).resolves.toMatchObject({ minutes: 8, questions: 5 });
+  });
 
   it.each([0, 45])(
     "keeps Today's carried challenge after midnight with %i minutes today",
@@ -312,20 +425,20 @@ describe("a challenge intro is a read", () => {
   });
 
   it("offers a legacy offer today's day holds without writing, then establishes its queue on Start", async () => {
-    const { boss, goal, plan, user } = await dueBossFixture();
+    const { boss, goal, plan, skills, user } = await dueBossFixture();
     const before = await readPlan(plan.id);
     const challenge = await readIntro(boss.id);
 
     expect(challenge).toMatchObject({
       blockId: null,
-      estimatedMinutes: null,
-      minutes: null,
-      passMark: null,
-      questions: null,
+      estimatedMinutes: 15,
+      minutes: 15,
+      passMark: getPassMark(10),
+      questions: 10,
       recordings: 0,
       status: "ready",
       title: "Test boss",
-      topics: [],
+      topics: skills.map((skill) => ({ name: skill.name, subject: null })),
       waitReason: null,
     });
 
@@ -465,66 +578,42 @@ describe("a challenge intro is a read", () => {
     },
   );
 
-  it("offers a due checkpoint as its saved plan item keeps it", async () => {
-    const { boss, skills } = await dueBossFixture(([first, second = ""]) => ({
-      kind: "text",
-      minutes: 19,
-      questions: 7,
-      testedKeys: [],
-      testedSkillIds: [second, first ?? ""],
-      waiting: false,
-    }));
+  it.each(["text", "recording"] as const)(
+    "keeps a stored %s estimate when Today's day does not hold the challenge",
+    async (kind) => {
+      const { boss, goal, plan, skills } = await dueBossFixture(([first, second = ""]) => ({
+        kind,
+        minutes: 19,
+        questions: 7,
+        testedKeys: [],
+        testedSkillIds: [second, first ?? ""],
+        waiting: false,
+      }));
 
-    const challenge = await readIntro(boss.id);
+      await prisma.plan.update({
+        data: { settings: { weekdayMinutes: [45, 45, 45, 0, 45, 45, 45] } },
+        where: { id: plan.id },
+      });
 
-    expect(challenge).toMatchObject({
-      estimatedMinutes: 19,
-      minutes: 19,
-      passMark: getPassMark(7),
-      questions: 7,
-      status: "ready",
-    });
+      const challenge = await readIntro(boss.id);
 
-    expect(challenge.topics.map((topic) => topic.name)).toStrictEqual([
-      skills[1]?.name,
-      skills[0]?.name,
-    ]);
-  });
+      expect(challenge).toMatchObject({
+        estimatedMinutes: 19,
+        minutes: 19,
+        passMark: getPassMark(7),
+        questions: 7,
+        recordings: kind === "recording" ? null : 0,
+        status: "upcoming",
+      });
 
-  it("keeps a due checkpoint the bank can't ask yet waiting, with no time of its own", async () => {
-    const { boss, goal } = await dueBossFixture(() => ({
-      kind: "recording",
-      minutes: 0,
-      questions: null,
-      testedKeys: [],
-      testedSkillIds: [],
-      waiting: true,
-    }));
+      expect(challenge.topics.map((topic) => topic.name)).toStrictEqual([
+        skills[1]?.name,
+        skills[0]?.name,
+      ]);
 
-    const challenge = await readIntro(boss.id);
-
-    expect(challenge).toMatchObject({ minutes: 0, questions: 0, status: "waiting", topics: [] });
-    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-  });
-
-  it("keeps a stored listening offer's playback rule before its recordings are selected", async () => {
-    const { boss } = await dueBossFixture((skillIds) => ({
-      kind: "recording",
-      minutes: 19,
-      questions: 7,
-      testedKeys: [],
-      testedSkillIds: skillIds,
-      waiting: false,
-    }));
-
-    await expect(readIntro(boss.id)).resolves.toMatchObject({
-      minutes: 19,
-      passMark: getPassMark(7),
-      questions: 7,
-      recordings: null,
-      status: "ready",
-    });
-  });
+      await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+    },
+  );
 
   it("keeps recording-only skills out of the stored text offer's topics", async () => {
     const { boss, goal, plan, skills } = await dueBossFixture((skillIds) => ({
