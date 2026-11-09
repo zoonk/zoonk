@@ -25,7 +25,13 @@ import { startStudyBlock } from "./start-study-block";
 /** A started day with one lesson open and one waiting, which a test-out and a set-aside take. */
 async function startedDayOfTwoLessons() {
   const user = await userFixture();
-  const { goal, lessons, planItems } = await sessionGoalFixture({ lessons: 2, userId: user.id });
+
+  const { goal, lessons, planItems } = await sessionGoalFixture({
+    challengesDone: true,
+    lessons: 2,
+    userId: user.id,
+  });
+
   const [tested, setAside] = lessons;
   const testedItemId = planItems[0]?.id ?? "";
   const now = new Date();
@@ -67,6 +73,7 @@ async function startedDay() {
   const user = await userFixture();
 
   const { chapters, goal, planItems } = await learnerGoalFixture({
+    challengesDone: true,
     itemsPerSkill: 4,
     phases: [1, 1],
     userId: user.id,
@@ -232,6 +239,7 @@ describe("a day refilled after a test-out", () => {
     const user = await userFixture();
 
     const { goal, lessons, planItems } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { dailyMinutes: 8 },
       lessons: 3,
       userId: user.id,

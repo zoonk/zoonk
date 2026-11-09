@@ -1171,7 +1171,7 @@ describe("a course level, its skills where its course teaches them", () => {
     await prisma.planItem.deleteMany({ where: { plan: { goalId: started.goal.id } } });
 
     await prisma.goal.update({
-      data: { dailyMinutes: 15, targetDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) },
+      data: { dailyMinutes: 5, targetDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) },
       where: { id: started.goal.id },
     });
 

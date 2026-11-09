@@ -5,9 +5,8 @@ import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
-import { type SessionBuildInput } from "../session-builder";
+import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { buildRestOfDay } from "./build-rest-of-day";
 import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
@@ -74,9 +73,12 @@ function withoutKept({
   return {
     ...input,
     capsules: kinds.has("review") ? [] : input.capsules,
-    checkpoints: input.checkpoints.filter(
-      (checkpoint) => !keptCheckpoints.has(checkpoint.planItemId),
-    ),
+    checkpoints: input.checkpoints
+      .filter((checkpoint) => !keptCheckpoints.has(checkpoint.planItemId))
+      .map((checkpoint) => ({
+        ...checkpoint,
+        reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
+      })),
     drills: kinds.has("practice") ? [] : input.drills,
     fillLessons: input.fillLessons?.filter(isNewLesson),
     lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
@@ -86,7 +88,6 @@ function withoutKept({
     // A day that keeps its practice gives the rest of its time to lessons.
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
     produce: kinds.has("produce") ? null : input.produce,
-    reinforcement: input.reinforcement.filter((lesson) => isNewLesson(lesson)),
     usedMinutes: getSessionUsedMinutes(kept),
   };
 }
@@ -123,23 +124,17 @@ export async function planRestOfDayWithPlan({
     selection,
   });
 
-  const plan = await dayPlan;
-
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
-  const built = buildRestOfDay({
-    input: withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
-    items: plan.items,
-    kept,
-  });
+  const { blocks, plannedMinutes } = buildSessionBlocks(
+    withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
+  );
 
   const keptKinds = new Set(kept.map((block) => block.kind));
 
   return {
-    blocks: built.blocks.filter(
-      (block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind),
-    ),
-    plan,
-    plannedMinutes: getSessionUsedMinutes(kept) + built.plannedMinutes,
+    blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
+    plan: await dayPlan,
+    plannedMinutes: getSessionUsedMinutes(kept) + plannedMinutes,
   };
 }
 

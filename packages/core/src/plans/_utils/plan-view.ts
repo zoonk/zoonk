@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { readChallengeReadiness } from "../../checkpoints/_utils/challenge-readiness";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
@@ -9,9 +8,10 @@ import { loadNoticeDates } from "../../exams/_utils/notice-day";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
 import { toLanguageAimView } from "../../language/aims/language-aims";
+import { readChallengeResults } from "../../learner/facts/challenge-results";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
-import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
+import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -146,6 +146,14 @@ function buildSteeringView({
 
 type PlanViewInput = { context: PlanContext; now: Date };
 
+function readPhaseChallengeAccess(goal: PlanContext["goal"]) {
+  return arePhaseChallengesRequired({
+    goalKind: goal.kind,
+    readSubscription: readActiveSubscription,
+    userId: goal.userId,
+  });
+}
+
 export async function buildPlanView({
   context: savedContext,
   now,
@@ -161,11 +169,7 @@ export async function buildPlanView({
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
 
-  const phaseChallengesRequired = await arePhaseChallengesRequired({
-    goalKind: goal.kind,
-    readSubscription: readActiveSubscription,
-    userId: goal.userId,
-  });
+  const phaseChallengesRequired = await readPhaseChallengeAccess(goal);
 
   const currentPhase = findPlanPhase({
     goal,
@@ -189,10 +193,10 @@ export async function buildPlanView({
     noticeDates,
     catchUp,
     examChoices,
-    todayBlocks,
+    todaySession,
     partAreas,
     taughtSkillIds,
-    readiness,
+    challengeResults,
   ] = await Promise.all([
     loadPlanChangeViews({
       context: savedContext,
@@ -215,10 +219,15 @@ export async function buildPlanView({
     }),
     Promise.resolve(selectedCatchUp),
     loadExamChoiceViews({ examBlueprintId: goal.examBlueprintId, picks: state.settings }),
-    readTodayLearnBlocks(goal.userId, goal.id),
+    readTodayPlanSession(goal.userId, goal.id),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
-    readChallengeReadiness({ goal, items, phases, state, today: context.today }),
+    readChallengeResults(
+      goal.userId,
+      items.flatMap((item) =>
+        item.kind === "boss" && item.id && item.status === "todo" ? [item.id] : [],
+      ),
+    ),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -283,6 +292,7 @@ export async function buildPlanView({
     numbers: summary ? buildSavedPlanNumbersView(context) : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
+      challengeResults,
       challengesOpen: phaseChallengesRequired && !access.freeWeekOver,
       chapterTitles,
       context,
@@ -290,11 +300,10 @@ export async function buildPlanView({
       estimateMinutes:
         summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
       phaseChallengesRequired,
-      readiness,
       shortPlan,
       skillAreas,
       taughtSkillIds,
-      todayBlocks,
+      todaySession,
     }),
     planId: context.plan.id,
     ready: savedContext.phases.length > 0 && !savedContext.plan.buildFailedAt,

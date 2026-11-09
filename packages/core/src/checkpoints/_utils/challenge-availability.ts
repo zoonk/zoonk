@@ -14,7 +14,7 @@ export function getAvailableChallengeStatus({
   size: { questions: number | null };
   status: ChallengeStatus;
 }): ChallengeStatus {
-  const pending = status === "upcoming" || status === "queued";
+  const pending = status === "upcoming";
   const empty = size.questions === 0;
   return pending && !isMock && !call && !block && empty ? "waiting" : status;
 }

@@ -1,13 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getExamName } from "../exams/exam-name";
-import { hasStoredTimeRunOutAway } from "../exams/mocks/_utils/owned-mock";
 import { getWrongPenalty } from "../exams/scoring/mock-scoring";
+import { readChallengeResults } from "../learner/facts/challenge-results";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanEffect } from "../plans/planner/plan-effect";
-import { parsePlanPhases } from "../plans/planner/plan-state";
+import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
@@ -15,16 +15,18 @@ import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
+import { readTodayBlockStatus } from "./_utils/challenge-day";
 import { canMoveToMonday, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
-import { readChallengeTiming } from "./_utils/challenge-readiness";
+import { isChallengeReached } from "./_utils/challenge-reach";
 import { loadChallengeSize } from "./_utils/challenge-size";
 import { getChallengeStatus } from "./_utils/challenge-status";
+import { getChallengeTimings } from "./_utils/challenge-timing";
 import { loadChallengeTopics } from "./_utils/challenge-topics";
 import { getAskablePassMark } from "./_utils/checkpoint-outcome";
 import { loadResultReinforcement } from "./_utils/checkpoint-reinforcement";
-import { findLastCheckpointResult } from "./_utils/checkpoint-results";
+import { type CheckpointResult } from "./_utils/checkpoint-results";
 import { isFinalBoss } from "./_utils/load-boss";
 import { isWeeklyChallengeItem } from "./_utils/load-weekly-challenge";
 import {
@@ -117,33 +119,6 @@ function getChallengePassMark({
   return payload?.checkpoint ? getAskablePassMark({ payload, questions }) : getPassMark(questions);
 }
 
-/** A mock that expired while away starts again as an unstarted block. */
-async function readTodayBlockStatus({
-  isMock,
-  todayBlock,
-}: {
-  isMock: boolean;
-  todayBlock: ChallengeBlock | null;
-}) {
-  if (!isMock || todayBlock?.status !== "active") {
-    return todayBlock?.status ?? null;
-  }
-
-  const sitting = await prisma.mockExam.findUnique({
-    select: {
-      answers: { select: { answer: true } },
-      conditions: true,
-      sectionIndex: true,
-      sectionStartedAt: true,
-      status: true,
-    },
-    where: { blockId: todayBlock.id },
-  });
-
-  const isOver = !sitting || hasStoredTimeRunOutAway({ mock: sitting, now: Date.now() });
-  return isOver ? "pending" : "active";
-}
-
 function isOfferedBeforeOpen({
   challenge,
   due,
@@ -175,8 +150,13 @@ function getSavedWaitReason({
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, today, userId } = challenge;
 
-  const [timing, plusRequired, block, savedDay] = await Promise.all([
-    readChallengeTiming(challenge),
+  const [results, plusRequired, block, savedDay] = await Promise.all([
+    item.kind === "boss"
+      ? readChallengeResults(
+          userId,
+          challenge.items.flatMap((entry) => (entry.kind === "boss" ? [entry.id] : [])),
+        )
+      : Promise.resolve(new Map<string, CheckpointResult>()),
     needsPlus(challenge),
     findChallengeBlock({ challenge }),
     prisma.studySession.findUnique({
@@ -188,12 +168,30 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
     }),
   ]);
 
-  const due = timing === "nextSession" && item.status === "todo";
+  const due =
+    item.kind === "boss"
+      ? isChallengeReached({ boss: item, items: challenge.items })
+      : item.scheduledFor !== null && item.scheduledFor <= today && item.status === "todo";
+
+  const nextOffer =
+    item.kind !== "boss" ||
+    getChallengeTimings({
+      goal,
+      items: challenge.items,
+      results,
+      savedDay: savedDay !== null,
+      settings: parsePlanSettings(challenge.plan.settings),
+      today,
+      todayItemIds: new Set(
+        (savedDay?.blocks ?? []).flatMap((row) => readBlockPayload(row).planItemId ?? []),
+      ),
+    }).get(item.id)?.when === "nextSession";
+
   const todayBlock = getTodayBlock({ block, today });
 
   const offered = isOfferedBeforeOpen({
     challenge,
-    due,
+    due: due && nextOffer,
     plusRequired,
     savedDay: Boolean(savedDay),
   });
@@ -202,7 +200,6 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
     due,
     itemStatus: item.status,
     plusRequired,
-    queued: timing === "queued",
     todayBlockStatus: offered
       ? "pending"
       : await readTodayBlockStatus({ isMock: item.kind === "mock", todayBlock }),
@@ -210,6 +207,7 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
 
   // An earlier day's block isn't the one Start opens today: the offer is sized as its item keeps it.
   return {
+    lastResult: results.get(item.id) ?? null,
     plusRequired,
     previewBlock: offered ? null : block,
     status,
@@ -256,15 +254,14 @@ export async function getChallenge({
   const kind = getKind(challenge);
   const isMock = item.kind === "mock";
 
-  const { plusRequired, previewBlock, status, todayBlock, waitReason } =
+  const { lastResult, plusRequired, previewBlock, status, todayBlock, waitReason } =
     await loadChallengeDay(challenge);
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
 
-  const [size, canMoveIt, lastResult, counts, recordings, topics, call, moved] = await Promise.all([
+  const [size, canMoveIt, counts, recordings, topics, call, moved] = await Promise.all([
     loadChallengeSize({ block: previewBlock, challenge }),
     status !== "plusRequired" && canMove({ challenge, todayBlock }),
-    kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
     loadMilestoneCounts(userId),
     loadRecordings({ block: previewBlock, challenge }),
     loadChallengeTopics({ block: previewBlock, challenge }),
@@ -280,7 +277,7 @@ export async function getChallenge({
       blockId,
       call,
       canMove: canMoveIt,
-      date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
+      date: item.kind !== "boss" && item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
       estimatedMinutes: size.estimatedMinutes,
       examName: isMock ? getExamName({ blueprint: goal.examBlueprint, goal }) : null,
       fullLength: size.fullLength,

@@ -76,7 +76,6 @@ const baseInput: SessionBuildInput = {
   practice,
   practiceShare: 0.2,
   produce: null,
-  reinforcement: [],
   reviewPlanItemId: null,
   topics: new Map([
     ["s0", { area: "Math", name: "Functions" }],
@@ -90,6 +89,61 @@ function getFullReview(input: SessionBuildInput) {
 }
 
 describe(buildSessionBlocks, () => {
+  it("funds only one of two reached 15-minute challenges on a 20-minute day", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      checkpoints: [boss, { ...boss, phase: 2, planItemId: "second" }],
+      dailyMinutes: 20,
+      drills: [],
+      lessons: [],
+      practice: [],
+    });
+
+    expect(built.blocks.filter((block) => block.kind === "checkpoint")).toHaveLength(1);
+    expect(built.plannedMinutes).toBeLessThanOrEqual(20);
+  });
+
+  it("keeps one oversized challenge alone, ahead of placement and reinforcement", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [{ ...boss, minutes: 15, reinforcement: [lesson("r", 3)], rematch: true }],
+      dailyMinutes: 10,
+      placementItemIds: ["placement"],
+    });
+
+    expect(built.blocks.map((block) => block.kind)).toStrictEqual(["checkpoint"]);
+    expect(built.plannedMinutes).toBe(15);
+  });
+
+  it("funds a first duel before a put-off rematch", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      checkpoints: [
+        {
+          ...boss,
+          minutes: 20,
+          reinforcement: [lesson("rematch-reinforcement", 3)],
+          rematch: true,
+        },
+        { ...boss, minutes: 20, phase: 2, planItemId: "first-duel" },
+      ],
+      dailyMinutes: 30,
+      drills: [],
+      lessons: [],
+      practice: [],
+    });
+
+    expect(
+      built.blocks
+        .filter((block) => block.kind === "checkpoint")
+        .map((block) => block.payload.planItemId),
+    ).toStrictEqual(["first-duel"]);
+
+    expect(built.blocks.some((block) => block.lessonId === "rematch-reinforcement")).toBe(false);
+  });
+
   it("builds an easy start, the hard middle and fits the day", () => {
     const { blocks, plannedMinutes } = buildSessionBlocks(baseInput);
 
@@ -146,25 +200,24 @@ describe(buildSessionBlocks, () => {
     expect(blocks.some((block) => block.kind === "learn")).toBe(true);
   });
 
-  it("puts reinforcement lessons before a boss rematch and waits on new lessons", () => {
+  it("puts reinforcement before its funded rematch and continues with lessons", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
-      checkpoints: [boss],
-      reinforcement: [lesson("r1", 3), lesson("r2", 3)],
+      checkpoints: [{ ...boss, reinforcement: [lesson("r1", 3), lesson("r2", 3)] }],
     });
 
     expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
       ["review", null],
       ["learn", "r1"],
       ["learn", "r2"],
-      ["practice", null],
-      ["practice", null],
       ["checkpoint", null],
+      ["learn", "l1"],
+      ["practice", null],
     ]);
 
     expect(blocks[1]?.payload.reinforcement).toBe(true);
 
-    expect(blocks[5]?.payload.checkpoint).toStrictEqual({
+    expect(blocks[3]?.payload.checkpoint).toStrictEqual({
       kind: "boss",
       mock: false,
       passMark: 7,
@@ -174,60 +227,55 @@ describe(buildSessionBlocks, () => {
     });
   });
 
-  it("gives the lessons its plan has before a challenge on its day first, and waits on the rest", () => {
+  it("walks lessons and challenges in plan order without waiting for a challenge", () => {
+    const lessons = [lesson("l1", 5), lesson("l2", 5), lesson("l3", 5)];
+    const order = ["plan-l1", "plan-boss", "plan-l2", "plan-l3"];
+
     const { blocks } = buildSessionBlocks({
       ...baseInput,
+      capsules: [],
       checkpoints: [boss],
-      lessons: [{ ...lesson("l1", 5), beforeChallenge: true }, lesson("l2", 10)],
+      drills: [],
+      lessons,
+      planItems: order.map((id, position) => ({
+        id,
+        kind: id === "plan-boss" ? "boss" : "lesson",
+        position,
+        status: "todo",
+      })),
+      practice: [],
     });
 
-    expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
-      ["review", null],
-      ["learn", "l1"],
-      ["practice", null],
-      ["practice", null],
-      ["checkpoint", null],
-    ]);
+    expect(blocks.map((block) => block.payload.planItemId)).toStrictEqual(order);
   });
 
-  it("follows a first duel with the lessons its plan has after it on its day", () => {
+  it("passes over a challenge that does not fit and continues with the next phase", () => {
+    const lessons = [lesson("l1", 10), lesson("l2", 10)];
+    const order = ["plan-l1", "plan-boss", "plan-l2"];
+
     const { blocks } = buildSessionBlocks({
       ...baseInput,
+      capsules: [],
       checkpoints: [boss],
-      lessons: [
-        { ...lesson("l1", 5), beforeChallenge: true },
-        { ...lesson("l2", 5), afterChallenge: true },
-        lesson("l3", 5),
-      ],
+      dailyMinutes: 20,
+      drills: [],
+      lessons,
+      planItems: order.map((id, position) => ({
+        id,
+        kind: id === "plan-boss" ? "boss" : "lesson",
+        position,
+        status: "todo",
+      })),
+      practice: [],
     });
 
-    expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
-      ["review", null],
-      ["learn", "l1"],
-      ["practice", null],
-      ["checkpoint", null],
-      ["learn", "l2"],
-    ]);
-  });
-
-  it("gives the lessons before and after a first duel one budget, in plan order", () => {
-    const { blocks } = buildSessionBlocks({
-      ...baseInput,
-      checkpoints: [boss],
-      lessons: [
-        { ...lesson("l1", 10), beforeChallenge: true },
-        { ...lesson("l2", 10), afterChallenge: true },
-      ],
-    });
-
-    expect(blocks.map((block) => block.lessonId).filter(Boolean)).toStrictEqual(["l1"]);
+    expect(blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-l1", "plan-l2"]);
   });
 
   it("never holds new lessons back on a rematch, so a lost boss locks nothing", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
-      checkpoints: [{ ...boss, rematch: true }],
-      reinforcement: [lesson("r1", 3), lesson("r2", 3)],
+      checkpoints: [{ ...boss, reinforcement: [lesson("r1", 3), lesson("r2", 3)], rematch: true }],
     });
 
     expect(blocks.map((block) => block.lessonId).filter(Boolean)).toStrictEqual(["r1", "r2", "l1"]);

@@ -4,6 +4,7 @@ import { type PlannedBlock, type PlannedCheckpoint } from "../session-builder";
 export function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBlock {
   const {
     itemIds,
+    reinforcement: _reinforcement,
     minutes,
     planItemId,
     planItemKey = null,

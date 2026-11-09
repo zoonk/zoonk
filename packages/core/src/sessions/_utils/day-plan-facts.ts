@@ -1,13 +1,10 @@
 import { type Goal } from "@zoonk/db";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { LEARN_KINDS, isWritingItem } from "../../plans/planner/plan-item-rules";
-import { getItemKey } from "../../plans/planner/plan-items";
 import { getFreshStart } from "../fresh-start";
 import { getPracticeShare } from "../practice-share";
-import { type PlannedCheckpoint } from "../session-builder";
 import { getUnwrittenMinutesOn } from "./day-lessons";
 import { type loadDayPlan } from "./day-plan";
-import { keepDuelLessons, markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { getTestSkillIds } from "./review-skills";
 import { type SessionPlanItem } from "./session-plan-item";
 
@@ -55,31 +52,13 @@ export function getPlanTestSkillIds(plan: Awaited<ReturnType<typeof loadDayPlan>
 }
 
 export function getDayWritingMinutes({
-  checkpoints,
-  items,
   reservedItems,
   today,
 }: {
-  checkpoints: readonly PlannedCheckpoint[];
-  items: readonly SessionPlanItem[];
   reservedItems: readonly SessionPlanItem[];
   today: Date;
 }): number {
-  const writing = keepDuelLessons({
-    checkpoints,
-    lessons: markLessonsAroundChallenges({
-      checkpoints,
-      items,
-      lessons: reservedItems.map((item) => ({
-        ...item,
-        planItemId: item.id,
-        planItemKey: getItemKey(item),
-      })),
-      today,
-    }),
-  });
-
-  return getUnwrittenMinutesOn({ items: writing, today });
+  return getUnwrittenMinutesOn({ items: reservedItems, today });
 }
 
 export function getDayPracticeShare({

@@ -5,7 +5,7 @@ import { type CheckpointKind } from "../sessions/brain-power";
 import { type CheckpointPhase } from "./checkpoint-contract";
 import { type CheckpointReward } from "./checkpoint-reward";
 
-/** `tried` retries tomorrow; `queued` waits for an earlier phase. `waiting` preserves its pending item and saved day. */
+/** `tried` retries tomorrow; `queued` is retained for older clients and is never returned. `waiting` preserves its pending item and saved day. */
 export const CHALLENGE_STATUSES = [
   "done",
   "plusRequired",
@@ -86,7 +86,7 @@ export type ChallengeView = {
   today: string;
   /** Plan-ordered topics; empty for mocks and language calls. */
   topics: ChallengeTopic[];
-  /** Earlier lessons or challenges must finish or be skipped; null before session creation or when unblocked. */
+  /** Earlier lessons must finish or be skipped; null before session creation or when unblocked. */
   waitReason: "challenge" | "lessons" | null;
 };
 

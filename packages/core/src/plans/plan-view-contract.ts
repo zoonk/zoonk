@@ -1,5 +1,5 @@
 import { type PlanChangeStatus, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
-import { type BossTiming } from "../checkpoints/_utils/boss-reached";
+import { type BossTiming } from "../checkpoints/_utils/challenge-reach";
 import { type ExamChoiceView } from "../exams/choices/exam-choice-contract";
 import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";

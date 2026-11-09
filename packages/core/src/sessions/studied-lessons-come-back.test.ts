@@ -15,6 +15,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { checkLessonStep } from "../lesson-player/check-lesson-step";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
+import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
@@ -130,7 +131,7 @@ async function liveDays(lessonSkills: LessonSkills) {
   const [user, library] = await Promise.all([userFixture(), outlinedLibrary(lessonSkills)]);
 
   // A plan's first day is all lessons; these days follow a plan that began the day before.
-  const { goal } = await unplannedGoalFixture({
+  const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 15,
     settings: { startDate: "2026-09-29" },
     timezone: TIME_ZONE,
@@ -142,6 +143,7 @@ async function liveDays(lessonSkills: LessonSkills) {
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
+  await finishChallengesFixture(plan.id);
   mockSession(user.id);
 
   const planSkillLabel = (skillId: string) =>

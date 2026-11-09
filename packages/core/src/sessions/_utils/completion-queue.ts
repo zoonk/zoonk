@@ -19,11 +19,13 @@ import { STUDY_SESSION_INCLUDE } from "./study-session-access";
 export async function loadCompletionQueue({
   blockId,
   sessionId,
+  phaseChallengesRequired,
   timeZone,
   userId,
 }: {
   blockId: string;
   sessionId: string;
+  phaseChallengesRequired?: boolean;
   timeZone: string;
   userId: string;
 }) {
@@ -32,9 +34,9 @@ export async function loadCompletionQueue({
     where: { id: sessionId, userId },
   });
 
-  const required = stored.goal
-    ? await arePhaseChallengesRequired({ goalKind: stored.goal.kind, userId })
-    : true;
+  const required =
+    phaseChallengesRequired ??
+    (stored.goal ? await arePhaseChallengesRequired({ goalKind: stored.goal.kind, userId }) : true);
 
   const session = {
     ...stored,
@@ -61,7 +63,6 @@ export async function loadCompletionQueue({
     : new Map();
 
   const reserved = hasSessionLessonReservation({
-    phaseChallengesRequired: required,
     plan,
     prerequisites,
     session,

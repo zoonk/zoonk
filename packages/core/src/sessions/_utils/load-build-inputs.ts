@@ -25,7 +25,6 @@ import {
 } from "./day-plan-facts";
 import { findPlannedReview } from "./day-review";
 import { getExamPrepAccess } from "./exam-access";
-import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { loadMistakeDrills } from "./load-mistake-drills";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
@@ -188,7 +187,16 @@ export async function loadSessionBuildInput(
       today: localDate,
       userId,
     }),
-    loadDayBosses({ access, context, plan }),
+    loadDayBosses({
+      access,
+      ahead: new Set(
+        [...learnItems, ...fillItems].flatMap((item) =>
+          item.lessonId ? [item.id ?? item.key ?? ""] : [],
+        ),
+      ),
+      context,
+      plan,
+    }),
     loadSessionWeeklyChallenge({
       goal,
       includesMockExams: access.includesMockExams,
@@ -212,17 +220,9 @@ export async function loadSessionBuildInput(
     }),
   ]);
 
-  const markLessons = (entries: PlannedLesson[]) =>
-    markLessonsAroundChallenges({
-      checkpoints: boss.checkpoints,
-      items: plan.items,
-      lessons: entries,
-      today: localDate,
-    });
+  const lessons = [...toAlphabetLessons(alphabet), ...planLessons];
 
-  const lessons = [...toAlphabetLessons(alphabet), ...markLessons(planLessons)];
-
-  const checkpoints = listDayCheckpoints({ access, boss, weekly });
+  const checkpoints = listDayCheckpoints({ access, boss, items: plan.items, weekly });
 
   const checkpointItems = new Set(checkpoints.flatMap((checkpoint) => checkpoint.itemIds));
 
@@ -269,7 +269,7 @@ export async function loadSessionBuildInput(
     dailyMinutes: dayMinutes,
     drills,
     examTrialEnded: access.trialEnded,
-    fillLessons: markLessons(fillLessons),
+    fillLessons,
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lessons,
@@ -282,19 +282,14 @@ export async function loadSessionBuildInput(
     }),
     netScored,
     placementItemIds,
+    planItems: plan.items,
     practice,
     practiceShare: getDayPracticeShare({ goal, items: plan.items, today: localDate }),
     produce,
-    reinforcement: boss.reinforcement,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay?.key ?? null,
     topics: getPlanTopics(plan.graph),
-    writingMinutes: getDayWritingMinutes({
-      checkpoints: boss.checkpoints,
-      items: plan.items,
-      reservedItems,
-      today: localDate,
-    }),
+    writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
   };
 
   return keepsBlocks ? input : withWeakestReview({ input, review });

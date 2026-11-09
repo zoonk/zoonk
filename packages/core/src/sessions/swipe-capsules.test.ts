@@ -39,6 +39,7 @@ describe("swipe capsules", () => {
     ]);
 
     const { goal, plan, planItems, skills } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { examBlueprintId: blueprint.id, kind: "exam" },
       itemsPerSkill: 0,
       lessons: 1,
@@ -174,6 +175,7 @@ describe("swipe capsules", () => {
     ]);
 
     const { goal, plan, planItems, skills } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { examBlueprintId: blueprint.id, kind: "exam" },
       itemsPerSkill: 0,
       lessons: 1,

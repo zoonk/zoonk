@@ -2,7 +2,6 @@ import { MIN_BLOCK_MINUTES, toMinutes } from "../block-minutes";
 import { toBlockPayload } from "../block-payload";
 import { isFullReviewDay } from "../full-review";
 import { type PlannedBlock, type PlannedLesson, type SessionBuildInput } from "../session-builder";
-import { keepDuelLessons } from "./lessons-before-challenges";
 
 export function canAddSessionLessons({
   reviewDay,
@@ -61,12 +60,12 @@ export function isSessionReviewDay(input: SessionBuildInput): boolean {
   return Boolean(input.reviewPlanItemId || input.reviewPlanItemKey) || isFullReviewDay(input);
 }
 
-/** Review days and expired free trials offer no new lessons; duel days retain only their planned surrounding lessons. */
+/** Review days and expired free trials offer no new lessons. */
 export function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
   return canAddSessionLessons({
     reviewDay: isSessionReviewDay(input),
     trialEnded: input.examTrialEnded,
   })
-    ? keepDuelLessons(input)
+    ? input.lessons
     : [];
 }

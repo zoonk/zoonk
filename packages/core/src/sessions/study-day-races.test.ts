@@ -12,7 +12,7 @@ import { openStudyDay } from "./open-study-day";
 
 async function setup() {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, userId: user.id });
   await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
   mockSession(user.id);
 

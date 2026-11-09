@@ -12,10 +12,12 @@ import { seedPersonaCopy } from "../seed/seed";
 import { toDayBlockRef } from "../sessions/day-block";
 import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
+import { finishChallengesFixture } from "./_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { planSummarySchema } from "./_utils/plan-summary";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
+import { parsePlanSettings } from "./planner/plan-state";
 
 const START = new Date("2020-09-28T12:00:00Z");
 const RETURN = new Date("2020-10-01T12:00:00Z");
@@ -55,7 +57,9 @@ async function startReturningDay({
   away,
   day,
   persona,
+  challengesDone = false,
 }: {
+  challengesDone?: boolean;
   away: number;
   day: number;
   persona: Parameters<typeof seedPersonaCopy>[0]["persona"];
@@ -72,6 +76,24 @@ async function startReturningDay({
 
   const user = await prisma.user.findUniqueOrThrow({ where: { id: copy.userId } });
   mockAccountSession({ user });
+
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: copy.goalId } });
+
+  if (challengesDone) {
+    await finishChallengesFixture(plan.id);
+    await prisma.goal.update({ data: { dailyMinutes: 60 }, where: { id: copy.goalId } });
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          ...parsePlanSettings(plan.settings),
+          weekdayMinutes: [60, 60, 60, 60, 60, 60, 60],
+        },
+      },
+      where: { id: plan.id },
+    });
+  }
+
   const input = { goalId: copy.goalId, timeZone: "UTC" };
   const read = await getTodayView(input);
 
@@ -211,6 +233,18 @@ describe("the visible Plan after days away, before any learner POST", () => {
 
     const user = await prisma.user.findUniqueOrThrow({ where: { id: copy.userId } });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: copy.goalId } });
+    await finishChallengesFixture(plan.id);
+    await prisma.goal.update({ data: { dailyMinutes: 90 }, where: { id: copy.goalId } });
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          ...parsePlanSettings(plan.settings),
+          weekdayMinutes: [90, 90, 90, 90, 90, 90, 90],
+        },
+      },
+      where: { id: plan.id },
+    });
 
     await Promise.all([
       prisma.planItem.updateMany({
@@ -221,6 +255,9 @@ describe("the visible Plan after days away, before any learner POST", () => {
     ]);
 
     mockAccountSession({ user });
+
+    await finishChallengesFixture(plan.id);
+
     const input = { goalId: copy.goalId, timeZone: "UTC" };
     const before = await saved(plan.id);
     expect(before.inputVersion).toBe(plan.inputVersion);
@@ -332,7 +369,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     "keeps every lesson $persona opens after days away whole on today in the Plan",
     async (back) => {
       vi.setSystemTime(new Date("2026-11-06T15:00:00Z"));
-      const { goalId, opened } = await startReturningDay(back);
+      const { goalId, opened } = await startReturningDay({ ...back, challengesDone: true });
       const read = await getGoalPlan(goalId);
 
       if (read.status !== "ready") {

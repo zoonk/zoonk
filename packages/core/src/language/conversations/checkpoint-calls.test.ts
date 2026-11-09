@@ -193,7 +193,21 @@ describe("language checkpoint calls", () => {
     expect(createLiveCallSession).toHaveBeenCalledOnce();
   });
 
-  it.each(["lessons", "challenge"] as const)(
+  it("opens a call past an unstarted phase challenge", async () => {
+    const { block, earlier } = await waitingCheckpointFixture({ reason: "challenge" });
+
+    await expect(
+      startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),
+    ).resolves.toMatchObject({ status: "preparing" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: earlier.id } }),
+    ).resolves.toStrictEqual(earlier);
+
+    expect(generateConversationScenario).not.toHaveBeenCalled();
+  });
+
+  it.each(["lessons"] as const)(
     "refuses a waiting call before scenario generation or session opening (%s)",
     async (reason) => {
       const { block, renting, session, user } = await waitingCheckpointFixture({ reason });

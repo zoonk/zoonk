@@ -217,10 +217,12 @@ async function finishQuestionBlock(
 /** Requires the lesson already completed; records its existing reward and time without paying again, including on retries. */
 export async function finishLessonBlock({
   energy = null,
+  phaseChallengesRequired,
   ...owned
 }: OwnedBlock & {
   /** Energy before and after the lesson, when its completion just added it. */
   energy?: ProgressChange | null;
+  phaseChallengesRequired?: boolean;
 }): Promise<FinishStudyBlockResult> {
   const finish = await findLessonFinish(owned);
 
@@ -260,6 +262,7 @@ export async function finishLessonBlock({
     brainPowerBefore: Number(progress?.totalBrainPower ?? 0) - finish.brainPower,
     energy,
     payload: readBlockPayload(owned.block),
+    phaseChallengesRequired,
     result: {
       brainPower: finish.brainPower,
       capsulesOpened: 0,

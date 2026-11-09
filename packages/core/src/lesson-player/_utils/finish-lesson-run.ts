@@ -157,18 +157,14 @@ export async function finishLessonRun({
 
     const languageGoals = await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
 
-    if (
-      blockDone &&
-      block &&
-      !readBlockPayload(block).extra &&
-      !readBlockPayload(block).reinforcement
-    ) {
-      await refitSessionLessons(tx, {
-        completedBlockId: block.id,
-        sessionId: block.sessionId,
-        timeZone,
-      });
-    }
+    const refitted =
+      blockDone && block && !readBlockPayload(block).extra && !readBlockPayload(block).reinforcement
+        ? await refitSessionLessons(tx, {
+            completedBlockId: block.id,
+            sessionId: block.sessionId,
+            timeZone,
+          })
+        : null;
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });
 
@@ -186,6 +182,7 @@ export async function finishLessonRun({
       explanationsFinished,
       languageGoals,
       modelChanged: changed,
+      phaseChallengesRequired: refitted?.phaseChallengesRequired,
       progress: { brainPower, energy: { after: clampedEnergy, before: currentEnergy } },
     };
   });

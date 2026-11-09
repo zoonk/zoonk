@@ -84,7 +84,7 @@ describe("starting a challenge directly", () => {
     vi.useRealTimers();
   });
 
-  it.each(["lessons", "challenge"] as const)(
+  it.each(["lessons"] as const)(
     "preserves the earlier %s refusal and unopened rows",
     async (reason) => {
       const { block, challenge, session, user } = await challengeSetup({ reason });
@@ -107,6 +107,14 @@ describe("starting a challenge directly", () => {
       ).resolves.toBe(0);
     },
   );
+
+  it("does not refuse a later challenge because an earlier one is pending", async () => {
+    const { challenge } = await challengeSetup({ reason: "challenge" });
+
+    await expect(startChallenge({ input: {}, planItemId: challenge.id })).resolves.toStrictEqual({
+      status: "questionsNeeded",
+    });
+  });
 
   it("holds a language call for earlier lessons and starts its focused clock once they are skipped", async () => {
     const { block, challenge, earlier, session, user } = await challengeSetup({

@@ -65,7 +65,13 @@ export function settlePlannedBosses<T extends SettlingPlan>({
     const size = (taught: T, items: readonly PlannedItem[]) =>
       facts
         ? toBossMinutes(
-            sizeBosses({ facts, input: given, items, skillLessons: taught.skillLessons }),
+            sizeBosses({
+              facts,
+              input: given,
+              items,
+              phases: taught.phases,
+              skillLessons: taught.skillLessons,
+            }),
           )
         : minutes;
 

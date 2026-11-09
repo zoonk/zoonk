@@ -292,14 +292,14 @@ async function expectTuesdayStable({
   );
 
   expect(monday.card).toMatchObject({
-    challenge: { date: TUESDAY, minutes: 15, questions: 10, status: "upcoming" },
+    challenge: { date: null, minutes: 15, questions: 10, status: "waiting" },
     status: "ready",
   });
 
   expect(monday.view).toMatchObject({
     plan: {
       phases: [
-        { checkpoint: { date: TUESDAY, planItemId: fixture.bosses[0]?.id, when: "date" } },
+        { checkpoint: { date: MONDAY, planItemId: fixture.bosses[0]?.id, when: "nextSession" } },
         { checkpoint: { date: TUESDAY, planItemId: secondBossId, when: "date" } },
       ],
     },
@@ -328,7 +328,7 @@ async function expectTuesdayStable({
   expect
     .soft(tuesday.card)
     .toMatchObject({
-      challenge: { date: TUESDAY, minutes: 15, questions: 10, status: "ready" },
+      challenge: { date: null, minutes: 15, questions: 10, status: "ready" },
       status: "ready",
     });
 
@@ -337,8 +337,10 @@ async function expectTuesdayStable({
     .toMatchObject({
       plan: {
         phases: [
-          { checkpoint: { date: TUESDAY, planItemId: fixture.bosses[0]?.id, when: "nextSession" } },
-          { checkpoint: { date: TUESDAY, planItemId: secondBossId, when: "nextSession" } },
+          {
+            checkpoint: { date: WEDNESDAY, planItemId: fixture.bosses[0]?.id, when: "nextSession" },
+          },
+          { checkpoint: { date: WEDNESDAY, planItemId: secondBossId, when: "nextSession" } },
         ],
       },
       status: "ready",

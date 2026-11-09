@@ -28,7 +28,11 @@ import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
-import { listChallengesLeftOut, listTaughtPhases } from "./phase-checkpoints";
+import {
+  listChallengesLeftOut,
+  listTaughtPhases,
+  withoutUntestableChallenges,
+} from "./phase-checkpoints";
 import { placeItemsInPhaseTime } from "./phase-time";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
@@ -43,7 +47,7 @@ import { type BossPlanFacts, settlePlannedBosses } from "./planned-bosses";
 import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
-import { summarizePlan } from "./summarize-plan";
+import { listDroppedSkills, summarizePlan } from "./summarize-plan";
 import { getPendingOrder, listStillSetAside } from "./this-week-items";
 import { markKeptLessons } from "./whole-boss";
 
@@ -101,7 +105,10 @@ export type { BuiltPlan } from "./built-plan";
 
 /** Pure: the same inputs always give the same plan. */
 export function buildPlan(given: BuildPlanInput) {
-  return settlePlannedBosses({ build: buildWithBosses, input: given });
+  return withoutUntestableChallenges({
+    built: settlePlannedBosses({ build: buildWithBosses, input: given }),
+    input: given,
+  });
 }
 
 function buildWithBosses(given: BuildPlanInput): BuiltPlan {
@@ -153,15 +160,6 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
       resolution,
     }),
   );
-}
-
-function listDroppedSkills(dropped: readonly { depth?: boolean; skillId: string | null }[]) {
-  return {
-    droppedSkillIds: [...new Set(dropped.flatMap((unit) => (unit.skillId ? [unit.skillId] : [])))],
-    waitingSkillIds: [
-      ...new Set(dropped.flatMap((unit) => (unit.skillId && !unit.depth ? [unit.skillId] : []))),
-    ],
-  };
 }
 
 function planGoal({

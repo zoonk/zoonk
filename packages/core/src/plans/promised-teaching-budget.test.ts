@@ -264,8 +264,8 @@ async function readPromise(fixture: Fixture) {
   });
 
   expect(pastDonations(before.settings)).toStrictEqual([
-    { date: START, minutes: 20.945945945945947 },
-    { date: "2026-10-11", minutes: 20.945945945945947 },
+    { date: START, minutes: 19.375 },
+    { date: "2026-10-11", minutes: 19.375 },
   ]);
 
   const [shown, content] = await Promise.all([
@@ -430,7 +430,7 @@ describe("promised teaching shares the real checkpoint and mock funding budget",
     await expect
       .soft(getChallenge({ input: { timeZone: "UTC" }, planItemId: boss?.id ?? "" }))
       .resolves.toMatchObject({
-        challenge: { date: CHALLENGE_DAY, minutes: 15, status: "upcoming" },
+        challenge: { date: null, minutes: 15, status: "upcoming" },
         status: "ready",
       });
 
