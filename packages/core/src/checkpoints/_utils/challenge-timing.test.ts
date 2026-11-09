@@ -64,6 +64,18 @@ describe(getChallengeTimings, () => {
     },
   );
 
+  it("follows the lessons with put-off challenges, then spends each later day's room", () => {
+    const timings = getChallengeTimings({
+      ...base,
+      goal: { ...base.goal, dailyMinutes: 15 },
+      items: [boss, { ...boss, id: "b", phase: 1, position: 2 }, { ...lesson, position: 3 }],
+      lastSessionChallenges: new Map([["a", false]]),
+    });
+
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    expect(timings.get("b")).toStrictEqual({ date: "2026-11-11", when: "date" });
+  });
+
   it("dates a challenge left out of today's built lesson day for tomorrow", () => {
     const timings = getChallengeTimings({
       ...base,
