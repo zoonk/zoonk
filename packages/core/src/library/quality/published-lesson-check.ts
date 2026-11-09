@@ -218,7 +218,8 @@ export async function recheckPublishedDraft({
     review: !isDeepStrictEqual(before, state.version.lesson),
   });
 
-  // The writer's response to a finding it saw is final; every other recheck finding blocks.
+  // A finding the writer saw on a screen it left unchanged is final, matched by screen, not wording.
+  // A lesson-wide finding always blocks: nothing ties it to what the writer kept.
   const blocking = checked.blocking.filter(
     (problem) =>
       problem.source === "code" ||
