@@ -559,8 +559,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "5 of 6 parts passed. Screen 2: What it asks reads as 310 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.5,
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -1337,8 +1337,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "11 of 14 parts passed. Screen 3: question: Too big: expected string to have <=240 characters Screen 6: Its problem, steps and result, shown together reads as 370 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 13: What it asks reads as 251 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.071428571428571,
+          "reasoning": "13 of 14 parts passed. Screen 3: question: Too big: expected string to have <=240 characters",
+          "score": 9.357142857142858,
           "weight": 30
         }
       ],
