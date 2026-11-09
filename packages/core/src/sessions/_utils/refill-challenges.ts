@@ -121,8 +121,18 @@ export async function fitRefillStretch({
     trialEnded,
   });
 
+  const ahead = new Set(
+    blocks.flatMap((block) => {
+      const payload = readBlockPayload(block);
+
+      return payload.extra
+        ? []
+        : [payload.planItemId, payload.planItemKey].filter((id): id is string => id !== null);
+    }),
+  );
+
   const potential = listDayStretch({
-    ahead: held,
+    ahead,
     budget,
     checkpoints,
     items: plan.items,
@@ -165,7 +175,7 @@ export async function fitRefillStretch({
     .map((checkpoint) => ({ ...checkpoint, rematch: results.has(checkpoint.planItemId ?? "") }));
 
   const stretch = listDayStretch({
-    ahead: held,
+    ahead,
     budget,
     checkpoints: available,
     items: plan.items,
