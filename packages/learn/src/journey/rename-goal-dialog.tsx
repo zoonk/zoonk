@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_GOAL_TITLE_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,
@@ -11,11 +12,10 @@ import {
 } from "@zoonk/ui/components/dialog";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { useChangeSaveErrorMessage } from "../_components/save-error";
+import { ChangeSaveError } from "../_components/save-error";
 
 export function RenameGoalDialog({
   displayName,
@@ -29,8 +29,9 @@ export function RenameGoalDialog({
   const t = useExtracted();
   const id = useId();
   const [name, setName] = useState(displayName);
+  const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
-  const error = useChangeSaveErrorMessage();
+  const trimmed = name.trim();
 
   return (
     <Dialog
@@ -41,22 +42,21 @@ export function RenameGoalDialog({
         }
       }}
     >
-      <DialogContent>
+      <DialogContent closeLabel={t("Close")}>
         <form
           onSubmit={(event) => {
             event.preventDefault();
 
-            if (!name.trim() || pending) {
+            if (!trimmed || pending) {
               return;
             }
 
             startTransition(async () => {
-              const result = await safeAsync(() => onRename(name.trim()));
+              const { data: saved } = await safeAsync(() => onRename(trimmed));
+              setFailed(!saved);
 
-              if (result.data) {
+              if (saved) {
                 onClose();
-              } else {
-                showErrorToast(error);
               }
             });
           }}
@@ -79,15 +79,16 @@ export function RenameGoalDialog({
               id={id}
               value={name}
               onChange={(event) => setName(event.target.value)}
-              maxLength={120}
+              maxLength={MAX_GOAL_TITLE_LENGTH}
               required
             />
+            {failed && <ChangeSaveError />}
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" disabled={pending} onClick={onClose}>
               {t("Cancel")}
             </Button>
-            <Button type="submit" busy={pending} disabled={!name.trim()}>
+            <Button type="submit" busy={pending} disabled={!trimmed}>
               {t("Save")}
             </Button>
           </DialogFooter>
