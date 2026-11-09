@@ -27,6 +27,11 @@ type LastSign = { recordedAt: number; resumeAt: number };
 
 export type RunState = { stalled: boolean; status: string | null };
 
+/** Completed, failed or cancelled: the run writes nothing more. */
+export function hasRunEnded(status: string): boolean {
+  return !ACTIVE_STATUSES.has(status);
+}
+
 async function readLastSign(runId: string): Promise<LastSign | null> {
   const world = await getWorld();
 
