@@ -10,7 +10,6 @@ export type CourseOutlineExpected = { tool: string };
 type OutlineTool = { essential: boolean; name: string };
 type OutlineChapter = { skillKeys?: string[]; title: string; tools: OutlineTool[] };
 
-const MAX_TOOL_NAME_LENGTH = 60;
 const MAX_TOOL_NAME_WORDS = 8;
 const MAX_CHAPTER_TOOLS = 4;
 
@@ -39,7 +38,7 @@ function getToolProblems({
   const taggedForExam = withoutTools && (chapter.skillKeys ?? []).length > 0;
 
   const names = tools.flatMap((tool) =>
-    tool.name.length > MAX_TOOL_NAME_LENGTH || tool.name.split(/\s+/u).length > MAX_TOOL_NAME_WORDS
+    tool.name.split(/\s+/u).length > MAX_TOOL_NAME_WORDS
       ? [`${where}: the tool "${tool.name}" is a description, not a tool name.`]
       : [],
   );

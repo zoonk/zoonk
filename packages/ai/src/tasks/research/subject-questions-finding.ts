@@ -1,8 +1,5 @@
 import { isFromCurrentBoard } from "@zoonk/utils/exam-boards";
 
-const MAX_TITLE_LENGTH = 200;
-const MAX_EDITION_LENGTH = 80;
-
 /** Counts by the subject's number in `SUBJECTS`. */
 export type RawSubjectQuestionsFinding = {
   /** Who ran the edition the counts are from. */
@@ -102,9 +99,9 @@ export function toSubjectQuestionsFinding({
 
   return {
     board: countedBoard,
-    edition: raw.edition?.trim().slice(0, MAX_EDITION_LENGTH) || null,
+    edition: raw.edition?.trim() || null,
     questions,
-    source: { title: raw.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null, url },
+    source: { title: raw.sourceTitle?.trim() || null, url },
     status: "found",
   };
 }

@@ -1,6 +1,3 @@
-const MAX_TITLE_LENGTH = 200;
-const MAX_LABEL_LENGTH = 80;
-
 export type RawTargetCutoffFinding = {
   edition: string | null;
   /** When the source or the exam says (ENEM's 1000). */
@@ -32,8 +29,8 @@ const UNKNOWN: TargetCutoffFinding = {
   status: "unknown",
 };
 
-function toLabel(value: string | null, length: number): string | null {
-  return value?.trim().slice(0, length) || null;
+function toLabel(value: string | null): string | null {
+  return value?.trim() || null;
 }
 
 /** A scale's top is a positive number; anything else says nothing about the scale. */
@@ -77,11 +74,11 @@ export function toTargetCutoffFinding({
   }
 
   return {
-    edition: toLabel(raw.edition, MAX_LABEL_LENGTH),
+    edition: toLabel(raw.edition),
     maxScore,
-    quota: toLabel(raw.quota, MAX_LABEL_LENGTH),
+    quota: toLabel(raw.quota),
     score: raw.score,
-    source: { title: toLabel(raw.sourceTitle, MAX_TITLE_LENGTH), url },
+    source: { title: toLabel(raw.sourceTitle), url },
     status: "found",
   };
 }

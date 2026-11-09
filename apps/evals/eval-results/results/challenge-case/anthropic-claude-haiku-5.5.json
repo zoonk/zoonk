@@ -149,21 +149,82 @@
       }
     },
     {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The medication round, 32 kg patient, available suspension, imminent deadline, busy nurse and occupied physician create a recognizable nursing task. However, the unexplained pediatric patient in a clinical-medicine ward and inconsistent timing weaken workplace credibility. This is a genuine work scenario rather than a disguised academic quiz, so the specified realism cap is not triggered.",
+          "score": 7,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "The correct choice is obvious at every decision, triggering the maximum score of 6. Replies and meters change, but all second-stage choices converge without preserving whether the physician was consulted or medication was already given. The final choice alone determines an ending that can falsely certify earlier safety checks. Delay changes also lack a consistent connection to elapsed time.",
+          "score": 5,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The nurse and physician have distinct responsibilities and realistic pressures; contacting the physician is an explicit, valued option, and the AI supplies useful arithmetic while disclaiming prescribing authority. No personal names are introduced. However, 'pelo colega' in the ending violates the explicit requirement that all marked references to the first colleague remain feminine. The physician's instruction to document the discrepancy without explicitly reconciling the prescription also makes the help incomplete.",
+          "score": 6,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback is generally specific, respectful and focused on strategies. Communication corrections include usable example wording, and the summary sentences each identify a practiced idea. The practice activities are short, but the prescription-checking exercise depends on having encountered a prescription that day and emphasizes recall rather than a reproducible check of the order, units and route. The generic-or-judgmental feedback cap is not triggered.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The main arithmetic is sound: 1,600 mg/day, approximately 533 mg per dose, 37.5 mg/kg/day for the 400 mg regimen, and 8 mL for 400 mg. However, a teaching example incorrectly writes '50 mg × 32 kg', and the ending teaches that physician confirmation occurred even on paths where it did not, triggering the maximum score of 5 for false information presented as correct. More seriously, the flow allows unchecked or unauthorized administration followed by another administration and a supposedly safe ending. Prescription reconciliation is incomplete, and 23h05 contradicts the stated 23h00 deadline.",
+          "score": 3,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The learner-facing material is in Brazilian Portuguese, uses local numerical formatting and employs suitable intermediate nursing terminology. Calculations are appropriately central to this work case, and there are no promises of employment, grades or guaranteed learning outcomes. The depth and language are well matched to the supplied level and variant.",
+          "score": 9,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5026,
+          "inputTokens": 5029,
+          "outputTokens": 1246,
+          "reasoningTokens": 257
+        }
+      },
       "steps": [
         {
-          "conclusion": "No part passed the code checks. setting: Too big: expected string to have <=40 characters",
+          "conclusion": "Unsafe branches can reach a falsely reassuring ending: administering unconfirmed 400 mg or independently changing to 533 mg both lead to another administration step and can end with a claim that the physician confirmed 400 mg. This also creates a possible duplicate administration. Even the strong path leaves the conflicting prescription entries unresolved rather than explicitly obtaining a corrected order. The worked example '50 mg × 32 kg' drops the required mg/kg/day units. The ending's 'pelo colega' incorrectly makes the first, female colleague masculine.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "No part passed the code checks. setting: Too big: expected string to have <=40 characters",
+          "conclusion": "The case mixes a clinical-medicine ward with a nine-year-old pediatric patient without explanation. It calls 23h05 on time despite a 23h00 deadline, and delay-meter reductions from an initial zero have no clear operational meaning. The strong path does not explicitly verify the prescribed route. Decision quality is consistently obvious from the wording, limiting meaningful judgment under pressure.",
           "kind": "minorErrors",
-          "score": 6
+          "score": 7
         },
         {
-          "conclusion": "No part passed the code checks. setting: Too big: expected string to have <=40 characters",
+          "conclusion": "Make subsequent messages and endings depend on whether clarification and administration actually occurred. Require reconciliation of the prescription before proceeding, and have the learner independently check the AI's calculation. Replace obviously unsafe distractors with plausible competing approaches to obtaining clarification. Give the prescription-checking practice a sample order and include route verification rather than relying on recall of a prescription encountered that day.",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {

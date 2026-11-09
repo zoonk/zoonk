@@ -174,7 +174,7 @@ struct MemoryView: View {
 }
 
 /// Core's `MAX_MEMORY_STATEMENT_LENGTH`.
-private let memoryStatementLimit = 160
+private let memoryStatementLimit = 300
 
 private struct MemoryFactRow: View {
   let fact: MemoryFact

@@ -41,8 +41,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "4 of 6 parts passed. Screen 4: fields.errorStepId: The math shows a different wrong step Screen 2: What it asks reads as 293 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 7,
+          "reasoning": "5 of 6 parts passed. Screen 4: fields.errorStepId: The math shows a different wrong step",
+          "score": 8.5,
           "weight": 30
         }
       ],
@@ -206,8 +206,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "5 of 6 parts passed. Screen 2: What it asks reads as 262 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.5,
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -518,8 +518,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "4 of 6 parts passed. Screen 2: What it asks reads as 307 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 5: Asks the question of screen 3 again with other numbers or names. Keep this screen's idea but ask something new about it: the reverse question, a harder case, a mistake to spot or a decision in a real situation.",
-          "score": 7,
+          "reasoning": "5 of 6 parts passed. Screen 5: Asks the question of screen 3 again with other numbers or names. Keep this screen's idea but ask something new about it: the reverse question, a harder case, a mistake to spot or a decision in a real situation.",
+          "score": 8.5,
           "weight": 30
         }
       ],
@@ -668,8 +668,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "7 of 8 parts passed. Screen 7: What it asks reads as 262 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.875,
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -1164,8 +1164,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "4 of 6 parts passed. Screen 4: What it asks reads as 269 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 1: Uses \"estabilidade\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
-          "score": 7,
+          "reasoning": "5 of 6 parts passed. Screen 1: Uses \"estabilidade\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.5,
           "weight": 30
         }
       ],
@@ -1323,8 +1323,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "6 of 7 parts passed. Screen 5: Its problem, steps and result, shown together reads as 303 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.714285714285714,
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],

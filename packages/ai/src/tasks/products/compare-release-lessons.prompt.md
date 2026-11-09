@@ -22,7 +22,7 @@ Empty when no lesson changes, as with most small releases.
 What `TO` adds that a learner of this course would use and no lesson teaches, as one short chapter. Null when `TO` adds nothing of that kind: fixes, internal changes, features for the maker's partners, or features no learner of this course would use.
 
 - `title`: the chapter's title: "What's new in" followed by `TO`'s name, written in {{LEARNER_LANGUAGE}}.
-- `offer`: one sentence of at most 140 characters, written in {{LEARNER_LANGUAGE}}, that the app shows learners already taking the course to offer them the chapter. Say what they'll be able to do with `TO`, in plain words, addressing the learner: "Learn the new shortcuts panel and the redesigned share menu in version 8", written in {{LEARNER_LANGUAGE}}. No exclamation marks and no promise of a result.
+- `offer`: one sentence, aiming for 140 characters or fewer, written in {{LEARNER_LANGUAGE}}, that the app shows learners already taking the course to offer them the chapter. Say what they'll be able to do with `TO`, in plain words, addressing the learner: "Learn the new shortcuts panel and the redesigned share menu in version 8", written in {{LEARNER_LANGUAGE}}. No exclamation marks and no promise of a result.
 - `level`: the band the chapter belongs in: `beginner` when anyone using the product will meet it, `intermediate` for regular users' work, `advanced` for experts only.
 - `skills`: 1 to 4 skills the chapter teaches, each one new thing the learner can do in `TO`.
   - `name`: an action of up to 8 words, written in {{LEARNER_LANGUAGE}}, worded like a can-do line.

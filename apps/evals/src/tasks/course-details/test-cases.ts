@@ -3,7 +3,7 @@ import { type CourseDetailsParams } from "@zoonk/ai/tasks/courses/details";
 import { type CourseDetailsExpected } from "./scorer";
 
 const SHARED_EXPECTATIONS = `
-  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
   - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
   - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
   - The page is shared by every learner of the course, so nothing is tailored to one person

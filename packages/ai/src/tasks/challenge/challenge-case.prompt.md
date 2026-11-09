@@ -13,7 +13,7 @@ Write one case that makes the learner use `SKILLS` from the chapter `CHAPTER_TIT
 # The case
 
 - `title`: the question the learner has to answer, short and concrete ("Does button B sell more?").
-- `setting`: where and when, up to 40 characters ("Day 3 at Aurora Shop").
+- `setting`: where and when, aiming for 40 characters or fewer ("Day 3 at Aurora Shop").
 - `mission`: what the learner must decide or deliver, in one or two sentences. Use **bold** for the one key thing.
 - `deadline`: the pressure, such as "Meeting with {{product}} today at 3 pm", or null for a `whatIf`.
 - `panels`: one panel (two at most) with the numbers or facts the learner starts from: 1 to 4 `metrics`, each a short `label`, a `value` ("3.4%", "12 mg", "R$ 4.200") and an optional `note`; an optional `title` and a `note` line under them ("Conversion · 1,200 visits per version · live for 1 day"). Numbers must be realistic for the job and consistent with every later message. A `whatIf` may have no panel.
@@ -44,7 +44,7 @@ Consequences carry forward: what colleagues say later, the next panel and the en
 
 # Meters
 
-`meters`: 1 to 3 things the decisions move, named in the job's own terms ("Risk of a wrong call", "{{product}}'s patience", "Budget left", "Patient comfort"). Each has an `id`, a `label` up to 40 characters, a `start` from 0 to 100 and `goodWhen`: `low` or `high`. Waiting has a cost and a benefit, so a good decision may still lower one meter. A `whatIf` may use one meter or none.
+`meters`: 1 to 3 things the decisions move, named in the job's own terms ("Risk of a wrong call", "{{product}}'s patience", "Budget left", "Patient comfort"). Each has an `id`, a `label` aiming for 40 characters or fewer, a `start` from 0 to 100 and `goodWhen`: `low` or `high`. Waiting has a cost and a benefit, so a good decision may still lower one meter. A `whatIf` may use one meter or none.
 
 # Endings
 
@@ -52,7 +52,7 @@ Consequences carry forward: what colleagues say later, the next panel and the en
 
 # Skills and debrief
 
-`skills`: the 1 to 4 skills the case trains, from `SKILLS`, each with a short `id`, a `name` of up to 40 characters ("Sample size", "Explaining data") and `practice`: one sentence the learner can practice in about 5 minutes when this skill comes out weakest, with a small, concrete size ("Explain one test result to someone who isn't a data person, in one sentence"). Every skill is tagged in at least one note. At least one skill is about judgment, framing the problem, communicating, or directing and checking AI, since that's what matters most when AI does routine work.
+`skills`: the 1 to 4 skills the case trains, from `SKILLS`, each with a short `id`, a `name` aiming for 40 characters or fewer ("Sample size", "Explaining data") and `practice`: one sentence the learner can practice in about 5 minutes when this skill comes out weakest, with a small, concrete size ("Explain one test result to someone who isn't a data person, in one sentence"). Every skill is tagged in at least one note. At least one skill is about judgment, framing the problem, communicating, or directing and checking AI, since that's what matters most when AI does routine work.
 
 `summary`: 1 to 3 sentences, each one idea the case practiced, stated so it stands on its own on a study card.
 
@@ -70,7 +70,7 @@ Consequences carry forward: what colleagues say later, the next panel and the en
 - No real people or real companies. No personal details about the learner.
 - Formatting: plain sentences with light Markdown (**bold**, _italics_) and `$...$` for math when the level needs it. No headings, links or lists.
 - Keep ids short and in English (`start`, `ask-ai`, `shipped`). Choice ids are unique within their decision; decision and ending ids are unique across the case.
-- Length limits (code rejects anything longer): `title`, `prompt` up to 240 characters; `mission`, messages, notes, practice and outcomes up to 400; choice text, `deadline`, examples, panel titles, panel notes and metric notes up to 160; roles, `setting`, meter and metric labels, metric values and skill names up to 40.
+- Lengths to aim for (a clear line a little over beats one squeezed to fit): `title`, `prompt` up to 240 characters; `mission`, messages, notes, practice and outcomes up to 400; choice text, `deadline`, examples, panel titles, panel notes and metric notes up to 160; roles, `setting`, meter and metric labels, metric values and skill names up to 40.
 - Avoid everything listed in `PROBLEMS_TO_AVOID`.
 
 # Language

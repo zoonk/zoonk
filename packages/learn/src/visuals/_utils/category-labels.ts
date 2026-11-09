@@ -4,25 +4,34 @@ const LABEL_GAP = 6;
 
 export type CategoryLabelLayout = { lines: string[][]; step: number };
 
-function getLabelWidth(text: string): number {
+export function getLabelWidth(text: string): number {
   return text.length * LABEL_CHAR_WIDTH + LABEL_GAP;
 }
 
-function splitLabel(label: string): string[] {
-  const middle = label.length / 2;
-  const breaks = [...label.matchAll(/[\s-]/gu)].map((match) => match.index);
-
-  const [at] = breaks.toSorted(
-    (first, second) => Math.abs(first - middle) - Math.abs(second - middle),
-  );
-
-  if (at === undefined) {
-    return [label];
-  }
-
-  return [label.slice(0, label[at] === "-" ? at + 1 : at), label.slice(at + 1)];
+function splitWords(label: string): string[] {
+  return label.split(/(?<=[\s-])/u);
 }
 
+function wrapLabel({ label, room }: { label: string; room: number }): string[] {
+  const lines = [""];
+
+  for (const word of splitWords(label)) {
+    const line = `${lines.at(-1)}${word}`;
+
+    if (getLabelWidth(line.trim()) <= room) {
+      lines[lines.length - 1] = line;
+    } else {
+      lines.push(word);
+    }
+  }
+
+  return lines.map((line) => line.trim()).filter(Boolean);
+}
+
+/**
+ * Each name wraps at a space or hyphen to fit under its bar. A word wider than a bar can't, so only
+ * every few names show, each with the room of the ones it skips.
+ */
 export function getCategoryLabels({
   band,
   categories,
@@ -30,20 +39,13 @@ export function getCategoryLabels({
   band: number;
   categories: readonly string[];
 }): CategoryLabelLayout {
-  const fits = (labels: string[][]) =>
-    labels.every((lines) => lines.every((line) => getLabelWidth(line) <= band));
+  const widestWord = Math.max(
+    ...categories.flatMap((category) =>
+      splitWords(category).map((word) => getLabelWidth(word.trim())),
+    ),
+  );
 
-  const single = categories.map((category) => [category]);
-  const split = categories.map((category) => splitLabel(category));
+  const step = Math.max(Math.ceil(widestWord / band), 1);
 
-  if (fits(single)) {
-    return { lines: single, step: 1 };
-  }
-
-  if (fits(split)) {
-    return { lines: split, step: 1 };
-  }
-
-  const longest = Math.max(...categories.map((category) => getLabelWidth(category)));
-  return { lines: single, step: Math.ceil(longest / band) };
+  return { lines: categories.map((label) => wrapLabel({ label, room: band * step })), step };
 }

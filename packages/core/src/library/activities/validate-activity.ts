@@ -28,10 +28,7 @@ type ActivityValidationResult =
   | { issues: ActivityIssue[]; ok: false };
 
 function toIssue(zodIssue: z.core.$ZodIssue): ActivityIssue {
-  const path = zodIssue.path.map(String).join(".");
-  const isLongText = zodIssue.code === "too_big" && zodIssue.origin === "string";
-
-  return issue(isLongText ? "labelTooLong" : "invalidSchema", path, zodIssue.message);
+  return issue("invalidSchema", zodIssue.path.map(String).join("."), zodIssue.message);
 }
 
 function checkTarget(check: Exclude<ActivityCheck, { kind: "interaction" }>): ActivityCheckTarget {

@@ -1,6 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
-import { MAX_SCREEN_CHARACTERS } from "@zoonk/ai/tasks/lesson-writer/screen-length";
 import { findQuestionBases } from "../steps/question-bases";
 import { type ConvertedScreen } from "../steps/written-screens";
 import { findGuessGiveaways } from "./_utils/guess-giveaways";
@@ -11,7 +10,6 @@ import {
   findMissingPlannedVisual,
   findRepeatedVisuals,
 } from "./_utils/planned-visuals";
-import { findLongScreens } from "./_utils/screen-length";
 
 export type LessonFlowCheckCode =
   | "basis"
@@ -19,8 +17,7 @@ export type LessonFlowCheckCode =
   | "moneyFormat"
   | "newTerms"
   | "plannedVisual"
-  | "repeatedVisual"
-  | "screenLength";
+  | "repeatedVisual";
 
 type LessonFlowProblem = { code: LessonFlowCheckCode; problem: string; screen: number };
 
@@ -102,12 +99,6 @@ function getVisualProblems({
 }
 
 function getWordingProblems({ lesson }: { lesson: WrittenLesson }): LessonFlowProblem[] {
-  const long = findLongScreens(lesson.screens).map(({ characters, part, screen }) => ({
-    code: "screenLength" as const,
-    problem: `${part ? `Its ${part}` : "What it asks"} reads as ${characters} characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most ${MAX_SCREEN_CHARACTERS}. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.`,
-    screen,
-  }));
-
   const guesses = findGuessGiveaways(lesson.screens).map((giveaway) => ({
     ...giveaway,
     code: "guessAnswer" as const,
@@ -125,7 +116,7 @@ function getWordingProblems({ lesson }: { lesson: WrittenLesson }): LessonFlowPr
     screen: mention.screen,
   }));
 
-  return [...guesses, ...bold, ...money, ...long];
+  return [...guesses, ...bold, ...money];
 }
 
 export function checkLessonFlow(input: {

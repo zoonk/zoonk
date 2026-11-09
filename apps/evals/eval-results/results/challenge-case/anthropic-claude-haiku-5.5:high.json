@@ -241,17 +241,17 @@
     {
       "steps": [
         {
-          "conclusion": "No part passed the code checks. endings: Too small: expected array to have >=1 items nodes: Too small: expected array to have >=1 items setting: Too big: expected string to have <=40 characters startNodeId: The case must start with a decision skills: No decision trains skill \"chance\" skills: No decision trains skill \"sample\" skills: No decision trains skill \"explain\"",
+          "conclusion": "No part passed the code checks. endings: Too small: expected array to have >=1 items nodes: Too small: expected array to have >=1 items startNodeId: The case must start with a decision skills: No decision trains skill \"chance\" skills: No decision trains skill \"sample\" skills: No decision trains skill \"explain\"",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "No part passed the code checks. endings: Too small: expected array to have >=1 items nodes: Too small: expected array to have >=1 items setting: Too big: expected string to have <=40 characters startNodeId: The case must start with a decision skills: No decision trains skill \"chance\" skills: No decision trains skill \"sample\" skills: No decision trains skill \"explain\"",
+          "conclusion": "No part passed the code checks. endings: Too small: expected array to have >=1 items nodes: Too small: expected array to have >=1 items startNodeId: The case must start with a decision skills: No decision trains skill \"chance\" skills: No decision trains skill \"sample\" skills: No decision trains skill \"explain\"",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "No part passed the code checks. endings: Too small: expected array to have >=1 items nodes: Too small: expected array to have >=1 items setting: Too big: expected string to have <=40 characters startNodeId: The case must start with a decision skills: No decision trains skill \"chance\" skills: No decision trains skill \"sample\" skills: No decision trains skill \"explain\"",
+          "conclusion": "No part passed the code checks. endings: Too small: expected array to have >=1 items nodes: Too small: expected array to have >=1 items startNodeId: The case must start with a decision skills: No decision trains skill \"chance\" skills: No decision trains skill \"sample\" skills: No decision trains skill \"explain\"",
           "kind": "potentialImprovements",
           "score": 6
         }

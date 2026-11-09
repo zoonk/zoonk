@@ -14,7 +14,7 @@ export const EXPLAIN_WRONG_ANSWER_SCORE_CATEGORIES = defineScoreCategories([
     weight: 30,
   },
   {
-    expectations: `Two to four short sentences in plain everyday words, in the requested language, that a learner can read in a few seconds. Penalize lectures, lists, headings, jargon without explanation and repeating the whole question. Score at most 7 when it is over 600 characters.`,
+    expectations: `Two to four short sentences in plain everyday words, in the requested language, that a learner can read in a few seconds. Penalize lectures, lists, headings, jargon without explanation and repeating the whole question.`,
     id: "clarity",
     label: "Clarity & brevity",
     weight: 20,
