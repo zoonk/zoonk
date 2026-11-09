@@ -791,7 +791,11 @@ describe(answerMistakePractice, () => {
       const user = await userFixture();
       mockSession(user.id);
 
-      const { planItems, skills } = await learnerGoalFixture({ phases: [1], userId: user.id });
+      const { goal, planItems, skills } = await learnerGoalFixture({
+        phases: [1],
+        userId: user.id,
+      });
+
       const [goalSkill] = skills as [(typeof skills)[number]];
 
       const [first, second] = await Promise.all([skillFixture(), skillFixture()]);
@@ -817,11 +821,88 @@ describe(answerMistakePractice, () => {
       const item = await prisma.item.findFirstOrThrow({ where: { skillId: goalSkill.id } });
 
       const result = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: item.id },
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 9000,
+          itemId: item.id,
+          run: { answerIds: [], goalId: goal.id },
+          timeZone: "UTC",
+        },
         mistakeId: practiced.id,
       });
 
       expect(fixedIds(result)).toStrictEqual([covered.id, practiced.id].toSorted());
+    });
+
+    it("stay open when the question is on another goal skill their lesson also teaches", async () => {
+      const user = await userFixture();
+      mockSession(user.id);
+
+      const { goal, planItems, skills } = await learnerGoalFixture({
+        phases: [2],
+        userId: user.id,
+      });
+
+      const [answered, other] = skills as [(typeof skills)[number], (typeof skills)[number]];
+      const planItem = planItems.find(({ skillId }) => skillId === answered.id);
+
+      await lessonSkillFixture({ lessonId: planItem?.lessonId ?? "", skillId: other.id });
+
+      const practiced = await mistakeFixture({
+        createdAt: YESTERDAY,
+        skillId: answered.id,
+        userId: user.id,
+      });
+
+      const onOtherSkill = await mistakeFixture({
+        createdAt: YESTERDAY,
+        skillId: other.id,
+        userId: user.id,
+      });
+
+      const item = await prisma.item.findFirstOrThrow({ where: { skillId: answered.id } });
+
+      const result = await answerMistakePractice({
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 9000,
+          itemId: item.id,
+          run: { answerIds: [], goalId: goal.id },
+          timeZone: "UTC",
+        },
+        mistakeId: practiced.id,
+      });
+
+      expect(fixedIds(result)).toStrictEqual([practiced.id]);
+
+      await expect(
+        prisma.mistake.findUniqueOrThrow({ where: { id: onOtherSkill.id } }),
+      ).resolves.toMatchObject({ status: "open" });
+    });
+
+    it("keep a timed mistake's clock", async () => {
+      const { extra, practiced, skill, user } = await withoutOwnQuestion();
+
+      const timed = await mistakeFixture({
+        cause: "time",
+        createdAt: YESTERDAY,
+        skillId: skill.id,
+        userId: user.id,
+      });
+
+      const slow = await answerMistakePractice({
+        input: { answer: { selectedIndex: 0 }, durationMs: 120_000, itemId: extra.id },
+        mistakeId: practiced.id,
+      });
+
+      expect(fixedIds(slow)).not.toContain(timed.id);
+
+      const quick = await answerMistakePractice({
+        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
+        mistakeId: practiced.id,
+      });
+
+      expect(fixedIds(quick)).toContain(timed.id);
     });
   });
 

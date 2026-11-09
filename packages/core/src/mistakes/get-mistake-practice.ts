@@ -2,11 +2,7 @@ import "server-only";
 import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
-import {
-  isDrillQuestion,
-  loadLearnerListeningSkillIds,
-  loadListeningSkillIds,
-} from "../exams/listening/listening-skills";
+import { isDrillQuestion } from "../exams/listening/listening-skills";
 import {
   GRADABLE_ITEM_FORMATS,
   type QuestionView,
@@ -14,8 +10,7 @@ import {
   parseChoiceItem,
   toQuestionView,
 } from "../learner/_utils/choice-items";
-import { getSkillOwners, loadGoalPlan } from "../learner/_utils/goal-skill-graph";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { IN_BANK, getGoalField, getItemAudienceFilter } from "../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
@@ -23,6 +18,7 @@ import { type ItemSetView } from "../library/items/item-set-view";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
+import { resolvePracticeScope } from "./_utils/practice-scope";
 import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
 import { getMistakePracticeBefore } from "./mistake-availability";
@@ -53,33 +49,6 @@ export type MistakePracticeResult =
     }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-async function resolveScope({ goalId, userId }: { goalId: string | undefined; userId: string }) {
-  // Unscoped practice must respect listening-only skills from any of the learner's goals.
-  if (!goalId) {
-    return {
-      goal: null,
-      listeningSkillIds: await loadLearnerListeningSkillIds(userId),
-      ownerOf: new Map<string, string>(),
-      skillIds: null,
-    };
-  }
-
-  const owned = await findOwnedGoal(goalId);
-
-  if (owned.status !== "ready") {
-    return null;
-  }
-
-  const [plan, listeningSkillIds] = await Promise.all([
-    loadGoalPlan(goalId),
-    loadListeningSkillIds(goalId),
-  ]);
-
-  const ownerOf = getSkillOwners(plan.skills);
-
-  return { goal: owned.goal, listeningSkillIds, ownerOf, skillIds: [...ownerOf.keys()] };
-}
 
 function getPracticeSkillIds({
   scopeSkillIds,
@@ -171,7 +140,7 @@ export async function getMistakePractice(
   }
 
   const userId = session.user.id;
-  const scope = await resolveScope({ goalId: input.goalId, userId });
+  const scope = await resolvePracticeScope({ goalId: input.goalId, userId });
 
   if (!scope) {
     return { status: "notFound" };

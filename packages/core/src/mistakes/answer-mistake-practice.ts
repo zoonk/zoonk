@@ -2,7 +2,6 @@ import "server-only";
 import { type Attempt, type Mistake, type MistakeStatus, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { loadLearnerListeningSkillIds } from "../exams/listening/listening-skills";
 import {
   findSavedAttempt,
   getAnswerAttemptId,
@@ -24,10 +23,16 @@ import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { NOTHING_REACHED, type Reached } from "../sessions/reached";
 import { getSession } from "../users/get-session";
 import { readFixedMistakeIds } from "./_utils/practice-runs";
+import { resolvePracticeScope } from "./_utils/practice-scope";
 import { type MistakePracticeAnswerInput } from "./contract";
 import { applyDrillRules } from "./drill-answer";
 import { finishMistakePractice } from "./finish-mistake-practice";
-import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
+import {
+  getDrillKind,
+  getDrillTimeLimitSeconds,
+  isMistakeSkill,
+  isPastTimeLimit,
+} from "./mistake-drills";
 
 type MistakePracticeFeedback = {
   answerId: string;
@@ -99,42 +104,41 @@ async function findPracticeItem({
   return owners.includes(item.skillId) ? parseChoiceItem(item) : null;
 }
 
-async function loadFinerSkillIds({
-  skillId,
-  userId,
-}: {
-  skillId: string;
-  userId: string;
-}): Promise<string[]> {
-  const items = await prisma.planItem.findMany({
-    select: { lesson: { select: { skills: { select: { skillId: true } } } } },
-    where: { OR: [{ skillId }, { skill: { mergedIntoId: skillId } }], plan: { goal: { userId } } },
-  });
-
-  return items.flatMap(({ lesson }) => lesson?.skills.map((skill) => skill.skillId) ?? []);
-}
-
 /**
  * A mistake with no question of its own can only be proven by a question on its skill, and a run asks
- * each question once, so one right answer stands for them all. A listening skill's mistakes are drilled
- * by their own recording and nothing else.
+ * each question once, so one right answer stands for them all, in time if the mistake is a timed one.
+ * A listening skill's mistakes are drilled by their own recording and nothing else.
  */
 async function findCoveredMistakeIds({
+  durationMs,
+  goalId,
   item,
   practicedMistakeId,
   userId,
 }: {
+  durationMs: number;
+  goalId: string | undefined;
   item: Pick<ChoiceItem, "skillId">;
   practicedMistakeId: string;
   userId: string;
 }): Promise<string[]> {
-  const [finerSkillIds, listeningSkillIds] = await Promise.all([
-    loadFinerSkillIds({ skillId: item.skillId, userId }),
-    loadLearnerListeningSkillIds(userId),
-  ]);
+  const scope = await resolvePracticeScope({ goalId, userId });
+
+  if (!scope) {
+    return [];
+  }
+
+  const { listeningSkillIds, ownerOf } = scope;
+
+  const skillIds = [...new Set([item.skillId, ...ownerOf.keys()])].filter(
+    (skillId) =>
+      !listeningSkillIds.has(skillId) &&
+      isMistakeSkill({ itemSkillId: item.skillId, mistakeSkillId: skillId, ownerOf }),
+  );
 
   const open = await prisma.mistake.findMany({
     select: {
+      cause: true,
       id: true,
       item: {
         select: {
@@ -147,20 +151,18 @@ async function findCoveredMistakeIds({
         },
       },
     },
-    where: {
-      id: { not: practicedMistakeId },
-      skillId: {
-        in: [...new Set([item.skillId, ...finerSkillIds])].filter(
-          (skillId) => !listeningSkillIds.has(skillId),
-        ),
-      },
-      status: "open",
-      userId,
-    },
+    where: { id: { not: practicedMistakeId }, skillId: { in: skillIds }, status: "open", userId },
   });
 
   return open
-    .filter(({ item: own }) => !own || own.retiredAt !== null || !parseChoiceItem(own))
+    .filter(
+      ({ cause, item: own }) =>
+        (!own || own.retiredAt !== null || !parseChoiceItem(own)) &&
+        !isPastTimeLimit({
+          durationMs,
+          timeLimitSeconds: getDrillTimeLimitSeconds(getDrillKind(cause)),
+        }),
+    )
     .map(({ id }) => id);
 }
 
@@ -297,7 +299,13 @@ export async function answerMistakePractice({
           answer: input.answer,
           attemptId,
           coveredMistakeIds: drilled.isCorrect
-            ? await findCoveredMistakeIds({ item, practicedMistakeId: mistake.id, userId })
+            ? await findCoveredMistakeIds({
+                durationMs: input.durationMs,
+                goalId: input.run?.goalId,
+                item,
+                practicedMistakeId: mistake.id,
+                userId,
+              })
             : [],
           graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
           itemId: item.id,
