@@ -1,15 +1,18 @@
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getChallengeTimings } from "../checkpoints/_utils/challenge-timing";
+import { getChallenge } from "../checkpoints/get-challenge";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getItemKey } from "../plans/planner/plan-items";
+import { parsePlanSettings } from "../plans/planner/plan-state";
 import { sessionGoalFixture } from "./_test-utils/session-goal";
 import { planStudyDay } from "./_utils/plan-study-day";
 import { selectDayPlan } from "./_utils/selected-day-plan";
@@ -30,6 +33,106 @@ describe("a selected review day", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("offers a reached challenge today when missed lessons cause the past review to move", async () => {
+    const user = await userFixture();
+
+    const fixture = await sessionGoalFixture({
+      goal: { kind: "exam", targetDate: new Date("2026-10-04") },
+      userId: user.id,
+    });
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: START, status: "done" },
+      where: { id: { in: [fixture.planItems[0]!.id, fixture.planItems[1]!.id] } },
+    });
+
+    const boss = await planItemFixture({
+      facts: {
+        boss: {
+          kind: "text",
+          minutes: 10,
+          questions: 10,
+          testedKeys: [],
+          testedSkillIds: [fixture.skills[0]!.id],
+          waiting: false,
+        },
+        minutes: 10,
+        parts: { checkpoint: 10, practice: 0, unwritten: 0, written: 0 },
+        schemaVersion: 1,
+        skillIds: [],
+      },
+      kind: "boss",
+      planId: fixture.plan.id,
+      position: 3,
+      scheduledFor: new Date("2026-10-02"),
+    });
+
+    await prisma.planItem.update({
+      data: { phase: 1, position: 10, scheduledFor: new Date("2026-09-28") },
+      where: { id: fixture.planItems[2]!.id },
+    });
+
+    await planItemFixture({
+      kind: "review",
+      planId: fixture.plan.id,
+      position: 4,
+      scheduledFor: new Date("2026-09-29"),
+    });
+
+    vi.setSystemTime(NOW);
+    mockSession(user.id);
+
+    const saved = await prisma.plan.findUniqueOrThrow({
+      include: { items: { orderBy: { position: "asc" } } },
+      where: { id: fixture.plan.id },
+    });
+
+    const selection = await selectDayPlan({ goal: fixture.goal, now: NOW, timeZone: "UTC" });
+
+    if (!selection) {
+      throw new Error("Expected the saved plan");
+    }
+
+    const planned = await planStudyDay({
+      goal: fixture.goal,
+      localDate: TODAY,
+      now: NOW,
+      selection,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    const today = {
+      checkpointInToday: planned.blocks.some(
+        (block) => block.kind === "checkpoint" && readBlockPayload(block).planItemId === boss.id,
+      ),
+      reviewDay:
+        planned.input.reviewPlanItemId !== null || planned.input.reviewPlanItemKey !== null,
+      selectionHasReview: selection.items.some((item) => item.kind === "review"),
+    };
+
+    const plan = getChallengeTimings({
+      goal: fixture.goal,
+      items: saved.items,
+      settings: parsePlanSettings(saved.settings),
+      today: TODAY,
+    }).get(boss.id)?.when;
+
+    await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
+    const read = await getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id });
+
+    const screen =
+      read.status === "ready"
+        ? { date: read.challenge.date, status: read.challenge.status }
+        : read.status;
+
+    expect({ plan, screen, today }).toStrictEqual({
+      plan: "nextSession",
+      screen: { date: null, status: "ready" },
+      today: { checkpointInToday: true, reviewDay: false, selectionHasReview: false },
+    });
+  });
 
   it("keeps a retained overdue review out of today's phase challenge offer", async () => {
     const user = await userFixture();

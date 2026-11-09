@@ -1,4 +1,5 @@
 import { type Goal, type StudySessionBlock } from "@zoonk/db";
+import { hasOverduePlanWork } from "../../plans/_utils/left-work";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { addDays, daysBetween, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, type PlanSettings } from "../../plans/planner/plan-state";
@@ -48,9 +49,12 @@ export function getChallengeTimings({
     (_, index) => addDays(today, index),
   );
 
+  const retainedReview =
+    !hasOverduePlanWork({ items, today }) && findPlannedReview({ items, today }) !== null;
+
   const capacity = (date: Date) => {
     const blocked =
-      (date.getTime() === today.getTime() && findPlannedReview({ items, today }) !== null) ||
+      (date.getTime() === today.getTime() && retainedReview) ||
       items.some(
         (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
       );
@@ -124,15 +128,11 @@ export function getChallengeTimings({
         const blockedNext =
           next && nextStudy && next > nextStudy && isChallengeReached({ boss, items });
 
+        const estimatedFor = isChallengeReached({ boss, items }) ? future : boss.scheduledFor;
+
         const estimate = blockedNext
           ? next
-          : new Date(
-              Math.max(
-                tomorrow.getTime(),
-                isChallengeReached({ boss, items }) ? 0 : (boss.scheduledFor?.getTime() ?? 0),
-                isChallengeReached({ boss, items }) ? (future?.getTime() ?? 0) : 0,
-              ),
-            );
+          : new Date(Math.max(tomorrow.getTime(), estimatedFor?.getTime() ?? 0));
 
         return [
           id,

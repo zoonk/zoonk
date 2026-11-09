@@ -67,7 +67,7 @@ describe(getChallengeTimings, () => {
       const timings = getChallengeTimings({
         ...base,
         items: [
-          { ...boss, scheduledFor: new Date("2026-11-08") },
+          boss,
           { ...boss, id: "review", kind: "review", position: 2, scheduledFor: new Date(date) },
         ],
       });
