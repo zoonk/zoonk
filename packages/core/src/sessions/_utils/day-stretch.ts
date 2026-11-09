@@ -8,6 +8,53 @@ import { readBlockPayload } from "../block-payload";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 
 type Identified = { planItemId: string | null; planItemKey?: string | null };
+type StretchLesson = Pick<PlannedLesson, "minutes" | "planItemId" | "planItemKey">;
+
+type StretchChallenge = Pick<
+  PlannedCheckpoint,
+  "afterLessons" | "kind" | "minutes" | "mock" | "planItemId" | "planItemKey" | "rematch"
+>;
+
+/** Each phase challenge a session held, by plan item id and key: whether the learner started it. */
+export function getSessionChallenges(
+  blocks: readonly Pick<StudySessionBlock, "payload" | "startedAt">[],
+): ReadonlyMap<string, boolean> {
+  const held = blocks.flatMap((block) => {
+    const { checkpoint, planItemId, planItemKey } = readBlockPayload(block);
+
+    return isPhaseChallenge(checkpoint)
+      ? [planItemId, planItemKey].flatMap((id) => (id === null ? [] : [{ block, id }]))
+      : [];
+  });
+
+  const started = new Set(held.flatMap(({ block, id }) => (block.startedAt ? [id] : [])));
+
+  return new Map(held.map(({ id }) => [id, started.has(id)]));
+}
+
+/** Every challenge follows the lessons, so two put-off ones can't take turns keeping lessons out; one the learner started there keeps its place. */
+export function placePutOffChallenges<Challenge extends StretchChallenge>({
+  checkpoints,
+  hasLessons,
+  lastSession = new Map(),
+}: {
+  checkpoints: readonly Challenge[];
+  hasLessons: boolean;
+  lastSession?: ReadonlyMap<string, boolean>;
+}): Challenge[] {
+  const started = (checkpoint: Challenge) =>
+    lastSession.get(checkpoint.planItemId ?? "") ?? lastSession.get(checkpoint.planItemKey ?? "");
+
+  const lessonsFirst =
+    hasLessons &&
+    checkpoints.some((checkpoint) => isPhaseChallenge(checkpoint) && started(checkpoint) === false);
+
+  return checkpoints.map((checkpoint) =>
+    lessonsFirst && isPhaseChallenge(checkpoint) && !started(checkpoint)
+      ? { ...checkpoint, afterLessons: true }
+      : checkpoint,
+  );
+}
 
 function findStretchItem<T extends ChallengeReachItem>({
   entry,
@@ -23,16 +70,21 @@ function findStretchItem<T extends ChallengeReachItem>({
   );
 }
 
-export function getLeadingChallenges({
+export function getLeadingChallenges<Challenge extends StretchChallenge>({
   checkpoints,
   items,
 }: {
-  checkpoints: readonly PlannedCheckpoint[];
+  checkpoints: readonly Challenge[];
   items: readonly ChallengeReachItem[];
-}): PlannedCheckpoint[] {
+}): Challenge[] {
   return checkpoints.filter((checkpoint) => {
     const boss = findStretchItem({ entry: checkpoint, items });
-    return isPhaseChallenge(checkpoint) && (!boss || isChallengeReached({ boss, items }));
+
+    return (
+      isPhaseChallenge(checkpoint) &&
+      !checkpoint.afterLessons &&
+      (!boss || isChallengeReached({ boss, items }))
+    );
   });
 }
 
@@ -58,11 +110,14 @@ export function fundLeadingChallenges<Challenge extends { minutes: number; remat
   return funded;
 }
 
-export type DayStretchEntry =
-  | { kind: "lesson"; lesson: PlannedLesson }
-  | { kind: "challenge"; checkpoint: PlannedCheckpoint };
+type DayStretchEntry<Lesson, Challenge> =
+  | { kind: "lesson"; lesson: Lesson }
+  | { kind: "challenge"; checkpoint: Challenge };
 
-export function listDayStretch({
+export function listDayStretch<
+  Lesson extends StretchLesson = PlannedLesson,
+  Challenge extends StretchChallenge = PlannedCheckpoint,
+>({
   budget,
   checkpoints,
   items,
@@ -73,33 +128,40 @@ export function listDayStretch({
 }: {
   ahead?: ReadonlySet<string>;
   budget: number;
-  checkpoints: readonly PlannedCheckpoint[];
+  checkpoints: readonly Challenge[];
   items: readonly ChallengeReachItem[];
-  leading?: readonly PlannedCheckpoint[];
-  lessons: readonly PlannedLesson[];
+  leading?: readonly Challenge[];
+  lessons: readonly Lesson[];
   overflow?: boolean;
-}): DayStretchEntry[] {
+}): DayStretchEntry<Lesson, Challenge>[] {
+  type Entry = DayStretchEntry<Lesson, Challenge>;
+
   const reached = new Set(getLeadingChallenges({ checkpoints, items }));
   const funded = new Set(leading);
   const leadingMinutes = leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0);
 
-  const entries: DayStretchEntry[] = [
-    ...lessons.map((lesson): DayStretchEntry => ({ kind: "lesson", lesson })),
+  const entries: Entry[] = [
+    ...lessons.map((lesson): Entry => ({ kind: "lesson", lesson })),
     ...checkpoints
       .filter((checkpoint) => isPhaseChallenge(checkpoint))
-      .map((checkpoint): DayStretchEntry => ({ checkpoint, kind: "challenge" })),
+      .map((checkpoint): Entry => ({ checkpoint, kind: "challenge" })),
   ];
 
-  const position = (entry: DayStretchEntry) =>
+  const afterLessons = (entry: Entry) =>
+    entry.kind === "challenge" && Boolean(entry.checkpoint.afterLessons);
+
+  const position = (entry: Entry) =>
     findStretchItem({ entry: entry.kind === "lesson" ? entry.lesson : entry.checkpoint, items })
       ?.position ?? (entry.kind === "challenge" ? -1 : 0);
 
-  const result: DayStretchEntry[] = [];
+  const result: Entry[] = [];
   const preceding = new Set(ahead);
   let room = budget - leadingMinutes;
   let stopped = false;
 
-  for (const entry of entries.toSorted((a, b) => position(a) - position(b))) {
+  for (const entry of entries.toSorted(
+    (a, b) => Number(afterLessons(a)) - Number(afterLessons(b)) || position(a) - position(b),
+  )) {
     if (entry.kind === "lesson") {
       const item = findStretchItem({ entry: entry.lesson, items });
 
@@ -180,7 +242,11 @@ export function orderDayBlocks<
   const position = (block: Block) =>
     findStretchItem({ entry: readBlockPayload(block), items })?.position ?? -1;
 
+  const afterLessons = (block: Block) => Number(readBlockPayload(block).afterLessons);
+
   return blocks.toSorted(
-    (a, b) => rank(a) - rank(b) || (group(a) === "stretch" ? position(a) - position(b) : 0),
+    (a, b) =>
+      rank(a) - rank(b) ||
+      (group(a) === "stretch" ? afterLessons(a) - afterLessons(b) || position(a) - position(b) : 0),
   );
 }

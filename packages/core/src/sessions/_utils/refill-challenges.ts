@@ -7,6 +7,7 @@ import {
   type TransactionClient,
 } from "@zoonk/db";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import { isChallengeReached } from "../../checkpoints/_utils/challenge-reach";
 import { findLastCheckpointResults } from "../../checkpoints/_utils/checkpoint-results";
 import { getPassMark } from "../../checkpoints/checkpoint-rules";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
@@ -26,6 +27,23 @@ type ChallengeRefillInput = {
   plan: Pick<Plan, "settings"> & { items: PlanItem[] };
   session: StudySessionRow & { goal: Goal };
 };
+
+function getFirstLessonPosition({
+  blocks,
+  items,
+}: {
+  blocks: readonly StudySessionBlock[];
+  items: readonly PlanItem[];
+}): number {
+  const lessons = new Set(
+    blocks.flatMap((block) => {
+      const payload = readBlockPayload(block);
+      return block.kind === "learn" && !payload.reinforcement ? [payload.planItemId] : [];
+    }),
+  );
+
+  return Math.min(...items.flatMap((item) => (lessons.has(item.id) ? [item.position] : [])));
+}
 
 function getRefillCheckpoints({
   access,
@@ -48,6 +66,8 @@ function getRefillCheckpoints({
         : [];
     }),
   );
+
+  const firstLesson = getFirstLessonPosition({ blocks, items: plan.items });
 
   return canHoldPhaseChallenges({
     mockOnlyDay,
@@ -79,6 +99,9 @@ function getRefillCheckpoints({
 
         return [
           {
+            // Reached before the day's first lesson, the day passed it over, as it does a put-off one.
+            afterLessons:
+              item.position < firstLesson && isChallengeReached({ boss: item, items: plan.items }),
             itemIds: [],
             kind: item.phase === lastPhase ? "finalBoss" : "boss",
             minutes: facts.minutes,

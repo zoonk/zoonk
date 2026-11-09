@@ -2,7 +2,12 @@ import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type ChallengeReachItem, isPhaseChallenge } from "../checkpoints/_utils/challenge-reach";
 import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-block";
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
-import { fundLeadingChallenges, getLeadingChallenges, listDayStretch } from "./_utils/day-stretch";
+import {
+  fundLeadingChallenges,
+  getLeadingChallenges,
+  listDayStretch,
+  placePutOffChallenges,
+} from "./_utils/day-stretch";
 import { fillRemainingLessonTime } from "./_utils/fill-session-time";
 import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
@@ -43,6 +48,7 @@ export type PlannedLesson = {
 };
 
 export type PlannedCheckpoint = BlockCheckpoint & {
+  afterLessons?: boolean;
   itemIds: string[];
   minutes: number;
   planItemId: string | null;
@@ -61,6 +67,8 @@ export type SessionBuildInput = {
   /** Earlier phases first; a day may carry more than one challenge. */
   checkpoints: PlannedCheckpoint[];
   planItems?: readonly ChallengeReachItem[];
+  /** Whether the learner started each phase challenge of their last session (`getSessionChallenges`). */
+  lastSessionChallenges?: ReadonlyMap<string, boolean>;
   dailyMinutes: number;
   /** Oldest open mistakes from earlier days only. */
   drills: BlockDrill[];
@@ -216,10 +224,19 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
 }
 
 /** Full reviews cover every skill and welcome-back days otherwise stay lighter. */
-export function buildSessionBlocks(input: SessionBuildInput): {
+export function buildSessionBlocks(day: SessionBuildInput): {
   blocks: PlannedBlock[];
   plannedMinutes: number;
 } {
+  const input = {
+    ...day,
+    checkpoints: placePutOffChallenges({
+      checkpoints: day.checkpoints,
+      hasLessons: day.lessons.length + (day.fillLessons?.length ?? 0) > 0,
+      lastSession: day.lastSessionChallenges,
+    }),
+  };
+
   const budget = getSessionBudget(input);
 
   if (budget < MIN_BLOCK_MINUTES) {
