@@ -2,23 +2,21 @@ import { getChallengeTimings } from "../../checkpoints/_utils/challenge-timing";
 import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-results";
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
-import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
 import { findUpNextItem, listTodayItems } from "./up-next-item";
 
-export async function readPlanToday({ context, now }: { context: PlanReadContext; now: Date }) {
+export async function readPlanToday({ context }: { context: PlanReadContext }) {
   const { goal, timeZone } = context;
-  const session = await readTodayPlanSession(goal.userId, goal.id);
+  const session = await readTodayPlanSession(goal.userId, goal.id, timeZone);
 
   if (session) {
     return { blocks: session.blocks, session };
   }
 
-  const blueprint = goal.examBlueprintId ? await readExamBlueprint(goal.examBlueprintId) : null;
-  const blocks = await previewTodayBlocks({ blueprint, goal, now, timeZone, userId: goal.userId });
+  const blocks = await previewTodayBlocks(goal.userId, goal.id, timeZone);
 
   return { blocks, session };
 }

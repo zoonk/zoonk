@@ -5,14 +5,27 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { type readPlannedDay } from "../../learner/facts/planned-day";
 import {
   SESSION_NOW,
   daysAgo,
   dueSkillFixture,
   sessionGoalFixture,
 } from "../../sessions/_test-utils/session-goal";
+import { loadSessionBuildInput } from "../../sessions/_utils/load-build-inputs";
 import { getPlanRevealToday } from "./get-plan-reveal-today";
 import { getTodayView } from "./get-today-view";
+
+vi.mock("../../sessions/_utils/load-build-inputs", { spy: true });
+
+vi.mock("../../learner/facts/planned-day", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readPlannedDay: typeof readPlannedDay }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readPlannedDay: keepRequestReads(actual.readPlannedDay) };
+});
 
 async function revealedGoalWithReviewsDue() {
   const user = await userFixture();
@@ -44,6 +57,30 @@ describe(getPlanRevealToday, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("shares the planned day between the reveal's Today and Plan without writing", async () => {
+    const { goal } = await revealedGoalWithReviewsDue();
+
+    const before = await prisma.plan.findUniqueOrThrow({
+      include: { items: { orderBy: { position: "asc" } } },
+      where: { goalId: goal.id },
+    });
+
+    vi.mocked(loadSessionBuildInput).mockClear();
+    const read = await countDatabaseStatements(() => getPlanRevealToday(goal.id, "UTC"));
+
+    expect(read.result.status).toBe("ready");
+    expect(read.writes).toBe(0);
+    expect(loadSessionBuildInput).toHaveBeenCalledOnce();
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { goalId: goal.id },
+      }),
+    ).resolves.toStrictEqual(before);
   });
 
   it("shows the day Today will show, its review included, before the plan is seen, writing nothing", async () => {

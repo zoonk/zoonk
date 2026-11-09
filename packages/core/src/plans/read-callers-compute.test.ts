@@ -75,7 +75,7 @@ describe("row-5 callers read their saved artifacts", () => {
   it("a due challenge GET plans today from the saved plan without a plan build or a write", async () => {
     const user = await userFixture();
 
-    const { goal, plan, planItems } = await sessionGoalFixture({
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
       itemsPerSkill: 10,
       userId: user.id,
     });
@@ -97,7 +97,12 @@ describe("row-5 callers read their saved artifacts", () => {
     );
 
     expect(read.result).toMatchObject({
-      challenge: { minutes: null, questions: null, status: "ready", topics: [] },
+      challenge: {
+        minutes: 15,
+        questions: 10,
+        status: "ready",
+        topics: skills.map((skill) => ({ name: skill.name, subject: null })),
+      },
       status: "ready",
     });
 
