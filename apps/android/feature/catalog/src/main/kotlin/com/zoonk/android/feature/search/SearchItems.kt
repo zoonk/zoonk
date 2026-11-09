@@ -308,9 +308,10 @@ private fun learnerGroups(
             .map {
                 SearchItem(
                     "goal-${it.id}",
-                    stringResource(R.string.search_switch_goal, it.title),
+                    stringResource(R.string.search_switch_goal, it.displayName),
                     SearchAction.SwitchGoal(it.id),
                     R.drawable.ic_swap_horiz,
+                    keywords = it.title,
                 )
             }
     val explanations =
@@ -321,7 +322,7 @@ private fun learnerGroups(
                 .map {
                     SearchItem(
                         "explanation-${it.id}",
-                        it.title,
+                        it.displayName,
                         SearchAction.Open(AppRoute.Explain(it.id.toString())),
                         R.drawable.ic_lightbulb,
                     )

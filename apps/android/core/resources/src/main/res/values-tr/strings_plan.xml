@@ -418,6 +418,9 @@
   "plan_recommendation_failed": "079d531ca73aad0bde8a29e67ae31cb4bce61d36fd9c9156755202ea493c7a47",
   "plan_recommendation_followed": "97eb09c91b7d737e6048adbe4acc4e51412f8af610e4815b5f94b7158548903a",
   "plan_recommended": "ce985759e2fec347864c1ac85f34c88f657434c6ff54749d68c4b33198bcf7f1",
+  "plan_rename_description": "76f20da5d432cb83c7ec2b781228c1300d47c2828b72500263d267bb1fb3f511",
+  "plan_rename_goal": "fc17ba50250498068834de418ba6894a77eb2561d9d44c9f2e7ae5f44ca37cbd",
+  "plan_rename_label": "b584c76429eff2f4e01afb2adee1bf29aa1799a16930c8a26e3cc6415fe345ef",
   "plan_resume": "d03ea25c1c9ef9ae935aa68ee6175e0bf6afa29c24ef1f566bd8f93f1be5b860",
   "plan_resume_effect": "3dbaca45cfa07afce0622ff1088b5285947e897d878da51e418ce9f798280963",
   "plan_resume_goal": "1b905724f4112db99b85237a3f65c2aa27116114f896ddf49d8f3cf68962603c",
@@ -630,6 +633,10 @@
     <string name="plan_full_course">Kursun tamamını gör</string>
     <string name="plan_share">Planı paylaş</string>
     <string name="plan_talk_to">%1$s ile konuş</string>
+    <string name="plan_rename_goal">Hedefin adını değiştir</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Ad</string>
+    <string name="plan_rename_description">Hedefini kolayca tanıyacağın bir ad seç. Çalışma planın aynı kalır.</string>
     <string name="plan_pause_goal">Bu hedefi duraklat</string>
     <string name="plan_resume_goal">Bu hedefe devam et</string>
     <string name="plan_archive_goal">Bu hedefi arşivle</string>

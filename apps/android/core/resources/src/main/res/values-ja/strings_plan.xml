@@ -418,6 +418,9 @@
   "plan_recommendation_failed": "1d036b92a3e87b12e2b660bacb7b43461568f15b38b599de950e725fe919250d",
   "plan_recommendation_followed": "cc94c4cd70fde37a8e60ef4eef68d1778d3d7fec0653ab4eeca99fed425c334d",
   "plan_recommended": "22950871e020e78c8570ba714e26857e35ec984a23c47a95a6d38f503a155b4a",
+  "plan_rename_description": "fc0090f393a58b8387b93486fd9d33f239f5bd65db010416e0e2f3916e89f91b",
+  "plan_rename_goal": "017a4209a028dc5e955ea51d5229eb192bd89cd49c296e222e76ea7962d46bc1",
+  "plan_rename_label": "605ea1c07a3d5aecab6d3cdbcaef10d428ec5766fb4c0fbba4ef6f22fb347d16",
   "plan_resume": "1cfe2610404eb61022af10ed1fab9bbc472f7a8673352d995800145b565e2957",
   "plan_resume_effect": "0a99513d0c0739ed3ba42fd93b4f02dc1c71f169020dfca9258c69938df4818d",
   "plan_resume_goal": "fd8cf87cc3d0267e1ddad3f32e6c351490092fe312eb051b4e9756fe8ac3e605",
@@ -627,6 +630,10 @@
     <string name="plan_full_course">コース全体を見る</string>
     <string name="plan_share">学習計画を共有する</string>
     <string name="plan_talk_to">%1$sと話す</string>
+    <string name="plan_rename_goal">目標の名前を変更</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">名前</string>
+    <string name="plan_rename_description">わかりやすい名前を付けてください。学習計画は変わりません。</string>
     <string name="plan_pause_goal">この目標を一時停止する</string>
     <string name="plan_resume_goal">この目標を再開する</string>
     <string name="plan_archive_goal">この目標をアーカイブする</string>

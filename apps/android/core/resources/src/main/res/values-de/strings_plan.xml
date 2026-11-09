@@ -418,6 +418,9 @@
   "plan_recommendation_failed": "6e13a436cceed5a9864aaf3e85ddf00c63f74ff60c9d6fc9a591a268b85bbccd",
   "plan_recommendation_followed": "f9eabd43c8148795cb2ee322e14ab54f259db9cd2dd164e1e7cfadef3a66fefb",
   "plan_recommended": "d5ce82564f3a495b934eac20e0723a4cb0c360e35c7729089b79cd61e0e1985f",
+  "plan_rename_description": "ef995453a4c235bc345dfde4483a1c833744ee17cc3a987926f2c0b020c6d99e",
+  "plan_rename_goal": "4293f69a2ae57939651b2716f1e6f29a5bcdad6d11d7eee890a8892a5d17e189",
+  "plan_rename_label": "024302f701fc2683e7424c9e0813dc0810c24023d341647e964a0e73e2e944e1",
   "plan_resume": "bd1bf65b6d3a8d86e3f200dd8c91f8d96deda2722030584ae01e5b3f5da6f1e9",
   "plan_resume_effect": "d569bf320caa4ed2d6a0433f428d710c6d37a880764a6566e68c9c6b143af562",
   "plan_resume_goal": "40c364e0ed63ae980f5d5de03ad529c833e4b8947e89bca8a57304121855baf8",
@@ -630,6 +633,10 @@
     <string name="plan_full_course">Gesamten Kurs ansehen</string>
     <string name="plan_share">Plan teilen</string>
     <string name="plan_talk_to">Mit %1$s sprechen</string>
+    <string name="plan_rename_goal">Ziel umbenennen</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Name</string>
+    <string name="plan_rename_description">Wähl einen Namen, den du wiedererkennst. Dein Plan bleibt gleich.</string>
     <string name="plan_pause_goal">Dieses Ziel pausieren</string>
     <string name="plan_resume_goal">Dieses Ziel fortsetzen</string>
     <string name="plan_archive_goal">Dieses Ziel archivieren</string>

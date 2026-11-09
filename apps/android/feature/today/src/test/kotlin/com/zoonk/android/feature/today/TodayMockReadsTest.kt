@@ -46,7 +46,15 @@ class TodayMockReadsTest {
         val today = TodayStore(LiveTodayApi(api.clients), cache, scope, timeZone = { "UTC" })
         val mocks = MockStore(LiveMockApi(api.clients), cache)
         val goal =
-            TodayGoal(dateEstimated = false, daysLeft = null, id = GOAL, kind = TodayGoal.Kind.EXAM, targetDate = null, title = "ENEM")
+            TodayGoal(
+                dateEstimated = false,
+                daysLeft = null,
+                id = GOAL,
+                kind = TodayGoal.Kind.EXAM,
+                targetDate = null,
+                title = "ENEM 2026",
+                displayName = "ENEM",
+            )
         var examPage by mutableStateOf(false)
 
         rule.setContent {

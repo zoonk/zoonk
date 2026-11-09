@@ -418,6 +418,9 @@
   "plan_recommendation_failed": "9d9dafce44e5fe66a93ca380ab0b1a0c27ab6c5f5142815a85f6375ad78c7712",
   "plan_recommendation_followed": "ba1a1486cbf187b09c4884b29369335c7a268e843fb4e51d06dabbb43373356f",
   "plan_recommended": "2b16065cca2a5a8fdca9cd7dbe0fed02a3ae6bf9d36573f6d501a07f778e6499",
+  "plan_rename_description": "92934eabf919a00fcd1da4d63980ba50bae15c94e655a761e14835e81c0de89d",
+  "plan_rename_goal": "eaef4aebe4f8736583b33b4b903b0a1a68ce99120f43cb5651641af1a59b1ed5",
+  "plan_rename_label": "344108653883c8990376d82a5e1d82b0355d228f7c61e3b453c443b74f5b28ea",
   "plan_resume": "44b23d88add2900e07285fff2cb365801354565f06123d3e78b2eb4ae11b0183",
   "plan_resume_effect": "2c6054064cd192028711eaab7cbd95b567015d15690ae0d36e0734fb8a32dce4",
   "plan_resume_goal": "01520c46c97525f77549106b283edc7748af69a15c63ee0c729478eb1bfbc65c",
@@ -627,6 +630,10 @@
     <string name="plan_full_course">전체 코스 보기</string>
     <string name="plan_share">계획 공유하기</string>
     <string name="plan_talk_to">%1$s에게 말 걸기</string>
+    <string name="plan_rename_goal">목표 이름 바꾸기</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">이름</string>
+    <string name="plan_rename_description">알아보기 쉬운 이름을 정하세요. 학습 계획은 그대로 유지돼요.</string>
     <string name="plan_pause_goal">이 목표 일시 중지하기</string>
     <string name="plan_resume_goal">이 목표 이어가기</string>
     <string name="plan_archive_goal">이 목표 보관하기</string>

@@ -43,6 +43,12 @@ enum class PlanPart { Aim, Date, Schedule, ExamChoices, Bases, Activities, Writi
 /** [Started] stays: the new goal becomes the active one, which the Plan then shows. */
 enum class NextLevelStart { Idle, Starting, Started, Failed }
 
+/** The open Rename dialog: its name is [saving], or [failed] to save and waits for another try. */
+data class RenameDialog(
+    val saving: Boolean = false,
+    val failed: Boolean = false,
+)
+
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
     val change: PlanChange,
@@ -69,6 +75,7 @@ class PlanViewModel(
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
     private val slotPreviewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
     private val nextLevelStart = MutableStateFlow(NextLevelStart.Idle)
+    private val renameDialog = MutableStateFlow<RenameDialog?>(null)
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
     private var openings = 0
@@ -112,6 +119,28 @@ class PlanViewModel(
     val slotPreview: StateFlow<PlanPreviewState> = slotPreviewState.asStateFlow()
 
     val nextLevel: StateFlow<NextLevelStart> = nextLevelStart.asStateFlow()
+
+    val rename: StateFlow<RenameDialog?> = renameDialog.asStateFlow()
+
+    fun openRename() {
+        renameDialog.value = RenameDialog()
+    }
+
+    fun closeRename() {
+        if (renameDialog.value?.saving != true) renameDialog.value = null
+    }
+
+    fun rename(displayName: String) {
+        if (renameDialog.value?.saving != false) return
+        renameDialog.value = RenameDialog(saving = true)
+        viewModelScope.launch {
+            renameDialog.value =
+                when (store.rename(goalId, displayName)) {
+                    is MutationResult.Failed -> RenameDialog(failed = true)
+                    is MutationResult.Done, MutationResult.Obsolete -> null
+                }
+        }
+    }
 
     fun setStatus(status: GoalUpdateInput.Status) {
         if (saving.value) return

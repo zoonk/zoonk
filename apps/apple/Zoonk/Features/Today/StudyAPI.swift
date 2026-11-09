@@ -103,7 +103,7 @@ struct StudyAPI: StudyAPIClient {
         let problem: TodayProblem = try StudyJSON.recode(try response.body.json)
 
         if problem.error.code == "PLAN_NOT_READY", let goal = problem.error.details?.goal {
-          return .preparing(goalID: goal.id, title: goal.title)
+          return .preparing(goalID: goal.id, displayName: goal.displayName)
         }
 
         return .goalNotActive

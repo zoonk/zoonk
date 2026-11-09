@@ -555,7 +555,7 @@ struct PlanSuggestionSection: View {
     case .paused:
       (
         Text(
-          "\(context.goal.title) is paused", tableName: "Plan",
+          "\(context.goal.displayName) is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
       )
     case .choice(let choice):
@@ -765,7 +765,7 @@ private struct PlanPausedSlot: View {
     VStack(alignment: .leading, spacing: 8) {
       Label {
         Text(
-          "\(context.goal.title) is paused", tableName: "Plan",
+          "\(context.goal.displayName) is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal"
         )
         .typeStyle(.body.weight(.semibold))

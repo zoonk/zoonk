@@ -418,6 +418,9 @@
   "plan_recommendation_failed": "a5b061079cc67724145a1e4007899526d85b9916eaa0c39a4b33c09838b6c08d",
   "plan_recommendation_followed": "88afe5f32e8497e18077041df988348a0e521878abb5f6e42747118c5c73aebd",
   "plan_recommended": "552662706560725d162abb16a21b5a032eff637e13a7b1dc0214f7e5ee8b9782",
+  "plan_rename_description": "33f4275d90bce01330b6d2e150e13ca07316533cb2700c08e2cf798ad22d82fc",
+  "plan_rename_goal": "11c0b91892b76754cb3ee2dd316c5ee1ea72723aa968a83c2c4a7cb7f3f79e30",
+  "plan_rename_label": "de63e342ad88adbc84366b78dd5bf1382b39dfeb3e0df73f9e0ea5d4aa8e2132",
   "plan_resume": "cdc91b74bbedd52eab01e54102568420735efa39d252462f009c0c471161b426",
   "plan_resume_effect": "8948de93c295cfd975daeba456aad63adb6b60454b7caeabdf36ad23d12a57e3",
   "plan_resume_goal": "9d74c336a43e7f86b0b36945a79b2eb80fe8650bc36548ff6a2e8c7923f4dcdf",
@@ -636,6 +639,10 @@
     <string name="plan_full_course">Zobacz cały kurs</string>
     <string name="plan_share">Udostępnij plan</string>
     <string name="plan_talk_to">Porozmawiaj z: %1$s</string>
+    <string name="plan_rename_goal">Zmień nazwę celu</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Nazwa</string>
+    <string name="plan_rename_description">Wybierz nazwę, po której rozpoznasz cel. Twój plan nauki się nie zmieni.</string>
     <string name="plan_pause_goal">Wstrzymaj ten cel</string>
     <string name="plan_resume_goal">Wznów ten cel</string>
     <string name="plan_archive_goal">Przenieś ten cel do archiwum</string>

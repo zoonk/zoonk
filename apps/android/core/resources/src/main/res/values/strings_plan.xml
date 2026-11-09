@@ -32,6 +32,10 @@
     <string name="plan_full_course">See the full course</string>
     <string name="plan_share">Share the plan</string>
     <string name="plan_talk_to">Talk to %1$s</string>
+    <string name="plan_rename_goal">Rename goal</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Name</string>
+    <string name="plan_rename_description">Choose a name you recognize. Your study plan stays the same.</string>
     <string name="plan_pause_goal">Pause this goal</string>
     <string name="plan_resume_goal">Resume this goal</string>
     <string name="plan_archive_goal">Archive this goal</string>

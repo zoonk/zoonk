@@ -447,8 +447,8 @@ private fun editValue(
             row.editDefault ?: row.value
         }
 
-        EditableField.Title -> {
-            goal.draft.title
+        EditableField.DisplayName -> {
+            goal.draft.displayName.orEmpty()
         }
 
         EditableField.TargetDate -> {
@@ -472,9 +472,9 @@ private fun draftEdit(
             OnboardingDraftEdit.OnboardingDraftEditOneOf3Value(OnboardingDraftEditOneOf3(OnboardingDraftEditOneOf3.Field.STUDY_TIME, value))
         }
 
-        EditableField.Title -> {
+        EditableField.DisplayName -> {
             OnboardingDraftEdit.OnboardingDraftEditOneOfValue(
-                OnboardingDraftEditOneOf(OnboardingDraftEditOneOf.Field.TITLE, goal.toLong(), value),
+                OnboardingDraftEditOneOf(OnboardingDraftEditOneOf.Field.DISPLAY_NAME, goal.toLong(), value),
             )
         }
 

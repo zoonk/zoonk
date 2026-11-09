@@ -65,7 +65,7 @@ internal fun RevealHero(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created), iconModifier = Modifier.revealSettle(play))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(goal.title, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium)
+            Text(goal.displayName, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium)
             CelebrationScope(play) {
                 BuddyActor(
                     buddy.look,

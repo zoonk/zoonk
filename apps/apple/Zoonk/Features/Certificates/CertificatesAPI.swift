@@ -77,14 +77,14 @@ private func makeCertificateUpNext(_ goals: [Components.Schemas.Goal]) -> [Certi
     switch goal.kind {
     case .language:
       return CertificateUpNext(
-        id: goal.id, title: goal.title, languageFlag: goal.languageFlag, progress: nil)
+        id: goal.id, displayName: goal.displayName, languageFlag: goal.languageFlag, progress: nil)
     case .learn, .exam:
       guard let plan = goal.plan, plan.lessonsTotal > 0 else {
         return nil
       }
 
       return CertificateUpNext(
-        id: goal.id, title: goal.title,
+        id: goal.id, displayName: goal.displayName,
         progress: Double(plan.lessonsDone) / Double(plan.lessonsTotal))
     case .explain:
       return nil

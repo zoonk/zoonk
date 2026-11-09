@@ -1331,7 +1331,6 @@ msgid "Buddy"
 msgstr "Compagno"
 
 #: src/buddies/buddy-picker.tsx
-#: src/journey/rename-goal-dialog.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nome"
@@ -5210,6 +5209,12 @@ msgstr "Affronta la tua prima sfida settimanale"
 msgctxt "kRla6I"
 msgid "Choose a name you recognize. Your study plan stays the same."
 msgstr "Scegli un nome facile da riconoscere. Il tuo piano resta lo stesso."
+
+#. A learning goal's name, not a person's name
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "goalDisplayName"
+msgid "Name"
+msgstr "Nome"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"

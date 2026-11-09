@@ -66,14 +66,15 @@ class LetterMarkTest {
                 targetDate = null,
                 targetLanguage = null,
                 title = "ENEM",
+                displayName = "ENEM",
             )
         compose.setContent {
             ZoonkTheme {
                 TopAppBar(
                     title = {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            GoalMark(goal.title)
-                            Text(goal.title)
+                            GoalMark(goal.displayName)
+                            Text(goal.displayName)
                         }
                     },
                     actions = { IconButton(onClick = {}) { AccountAvatar(user, size = 32.dp) } },

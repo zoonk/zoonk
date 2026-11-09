@@ -418,6 +418,9 @@
   "plan_recommendation_failed": "1793a1f2d223a0d0f8fdbb0575ea173d99144b702045647c37ea074ec5d01d6c",
   "plan_recommendation_followed": "0a630b16914e5d20840586d0aeeb515bf5bb9643940afc37b9b98669f6033d1b",
   "plan_recommended": "d3f8f5199be118fc42a5319728e9f069bafe4f4a088b84e4652e98e6e22ba179",
+  "plan_rename_description": "a670b29a96ed9d631d50cb05174be55c5a449915c795413ada049f0e98a1c573",
+  "plan_rename_goal": "a7f82a44f3f00bc49516ecfcfb931612e2f0abbf1c6c5b6e01b49f773cc80a2b",
+  "plan_rename_label": "789bcb14f44b2f4ec7040fa54036354f4d4b033c318bd0f371285ba67a57abf8",
   "plan_resume": "8c08e8362b364fb448b630c01117c30d27818efb066498f781b4f8f1b29bcddb",
   "plan_resume_effect": "97b99a94f79497b6c2d605a7723221e23e175e713df845f262e0202cd680a569",
   "plan_resume_goal": "b70119e95c7fe5f30271ebdaeef52953af33d9c3d62362c0a9dee3383436807e",
@@ -633,6 +636,10 @@
     <string name="plan_full_course">Ver el curso completo</string>
     <string name="plan_share">Compartir el plan</string>
     <string name="plan_talk_to">Hablar con %1$s</string>
+    <string name="plan_rename_goal">Cambiar el nombre del objetivo</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Nombre</string>
+    <string name="plan_rename_description">Elige un nombre que reconozcas. Tu plan de estudio no cambia.</string>
     <string name="plan_pause_goal">Pausar este objetivo</string>
     <string name="plan_resume_goal">Reanudar este objetivo</string>
     <string name="plan_archive_goal">Archivar este objetivo</string>

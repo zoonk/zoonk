@@ -34,7 +34,7 @@ enum class EditableField(
     val key: String,
     val kind: EditorKind,
 ) {
-    Title("title", EditorKind.Text),
+    DisplayName("displayName", EditorKind.Text),
     TargetDate("targetDate", EditorKind.Date),
     Institution("institution", EditorKind.Text),
     Reason("reason", EditorKind.Text),
@@ -54,13 +54,13 @@ data class GoalFacts(
     val isLanguage: Boolean,
     val targetLanguage: String?,
     val details: Map<String, JsonElement?>?,
-    val title: String,
+    val displayName: String,
     val language: String,
 )
 
-fun GoalDraftOutput.facts() = GoalFacts(kind == GoalDraftOutput.Kind.LANGUAGE, targetLanguage, details, title, language)
+fun GoalDraftOutput.facts() = GoalFacts(kind == GoalDraftOutput.Kind.LANGUAGE, targetLanguage, details, displayName.orEmpty(), language)
 
-fun Goal.facts() = GoalFacts(kind == Goal.Kind.LANGUAGE, targetLanguage, details, title, language)
+fun Goal.facts() = GoalFacts(kind == Goal.Kind.LANGUAGE, targetLanguage, details, displayName, language)
 
 data class UnderstoodRow(
     val id: String,
@@ -94,7 +94,12 @@ class UnderstoodRows(
         val levelNote = draft.details.text("levelNote")
 
         return listOfNotNull(
-            UnderstoodRow("title", text(R.string.onboarding_row_goal), draft.title, editable = EditableField.Title),
+            UnderstoodRow(
+                "displayName",
+                text(R.string.onboarding_row_goal),
+                draft.displayName.orEmpty(),
+                editable = EditableField.DisplayName,
+            ),
             dateRow(draft, goal.examDates),
         ) + languageRows(draft.facts()) + detailRows(draft.facts(), goal.cutoff, goal.languageAim) +
             listOfNotNull(
@@ -160,7 +165,7 @@ class UnderstoodRows(
                 "targetLanguage",
                 text(R.string.onboarding_row_language),
                 language,
-            ).takeUnless { isSaidIn(draft.title, language) },
+            ).takeUnless { isSaidIn(draft.displayName, language) },
             UnderstoodRow("nativeLanguage", text(R.string.onboarding_row_you_speak), languageName(native)),
         )
     }
@@ -170,7 +175,7 @@ class UnderstoodRows(
         cutoff: TargetCutoff?,
         languageAim: LanguageAim? = null,
     ): List<UnderstoodRow> {
-        fun unsaid(key: String) = draft.details.text(key)?.takeUnless { isSaidIn(draft.title, it) }
+        fun unsaid(key: String) = draft.details.text(key)?.takeUnless { isSaidIn(draft.displayName, it) }
 
         val course = unsaid("targetCourse")
         val institution = unsaid("institution")
