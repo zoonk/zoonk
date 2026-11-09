@@ -73,9 +73,12 @@ function withoutKept({
   return {
     ...input,
     capsules: kinds.has("review") ? [] : input.capsules,
-    checkpoints: input.checkpoints.filter(
-      (checkpoint) => !keptCheckpoints.has(checkpoint.planItemId),
-    ),
+    checkpoints: input.checkpoints
+      .filter((checkpoint) => !keptCheckpoints.has(checkpoint.planItemId))
+      .map((checkpoint) => ({
+        ...checkpoint,
+        reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
+      })),
     drills: kinds.has("practice") ? [] : input.drills,
     fillLessons: input.fillLessons?.filter(isNewLesson),
     lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
@@ -85,7 +88,6 @@ function withoutKept({
     // A day that keeps its practice gives the rest of its time to lessons.
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
     produce: kinds.has("produce") ? null : input.produce,
-    reinforcement: input.reinforcement.filter((lesson) => isNewLesson(lesson)),
     usedMinutes: getSessionUsedMinutes(kept),
   };
 }

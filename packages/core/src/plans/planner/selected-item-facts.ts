@@ -118,6 +118,7 @@ export function listSelectedItemFacts({
   const plan = toBossPlan({
     input,
     items: built.items,
+    phases: built.phases,
     rows: facts?.rows,
     skillLessons: built.skillLessons,
     survivors: facts?.survivors,

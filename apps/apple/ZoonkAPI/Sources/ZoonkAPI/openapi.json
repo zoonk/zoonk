@@ -33028,7 +33028,7 @@
           },
           "date": {
             "nullable": true,
-            "description": "The day it's planned for",
+            "description": "Null for a phase challenge, which opens after its preceding lessons finish. Weekly challenges and mocks keep their real calendar date.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -33225,7 +33225,7 @@
               "upcoming",
               "waiting"
             ],
-            "description": "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it: the next one has it); queued (a phase challenge whose lessons are done, after one still to win: it comes in the session after that one is won)"
+            "description": "upcoming before its preceding lessons finish (or before a weekly challenge or mock's calendar date); ready or started when offered; tried after a loss today; done once won; plusRequired while locked; waiting when reached but absent from today's session or its offer is not yet established. queued is retained for older clients and is never returned"
           },
           "timeZone": {
             "nullable": true,
@@ -33264,7 +33264,7 @@
           },
           "waitReason": {
             "nullable": true,
-            "description": "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) or an earlier phase challenge (`challenge`) are still pending or active. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+            "description": "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
             "type": "string",
             "enum": [
               "lessons",
@@ -81247,7 +81247,7 @@
         "properties": {
           "challengeLeftOut": {
             "default": false,
-            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study (placement found it known, or the plan holds none of its lessons) has no challenge and is never marked",
+            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
             "type": "boolean"
           },
           "chapterCount": {
@@ -81358,6 +81358,7 @@
             "properties": {
               "date": {
                 "nullable": true,
+                "description": "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless the challenge is already in today's session; weekly challenges and mocks retain their calendar dates.",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -81387,7 +81388,7 @@
                   "nextSession",
                   "queued"
                 ],
-                "description": "When it comes, as sessions offer challenges and its intro says: `date`, on its `date`; `nextSession`, the learner's next session has it (the first one reached, and any whose day came): say that instead of `date`; `queued`, its phase's lessons are done but a challenge before it comes first, one a session: say it comes after that one, not `date`. Always `date` once won, and past a free exam plan's first week (its sessions hold no challenges)"
+                "description": "`date` shows the approximate date for a phase challenge. `nextSession` means it is reached and funded in the next session, or already belongs to today's session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week."
               }
             },
             "required": [

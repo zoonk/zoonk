@@ -101,7 +101,7 @@ describe("mistake drills in today's session", () => {
 
   it("builds a content gap's drill with the lesson to go over first", async () => {
     const user = await userFixture();
-    const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });
+    const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 2, userId: user.id });
     const [skill] = fixture.skills;
     const [lesson] = fixture.lessons;
 
@@ -151,7 +151,7 @@ describe("mistake drills in today's session", () => {
     const user = await userFixture();
 
     const [fixture, planSkill] = await Promise.all([
-      sessionGoalFixture({ itemsPerSkill: 0, lessons: 2, userId: user.id }),
+      sessionGoalFixture({ challengesDone: true, itemsPerSkill: 0, lessons: 2, userId: user.id }),
       skillFixture({ name: "Plan skill" }),
     ]);
 

@@ -55,6 +55,7 @@ async function mathReviewDay() {
   const user = await userFixture();
 
   const { goal, plan, planItems, skills } = await sessionGoalFixture({
+    challengesDone: true,
     itemsPerSkill: 0,
     lessons: 1,
     userId: user.id,
@@ -195,6 +196,7 @@ describe("math problems in sessions", () => {
     const user = await userFixture();
 
     const { goal, skills } = await sessionGoalFixture({
+      challengesDone: true,
       itemsPerSkill: 0,
       lessons: 1,
       userId: user.id,
@@ -251,6 +253,7 @@ describe("math problems in sessions", () => {
     const user = await userFixture();
 
     const { goal, planItems, skills } = await sessionGoalFixture({
+      challengesDone: true,
       itemsPerSkill: 0,
       lessons: 2,
       userId: user.id,

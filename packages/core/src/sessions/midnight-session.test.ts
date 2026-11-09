@@ -83,7 +83,13 @@ async function startLessonOutsideSessionBeforeMidnight() {
   const { lesson, skill, steps, user } = await setupPlayableLesson({ steps: ["check"] });
   const goal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
 
-  await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] });
+  await planFixture({
+    goalId: goal.id,
+    items: [
+      { lessonId: lesson.id, skillId: skill.id },
+      { kind: "boss", position: 100, status: "done" },
+    ],
+  });
 
   const started = await startLibraryLesson({ input: { timeZone: TIME_ZONE }, lessonId: lesson.id });
   const runId = started.status === "started" ? started.run.runId : "";

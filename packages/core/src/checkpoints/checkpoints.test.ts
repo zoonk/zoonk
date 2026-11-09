@@ -108,7 +108,12 @@ describe("phase checkpoint (boss)", () => {
       optionIndex: 0,
     });
 
-    expect(session.blocks.map((candidate) => candidate.kind)).toStrictEqual(["checkpoint"]);
+    expect(session.blocks.map((candidate) => candidate.kind)).toStrictEqual([
+      "checkpoint",
+      "learn",
+      "checkpoint",
+    ]);
+
     expect(block.checkpoint).toMatchObject({ kind: "boss", mock: false, passMark: 5, phase: 0 });
     expect(detail.status === "ready" && detail.detail.hints).toBe(false);
 
@@ -435,7 +440,7 @@ describe("phase checkpoint (boss)", () => {
 
     const next = await prisma.planItem.findFirstOrThrow({ where: { lessonId: lessons[2]?.id } });
     expect(next.status).toBe("todo");
-    expect(next.scheduledFor?.getTime()).toBeGreaterThan(SESSION_TODAY.getTime() + DAY_MS);
+    expect(tomorrow.session.blocks.some((block) => block.lessonId === next.lessonId)).toBe(true);
   });
 
   it("holds a challenge whose questions aren't written yet, sized for the ten it asks", async () => {
@@ -506,7 +511,7 @@ describe("phase checkpoint (boss)", () => {
     expect(getBlockItemIds(payload)).toHaveLength(5);
   });
 
-  it("asks a phase with no lessons of its own on its day, not before", async () => {
+  it("offers a phase with no lessons of its own after its preceding teaching, before its estimate", async () => {
     const user = await userFixture();
     const { goal, plan } = await sessionGoalFixture({ lessons: 2, userId: user.id });
     const day = new Date(SESSION_TODAY.getTime() + 2 * DAY_MS);
@@ -528,7 +533,7 @@ describe("phase checkpoint (boss)", () => {
       throw new Error("Expected today's session");
     }
 
-    expect(today.session.blocks.map((block) => block.kind)).not.toContain("checkpoint");
+    expect(today.session.blocks.map((block) => block.kind)).toContain("checkpoint");
     expect(today.session.blocks.map((block) => block.kind)).toContain("learn");
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * DAY_MS));
@@ -538,7 +543,7 @@ describe("phase checkpoint (boss)", () => {
       throw new Error("Expected the session on the challenge's day");
     }
 
-    expect(onItsDay.session.blocks.find((block) => block.kind === "checkpoint")).toMatchObject({
+    expect(onItsDay.session.blocks.find((block) => block.checkpoint?.phase === 1)).toMatchObject({
       checkpoint: { kind: "finalBoss", phase: 1 },
     });
   });

@@ -97,7 +97,7 @@ describe("row-5 callers read their saved artifacts", () => {
     );
 
     expect(read.result).toMatchObject({
-      challenge: { minutes: null, questions: null, status: "ready", topics: [] },
+      challenge: { minutes: null, questions: null, status: "waiting", topics: [] },
       status: "ready",
     });
 

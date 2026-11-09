@@ -43,7 +43,7 @@ import { type BossPlanFacts, settlePlannedBosses } from "./planned-bosses";
 import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
-import { summarizePlan } from "./summarize-plan";
+import { listDroppedSkills, summarizePlan } from "./summarize-plan";
 import { getPendingOrder, listStillSetAside } from "./this-week-items";
 import { markKeptLessons } from "./whole-boss";
 
@@ -153,15 +153,6 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
       resolution,
     }),
   );
-}
-
-function listDroppedSkills(dropped: readonly { depth?: boolean; skillId: string | null }[]) {
-  return {
-    droppedSkillIds: [...new Set(dropped.flatMap((unit) => (unit.skillId ? [unit.skillId] : [])))],
-    waitingSkillIds: [
-      ...new Set(dropped.flatMap((unit) => (unit.skillId && !unit.depth ? [unit.skillId] : []))),
-    ],
-  };
 }
 
 function planGoal({

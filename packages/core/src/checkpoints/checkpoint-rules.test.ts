@@ -281,6 +281,14 @@ describe("a challenge before an exam's continuation", () => {
     ).toStrictEqual(["a", "b"]);
   });
 
+  it("anchors its core to the exam window when its estimate moves past the exam", () => {
+    const phases = [{ kind: "foundations" }, { kind: "practice" }, { kind: "afterExam" }];
+
+    expect(
+      getBossSkillIds({ ...plan, boss: { ...boss, scheduledFor: day(15) }, phases }),
+    ).toStrictEqual(["a", "b"]);
+  });
+
   it("counts a required lesson on the exam day", () => {
     const onExam = items.map((item) =>
       item.id === "a2" ? { ...item, scheduledFor: day(12) } : item,
@@ -291,7 +299,6 @@ describe("a challenge before an exam's continuation", () => {
     expect(getBossSkillIds({ ...plan, boss: { ...boss, scheduledFor: day(12) } })).toStrictEqual([
       "a",
       "b",
-      "c",
     ]);
   });
 

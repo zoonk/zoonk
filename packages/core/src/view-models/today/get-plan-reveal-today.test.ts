@@ -18,6 +18,7 @@ async function revealedGoalWithReviewsDue() {
   const user = await userFixture();
 
   const { goal, plan, skills } = await sessionGoalFixture({
+    challengesDone: true,
     goal: { planRevealedAt: null },
     itemsPerSkill: 20,
     userId: user.id,

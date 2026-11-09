@@ -141,7 +141,12 @@ export const challengeResponseSchema = z
       .meta({
         description: '"Move to Monday": the weekly challenge before it starts, from today on',
       }),
-    date: logicalDateSchema.nullable().meta({ description: "The day it's planned for" }),
+    date: logicalDateSchema
+      .nullable()
+      .meta({
+        description:
+          "Null for a phase challenge, which opens after its preceding lessons finish. Weekly challenges and mocks keep their real calendar date.",
+      }),
     estimatedMinutes: unknownSizeSchema.meta({
       description:
         "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. Display minutes as the canonical mock duration, the real time limit funded by the plan.",
@@ -216,7 +221,7 @@ export const challengeResponseSchema = z
       .enum(CHALLENGE_STATUSES)
       .meta({
         description:
-          "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it: the next one has it); queued (a phase challenge whose lessons are done, after one still to win: it comes in the session after that one is won)",
+          "upcoming before its preceding lessons finish (or before a weekly challenge or mock's calendar date); ready or started when offered; tried after a loss today; done once won; plusRequired while locked; waiting when reached but absent from today's session or its offer is not yet established. queued is retained for older clients and is never returned",
       }),
     timeZone: z.string().nullable(),
     title: z.string(),
@@ -237,7 +242,7 @@ export const challengeResponseSchema = z
       }),
     waitReason: studyBlockSchema.shape.waitReason.meta({
       description:
-        "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) or an earlier phase challenge (`challenge`) are still pending or active. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+        "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
     }),
     written: mockWrittenPartsSchema,
     wrongPenalty: z

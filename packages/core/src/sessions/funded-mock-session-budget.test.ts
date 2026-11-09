@@ -60,7 +60,12 @@ async function setup({
     examBlueprintFixture({ structure: STRUCTURE }),
     planLibraryFixture({
       skills: [
-        { area: "Math", lessons: withBoss ? 200 : 60 },
+        ...(withBoss
+          ? [
+              { area: "Math", lessons: 1 },
+              { area: "Math", lessons: 199 },
+            ]
+          : [{ area: "Math", lessons: 60 }]),
         ...(withBoss ? [] : [{ area: "Science", lessons: 1 }]),
       ],
     }),
@@ -244,7 +249,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
     vi.useRealTimers();
   });
 
-  it("brings lessons back only as the learner's own progress frees room, and records it", async () => {
+  it("keeps the shown teaching when progress cannot free another complete core", async () => {
     const fixture = await setup({ withBoss: true });
     await moveMock({ fixture, to: BOSS_DAY });
     const finishDeferred = runDeferredWork();
@@ -312,18 +317,13 @@ describe("funded mock sessions reserve all their fixed work", () => {
     const added = writtenIds(completed).length - writtenIds(before).length;
 
     expect(keptLessons(completed)).toStrictEqual(shownLessons);
-    expect(added).toBeGreaterThan(0);
+    expect(added).toBe(0);
 
     const changes = await prisma.planChange.findMany({
       where: { kind: "estimateUpdated", planId: fixture.plan.id },
     });
 
-    expect(changes).toHaveLength(1);
-
-    expect(changes[0]?.payload).toMatchObject({
-      effect: { lessonsAdded: added, lessonsRemoved: 0 },
-      source: "system",
-    });
+    expect(changes).toHaveLength(0);
 
     const completedPace = await readPace();
     expect(completedPace?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
@@ -340,7 +340,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
     expect(openedPace?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
   });
 
-  it("funds and can start the real 15-minute boss before the 165-minute moved mock", async () => {
+  it("keeps the 165-minute moved mock alone and puts off the phase challenge", async () => {
     const fixture = await setup({ targetDate: "2020-11-09", withBoss: true });
     const { goal, plan } = fixture;
 
@@ -400,8 +400,11 @@ describe("funded mock sessions reserve all their fixed work", () => {
 
     const movedMock = onDay.find((item) => item.kind === "mock");
 
-    expect(onDay.map((item) => item.kind).toSorted()).toStrictEqual(["boss", "mock"]);
-    expect(onDay.find((item) => item.kind === "boss")?.id).toBe(boss?.id);
+    expect(onDay.map((item) => item.kind)).toStrictEqual(["mock"]);
+
+    expect(saved.find((item) => item.id === boss?.id)?.scheduledFor).not.toStrictEqual(
+      new Date(SHARED_DAY),
+    );
 
     await finishTeaching({
       beforeDate: SHARED_DAY,
@@ -427,18 +430,17 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the saved shared day before Open");
     }
 
-    expect(preview.today.session.minutes).toMatchObject({ dailyGoal: 180, planned: 180 });
+    expect(preview.today.session.minutes).toMatchObject({ dailyGoal: 165, planned: 165 });
 
     expect(preview.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([
-      boss?.id,
       movedMock?.id,
     ]);
 
     expect(preview.today.session.blocks.map((block) => block.estimatedMinutes)).toStrictEqual([
-      15, 165,
+      165,
     ]);
 
-    expect(planPreview.plan.week.days.find((day) => day.date === SHARED_DAY)?.minutes).toBe(180);
+    expect(planPreview.plan.week.days.find((day) => day.date === SHARED_DAY)?.minutes).toBe(165);
 
     const today = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
@@ -446,7 +448,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the actual shared day");
     }
 
-    expect(today.today.session.minutes).toMatchObject({ dailyGoal: 180, planned: 180 });
+    expect(today.today.session.minutes).toMatchObject({ dailyGoal: 165, planned: 165 });
     expect(today.today.planChange).toBeNull();
 
     const session = await prisma.studySession.findUniqueOrThrow({
@@ -457,12 +459,11 @@ describe("funded mock sessions reserve all their fixed work", () => {
     const checkpoints = session.blocks.filter((block) => block.kind === "checkpoint");
 
     expect(checkpoints.map((block) => readBlockPayload(block).planItemId)).toStrictEqual([
-      boss?.id,
       movedMock?.id,
     ]);
 
-    expect(checkpoints.map((block) => block.estimatedMinutes)).toStrictEqual([15, 165]);
-    expect(session.plannedMinutes).toBe(180);
+    expect(checkpoints.map((block) => block.estimatedMinutes)).toStrictEqual([165]);
+    expect(session.plannedMinutes).toBe(165);
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
@@ -472,7 +473,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
 
     await expect(
       startChallenge({ input: { timeZone: "UTC" }, planItemId: boss?.id ?? "" }),
-    ).resolves.toMatchObject({ destination: { kind: "checkpoint" }, status: "ready" });
+    ).resolves.toMatchObject({ status: "notToday" });
 
     const started = await startChallenge({
       input: { timeZone: "UTC" },
@@ -516,16 +517,18 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the first boss day");
     }
 
-    expect(skipped.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([
-      original.items.find((item) => item.kind === "boss" && item.phase === 0)?.id,
-      ...original.items
-        .filter(
-          (item) =>
-            item.kind === "lesson" &&
-            item.scheduledFor?.toISOString().slice(0, 10) === FIRST_BOSS_DAY,
-        )
-        .map((item) => item.id),
-    ]);
+    expect(skipped.today.session.blocks.map((block) => block.planItemId)).toStrictEqual(
+      expect.arrayContaining([
+        original.items.find((item) => item.kind === "boss" && item.phase === 0)?.id,
+        ...original.items
+          .filter(
+            (item) =>
+              item.kind === "lesson" &&
+              item.scheduledFor?.toISOString().slice(0, 10) === FIRST_BOSS_DAY,
+          )
+          .map((item) => item.id),
+      ]),
+    );
 
     await finishTeaching({
       items: original.items.filter((item) => item.kind === "lesson" && item.phase === 1),

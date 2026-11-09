@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   studySessionBlockFixture,
@@ -108,6 +108,237 @@ async function finish({
 
   return { complete, completion: outcome.completion.studyBlock };
 }
+
+async function setupChallengeDay({
+  minutes,
+  challengeMinutes,
+  nextPhase = false,
+  rematch = false,
+  final = false,
+}: {
+  minutes: number;
+  challengeMinutes: number;
+  nextPhase?: boolean;
+  rematch?: boolean;
+  final?: boolean;
+}) {
+  const fixture = await setup({ lessons: nextPhase ? 3 : 2, minutes, queued: 2 });
+  await prisma.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });
+
+  if (nextPhase) {
+    await prisma.planItem.update({
+      data: { phase: 1, position: 3 },
+      where: { id: fixture.plan.items[2]!.id },
+    });
+  }
+
+  const challenge = await planItemFixture({
+    kind: "boss",
+    minutes: challengeMinutes,
+    phase: 0,
+    planId: fixture.plan.id,
+    position: 2,
+  });
+
+  const block = await studySessionBlockFixture({
+    estimatedMinutes: challengeMinutes,
+    kind: "checkpoint",
+    payload: toBlockPayload({
+      checkpoint: {
+        kind: final ? "finalBoss" : "boss",
+        mock: false,
+        passMark: 7,
+        phase: 0,
+        rematch,
+        timeLimitMinutes: null,
+      },
+      planItemId: challenge.id,
+    }),
+    position: 2,
+    sessionId: fixture.session.id,
+  });
+
+  return { ...fixture, challenge, challengeBlock: block };
+}
+
+describe("phase challenges follow their lessons during refitting", () => {
+  it("cuts the challenge first on a 30-minute day when the first lesson takes 20", async () => {
+    const fixture = await setupChallengeDay({ challengeMinutes: 10, minutes: 30 });
+
+    const { completion } = await finish({
+      block: fixture.blocks[0]!,
+      elapsedMinutes: 20,
+      sessionId: fixture.session.id,
+    });
+
+    expect(completion.blocks.map((block) => block.id)).not.toContain(fixture.challengeBlock.id);
+
+    expect(completion.blocks.map((block) => block.lessonId)).toContain(
+      fixture.playable[1]!.lesson.id,
+    );
+
+    expect(completion.deferredLessonsCount).toBe(0);
+  });
+
+  it.each([
+    { final: false, rematch: false },
+    { final: false, rematch: true },
+    { final: true, rematch: false },
+  ])(
+    "fills past a trimmed challenge without locking the next phase: %j",
+    async ({ rematch, final }) => {
+      const fixture = await setupChallengeDay({
+        challengeMinutes: 20,
+        final,
+        minutes: 40,
+        nextPhase: true,
+        rematch,
+      });
+
+      const { completion } = await finish({
+        block: fixture.blocks[0]!,
+        elapsedMinutes: 20,
+        sessionId: fixture.session.id,
+      });
+
+      expect(completion.blocks.map((block) => block.id)).not.toContain(fixture.challengeBlock.id);
+
+      expect(completion.blocks.map((block) => block.lessonId)).toContain(
+        fixture.playable[2]!.lesson.id,
+      );
+
+      expect(completion.minutes.left).toBe(20);
+      expect(completion.deferredLessonsCount).toBe(0);
+    },
+  );
+
+  it("counts only lessons still absent after refill", async () => {
+    const fixture = await setupChallengeDay({ challengeMinutes: 20, minutes: 50, nextPhase: true });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 10,
+      lessonId: fixture.playable[2]!.lesson.id,
+      payload: toBlockPayload({ planItemId: fixture.plan.items[2]!.id }),
+      position: 3,
+      sessionId: fixture.session.id,
+    });
+
+    const { completion } = await finish({
+      block: fixture.blocks[0]!,
+      elapsedMinutes: 25,
+      sessionId: fixture.session.id,
+    });
+
+    expect(completion.blocks.map((block) => block.lessonId)).toContain(
+      fixture.playable[2]!.lesson.id,
+    );
+
+    expect(completion.deferredLessonsCount).toBe(0);
+    expect(completion.blocks.map((block) => block.id)).not.toContain(fixture.challengeBlock.id);
+  });
+});
+
+async function addSavedChallenge(
+  fixture: Awaited<ReturnType<typeof setup>>,
+  {
+    kind = "text",
+    position = 2,
+    minutes = 10,
+  }: { kind?: "text" | "call"; position?: number; minutes?: number } = {},
+) {
+  await prisma.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });
+
+  return planItemFixture({
+    facts: {
+      boss: {
+        kind,
+        minutes,
+        questions: kind === "call" ? null : 10,
+        testedKeys: [],
+        testedSkillIds: [fixture.plan.items[0]!.skillId!],
+        waiting: false,
+      },
+      minutes,
+      parts: { checkpoint: minutes, practice: 0, unwritten: 0, written: 0 },
+      schemaVersion: 1,
+      skillIds: [],
+    },
+    kind: "boss",
+    planId: fixture.plan.id,
+    position,
+  });
+}
+
+describe("completion adds a reached challenge from its saved facts", () => {
+  it.each([false, true])("refills a language call only with Plus (Plus: %s)", async (plus) => {
+    const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
+
+    await prisma.goal.update({
+      data: { kind: "language", targetLanguage: "en" },
+      where: { id: fixture.goal.id },
+    });
+
+    if (plus) {
+      await prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: fixture.user.id, status: "active" },
+      });
+    }
+
+    await addSavedChallenge(fixture, { kind: "call" });
+
+    const { completion } = await finish({
+      block: fixture.blocks[0]!,
+      elapsedMinutes: 5,
+      sessionId: fixture.session.id,
+    });
+
+    expect(
+      completion.blocks.some((block) => block.checkpoint !== null && block.kind === "checkpoint"),
+    ).toBe(plus);
+  });
+
+  it("inserts a newly fitting challenge before pending next-phase lessons and practice", async () => {
+    const fixture = await setup({ lessons: 4, minutes: 50, queued: 4 });
+    await prisma.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });
+
+    await prisma.planItem.update({
+      data: { phase: 1, position: 4 },
+      where: { id: fixture.plan.items[3]!.id },
+    });
+
+    const boss = await addSavedChallenge(fixture, { minutes: 15, position: 3 });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 10,
+      kind: "practice",
+      position: 4,
+      sessionId: fixture.session.id,
+    });
+
+    for (const index of [0, 1, 2]) {
+      // oxlint-disable-next-line no-await-in-loop -- each completion frees the time the next queue refit sees
+      await finish({
+        block: fixture.blocks[index]!,
+        elapsedMinutes: 5,
+        sessionId: fixture.session.id,
+      });
+    }
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { sessionId: fixture.session.id },
+    });
+
+    const challengeAt = blocks.findIndex((block) => readBlockPayload(block).planItemId === boss.id);
+    expect(challengeAt).toBeGreaterThanOrEqual(0);
+
+    expect(challengeAt).toBeLessThan(
+      blocks.findIndex((block) => block.lessonId === fixture.playable[3]!.lesson.id),
+    );
+
+    expect(challengeAt).toBeLessThan(blocks.findIndex((block) => block.kind === "practice"));
+  });
+});
 
 describe("completion refits today's lessons", () => {
   it("finishes a 100-minute day after five 20-minute lessons and keeps deferred work todo", async () => {

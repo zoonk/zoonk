@@ -46,6 +46,7 @@ export async function completeBlockMoment({
   brainPowerBefore,
   energy,
   payload,
+  phaseChallengesRequired,
   result,
   sessionId,
   source,
@@ -57,13 +58,22 @@ export async function completeBlockMoment({
   /** Null when an earlier request already settled the answers. */
   energy: ProgressChange | null;
   payload: BlockPayload;
+  phaseChallengesRequired?: boolean;
   result: BlockResult;
   sessionId: string;
   source?: MissionCompletionSource;
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion> {
-  const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
+  const settled = await settleSessionDay({
+    blockId,
+    phaseChallengesRequired,
+    sessionId,
+    source,
+    timeZone,
+    userId,
+  });
+
   const { missionResult } = settled;
   const bonus = getMissionBonus(settled.missions);
   const fullMeal = missionResult.fullMealPaid ? bonus : 0;
@@ -84,7 +94,7 @@ export async function completeBlockMoment({
       brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
       userId,
     }),
-    loadCompletionQueue({ blockId, sessionId, timeZone, userId }),
+    loadCompletionQueue({ blockId, phaseChallengesRequired, sessionId, timeZone, userId }),
   ]);
 
   const [ceremony, certificates] = await Promise.all([

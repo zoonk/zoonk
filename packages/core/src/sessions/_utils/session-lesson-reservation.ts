@@ -7,7 +7,6 @@ import { getSessionUsedMinutes } from "../session-minutes";
 import { pickDayLessons } from "./day-lessons";
 import { isMockOnlyDay } from "./day-mock";
 import { findPlannedReview } from "./day-review";
-import { keepDuelLessons, markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { canAddSessionLessons } from "./session-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionRow } from "./study-session-access";
@@ -59,27 +58,11 @@ export function getSessionLessonCandidates({
     plan: { ...plan, graph: parsePlanGraph(plan.graph), prerequisites },
   });
 
-  const checkpoints = blocks.flatMap((block) => {
-    const checkpoint = readBlockPayload(block).checkpoint;
-    return checkpoint ? [{ ...checkpoint, planItemId: readBlockPayload(block).planItemId }] : [];
-  });
-
-  const selected = [...new Set([...fillItems, ...reservedItems])].toSorted(
-    (a, b) => a.position - b.position,
-  );
-
-  const marked = markLessonsAroundChallenges({
-    checkpoints,
-    items: plan.items,
-    lessons: selected.map((item) => ({ ...item, planItemId: item.id, planItemKey: item.key })),
-    today: localDate,
-  });
-
   const held = new Set(blocks.flatMap((block) => block.lessonId ?? []));
 
-  return keepDuelLessons({ checkpoints, lessons: marked }).filter(
-    (item) => !item.lessonId || !held.has(item.lessonId),
-  );
+  return [...new Set([...fillItems, ...reservedItems])]
+    .toSorted((a, b) => a.position - b.position)
+    .filter((item) => !item.lessonId || !held.has(item.lessonId));
 }
 
 export function hasSessionLessonReservation({

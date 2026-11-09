@@ -120,7 +120,7 @@ async function complete(lessonId: string, sessionId: string) {
   ).resolves.toMatchObject({ status: "completed" });
 }
 
-describe("a course boss retrieves its tested lesson on a later study day", () => {
+describe("a course boss follows its teaching in plan order", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     on(START);
@@ -128,7 +128,7 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
 
   afterEach(() => vi.useRealTimers());
 
-  it("uses the next study day and does not offer or start the boss as soon as its lesson is completed", async () => {
+  it("offers and starts the boss after its lesson on the same day", async () => {
     const { goal, library, plan } = await setup();
     const items = await readItems(plan.id);
     const lesson = items.find((item) => item.kind === "lesson");
@@ -149,16 +149,16 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
       .soft(
         beforeGap.session.blocks.some((block) => readBlockPayload(block).planItemId === boss.id),
       )
-      .toBe(false);
+      .toBe(true);
 
     await expect
       .soft(getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }))
       .resolves.toMatchObject({
         challenge: {
-          date: "2020-09-29",
+          date: null,
           minutes: 15,
           questions: 10,
-          status: "upcoming",
+          status: "ready",
           topics: [{ name: library.skills[0]?.name }],
         },
         status: "ready",
@@ -166,7 +166,7 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
 
     await expect(
       startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
-    ).resolves.toMatchObject({ status: "notToday" });
+    ).resolves.toMatchObject({ status: "ready" });
   });
 
   it("lets a 15-minute boss lead the next 10-minute study day, with Plan, Today and the actual block sharing its whole duration", async () => {
@@ -200,7 +200,7 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
         status: "ready",
       });
 
-    expect.soft(result.today.session.minutes.dailyGoal).toBe(15);
+    expect.soft(result.today.session.minutes.dailyGoal).toBe(10);
 
     const block = result.session.blocks.find(
       (entry) => readBlockPayload(entry).planItemId === boss.id,
@@ -220,7 +220,7 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
     ).resolves.toMatchObject({ destination: { kind: "checkpoint" }, status: "ready" });
   });
 
-  it("keeps the tested lesson then the full boss on the deadline's last study day and bills 10 plus 15", async () => {
+  it("keeps the last-day lesson within its minutes and puts off the challenge", async () => {
     const { goal, plan } = await setup({
       dailyMinutes: 10,
       estimatedMinutes: 10,
@@ -253,23 +253,17 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
         status: "ready",
       });
 
-    expect.soft(result.today.session.minutes.dailyGoal).toBe(25);
-
-    const work = result.session.blocks.filter(
-      (block) => block.kind === "learn" || readBlockPayload(block).planItemId === boss.id,
-    );
-
-    expect.soft(work.map((block) => block.kind)).toStrictEqual(["learn", "checkpoint"]);
-    expect.soft(result.session.plannedMinutes).toBe(25);
-    expect.soft(work.find((block) => block.kind === "checkpoint")?.estimatedMinutes).toBe(15);
+    expect.soft(result.today.session.minutes.dailyGoal).toBe(10);
+    expect.soft(result.session.blocks.map((block) => block.kind)).toStrictEqual(["learn"]);
+    expect.soft(result.session.plannedMinutes).toBe(10);
     await complete(lesson.lessonId, result.session.id);
 
     await expect(
       startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
-    ).resolves.toMatchObject({ destination: { kind: "checkpoint" }, status: "ready" });
+    ).resolves.toMatchObject({ status: "notToday" });
   });
 
-  it("moves a held boss after its tested lesson when a missed day defers that lesson", async () => {
+  it("keeps the moved estimate but offers the challenge after its deferred lesson", async () => {
     const { goal, library, plan } = await setup();
     const before = await readItems(plan.id);
     const boss = before.find((item) => item.kind === "boss");
@@ -290,23 +284,24 @@ describe("a course boss retrieves its tested lesson on a later study day", () =>
 
     expect
       .soft(result.session.blocks.some((block) => readBlockPayload(block).planItemId === boss.id))
-      .toBe(false);
+      .toBe(true);
 
     await expect
       .soft(getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }))
       .resolves.toMatchObject({
         challenge: {
-          date: "2020-09-30",
+          date: null,
           minutes: 15,
           questions: 10,
-          status: "upcoming",
+          status: "ready",
           topics: [{ name: library.skills[0]?.name }],
+          waitReason: "lessons",
         },
         status: "ready",
       });
 
     await expect(
       startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
-    ).resolves.toMatchObject({ status: "notToday" });
+    ).resolves.toMatchObject({ reason: "lessons", status: "earlierFirst" });
   });
 });

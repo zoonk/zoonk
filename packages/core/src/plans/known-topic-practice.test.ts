@@ -17,6 +17,7 @@ import { readBlockPayload } from "../sessions/block-payload";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { getTodayView } from "../view-models/today/get-today-view";
+import { finishChallengesFixture } from "./_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
@@ -291,6 +292,7 @@ describe.each([
     expect(ordinaryLessons.every((item) => item.status === "testedOut")).toBe(true);
     expect(missedLessons.some((item) => item.status === "todo")).toBe(true);
 
+    await finishChallengesFixture(plan.id);
     const { payload } = await startPractice(goal.id);
     const ids = (skill: Skill) => new Set(itemsOf(skill).map((item) => item.id));
     const position = (skill: Skill) => payload.itemIds.findIndex((id) => ids(skill).has(id));

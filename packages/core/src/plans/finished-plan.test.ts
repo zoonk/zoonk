@@ -224,7 +224,7 @@ describe("a finished plan", () => {
     expect(beforeDue?.end).toBeNull();
 
     expect(checkpointTimings(beforeDue)).toStrictEqual(
-      Array.from({ length: challenges }, () => "date"),
+      Array.from({ length: challenges }, (_, index) => (index === 0 ? "nextSession" : "date")),
     );
 
     const bosses = await prisma.planItem.findMany({
@@ -238,7 +238,7 @@ describe("a finished plan", () => {
       throw new Error("Expected the real plan's first two dated challenges");
     }
 
-    await expect(readChallengeStatus(first.id)).resolves.toBe("upcoming");
+    await expect(readChallengeStatus(first.id)).resolves.toBe("ready");
     vi.setSystemTime(new Date(first.scheduledFor.getTime() + 12 * 60 * 60 * 1000));
 
     const view = await readPlan();
@@ -253,7 +253,7 @@ describe("a finished plan", () => {
 
     expect(checkpointIds(view)).toStrictEqual(bosses.map((boss) => boss.id));
     await expect(readChallengeStatus(first.id)).resolves.toBe("ready");
-    await expect(readChallengeStatus(second.id)).resolves.toBe("upcoming");
+    await expect(readChallengeStatus(second.id)).resolves.toBe("waiting");
 
     await expect(readTodayStatus(goal.id)).resolves.toStrictEqual(view?.status);
     await expect(readNext()).resolves.toBeNull();
@@ -295,7 +295,7 @@ describe("a finished plan", () => {
     expect(view).toMatchObject({ end: null, status: { challenges, kind: "challengesLeft" } });
 
     expect(view?.phases.flatMap((phase) => phase.checkpoint?.when ?? [])).toStrictEqual(
-      Array.from({ length: challenges }, () => "nextSession"),
+      Array.from({ length: challenges }, () => "date"),
     );
   });
 

@@ -438,9 +438,10 @@ describe("today's session the learner was shown", () => {
       where: { lessonId: { not: null }, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
     });
 
-    const due = new Set(dueToday.map((item) => item.lessonId));
+    expect(dueToday.length).toBeGreaterThan(0);
 
-    expect(learnLessonIds(today).some((id) => later.has(id) && !due.has(id))).toBe(true);
+    expect(learnLessonIds(today).some((id) => later.has(id))).toBe(true);
+    expect(today.minutes.planned).toBeLessThanOrEqual(goal.dailyMinutes);
   });
 
   it("says lessons are coming before the day opens only while someone is outlining them", async () => {

@@ -89,6 +89,7 @@ async function practiceBlock(
   const user = await userFixture();
 
   const { goal, skills } = await sessionGoalFixture({
+    challengesDone: true,
     itemsPerSkill: 0,
     lessons: 1,
     userId: user.id,
@@ -129,7 +130,14 @@ async function todayPractice({
 }) {
   const user = await userFixture();
 
-  const fixture = await sessionGoalFixture({ goal, itemsPerSkill: 0, lessons: 1, userId: user.id });
+  const fixture = await sessionGoalFixture({
+    challengesDone: true,
+    goal,
+    itemsPerSkill: 0,
+    lessons: 1,
+    userId: user.id,
+  });
+
   const skillId = fixture.skills[0]?.id ?? "";
 
   const [created] = await Promise.all([

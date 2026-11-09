@@ -9,12 +9,14 @@ import { finishLessonBlock } from "./finish-study-block";
 export async function settleFinishedLesson({
   blockId,
   energy,
+  phaseChallengesRequired,
   timeZone,
   userId,
 }: {
   blockId: string;
   /** Energy before and after the lesson, when its completion just added it (not on a replay). */
   energy?: ProgressChange | null;
+  phaseChallengesRequired?: boolean;
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion | null> {
@@ -28,7 +30,15 @@ export async function settleFinishedLesson({
   }
 
   const { session, ...block } = found;
-  const result = await finishLessonBlock({ block, energy, session, timeZone, userId });
+
+  const result = await finishLessonBlock({
+    block,
+    energy,
+    phaseChallengesRequired,
+    session,
+    timeZone,
+    userId,
+  });
 
   return result.status === "ready" ? result.completion : null;
 }

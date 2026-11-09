@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
@@ -33,13 +34,14 @@ async function setup(format: "multipleChoice" | "trueFalse") {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
 
-  const { goal } = await unplannedGoalFixture({
+  const { goal, plan } = await unplannedGoalFixture({
     createdAt: new Date(Date.now() - DAY_MS),
     timezone: TIME_ZONE,
     userId: user.id,
   });
 
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  await finishChallengesFixture(plan.id);
 
   await Promise.all(
     library.skills.map((skill) =>

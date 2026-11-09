@@ -142,7 +142,7 @@ describe("a challenge intro is a read", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("offers a due checkpoint without writing, then creates its queue only on Start", async () => {
+  it("keeps a legacy offer waiting without writing, then establishes its queue on Start", async () => {
     const { boss, goal, plan, user } = await dueBossFixture();
     const before = await readPlan(plan.id);
     const challenge = await readIntro(boss.id);
@@ -154,7 +154,7 @@ describe("a challenge intro is a read", () => {
       passMark: null,
       questions: null,
       recordings: 0,
-      status: "ready",
+      status: "waiting",
       title: "Test boss",
       topics: [],
     });
@@ -214,7 +214,7 @@ describe("a challenge intro is a read", () => {
       where: { id: plan.id },
     });
 
-    await expect(readIntro(boss.id)).resolves.toMatchObject({ status: "ready" });
+    await expect(readIntro(boss.id)).resolves.toMatchObject({ status: "waiting" });
     expect(buildSessionBlocks).not.toHaveBeenCalled();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
@@ -233,10 +233,14 @@ describe("a challenge intro is a read", () => {
     expect(buildSessionBlocks).not.toHaveBeenCalled();
   });
 
-  it("has nothing to wait for before the day is saved", async () => {
+  it("leaves a legacy offer waiting until the day is built", async () => {
     const { boss, goal } = await dueBossFixture();
 
-    await expect(readIntro(boss.id)).resolves.toMatchObject({ status: "ready", waitReason: null });
+    await expect(readIntro(boss.id)).resolves.toMatchObject({
+      status: "waiting",
+      waitReason: null,
+    });
+
     expect(buildSessionBlocks).not.toHaveBeenCalled();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
@@ -260,7 +264,7 @@ describe("a challenge intro is a read", () => {
 
       await expect(readIntro(boss.id)).resolves.toMatchObject({
         status: "ready",
-        waitReason: before,
+        waitReason: before === "lessons" ? "lessons" : null,
       });
 
       expect(buildSessionBlocks).not.toHaveBeenCalled();

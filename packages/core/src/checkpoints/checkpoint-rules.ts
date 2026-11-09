@@ -88,6 +88,7 @@ type BossPlan = {
   /** Requires plan order, with excluded areas removed. */
   skills: readonly { id: string }[];
   targetDate: Date | null;
+  phases?: readonly { kind?: string; endDate?: string | null }[];
 };
 
 type CoreLessons = ReadonlyMap<string, readonly BossPlanItem[]>;
@@ -96,13 +97,7 @@ export function isBossTeachingItem(item: Pick<BossPlanItem, "kind" | "status">):
   return LEARN_KINDS.has(item.kind) && item.status !== "skipped" && item.status !== "testedOut";
 }
 
-/** Use scheduled days rather than completion dates so early finishes do not change the skills tested. */
 function comesBy({ boss, item }: { boss: BossItem; item: BossPlanItem }): boolean {
-  if (item.scheduledFor && boss.scheduledFor) {
-    const order = item.scheduledFor.getTime() - boss.scheduledFor.getTime();
-    return order < 0 || (order === 0 && item.position < boss.position);
-  }
-
   return item.position < boss.position;
 }
 
@@ -166,7 +161,8 @@ function createCoreFor<Item extends BossPlanItem>({
   graphSkills,
   items: planItems,
   targetDate,
-}: Pick<BossPlan, "graphSkills" | "targetDate"> & { items: readonly Item[] }) {
+  phases,
+}: Pick<BossPlan, "graphSkills" | "targetDate" | "phases"> & { items: readonly Item[] }) {
   const items = planItems.toSorted((a, b) => a.position - b.position);
   const byDate = (date: Date | null) => targetDate !== null && date !== null && date <= targetDate;
   const core = listCoreLessonItems({ graphSkills, items });
@@ -176,14 +172,16 @@ function createCoreFor<Item extends BossPlanItem>({
     items: items.filter((item) => !item.scheduledFor || byDate(item.scheduledFor)),
   });
 
-  return (checkpoint: BossItem) => (byDate(checkpoint.scheduledFor) ? coreByDate : core);
-}
+  return (checkpoint: BossItem) => {
+    const phase = phases?.[checkpoint.phase];
 
-export function getBossCoreLessons<Item extends BossPlanItem>({
-  boss,
-  ...plan
-}: Pick<BossPlan, "graphSkills" | "targetDate"> & { boss: BossItem; items: readonly Item[] }) {
-  return createCoreFor(plan)(boss);
+    const beforeExam =
+      targetDate !== null && phase?.kind
+        ? phase.kind !== "afterExam" && phase.kind !== "learn"
+        : byDate(checkpoint.scheduledFor);
+
+    return beforeExam ? coreByDate : core;
+  };
 }
 
 export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {

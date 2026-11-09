@@ -1,4 +1,5 @@
 import { type StudyBlockKind, type StudyBlockStatus, type StudySessionBlock } from "@zoonk/db";
+import { isPhaseChallenge } from "../checkpoints/_utils/challenge-reach";
 import { type BlockCheckpoint, readBlockPayload } from "./block-payload";
 
 type BlockWaitFields = {
@@ -8,15 +9,11 @@ type BlockWaitFields = {
   status: StudyBlockStatus;
 };
 
-function isPhaseChallenge(block: Pick<BlockWaitFields, "checkpoint">): boolean {
-  return block.checkpoint !== null && !block.checkpoint.mock && block.checkpoint.kind !== "weekly";
-}
-
 function isUnfinished(block: Pick<BlockWaitFields, "status">): boolean {
   return block.status === "pending" || block.status === "active";
 }
 
-/** Phase challenges wait for earlier lessons and phase challenges; other blocks may open out of order. */
+/** Phase challenges wait for earlier lessons; other blocks may open out of order. */
 export function getBlockWait<Block extends BlockWaitFields>({
   block,
   blocks,
@@ -24,7 +21,7 @@ export function getBlockWait<Block extends BlockWaitFields>({
   block: Block;
   blocks: readonly Block[];
 }): "challenge" | "lessons" | null {
-  if (!isPhaseChallenge(block) || !isUnfinished(block)) {
+  if (!isPhaseChallenge(block.checkpoint) || !isUnfinished(block)) {
     return null;
   }
 
@@ -34,7 +31,7 @@ export function getBlockWait<Block extends BlockWaitFields>({
     return "lessons";
   }
 
-  return before.some((other) => isPhaseChallenge(other)) ? "challenge" : null;
+  return null;
 }
 
 type StoredWaitInput = Pick<StudySessionBlock, "kind" | "payload" | "position" | "status">;
