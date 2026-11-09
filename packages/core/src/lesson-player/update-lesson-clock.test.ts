@@ -172,6 +172,68 @@ describe(updateLessonClock, () => {
     await expect(timing()).resolves.toStrictEqual(current);
   });
 
+  it("Start resumes a paused block bound to no live clock", async () => {
+    const { lesson, session, transition } = await setup();
+    at(2);
+    await transition("paused", 1);
+    at(40);
+
+    const again = await startLibraryLesson({
+      input: { studySessionId: session.id, timeZone: "UTC" },
+      lessonId: lesson.id,
+    });
+
+    expect(again.status === "started" && again.run.clockId).toBeTruthy();
+    at(50);
+
+    await expect(
+      completeLibraryLesson({
+        input: { runId: again.status === "started" ? again.run.runId : "", timeZone: "UTC" },
+        lessonId: lesson.id,
+      }),
+    ).resolves.toMatchObject({ completion: { seconds: 720 }, status: "completed" });
+  });
+
+  it("Start resumes the lesson after another block opened and pauses that block", async () => {
+    const { lesson, session, timing } = await setup();
+
+    const other = await studySessionBlockFixture({
+      kind: "practice",
+      position: 1,
+      sessionId: session.id,
+    });
+
+    at(2);
+    await startStudyBlock({ blockId: other.id, input: { timeZone: "UTC" }, sessionId: session.id });
+    at(10);
+
+    const again = await startLibraryLesson({
+      input: { studySessionId: session.id, timeZone: "UTC" },
+      lessonId: lesson.id,
+    });
+
+    expect(again.status === "started" && again.run.clockId).toBeTruthy();
+
+    expect(
+      readBlockPayload(
+        await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: other.id } }),
+      ).timing,
+    ).toMatchObject({ activeAt: null, clock: null, elapsedMs: 480_000 });
+
+    await expect(timing()).resolves.toMatchObject({
+      activeAt: new Date(NOW.getTime() + 600_000).toISOString(),
+    });
+
+    at(20);
+
+    await expect(
+      completeLibraryLesson({
+        input: { runId: again.status === "started" ? again.run.runId : "", timeZone: "UTC" },
+        lessonId: lesson.id,
+      }),
+    ).resolves.toMatchObject({ completion: { seconds: 720 }, status: "completed" });
+  });
+
   it("does not revive a clock after another block opens", async () => {
     const { finish, session, timing, transition } = await setup();
 

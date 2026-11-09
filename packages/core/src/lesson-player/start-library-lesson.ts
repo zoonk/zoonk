@@ -69,7 +69,7 @@ async function openLessonRun({
   ]);
 
   if (existing && (!bindSession || getRunStudySessionId(existing) === studySessionId)) {
-    const reopened = await reopenRunClock({ lessonId: lesson.id, runId: existing.id, userId });
+    const reopened = await reopenRunClock({ lessonId: lesson.id, run: existing, userId });
 
     if (!reopened.run.endedAt) {
       return { ...reopened, isNew: false };
@@ -300,7 +300,7 @@ async function resumeLessonRun({
 
   const reopened =
     requested && !requested.endedAt
-      ? await reopenRunClock({ lessonId, runId: requested.id, userId })
+      ? await reopenRunClock({ lessonId, run: requested, userId })
       : null;
 
   const run =
@@ -311,17 +311,21 @@ async function resumeLessonRun({
 
 async function reopenRunClock({
   lessonId,
-  runId,
+  run,
   userId,
 }: {
   lessonId: string;
-  runId: string;
+  run: LearningEvent;
   userId: string;
 }) {
+  if (!getRunStudySessionId(run)) {
+    return { clockId: null, run };
+  }
+
   return writeLearnerChange({ userId }, async (tx) => {
-    const run = await tx.learningEvent.findUniqueOrThrow({ where: { id: runId } });
-    const clockId = await startLessonClock({ lessonId, run, tx, userId });
-    const result = { clockId, run };
+    const current = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
+    const clockId = await startLessonClock({ lessonId, run: current, tx, userId });
+    const result = { clockId, run: current };
     return clockId ? result : unchanged(result);
   });
 }

@@ -11,7 +11,7 @@ import { DaySegment, type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
-import { getDayTime, getHeldMinutes } from "./today-time";
+import { getDaySegmentCount, getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
   if (block.status !== "active" || block.questions === 0) {
@@ -40,7 +40,7 @@ export function DayProgress({ className }: { className?: string }) {
   const done = blocks.filter((block) => isFinished(block)).length;
   const held = getHeldMinutes(today.session);
 
-  if (blocks.length < 2) {
+  if (getDaySegmentCount(today.session) < 2) {
     return null;
   }
 

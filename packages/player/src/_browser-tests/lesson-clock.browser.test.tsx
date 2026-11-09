@@ -1,6 +1,13 @@
+import { Activity } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { buildAdapters, renderLessonPlayer, startedRun } from "../_test-utils/render-lesson-player";
+import { render } from "../_test-utils/render";
+import {
+  buildAdapters,
+  lessonPlayerElement,
+  renderLessonPlayer,
+  startedRun,
+} from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
@@ -59,6 +66,40 @@ describe("lesson clock", () => {
       { clockId, runId, sequence: 2, state: "running" },
       { clockId, runId, sequence: 3, state: "paused" },
     ]);
+  });
+
+  it("resumes a lesson restored by Back after Activity hides it", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const clockId = crypto.randomUUID();
+    const runId = crypto.randomUUID();
+    const updateLessonClock = clockServer();
+    const startLesson = vi.fn(() => Promise.resolve(startedRun({ clockId, runId })));
+
+    const player = lessonPlayerElement({
+      adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
+      lesson,
+    });
+
+    const view = render(<Activity mode="visible">{player}</Activity>);
+    await expect.poll(() => startLesson.mock.calls.length).toBe(1);
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+    view.rerender(<Activity mode="hidden">{player}</Activity>);
+
+    await expect
+      .poll(() => transitions(updateLessonClock))
+      .toStrictEqual([{ clockId, runId, sequence: 1, state: "paused" }]);
+
+    view.rerender(<Activity mode="visible">{player}</Activity>);
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+
+    await expect
+      .poll(() => transitions(updateLessonClock))
+      .toStrictEqual([
+        { clockId, runId, sequence: 1, state: "paused" },
+        { clockId, runId, sequence: 2, state: "running" },
+      ]);
+
+    expect(startLesson).toHaveBeenCalledOnce();
   });
 
   it("pauses the clock of a start that answers after the learner closed the lesson", async () => {

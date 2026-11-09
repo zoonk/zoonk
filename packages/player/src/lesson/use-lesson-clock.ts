@@ -10,14 +10,6 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
   const clockRef = useRef<LessonClock | null>(null);
   const openRef = useRef(false);
 
-  useEffect(() => {
-    openRef.current = true;
-
-    return () => {
-      openRef.current = false;
-    };
-  }, []);
-
   const move = useCallback(
     (state: LessonClock["transition"]["state"]) => {
       const next = moveClock(clockRef.current, state);
@@ -38,6 +30,18 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
     },
     [adapters],
   );
+
+  useEffect(() => {
+    openRef.current = true;
+
+    if (document.visibilityState === "visible") {
+      move("running");
+    }
+
+    return () => {
+      openRef.current = false;
+    };
+  }, [move]);
 
   usePageLifecycle({
     onAway: () => move("paused"),

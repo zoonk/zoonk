@@ -1,7 +1,11 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { type LearningEvent, type TransactionClient } from "@zoonk/db";
-import { getBlockElapsedMs } from "../../sessions/_utils/block-timing";
+import {
+  getBlockElapsedMs,
+  lockStudyBlockClocks,
+  pauseOtherStudyBlocks,
+} from "../../sessions/_utils/block-timing";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { getRunStudySessionId } from "./lesson-runs";
 
@@ -31,16 +35,20 @@ export async function startLessonClock({
     blocks.find((block) => {
       const timing = readBlockPayload(block).timing;
       return timing ? timing.activeAt !== null : block.startedAt !== null;
-    }) ?? blocks.find((block) => readBlockPayload(block).timing?.clock?.runId === run.id);
+    }) ??
+    blocks.find((block) => readBlockPayload(block).timing?.clock?.runId === run.id) ??
+    blocks[0];
 
   if (!found) {
     return null;
   }
 
-  await tx.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${found.id}::uuid FOR UPDATE`;
+  const lockedIds = await lockStudyBlockClocks({ blockId: found.id, tx, userId });
   const block = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: found.id } });
   const now = new Date();
   const id = randomUUID();
+
+  await pauseOtherStudyBlocks({ blockId: block.id, lockedIds, now, tx });
 
   await tx.studySessionBlock.update({
     data: {
