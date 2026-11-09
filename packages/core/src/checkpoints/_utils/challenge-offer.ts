@@ -7,6 +7,8 @@ import {
 } from "../../plans/_utils/selected-item-contract";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getBossQuestionSkills } from "../checkpoint-minutes";
+import { isBossTeachingItem } from "../checkpoint-rules";
+import { isChallengeReached } from "./challenge-reach";
 import { type OwnedChallenge } from "./owned-challenge";
 
 type BossFacts = NonNullable<SavedItemFacts["boss"]>;
@@ -30,18 +32,35 @@ export function getOfferQuestions(offer: BossFacts | null): number | null {
   return offer?.questions ?? null;
 }
 
-export function getOfferSkillIds(challenge: OwnedChallenge): string[] {
-  const offer = readBossOffer(challenge);
+function getPreviewSkillIds(challenge: OwnedChallenge): string[] {
+  const preview =
+    challenge.item.kind === "boss" &&
+    challenge.item.status === "todo" &&
+    !isChallengeReached({ boss: challenge.item, items: challenge.items });
 
-  if (!offer || offer.waiting) {
-    return [];
+  if (!preview) {
+    const offer = readBossOffer(challenge);
+    return offer && !offer.waiting ? offer.testedSkillIds : [];
   }
 
+  return [
+    ...new Set(
+      challenge.items
+        .filter((item) => item.position < challenge.item.position && isBossTeachingItem(item))
+        .flatMap(
+          (item) =>
+            readSelectedItemFacts(item.facts)?.skillIds ?? (item.skillId ? [item.skillId] : []),
+        ),
+    ),
+  ];
+}
+
+export function getOfferSkillIds(challenge: OwnedChallenge): string[] {
   return getBossQuestionSkills({
     listeningSkillIds: getListeningSkillIds({
       exam: toListeningExam(challenge.goal),
       graph: parsePlanGraph(challenge.plan.graph),
     }),
-    skillIds: offer.testedSkillIds,
+    skillIds: getPreviewSkillIds(challenge),
   }).skillIds;
 }
