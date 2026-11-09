@@ -187,6 +187,7 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
           settings: parsePlanSettings(challenge.plan.settings),
           today,
           todayBlocks,
+          todaySessionDate: savedDay?.localDate,
         }).get(item.id)
       : null;
 

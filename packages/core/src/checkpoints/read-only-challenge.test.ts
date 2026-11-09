@@ -329,10 +329,78 @@ describe("a challenge intro is a read", () => {
         .flatMap((phase) => phase.checkpoint ?? [])
         .find((entry) => entry.planItemId === boss.id);
 
-      expect.soft(checkpoint?.when).toBe("nextSession");
+      expect.soft(checkpoint).toMatchObject({ date: "2026-10-01", when: "nextSession" });
       expect(screen).toMatchObject({ blockId: opened.destination.blockId, status: "started" });
     },
   );
+
+  it("dates a challenge outside the carried session from the day Today shows next", async () => {
+    const { boss, goal, user } = await dueBossFixture((skillIds) => ({
+      kind: "text",
+      minutes: 15,
+      questions: 10,
+      testedKeys: [],
+      testedSkillIds: skillIds,
+      waiting: false,
+    }));
+
+    const startedAt = new Date("2026-09-30T23:50:00Z");
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: SESSION_TODAY,
+      missions: [],
+      startedAt,
+      status: "active",
+      userId: user.id,
+    });
+
+    await studySessionBlockFixture({
+      kind: "practice",
+      payload: toBlockPayload({}),
+      position: 0,
+      sessionId: session.id,
+      startedAt,
+      status: "active",
+    });
+
+    async function readViews() {
+      const [today, view, screen] = await Promise.all([
+        readStudyDay({ goal, now: new Date(), timeZone: "UTC", userId: user.id }),
+        getGoalPlan(goal.id),
+        readIntro(boss.id),
+      ]);
+
+      if (view.status !== "ready") {
+        throw new Error("Expected the Plan");
+      }
+
+      const checkpoint = view.plan.phases
+        .flatMap((phase) => phase.checkpoint ?? [])
+        .find((entry) => entry.planItemId === boss.id);
+
+      return { checkpoint, screen, today };
+    }
+
+    vi.setSystemTime(new Date("2026-10-01T00:05:00Z"));
+    const carried = await countDatabaseStatements(readViews);
+    expect(carried.writes).toBe(0);
+    expect(carried.result.today?.session.localDate).toStrictEqual(SESSION_TODAY);
+
+    expect(carried.result.today?.session.blocks.some((block) => block.kind === "checkpoint")).toBe(
+      false,
+    );
+
+    expect.soft(carried.result.checkpoint).toMatchObject({ date: "2026-10-01", when: "date" });
+    expect.soft(carried.result.screen).toMatchObject({ date: "2026-10-01", status: "upcoming" });
+
+    vi.setSystemTime(new Date("2026-10-01T01:00:00Z"));
+    const afterCarry = await countDatabaseStatements(readViews);
+    expect(afterCarry.writes).toBe(0);
+    expect(afterCarry.result.today?.session.localDate).toStrictEqual(new Date("2026-10-01"));
+    expect(afterCarry.result.checkpoint).toMatchObject({ date: "2026-10-01", when: "nextSession" });
+    expect(afterCarry.result.screen).toMatchObject({ date: null, status: "ready" });
+  });
 
   it("dates a reached challenge left outside today's saved session from the Plan's timing", async () => {
     const { boss, goal, user } = await dueBossFixture((skillIds) => ({

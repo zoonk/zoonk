@@ -25,6 +25,7 @@ export function getChallengeTimings({
   settings,
   today,
   todayBlocks,
+  todaySessionDate = today,
 }: {
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   items: readonly TimingItem[];
@@ -33,8 +34,9 @@ export function getChallengeTimings({
   today: Date;
   /** Today's saved blocks once Start built the day, else the day Today plans (`previewTodayBlocks`). */
   todayBlocks: readonly Pick<StudySessionBlock, "payload" | "status">[];
+  todaySessionDate?: Date;
 }): ReadonlyMap<string, ChallengeTiming> {
-  const tomorrow = addDays(today, 1);
+  const tomorrow = addDays(todaySessionDate, 1);
 
   const last = Math.max(
     tomorrow.getTime(),

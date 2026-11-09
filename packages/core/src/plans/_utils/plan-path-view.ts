@@ -60,6 +60,7 @@ export function buildPlanPath({ challengeResults, context, today, ...input }: Pa
       settings: state.settings,
       today: context.today,
       todayBlocks: today.blocks,
+      todaySessionDate: today.session?.localDate,
     }),
     today: context.today,
     todayItemKeys: new Set(
