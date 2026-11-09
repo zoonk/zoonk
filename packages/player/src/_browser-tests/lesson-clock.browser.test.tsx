@@ -1,3 +1,4 @@
+import { act } from "@testing-library/react";
 import { Activity } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
@@ -152,6 +153,61 @@ describe("lesson clock", () => {
         ]);
 
       expect(startLesson).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it.each(["Activity", "visibility"])(
+    "does not restart an ignored running clock after leaving through %s again",
+    async (through) => {
+      const lesson = buildLesson([teachingStep("check")]);
+      const runId = crypto.randomUUID();
+      const [firstClock, secondClock] = [crypto.randomUUID(), crypto.randomUUID()];
+      const running = Promise.withResolvers<{ status: "ignored" }>();
+
+      const updateLessonClock = clockServer().mockImplementation((input) =>
+        input.state === "running" ? running.promise : Promise.resolve({ status: "updated" }),
+      );
+
+      const startLesson = vi
+        .fn<LessonPlayerAdapters["startLesson"]>()
+        .mockResolvedValueOnce(startedRun({ clockId: firstClock, runId }))
+        .mockResolvedValue(startedRun({ clockId: secondClock, runId }));
+
+      const player = lessonPlayerElement({
+        adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
+        lesson,
+      });
+
+      const view = render(<Activity mode="visible">{player}</Activity>);
+      await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+
+      function show(visible: boolean) {
+        if (through === "Activity") {
+          view.rerender(<Activity mode={visible ? "visible" : "hidden"}>{player}</Activity>);
+        } else {
+          setVisibility(visible ? "visible" : "hidden");
+        }
+      }
+
+      show(false);
+      await expect.poll(() => transitions(updateLessonClock)).toHaveLength(1);
+      show(true);
+      await expect.poll(() => transitions(updateLessonClock)).toHaveLength(2);
+      show(false);
+      await expect.poll(() => transitions(updateLessonClock)).toHaveLength(3);
+
+      await act(async () => {
+        running.resolve({ status: "ignored" });
+        await running.promise;
+      });
+
+      expect(startLesson).toHaveBeenCalledOnce();
+
+      expect(transitions(updateLessonClock)).toStrictEqual([
+        { clockId: firstClock, runId, sequence: 1, state: "paused" },
+        { clockId: firstClock, runId, sequence: 2, state: "running" },
+        { clockId: firstClock, runId, sequence: 3, state: "paused" },
+      ]);
     },
   );
 
