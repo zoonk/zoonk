@@ -337,46 +337,69 @@ describe("completion adds a reached challenge from its saved facts", () => {
     },
   );
 
-  it("keeps a full-review day free of phase challenges during the final refill", async () => {
-    const fixture = await setup({ lessons: 1, minutes: 30, queued: 0 });
-    await addSavedChallenge(fixture, { position: 1 });
+  it.each([true, false])(
+    "keeps a full-review day free of challenges and new lessons during the final refill (every topic covered: %s)",
+    async (covered) => {
+      const fixture = await setup({ lessons: 2, minutes: 30, queued: 0 });
 
-    await prisma.goal.update({
-      data: { kind: "exam", targetDate: new Date("2026-10-04") },
-      where: { id: fixture.goal.id },
-    });
+      await prisma.planItem.update({
+        data: { minutes: 5, phase: 1, position: 3 },
+        where: { id: fixture.plan.items[1]!.id },
+      });
 
-    await prisma.planItem.update({
-      data: { completedAt: NOW, status: "done" },
-      where: { id: fixture.plan.items[0]!.id },
-    });
+      await prisma.lesson.update({
+        data: { estimatedMinutes: 5 },
+        where: { id: fixture.playable[1]!.lesson.id },
+      });
 
-    await planItemFixture({
-      kind: "mock",
-      planId: fixture.plan.id,
-      position: 2,
-      scheduledFor: fixture.session.localDate,
-    });
+      await addSavedChallenge(fixture, { position: 1 });
 
-    const review = await studySessionBlockFixture({
-      completedAt: NOW,
-      estimatedMinutes: 30,
-      kind: "practice",
-      payload: toBlockPayload({ creditedMinutes: 15, fullReview: true }),
-      position: 0,
-      sessionId: fixture.session.id,
-      startedAt: NOW,
-      status: "completed",
-    });
+      await prisma.goal.update({
+        data: { kind: "exam", targetDate: new Date("2026-10-04") },
+        where: { id: fixture.goal.id },
+      });
 
-    await prisma.$transaction((tx) =>
-      refitSessionLessons(tx, { sessionId: fixture.session.id, timeZone: "UTC" }),
-    );
+      await prisma.planItem.update({
+        data: { completedAt: NOW, status: "done" },
+        where: { id: fixture.plan.items[0]!.id },
+      });
 
-    await expect(
-      prisma.studySessionBlock.findMany({ where: { sessionId: fixture.session.id } }),
-    ).resolves.toMatchObject([{ id: review.id, status: "completed" }]);
-  });
+      await planItemFixture({
+        kind: "mock",
+        planId: fixture.plan.id,
+        position: 2,
+        scheduledFor: fixture.session.localDate,
+      });
+
+      const reviews = await Promise.all(
+        (covered ? [30] : [15, 15]).map((minutes, position) =>
+          studySessionBlockFixture({
+            completedAt: NOW,
+            estimatedMinutes: minutes,
+            kind: "practice",
+            payload: toBlockPayload({ creditedMinutes: covered ? 15 : 7, fullReview: covered }),
+            position,
+            sessionId: fixture.session.id,
+            startedAt: NOW,
+            status: "completed",
+          }),
+        ),
+      );
+
+      const refit = await prisma.$transaction((tx) =>
+        refitSessionLessons(tx, { sessionId: fixture.session.id, timeZone: "UTC" }),
+      );
+
+      expect(refit.reserved).toBe(false);
+
+      await expect(
+        prisma.studySessionBlock.findMany({
+          orderBy: { position: "asc" },
+          where: { sessionId: fixture.session.id },
+        }),
+      ).resolves.toMatchObject(reviews.map((review) => ({ id: review.id, status: "completed" })));
+    },
+  );
 
   it("keeps a planned review day free of phase challenges during refill", async () => {
     const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });

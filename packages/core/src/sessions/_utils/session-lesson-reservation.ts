@@ -7,6 +7,7 @@ import { getSessionUsedMinutes } from "../session-minutes";
 import { pickDayLessons } from "./day-lessons";
 import { isMockOnlyDay } from "./day-mock";
 import { isSavedReviewDay } from "./day-review";
+import { type ExamPrepAccess } from "./exam-access";
 import { canAddSessionLessons } from "./session-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionRow } from "./study-session-access";
@@ -19,24 +20,29 @@ type ReservationBlock = Pick<
 type ReservationPlan = { graph: unknown; settings: unknown; items: readonly SessionPlanItem[] };
 
 export function getSessionLessonCandidates({
+  access,
   goal,
   localDate,
   plan,
   blocks,
   prerequisites = new Map(),
-  trialEnded = false,
 }: {
+  access: ExamPrepAccess;
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   localDate: Date;
   plan: ReservationPlan;
   blocks: readonly ReservationBlock[];
   prerequisites?: ReadonlyMap<string, readonly string[]>;
-  trialEnded?: boolean;
 }) {
   if (
     !canAddSessionLessons({
-      reviewDay: isSavedReviewDay({ blocks, items: plan.items, today: localDate }),
-      trialEnded,
+      reviewDay: isSavedReviewDay({
+        blocks,
+        includesMockExams: access.includesMockExams,
+        items: plan.items,
+        today: localDate,
+      }),
+      trialEnded: access.trialEnded,
     }) ||
     isMockOnlyDay({
       goal,
@@ -64,18 +70,18 @@ export function getSessionLessonCandidates({
 }
 
 export function hasSessionLessonReservation({
+  access,
   session,
   plan,
   prerequisites,
-  trialEnded = false,
 }: {
+  access: ExamPrepAccess;
   session: Pick<StudySessionRow, "goal" | "freshStart" | "localDate" | "plannedMinutes"> & {
     blocks: readonly ReservationBlock[];
     status?: StudySessionRow["status"];
   };
   plan: ReservationPlan | null;
   prerequisites?: ReadonlyMap<string, readonly string[]>;
-  trialEnded?: boolean;
 }): boolean {
   if (
     !session.goal ||
@@ -92,12 +98,12 @@ export function hasSessionLessonReservation({
   const room = session.plannedMinutes - getSessionUsedMinutes(session.blocks);
 
   const candidates = getSessionLessonCandidates({
+    access,
     blocks: session.blocks,
     goal: session.goal,
     localDate: session.localDate,
     plan,
     prerequisites,
-    trialEnded,
   });
 
   const pace = parsePlanSettings(plan.settings).pace?.factor ?? 1;

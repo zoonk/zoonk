@@ -15,25 +15,26 @@ import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 import { isMockOnlyDay } from "./day-mock";
 import { isSavedReviewDay } from "./day-review";
 import { fundLeadingChallenges, getLeadingChallenges, listDayStretch } from "./day-stretch";
+import { type ExamPrepAccess } from "./exam-access";
 import { canHoldPhaseChallenges } from "./phase-challenge-day";
 import { type StudySessionRow } from "./study-session-access";
 
 type ChallengeRefillInput = {
+  access: ExamPrepAccess;
   blocks: readonly StudySessionBlock[];
   leaving: readonly StudySessionBlock[];
   plan: Pick<Plan, "settings"> & { items: PlanItem[] };
   session: StudySessionRow & { goal: Goal };
-  trialEnded: boolean;
 };
 
 function getRefillCheckpoints({
+  access,
   blocks,
   held,
   mockOnlyDay,
   leaving,
   plan,
   session,
-  trialEnded,
 }: ChallengeRefillInput & {
   held: ReadonlySet<string>;
   mockOnlyDay: boolean;
@@ -50,8 +51,13 @@ function getRefillCheckpoints({
 
   return canHoldPhaseChallenges({
     mockOnlyDay,
-    reviewDay: isSavedReviewDay({ blocks, items: plan.items, today: session.localDate }),
-    trialEnded,
+    reviewDay: isSavedReviewDay({
+      blocks,
+      includesMockExams: access.includesMockExams,
+      items: plan.items,
+      today: session.localDate,
+    }),
+    trialEnded: access.trialEnded,
   })
     ? plan.items.flatMap((item): PlannedCheckpoint[] => {
         const facts = readSelectedItemFacts(item.facts)?.boss;
@@ -91,11 +97,11 @@ function getRefillCheckpoints({
 }
 
 export async function fitRefillStretch({
+  access,
   blocks,
   leaving,
   plan,
   session,
-  trialEnded,
   lessons,
   budget,
   tx,
@@ -108,6 +114,7 @@ export async function fitRefillStretch({
   );
 
   const checkpoints = getRefillCheckpoints({
+    access,
     blocks,
     held,
     leaving,
@@ -120,7 +127,6 @@ export async function fitRefillStretch({
     }),
     plan,
     session,
-    trialEnded,
   });
 
   const ahead = new Set(

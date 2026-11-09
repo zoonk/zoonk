@@ -4,6 +4,7 @@ import { addDays, daysBetween, toIsoDate } from "../../plans/planner/plan-calend
 import { DAYS_PER_WEEK, type PlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { isMockOnlyDay } from "../../sessions/_utils/day-mock";
+import { findPlannedReview } from "../../sessions/_utils/day-review";
 import { fundLeadingChallenges } from "../../sessions/_utils/day-stretch";
 import { canHoldPhaseChallenges } from "../../sessions/_utils/phase-challenge-day";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -48,9 +49,11 @@ export function getChallengeTimings({
   );
 
   const capacity = (date: Date) => {
-    const blocked = items.some(
-      (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
-    );
+    const blocked =
+      (date.getTime() === today.getTime() && findPlannedReview({ items, today }) !== null) ||
+      items.some(
+        (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
+      );
 
     return canHoldPhaseChallenges({
       mockOnlyDay: isMockOnlyDay({

@@ -9,6 +9,7 @@ import {
   type AlphabetIntro,
   loadAlphabetIntro,
 } from "../../library/language/alphabet/alphabet-intro";
+import { getItemKey } from "../../plans/planner/plan-items";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { type BlockDrill } from "../block-payload";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
@@ -287,7 +288,7 @@ export async function loadSessionBuildInput(
     practiceShare: getDayPracticeShare({ goal, items: plan.items, today: localDate }),
     produce,
     reviewPlanItemId: reviewDay?.id ?? null,
-    reviewPlanItemKey: reviewDay?.key ?? null,
+    reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
     topics: getPlanTopics(plan.graph),
     writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
   };

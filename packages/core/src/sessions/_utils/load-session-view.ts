@@ -167,7 +167,7 @@ export async function loadStudySessionView({
       localDate: session.localDate,
       userId,
     }),
-    loadLessonReservation({ current, plan, session, trialEnded: examAccess.trialEnded }),
+    loadLessonReservation({ access: examAccess, current, plan, session }),
   ]);
 
   const view = toStudySessionView({
