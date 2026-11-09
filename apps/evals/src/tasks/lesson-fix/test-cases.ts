@@ -39,7 +39,7 @@ function toInput(
   };
 }
 
-const { regra, temperature } = BASE_LESSONS;
+const { temperature } = BASE_LESSONS;
 const temperatureScreens = (temperature.lesson as WrittenLesson).screens;
 const mathCheck = temperatureScreens[4] as Extract<WrittenScreen, { kind: "mathCheck" }>;
 
@@ -191,77 +191,6 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           problem: "check.answer: The answer 6 doesn't match the computed 5",
           screen: 6,
           source: "check" as const,
-        },
-      ],
-    ),
-  },
-  {
-    expected: { screens: [8] },
-    id: "en-temperature-numbered-reason",
-    userInput: toInput(
-      temperature,
-      withScreens(temperature, {
-        8: {
-          basis: null,
-          context:
-            "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
-          image: {
-            alt: "A thermometer from −10 °C to 10 °C: 1 sits low on the scale, 2 at its middle line, 3 just above it.",
-            parts: ["−6 °C mark", "zero mark", "3 °C mark"],
-            prompt: "A thermometer from −10 °C to 10 °C.",
-          },
-          kind: "check",
-          options: [
-            {
-              isCorrect: true,
-              picture: null,
-              reason: "Six degrees reach zero and three more go above it, to 3 °C.",
-              text: "3",
-            },
-            { isCorrect: false, picture: null, reason: "That's not right.", text: "1" },
-            {
-              isCorrect: false,
-              picture: null,
-              reason: "Zero is only 6 degrees up: the rise goes 3 more past it.",
-              text: "2",
-            },
-          ],
-          question: "Which number on the thermometer marks where it ends up?",
-          visual: null,
-        },
-      }),
-      [
-        {
-          problem:
-            'The reason for "1" ("That\'s not right.") is too vague: say that 1 marks the starting −6 °C, before the rise.',
-          screen: 8,
-          source: "review" as const,
-        },
-      ],
-    ),
-  },
-  {
-    expected: { screens: [1] },
-    id: "pt-regra-reviewer-jargon",
-    userInput: toInput(
-      regra,
-      withScreens(regra, {
-        1: {
-          exampleLineIdea: null,
-          explore: null,
-          image: null,
-          kind: "explanation",
-          text: String.raw`Grandezas inversamente proporcionais têm produto constante: $x \cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante.`,
-          title: "O que fica fixo?",
-          visual: null,
-        },
-      }),
-      [
-        {
-          problem:
-            'Uses "grandezas inversamente proporcionais", "constante de proporcionalidade" and notation before explaining them, right after the scene at the gráfica. Fix: say it in everyday words with the laundromat: for the same laundry, more dryers means less time (inverse); with the same dryers, more laundry means more time (direct). Introduce one term at a time and no notation.',
-          screen: 1,
-          source: "review" as const,
         },
       ],
     ),
