@@ -23,8 +23,8 @@ import { saveAnswerGoal } from "./save-answer-goal";
 type Details = Record<string, unknown>;
 
 const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
+const REASON_ANSWER_KEYS = new Set(["reason", "targetScore"]);
 
-/** Replacing a level answer must clear old known subjects, including a return to None of them yet. */
 function withoutReplacedAnswer({
   details,
   input,
@@ -32,6 +32,12 @@ function withoutReplacedAnswer({
   details: Details;
   input: OnboardingAnswerInput;
 }): Details {
+  if (input.question === "reason") {
+    return Object.fromEntries(
+      Object.entries(details).filter(([key]) => !REASON_ANSWER_KEYS.has(key)),
+    );
+  }
+
   return input.question === "level"
     ? Object.fromEntries(Object.entries(details).filter(([key]) => !LEVEL_ANSWER_KEYS.has(key)))
     : details;
