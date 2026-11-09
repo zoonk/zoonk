@@ -352,7 +352,7 @@ class LessonPlayerViewModel(
                 }
             if (input.state == LessonClockInput.State.RUNNING &&
                 result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
-                sessions.current == session && clock?.clockId == input.clockId
+                sessions.current == session && clock == input
             ) {
                 start(input.runId.toString())
             }

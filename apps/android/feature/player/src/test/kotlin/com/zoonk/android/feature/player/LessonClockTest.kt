@@ -108,6 +108,29 @@ class LessonClockTest {
             )
         }
 
+    @Test fun ignoredRunningDoesNotRestartAfterLeavingAgain() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            api.clockId = UUID.randomUUID()
+            val running = CompletableDeferred<LessonClockResult>()
+            api.clockResponse = {
+                if (it.state == RUNNING) running.await() else LessonClockResult(LessonClockResult.Status.UPDATED)
+            }
+            player.leave()
+            runCurrent()
+            player.resume()
+            runCurrent()
+            assertEquals(listOf(update(1, PAUSED), update(2, RUNNING)), api.clockUpdates.map { it.second })
+            player.leave()
+            runCurrent()
+            running.complete(LessonClockResult(LessonClockResult.Status.IGNORED))
+            advanceUntilIdle()
+
+            assertEquals(listOf(null), api.startRunIds)
+            assertEquals(listOf(update(1, PAUSED), update(2, RUNNING), update(3, PAUSED)), api.clockUpdates.map { it.second })
+        }
+
     @Test fun standaloneLessonsSkipClockCalls() =
         runTest(dispatcher) {
             api.clockId = null
