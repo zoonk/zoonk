@@ -6,7 +6,6 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { type GoalRunContext } from "./goal-run-context";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import {
-  checkWarmUpKeysStep,
   checkWarmUpStep,
   claimWarmUpStep,
   failWarmUpStep,
@@ -31,19 +30,7 @@ async function writeDeck({
   const analytics = toContentAnalytics({ ...context, scope });
 
   try {
-    const draft = await writeWarmUpStep({ analytics, id, input, workflowRunId });
-
-    if (!draft) {
-      return null;
-    }
-
-    const written = await checkWarmUpKeysStep({
-      analytics,
-      id,
-      input,
-      workflowRunId,
-      written: draft,
-    });
+    const written = await writeWarmUpStep({ analytics, id, input, workflowRunId });
 
     if (!written) {
       return null;

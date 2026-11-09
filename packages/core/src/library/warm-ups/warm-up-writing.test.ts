@@ -1,4 +1,3 @@
-import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
 import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
@@ -10,7 +9,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { checkWarmUp } from "./check-warm-up";
-import { checkWarmUpKeys } from "./check-warm-up-keys";
 import {
   type WarmUpClaim,
   claimWarmUp,
@@ -22,8 +20,6 @@ import { saveWarmUp } from "./save-warm-up";
 import { warmUpDeckSchema } from "./warm-up-contract";
 import { getWarmUpKey } from "./warm-up-key";
 import { writeWarmUp } from "./write-warm-up";
-
-vi.mock("@zoonk/ai/tasks/items/solve", () => ({ solveItems: vi.fn() }));
 
 function result<T>(data: T, model = "openai/gpt-6-luna") {
   return {
@@ -127,58 +123,6 @@ describe("shared warm-up writing", () => {
         "anthropic/claude-haiku-5.5",
       ),
     );
-  });
-
-  it("drops a warm-up card whose key a blind solve disagrees with before saving the deck", async () => {
-    const { goals, scope } = await newGoals();
-    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
-    const claim = await claimWarmUp(request);
-
-    if (claim.status !== "claimed") {
-      throw new Error("Expected the test to own this deck");
-    }
-
-    const input = { id: claim.id, input: claim.input, workflowRunId: request.workflowRunId };
-    const written = await writeWarmUp(input);
-
-    if (!written) {
-      throw new Error("Expected a written deck");
-    }
-
-    vi.mocked(solveItems).mockResolvedValue(
-      result({
-        solutions: [
-          { format: "multipleChoice" as const, picks: [1], work: "The other option is right." },
-          { format: "multipleChoice" as const, picks: [0], work: "Three." },
-          { format: "multipleChoice" as const, picks: [0], work: "Four." },
-        ],
-      }),
-    );
-
-    const keyed = await checkWarmUpKeys({ ...input, written });
-
-    expect(keyed?.cards.map(({ id }) => id)).toStrictEqual(
-      written.cards.slice(1).map(({ id }) => id),
-    );
-
-    if (!keyed) {
-      throw new Error("Expected the key check to hold the claim");
-    }
-
-    const checked = await checkWarmUp({ ...input, written: keyed });
-
-    if (!checked) {
-      throw new Error("Expected the quality check to hold the claim");
-    }
-
-    await saveWarmUp({ ...input, checked, goalId: request.goalId, written: keyed });
-    const saved = await prisma.warmUp.findUniqueOrThrow({ where: { id: claim.id } });
-
-    expect(
-      warmUpDeckSchema
-        .parse({ cards: saved.cards, id: saved.id, language: saved.language })
-        .cards.map(({ question }) => question),
-    ).not.toContain(written.cards[0]!.question);
   });
 
   it("records one deck save when the successful save is replayed", async () => {

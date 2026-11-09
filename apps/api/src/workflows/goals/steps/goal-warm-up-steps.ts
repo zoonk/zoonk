@@ -1,6 +1,5 @@
 import { trackOnboardingProgress } from "@zoonk/core/analytics/track-onboarding-progress";
 import { checkWarmUp } from "@zoonk/core/library/warm-ups/check";
-import { checkWarmUpKeys } from "@zoonk/core/library/warm-ups/check-keys";
 import { claimWarmUp, failWarmUp, readWarmUpStatus } from "@zoonk/core/library/warm-ups/claim";
 import { saveWarmUp } from "@zoonk/core/library/warm-ups/save";
 import { writeWarmUp } from "@zoonk/core/library/warm-ups/write";
@@ -52,10 +51,4 @@ export async function failWarmUpStep(input: Parameters<typeof failWarmUp>[0]) {
   "use step";
 
   return failWarmUp(input);
-}
-
-export async function checkWarmUpKeysStep(input: Parameters<typeof checkWarmUpKeys>[0]) {
-  "use step";
-
-  return checkWarmUpKeys(input);
 }
