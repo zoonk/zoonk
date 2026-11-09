@@ -37,6 +37,7 @@ import { useSessionAction } from "./use-session-action";
 function MomentEarned({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
   const brainPower = getOwnBrainPower(moment);
 
   const facts = [
@@ -49,6 +50,11 @@ function MomentEarned({ moment }: { moment: StudyMomentView }) {
         }),
       }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
+    moment.deferredLessonsCount > 0 &&
+      t(
+        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
+        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
+      ),
   ];
 
   return <MomentReadouts brainPower={brainPower} facts={facts} />;
