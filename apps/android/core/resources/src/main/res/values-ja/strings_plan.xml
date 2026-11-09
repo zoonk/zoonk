@@ -220,8 +220,8 @@
   "plan_coverage": "ef6358ca75573796bae5ea36f574fb24a4a6251e753ab45a4909d0f528442e5c",
   "plan_coverage_caption": "95402fdf06a28e35ea94a3ac4d864f61fae8ca7218d1cc77136a35fc4eac4bec",
   "plan_covered_not_enough": "dcd0bdb516bb674857fcc519819726883b6fb1d6cdf0fb784d3573c275199957",
-  "plan_date_estimate": "93622e33d18e73a37c6b6e19c8e1080717cb7c0e55af66a9d0697e52b31fa0d6",
-  "plan_date_estimate_spoken": "78a8427d61e1492cd0b27821525972779a270ded1fc6260d3793ce988b54b834",
+  "plan_date_estimate": "d5e918a01e2d9aa07b71490c490465a4e16ffe7dd1e3f58caf91dfdb45988295",
+  "plan_date_estimate_spoken": "df55a1ad97a556d57366f607334d4540574bf16f3c11c99b20e89355d19d4bc7",
   "plan_date_range": "4ffb9e72b56cd3482d3e90f259bb30cb45dc9a9cfd53787197f5bbf814cc4f89",
   "plan_date_to_be_confirmed": "f5a65bb177fa910f93cb200cdf9a2405e8abaca6677c6f80b2c9dd9b01a92251",
   "plan_day_done": "3dc34a4beb5220b4d9c0130eeaa371805ff27f34d60298142ecc3184a5cba920",
@@ -611,8 +611,8 @@
     <plurals name="plan_days_left_estimate_spoken">
         <item quantity="other">あと約%d日</item>
     </plurals>
-    <string name="plan_date_estimate">約%1$s</string>
-    <string name="plan_date_estimate_spoken">約%1$s</string>
+    <string name="plan_date_estimate">%1$sごろ</string>
+    <string name="plan_date_estimate_spoken">%1$sごろ</string>
     <string name="plan_date_range">%1$s〜%2$s</string>
     <string name="plan_no_goal_description">学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。</string>
     <string name="plan_setup_left_title">学習計画を作る前に、いくつか質問があります</string>

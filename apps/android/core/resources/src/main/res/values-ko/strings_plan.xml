@@ -220,8 +220,8 @@
   "plan_coverage": "5f30170cd334b49c690613157f1a3335d0342abe732fe6b3bd5d59178b0f6e8f",
   "plan_coverage_caption": "4e922e184966360016996829f4d9842dfd517a805c9b5800f5abecfc5bed14c0",
   "plan_covered_not_enough": "7500ff8492cc87c6cfed1064265ef8d84a75ac8fafaaee1a1f14dc0c97684b2d",
-  "plan_date_estimate": "883a2001fb417f13578b3a659f077730aa206a091fba048f3e0ca5b7a784322e",
-  "plan_date_estimate_spoken": "d217f3c8b2ad94c0d38ee7936efe868ae74a779d975354782b7317e4a5328b02",
+  "plan_date_estimate": "461a95866e0833f79cfe17676c81c516c94c32362fe681793491062027a53d04",
+  "plan_date_estimate_spoken": "8252c831fba8ca789fdde2b4bfbfa29879b3ebf7f61d2079c70cab5b4fa2a4bd",
   "plan_date_range": "99a667755dd19b16dd930d9547ad636dc413d52fc1c9fac0d0bcae5cdd300ead",
   "plan_date_to_be_confirmed": "e624bd4835b6f0581a2c29f28e535a2ef19ba5071ede45c4c01c25a6e46aaae9",
   "plan_day_done": "9996384ecb836599758ca77f5f2f1a14b5b848e4286878c9fbc64ca4de4679ec",
@@ -611,8 +611,8 @@
     <plurals name="plan_days_left_estimate_spoken">
         <item quantity="other">약 %d일 남음</item>
     </plurals>
-    <string name="plan_date_estimate">약 %1$s</string>
-    <string name="plan_date_estimate_spoken">약 %1$s</string>
+    <string name="plan_date_estimate">%1$s쯤</string>
+    <string name="plan_date_estimate_spoken">%1$s쯤</string>
     <string name="plan_date_range">%1$s ~ %2$s</string>
     <string name="plan_no_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
     <string name="plan_setup_left_title">몇 가지 질문에 답하면 계획이 준비돼요</string>
