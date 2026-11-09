@@ -58,7 +58,7 @@ const taxDeadlines: WrittenLesson = {
           isCorrect: false,
           picture: null,
           reason:
-            "Paying when she files means paying late: interest and penalties run from April 15.",
+            "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
           text: "Whenever she files",
         },
       ],
@@ -120,7 +120,7 @@ const estabilidade: WrittenLesson = {
         { isCorrect: false, text: "5 anos" },
       ],
       question:
-        "Ana passou num concurso e tomou posse. Sem valer ponto: depois de quanto tempo trabalhando no cargo ela pode ganhar a garantia de não ser mandada embora?",
+        "Ana foi nomeada por concurso para um cargo efetivo. Sem valer ponto: depois de quanto tempo de efetivo exercício ela pode ganhar a garantia de não ser mandada embora?",
       reveal: "São 3 anos, e ainda falta uma condição. As próximas telas mostram qual.",
       visual: null,
     },
@@ -129,7 +129,7 @@ const estabilidade: WrittenLesson = {
       explore: null,
       image: null,
       kind: "explanation",
-      text: "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **três anos** trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
+      text: "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem é nomeado por concurso para cargo efetivo ganha essa garantia depois de **três anos** de efetivo exercício, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
       title: "Três anos e uma avaliação",
       visual: null,
     },
@@ -156,12 +156,13 @@ const estabilidade: WrittenLesson = {
         {
           isCorrect: false,
           picture: null,
-          reason: "Na posse ele só começa a contar os três anos.",
+          reason:
+            "A posse não dá estabilidade. Os três anos são de efetivo exercício, contados a partir do início do exercício.",
           text: "Sim, desde a posse",
         },
       ],
       question:
-        "Pedro completou três anos no cargo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?",
+        "Pedro completou três anos de efetivo exercício em cargo efetivo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?",
       visual: null,
     },
     {
@@ -209,7 +210,7 @@ const estabilidade: WrittenLesson = {
     ideas: [
       {
         label: "Estabilidade em três anos",
-        text: "Quem entra por concurso fica estável depois de três anos no cargo, se for aprovado na avaliação do seu trabalho feita por uma comissão.",
+        text: "Quem é nomeado por concurso para cargo efetivo fica estável depois de três anos de efetivo exercício, se for aprovado na avaliação do seu trabalho feita por uma comissão.",
       },
       {
         label: "Perda do cargo",

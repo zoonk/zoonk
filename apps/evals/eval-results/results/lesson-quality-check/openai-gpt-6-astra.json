@@ -11757,340 +11757,6 @@
     {
       "classification": {
         "expected": "fail",
-        "predicted": "pass"
-      },
-      "steps": [
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "screen": 9,
-          "verdict": "fail"
-        },
-        "id": "en-temperature-data-disagrees-with-options-1",
-        "userInput": {
-          "chapterTitle": "Negative numbers",
-          "courseTitle": "Everyday math",
-          "language": "en",
-          "lesson": {
-            "screens": [
-              {
-                "image": {
-                  "alt": "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
-                  "prompt": "A frosty window at dawn with an outdoor thermometer reading −3 °C."
-                },
-                "kind": "hookText",
-                "text": "At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": "A cold morning where the learner lives.",
-                "explore": null,
-                "image": {
-                  "alt": "A thermometer with an arrow going up past zero.",
-                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero."
-                },
-                "kind": "explanation",
-                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
-                "title": "Up is up, even below zero",
-                "visual": null
-              },
-              {
-                "image": null,
-                "kind": "hookGuess",
-                "options": [
-                  {
-                    "isCorrect": true,
-                    "text": "2 °C"
-                  },
-                  {
-                    "isCorrect": false,
-                    "text": "8 °C"
-                  },
-                  {
-                    "isCorrect": false,
-                    "text": "−8 °C"
-                  }
-                ],
-                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
-                "visual": null
-              },
-              {
-                "image": null,
-                "kind": "workedExample",
-                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
-                "result": "It's 2 °C: two degrees above zero.",
-                "steps": [
-                  {
-                    "math": "-3 + 3 = 0",
-                    "text": "First climb to zero: that takes 3 degrees."
-                  },
-                  {
-                    "math": "0 + 2 = 2",
-                    "text": "Two degrees of the rise are left, so keep going up."
-                  }
-                ],
-                "title": "From −3 °C, up 5 degrees",
-                "visual": null
-              },
-              {
-                "basis": null,
-                "context": null,
-                "correctReason": "You start at {start} °C and move {rise} degrees up.",
-                "image": null,
-                "kind": "mathCheck",
-                "math": {
-                  "answer": 3,
-                  "commonMistakes": [
-                    {
-                      "expression": "rise - start",
-                      "misconception": "Subtracts the negative start",
-                      "reason": "You took the start away instead of adding the rise to it."
-                    },
-                    {
-                      "expression": "start - rise",
-                      "misconception": "Moves down instead of up",
-                      "reason": "A rise moves up the thermometer, not down."
-                    }
-                  ],
-                  "solution": "start + rise",
-                  "steps": [
-                    {
-                      "expression": "start + rise",
-                      "text": "Move {rise} degrees up from {start} °C: {result} °C."
-                    }
-                  ],
-                  "tolerance": {
-                    "kind": "absolute",
-                    "value": 0
-                  },
-                  "unit": "°C",
-                  "variables": [
-                    {
-                      "max": -1,
-                      "min": -10,
-                      "name": "start",
-                      "step": 1,
-                      "unit": "°C",
-                      "value": -4
-                    },
-                    {
-                      "max": 15,
-                      "min": 2,
-                      "name": "rise",
-                      "step": 1,
-                      "unit": "°C",
-                      "value": 7
-                    }
-                  ]
-                },
-                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
-              },
-              {
-                "exampleLineIdea": null,
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
-                "title": "Zero is a stop, not a wall",
-                "visual": null
-              },
-              {
-                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}",
-                "kind": "activity",
-                "template": "numberLine"
-              },
-              {
-                "acceptedAnswers": [],
-                "basis": null,
-                "context": null,
-                "keyPoints": [
-                  "Going up 3 degrees reaches zero",
-                  "The last 2 degrees go above zero"
-                ],
-                "kind": "typedAnswer",
-                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
-                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
-                "visual": null
-              },
-              {
-                "basis": null,
-                "context": "Five weather stations logged the dawn temperature and the rise forecast for the day:\n\n| Station | Dawn | Rise |\n|---|---:|---:|\n| A | −6 °C | 9 degrees |\n| B | −4 °C | 3 degrees |\n| C | −2 °C | 1 degree |\n| D | −5 °C | 3 degrees |\n| E | −8 °C | 2 degrees |",
-                "image": null,
-                "kind": "check",
-                "options": [
-                  {
-                    "isCorrect": true,
-                    "picture": null,
-                    "reason": "Six degrees take A to zero and three more go above it: 3 °C.",
-                    "text": "Station A"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Three degrees take B from −4 °C to −1 °C, still below zero.",
-                    "text": "Station B"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "One degree takes C from −2 °C to −1 °C, still below zero.",
-                    "text": "Station C"
-                  },
-                  {
-                    "isCorrect": false,
-                    "picture": null,
-                    "reason": "Three degrees take D from −5 °C to −2 °C, still below zero.",
-                    "text": "Station D"
-                  }
-                ],
-                "question": "Which station ends the day above zero?",
-                "visual": null
-              }
-            ],
-            "summary": {
-              "ideas": [
-                {
-                  "label": "Rising below zero",
-                  "text": "A rise moves up the thermometer, even below zero."
-                },
-                {
-                  "label": "Count up to zero",
-                  "text": "Count up to zero first, then the degrees above it."
-                }
-              ],
-              "shape": "hub"
-            }
-          },
-          "level": "beginner",
-          "shortAnswers": true,
-          "spec": {
-            "canDo": "Work out a temperature after it rises across zero",
-            "description": "Add a rise to a temperature below zero, the way thermometers do.",
-            "estimatedMinutes": 4,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "At dawn the thermometer outside Maya's window reads −3 °C, and the forecast says 5 degrees warmer by noon, so she leaves her coat at home. End on the open question: was that a good call?",
-                "kind": "hook",
-                "skills": [],
-                "visual": "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
-                "visualKind": "picture"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
-                "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up.",
-                "visualKind": "picture"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
-                "kind": "guess",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
-                "kind": "workedExample",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
-                "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
-                "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": "numberLine",
-                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
-                "kind": "activity",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "template"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Explain in your own words why −3 + 5 is 2.",
-                "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              },
-              {
-                "activityTemplate": null,
-                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
-                "kind": "application",
-                "skills": [
-                  0
-                ],
-                "visual": null,
-                "visualKind": "none"
-              }
-            ],
-            "skills": [
-              {
-                "description": "A rise adds to the temperature, even when it starts below zero.",
-                "example": "−3 °C plus a 5 degree rise is 2 °C.",
-                "hard": true,
-                "name": "Add a rise to a temperature below zero",
-                "topic": "Temperature changes",
-                "useCase": "Reading a weather forecast."
-              }
-            ],
-            "title": "Temperature changes across zero"
-          }
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "fail",
         "predicted": "fail"
       },
       "steps": [
@@ -14603,6 +14269,339 @@
               "title": "Temperature drops"
             }
           ]
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "pass",
+        "predicted": "pass"
+      },
+      "steps": [
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No blocking issues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "verdict": "pass"
+        },
+        "id": "en-temperature-data-disagrees-with-options-1",
+        "userInput": {
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "lesson": {
+            "screens": [
+              {
+                "image": {
+                  "alt": "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+                  "prompt": "A frosty window at dawn with an outdoor thermometer reading −3 °C."
+                },
+                "kind": "hookText",
+                "text": "At dawn the thermometer outside Maya's window reads −3 °C. The forecast says 5 degrees warmer by noon, so she leaves her coat at home. Was that a good call?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A cold morning where the learner lives.",
+                "explore": null,
+                "image": {
+                  "alt": "A thermometer with an arrow going up past zero.",
+                  "prompt": "A thermometer from −5 °C to 5 °C with an arrow going up past zero."
+                },
+                "kind": "explanation",
+                "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "title": "Up is up, even below zero",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
+                ],
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "result": "It's 2 °C: two degrees above zero.",
+                "steps": [
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
+                  {
+                    "math": "0 + 2 = 2",
+                    "text": "Two degrees of the rise are left, so keep going up."
+                  }
+                ],
+                "title": "From −3 °C, up 5 degrees",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": null,
+                "correctReason": "You start at {start} °C and move {rise} degrees up.",
+                "image": null,
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 3,
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ],
+                  "solution": "start + rise",
+                  "steps": [
+                    {
+                      "expression": "start + rise",
+                      "text": "Move {rise} degrees up from {start} °C: {result} °C."
+                    }
+                  ],
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
+                  "unit": "°C",
+                  "variables": [
+                    {
+                      "max": -1,
+                      "min": -10,
+                      "name": "start",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": -4
+                    },
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
+                  ]
+                },
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+                "title": "Zero is a stop, not a wall",
+                "visual": null
+              },
+              {
+                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}",
+                "kind": "activity",
+                "template": "numberLine"
+              },
+              {
+                "acceptedAnswers": [],
+                "basis": null,
+                "context": null,
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "kind": "typedAnswer",
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "Five weather stations logged the dawn temperature and the rise forecast for the day:\n\n| Station | Dawn | Rise |\n|---|---:|---:|\n| A | −6 °C | 9 degrees |\n| B | −4 °C | 3 degrees |\n| C | −2 °C | 1 degree |\n| D | −5 °C | 3 degrees |\n| E | −8 °C | 2 degrees |",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Six degrees take A to zero and three more go above it: 3 °C.",
+                    "text": "Station A"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Three degrees take B from −4 °C to −1 °C, still below zero.",
+                    "text": "Station B"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "One degree takes C from −2 °C to −1 °C, still below zero.",
+                    "text": "Station C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Three degrees take D from −5 °C to −2 °C, still below zero.",
+                    "text": "Station D"
+                  }
+                ],
+                "question": "Which station ends the day above zero?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Rising below zero",
+                  "text": "A rise moves up the thermometer, even below zero."
+                },
+                {
+                  "label": "Count up to zero",
+                  "text": "Count up to zero first, then the degrees above it."
+                }
+              ],
+              "shape": "hub"
+            }
+          },
+          "level": "beginner",
+          "shortAnswers": true,
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "At dawn the thermometer outside Maya's window reads −3 °C, and the forecast says 5 degrees warmer by noon, so she leaves her coat at home. End on the open question: was that a good call?",
+                "kind": "hook",
+                "skills": [],
+                "visual": "A frosty window at dawn with an outdoor thermometer reading −3 °C.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up.",
+                "visualKind": "picture"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "guess",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "template"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "title": "Temperature changes across zero"
+          }
         }
       }
     }

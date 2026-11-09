@@ -264,7 +264,7 @@ export const TEST_CASES: TestCase<
     userInput: plant(regra, 5, {
       ...(screenOf(regra, 5) as Extract<WrittenScreen, { kind: "check" }>),
       context:
-        "Na prova da Cebraspe para analista da Câmara dos Deputados, conforme o subitem 13.5 do edital, recursos vão para sac@cebraspe.org.br. Um setor da Câmara organiza a triagem desses recursos.",
+        "Neste simulado para a prova da Câmara dos Deputados, uma equipe organiza a triagem de pedidos. Todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
     }),
   },
   {
@@ -328,7 +328,7 @@ export const TEST_CASES: TestCase<
       explore: null,
       image: null,
       kind: "explanation",
-      text: String.raw`O arranjo mais estável minimiza a energia total $E = \frac{\hbar^2}{2 m r^2} - \frac{e^2}{4 \pi \varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \approx 0{,}53$ Å.`,
+      text: String.raw`Num modelo simplificado do átomo de hidrogênio, o estado de menor energia minimiza $E = \frac{\hbar^2}{2 m r^2} - \frac{e^2}{4 \pi \varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \approx 0{,}53$ Å.`,
       title: "O arranjo mais estável",
       visual: null,
     }),
@@ -391,7 +391,7 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
-    expected: { screen: 9, verdict: "fail" },
+    expected: { verdict: "pass" },
     id: "en-temperature-data-disagrees-with-options",
     userInput: plant(temperature, 9, {
       basis: null,

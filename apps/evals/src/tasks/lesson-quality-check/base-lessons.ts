@@ -24,7 +24,7 @@ const RECORDED = {
         {
           image: null,
           kind: "hookText",
-          text: "Around 1160, builders in Paris began pointing the arches over church doors. The shape carried the weight down slender columns, so churches could grow taller and lighter. A doorway's shape still tells you when it was built.",
+          text: "Pointed arches, ribbed vaults and flying buttresses helped Gothic churches grow taller and admit more light. A doorway's shape can suggest its style, even when a later building imitates it. Which style does this door suggest?",
           visual: null,
         },
         {
