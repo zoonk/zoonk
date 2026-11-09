@@ -85,6 +85,7 @@ async function setup() {
     studySessionBlockFixture({ lessonId: lesson.id, sessionId: paused.id }),
     studySessionBlockFixture({
       lessonId: lesson.id,
+      payload: toBlockPayload({ timing: { activeAt: null, clock: null, elapsedMs: 0 } }),
       position: 1,
       sessionId: other.id,
       startedAt: NOW,

@@ -139,6 +139,7 @@ describe("starting a challenge directly", () => {
 
     expect(readBlockPayload(started).timing).toStrictEqual({
       activeAt: SESSION_NOW.toISOString(),
+      clock: null,
       elapsedMs: 0,
     });
   });
