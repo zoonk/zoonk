@@ -189,7 +189,7 @@ export function TurnaroundStep() {
       </StepHeader>
 
       <TurnaroundChart turnaround={turnaround} />
-      {reason && <p className="text-balance">{reason}</p>}
+      {reason && <p className="text-pretty">{reason}</p>}
     </StepCard>
   );
 }

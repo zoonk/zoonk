@@ -304,7 +304,7 @@ export function WaitQuizCard({
         <QuizEyebrow />
 
         <h2
-          className={cn(QUESTION_TEXT_CLASS, "text-pretty outline-none")}
+          className={cn(QUESTION_TEXT_CLASS, "outline-none")}
           id={questionId}
           ref={questionRef}
           tabIndex={-1}

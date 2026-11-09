@@ -73,7 +73,7 @@ async function QuestionScreen({
       )}
 
       <RichTextBlocks
-        className="mt-2 mb-5 text-[19px] leading-snug font-[560] tracking-[-0.015em] text-balance"
+        className="mt-2 mb-5 text-[19px] leading-snug font-[560] tracking-[-0.015em] text-pretty"
         text={screen.question}
       />
 

@@ -305,7 +305,7 @@ export function NextStop({
           <div className="flex flex-col gap-2">
             <PageEyebrow>{t("Up next")}</PageEyebrow>
             <h2 className="text-title">{title(block)}</h2>
-            {line && <p className="text-muted-foreground text-sm text-balance">{line}</p>}
+            {line && <p className="text-muted-foreground text-sm text-pretty">{line}</p>}
             <TaskMeta facts={facts} />
           </div>
 
