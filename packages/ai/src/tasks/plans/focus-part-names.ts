@@ -1,11 +1,9 @@
 import { decodeHtmlEntities } from "../_utils/html-entities";
 
-const MAX_PART_NAME_LENGTH = 80;
-
 export type FocusPart = { area: string; name: string; skillIds: string[] };
 
 export function toPartName(value: string): string {
-  const name = decodeHtmlEntities(value).trim().slice(0, MAX_PART_NAME_LENGTH);
+  const name = decodeHtmlEntities(value).trim();
   return name.charAt(0).toLocaleUpperCase() + name.slice(1);
 }
 

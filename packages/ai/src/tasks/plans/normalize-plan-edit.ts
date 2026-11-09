@@ -44,7 +44,6 @@ export type PlanEdit = {
 
 /** A few short phrases are all a reply needs to answer them. */
 const MAX_LEFT_OUT = 3;
-const MAX_LEFT_OUT_LENGTH = 120;
 
 type RawPart = { area: string; name: string; skills: string[] };
 
@@ -259,13 +258,9 @@ function toOperation({
   }
 }
 
-function shortenPhrase(text: string): string {
-  return text.length > MAX_LEFT_OUT_LENGTH ? `${text.slice(0, MAX_LEFT_OUT_LENGTH - 1)}…` : text;
-}
-
 function toLeftOut(values: readonly string[] | null | undefined): string[] {
   const phrases = (values ?? []).map((value) => decodeHtmlEntities(value).trim()).filter(Boolean);
-  return [...new Set(phrases)].slice(0, MAX_LEFT_OUT).map((phrase) => shortenPhrase(phrase));
+  return [...new Set(phrases)].slice(0, MAX_LEFT_OUT);
 }
 
 /** When no change the planner can apply is left, the request counts as not understood. */

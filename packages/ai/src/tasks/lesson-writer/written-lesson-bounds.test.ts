@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { MAX_IMAGE_ALT_LENGTH, MAX_IMAGE_PROMPT_LENGTH } from "../images/image-request-schema";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import { MAX_CHECK_OPTIONS, MAX_GUESS_OPTIONS } from "./written-lesson-schema";
 
@@ -16,52 +15,27 @@ function firstScreen(value: unknown): Record<string, unknown> {
 }
 
 describe(fitWrittenBounds, () => {
-  it("ends an alt one word too long on the last whole word that fits", () => {
-    // Terra wrote an alt just over the limit on en-particle-in-a-box-advanced (3 Nov 2026).
+  it("keeps a picture's alt and prompt as written, however long", () => {
+    // Terra wrote this alt on en-particle-in-a-box-advanced (3 Nov 2026); it was cut at 160.
     const alt =
       "Two energy ladders side by side: a narrow box with widely spaced rungs and a wide box with closely spaced rungs, and each rung is labeled with its level number n.";
 
-    expect(alt.length).toBeGreaterThan(MAX_IMAGE_ALT_LENGTH);
-
-    const screen = firstScreen(
-      fitWrittenBounds({
-        screens: [{ image: { alt, prompt: "Two energy ladders." }, kind: "hookText", text: "Hi" }],
-      }),
-    );
-
-    const fitted = (screen.image as { alt: string }).alt;
-
-    expect(fitted).toBe(
-      "Two energy ladders side by side: a narrow box with widely spaced rungs and a wide box with closely spaced rungs, and each rung is labeled with its level…",
-    );
-  });
-
-  it("shortens a picture's prompt and an option's picture the same way", () => {
     const prompt = `${"a red apple on a table ".repeat(20)}end`;
-    const longAlt = "word ".repeat(40).trim();
 
-    const screen = firstScreen(
-      fitWrittenBounds({
-        screens: [
-          {
-            image: { alt: "Short.", prompt },
-            kind: "check",
-            options: [
-              { ...option("Maple", true), picture: { alt: longAlt, prompt: "A leaf." } },
-              { ...option("Oak", false), picture: null },
-            ],
-          },
-        ],
-      }),
-    );
+    const answer = {
+      screens: [
+        {
+          image: { alt, prompt },
+          kind: "check",
+          options: [
+            { ...option("Maple", true), picture: { alt, prompt: "A leaf." } },
+            { ...option("Oak", false), picture: null },
+          ],
+        },
+      ],
+    };
 
-    const image = screen.image as { alt: string; prompt: string };
-    const [maple, oak] = screen.options as { picture: { alt: string } | null }[];
-
-    expect(image.alt).toBe("Short.");
-    expect(image.prompt.length).toBeLessThanOrEqual(MAX_IMAGE_PROMPT_LENGTH);
-    expect(maple?.picture?.alt.length).toBeLessThanOrEqual(MAX_IMAGE_ALT_LENGTH);
-    expect(oak?.picture).toBeNull();
+    expect(fitWrittenBounds(answer)).toStrictEqual(answer);
   });
 
   it("drops a guess's surplus wrong options from the end and keeps the right one", () => {

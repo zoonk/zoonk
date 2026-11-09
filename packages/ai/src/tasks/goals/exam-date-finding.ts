@@ -1,6 +1,4 @@
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
-const MAX_LABEL_LENGTH = 60;
-const MAX_TITLE_LENGTH = 200;
 
 type RawExamDate = { date: string; label: string };
 
@@ -24,7 +22,7 @@ function isRealDate(date: string): boolean {
 function cleanDates({ dates, today }: { dates: RawExamDate[]; today: string }): RawExamDate[] {
   const ahead = dates
     .filter((day) => isRealDate(day.date) && day.date >= today)
-    .map((day) => ({ date: day.date, label: day.label.trim().slice(0, MAX_LABEL_LENGTH) }))
+    .map((day) => ({ date: day.date, label: day.label.trim() }))
     .toSorted((a, b) => a.date.localeCompare(b.date));
 
   return ahead.filter(
@@ -54,7 +52,7 @@ export function toExamDateFinding({
     return UNKNOWN;
   }
 
-  const title = raw.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null;
+  const title = raw.sourceTitle?.trim() || null;
 
   return { dates, source: { title, url }, status: "official" };
 }

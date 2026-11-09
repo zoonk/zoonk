@@ -3,7 +3,8 @@ import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languag
 const DAYS_PER_WEEK = 7;
 const MAX_GOALS = 3;
 const MAX_FOLLOW_UPS = 2;
-const MAX_TEXT_LENGTH = 120;
+/** The learner's app sends the title back to POST /goals, which takes up to 120 characters. */
+const MAX_TITLE_LENGTH = 120;
 const MIN_YEAR = 1900;
 const MAX_YEAR = 2200;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
@@ -99,7 +100,7 @@ export type GoalUnderstanding =
     };
 
 function cleanText(value: string | null): string | undefined {
-  const text = value?.trim().slice(0, MAX_TEXT_LENGTH);
+  const text = value?.trim();
   return text || undefined;
 }
 
@@ -174,7 +175,7 @@ function normalizeGoal({
   goal: RawUnderstoodGoal;
   today: string;
 }): UnderstoodGoal | null {
-  const title = cleanText(goal.title);
+  const title = cleanText(goal.title.slice(0, MAX_TITLE_LENGTH));
   const targetLanguage = cleanLanguageCode(goal.targetLanguage);
 
   if (!title || (goal.kind === "language" && !targetLanguage)) {

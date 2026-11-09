@@ -12,7 +12,6 @@ const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 /** The limit the prompt asks for, with room for a model that runs a little over. */
-const MAX_NOTICE_LENGTH = 160;
 
 const schema = z.object({ message: z.string() });
 
@@ -60,7 +59,7 @@ ${formatUntrustedInput({ CHANGES: changes, SOURCE: source })}`;
   });
 
   return {
-    data: { message: result.output.message.trim().slice(0, MAX_NOTICE_LENGTH) },
+    data: { message: result.output.message.trim() },
     provenance,
     systemPrompt,
     usage: result.usage,

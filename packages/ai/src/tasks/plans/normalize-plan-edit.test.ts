@@ -302,7 +302,7 @@ describe(normalizePlanEdit, () => {
       { areas: ["Natural sciences"], kind: "focusAreas", parts: [] },
     ]);
 
-    expect(result.leftOut).toStrictEqual(["mirar 800 pontos", `${"x".repeat(119)}…`]);
+    expect(result.leftOut).toStrictEqual(["mirar 800 pontos", "x".repeat(300)]);
   });
 
   it("clamps minutes, turns a cleared date into no date and keeps a light week from today", () => {

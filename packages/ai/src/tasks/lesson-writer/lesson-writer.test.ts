@@ -249,7 +249,7 @@ describe(writeLessonDraft, () => {
     expect(data.screens[0]).toMatchObject({ options: [{ picture: null }, { picture: null }] });
   });
 
-  it("brings a long alt and a guess's extra wrong option within bounds instead of failing", async () => {
+  it("keeps a long alt as written and drops a guess's extra wrong option instead of failing", async () => {
     const alt = "word ".repeat(40).trim();
 
     await answerOnceWith({
@@ -282,7 +282,7 @@ describe(writeLessonDraft, () => {
     });
 
     expect(data.screens[0]).toMatchObject({
-      image: { alt: expect.stringMatching(/^(?:word ){30,}word\u2026$/u) },
+      image: { alt },
       options: [{ text: "A" }, { text: "B" }, { text: "C" }, { text: "D" }],
     });
   });

@@ -20,9 +20,6 @@ const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "minimal";
 const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
-const MAX_NAME_LENGTH = 80;
-const MAX_DESCRIPTION_LENGTH = 200;
-
 const schema = z.object({
   skills: z.array(z.object({ description: z.string(), name: z.string() })),
 });
@@ -41,13 +38,12 @@ export type TopicSkillNamesParams = TopicSkillNamesInput & {
   useFallback?: boolean;
 };
 
-function cleanText({ max, text }: { max: number; text: string }): string {
+function cleanText(text: string): string {
   return decodeHtmlEntities(text)
     .replaceAll(/\s*[—–]\s*/gu, ", ")
     .replaceAll(/\s+/gu, " ")
     .trim()
-    .replace(/\.$/u, "")
-    .slice(0, max);
+    .replace(/\.$/u, "");
 }
 
 /** Never the topic's own words: they may name the learner's teacher, school or test. */
@@ -60,13 +56,13 @@ function toSkillNames({
 }): (TopicSkillName | null)[] {
   return Array.from({ length: count }, (_, index) => {
     const skill = raw.skills[index];
-    const name = skill ? cleanText({ max: MAX_NAME_LENGTH, text: skill.name }) : "";
+    const name = skill ? cleanText(skill.name) : "";
 
     if (!skill || name.length === 0) {
       return null;
     }
 
-    const description = cleanText({ max: MAX_DESCRIPTION_LENGTH, text: skill.description });
+    const description = cleanText(skill.description);
     return { description: description ? `${description}.` : "", name };
   });
 }
