@@ -34,7 +34,7 @@ export function PlanChangeSummary({
         <Icon className="text-muted-foreground size-4" />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p className="font-medium text-balance">
+        <p className="font-medium text-pretty">
           {undone ? t("Undone. Your plan is back as it was.") : sentence(change)}
         </p>
         {effect && <p className="text-muted-foreground text-sm">{effect}</p>}

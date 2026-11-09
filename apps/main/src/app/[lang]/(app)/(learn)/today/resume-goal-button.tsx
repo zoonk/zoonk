@@ -20,7 +20,7 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
   }
 
   return (
-    <p className="text-destructive-text text-sm text-balance" role="alert">
+    <p className="text-destructive-text text-sm text-pretty" role="alert">
       {t(
         "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
       )}
