@@ -245,6 +245,10 @@ export async function saveAnswerInputs({
       }
 
       for (const current of currentGoals) {
+        if (input.question === "reason" && current.kind !== "language") {
+          return unchanged("invalid");
+        }
+
         const own = current.id === goal.id;
         const details = isJsonObject(current.details) ? current.details : {};
 
