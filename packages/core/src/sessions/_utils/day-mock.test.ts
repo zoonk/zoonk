@@ -19,22 +19,49 @@ describe(isMockOnlyDay, () => {
   ])(
     "respects the planner's mock event: $settings, mock $hasMock",
     ({ hasMock, onlyMock, settings }) => {
-      expect(isMockOnlyDay({ goal, hasMock, planSettings: settings, today })).toBe(onlyMock);
+      expect(
+        isMockOnlyDay({
+          goal,
+          hasMock,
+          items: [{ kind: "mock", scheduledFor: today }],
+          planSettings: settings,
+          today,
+        }),
+      ).toBe(onlyMock);
     },
   );
 
-  it("keeps a moved mock's original day rule", () => {
+  it.each([null, new Date("2026-10-05"), new Date("2026-10-07")])(
+    "does not replace today with a mock scheduled for %s",
+    (scheduledFor) => {
+      expect(
+        isMockOnlyDay({
+          goal,
+          hasMock: true,
+          items: [{ kind: "mock", scheduledFor }],
+          planSettings: {},
+          today,
+        }),
+      ).toBe(false);
+    },
+  );
+
+  it.each([
+    { from: "2026-10-06", onlyMock: false },
+    { from: "2026-10-05", onlyMock: true },
+  ])("keeps a moved mock's original day rule: $from", ({ from, onlyMock }) => {
     expect(
       isMockOnlyDay({
         goal,
         hasMock: true,
+        items: [{ kind: "mock", scheduledFor: new Date("2026-10-08T00:00:00Z") }],
         planSettings: {
-          movedEvents: [{ from: "2026-10-06", to: "2026-10-08" }],
+          movedEvents: [{ from, to: "2026-10-08" }],
           shortMockMinutes: 10,
           startDate: "2026-10-06",
         },
         today: new Date("2026-10-08T00:00:00Z"),
       }),
-    ).toBe(false);
+    ).toBe(onlyMock);
   });
 });

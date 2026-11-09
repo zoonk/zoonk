@@ -1,6 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  lessonSkillFixture,
+  libraryLessonFixture,
+  libraryLessonsFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -10,7 +15,10 @@ import { getChallenge } from "../../checkpoints/get-challenge";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
+import { loadSessionBuildInput } from "../../sessions/_utils/load-build-inputs";
+import { hasSessionLessonReservation } from "../../sessions/_utils/session-lesson-reservation";
 import { readBlockPayload } from "../../sessions/block-payload";
+import { buildSessionBlocks } from "../../sessions/session-builder";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { getMock } from "./get-mock";
 import { mockConditionsSchema } from "./mock-contract";
@@ -37,10 +45,10 @@ const STRUCTURE = examStructureSchema.parse({
   subjects: [],
 });
 
-async function overduePlan() {
+async function overduePlan({ dailyMinutes = 30, mockMinutes = 150, structure = STRUCTURE } = {}) {
   const [user, blueprint, languages, math] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ structure: STRUCTURE }),
+    examBlueprintFixture({ structure }),
     skillFixture({ name: "Languages" }),
     skillFixture({ name: "Math" }),
   ]);
@@ -49,7 +57,7 @@ async function overduePlan() {
 
   const goal = await goalFixture({
     createdAt: new Date("2020-09-28"),
-    dailyMinutes: 30,
+    dailyMinutes,
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
     kind: "exam",
@@ -75,10 +83,10 @@ async function overduePlan() {
     settings: {
       mockFunding: [
         { contributions: [], date: "2020-10-02", day: 1, fullLength: false, minutes: 165 },
-        { contributions: [], date: EVENT_DATE, day: 2, fullLength: false, minutes: 150 },
+        { contributions: [], date: EVENT_DATE, day: 2, fullLength: false, minutes: mockMinutes },
       ],
       startDate: "2020-09-28",
-      weekdayMinutes: [30, 30, 30, 30, 30, 30, 30],
+      weekdayMinutes: Array.from({ length: 7 }, () => dailyMinutes),
     },
   });
 
@@ -133,7 +141,7 @@ async function overduePlan() {
   ]);
 
   mockSession(user.id);
-  return { goal, mathQuestions: banks[1] ?? [], mock, plan, skipped };
+  return { goal, languages, math, mathQuestions: banks[1] ?? [], mock, plan, skipped, user };
 }
 
 describe("an overdue scheduled mock's canonical identity", () => {
@@ -143,6 +151,97 @@ describe("an overdue scheduled mock's canonical identity", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("fills an ordinary day around a carried mock and reserves lessons still being written", async () => {
+    const { goal, languages, math, mock, plan, user } = await overduePlan({
+      dailyMinutes: 60,
+      mockMinutes: 20,
+      structure: examStructureSchema.parse({
+        ...STRUCTURE,
+        mock: {
+          ...STRUCTURE.mock,
+          sections: [
+            { day: 1, kind: "objective", minutes: 40, name: "Languages", questions: 12 },
+            { day: 2, kind: "objective", minutes: 40, name: "Math", questions: 12 },
+          ],
+          timeLimitMinutes: 80,
+          totalQuestions: 24,
+        },
+      }),
+    });
+
+    const lessons = await libraryLessonsFixture(8, { estimatedMinutes: 6 });
+
+    await Promise.all([
+      dailyProgressFixtureMany([
+        { date: new Date("2020-10-11"), timeSpentSeconds: 600, userId: user.id },
+      ]),
+      ...lessons.map(async (lesson, position) => {
+        const skillId = position < 2 ? math.id : languages.id;
+        await lessonSkillFixture({ lessonId: lesson.id, skillId });
+
+        return planItemFixture({
+          lessonId: lesson.id,
+          minutes: 6,
+          planId: plan.id,
+          position: position + 4,
+          scheduledFor: new Date(position < 2 ? "2020-10-12" : "2020-10-13"),
+          skillId,
+        });
+      }),
+    ]);
+
+    const input = await loadSessionBuildInput({
+      goal,
+      localDate: new Date("2020-10-12"),
+      now: NOW,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    const built = buildSessionBlocks(input);
+
+    expect.soft(input.freshStart).toBeNull();
+    expect.soft(input.mockReplacesDay).toBe(false);
+
+    expect
+      .soft(built.blocks.map((block) => block.kind))
+      .toStrictEqual(["learn", "learn", "learn", "learn", "learn", "learn", "checkpoint"]);
+
+    expect.soft(built.plannedMinutes).toBe(60);
+    expect.soft(built.blocks.at(-1)?.payload.planItemId).toBe(mock.id);
+
+    const blocks = built.blocks.filter(
+      (block, index) => index < 2 || block.payload.checkpoint?.mock,
+    );
+
+    const held = new Set(blocks.flatMap((block) => block.lessonId ?? []));
+
+    await prisma.planItem.updateMany({
+      data: { lessonId: null, scheduledFor: new Date("2020-10-12") },
+      where: {
+        lessonId: { in: lessons.filter((lesson) => !held.has(lesson.id)).map(({ id }) => id) },
+      },
+    });
+
+    const saved = await prisma.plan.findUniqueOrThrow({
+      include: { items: { orderBy: { position: "asc" } } },
+      where: { id: plan.id },
+    });
+
+    expect(
+      hasSessionLessonReservation({
+        plan: saved,
+        session: {
+          blocks: blocks.map((block) => ({ ...block, status: "completed" })),
+          freshStart: null,
+          goal,
+          localDate: new Date("2020-10-12"),
+          plannedMinutes: 60,
+        },
+      }),
+    ).toBe(true);
+  });
 
   it("keeps its announced day-two clock and sections when returning after a skipped mock", async () => {
     const { goal, mathQuestions, mock, plan, skipped } = await overduePlan();

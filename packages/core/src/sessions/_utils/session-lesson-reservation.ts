@@ -44,6 +44,7 @@ export function getSessionLessonCandidates({
     isMockOnlyDay({
       goal,
       hasMock: blocks.some((block) => readBlockPayload(block).checkpoint?.mock),
+      items: plan.items,
       planSettings: plan.settings,
       today: localDate,
     })
