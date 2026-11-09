@@ -144,7 +144,6 @@ function MomentActions({
 
 export function StudyMoment({
   continueHref,
-  blocks,
   buddy,
   exitHref,
   inLessonPlayer = false,
@@ -159,7 +158,6 @@ export function StudyMoment({
   testedOut = false,
 }: {
   continueHref?: string | null;
-  blocks: readonly StudyBlock[];
   buddy?: LearnBuddy | null;
   exitHref?: string;
   finishedChapterId?: string | null;
@@ -178,11 +176,14 @@ export function StudyMoment({
   const offer = onStartTestOut ? moment.testOutOffer : null;
   const hasHeader = !inLessonPlayer && exitHref !== undefined;
 
-  const queue = getSessionQueue({
-    blocks,
-    finishedId: moment.blockId,
-    nextId: nextBlock?.id ?? null,
-  });
+  const queue = {
+    left: moment.minutes.left,
+    rows: getSessionQueue({
+      blocks: moment.blocks,
+      finishedId: moment.blockId,
+      nextId: nextBlock?.id ?? null,
+    }),
+  };
 
   const aside = useSessionQueueAside(queue);
 

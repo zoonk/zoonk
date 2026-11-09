@@ -57,7 +57,7 @@ function getQuestionSegments({
   });
 }
 
-type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id">;
+type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id" | "minutes">;
 
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
@@ -83,7 +83,6 @@ function FinishedBlock({
 }) {
   return (
     <StudyMoment
-      blocks={session.blocks}
       buddy={buddy}
       renderCeremony={renderCeremony}
       exitHref={exitHref}
