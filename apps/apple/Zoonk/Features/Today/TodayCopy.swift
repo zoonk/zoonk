@@ -259,6 +259,10 @@ func studyDuration(minutes: Int) -> String {
   progressLearningTime(minutes * 60)
 }
 
+func studyDuration(minutes: Double) -> String {
+  progressLearningTime(Int((minutes * 60).rounded()))
+}
+
 /// Midnight in UTC, to format with a UTC calendar so it never shifts a day.
 func studyDate(_ localDate: String) -> Date? {
   try? Date(localDate, strategy: .iso8601.year().month().day())

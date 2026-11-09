@@ -230,6 +230,17 @@ struct LessonCompletionView: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
+
+      if let block = summary.block, block.deferredLessonsCount > 0 {
+        Text(
+          "\(block.deferredLessonsCount) lessons moved to another day to fit your \(studyDuration(minutes: block.minutes.dailyGoal)) today.",
+          tableName: "Player",
+          comment:
+            "After a lesson is saved: lessons moved to another day so today's work fits the learner's daily time. The second argument is a duration like '4 hr'."
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
     }
   }
 }

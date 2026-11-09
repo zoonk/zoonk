@@ -4,6 +4,47 @@ import XCTest
 
 @MainActor
 final class TodayStoreTests: XCTestCase {
+  func testReservedLessonTimeUsesTheServersRemainingMinutes() throws {
+    let session = try timedDay(left: 240, coming: true, estimates: [61])
+
+    XCTAssertEqual(session.minutes.left, 240)
+    XCTAssertEqual(session.blocks.map(\.estimatedMinutes), [61])
+    XCTAssertEqual(session.meterParts.map(\.weight), [61, 179])
+    guard case .track = session.meterParts.last?.fill else {
+      return XCTFail("Reserved lessons use the existing ahead track")
+    }
+  }
+
+  func testOnlyLessonsBeingWrittenOrAwaitingPreparationGetAReservedSegment() throws {
+    for (coming, preparing) in [(false, false), (true, false), (false, true), (true, true)] {
+      let session = try timedDay(
+        left: 61.5, coming: coming, preparing: preparing, estimates: [61])
+      XCTAssertEqual(session.meterParts.count, coming || preparing ? 2 : 1)
+    }
+
+    let fullyListed = try timedDay(left: 61, coming: true, estimates: [61])
+    XCTAssertEqual(fullyListed.meterParts.count, 1)
+    let overListed = try timedDay(left: 60, coming: true, estimates: [61])
+    XCTAssertEqual(overListed.meterParts.count, 1)
+  }
+
+  func testAWaitingDayCanShowItsReservedTimeBeforeAnyLessonIsListed() throws {
+    let session = try timedDay(left: 240, coming: true, estimates: [], state: "waiting")
+
+    XCTAssertEqual(session.minutes.left, 240)
+    XCTAssertEqual(session.meterParts.map(\.weight), [240])
+  }
+
+  func testFoldedTimeIncludesReservedMinutesAndOnlySubtractsUnfinishedShownRows() throws {
+    var session = try timedDay(left: 240.5, coming: true, estimates: [8, 8, 8, 8, 8, 8, 13])
+    session.blocks[0].status = .completed
+
+    XCTAssertEqual(session.foldedMinutes(showing: Array(session.blocks.prefix(3))), 224.5)
+    XCTAssertEqual(session.foldedMinutes(showing: []), 240.5)
+    session.minutes = .init(dailyGoal: 240, done: 8, left: 1, planned: 240)
+    XCTAssertEqual(session.foldedMinutes(showing: Array(session.blocks.prefix(3))), 0)
+  }
+
   func testWrittenLessonNavigatesWithoutOpeningRequest() async throws {
     let json = blockJSON(
       position: 0, kind: "learn", status: "pending", id: "b1", lessonID: "l1", planItemID: nil,
@@ -671,10 +712,13 @@ final class TodayStoreTests: XCTestCase {
     let shownSession = sessions.session(id: "s1").value
     XCTAssertEqual(shownSession?.nextBlock?.id, "b1")
     XCTAssertEqual(shownSession?.blocks.first?.isFinished, true)
+    XCTAssertEqual(shownSession?.minutes.left, 20)
+    XCTAssertEqual(shownSession?.minutes.dailyGoal, 30)
     guard case .day(let view)? = todayStore.today.value else {
       return XCTFail("Expected Today's day")
     }
     XCTAssertEqual(view.session.nextBlock?.id, "b1")
+    XCTAssertEqual(view.session.minutes, shownSession?.minutes)
     let reads = await api.todayReads
     XCTAssertEqual(reads, 1, "the completion shows without reading Today again")
   }
@@ -695,6 +739,24 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertTrue(checkpoint?["phase"] is NSNull)
     XCTAssertNil(checkpoint?["mockIdentity"], "only a mock carries its identity")
   }
+}
+
+private func timedDay(
+  left: Double, coming: Bool, preparing: Bool = false, estimates: [Int], state: String = "underway"
+) throws -> StudyDay {
+  let blocks = try estimates.indices.map { try block(position: $0, kind: "learn") }
+  let json = dayJSON(
+    blocks: blocks, nextPosition: blocks.isEmpty ? nil : 0, id: "s1", emptyDay: nil,
+    localDate: "2026-11-08", goalID: "g1", state: state)
+  var object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any])
+  var rows = try XCTUnwrap(object["blocks"] as? [[String: Any]])
+  for index in rows.indices { rows[index]["estimatedMinutes"] = estimates[index] }
+  object["blocks"] = rows
+  object["lessonsComing"] = coming
+  object["lessonsToPrepare"] = preparing
+  object["minutes"] = ["dailyGoal": 240, "done": 0, "left": left, "planned": 240]
+  return try JSONDecoder().decode(
+    StudyDay.self, from: JSONSerialization.data(withJSONObject: object))
 }
 
 @MainActor

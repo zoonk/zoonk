@@ -659,9 +659,29 @@ final class LessonPlayerLoadingTests: XCTestCase {
     }
 
     XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
+    XCTAssertEqual(summary.block?.deferredLessonsCount, 0)
+    XCTAssertEqual(summary.block?.minutes.left, 20)
     XCTAssertEqual(summary.day?.missionMoment?.completed, [.somethingNew])
     XCTAssertEqual(summary.day?.missionMoment?.fullMeal.bonus, 50)
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
+  }
+
+  func testASavedLessonKeepsTheDeferredCountAndFractionalDailyBudget() async throws {
+    let response =
+      sessionLessonCompletion
+      .replacingOccurrences(of: "\"deferredLessonsCount\":0", with: "\"deferredLessonsCount\":3")
+      .replacingOccurrences(of: "\"dailyGoal\":30", with: "\"dailyGoal\":240.5")
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: JSONTransport(body: response)))
+
+    let outcome = try await api.completeLesson(
+      id: "lesson", runId: "run", skippedWritingStepIds: [], token: "token")
+    guard case .completed(let summary) = outcome else {
+      return XCTFail("Expected a saved lesson")
+    }
+    XCTAssertEqual(summary.block?.deferredLessonsCount, 3)
+    XCTAssertEqual(summary.block?.minutes.dailyGoal, 240.5)
   }
 
   func testAFirstLessonWrittenDuringItsWarmUpWaitsForTheWaitBeforeItStarts() async {

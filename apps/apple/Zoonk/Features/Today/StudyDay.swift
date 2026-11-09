@@ -53,11 +53,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let earned: Bool
   }
 
-  struct Minutes: Decodable, Equatable, Sendable {
-    let dailyGoal: Double
-    let done: Int
-    let planned: Int
-  }
+  typealias Minutes = Components.Schemas.StudySessionMinutes
 
   struct PlusLesson: Decodable, Equatable, Sendable {
     let title: String
@@ -80,7 +76,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let lessonsToPrepare: Bool
   /// The learner's calendar day, `YYYY-MM-DD`.
   let localDate: String
-  let minutes: Minutes
+  var minutes: Minutes
   let missions: [StudyMission]
   var nextBlockId: String?
   var nextPosition: Int?
@@ -113,6 +109,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
     else { return self }
     var day = self
     day.blocks = moment.blocks
+    day.minutes = moment.minutes
     day.nextBlockId = moment.next?.block.id
     day.nextPosition = moment.next?.block.position
     if moment.sessionCompleted { day.state = .done }
@@ -132,8 +129,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
     )
   }
 
-  var minutesLeft: Int {
-    blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes }
+  func foldedMinutes(showing blocks: [StudyBlock]) -> Double {
+    max(
+      0,
+      minutes.left - Double(blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes })
+    )
   }
 
   var isStarted: Bool {
@@ -141,7 +141,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   }
 
   var meterParts: [MeterParts.Part] {
-    blocks.map { block in
+    var parts = blocks.map { block in
       let weight = Double(max(block.estimatedMinutes, 1))
 
       if block.isFinished {
@@ -156,6 +156,13 @@ struct StudyDay: Decodable, Equatable, Sendable {
       return MeterParts.Part(
         weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
     }
+
+    if lessonsComing || lessonsToPrepare {
+      let held = foldedMinutes(showing: blocks)
+      if held > 0 { parts.append(.init(weight: held, fill: .track)) }
+    }
+
+    return parts
   }
 }
 
