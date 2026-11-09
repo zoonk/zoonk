@@ -1,4 +1,4 @@
-import { type Goal } from "@zoonk/db";
+import { type Goal, type PlanItem } from "@zoonk/db";
 import { daysBetween, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { canShareMockDay } from "../../plans/planner/short-exam-plan";
@@ -7,15 +7,20 @@ import { getGoalDayMinutes } from "./day-minutes";
 export function isMockOnlyDay({
   goal,
   hasMock,
+  items,
   planSettings,
   today,
 }: {
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   hasMock: boolean;
+  items: readonly Pick<PlanItem, "kind" | "scheduledFor">[];
   planSettings: unknown;
   today: Date;
 }): boolean {
-  if (!hasMock) {
+  if (
+    !hasMock ||
+    !items.some((item) => item.kind === "mock" && item.scheduledFor?.getTime() === today.getTime())
+  ) {
     return false;
   }
 

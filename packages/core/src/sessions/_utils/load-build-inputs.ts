@@ -276,6 +276,7 @@ export async function loadSessionBuildInput(
     mockReplacesDay: isMockOnlyDay({
       goal,
       hasMock: checkpoints.some((checkpoint) => checkpoint.mock),
+      items: plan.items,
       planSettings: plan.settings,
       today: localDate,
     }),
