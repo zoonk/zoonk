@@ -147,10 +147,37 @@ describe(getChallengeTimings, () => {
     expect(timings.get("a")?.when).toBe("nextSession");
   });
 
-  it("does not promise a challenge lost earlier today for the next session", () => {
+  it.each([true, false])(
+    "does not promise a challenge lost earlier today for the next session (saved day: %s)",
+    (savedDay) => {
+      const timings = getChallengeTimings({
+        ...base,
+        items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
+        results: new Map([
+          [
+            "a",
+            {
+              correct: 3,
+              localDate: TODAY,
+              passed: false,
+              studySessionBlockId: "b",
+              studySessionId: "s",
+              total: 10,
+            },
+          ],
+        ]),
+        savedDay,
+        todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "completed" }],
+      });
+
+      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    },
+  );
+
+  it("dates a challenge lost today after the first duel the next day holds", () => {
     const timings = getChallengeTimings({
       ...base,
-      items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
+      items: [boss, { ...boss, id: "b", phase: 1, position: 2 }],
       results: new Map([
         [
           "a",
@@ -158,8 +185,8 @@ describe(getChallengeTimings, () => {
             correct: 3,
             localDate: TODAY,
             passed: false,
-            studySessionBlockId: "b",
-            studySessionId: "s",
+            studySessionBlockId: "block",
+            studySessionId: "session",
             total: 10,
           },
         ],
@@ -168,7 +195,8 @@ describe(getChallengeTimings, () => {
       todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "completed" }],
     });
 
-    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-11", when: "date" });
+    expect(timings.get("b")).toStrictEqual({ date: "2026-11-10", when: "date" });
   });
 
   it("offers a reached challenge before its estimate and never queues a later one", () => {

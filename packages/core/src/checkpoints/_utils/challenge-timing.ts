@@ -172,8 +172,7 @@ export function getChallengeTimings({
         inToday(boss) ||
         !facts ||
         facts.waiting ||
-        facts.testedSkillIds.length === 0 ||
-        (result && result.localDate.getTime() === today.getTime())
+        facts.testedSkillIds.length === 0
       ) {
         return [];
       }
@@ -191,6 +190,12 @@ export function getChallengeTimings({
       ];
     });
 
+  const lostToday = new Set(
+    [...results].flatMap(([id, result]) =>
+      result.localDate.getTime() === today.getTime() ? [id] : [],
+    ),
+  );
+
   const next = days.find((date) => (!savedDay || date > today) && capacity(date) > 0);
   const dates = new Map<string, Date>();
 
@@ -203,7 +208,9 @@ export function getChallengeTimings({
         date,
         items,
         lastSessionChallenges: date === next ? lastSessionChallenges : undefined,
-        reached: reached.filter((entry) => !dates.has(entry.id)),
+        reached: reached.filter(
+          (entry) => !dates.has(entry.id) && (date > today || !lostToday.has(entry.id)),
+        ),
       });
 
       for (const id of ids) {
