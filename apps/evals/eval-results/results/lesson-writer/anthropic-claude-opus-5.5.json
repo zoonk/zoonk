@@ -1337,8 +1337,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "13 of 14 parts passed. Screen 3: question: Too big: expected string to have <=240 characters",
-          "score": 9.357142857142858,
+          "reasoning": "All 14 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
