@@ -51,6 +51,32 @@ class GenerationFollowerTest {
     }
 
     @Test
+    fun aClosedReadyPlanHandsItsUnreadyLessonToTheReadWithoutReconnecting() =
+        runTest {
+            listOf(false, true).forEach { ready ->
+                val source = FakeSource()
+                source.statuses["a"] = Generation.Status.RUNNING
+                source.streams["a"] =
+                    mutableListOf(
+                        flow {
+                            emit(GenerationEvent(lessonId = "lesson", lessonTitle = "Dawn", status = "started", step = "writeFirstLesson"))
+                            emit(event("goalReady"))
+                            if (ready) emit(GenerationEvent(lessonId = "lesson", status = "completed", step = "firstLessonReady"))
+                        },
+                    )
+                val follower = follower(source, kind = GenerationKind.Curriculum)
+                follower.follow("a")
+                runCurrent()
+                advanceTimeBy(300_000)
+                runCurrent()
+                assertEquals(listOf("a"), source.opened)
+                assertEquals(true, follower.run.value.ended)
+                assertEquals(GenerationRun.Status.Ready, follower.run.value.status)
+                follower.stop()
+            }
+        }
+
+    @Test
     fun aReadyPlanStillFollowsItsFirstLessonUntilItCanStart() =
         runTest {
             val source = FakeSource()

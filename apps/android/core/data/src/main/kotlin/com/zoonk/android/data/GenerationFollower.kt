@@ -165,6 +165,9 @@ class GenerationFollower(
                 }
 
                 Ending.Closed -> {
+                    if (state.value.status == GenerationRun.Status.Ready) {
+                        return state.update { it.copy(ended = true) }
+                    }
                     when (readStatus(id)) {
                         Generation.Status.COMPLETED -> return state.update { it.copy(ended = true, status = GenerationRun.Status.Ready) }
                         Generation.Status.FAILED, Generation.Status.CANCELLED -> return fail(GenerationFailure.Generation)

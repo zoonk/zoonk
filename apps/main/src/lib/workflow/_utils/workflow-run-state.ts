@@ -172,6 +172,10 @@ function applyEvent({
 
 /** A run still running behind a closed stream had its connection cut (a function timeout). */
 function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRunState {
+  if (state.ready) {
+    return { ...state, ended: true, reconnectIn: null };
+  }
+
   if (isSettled(state)) {
     return status === "completed" || status === "failed" || status === "cancelled"
       ? { ...state, ended: true }

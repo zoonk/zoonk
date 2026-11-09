@@ -308,4 +308,35 @@ describe(getRunStatus, () => {
     expect(state.ready).toBe(true);
     expect(state.ended).toBe(true);
   });
+
+  it.each([false, true])(
+    "ends a closed ready-plan stream with lesson ready=%s while its run still works",
+    (ready) => {
+      const afterPlan = run([
+        event({
+          lessonId: "lesson",
+          lessonTitle: "Dawn",
+          status: "started",
+          step: "writeFirstLesson",
+        }),
+        event({ status: "completed", step: "goalReady" }),
+        ...(ready
+          ? [event({ lessonId: "lesson", status: "completed", step: "firstLessonReady" })]
+          : []),
+      ]);
+
+      const cycle: WorkflowRunAction[] = [
+        { runId: "run", status: "running", type: "runStatus" },
+        { type: "reconnect" },
+      ];
+
+      const afterReopens = run(Array.from({ length: 80 }, () => cycle).flat(), afterPlan);
+      const closed = run([{ runId: "run", status: "running", type: "runStatus" }], afterReopens);
+
+      expect({ ended: closed.ended, reconnectIn: closed.reconnectIn }).toStrictEqual({
+        ended: true,
+        reconnectIn: null,
+      });
+    },
+  );
 });
