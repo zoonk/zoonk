@@ -145,8 +145,7 @@ private fun firstStepLine(step: BuddyFirstStepsStepsInner): String? {
     val wait = step.waitReason
 
     return when {
-        wait == BuddyFirstStepsStepsInner.WaitReason.LESSONS -> stringResource(R.string.missions_after_lessons)
-        wait == BuddyFirstStepsStepsInner.WaitReason.CHALLENGE -> stringResource(R.string.missions_after_challenge)
+        wait != null -> stringResource(R.string.missions_after_lessons)
         step.status == Status.TODAY -> stringResource(R.string.buddy_page_first_today)
         step.status == Status.AVAILABLE -> stringResource(R.string.buddy_page_first_anytime)
         else -> step.`when`?.let { whenLine(it) }

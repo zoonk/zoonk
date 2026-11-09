@@ -136,10 +136,8 @@
   "today_setting_up_goal": "47216a8768cd14d2622e0befec2d4d1d32aa726f31cf357aa853f4d76ce7a8d4",
   "today_start_new_goal": "44f063b5c39f7ae0c19d3bf4992ae226ecb083e75d30c9992c87129a5f7483da",
   "today_start_session": "15736c8dd3868806531c9fa8b9b2ede8731f1d23f41811531fe971a18951f8dd",
-  "today_step_after_challenge": "af080f26830ed653958a6f246dcbeced226ded0021cb1fba56115294cf59e586",
-  "today_step_after_challenge_phase": "70a5ad31817d66874d6c49e7ddfab3a43765382dc92dc75f429e7fc2f64409fd",
-  "today_step_after_lessons": "11eff26ec9a58cb0a9a9fee5afa1024c6d2192e16c03f592ab53fd6419210cf7",
-  "today_step_after_lessons_phase": "b28de3cf804d6d3de8d2ba54e1218961cf4f7dbba983477c20dde67df7dc6531",
+  "today_step_after_lessons": "c0250b82cb775626a523946a774aa247f846ff72028e2d86f8d597fd25217c47",
+  "today_step_after_lessons_phase": "659795cb0216e41a092532d6454ba7b7eeb520c14d4dd255d259adece7efa55a",
   "today_step_being_written": "0ffba6fcc1262f020f7b5cadb365b2d0a4821df5fa10b2ed322d080ea8b666ab",
   "today_step_catching_up": "907fef7124c5e88fa35325715fde17a3dd7df3505afb5e514202809661876b1e",
   "today_step_catching_up_subject": "b6f8567efb7afcea7f8d1f7b687031f70b11aee20e24d8eed77a8d4fcf8e484d",
@@ -262,11 +260,9 @@
     <string name="today_step_catching_up_subject">Arayı kapatma · %1$s</string>
     <string name="today_step_often_tested">Sınavlarda sık çıkar</string>
     <string name="today_step_often_tested_label">%1$s · sık sorulur</string>
-    <string name="today_step_after_lessons">Bugünkü derslerden sonra</string>
+    <string name="today_step_after_lessons">Bu aşamanın derslerinden sonra</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · bugünkü derslerden sonra</string>
-    <string name="today_step_after_challenge">Önceki meydan okumadan sonra</string>
-    <string name="today_step_after_challenge_phase">%1$s · önceki meydan okumadan sonra</string>
+    <string name="today_step_after_lessons_phase">%1$s · bu aşamanın derslerinden sonra</string>
     <string name="today_done">Bugünkü çalışman tamamlandı.</string>
     <string name="today_done_day_off">Dinlenme gününde çalıştın.</string>
     <string name="today_see_summary">Bugünün özetini gör</string>

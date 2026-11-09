@@ -230,9 +230,11 @@ private fun phaseUntil(
         return null
     }
     if (isLast && phase.kind != PlanPhase.Kind.AFTER_EXAM && page.finish != null) return null
-    val estimate =
-        (phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM) && phase.state == PlanPhase.State.UPCOMING
-    val date = formatPlanDate(end, page.today, currentLocale(), month = estimate)
+    val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
+    val month = learns && phase.state == PlanPhase.State.UPCOMING
+    // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+    val estimate = month || (learns && phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
+    val date = formatPlanDate(end, page.today, currentLocale(), month = month)
     return if (estimate) {
         PlanDateWords(stringResource(R.string.plan_until_estimate, date), stringResource(R.string.plan_until_estimate_spoken, date))
     } else {
@@ -487,8 +489,14 @@ internal fun CheckpointRow(
     val trailing =
         when {
             done -> sameWords(stringResource(R.string.plan_challenge_won))
+
+            // Dated today, the next session is today's, which may already be under way.
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> sameWords(stringResource(R.string.plan_today))
+
             whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> sameWords(stringResource(R.string.plan_challenge_next_session))
+
             date != null -> planDate(date, page.today, estimate = true)
+
             else -> null
         }
     val planItemId = checkpoint.planItemId?.toString()

@@ -136,10 +136,8 @@
   "today_setting_up_goal": "649219d1cfc1c7668c5c904e6907721bafa889fc76280f6a0c1e976aba7a5130",
   "today_start_new_goal": "7edc38637d68f6e613598862dc6e34f358990bb6cee32a8688bb7207a8ec8284",
   "today_start_session": "9c90b1d4123a1b3b7131759de3b6df631460ad4a566413dc37898eadb1a6b6dd",
-  "today_step_after_challenge": "28c587dc1ad22054b29f455a95aec0a33385863803ed14df030031a7cea73655",
-  "today_step_after_challenge_phase": "44bbfd87aaa76875381321c1dbce6877e57b5ad220c7d717f12e3a5c5e14ac77",
-  "today_step_after_lessons": "b82938e3eac4bfe84fd707078a1c8f4c632f5a172250d6082646fb545da02186",
-  "today_step_after_lessons_phase": "f1b5871ebe1c8b6022d97ad00f8bd795050d1919f30c1933ffd50f38b195553e",
+  "today_step_after_lessons": "f14560001492ac08f82c0fed4effe695c5e29a3881545e5bb5c0f5b581fb7345",
+  "today_step_after_lessons_phase": "1fd98b63c120236be6d315d80c4983e997584a901598db5f12e01e382b5df8a7",
   "today_step_being_written": "e6d4c5b2c35fcf20e569702dd05220f9864c04ec6481f9f4944b89d7defe3332",
   "today_step_catching_up": "321ef3f8bc1c827fef538f0876c59d7a8e27ba02cf2d8449d0235b8596ee7c7c",
   "today_step_catching_up_subject": "541763cc87e34c703335137bdf021449020902025311de8ca6311c55ec2a63bc",
@@ -262,11 +260,9 @@
     <string name="today_step_catching_up_subject">Nachholen · %1$s</string>
     <string name="today_step_often_tested">Wird oft geprüft</string>
     <string name="today_step_often_tested_label">%1$s · häufig geprüft</string>
-    <string name="today_step_after_lessons">Nach den heutigen Lektionen</string>
+    <string name="today_step_after_lessons">Nach den Lektionen dieser Phase</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · nach den heutigen Lektionen</string>
-    <string name="today_step_after_challenge">Nach der vorherigen Herausforderung</string>
-    <string name="today_step_after_challenge_phase">%1$s · nach der vorherigen Herausforderung</string>
+    <string name="today_step_after_lessons_phase">%1$s · nach den Lektionen dieser Phase</string>
     <string name="today_done">Deine heutige Lerneinheit ist abgeschlossen.</string>
     <string name="today_done_day_off">Du hast an deinem freien Tag gelernt.</string>
     <string name="today_see_summary">Heutige Zusammenfassung ansehen</string>
