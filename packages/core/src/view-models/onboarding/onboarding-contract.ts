@@ -271,19 +271,6 @@ const skippableAnswer = nullableAnswer.default(null);
 /** Null skips skippable questions; placement marks completion after finishing, stopping, or opting out. */
 export const onboardingAnswerInputSchema = z
   .discriminatedUnion("question", [
-    ...profileOnboardingAnswerSchemas,
-    z
-      .object({
-        forever: z
-          .boolean()
-          .default(false)
-          .meta({
-            description:
-              "Declines every unanswered profile question permanently instead of skipping this onboarding",
-          }),
-        question: z.literal("skipProfile"),
-      })
-      .strict(),
     z.object({ purpose: z.enum(ONBOARDING_PURPOSES), question: z.literal("purpose") }).strict(),
     z
       .object({
@@ -351,6 +338,19 @@ export const onboardingAnswerInputSchema = z
       .object({
         buddy: learningProfileUpdateSchema.shape.buddy.unwrap(),
         question: z.literal("buddy"),
+      })
+      .strict(),
+    ...profileOnboardingAnswerSchemas,
+    z
+      .object({
+        forever: z
+          .boolean()
+          .default(false)
+          .meta({
+            description:
+              "Declines every unanswered profile question permanently instead of skipping this onboarding",
+          }),
+        question: z.literal("skipProfile"),
       })
       .strict(),
   ])

@@ -387,6 +387,18 @@ private fun ColumnScope.QuestionStep(
     onReportLevelTest: () -> Unit,
 ) {
     when (step) {
+        OnboardingStep.WORK,
+        OnboardingStep.TOOLS,
+        OnboardingStep.STUDIES,
+        OnboardingStep.WATCH,
+        OnboardingStep.LISTEN,
+        OnboardingStep.PLAY,
+        OnboardingStep.READ,
+        OnboardingStep.ACTIVITIES,
+        OnboardingStep.CONDITIONS,
+        OnboardingStep.LEARNING_SUPPORT,
+        -> {}
+
         OnboardingStep.PURPOSE -> {
             PurposeStep(subject, pending, vm::answer)
         }

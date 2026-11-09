@@ -1,4 +1,6 @@
+import { type Goal } from "@zoonk/db";
 import { LearnerConditionKind, LearningNeed, type ProfileQuestion } from "@zoonk/db/enums";
+import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "../../memory/memory-limits";
 import { PROFILE_OPTION_IDS } from "./profile-option-ids";
@@ -219,4 +221,29 @@ export function isProfileQuestion(question: string): question is ProfileQuestion
 }
 export function isBiographyQuestion(question: ProfileQuestion): boolean {
   return BIOGRAPHY_QUESTIONS.some((id) => id === question);
+}
+
+/** @public */
+export function getProfileSteps({
+  goal,
+  answered,
+  memoryEnabled,
+}: {
+  goal: Pick<Goal, "kind" | "details" | "replacesGoalId" | "planRevealedAt">;
+  answered: Partial<Record<ProfileQuestion, number>>;
+  memoryEnabled: boolean;
+}): ProfileQuestion[] {
+  if (goal.kind === "explain" || goal.replacesGoalId || goal.planRevealedAt) {
+    return [];
+  }
+
+  const skipped =
+    isJsonObject(goal.details) && Array.isArray(goal.details.answered) ? goal.details.answered : [];
+
+  return PROFILE_QUESTIONS.filter(
+    (question) =>
+      (answered[question] ?? 0) < PROFILE_QUESTION_VERSIONS[question] &&
+      !skipped.includes(question) &&
+      (memoryEnabled || !isBiographyQuestion(question)),
+  );
 }

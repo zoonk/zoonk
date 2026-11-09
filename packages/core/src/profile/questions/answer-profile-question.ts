@@ -10,21 +10,16 @@ import {
   getLearningProfileCacheTag,
   getMemoryCacheTag,
 } from "../../cache/tags";
-import {
-  type EntitlementViewer,
-  getEntitlementViewer,
-} from "../../entitlements/_utils/entitlement-viewer";
-import { claimAssistInWrite } from "../../entitlements/claim-usage";
-import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { forgetExampleLines } from "../../memory/_utils/forget-example-lines";
-import { LEARNER_CONFIDENCE } from "../../memory/_utils/memory-candidates";
 import { getSession } from "../../users/get-session";
 import {
+  getQuestionFacts,
   loadProfileQuestionState,
   savedProfileAnswer,
   toProfileQuestionView,
 } from "./_utils/profile-question-state";
+import { replaceProfileFacts } from "./_utils/save-profile-facts";
 import { parseProfileAnswer } from "./profile-answer-normalization";
 import {
   PROFILE_QUESTION_VERSIONS,
@@ -32,7 +27,6 @@ import {
   type ProfileQuestionView,
   isBiographyQuestion,
 } from "./profile-question-contract";
-import { toProfileFacts } from "./profile-statements";
 
 export type ProfileAnswerResult =
   | { status: "saved"; question: ProfileQuestionView }
@@ -52,65 +46,6 @@ function comparable(input: ProfileAnswerInput, soundsEnabled: boolean, memoryEna
   }
 
   return input.answer;
-}
-
-async function replaceFacts({
-  tx,
-  userId,
-  input,
-  locale,
-  viewer,
-}: {
-  tx: TransactionClient;
-  userId: string;
-  input: ProfileAnswerInput;
-  locale: SupportedLocale;
-  viewer: EntitlementViewer | null;
-}): Promise<boolean> {
-  await tx.memoryFact.updateMany({
-    data: { deletedAt: new Date(), status: "deleted" },
-    where: {
-      AND: [
-        { sourceRef: { equals: "profile", path: ["kind"] } },
-        { sourceRef: { equals: input.question, path: ["id"] } },
-      ],
-      status: "active",
-      userId,
-    },
-  });
-
-  const created = await tx.memoryFact.createManyAndReturn({
-    data: toProfileFacts({ ...input, locale }).map((fact) => ({
-      ...fact,
-      confidence: LEARNER_CONFIDENCE,
-      origin: "said",
-      sourceRef: { id: input.question, kind: "profile" },
-      userId,
-    })),
-  });
-
-  const checked: typeof created = [];
-
-  for (const fact of created.filter((item) => item.sensitive)) {
-    // oxlint-disable-next-line no-await-in-loop -- Each claim must see the preceding claim in this transaction.
-    if (viewer && (await claimAssistInWrite({ transaction: tx, viewer }))) {
-      checked.push(fact);
-    }
-  }
-
-  if (checked.length > 0) {
-    await oweFollowUps({
-      db: tx,
-      followUps: checked.map((fact) => ({
-        input: { factId: fact.id, statement: fact.statement },
-        kind: "checkFactSensitivity",
-      })),
-      userId,
-    });
-  }
-
-  await forgetExampleLines({ client: tx, userId });
-  return checked.length > 0;
 }
 
 async function saveSettings({
@@ -159,13 +94,17 @@ export async function answerProfileQuestion({
     return { status: "unauthorized" };
   }
 
-  const input = parseProfileAnswer(unparsed);
+  const submitted = parseProfileAnswer(unparsed);
 
-  if (!input) {
+  if (!submitted) {
     return { status: "invalid" };
   }
 
-  if (input.question === "conditions" && !input.answer.declined && !input.answer.consented) {
+  if (
+    submitted.question === "conditions" &&
+    !submitted.answer.declined &&
+    !submitted.answer.consented
+  ) {
     return { status: "consentRequired" };
   }
 
@@ -173,11 +112,20 @@ export async function answerProfileQuestion({
   const viewer = await getEntitlementViewer();
 
   const saved = await writeLearnerChange<
-    | { status: "memoryOff" }
+    | { status: "memoryOff" | "invalid" }
     | { status: "saved"; changed: boolean; checked: boolean; question: ProfileQuestionView }
   >({ userId }, async (tx) => {
     const state = await loadProfileQuestionState({ client: tx, userId });
     const memoryEnabled = state.profile?.memoryEnabled ?? true;
+
+    const input =
+      !memoryEnabled && submitted.question === "learningSupport"
+        ? parseProfileAnswer({ ...submitted, answer: { ...submitted.answer, note: null } })
+        : submitted;
+
+    if (!input) {
+      return unchanged({ status: "invalid" as const });
+    }
 
     if (!memoryEnabled && isBiographyQuestion(input.question)) {
       return unchanged({ status: "memoryOff" as const });
@@ -204,7 +152,14 @@ export async function answerProfileQuestion({
 
     const checked =
       isBiographyQuestion(input.question) || (input.question === "learningSupport" && memoryEnabled)
-        ? await replaceFacts({ input, locale, tx, userId, viewer })
+        ? await replaceProfileFacts({
+            existing: getQuestionFacts({ facts: state.facts, question: input.question }),
+            input,
+            locale,
+            tx,
+            userId,
+            viewer,
+          })
         : false;
 
     await saveSettings({ input, tx, userId });
@@ -231,7 +186,7 @@ export async function answerProfileQuestion({
     };
   });
 
-  if (saved.status === "memoryOff") {
+  if (saved.status !== "saved") {
     return saved;
   }
 

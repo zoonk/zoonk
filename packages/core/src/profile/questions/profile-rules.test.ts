@@ -2,9 +2,12 @@ import { type Goal } from "@zoonk/db";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { parseProfileAnswer, splitProfileFavorites } from "./profile-answer-normalization";
-import { PROFILE_QUESTIONS, profileAnswerInputSchema } from "./profile-question-contract";
+import {
+  PROFILE_QUESTIONS,
+  getProfileSteps,
+  profileAnswerInputSchema,
+} from "./profile-question-contract";
 import { toProfileFacts } from "./profile-statements";
-import { getProfileSteps } from "./profile-steps";
 
 const goal: Pick<Goal, "details" | "kind" | "planRevealedAt" | "replacesGoalId"> = {
   details: {},
@@ -134,10 +137,13 @@ describe("profile statements", () => {
     },
   );
 
-  it("validates the normalized favorites length before starting a write", () => {
+  it("keeps normalized favorites within the original input length", () => {
     const favorites = Array.from({ length: 40 }, (_, index) => String(index)).join(",");
     expect(favorites.length).toBeLessThanOrEqual(120);
-    expect(parseProfileAnswer({ answer: { favorites }, question: "watch" })).toBeNull();
+
+    expect(parseProfileAnswer({ answer: { favorites }, question: "watch" })).toMatchObject({
+      answer: { favorites },
+    });
   });
 
   it.each([

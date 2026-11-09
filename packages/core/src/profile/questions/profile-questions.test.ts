@@ -66,7 +66,7 @@ describe("profile question capabilities", () => {
 
     await expect(save(watch)).resolves.toMatchObject({
       question: {
-        saved: { picks: ["anime", "sciFi"], text: "Star Trek, Fringe" },
+        saved: { picks: ["anime", "sciFi"], text: "Star Trek,Fringe" },
         status: "answered",
       },
       status: "saved",
@@ -117,7 +117,7 @@ describe("profile question capabilities", () => {
 
     await expect(
       prisma.memoryFact.findUniqueOrThrow({ where: { id: facts[0]!.id } }),
-    ).resolves.toMatchObject({ deletedAt: expect.any(Date), status: "deleted" });
+    ).resolves.toMatchObject({ deletedAt: expect.any(Date), status: "superseded" });
   });
 
   it.each(PROFILE_QUESTIONS)(
@@ -364,6 +364,164 @@ describe("profile question capabilities", () => {
       { field: "computing", subject: null },
       { field: "media", subject: "Journalism" },
     ]);
+  });
+
+  it("keeps an unchanged cleared support note when needs or sounds change", async () => {
+    const user = await learner();
+    const note = "Diagrams help me";
+
+    await save({
+      answer: { needs: ["stepByStep"], note, soundEffects: true },
+      question: "learningSupport",
+    });
+
+    const [original] = await activeFacts(user.id);
+    await prisma.memoryFact.update({ data: { sensitive: false }, where: { id: original!.id } });
+
+    await save({
+      answer: { needs: ["shortAnswers"], note, soundEffects: true },
+      question: "learningSupport",
+    });
+
+    await save({
+      answer: { needs: ["shortAnswers"], note, soundEffects: false },
+      question: "learningSupport",
+    });
+
+    await expect(activeFacts(user.id)).resolves.toMatchObject([
+      { id: original!.id, sensitive: false, statement: note },
+    ]);
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+    ).resolves.toBe(1);
+
+    await expect(listFollowUps(user.id)).resolves.toHaveLength(1);
+  });
+
+  it("keeps cleared studies and spends no assists for them when another study is added at the cap", async () => {
+    const user = await learner();
+
+    const studies = [
+      { field: "computing", subject: "Computer science" },
+      { field: "media", subject: "Journalism" },
+    ];
+
+    await save({ answer: { studies }, question: "studies" });
+    const originals = await activeFacts(user.id);
+    await prisma.memoryFact.updateMany({ data: { sensitive: false }, where: { userId: user.id } });
+    const cap = getUsageRule({ kind: "assist", tier: "free" }).day ?? 0;
+
+    await usageRecordsFixture({
+      count: cap - 2,
+      createdAt: new Date(),
+      kind: "assist",
+      userId: user.id,
+    });
+
+    await save({
+      answer: { studies: [...studies, { field: "business", subject: "Finance" }] },
+      question: "studies",
+    });
+
+    const current = await activeFacts(user.id);
+    expect(current).toHaveLength(3);
+
+    expect(
+      current
+        .filter((fact) => originals.some((original) => original.id === fact.id))
+        .every((fact) => !fact.sensitive),
+    ).toBe(true);
+
+    expect(
+      current.filter((fact) => originals.some((original) => original.id === fact.id)),
+    ).toHaveLength(2);
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+    ).resolves.toBe(cap);
+
+    await expect(listFollowUps(user.id)).resolves.toHaveLength(2);
+  });
+
+  it("accepts and round-trips favorites whose separators fit the 120-character input limit", async () => {
+    await learner();
+    const favorites = Array.from({ length: 13 }, (_, index) => `ドラゴンボール${index}`).join("、");
+    expect(favorites.length).toBeLessThanOrEqual(120);
+    const saved = await save({ answer: { favorites }, question: "watch" }, "ja");
+
+    if (saved.status !== "saved") {
+      throw new Error(saved.status);
+    }
+
+    expect(saved.question.saved.text.length).toBeLessThanOrEqual(120);
+
+    const repeat = await countDatabaseStatements(() =>
+      save({ answer: { favorites: saved.question.saved.text }, question: "watch" }, "ja"),
+    );
+
+    expect(repeat.result).toMatchObject({ status: "saved" });
+    expect(repeat.writes).toBe(0);
+  });
+
+  it("refuses a note-only support answer with memory off before recording it as answered", async () => {
+    const user = await learner();
+    await learningProfileFixture({ memoryEnabled: false, userId: user.id });
+
+    const result = await countDatabaseStatements(() =>
+      save({ answer: { note: "Diagrams help" }, question: "learningSupport" }),
+    );
+
+    expect(result.result).toStrictEqual({ status: "invalid" });
+    expect(result.writes).toBe(0);
+    await expect(prisma.profileAnswer.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("refuses an old deletion's undo after a newer answer, including a decline", async () => {
+    const user = await learner();
+    await save({ answer: { picks: ["anime"] }, question: "watch" });
+    const [old] = await activeFacts(user.id);
+    await save({ answer: { picks: ["comedy"] }, question: "watch" });
+
+    await expect(
+      undoMemoryChanges({ changes: [{ factId: null, previousFactId: old!.id }] }),
+    ).resolves.toMatchObject({ status: "conflict" });
+
+    const [current] = await activeFacts(user.id);
+    await save({ answer: { declined: true }, question: "watch" });
+
+    await expect(
+      undoMemoryChanges({ changes: [{ factId: null, previousFactId: current!.id }] }),
+    ).resolves.toMatchObject({ status: "conflict" });
+
+    await expect(activeFacts(user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("does not restore a manually deleted study after About you replaces that question", async () => {
+    const user = await learner();
+
+    await save({
+      answer: { studies: [{ field: "media", subject: "Journalism" }] },
+      question: "studies",
+    });
+
+    const [old] = await activeFacts(user.id);
+    await deleteMemoryFact(old!.id);
+
+    await save({
+      answer: { studies: [{ field: "computing" }, { field: "business" }, { field: "law" }] },
+      question: "studies",
+    });
+
+    await expect(
+      undoMemoryChanges({ changes: [{ factId: null, previousFactId: old!.id }] }),
+    ).resolves.toMatchObject({ status: "conflict" });
+
+    const view = await getProfileQuestions({ locale: "en" });
+
+    expect(
+      view?.questions.find((question) => question.id === "studies")?.saved.studies,
+    ).toHaveLength(3);
   });
 
   it("exports structured facts, status records, needs and consented conditions", async () => {

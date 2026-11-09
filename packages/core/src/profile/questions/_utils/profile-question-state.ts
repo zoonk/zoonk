@@ -46,7 +46,7 @@ export async function loadProfileQuestionState({
 }
 export type ProfileQuestionState = Awaited<ReturnType<typeof loadProfileQuestionState>>;
 
-function getQuestionFacts({
+export function getQuestionFacts({
   facts,
   question,
 }: {
@@ -129,7 +129,7 @@ function questionAnswer({
     case "watch":
       return {
         declined,
-        favorites: Array.isArray(first.favorites) ? first.favorites.join(", ") : "",
+        favorites: Array.isArray(first.favorites) ? first.favorites.join(",") : "",
         picks: first.picks ?? [],
       };
     default:

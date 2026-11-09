@@ -74,7 +74,7 @@ export const memoryExportSchema = z
         deletedAt: z.iso.datetime().nullable(),
         lastUsedAt: z.iso.datetime().nullable(),
         profileAnswer: z
-          .json()
+          .record(z.string(), z.unknown())
           .nullable()
           .meta({ description: "Structured profile answer; cleared when its fact is reworded" }),
         status: z.enum(MemoryFactStatus),

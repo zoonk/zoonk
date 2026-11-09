@@ -155,7 +155,7 @@ extension MemoryFact {
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding
       case (_, .session): .session
-      case (_, nil): .told
+      case (_, .profile), (_, nil): .told
       }
 
     self.init(

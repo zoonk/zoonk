@@ -29665,6 +29665,326 @@
           {
             "type": "object",
             "properties": {
+              "purpose": {
+                "type": "string",
+                "enum": [
+                  "overview",
+                  "deep",
+                  "work",
+                  "careerChange",
+                  "refresh",
+                  "other"
+                ]
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "purpose"
+                ]
+              }
+            },
+            "required": [
+              "purpose",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "enum": [
+                  "role"
+                ]
+              },
+              "role": {
+                "default": null,
+                "description": "The learner's current role",
+                "nullable": true,
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "targetPosition": {
+                "description": "For a career change, the role they're aiming for",
+                "nullable": true,
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "tasks": {
+                "description": "For work, what they use the subject for in their job",
+                "nullable": true,
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "enum": [
+                  "reason"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "travel",
+                  "talk",
+                  "work",
+                  "fluent",
+                  "certificate",
+                  "other"
+                ],
+                "description": "Why the learner studies the language, which sets the level the course goes up to (`languageAim.reasons`): certificate moves the goal to an exam goal for the certificate `words` names"
+              },
+              "words": {
+                "description": "For certificate, which one (IELTS, DELE, CELI). For other, the learner's own words",
+                "nullable": true,
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "question",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "enum": [
+                  "target"
+                ]
+              },
+              "target": {
+                "default": null,
+                "nullable": true,
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "enum": [
+                  "targetDate"
+                ]
+              },
+              "targetDate": {
+                "default": null,
+                "description": "The learner's deadline, or null for none: after their today (an earlier one is refused with 422) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+                "nullable": true,
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answers": {
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "nullable": true,
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                }
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "followUps"
+                ]
+              }
+            },
+            "required": [
+              "answers",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "choices": {
+                "default": null,
+                "description": "The option the learner takes for each of the exam's choices (`examChoices`); null to decide later, from the plan",
+                "nullable": true,
+                "minItems": 1,
+                "maxItems": 5,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ExamChoicePick"
+                }
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "examChoice"
+                ]
+              },
+              "timeZone": {
+                "description": "The learner's IANA timezone, for relative dates; UTC when left out",
+                "type": "string"
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "knownSubjects": {
+                "description": "For an exam with several subjects: the notice's subjects the learner already knows well, whose basics the plan skips",
+                "maxItems": 40,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                }
+              },
+              "level": {
+                "default": null,
+                "nullable": true,
+                "type": "string",
+                "enum": [
+                  "none",
+                  "basic",
+                  "intermediate",
+                  "advanced"
+                ]
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "level"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dailyMinutes": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 1440
+              },
+              "fullCourse": {
+                "description": "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
+                "type": "boolean"
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "schedule"
+                ]
+              },
+              "studyDays": {
+                "minItems": 1,
+                "maxItems": 7,
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 6
+                }
+              },
+              "timeZone": {
+                "description": "The learner's IANA timezone, for relative dates; UTC when left out",
+                "type": "string"
+              },
+              "weekendMinutes": {
+                "description": "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 1440
+              }
+            },
+            "required": [
+              "dailyMinutes",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "enum": [
+                  "placement"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "buddy": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BuddyInput"
+                  }
+                ]
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "buddy"
+                ]
+              }
+            },
+            "required": [
+              "buddy",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
               "answer": {
                 "default": null,
                 "nullable": true,
@@ -30236,326 +30556,6 @@
               }
             },
             "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "purpose": {
-                "type": "string",
-                "enum": [
-                  "overview",
-                  "deep",
-                  "work",
-                  "careerChange",
-                  "refresh",
-                  "other"
-                ]
-              },
-              "question": {
-                "type": "string",
-                "enum": [
-                  "purpose"
-                ]
-              }
-            },
-            "required": [
-              "purpose",
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "question": {
-                "type": "string",
-                "enum": [
-                  "role"
-                ]
-              },
-              "role": {
-                "default": null,
-                "description": "The learner's current role",
-                "nullable": true,
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "targetPosition": {
-                "description": "For a career change, the role they're aiming for",
-                "nullable": true,
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "tasks": {
-                "description": "For work, what they use the subject for in their job",
-                "nullable": true,
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              }
-            },
-            "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "question": {
-                "type": "string",
-                "enum": [
-                  "reason"
-                ]
-              },
-              "reason": {
-                "type": "string",
-                "enum": [
-                  "travel",
-                  "talk",
-                  "work",
-                  "fluent",
-                  "certificate",
-                  "other"
-                ],
-                "description": "Why the learner studies the language, which sets the level the course goes up to (`languageAim.reasons`): certificate moves the goal to an exam goal for the certificate `words` names"
-              },
-              "words": {
-                "description": "For certificate, which one (IELTS, DELE, CELI). For other, the learner's own words",
-                "nullable": true,
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              }
-            },
-            "required": [
-              "question",
-              "reason"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "question": {
-                "type": "string",
-                "enum": [
-                  "target"
-                ]
-              },
-              "target": {
-                "default": null,
-                "nullable": true,
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              }
-            },
-            "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "question": {
-                "type": "string",
-                "enum": [
-                  "targetDate"
-                ]
-              },
-              "targetDate": {
-                "default": null,
-                "description": "The learner's deadline, or null for none: after their today (an earlier one is refused with 422) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
-                "nullable": true,
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              }
-            },
-            "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "answers": {
-                "maxItems": 2,
-                "type": "array",
-                "items": {
-                  "nullable": true,
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 200
-                }
-              },
-              "question": {
-                "type": "string",
-                "enum": [
-                  "followUps"
-                ]
-              }
-            },
-            "required": [
-              "answers",
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "choices": {
-                "default": null,
-                "description": "The option the learner takes for each of the exam's choices (`examChoices`); null to decide later, from the plan",
-                "nullable": true,
-                "minItems": 1,
-                "maxItems": 5,
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ExamChoicePick"
-                }
-              },
-              "question": {
-                "type": "string",
-                "enum": [
-                  "examChoice"
-                ]
-              },
-              "timeZone": {
-                "description": "The learner's IANA timezone, for relative dates; UTC when left out",
-                "type": "string"
-              }
-            },
-            "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "knownSubjects": {
-                "description": "For an exam with several subjects: the notice's subjects the learner already knows well, whose basics the plan skips",
-                "maxItems": 40,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 200
-                }
-              },
-              "level": {
-                "default": null,
-                "nullable": true,
-                "type": "string",
-                "enum": [
-                  "none",
-                  "basic",
-                  "intermediate",
-                  "advanced"
-                ]
-              },
-              "question": {
-                "type": "string",
-                "enum": [
-                  "level"
-                ]
-              }
-            },
-            "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "dailyMinutes": {
-                "type": "integer",
-                "minimum": 5,
-                "maximum": 1440
-              },
-              "fullCourse": {
-                "description": "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
-                "type": "boolean"
-              },
-              "question": {
-                "type": "string",
-                "enum": [
-                  "schedule"
-                ]
-              },
-              "studyDays": {
-                "minItems": 1,
-                "maxItems": 7,
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 6
-                }
-              },
-              "timeZone": {
-                "description": "The learner's IANA timezone, for relative dates; UTC when left out",
-                "type": "string"
-              },
-              "weekendMinutes": {
-                "description": "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
-                "type": "integer",
-                "minimum": 5,
-                "maximum": 1440
-              }
-            },
-            "required": [
-              "dailyMinutes",
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "question": {
-                "type": "string",
-                "enum": [
-                  "placement"
-                ]
-              }
-            },
-            "required": [
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "buddy": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/BuddyInput"
-                  }
-                ]
-              },
-              "question": {
-                "type": "string",
-                "enum": [
-                  "buddy"
-                ]
-              }
-            },
-            "required": [
-              "buddy",
               "question"
             ],
             "additionalProperties": false
@@ -31774,11 +31774,8 @@
                 "profileAnswer": {
                   "nullable": true,
                   "description": "Structured profile answer; cleared when its fact is reworded",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/__schema1"
-                    }
-                  ]
+                  "type": "object",
+                  "additionalProperties": {}
                 },
                 "status": {
                   "type": "string",
@@ -95156,38 +95153,6 @@
           }
         ]
       },
-      "__schema2": {
-        "anyOf": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "number"
-          },
-          {
-            "type": "boolean"
-          },
-          {
-            "type": "string",
-            "nullable": true,
-            "enum": [
-              null
-            ]
-          },
-          {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/__schema2"
-            }
-          },
-          {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/__schema2"
-            }
-          }
-        ]
-      },
       "PlanOperationOutput": {
         "oneOf": [
           {
@@ -95755,7 +95720,7 @@
           "details": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/__schema2"
+              "$ref": "#/components/schemas/__schema1"
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
           },

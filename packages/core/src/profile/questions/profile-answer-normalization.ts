@@ -25,7 +25,7 @@ function normalizePicks<T extends { answer: { favorites: string; picks: string[]
     ...input,
     answer: {
       ...input.answer,
-      favorites: splitProfileFavorites(input.answer.favorites).join(", "),
+      favorites: splitProfileFavorites(input.answer.favorites).join(","),
       picks: uniqueIds(input.answer.picks),
     },
   };
@@ -123,10 +123,6 @@ export function parseProfileAnswer(input: unknown): ProfileAnswerInput | null {
   }
 
   const normalized = normalizeProfileAnswer(parsed.data);
-
-  if (!profileAnswerInputSchema.safeParse(normalized).success) {
-    return null;
-  }
 
   if (normalized.answer.declined === hasProfileAnswerContent(normalized)) {
     return null;
