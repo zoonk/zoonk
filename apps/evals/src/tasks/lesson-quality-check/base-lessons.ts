@@ -24,7 +24,7 @@ const RECORDED = {
         {
           image: null,
           kind: "hookText",
-          text: "Pointed arches, ribbed vaults and flying buttresses helped Gothic churches grow taller and admit more light. A doorway's shape can suggest its style, even when a later building imitates it. Which style does this door suggest?",
+          text: "Pointed arches, ribbed vaults and flying buttresses helped Gothic churches grow taller and admit more light. A doorway's shape can suggest its style, even when a later building imitates it. What can a doorway's shape tell you?",
           visual: null,
         },
         {
