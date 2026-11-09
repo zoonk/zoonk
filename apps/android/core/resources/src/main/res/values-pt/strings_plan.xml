@@ -571,6 +571,8 @@
   "plan_unit_lessons_being_written": "9fbf593a9fab5132ad013cbe096767f251038d107e0e973d165d4218602e5c59",
   "plan_until": "33230a407be81aa1fed5b9b9e92da6a99c460912406b19bd4ebe163ca22dfd6d",
   "plan_until_estimate": "f4418112574dba696557ef23f243e1d81463b92f9d3a1366fe586e50d230ca20",
+  "plan_until_estimate_month": "d73a0196e092d8c27b1d3f77e43df3cc9efd7987f11d6d9ee1cd3aae300cba3d",
+  "plan_until_estimate_month_spoken": "fbad05d055778021df077dbc1a66b509ae88c40882a70913dfe2accaf377b290",
   "plan_until_estimate_spoken": "529bead1fc3f59582dc6f4903c08046ea03e1e19c3ff53a98dfdae4052bafd44",
   "plan_up_next": "647df8900433f67bd774b1fc666bcd964a5d6408afbe07acb7153b3b660ea92f",
   "plan_up_next_suffix": "004c2e471a09e440fe692b83ccc7f80c9bd77aad90fc833018f875f01c8c7b5d",
@@ -694,6 +696,8 @@
     <string name="plan_until">até %1$s</string>
     <string name="plan_until_estimate">até ~%1$s</string>
     <string name="plan_until_estimate_spoken">até aproximadamente %1$s</string>
+    <string name="plan_until_estimate_month">até ~%1$s</string>
+    <string name="plan_until_estimate_month_spoken">até por volta de %1$s</string>
     <string name="plan_not_in_your_plan">Fora do seu plano</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">%d aula ficou de fora</item>

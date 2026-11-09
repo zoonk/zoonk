@@ -93,8 +93,14 @@
         <item quantity="other">%1$d of %2$d lessons done</item>
     </plurals>
     <string name="plan_until">until %1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate">until ~%1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate_spoken">until about %1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month">until ~%1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month_spoken">until about %1$s</string>
     <string name="plan_not_in_your_plan">Not in your plan</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">%d lesson was left out</item>

@@ -571,6 +571,8 @@
   "plan_unit_lessons_being_written": "f36c97401b7c2c884b269794aeabd842f2909ee02331a261c59dfcce02957860",
   "plan_until": "83b56ea42238fdb02f4ca161513f779f8147d8fe8e76bcd8ea5d8a30ad20e491",
   "plan_until_estimate": "7243fcc7851b3637681ed897a00376a41ea2845783f063f3e94d33816e3d6d4e",
+  "plan_until_estimate_month": "1ff2b322da02ccf86e40379c4bb94aaf0c6e70f7b67da22af40b3d62bcf81f82",
+  "plan_until_estimate_month_spoken": "baf0c750fc89e6eaeb9f773a92808cf119be3a192fce04f95b623f56bbd15935",
   "plan_until_estimate_spoken": "dcf79e4a86ba28788d47fc949764ca2bf21513186062c12728fc0246e1de1031",
   "plan_up_next": "b46f0f341dd32e592248bb5d4bc439dae6540bce024e1e0e6c2bb25841efa4f4",
   "plan_up_next_suffix": "153f254d75d72737733eb076f22aa5905462ea7b7b98d7293cfa8909845093c1",
@@ -684,6 +686,8 @@
     <string name="plan_until">%1$s까지</string>
     <string name="plan_until_estimate">~%1$s까지</string>
     <string name="plan_until_estimate_spoken">%1$s쯤까지</string>
+    <string name="plan_until_estimate_month">%1$s쯤까지</string>
+    <string name="plan_until_estimate_month_spoken">%1$s쯤까지</string>
     <string name="plan_not_in_your_plan">계획에 없어요</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="other">레슨 %d개가 제외됐어요</item>
