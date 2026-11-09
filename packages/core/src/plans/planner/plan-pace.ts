@@ -28,8 +28,8 @@ export function keepSlowerPace({
 
 const MIN_LESSONS: Record<PaceSource, number> = { course: 20, own: 5, typical: 50 };
 
-const MIN_FACTOR = 0.5;
-const MAX_FACTOR = 2.5;
+export const MIN_PACE_FACTOR = 0.5;
+export const MAX_PACE_FACTOR = 2.5;
 
 const PRIOR_LESSONS = 5;
 
@@ -61,7 +61,7 @@ export function choosePace({ course, own, typical }: Record<PaceSource, PaceSamp
     ? ["own", blendOwn({ own: ownTrusted, prior })]
     : [others?.[0] ?? "typical", prior];
 
-  const factor = Math.min(MAX_FACTOR, Math.max(MIN_FACTOR, ratio));
+  const factor = Math.min(MAX_PACE_FACTOR, Math.max(MIN_PACE_FACTOR, ratio));
 
   return { factor: Math.round(factor * 100) / 100, source };
 }

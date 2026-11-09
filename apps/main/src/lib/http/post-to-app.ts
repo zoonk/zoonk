@@ -12,15 +12,16 @@ function toRequest(body: unknown): RequestInit {
   };
 }
 
-async function send<Outcome>({
+/** Null when the request didn't get through: offline, or a server error. */
+export async function postToApp<Outcome>({
   body,
   keepalive,
   path,
 }: {
   body: unknown;
   keepalive?: boolean;
-  path: string;
-}) {
+  path: `/api/${string}`;
+}): Promise<Outcome | null> {
   const { data } = await safeAsync(async () => {
     const response = await fetch(path, { ...toRequest(body), keepalive });
 
@@ -33,17 +34,4 @@ async function send<Outcome>({
   });
 
   return data ?? null;
-}
-
-/** Null when the request didn't get through: offline, or a server error. */
-export function postToApp<Outcome>({
-  body,
-  keepalive,
-  path,
-}: {
-  body: unknown;
-  keepalive?: boolean;
-  path: `/api/${string}`;
-}): Promise<Outcome | null> {
-  return send<Outcome>({ body, keepalive, path });
 }
