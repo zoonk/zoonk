@@ -128,6 +128,12 @@ const planSettingsSchema = z.object({
   skippedActivities: z.array(z.enum(LANGUAGE_ACTIVITY_TYPES)).default([]),
   skippedAreas: z.array(z.string()).default([]),
   startDate: isoDateSchema.nullable().default(null),
+  /**
+   * A language plan studies only the situations up to its aim's band. Plans laid out before that
+   * rule keep every band until the learner moves their aim. Absent unless set, so those plans keep
+   * the settings, and so the inputs key, they were saved with.
+   */
+  stopsAtAim: z.boolean().optional(),
   team: challengeTeamSchema.nullable().default(null),
   tools: z.array(toolChoiceSchema).default([]),
   weekdayMinutes: z
@@ -161,7 +167,12 @@ export type PlanToolChoice = z.infer<typeof toolChoiceSchema>;
 export type StoredBaseChoice = z.infer<typeof baseChoiceSchema>;
 
 export const planStateSchema = z.object({
-  goal: z.object({ dailyMinutes: z.int(), targetDate: isoDateSchema.nullable() }),
+  goal: z.object({
+    /** A language goal's aim (its `targetScore`); absent from snapshots saved before it was kept. */
+    aim: z.string().nullable().optional(),
+    dailyMinutes: z.int(),
+    targetDate: isoDateSchema.nullable(),
+  }),
   graph: planGraphSchema,
   settings: planSettingsSchema,
 });

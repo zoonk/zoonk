@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.studyDaysWords
+import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
@@ -95,13 +97,18 @@ import kotlin.time.Duration.Companion.milliseconds
 internal fun ColumnScope.PlanRevealStep(
     goal: Goal,
     isGuest: Boolean,
-    libraryCourse: OnboardingLibraryCourse?,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     plans: PlanStore,
     navigator: AppNavigator,
     here: AppRoute,
     prepareToday: suspend () -> Unit = {},
+    onReveal: (((() -> Unit)) -> Unit)? = null,
+    saving: Boolean = false,
+    saveFailed: Boolean = false,
+    playMoment: () -> Boolean = { false },
+    planRevealed: Boolean = false,
+    today: com.zoonk.android.data.Resource<com.zoonk.api.models.PlanRevealToday>? = null,
 ) {
     val resource = plans.plan[goal.id]
     val state by resource.collectShown()
@@ -162,20 +169,21 @@ internal fun ColumnScope.PlanRevealStep(
                     onRetry = if (poll.stopped) poll::restart else onRetryRun,
                     hold = hold,
                     next = PlanNext.Plan,
-                ) {
-                    libraryCourse?.let { course ->
-                        LibraryCourseOffer(course) { navigator.open(AppRoute.CatalogCourse(course.courseId.toString())) }
-                    }
-                }
+                )
             } else {
                 val syllabus by plans.syllabus[goal.id].collectShown()
+                val todayState = today?.collectShown()?.value
+                val preview = todayState?.value
                 RevealBody(
                     plan = plan,
+                    reveal = preview,
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
-                    starting = starting,
-                    onStart = { opening = true },
+                    starting = starting || saving,
+                    saveFailed = saveFailed,
+                    playMoment = !planRevealed && remember { playMoment() },
+                    onStart = { if (onReveal != null) onReveal { opening = true } else opening = true },
                     // Adjust opens the Plan tab until the plan editor (F16) can open here.
                     onAdjust = {
                         navigator.closeSection()
@@ -197,20 +205,28 @@ internal fun ColumnScope.PlanRevealStep(
 internal enum class PlanNext { TimeQuestion, Plan }
 
 @Composable
-internal fun PlanBuilding(
+internal fun ColumnScope.PlanBuilding(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     hold: ReadyHold? = null,
     next: PlanNext = PlanNext.Plan,
-    offer: @Composable () -> Unit = {},
 ) {
-    PlanWait(run.warmUpId, hold, next) {
-        if (hold?.holding == true) {
-            GenerationWait(GenerationKind.Curriculum, run.copy(status = GenerationRun.Status.Ready, failure = null), onRetry = null) {
+    val held = hold ?: rememberReadyHold(false)
+    val shown = if (held.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
+    SetupWait(
+        shown,
+        GenerationKind.Curriculum,
+        AnalyticsEvent.WarmUpSurface.PlanWait,
+        stringResource(if (held.holding) R.string.warm_up_plan_ready else R.string.onboarding_reveal_building_title),
+        held,
+        stringResource(if (next == PlanNext.Plan) R.string.focustest_see_plan else R.string.onboarding_continue),
+        onRetry,
+        next,
+    ) { share ->
+        GenerationWait(GenerationKind.Curriculum, shown, onRetry, share = share) {
+            if (held.holding) {
                 PlanReadyHeading(next)
-            }
-        } else {
-            GenerationWait(kind = GenerationKind.Curriculum, run = run, onRetry = onRetry) {
+            } else {
                 OnboardingHeading(
                     stringResource(R.string.onboarding_reveal_building_title),
                     stringResource(
@@ -219,36 +235,6 @@ internal fun PlanBuilding(
                 )
             }
         }
-        offer()
-    }
-}
-
-/**
- * A wait for the plan. Given a [hold], the goal's guesses show under it; once the plan is ready and the learner is still
- * guessing, it says so, and only the pinned button to what's [next] moves on.
- */
-@Composable
-private fun PlanWait(
-    warmUpId: String?,
-    hold: ReadyHold?,
-    next: PlanNext,
-    content: @Composable () -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        content()
-        hold?.let { SetupWarmUpCard(warmUpId, AnalyticsEvent.WarmUpSurface.PlanWait, it) }
-    }
-
-    hold?.let {
-        PageHold(
-            it,
-            stringResource(
-                when (next) {
-                    PlanNext.Plan -> R.string.focustest_see_plan
-                    PlanNext.TimeQuestion -> R.string.onboarding_continue
-                },
-            ),
-        )
     }
 }
 
@@ -266,34 +252,17 @@ private fun PlanReadyHeading(next: PlanNext) {
 }
 
 @Composable
-private fun LibraryCourseOffer(
+internal fun LibraryCourseOffer(
     course: OnboardingLibraryCourse,
     onOpen: () -> Unit,
 ) {
-    val chapters = course.chapterCount.toInt()
-
-    OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
-        ListRow(
-            headline = {
-                Column {
-                    Text(
-                        stringResource(R.string.onboarding_library_course_fits),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                    Text(course.title)
-                }
-            },
-            leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
-            supporting =
-                if (chapters > 0) {
-                    { Text(pluralStringResource(R.plurals.catalog_chapters, chapters, chapters)) }
-                } else {
-                    null
-                },
-            chevron = true,
-        )
-    }
+    ListRow(
+        onClick = onOpen,
+        headline = { Text(course.title) },
+        supporting = { Text(stringResource(R.string.onboarding_library_course_fits)) },
+        leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+        chevron = true,
+    )
 }
 
 /**
@@ -301,7 +270,7 @@ private fun LibraryCourseOffer(
  * its [onRetry] show in place of the bar, so the card keeps its place under them.
  */
 @Composable
-internal fun NoticeReading(
+internal fun ColumnScope.NoticeReading(
     document: ExamDocument,
     lastEdition: Boolean,
     warmUpId: String?,
@@ -311,25 +280,40 @@ internal fun NoticeReading(
     next: PlanNext,
 ) {
     val holding = hold.holding
-
-    PlanWait(warmUpId, hold, next) {
-        GenerationWait(
-            kind = if (document == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading,
-            run =
-                when {
-                    holding -> READING_RUN.copy(status = GenerationRun.Status.Ready)
-                    failure != null -> READING_RUN.copy(status = GenerationRun.Status.Failed, failure = failure)
-                    else -> READING_RUN
-                },
-            onRetry = onRetry,
-        ) {
+    val kind = if (document == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading
+    val shown =
+        when {
+            holding -> READING_RUN.copy(status = GenerationRun.Status.Ready)
+            failure != null -> READING_RUN.copy(status = GenerationRun.Status.Failed, failure = failure)
+            else -> READING_RUN
+        }.copy(warmUpId = warmUpId)
+    val title =
+        stringResource(
+            if (holding) {
+                R.string.warm_up_plan_ready
+            } else if (lastEdition) {
+                R.string.onboarding_reveal_reading_last_title
+            } else {
+                R.string.onboarding_reveal_reading_title
+            },
+        )
+    SetupWait(
+        shown,
+        kind,
+        AnalyticsEvent.WarmUpSurface.PlanWait,
+        title,
+        hold,
+        stringResource(if (next == PlanNext.Plan) R.string.focustest_see_plan else R.string.onboarding_continue),
+        onRetry,
+        next,
+        waitSurface = "examNotice",
+    ) { share ->
+        GenerationWait(kind, shown, onRetry, share = share) {
             if (holding) {
                 PlanReadyHeading(next)
             } else {
                 OnboardingHeading(
-                    stringResource(
-                        if (lastEdition) R.string.onboarding_reveal_reading_last_title else R.string.onboarding_reveal_reading_title,
-                    ),
+                    title,
                     stringResource(
                         when {
                             lastEdition -> R.string.onboarding_reveal_reading_last
@@ -344,125 +328,89 @@ internal fun NoticeReading(
 }
 
 @Composable
-private fun StartButton(
-    working: Boolean,
-    onClick: () -> Unit,
-) {
-    Button(busy = working, onClick = onClick, modifier = Modifier.fillMaxWidth(), leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
-        Text(stringResource(R.string.onboarding_reveal_start))
-    }
-}
-
-@Composable
-private fun RevealBody(
+private fun ColumnScope.RevealBody(
     plan: Plan,
+    reveal: com.zoonk.api.models.PlanRevealToday?,
     goal: Goal,
     syllabus: Syllabus?,
     isGuest: Boolean,
     starting: Boolean,
+    saveFailed: Boolean,
+    playMoment: Boolean,
     onStart: () -> Unit,
     onAdjust: () -> Unit,
     onChangeChoice: () -> Unit,
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
 ) {
-    val today = remember { LocalDate.now() }
-    val coverage = revealCoverage(plan, goal.kind, syllabus)
+    SetupContent {
+        val studyDay = reveal?.today?.toDayView()
+        val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
+        val coverage = revealCoverage(plan, goal.kind, syllabus)
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
-        Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-        FactsLine(plan.revealFacts(today), plan.schedule)
+        RevealHero(plan, goal, playMoment, today)
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
-    }
+        studyDay?.let { RevealToday(it, reveal.minutes, playMoment) }
+        reveal?.let { RevealWeek(it) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        StartButton(starting, onClick = onStart)
-        OutlinedButton(
-            onClick = onAdjust,
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(stringResource(R.string.onboarding_reveal_adjust)) }
-        if (isGuest) {
-            Text(
-                stringResource(R.string.onboarding_reveal_save_note),
-                modifier = Modifier.padding(top = 8.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
-        }
-    }
-
-    if (plan.roadmapPhases.size >= 2) {
-        PlanPhases(plan, today)
-    } else {
-        plan.revealChapters().takeIf { it.isNotEmpty() }?.let { RevealChapters(it) }
-    }
-
-    if (plan.notice == Plan.Notice.USUAL) {
-        Text(
-            stringResource(R.string.onboarding_reveal_usual_structure),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
-    }
-
-    syllabus?.areaWeights()?.let { AreaWeightList(it) }
-
-    // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
-    // topics) and choices (bases, study everything) go with this.
-    coverage?.let { CoverageWords(it, plan, onSeePlus) }
-}
-
-@Composable
-private fun FactsLine(
-    facts: RevealFacts,
-    schedule: PlanSchedule,
-) {
-    val locale = currentLocale()
-    val days = facts.days
-    val end = facts.end
-    val parts =
-        listOfNotNull(
-            days?.let {
-                val plural = if (facts.daysEstimated) R.plurals.onboarding_reveal_about_days else R.plurals.onboarding_reveal_days
-                pluralStringResource(plural, it, it)
-            },
-            end?.let {
-                stringResource(
-                    if (facts.endAsMonth) R.string.onboarding_reveal_until_about_month else R.string.onboarding_reveal_until_about,
-                    formatDate(it, locale, if (facts.endAsMonth) DateStyle.Month else DateStyle.Day),
+        val started = studyDay?.steps?.any { it.isFinished } == true
+        PageWaitActions {
+            if (saveFailed) {
+                Text(
+                    stringResource(R.string.onboarding_save_failed),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite },
                 )
-            },
-            dailyTime(schedule.shape),
-            schedule.weekdayMinutes
-                .map(Long::toInt)
-                .takeUnless { days -> days.all { it > 0 } }
-                ?.let { studyDaysWords(it, locale) },
-        )
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onAdjust, modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.onboarding_reveal_adjust))
+                }
+                Button(
+                    busy = starting,
+                    onClick = onStart,
+                    modifier = Modifier.weight(2f),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                ) {
+                    Text(
+                        stringResource(if (started) R.string.onboarding_continue else R.string.onboarding_reveal_start),
+                    )
+                }
+            }
+            if (isGuest) {
+                Text(
+                    stringResource(R.string.onboarding_reveal_save_note),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
+            }
+        }
 
-    Text(
-        text = parts.factsLine(),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
-    )
+        if (plan.roadmapPhases.size >= 2) {
+            PlanPhases(plan, today)
+        } else {
+            plan.revealChapters().takeIf { it.isNotEmpty() }?.let { RevealChapters(it) }
+        }
+
+        if (plan.notice == Plan.Notice.USUAL) {
+            Text(
+                stringResource(R.string.onboarding_reveal_usual_structure),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+
+        syllabus?.areaWeights()?.let { AreaWeightList(it) }
+
+        // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
+        // topics) and choices (bases, study everything) go with this.
+        coverage?.let { CoverageWords(it, plan, onSeePlus) }
+    }
 }
 
-/** The time a day and the weekend's when it differs, in the Plan settings' words. */
-@Composable
-private fun dailyTime(shape: PlanWeekShape): String {
-    val locale = currentLocale()
-    val weekdays = formatMinutes(shape.weekdays.toInt(), locale)
-    return shape.weekend?.let { stringResource(R.string.onboarding_reveal_daily_weekends, weekdays, formatMinutes(it.toInt(), locale)) }
-        ?: stringResource(R.string.onboarding_reveal_daily, weekdays)
-}
-
-/**
- * A learn goal without a date runs as long as its subject takes, so the reveal says what sets its end.
- * Planning without a date stops at the longest plan there can be, so only a plan holding every part says so.
- */
 @Composable
 private fun PaceLine(
     plan: Plan,
@@ -484,7 +432,6 @@ private fun PaceLine(
     )
 }
 
-/** F16: "Use this date" (a plan change) goes beside these words with the plan editor's changes. */
 @Composable
 private fun NoticeDayLine(plan: Plan) {
     if (plan.notice == Plan.Notice.USUAL) return

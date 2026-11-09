@@ -39,7 +39,7 @@ export type PlanAnswer<Answer> = {
 type Answered<Answer> = {
   byKey: ReadonlyMap<string, Answer>;
   first: Answer | null;
-  last: Answer | null;
+  last: { answer: Answer; scope: string } | null;
 };
 
 /**
@@ -54,12 +54,15 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
   key,
   paused,
   planMade,
+  scope = "",
 }: {
   ask: () => Promise<Answer | null>;
   enabled: boolean;
   key: string;
   paused: boolean;
   planMade: boolean;
+  /** What an answer is about as a whole, such as a language goal's aim: `last` never crosses it. */
+  scope?: string;
 }): PlanAnswer<Answer> {
   const [answered, setAnswered] = useState<Answered<Answer>>({
     byKey: new Map(),
@@ -94,7 +97,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
       setAnswered((current) => ({
         byKey: new Map(current.byKey).set(key, next),
         first: current.first ?? (next.ready ? next : null),
-        last: next,
+        last: { answer: next, scope },
       }));
     },
     timeoutMs: Infinity,
@@ -103,7 +106,7 @@ export function usePlanAnswer<Answer extends { ready: boolean }>({
   return {
     answer,
     first: answered.first,
-    last: answer ?? answered.last,
+    last: answer ?? (answered.last?.scope === scope ? answered.last.answer : null),
     restart: () => {
       setMissed(null);
       poll.restart();

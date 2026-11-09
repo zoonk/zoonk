@@ -27,6 +27,10 @@ export function applyAnswer({
   step: OnboardingStep;
   view: OnboardingView;
 }): FlowState {
+  if (state.view.goal.id !== view.goal.id) {
+    return { current: view.steps[0] ?? "plan", history: [], view };
+  }
+
   if (state.current !== step) {
     return { ...state, view };
   }

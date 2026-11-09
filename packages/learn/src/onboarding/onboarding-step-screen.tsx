@@ -5,10 +5,11 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { useEffect, useRef } from "react";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
+import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
 import {
   type OnboardingActions,
   type OnboardingRoutes,
@@ -27,41 +28,12 @@ import {
   PurposeStep,
   TextStep,
 } from "./steps/question-steps";
+import { ReasonStep } from "./steps/reason-step";
 import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
-
-const PLAN_WAIT_STEPS = new Set<OnboardingStep>(["plan", "schedule"]);
-
-function usePlanWait({
-  recordPlanWait,
-  step,
-}: {
-  recordPlanWait: OnboardingActions["recordPlanWait"];
-  step: OnboardingStep;
-}) {
-  const startedAt = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!PLAN_WAIT_STEPS.has(step)) {
-      startedAt.current = null;
-    }
-  }, [step]);
-
-  return (isReady: boolean) => {
-    if (!isReady) {
-      startedAt.current ??= Date.now();
-      return;
-    }
-
-    if (startedAt.current !== null) {
-      const milliseconds = Date.now() - startedAt.current;
-      startedAt.current = null;
-      void recordPlanWait(milliseconds);
-    }
-  };
-}
+import { getFirstLesson } from "./steps/wait-run";
 
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
@@ -127,7 +99,7 @@ function QuestionStepScreen({
         />
       );
     case "reason":
-      return <TextStep {...props} key={step} question={step} subject={subject} />;
+      return <ReasonStep {...props} reasons={view.languageAim?.reasons ?? []} subject={subject} />;
     case "target":
       return (
         <TextStep
@@ -173,38 +145,65 @@ function QuestionStepScreen({
   }
 }
 
-export function OnboardingStepScreen({
+/** The goal's deck as this read reports it reaches every wait the screen opens. */
+export function OnboardingStepScreen(props: Parameters<typeof StepScreen>[0]) {
+  return (
+    <ClaimedDeckProvider warmUp={props.view.warmUp}>
+      <StepScreen {...props} />
+    </ClaimedDeckProvider>
+  );
+}
+
+function StepScreen({
   actions,
+  buddy,
   isGuest,
   onAnswer,
   onPlacementDone,
   onPlacementFinishFailed,
+  onViewChange,
   pending,
   plan,
-  refreshPages,
   routes,
   run,
   schedule,
   step,
+  toToday,
   view,
 }: {
   actions: OnboardingActions;
+  buddy: LearnBuddy | null;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => void;
   onPlacementDone: () => Promise<boolean>;
   onPlacementFinishFailed: (failed: boolean) => void;
+  /** A change made on a screen without answering it, such as the aim, read back. */
+  onViewChange: (view: OnboardingView) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
-  refreshPages: () => void;
   routes: OnboardingRoutes;
   schedule: { draft: ScheduleDraft | null; onChangeDate: (draft: ScheduleDraft) => void };
   run: GenerationRun | null;
   step: OnboardingStep;
+  toToday: () => void;
   view: OnboardingView;
 }) {
   const subject = getSubject(view);
   const props = { onAnswer, pending };
-  const onPlanReadyChange = usePlanWait({ recordPlanWait: actions.recordPlanWait, step });
+
+  usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });
+
+  const wait = {
+    firstLesson: getFirstLesson({
+      read: view.firstLesson,
+      readGenerationId: view.generationId,
+      run,
+    }),
+    lessonHref: routes.lesson,
+    library: view.libraryCourse
+      ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }
+      : null,
+  };
 
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
@@ -215,6 +214,7 @@ export function OnboardingStepScreen({
       return (
         <ScheduleStep
           {...props}
+          {...wait}
           // Its answers are for one date, so a date saved while it shows asks them again.
           key={view.goal.targetDate ?? "none"}
           // An exam takes its notice's day when the learner gave none.
@@ -224,8 +224,17 @@ export function OnboardingStepScreen({
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
+          languageAim={view.languageAim}
+          onChangeAim={async (aim) => {
+            const changed = await actions.changeAim({ aim, goalId: view.goal.id });
+
+            if (changed) {
+              onViewChange(changed);
+            }
+
+            return changed !== null;
+          }}
           onChangeDate={schedule.onChangeDate}
-          onPlanReadyChange={onPlanReadyChange}
           planReadiness={view.planReadiness}
           readWarmUp={actions.readWarmUp}
           recommendedMinutes={view.recommendedMinutes}
@@ -266,24 +275,20 @@ export function OnboardingStepScreen({
     case "plan":
       return (
         <PlanReveal
+          {...wait}
           actions={actions}
+          buddy={buddy}
           goal={{ kind: view.goal.kind, title: view.goal.title }}
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
           isGuest={isGuest}
-          onPlanReadyChange={onPlanReadyChange}
-          libraryCourse={
-            view.libraryCourse
-              ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }
-              : null
-          }
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}
-          refreshPages={refreshPages}
+          planRevealed={view.planRevealed}
           run={run}
           signUpHref={routes.signUp}
-          todayHref={routes.today}
+          toToday={toToday}
         />
       );
     default:

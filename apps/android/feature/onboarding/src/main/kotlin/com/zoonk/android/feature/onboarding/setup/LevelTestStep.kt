@@ -105,6 +105,10 @@ fun ColumnScope.LanguageLevelTestStep(
     val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle()) }
     val test by store.levelTests[goalId].collectShown()
     val phase = vm.phase(test)
+    val hold =
+        com.zoonk.android.feature.warmup
+            .rememberReadyHold(phase != LevelTestPhase.Waiting)
+    val shown = if (hold.holding) LevelTestPhase.Waiting else phase
     val poll = rememberPoll(active = phase == LevelTestPhase.Waiting && !vm.bank.isStopped) { vm.check() }
     val audioQuestion = (phase as? LevelTestPhase.Question)?.question?.takeIf { it.audioPending }?.id
     val audioPoll = rememberPoll(active = audioQuestion != null, key = audioQuestion) { vm.check() }
@@ -118,12 +122,14 @@ fun ColumnScope.LanguageLevelTestStep(
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val finish = { vm.finish(onDone = onDone) }
 
-    when (phase) {
+    when (shown) {
         LevelTestPhase.Loading -> {
             StepLoading()
         }
 
         LevelTestPhase.Intro -> {
+            com.zoonk.android.data
+                .TrackOnboardingQuestion(goalId, "placement")
             LevelTestIntro(
                 language,
                 targetLanguage,
@@ -141,7 +147,8 @@ fun ColumnScope.LanguageLevelTestStep(
             val run = vm.bank.run().withPoll(poll.stopped)
             LevelTestWaiting(
                 targetLanguage = targetLanguage,
-                run = run,
+                hold = hold,
+                run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready) else run,
                 onRetry =
                     when {
                         poll.stopped -> poll::restart
@@ -155,20 +162,24 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Question -> {
-            FinishFailed(vm.finishFailed)
-            key(phase.question.id) {
-                val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
-                TestQuestion(phase.question, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
+            SetupContent {
+                FinishFailed(vm.finishFailed)
+                key(shown.question.id) {
+                    val audioPending = audioPoll.status(audioQuestion != null) == PollStatus.Polling
+                    TestQuestion(shown.question, targetLanguage, audioPending, vm, navigator, onReportSaveFailure)
+                }
             }
         }
 
         is LevelTestPhase.Speaking -> {
-            FinishFailed(vm.finishFailed)
-            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::skipSpeaking)
+            SetupContent {
+                FinishFailed(vm.finishFailed)
+                LevelTestSpeaking(shown.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::skipSpeaking)
+            }
         }
 
         is LevelTestPhase.Done -> {
-            LevelTestDone(phase.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+            LevelTestDone(shown.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
         }
     }
 }
@@ -185,38 +196,40 @@ private fun ColumnScope.LevelTestIntro(
     onStart: () -> Unit,
     onSkip: () -> Unit,
 ) {
-    OnboardingHeading(
-        stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
-        stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
-    )
-    if (showAlphabetNote) {
-        Text(
-            stringResource(R.string.onboarding_language_test_new_alphabet),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+    SetupContent {
+        OnboardingHeading(
+            stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
+            stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
         )
-    }
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = starting,
-            onClick = onStart,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !pending,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_start))
+        if (showAlphabetNote) {
+            Text(
+                stringResource(R.string.onboarding_language_test_new_alphabet),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
-        TextButton(
-            busy = pending,
-            onClick = onSkip,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !starting,
-            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-        ) {
-            Text(stringResource(R.string.onboarding_language_test_skip))
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = starting,
+                onClick = onStart,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_start))
+            }
+            TextButton(
+                busy = pending,
+                onClick = onSkip,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !starting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
+                Text(stringResource(R.string.onboarding_language_test_skip))
+            }
+            InterfaceOffer(language)
         }
-        InterfaceOffer(language)
     }
 }
 
@@ -241,35 +254,49 @@ private fun InterfaceOffer(language: String) {
 @Composable
 private fun ColumnScope.LevelTestWaiting(
     targetLanguage: String,
+    hold: com.zoonk.android.feature.warmup.ReadyHold,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
 ) {
-    GenerationWait(kind = GenerationKind.LevelTestBank, run = run, onRetry = onRetry) {
-        OnboardingHeading(
-            stringResource(R.string.onboarding_language_test_preparing_title),
-            stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
-        )
-    }
-    OnboardingActions {
-        FinishFailed(failed)
-        TextButton(
-            busy = pending,
-            onClick = onSkip,
-            modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-        ) {
-            Text(stringResource(R.string.onboarding_language_test_skip))
+    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_language_test_preparing_title)
+    SetupWait(
+        run,
+        GenerationKind.LevelTestBank,
+        com.zoonk.android.data.AnalyticsEvent.WarmUpSurface.PlacementWait,
+        title,
+        hold,
+        stringResource(R.string.onboarding_continue),
+        onRetry,
+        afterWait = {
+            OnboardingActions {
+                FinishFailed(failed)
+                TextButton(
+                    busy = pending,
+                    onClick = onSkip,
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                ) {
+                    Text(stringResource(R.string.onboarding_language_test_skip))
+                }
+                Text(
+                    text = stringResource(R.string.onboarding_language_test_skip_note),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        },
+    ) { share ->
+        GenerationWait(GenerationKind.LevelTestBank, run, onRetry, share = share) {
+            OnboardingHeading(
+                title,
+                stringResource(R.string.onboarding_language_test_preparing_description, languageName(targetLanguage, currentLocale())),
+            )
         }
-        Text(
-            text = stringResource(R.string.onboarding_language_test_skip_note),
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
@@ -466,25 +493,27 @@ private fun ColumnScope.LevelTestDone(
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
-    Icon(
-        painterResource(R.drawable.ic_check_circle),
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-    )
-    OnboardingHeading(
-        stringResource(R.string.onboarding_language_test_done_title),
-        stringResource(R.string.onboarding_language_test_done_description),
-    )
-    if (levels.isNotEmpty()) LevelRows(levels)
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = pending,
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(stringResource(R.string.onboarding_language_test_build_plan))
+    SetupContent {
+        Icon(
+            painterResource(R.drawable.ic_check_circle),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+        )
+        OnboardingHeading(
+            stringResource(R.string.onboarding_language_test_done_title),
+            stringResource(R.string.onboarding_language_test_done_description),
+        )
+        if (levels.isNotEmpty()) LevelRows(levels)
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = pending,
+                onClick = onContinue,
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+            ) {
+                Text(stringResource(R.string.onboarding_language_test_build_plan))
+            }
         }
     }
 }

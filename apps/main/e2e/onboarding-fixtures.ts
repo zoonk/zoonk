@@ -24,6 +24,7 @@ export async function createMappedGoal(userId: string) {
   const goal = await goalFixture({
     dailyMinutes: 30,
     details: { answered: ANSWERED, subject: "algebra" },
+    planRevealedAt: null,
     prompt: `learn algebra ${id}`,
     title: `Learn algebra ${id}`,
     userId,

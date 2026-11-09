@@ -131,6 +131,29 @@ describe("parent-issued generation manifests", () => {
     expect(buildPlan).not.toHaveBeenCalled();
   });
 
+  it("rejects an initial run's queued lessons after the curriculum swaps its graph", async () => {
+    const { goal, graph, lessonIds, manifest } = await manifestFixture();
+    const replacement = await skillFixture();
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        ...graph,
+        skills: [{ ...graph.skills[0]!, name: replacement.name, skillId: replacement.id }],
+      },
+    });
+
+    await expect(admitPlanLessons({ goalId: goal.id, lessonIds, manifest })).resolves.toStrictEqual(
+      [],
+    );
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    expect(plan.graph).toMatchObject({
+      skills: [expect.objectContaining({ skillId: replacement.id })],
+    });
+  });
+
   it("rejects a source placement settled after the manifest was issued", async () => {
     const { goal, lessonIds, manifest, plan } = await manifestFixture();
     const settled = lessonIds[0]!;

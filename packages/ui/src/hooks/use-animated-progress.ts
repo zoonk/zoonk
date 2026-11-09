@@ -16,9 +16,9 @@ function toWholeSteps(ms: number): number {
 }
 
 /**
- * `target` is where `progress` will be once the running phase finishes. `since` is when the wait
+ * `target` is where `progress` will be once the running phase finishes. `since` is when that phase
  * began (`Date.now()`), so a bar drawn again partway through it, as another screen takes the wait
- * over, goes on from the step it showed instead of starting over.
+ * over or a reload learns when it started, goes on from there instead of starting over.
  */
 export function useAnimatedProgress({
   active,
@@ -53,19 +53,23 @@ export function useAnimatedProgress({
     const restarted = progress < progressRef.current;
     progressRef.current = progress;
 
+    if (restarted) {
+      shownRef.current = progress;
+    }
+
     if (!active) {
       return;
     }
 
-    const base = restarted ? progress : Math.max(shownRef.current, progress);
-    const startedAt = performance.now();
+    const base = since === undefined ? Math.max(shownRef.current, progress) : progress;
+    const startedAt = since ?? Date.now();
 
     function step() {
-      const elapsedMs = toWholeSteps(performance.now() - startedAt);
+      const elapsedMs = toWholeSteps(Date.now() - startedAt);
       const value = getDriftedProgress({ base, elapsedMs, estimatedMs, target });
 
-      shownRef.current = value;
-      setDisplay(toTenths(value));
+      shownRef.current = Math.max(shownRef.current, value);
+      setDisplay(toTenths(shownRef.current));
     }
 
     const first = setTimeout(step, 0);
@@ -75,7 +79,7 @@ export function useAnimatedProgress({
       clearTimeout(first);
       clearInterval(timer);
     };
-  }, [active, estimatedMs, progress, target]);
+  }, [active, estimatedMs, progress, since, target]);
 
   return Math.max(display, progress);
 }

@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { readChallengeReadiness } from "../../checkpoints/_utils/challenge-readiness";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -7,6 +8,7 @@ import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { loadNoticeDates } from "../../exams/_utils/notice-day";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
+import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
@@ -15,7 +17,7 @@ import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status"
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { getNoticeWaitState } from "../notice-wait";
-import { type PlanView } from "../plan-view-contract";
+import { type PlanDayView, type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
@@ -147,7 +149,7 @@ type PlanViewInput = { context: PlanContext; now: Date };
 export async function buildPlanView({
   context: savedContext,
   now,
-}: PlanViewInput): Promise<PlanView> {
+}: PlanViewInput): Promise<PlanView & { nextDays: PlanDayView[] }> {
   const {
     catchUp: selectedCatchUp,
     context,
@@ -273,6 +275,10 @@ export async function buildPlanView({
       canApply: fresh !== null,
     },
     goalId: goal.id,
+    languageAim:
+      goal.kind === "language" && isJsonObject(goal.details)
+        ? toLanguageAimView(goal.details)
+        : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     numbers: summary ? buildSavedPlanNumbersView(context) : null,
     ownLevel: getOwnLevel({ goal }),
@@ -291,7 +297,7 @@ export async function buildPlanView({
       todayBlocks,
     }),
     planId: context.plan.id,
-    ready: savedContext.phases.length > 0,
+    ready: savedContext.phases.length > 0 && !savedContext.plan.buildFailedAt,
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,

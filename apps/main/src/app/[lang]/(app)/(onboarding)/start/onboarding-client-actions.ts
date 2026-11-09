@@ -6,7 +6,6 @@ import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
-import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import {
   type CreateGoalsOutcome,
   type OnboardingActions,
@@ -35,7 +34,9 @@ import {
   startOverAction,
   stopPlacementMockAction,
 } from "./onboarding-actions";
+import { changeOnboardingAimAction, readFirstLessonAction } from "./onboarding-aim-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
+import { markPlanRevealedAction } from "./plan-reveal-action";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
 
 async function createAsGuest(
@@ -61,6 +62,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
+  changeAim: ({ aim, goalId }) => changeOnboardingAimAction(goalId, aim),
   createGoals: (input) => createAsGuest(() => createOnboardingGoalsAction(input)),
   findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
@@ -90,9 +92,9 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
       }
     },
   }),
+  markPlanRevealed: markPlanRevealedAction,
+  readFirstLesson: readFirstLessonAction,
   readWarmUp: readWarmUpAction,
-  recordPlanWait: (milliseconds) =>
-    recordGenerationWaitAction({ contentKind: "curriculum", milliseconds }),
   startOver: startOverAction,
   stopPlacementMock: (mockId) => stopPlacementMockAction(mockId, getLocalTimeZone()),
   understanding: WEB_UNDERSTANDING_ACTIONS,
@@ -101,6 +103,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
 const WEB_ONBOARDING_ROUTES = {
   course: getCourseHref,
   focusTest: (goalId) => `/focus-test?goal=${goalId}`,
+  lesson: (lessonId) => `/learn/${lessonId}`,
   mock: (mockId) => `/mock/${mockId}`,
   placementMock: (goalId) => `/mock/placement/${goalId}`,
   planLink: (planId) => `/plan-link/${planId}`,

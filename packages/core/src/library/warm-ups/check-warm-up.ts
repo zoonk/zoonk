@@ -33,7 +33,7 @@ export async function checkWarmUp({
     goal: input.goal,
     kind: input.kind,
     language: input.language,
-    serviceTier: chooseServiceTier({ wait: "soon" }),
+    serviceTier: chooseServiceTier({ wait: "learner" }),
     writerModel: written.provenance.model,
   });
 

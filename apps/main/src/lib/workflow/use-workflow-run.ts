@@ -102,7 +102,12 @@ export function useWorkflowRun({
     );
   }
 
-  const isConnected = status === "following" && runId !== null && state.reconnectIn === null;
+  const isConnected =
+    !state.ended &&
+    state.failure === null &&
+    (status === "following" || (status === "ready" && state.firstLesson?.status === "writing")) &&
+    runId !== null &&
+    state.reconnectIn === null;
 
   const checkStopped = useEffectEvent(async (id: string) => {
     const runStatus = await readRunStatus(id);
@@ -170,7 +175,10 @@ export function useWorkflowRun({
 
   return {
     clockOffsetMs: state.clockOffsetMs ?? undefined,
+    ended: state.ended,
     failure: state.failure,
+    firstLesson: state.firstLesson ?? undefined,
+    id: runId,
     retry: getRetry(),
     skillName: state.skillName ?? undefined,
     status,

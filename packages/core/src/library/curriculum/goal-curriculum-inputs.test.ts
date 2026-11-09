@@ -13,7 +13,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { getReferenceSyllabusNeed, loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
-import { toScopedGraphPrompt } from "./shared-graph-prompt";
+import { isAwaitingGraphAnswers, toScopedGraphPrompt } from "./shared-graph-prompt";
 
 const citation = { passage: "passage", sourceId: "source" };
 
@@ -236,7 +236,11 @@ describe(loadGoalCurriculumInputs, () => {
       ),
     );
 
-    expect(inputs.map((item) => item?.awaitingAnswers)).toStrictEqual([true, false, false, false]);
+    expect(
+      inputs.map(
+        (item) => item && isAwaitingGraphAnswers({ inputs: item, scope: { ownerId: user.id } }),
+      ),
+    ).toStrictEqual([true, false, false, false]);
 
     expect(inputs[1]?.graphPrompt).toMatchObject({ context: undefined, ownLevel: "none" });
   });
@@ -255,10 +259,12 @@ describe(loadGoalCurriculumInputs, () => {
       userId: user.id,
     });
 
-    await expect(loadGoalCurriculumInputs(goal.id)).resolves.toMatchObject({
-      awaitingAnswers: true,
+    const inputs = await loadGoalCurriculumInputs(goal.id);
+
+    expect(inputs).toMatchObject({
       graphPrompt: { context: '{"role":"Teacher"}', purpose: "careerChange" },
       sharedContext: undefined,
+      unansweredQuestions: expect.arrayContaining(["role"]),
     });
   });
 
@@ -419,6 +425,145 @@ describe(loadGoalCurriculumInputs, () => {
     expect(
       toScopedGraphPrompt({ inputs: after, scope: { generalGoal: null, ownerId: user.id } }),
     ).toMatchObject({ ownLevel: "intermediate" });
+  });
+});
+
+describe(isAwaitingGraphAnswers, () => {
+  it.each([
+    { kind: "learn", privateGraph: false, readsAnswers: false },
+    { kind: "learn", privateGraph: true, readsAnswers: true },
+    { kind: "exam", privateGraph: false, readsAnswers: false },
+    { kind: "language", privateGraph: false, readsAnswers: false },
+  ] as const)(
+    "$kind, private=$privateGraph: waits only for answers its normalized prompt reads",
+    async ({ kind, privateGraph, readsAnswers }) => {
+      const user = await userFixture();
+
+      const personal = {
+        followUps: [{ answer: "Budgeting at work", question: "Which tasks?" }],
+        role: "Accountant",
+        tasks: "Monthly reports",
+        ...(kind !== "learn" && {
+          level: "advanced",
+          purpose: "deep",
+          reason: "Travel",
+          targetScore: "B2",
+        }),
+      };
+
+      const details = {
+        answered: [],
+        onboardingId: crypto.randomUUID(),
+        ...(kind === "learn" && { level: "basic", purpose: "work" }),
+        ...(kind === "exam" && { examName: "ENEM", examTarget: "score" }),
+        followUps: [{ answer: null, question: "Which tasks?" }],
+      };
+
+      const goal = await goalFixture({
+        details,
+        kind,
+        targetLanguage: kind === "language" ? "it" : null,
+        userId: user.id,
+      });
+
+      const before = await loadGoalCurriculumInputs(goal.id);
+
+      await prisma.goal.update({
+        data: { details: { ...details, ...personal, answered: ["role", "followUps"] } },
+        where: { id: goal.id },
+      });
+
+      const after = await loadGoalCurriculumInputs(goal.id);
+
+      if (!before || !after) {
+        throw new Error("Expected curriculum inputs");
+      }
+
+      const scope = {
+        generalGoal: privateGraph ? null : "Accounting",
+        ownerId: privateGraph ? user.id : null,
+      };
+
+      const beforePrompt = toScopedGraphPrompt({ inputs: before, scope });
+      const afterPrompt = toScopedGraphPrompt({ inputs: after, scope });
+      expect(isAwaitingGraphAnswers({ inputs: before, scope })).toBe(readsAnswers);
+
+      expect(JSON.stringify(afterPrompt) === JSON.stringify(beforePrompt)).toBe(!readsAnswers);
+
+      expect(isAwaitingGraphAnswers({ inputs: after, scope })).toBe(false);
+    },
+  );
+
+  it.each(["purpose", "level"] as const)(
+    "a shared learn graph still reads and waits for %s",
+    async (question) => {
+      const user = await userFixture();
+
+      const details = {
+        answered: [],
+        level: "basic",
+        onboardingId: crypto.randomUUID(),
+        purpose: "deep",
+      };
+
+      const goal = await goalFixture({
+        details: Object.fromEntries(Object.entries(details).filter(([key]) => key !== question)),
+        userId: user.id,
+      });
+
+      const before = await loadGoalCurriculumInputs(goal.id);
+      await prisma.goal.update({ data: { details }, where: { id: goal.id } });
+      const after = await loadGoalCurriculumInputs(goal.id);
+
+      if (!before || !after) {
+        throw new Error("Expected curriculum inputs");
+      }
+
+      const scope = { generalGoal: "Accounting", ownerId: null };
+      expect(isAwaitingGraphAnswers({ inputs: before, scope })).toBe(true);
+      expect(isAwaitingGraphAnswers({ inputs: after, scope })).toBe(false);
+
+      expect(toScopedGraphPrompt({ inputs: after, scope })).not.toStrictEqual(
+        toScopedGraphPrompt({ inputs: before, scope }),
+      );
+    },
+  );
+
+  it("keeps an own-material exam waiting for its date, which sizes the graph", async () => {
+    const user = await userFixture();
+
+    const source = await sourceFixture({
+      extractedText: "Cell biology notes",
+      kind: "upload",
+      visibility: "private",
+    });
+
+    const goal = await goalFixture({
+      details: {
+        answered: [],
+        level: "basic",
+        materialIntent: "exam",
+        onboardingId: crypto.randomUUID(),
+      },
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await learnerSourceFixture({
+      goalId: goal.id,
+      origin: "upload",
+      sourceId: source.id,
+      userId: user.id,
+    });
+
+    const inputs = await loadGoalCurriculumInputs(goal.id);
+
+    if (!inputs) {
+      throw new Error("Expected curriculum inputs");
+    }
+
+    expect(inputs.hasMaterial).toBe(true);
+    expect(isAwaitingGraphAnswers({ inputs, scope: { ownerId: user.id } })).toBe(true);
   });
 });
 

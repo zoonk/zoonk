@@ -195,6 +195,7 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
     examBlueprintId: goal.exam ? libraryIds.blueprint(goal.exam, learner.language) : null,
     kind: goal.kind,
     language: learner.language,
+    planRevealedAt: daysFrom(now, goal.createdDay),
     primaryCourseId: lookup.courseId,
     prompt: goal.prompt,
     status: goal.status ?? "active",

@@ -12,6 +12,7 @@ import { postFromBrowser } from "../api/browser-api";
 
 /** From the browser: the question asks again until the plan is built, and a Server Action would keep Continue busy. */
 export async function getGoalTimeAdvice({
+  aim,
   dailyMinutes,
   fullCourse,
   goalId,
@@ -19,7 +20,7 @@ export async function getGoalTimeAdvice({
   weekendMinutes,
 }: PlanTimeAdviceInput & { goalId: string; studyDays: number[] }): Promise<PlanTimeAdvice | null> {
   const response = await postFromBrowser({
-    body: { dailyMinutes, fullCourse, studyDays, weekendMinutes },
+    body: { aim, dailyMinutes, fullCourse, studyDays, weekendMinutes },
     path: `/v1/goals/${goalId}/plan/time-advice`,
   });
 

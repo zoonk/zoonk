@@ -27,6 +27,7 @@ import { LessonTutor } from "./tutor/lesson-tutor";
 import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
 import { useExampleLines } from "./use-example-lines";
+import { useFirstSceneClock } from "./use-first-scene-clock";
 import { useLessonPlayerActions } from "./use-lesson-player-actions";
 import { usePreloadActivityCanvases } from "./use-preload-activity-canvases";
 import { CANT_WRITE_TODAY, isChosenToday } from "./use-today-choice";
@@ -92,6 +93,7 @@ export type LessonPlayerProviderProps = {
   children: React.ReactNode;
   /** Only a hook reveals `firstAnswer` immediately; graded screens still require Check. */
   firstAnswer?: LessonPlayerAnswer | string | null;
+  goalId?: string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
   onExit: () => void;
@@ -118,6 +120,7 @@ export function LessonPlayerProvider({
   challengeTeam = null,
   children,
   firstAnswer = null,
+  goalId = null,
   lesson,
   linkComponent,
   onExit,
@@ -137,6 +140,7 @@ export function LessonPlayerProvider({
   );
 
   const exampleLines = useExampleLines({ adapters, steps: lesson.steps });
+  useFirstSceneClock({ goalId, lessonId: lesson.id, state, track });
 
   const { actions, reopen } = useLessonPlayerActions({
     adapters,

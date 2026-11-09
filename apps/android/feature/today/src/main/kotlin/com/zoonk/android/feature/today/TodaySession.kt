@@ -291,7 +291,7 @@ private fun LazyListScope.plusLessons(
 ) {
     val shown = titles.take(visible)
     items(shown.withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (index, title) ->
-        QueueRow(
+        DayQueueRow(
             onClick = { actions.navigate(AppRoute.Subscription) },
             modifier = Modifier.pageRow(),
             divider = !endsList || index != shown.lastIndex,
@@ -315,7 +315,7 @@ private fun ComingLessonsRow(
     modifier: Modifier,
     divider: Boolean,
 ) {
-    QueueRow(
+    DayQueueRow(
         onClick = null,
         modifier = modifier,
         divider = divider,
@@ -370,7 +370,7 @@ private fun LazyListScope.upNext(
 
     items(lessons.withIndex().toList(), key = { "up-next-${it.index}" }, contentType = { "up-next" }) { (index, lesson) ->
         val first = index == 0
-        QueueRow(
+        DayQueueRow(
             isNext = first,
             busy = first && pending == TodayTap.UpNext,
             waiting = pending != null && pending != TodayTap.UpNext,
@@ -378,24 +378,15 @@ private fun LazyListScope.upNext(
             modifier = Modifier.pageRow(),
             leading = { KindMark(LearnKind.Lesson) },
             supporting = if (first && failed) ({ StepOpenFailed() }) else null,
-            meta = { Minutes(lesson.minutes) },
+            meta = { DayMinutes(lesson.minutes) },
         ) {
             Text(text = lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
 
-internal fun TodayDayModel.countsTowardMission(step: DayStep): Boolean =
-    !day.fullMeal.earned && day.missions.any { mission -> !mission.done && mission.waitReason == null && mission.opens.opensStep(step) }
+internal fun TodayDayModel.countsTowardMission(step: DayStep): Boolean = day.countsTowardMission(step)
 
-private fun MissionOpens?.opensStep(step: DayStep): Boolean =
-    when {
-        this !is MissionOpens.Block -> false
-        blockId != null -> blockId == step.id
-        else -> position == step.position
-    }
-
-/** A finished row shows no minutes: they were the plan's estimate, not the time it took. */
 @Composable
 private fun StepRow(
     model: TodayDayModel,
@@ -409,95 +400,24 @@ private fun StepRow(
     onNavigate: (AppRoute) -> Unit = {},
     divider: Boolean = true,
 ) {
-    val finished = step.isFinished
-    val mission = model.countsTowardMission(step)
-    val state =
-        when (step.status) {
-            StudyBlock.Status.COMPLETED -> stringResource(R.string.today_step_done)
-            StudyBlock.Status.SKIPPED -> stringResource(R.string.today_step_skipped)
-            else -> if (isNext) stringResource(R.string.today_step_next) else null
-        }
-
-    QueueRow(
-        isNext = isNext,
+    DayStepRow(
+        model.day,
+        step,
+        isNext,
+        modifier,
+        model.today.lessonStatus,
+        model.writingStalled,
+        onOpen = onOpen.takeIf { opens },
         busy = busy,
-        onClick = if (opens) onOpen else null,
-        modifier = modifier,
+        openFailed = openFailed,
         divider = divider,
-        stateDescription = state,
-        leading = { BlockMark(step) },
-        supporting =
-            if (finished && !openFailed) {
-                null
+        testOut =
+            if (isNext && step.canTestOut && step.chapterId != null) {
+                { TestOutLink(model, requireNotNull(step.chapterId), onNavigate) }
             } else {
-                {
-                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                        if (openFailed) StepOpenFailed()
-                        if (!finished) {
-                            StepLines(model, step)
-                            if (isNext && step.canTestOut) step.chapterId?.let { TestOutLink(model, it, onNavigate) }
-                        }
-                    }
-                }
-            },
-        meta =
-            if (finished) {
                 null
-            } else {
-                {
-                    if (mission) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_target),
-                            contentDescription = stringResource(R.string.today_step_counts_toward_mission),
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.zoonk.brain,
-                        )
-                    }
-                    Minutes(step.estimatedMinutes)
-                }
             },
-    ) {
-        Text(
-            text = blockTitle(step),
-            // Two lines, so a large font still shows what the step is.
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            color = if (finished) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-@Composable
-private fun StepLines(
-    model: TodayDayModel,
-    step: DayStep,
-) {
-    val wait = step.waitReason
-    val phase = step.challengePhase
-    val line =
-        when {
-            wait == StudyBlock.WaitReason.LESSONS -> {
-                phase?.let { stringResource(R.string.today_step_after_lessons_phase, it) }
-                    ?: stringResource(R.string.today_step_after_lessons)
-            }
-
-            wait == StudyBlock.WaitReason.CHALLENGE -> {
-                phase?.let { stringResource(R.string.today_step_after_challenge_phase, it) }
-                    ?: stringResource(R.string.today_step_after_challenge)
-            }
-
-            !model.writingStalled && step.isBeingWritten(model.today.lessonStatus) -> {
-                stringResource(R.string.today_step_being_written)
-            }
-
-            else -> {
-                rowLabel(model, step)
-            }
-        }
-    val reviewDetail = if (step.weakest || step.fullReview) blockDetail(step) else null
-
-    if (line != null) SubLine(line)
-    if (reviewDetail != null) SubLine(reviewDetail)
+    )
 }
 
 /** Earlier unfinished lessons, which the session fits into today's time once it starts; a long list starts folded. */
@@ -566,87 +486,10 @@ private fun TestOutLink(
     )
 }
 
-@Composable
-private fun rowLabel(
-    model: TodayDayModel,
-    step: DayStep,
-): String? {
-    val catchingUp =
-        model.day.catchUp
-            ?.positions
-            ?.contains(step.position) == true
-    val subject = step.subject
-    val label =
-        when {
-            step.practisesTopics -> shortTopicList(step.topics, named = 1)
-            !catchingUp && step.checkpoint != null -> listOfNotNull(subject, blockDetail(step)).factsLine()
-            !catchingUp -> subject
-            subject != null -> stringResource(R.string.today_step_catching_up_subject, subject)
-            else -> stringResource(R.string.today_step_catching_up)
-        }
-
-    return when {
-        !step.oftenTested -> label
-        label != null -> stringResource(R.string.today_step_often_tested_label, label)
-        else -> stringResource(R.string.today_step_often_tested)
-    }
-}
-
-@Composable
-private fun SubLine(text: String) {
-    Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
-}
-
 /** A fold's mark slot, so its words start where the rows' do. */
 @Composable
 private fun RowMark(content: @Composable () -> Unit) {
     Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
-}
-
-/**
- * A row of the day on main's `ListRow`: the next block on `muted`, its mark on the title's first line
- * (main's `items-start`), the others over a hairline, except right above the next block.
- */
-@Composable
-private fun QueueRow(
-    onClick: (() -> Unit)?,
-    modifier: Modifier,
-    leading: @Composable () -> Unit,
-    isNext: Boolean = false,
-    busy: Boolean = false,
-    waiting: Boolean = false,
-    divider: Boolean = true,
-    stateDescription: String? = null,
-    supporting: (@Composable () -> Unit)? = null,
-    meta: (@Composable () -> Unit)? = null,
-    headline: @Composable () -> Unit,
-) {
-    Column(modifier) {
-        ListRow(
-            headline = headline,
-            onClick = onClick,
-            enabled = !waiting,
-            focusableWhenDisabled = waiting,
-            busy = busy,
-            highlighted = isNext,
-            stateDescription = stateDescription,
-            leading = leading,
-            supporting = supporting,
-            meta = meta,
-            verticalAlignment = if (isNext) Alignment.Top else Alignment.CenterVertically,
-            chevron = false,
-        )
-        if (!isNext && divider) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
-    }
-}
-
-@Composable
-private fun Minutes(minutes: Long) {
-    Text(
-        text = formatMinutes(minutes.toInt(), currentLocale()),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.zoonkType.data,
-    )
 }
 
 /** Only time still ahead says its minutes: a done row's are the plan's estimate. */
@@ -684,7 +527,7 @@ private fun FoldRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (minutes != null && minutes > 0) Minutes(minutes)
+        if (minutes != null && minutes > 0) DayMinutes(minutes)
     }
 }
 

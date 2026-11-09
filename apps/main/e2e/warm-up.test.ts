@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
@@ -19,8 +20,23 @@ const STILL_READING_MS = 30 * 60_000;
 
 const DAILY_MINUTES = Array.from({ length: 7 }, () => 20);
 
-/** A goal at the time question while its plan is built, by a run that already reported its deck. */
-async function openPlanWait({ page, userId }: { page: Page; userId: string }) {
+const PLAY_QUIZ = "Play a quiz while you wait";
+
+/**
+ * A goal at the time question while its plan is built, by a run that already reported its deck. A
+ * page opened on the wait reads the deck after it draws, so the quiz is offered, not shown.
+ */
+async function openPlanWait({
+  events = [],
+  openingLessonId = null,
+  page,
+  userId,
+}: {
+  events?: StreamEvent[];
+  openingLessonId?: string | null;
+  page: Page;
+  userId: string;
+}) {
   const runId = `e2e-warm-up-${randomUUID()}`;
 
   const [deck, goal] = await Promise.all([
@@ -28,6 +44,7 @@ async function openPlanWait({ page, userId }: { page: Page; userId: string }) {
     goalFixture({
       details: { answered: ["purpose", "targetDate", "level", "buddy", "placement"] },
       generationRunId: runId,
+      openingLessonId,
       prompt: `learn beekeeping ${randomUUID()}`,
       title: "Learn beekeeping",
       userId,
@@ -47,6 +64,7 @@ async function openPlanWait({ page, userId }: { page: Page; userId: string }) {
       { entityId: goal.id, status: "started", step: "understandGoal" },
       { status: "completed", step: "warmUpReady", warmUpId: deck.id },
       { entityId: goal.id, status: "started", step: "buildSkillGraph" },
+      ...events,
     ],
     page,
     runId,
@@ -82,12 +100,24 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   noProgressUser,
   userWithoutProgress: page,
 }) => {
+  const events = await captureAnalytics(page);
   const { deck, goal } = await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  await expect.poll(() => events.filter((event) => event.name === "Warm-Up Shown").length).toBe(1);
+  await page.reload();
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
 
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
 
   await card.getByRole("radio", { name: /alarm scent/u }).click();
   await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await expect
+    .poll(() => events.filter((event) => event.name === "Warm-Up Answered").length)
+    .toBe(1);
+
+  expect(events.filter((event) => event.name === "Warm-Up Shown")).toHaveLength(1);
 
   await mapGoalSkills({ goalId: goal.id });
 
@@ -108,13 +138,46 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   ).toBeVisible();
 });
 
+test("blocked tab storage leaves the wait quiz playable", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(globalThis, "sessionStorage", {
+      get() {
+        throw new DOMException("Storage is blocked", "SecurityError");
+      },
+    });
+  });
+
+  const events = await captureAnalytics(page);
+  await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  await expect.poll(() => events.filter((event) => event.name === "Warm-Up Shown").length).toBe(1);
+
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+
+  await page
+    .getByRole("radiogroup", { name: FIRST_CARD })
+    .getByRole("radio", { name: /alarm scent/u })
+    .click();
+
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await expect
+    .poll(() => events.filter((event) => event.name === "Warm-Up Answered").length)
+    .toBe(1);
+
+  expect(events.filter((event) => event.name === "Warm-Up Shown")).toHaveLength(1);
+});
+
 test("a learner who didn't guess moves on to the time question as soon as the plan is ready", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
   const { goal } = await openPlanWait({ page, userId: noProgressUser.id });
-
-  await expect(page.getByRole("radiogroup", { name: FIRST_CARD })).toBeVisible();
+  await expect(page.getByRole("button", { name: PLAY_QUIZ })).toBeVisible();
 
   await mapGoalSkills({ goalId: goal.id });
 
@@ -151,7 +214,12 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await followRun({ events, page, runId });
   await page.goto("/session");
 
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
   const steps = page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem");
+  await page.getByRole("button", { name: /^Writing your lesson/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
@@ -160,14 +228,17 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
     /^Drawing the pictures, not started yet/u,
   ]);
 
-  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
-  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await page.goBack();
   await expect(page.getByText("Good guess!")).toBeVisible();
 
   await writeStudyLesson(lesson.id);
   events.push({ entityId: lesson.id, status: "completed", step: "lessonReady" });
 
   await expect(page.getByRole("status").filter({ hasText: "Your lesson is ready." })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
+  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
+
+  await page.getByRole("button", { name: /^Your lesson is ready/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
@@ -175,9 +246,6 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
     /^Highlighting the key ideas, done/u,
     /^Drawing the pictures, done/u,
   ]);
-
-  await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
-  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
 
   await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
@@ -219,6 +287,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
     page.getByRole("heading", { name: "Reading the exam's official documents" }),
   ).toBeVisible();
 
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
   await card.getByRole("radio", { name: /alarm scent/u }).click();
   await expect(page.getByText("Good guess!")).toBeVisible();
@@ -232,4 +301,96 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
   await page.getByRole("button", { name: "See your plan" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+});
+
+test("a learner whose first lesson is written before the plan starts it from the wait", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const lesson = await libraryLessonFixture({
+    contentStatus: "completed",
+    title: "Why birds sing at dawn",
+  });
+
+  await openPlanWait({
+    events: [
+      {
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        status: "started",
+        step: "writeFirstLesson",
+      },
+      { lessonId: lesson.id, status: "completed", step: "firstLessonReady" },
+    ],
+    openingLessonId: lesson.id,
+    page,
+    userId: noProgressUser.id,
+  });
+
+  await expect(page.getByText("Your plan will be waiting when you finish.")).toBeVisible();
+  await page.getByRole("link", { name: "Start lesson 1" }).click();
+  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
+});
+
+test("a failed first lesson stops writing even when the goal replays its start", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const lesson = await libraryLessonFixture({
+    contentStatus: "failed",
+    title: "Why birds sing at dawn",
+  });
+
+  const { goal } = await openPlanWait({
+    events: [
+      {
+        at: Date.now(),
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        status: "started",
+        step: "writeFirstLesson",
+      },
+      { reason: "aiGenerationFailed", status: "error", step: "workflowError" },
+    ],
+    openingLessonId: lesson.id,
+    page,
+    userId: noProgressUser.id,
+  });
+
+  const row = page.locator('[data-slot="first-lesson-row"]');
+  await expect(row.getByText("Something went wrong on our side.")).toBeVisible();
+  await expect(row.getByText("Writing about 5 short screens")).toHaveCount(0);
+  await expect(row.getByText("Ready to start")).toHaveCount(0);
+  const clock = row.locator(".font-mono");
+  const stoppedTime = await clock.textContent();
+  await page.clock.install();
+  await page.clock.runFor(3000);
+  await expect(clock).toHaveText(stoppedTime ?? "");
+  await expect(page.getByRole("button", { exact: true, name: "Try again" })).toBeVisible();
+  await page.clock.resume();
+
+  await page.route("**/v1/generations/*/events**", async (route) => {
+    if (
+      route
+        .request()
+        .url()
+        .includes(goal.generationRunId ?? "")
+    ) {
+      await route.fallback();
+      return;
+    }
+
+    await route.fulfill({
+      body: `data: ${JSON.stringify({ at: Date.now(), lessonId: lesson.id, lessonTitle: lesson.title, status: "started", step: "writeFirstLesson" })}\n\n`,
+      contentType: "text/event-stream",
+    });
+  });
+
+  await page.route(/\/v1\/generations\/[^/]+$/u, (route) =>
+    route.fulfill({ json: { status: "running" } }),
+  );
+
+  await page.getByRole("button", { exact: true, name: "Try again" }).click();
+  await expect(row.getByText("Writing about 5 short screens")).toBeVisible();
+  await expect(row.getByText("Something went wrong on our side.")).toHaveCount(0);
 });

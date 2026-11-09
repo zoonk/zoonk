@@ -100,7 +100,14 @@ export const studySessionResponseSchema = z
           description:
             "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`",
         }),
-      planned: z.number().int().min(0),
+      planned: z
+        .number()
+        .int()
+        .min(0)
+        .meta({
+          description:
+            "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks",
+        }),
     }),
     missions: z
       .array(missionSchema)

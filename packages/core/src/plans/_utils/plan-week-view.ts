@@ -86,18 +86,7 @@ function getDayState({
   return items.every((item) => isWorkFinished(item.status)) ? "done" : "missed";
 }
 
-export function buildWeekView({
-  access,
-  calendar,
-  exam,
-  items,
-  overflow = [],
-  skillAreas,
-  startDate,
-  studiedDates,
-  targetDate,
-  today,
-}: {
+type DaysInput = {
   access: ItemAccess;
   calendar: StudyCalendar;
   exam: ExamDayRules | null;
@@ -108,11 +97,24 @@ export function buildWeekView({
   studiedDates: ReadonlySet<string>;
   targetDate: Date | null;
   today: Date;
-}): PlanView["week"] {
-  const start = getStartOfWeek(today);
+};
 
-  const days = Array.from({ length: DAYS_PER_WEEK }, (_, offset) => {
-    const date = addDays(start, offset);
+/** Seven days from `from`. */
+function buildPlanDays({
+  access,
+  calendar,
+  exam,
+  from,
+  items,
+  overflow = [],
+  skillAreas,
+  startDate,
+  studiedDates,
+  targetDate,
+  today,
+}: DaysInput & { from: Date }): PlanDayView[] {
+  return Array.from({ length: DAYS_PER_WEEK }, (_, offset) => {
+    const date = addDays(from, offset);
     const day = toIsoDate(date);
 
     const dayItems = items
@@ -137,8 +139,21 @@ export function buildWeekView({
       }),
     };
   });
+}
 
-  return { days, endDate: toIsoDate(getEndOfWeek(today)), startDate: toIsoDate(start) };
+export function buildWeekView(input: DaysInput): PlanView["week"] {
+  const start = getStartOfWeek(input.today);
+
+  return {
+    days: buildPlanDays({ ...input, from: start }),
+    endDate: toIsoDate(getEndOfWeek(input.today)),
+    startDate: toIsoDate(start),
+  };
+}
+
+/** Today and the six days after it, whatever the weekday: a week from Monday read on a Sunday holds one day ahead. */
+export function buildNextDaysView(input: DaysInput): PlanDayView[] {
+  return buildPlanDays({ ...input, from: input.today });
 }
 
 export function buildFundedMocksView({

@@ -341,6 +341,28 @@ function busiest(plan: { items: readonly PlannedItem[] }) {
 describe.each([false, true])(
   "lessons that land in a stand-in's place (landing only: %s)",
   (landedOnly) => {
+    it("keeps a shown title once when the duplicate lands in a placeholder's place", () => {
+      const first = buildPlan(learn);
+
+      const landedLessons = writeLessons({ count: 8, minutes: 3, skillId: "landed" }).map(
+        (lesson, index) => (index === 1 ? { ...lesson, title: "First 1" } : lesson),
+      );
+
+      const next = buildPlan({
+        ...learn,
+        items: saveItems(first),
+        landedOnly,
+        lessons: [...learn.lessons, ...landedLessons],
+        mode: "automatic",
+      });
+
+      expect(
+        next.items.filter((entry) => entry.titleSnapshot.toLowerCase() === "first 1"),
+      ).toHaveLength(1);
+
+      expect(next.items.some((entry) => entry.lessonId === "landed-2")).toBe(true);
+    });
+
     it("take the days their stand-in's time held and move nothing else", () => {
       const first = buildPlan(learn);
 

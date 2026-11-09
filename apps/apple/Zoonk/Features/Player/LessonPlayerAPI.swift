@@ -278,7 +278,10 @@ struct LessonPlayerAPI: Sendable {
           energyDelta: completion.energyDelta, seconds: completion.seconds,
           isFirstCompletion: completion.isFirstCompletion,
           nextReviewAt: completion.nextReviewAt,
-          day: block?.day ?? DayResult(completion), block: block))
+          day: block?.day ?? DayResult(completion), block: block,
+          planReveal: completion.planReveal.map {
+            PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
+          }))
     case .unprocessableContent:
       return .incomplete
     case .unauthorized:

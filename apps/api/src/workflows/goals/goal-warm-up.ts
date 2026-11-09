@@ -54,41 +54,45 @@ export async function prepareWarmUp({
   goalId: string;
   scope: CurriculumScope;
 }): Promise<void> {
+  const warmUpId = await getDeck({ context, goalId, scope }).catch(() => null);
+
+  // A wait shows the quiz's skeleton while the goal's deck is on its way, so every end reaches it.
+  await goalProgressStep(
+    warmUpId
+      ? { entityId: goalId, status: "completed", step: "warmUpReady", warmUpId }
+      : { entityId: goalId, status: "completed", step: "warmUpFailed" },
+  );
+}
+
+async function getDeck({
+  context,
+  goalId,
+  scope,
+}: {
+  context: GoalRunContext;
+  goalId: string;
+  scope: CurriculumScope;
+}): Promise<string | null> {
   const claim = await claimWarmUpStep({ goalId, scope, workflowRunId: context.workflowRunId });
 
   if (claim.status === "none") {
-    return;
+    return null;
   }
 
-  if (claim.status === "following") {
-    const result = await repeatUntil({
-      done: ({ status }) => status !== "writing",
-      run: () => readWarmUpStatusStep({ goalId, id: claim.id }),
-      times: 30,
-      wait: () => sleep("2s"),
-    });
-
-    if (result.status === "ready") {
-      await goalProgressStep({
-        entityId: goalId,
-        status: "completed",
-        step: "warmUpReady",
-        warmUpId: claim.id,
-      });
-    }
-
-    return;
+  if (claim.status === "ready") {
+    return claim.id;
   }
 
-  const warmUpId =
-    claim.status === "ready" ? claim.id : await writeDeck({ claim, context, goalId, scope });
-
-  if (warmUpId) {
-    await goalProgressStep({
-      entityId: goalId,
-      status: "completed",
-      step: "warmUpReady",
-      warmUpId,
-    });
+  if (claim.status === "claimed") {
+    return writeDeck({ claim, context, goalId, scope });
   }
+
+  const followed = await repeatUntil({
+    done: ({ status }) => status !== "writing",
+    run: () => readWarmUpStatusStep({ goalId, id: claim.id }),
+    times: 30,
+    wait: () => sleep("2s"),
+  });
+
+  return followed.status === "ready" ? claim.id : null;
 }

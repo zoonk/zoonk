@@ -114,6 +114,7 @@ function NoteWords({
 
 export function TimeAnswer({
   action,
+  aim = null,
   date,
   exam,
   line,
@@ -128,6 +129,8 @@ export function TimeAnswer({
   updating = false,
 }: {
   action?: React.ReactNode;
+  /** A language goal's aim above the learner's level, which its finish is when they reach. */
+  aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
   line: TimeLine;
@@ -160,7 +163,7 @@ export function TimeAnswer({
         <NoteWords date={date} note={note} noteStatus={noteStatus} />
 
         <p>
-          <LineWords date={date} exam={exam} line={line} minutes={minutes} />
+          <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
 
           {note?.kind === "tooLong" && (
             <>

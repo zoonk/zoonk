@@ -82,6 +82,7 @@ internal fun SetupFlow.arriving(
     answered: OnboardingStep,
     next: OnboardingStep,
 ): SetupFlow {
+    if (goalId != this.goalId) return SetupFlow(goalId, next)
     val trail = history + answered
     val seen = trail.indexOf(next)
     return SetupFlow(goalId, next, if (seen < 0) trail else trail.take(seen))
@@ -91,10 +92,69 @@ internal fun SetupFlow.arriving(
 internal class GoalSetupViewModel(
     private val store: OnboardingStore,
     private val drafts: SetupDrafts?,
-    handle: SavedStateHandle,
+    private val handle: SavedStateHandle,
     goalId: String,
+    revealMoment: Boolean = false,
 ) : ViewModel() {
     private var saved by handle.saved { SetupFlow(goalId) }
+
+    init {
+        if (!handle.contains("revealMoment")) handle["revealMoment"] = revealMoment
+    }
+
+    fun takeRevealMoment(): Boolean = (handle.get<Boolean>("revealMoment") == true).also { handle["revealMoment"] = false }
+
+    fun changeAim(
+        plans: com.zoonk.android.feature.plan.PlanStore,
+        aim: String,
+        onSaved: () -> Unit,
+    ) {
+        if (isSaving) return
+        isSaving = true
+        clearFailure()
+        viewModelScope.launch {
+            when (
+                val result =
+                    plans.change(
+                        java.util.UUID.fromString(goalId),
+                        listOf(
+                            com.zoonk.android.feature.plan.PlanOp
+                                .Aim(aim),
+                        ),
+                    )
+            ) {
+                is com.zoonk.android.data.MutationResult.Done -> {
+                    if (result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED) {
+                        store.onboardings[goalId].refresh()
+                        onSaved()
+                    } else {
+                        saveFailed = true
+                    }
+                }
+
+                com.zoonk.android.data.MutationResult.Obsolete -> {}
+
+                else -> {
+                    saveFailed = true
+                }
+            }
+            isSaving = false
+        }
+    }
+
+    fun reveal(onSaved: () -> Unit) {
+        if (isSaving) return
+        isSaving = true
+        clearFailure()
+        viewModelScope.launch {
+            when (store.markPlanRevealed(goalId)) {
+                is WriteOutcome.Done -> onSaved()
+                WriteOutcome.Obsolete -> Unit
+                else -> saveFailed = true
+            }
+            isSaving = false
+        }
+    }
 
     var flow by mutableStateOf(saved)
         private set
@@ -210,6 +270,7 @@ internal class GoalSetupViewModel(
     ) {
         val goalId = view.goal.id.toString()
         val movedGoal = goalId != flow.goalId
+        if (step == OnboardingStep.SCHEDULE && flow.current == step) handle["revealMoment"] = true
         update(
             if (flow.current == step) {
                 flow.arriving(goalId, step, view.steps.firstOrNull { it != step } ?: OnboardingStep.PLAN)

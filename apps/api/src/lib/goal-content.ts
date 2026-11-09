@@ -6,15 +6,18 @@ import {
   getExplainQuestionToken,
 } from "@/workflows/explain/explain-question-workflow";
 import { getGoalContentToken, goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
+import { getGoalRebuildAsk } from "@/workflows/goals/goal-rebuild-ask";
+import { rebuildGoalCurriculumWorkflow } from "@/workflows/goals/rebuild-goal-curriculum-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
 import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
+import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";
 import { isResearchedGoalKind } from "@zoonk/core/goals/research";
 import { type GoalKind } from "@zoonk/db";
 import { type z } from "zod";
 import { type goalGenerationSchema } from "./openapi/schemas/content-generation";
 
-type GoalRef = { id: string; kind: GoalKind };
+type GoalRef = { followUp?: GoalRebuildFollowUp; id: string; kind: GoalKind };
 
 type GoalGeneration = z.infer<typeof goalGenerationSchema>;
 
@@ -35,6 +38,18 @@ async function startGoalRun({
     );
 
     return { generationId, goalId: goal.id, kind: "explanation" };
+  }
+
+  if (goal.followUp) {
+    const { followUp } = goal;
+
+    const generationId = await startOnce(
+      rebuildGoalCurriculumWorkflow,
+      [{ followUp, goalId: goal.id, platform, researchId }],
+      getGoalRebuildAsk({ followUp, goalId: goal.id }),
+    );
+
+    return { generationId, goalId: goal.id, kind: "curriculum" };
   }
 
   const generationId = await startOnce(

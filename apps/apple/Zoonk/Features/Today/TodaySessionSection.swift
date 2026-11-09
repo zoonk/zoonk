@@ -516,6 +516,8 @@ struct BlockRow: View {
   var isBusy = false
   var failed = false
   var showsDetail = false
+  /// Main's reveal tags its next block where to start, on the moment's third beat.
+  var tag: Text?
 
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -526,6 +528,13 @@ struct BlockRow: View {
           Text(block.displayTitle)
             .typeStyle(.rowTitle)
             .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
+
+          if let tag {
+            tag
+              .typeStyle(.meta.weight(.medium))
+              .foregroundStyle(.successText)
+              .settles(delay: 2 * .beat)
+          }
 
           if failed {
             FailureLine(

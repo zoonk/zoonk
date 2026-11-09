@@ -146,7 +146,11 @@ describe(writeLanguageLessonContent, () => {
     mockDraft(uniqueDraft(key), writerRunId);
     mockAudio();
 
-    const result = await writeLanguageLessonContent({ lessonId: lesson.id, workflowRunId });
+    const result = await writeLanguageLessonContent({
+      lessonId: lesson.id,
+      speed: "fast",
+      workflowRunId,
+    });
 
     expect(result).toStrictEqual({
       sentenceCount: 3,
@@ -159,6 +163,7 @@ describe(writeLanguageLessonContent, () => {
       learnerLanguage: "pt",
       lessonCanDo: "Ask how much the rent is",
       level: "A1–A2",
+      speed: "fast",
       targetLanguage: "en",
       unitCanDos: ["Alugar um apartamento"],
       unitTitle: "Alugando um apartamento",

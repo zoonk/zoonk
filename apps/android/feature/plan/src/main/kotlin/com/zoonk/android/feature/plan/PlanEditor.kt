@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -89,6 +90,8 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTool
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.datetime.toJavaLocalDate
 import java.io.Serializable
 import java.util.UUID
@@ -225,6 +228,26 @@ internal fun ColumnScope.PlanEditorBody(
     onClose: (() -> Unit)? = null,
     drafts: EditorDrafts = remember { EditorDrafts() },
 ) {
+    val aimDates by produceState<Map<String, java.time.LocalDate?>>(emptyMap(), page.plan) {
+        value = emptyMap()
+        val aim = page.plan.languageAim
+        value =
+            aim
+                ?.choices
+                .orEmpty()
+                .map { choice ->
+                    async {
+                        val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
+                        choice.aim.value to
+                            preview
+                                ?.takeIf { it.ready }
+                                ?.finishDate
+                                ?.toJavaLocalDate()
+                    }
+                }.awaitAll()
+                .toMap()
+    }
+
     val requesters = remember { PlanSection.entries.associateWith { BringIntoViewRequester() } }
 
     fun Modifier.section(section: PlanSection) = bringIntoViewRequester(requesters.getValue(section))
@@ -260,6 +283,28 @@ internal fun ColumnScope.PlanEditorBody(
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
+        page.plan.languageAim?.let { languageAim ->
+            languageAim.aim?.let { aim ->
+                LanguageAimRow(
+                    aim.value,
+                    languageAim.choices,
+                    onPick = { next, done ->
+                        edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
+                            if (it?.status ==
+                                PlanChangeResult.Status.APPLIED
+                            ) {
+                                done()
+                            }
+                        }
+                    },
+                    pending = edits.isPending(PlanPart.Aim),
+                    failed = edits.hasFailed(PlanPart.Aim),
+                    note = stringResource(R.string.onboarding_aim_description),
+                    dates = { aimDates },
+                    endDate = aimDates[aim.value],
+                )
+            }
+        }
         PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         PlanScheduleSection(
             page,

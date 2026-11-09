@@ -100,6 +100,14 @@ class LessonEndScreenshots {
     @Config(qualifiers = TABLET)
     fun tabletGuest() = capture("lessonend-guest-tablet", SIGNED_IN, LessonEnding(guest = true, fit = FIT))
 
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phonePlanReveal() = capture("lessonend-plan-reveal-phone", PLAN_REVEAL, LessonEnding(inSession = true))
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletPlanReveal() = capture("lessonend-plan-reveal-tablet", PLAN_REVEAL, LessonEnding(inSession = true))
+
     private val steps = listOf(checkStep("quiz"), summaryStep("end"))
 
     private fun completed(json: String): LessonPlayerState {
@@ -191,11 +199,17 @@ private val SIGNED_IN =
         """"reached":{"energy":80,"level":{"color":"yellow","level":3}}""",
     )
 
+private val PLAN_REVEAL =
+    SIGNED_IN.replace(
+        "\"studyBlock\":null",
+        "\"studyBlock\":null,\"planReveal\":{\"goalId\":\"00000000-0000-4000-8000-000000000031\",\"goalTitle\":\"Learn bird songs\",\"planReady\":true}",
+    )
+
 private val IN_SESSION =
     SIGNED_IN.replace(
         """"studyBlock":null""",
         """
-        "studyBlock":{"blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
+        "studyBlock":{"blocks":[],"sessionId":"8d2d9ef0-2756-4b38-92ee-ff261737ce06","blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
          "checkpoint":null,"comesBackOn":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
          "milestones":[],"missions":[{"done":1,"kind":"somethingNew","status":"done","total":1},{"done":0,"kind":"review","status":"todo","total":1}],
          "netScore":null,"nextBlockId":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},

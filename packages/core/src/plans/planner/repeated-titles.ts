@@ -13,19 +13,26 @@ export function withoutRepeatedTitles({
   kept: readonly ExistingPlanItem[];
   units: readonly QueueUnit[];
 }): QueueUnit[] {
-  const keptTitles = new Set(
-    kept.flatMap((item) => (item.lessonId ? [getTitleKey(item.titleSnapshot)] : [])),
+  const keptTitles = new Map(
+    kept.flatMap((item) =>
+      item.lessonId ? [[getTitleKey(item.titleSnapshot), item.lessonId] as const] : [],
+    ),
   );
 
-  const titles = units.map((unit) => (unit.lessonId ? getTitleKey(unit.title) : null));
+  const pending = units.filter((unit) => {
+    const lessonId = keptTitles.get(getTitleKey(unit.title));
+    return !unit.lessonId || !lessonId || lessonId === unit.lessonId;
+  });
+
+  const titles = pending.map((unit) => (unit.lessonId ? getTitleKey(unit.title) : null));
 
   const firstIndex = titles.reduce(
     (first, title, index) => (title === null || first.has(title) ? first : first.set(title, index)),
     new Map<string, number>(),
   );
 
-  return units.filter((_, index) => {
+  return pending.filter((_, index) => {
     const title = titles[index];
-    return !title || (!keptTitles.has(title) && firstIndex.get(title) === index);
+    return !title || firstIndex.get(title) === index;
   });
 }

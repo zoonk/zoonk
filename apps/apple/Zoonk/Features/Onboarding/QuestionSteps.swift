@@ -25,7 +25,8 @@ struct QuestionStep: View {
       RoleQuestion(
         subject: subject, isCareerChange: detail("purpose") == "careerChange", onAnswer: onAnswer)
     case .reason:
-      TextQuestion(kind: .reason, subject: subject, onAnswer: onAnswer)
+      ReasonQuestion(
+        subject: subject, reasons: view.languageAimView?.reasons ?? [], onAnswer: onAnswer)
     case .target:
       TextQuestion(
         kind: TextQuestion.Kind(examTarget: detail("examTarget")), subject: subject,
@@ -289,7 +290,7 @@ private struct PurposeQuestion: View {
         "What do you want from it?", tableName: "Onboarding",
         comment: "Onboarding question: what the learner hopes to get from learning it"),
       description: Text(
-        "Pick what motivates you most.", tableName: "Onboarding",
+        "It sets how deep your course goes, and so how long it is.", tableName: "Onboarding",
         comment: "Under the purpose question"))
 
     ChoiceRows(
@@ -299,33 +300,36 @@ private struct PurposeQuestion: View {
           label: String(
             localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
-            "The big ideas, no formulas", tableName: "Onboarding", comment: "Purpose choice detail")
+            "A short course: the big ideas, no formulas", tableName: "Onboarding",
+            comment: "Purpose choice detail")
         ),
         .init(
           value: "deep",
           label: String(
             localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
-            "From the basics to advanced", tableName: "Onboarding", comment: "Purpose choice detail"
-          )),
+            "The full path, from the basics to advanced", tableName: "Onboarding",
+            comment: "Purpose choice detail")),
         .init(
           value: "work",
           label: String(
             localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
-            "Apply it to real projects", tableName: "Onboarding", comment: "Purpose choice detail")),
+            "Only what your work uses, in the order it needs", tableName: "Onboarding",
+            comment: "Purpose choice detail")),
         .init(
           value: "careerChange",
           label: String(
             localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
-            "Get ready for a new role", tableName: "Onboarding", comment: "Purpose choice detail")),
+            "What the new role needs, portfolio included", tableName: "Onboarding",
+            comment: "Purpose choice detail")),
         .init(
           value: "refresh",
           label: String(
             localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
-            "Pick up what you left behind", tableName: "Onboarding",
+            "Back to the level you had, after a quick test", tableName: "Onboarding",
             comment: "Purpose choice detail")),
         .init(
           value: "other",
@@ -340,6 +344,184 @@ private struct PurposeQuestion: View {
       onAnswer(["purpose": purpose, "question": "purpose"])
     }
     .locksWhileSaving()
+  }
+}
+
+/// Main's `ReasonStep`: each reason with the level it aims for and its hours from scratch. One with
+/// a level moves on when it's picked; a certificate and Something else ask for words first.
+private struct ReasonQuestion: View {
+  let subject: String
+  let reasons: [LanguageAimView.Reason]
+  let onAnswer: ([String: Any]) -> Void
+
+  @State private var picked: String?
+  @State private var words = ""
+
+  var body: some View {
+    StepHeader(
+      subject: subject,
+      title: Text(
+        "Why are you learning it?", tableName: "Onboarding",
+        comment: "Onboarding question for a language goal"),
+      description: Text(
+        "Your answer sets how far your course goes.", tableName: "Onboarding",
+        comment: "Under the language reason question"))
+
+    Section {
+      ForEach(reasons, id: \.reason) { reason in
+        Button {
+          pick(reason.reason)
+        } label: {
+          row(reason)
+        }
+        .pickedRow(picked == reason.reason)
+        .accessibilityAddTraits(picked == reason.reason ? .isSelected : [])
+
+        if picked == reason.reason, Self.asksWords(reason.reason) {
+          wordsField(reason.reason)
+        }
+      }
+    } footer: {
+      SectionFooter {
+        Text(
+          "Hours of study from scratch, practice included. Less if you already know some.",
+          tableName: "Onboarding",
+          comment: "Under the reasons to learn a language, with their hours")
+      }
+    }
+    .locksWhileSaving()
+
+    if let picked, Self.asksWords(picked) {
+      StepButtons(
+        canContinue: picked != "certificate" || !trimmed(words).isEmpty, canSkip: false
+      ) {
+        answer(picked)
+      }
+    }
+  }
+
+  private static func asksWords(_ reason: String) -> Bool {
+    reason == "certificate" || reason == "other"
+  }
+
+  private func pick(_ reason: String) {
+    picked = reason
+
+    if !Self.asksWords(reason) {
+      announcePolitely(
+        String(
+          localized: "You picked \(Self.copy(reason, aim: nil).label)", table: "Onboarding",
+          comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
+      answer(reason)
+    }
+  }
+
+  private func answer(_ reason: String) {
+    var input: [String: Any] = ["question": "reason", "reason": reason]
+
+    if Self.asksWords(reason) {
+      input["words"] = trimmed(words).isEmpty ? NSNull() : trimmed(words)
+    }
+
+    onAnswer(input)
+  }
+
+  private func row(_ reason: LanguageAimView.Reason) -> some View {
+    let copy = Self.copy(reason.reason, aim: reason.aim)
+
+    return HStack(spacing: 12) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(copy.label)
+          .foregroundStyle(.primary)
+
+        Text(copy.description)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      VStack(alignment: .trailing, spacing: 2) {
+        if let aim = reason.aim {
+          Text(verbatim: aim)
+            .foregroundStyle(Color(.foreground))
+
+          if let hours = reason.hours {
+            Text(
+              "\(hours.formatted()) h", tableName: "Onboarding",
+              comment: "Hours of study, as a short figure like '190 h'"
+            )
+            .foregroundStyle(.mutedForeground)
+          }
+        } else {
+          Text(
+            "Exam", tableName: "Onboarding",
+            comment: "Beside a language goal's reason: a certificate's plan follows its exam"
+          )
+          .foregroundStyle(Color(.foreground))
+        }
+      }
+      .typeStyle(.data)
+    }
+    .contentShape(.rect)
+  }
+
+  @ViewBuilder
+  private func wordsField(_ reason: String) -> some View {
+    if reason == "certificate" {
+      VStack(alignment: .leading, spacing: 8) {
+        LabeledField(
+          label: Text(
+            "Which one?", tableName: "Onboarding",
+            comment: "Box for the certificate a language learner wants to pass"),
+          prompt: nil, text: $words)
+
+        Text(
+          "Your plan follows that exam's papers and score.", tableName: "Onboarding",
+          comment: "Under the certificate a language learner wants to pass"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
+    } else {
+      LabeledField(
+        label: Text(
+          "In your own words", tableName: "Onboarding",
+          comment: "Box for a language learner's own reason"),
+        prompt: nil, text: $words)
+    }
+  }
+
+  /// Main's `useReasonCopy`.
+  private static func copy(_ reason: String, aim: String?) -> (label: String, description: String) {
+    let description =
+      switch reason {
+      case "travel":
+        String(
+          localized: "Get by on trips: order, ask the way, small talk", table: "Onboarding",
+          comment: "Under the Travel reason")
+      case "talk":
+        String(
+          localized: "Everyday conversations, at home or abroad", table: "Onboarding",
+          comment: "Under the Talk with people reason")
+      case "work":
+        String(
+          localized: "Meetings, interviews and classes", table: "Onboarding",
+          comment: "Under the Work or study in it reason")
+      case "fluent":
+        String(
+          localized: "Talk about almost anything with ease", table: "Onboarding",
+          comment: "Under the Speak it fluently reason")
+      case "certificate":
+        String(
+          localized: "IELTS, DELE, CELI and others", table: "Onboarding",
+          comment: "Under the Pass a certificate reason")
+      default:
+        String(
+          localized: "In your own words. Aims for \(aim ?? "")", table: "Onboarding",
+          comment: "Under the Something else reason; the argument is a language level like B1")
+      }
+
+    return (languageReasonLabel(reason) ?? reason, description)
   }
 }
 
@@ -440,7 +622,7 @@ private func value(_ text: String) -> Any {
 
 private struct TextQuestion: View {
   enum Kind {
-    case admission, position, score, reason
+    case admission, position, score
 
     init(examTarget: String?) {
       self =
@@ -474,9 +656,7 @@ private struct TextQuestion: View {
   }
 
   private func answer(_ value: String?) -> [String: Any] {
-    kind == .reason
-      ? ["question": "reason", "reason": value ?? NSNull()]
-      : ["question": "target", "target": value ?? NSNull()]
+    ["question": "target", "target": value ?? NSNull()]
   }
 
   private var title: Text {
@@ -489,10 +669,6 @@ private struct TextQuestion: View {
       Text(
         "Which position are you applying for?", tableName: "Onboarding",
         comment: "Onboarding question for a civil service exam")
-    case .reason:
-      Text(
-        "Why are you learning it?", tableName: "Onboarding",
-        comment: "Onboarding question for a language goal")
     case .score:
       Text(
         "What score do you need?", tableName: "Onboarding",
@@ -510,10 +686,6 @@ private struct TextQuestion: View {
       Text(
         "The notice can have a different exam for each position.", tableName: "Onboarding",
         comment: "Under the position question")
-    case .reason:
-      Text(
-        "The situations you care about shape every lesson.", tableName: "Onboarding",
-        comment: "Under the language reason question")
     }
   }
 
@@ -525,8 +697,6 @@ private struct TextQuestion: View {
         comment: "Box for the course and score the learner aims for on the exam")
     case .position:
       Text("Position", tableName: "Onboarding", comment: "Box for the position an exam is for")
-    case .reason:
-      Text("Why", tableName: "Onboarding", comment: "Box for why the learner studies a language")
     }
   }
 
@@ -538,10 +708,6 @@ private struct TextQuestion: View {
         "E.g., medicine, 750 points", tableName: "Onboarding", comment: "Example admission targets")
     case .position:
       nil
-    case .reason:
-      Text(
-        "E.g., a job interview, travel", tableName: "Onboarding",
-        comment: "Example reasons to learn a language")
     case .score:
       Text("E.g., band 7, 100 points", tableName: "Onboarding", comment: "Example score targets")
     }

@@ -1,4 +1,5 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
+import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
@@ -23,6 +24,7 @@ import { recordGoalRunStep } from "./steps/record-goal-run-step";
 import { loadStoredCurriculumStep } from "./steps/stored-plan-steps";
 
 export type GoalContentInput = {
+  followUp?: GoalRebuildFollowUp;
   goalId: string;
   researchId?: string | null;
   /** The learner's upload answered research's ask after the plan was built. */
@@ -62,7 +64,7 @@ async function reportBuildFailure({
       },
       { last },
     ),
-    recordGoalBuildFailureStep(goalId),
+    recordGoalBuildFailureStep({ generationId: context.workflowRunId, goalId }),
     trackGenerationFailedStep({
       analytics: context.analytics,
       contentKind: "curriculum",
@@ -192,9 +194,9 @@ async function buildGoal({
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
-  const { curriculum, inputs, researchId, scope } = built;
+  const { curriculum, firstLesson, inputs, researchId, scope } = built;
   const prepared = prepareAheadOfLearner({ context, inputs, rebuild });
-  const closed = Promise.allSettled([prepared, warmUp]).then(() => closeStepStream());
+  const closed = Promise.allSettled([prepared, warmUp, firstLesson]).then(() => closeStepStream());
 
   try {
     const [speculativeLessonIds] = await Promise.all([

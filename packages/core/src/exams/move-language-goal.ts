@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { trackOnboardingProgress } from "../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
 import { insertGoalWithPlan, setActiveGoal } from "../goals/_utils/create-goal-records";
@@ -127,6 +128,14 @@ export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLangua
     activeGoalId: profile?.activeGoalId ?? null,
     goals: [exam],
   });
+
+  if (outcome.status === "moved") {
+    trackOnboardingProgress({
+      at: exam.createdAt.getTime(),
+      goalId: exam.id,
+      stage: "goal_created",
+    });
+  }
 
   return goal ? { goal, status: outcome.status } : { status: "notFound" };
 }

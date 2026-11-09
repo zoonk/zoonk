@@ -4325,7 +4325,7 @@
     },
     "/generations/{generationId}/events": {
       "get": {
-        "description": "Returns a resumable Server-Sent Events stream with generation step updates. A run that stopped without ending gets a stream that ends at once: read its status, which says `failed`.",
+        "description": "Returns a resumable Server-Sent Events stream with generation step updates. A run that already ended (completed, failed or cancelled) gets the events it wrote, then the stream ends: read its status to learn how it ended. A run that stopped without ending gets a stream that ends at once: read its status, which says `failed`.",
         "operationId": "streamGenerationEvents",
         "security": [],
         "summary": "Stream generation events (SSE)",
@@ -4363,7 +4363,7 @@
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again) and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. A run that builds the plan (a first build or a retry before the plan exists) reports the deck once, including a reused or already linked deck. A run on an existing plan does not send this event. This event is never sent when the goal has no deck.",
+                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again), \"lessonId\", \"lessonTitle\" and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. When the run ends its deck step without one (the goal gets no deck, the deck failed, or another run's deck wasn't ready in time), a `completed` event with step `warmUpFailed` says so: a wait showing the quiz's skeleton turns to its progress. A run that builds the plan (a first build or a retry before the plan exists) ends its deck step with exactly one of the two, including a reused or already linked deck. A run on an existing plan sends neither. A learn goal whose first lesson is picked before its plan reports it on the same stream: a `started` event with step `writeFirstLesson` carries its `lessonId` and `lessonTitle`, and a `completed` event with step `firstLessonReady` carries its `lessonId` once the learner can start it, before or after `goalReady`. Each is sent at most once per run; after a reconnect, read the onboarding's `firstLesson`.",
                   "example": "data: {\"at\":1760000000000,\"status\":\"started\",\"step\":\"writeLesson\"}\n\n"
                 }
               }
@@ -21133,9 +21133,189 @@
         }
       }
     },
+    "/goals/{goalId}/plan-reveal/today": {
+      "get": {
+        "description": "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson shows once and every number matches what's listed, so draw them as given. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
+        "operationId": "getPlanRevealToday",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get the plan reveal's Today",
+        "tags": [
+          "Onboarding"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "timeZone",
+            "schema": {
+              "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+              "type": "string"
+            },
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The reveal's Today and first week",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanRevealToday"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The goal is paused, completed or archived, or its plan isn't ready (`PLAN_NOT_READY`, with the goal in `details`), as `GET /today` answers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/plan-reveal/views": {
+      "post": {
+        "description": "Records that the learner pressed the plan reveal's action (Start, or Continue after their first lesson), which ends the goal's onboarding: its `planRevealed` turns true, `GET /me/onboarding-resume` stops bringing it back and Today stops answering `preparing`. Send it before opening Today. Pressing it again keeps the first time.",
+        "operationId": "markPlanRevealed",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Mark the plan reveal as seen",
+        "tags": [
+          "Onboarding"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Recorded"
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/onboarding-resume": {
       "get": {
-        "description": "What a returning learner (guests included) should continue: a goal they typed but haven't confirmed (`draft`), their newest goal while its onboarding hasn't reached the plan (`goal`), or their day when they have an active goal (`today`). `resume` is null when there's nothing to continue.",
+        "description": "What a returning learner (guests included) should continue: a goal they typed but haven't confirmed (`draft`), their newest goal while its onboarding isn't over (`goal`): questions are left or they haven't pressed its plan reveal's action (`planRevealed`), or their day when they have an active goal (`today`). `resume` is null when there's nothing to continue.",
         "operationId": "getOnboardingResume",
         "security": [
           {
@@ -24079,7 +24259,7 @@
             }
           },
           "409": {
-            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): while the goal's onboarding has questions left, lead back to them (a plan built before they're answered isn't the learner's yet); otherwise show the wait and ask again.",
+            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): while the goal's onboarding isn't over, lead back to it: questions are left (a plan built before they're answered isn't the learner's yet) or its plan reveal isn't seen yet (`planRevealed` false on `GET /goals/{goalId}/onboarding`); otherwise show the wait and ask again.",
             "content": {
               "application/json": {
                 "schema": {
@@ -27849,6 +28029,32 @@
           {
             "type": "object",
             "properties": {
+              "aim": {
+                "type": "string",
+                "enum": [
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setAim"
+                ]
+              }
+            },
+            "required": [
+              "aim",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals"
+          },
+          {
+            "type": "object",
+            "properties": {
               "areas": {
                 "minItems": 1,
                 "maxItems": 20,
@@ -28099,6 +28305,16 @@
             "type": "integer",
             "minimum": 5,
             "maximum": 1440
+          },
+          "aim": {
+            "description": "Language goals only, ignored for others: the aim to answer for, as the plan change `setAim` would set it; the goal's own when absent. The time question asks once per aim in `languageAim.choices` to date each choice as picking it would",
+            "type": "string",
+            "enum": [
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
           },
           "dailyMinutes": {
             "description": "The time a day asked about, as studyDays says; the goal's own when absent. With studyDays, the plan answers for this goal's share of it",
@@ -28827,7 +29043,19 @@
                 ]
               },
               "reason": {
-                "default": null,
+                "type": "string",
+                "enum": [
+                  "travel",
+                  "talk",
+                  "work",
+                  "fluent",
+                  "certificate",
+                  "other"
+                ],
+                "description": "Why the learner studies the language, which sets the level the course goes up to (`languageAim.reasons`): certificate moves the goal to an exam goal for the certificate `words` names"
+              },
+              "words": {
+                "description": "For certificate, which one (IELTS, DELE, CELI). For other, the learner's own words",
                 "nullable": true,
                 "type": "string",
                 "minLength": 1,
@@ -28835,7 +29063,8 @@
               }
             },
             "required": [
-              "question"
+              "question",
+              "reason"
             ],
             "additionalProperties": false
           },
@@ -72139,6 +72368,31 @@
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           },
+          "planReveal": {
+            "nullable": true,
+            "description": "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
+            "type": "object",
+            "properties": {
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "goalTitle": {
+                "type": "string"
+              },
+              "planReady": {
+                "type": "boolean",
+                "description": "False while the plan is still being built"
+              }
+            },
+            "required": [
+              "goalId",
+              "goalTitle",
+              "planReady"
+            ],
+            "additionalProperties": false
+          },
           "seconds": {
             "type": "integer",
             "minimum": 0,
@@ -72167,6 +72421,7 @@
           "incorrectCount",
           "isFirstCompletion",
           "nextReviewAt",
+          "planReveal",
           "seconds",
           "studyBlock",
           "totalBrainPower"
@@ -80141,6 +80396,14 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "languageAim": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguageAim"
+              }
+            ]
+          },
           "notice": {
             "nullable": true,
             "description": "An exam plan built before research read the exam's notice: reading while the reveal waits for that reading; usual once the wait ended without it (the plan follows the exam's usual structure and the reading arrives as a change to apply); null otherwise",
@@ -80498,6 +80761,7 @@
           "fitOffer",
           "fundedMocks",
           "goalId",
+          "languageAim",
           "notice",
           "numbers",
           "ownLevel",
@@ -80723,6 +80987,59 @@
           "take"
         ],
         "additionalProperties": false
+      },
+      "LanguageAim": {
+        "type": "object",
+        "properties": {
+          "aim": {
+            "nullable": true,
+            "description": "The level the course goes up to; null when none is set yet",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1",
+              "C2"
+            ]
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "aim": {
+                  "type": "string",
+                  "enum": [
+                    "A2",
+                    "B1",
+                    "B2",
+                    "C1"
+                  ]
+                },
+                "hours": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Hours of study, practice included, from the learner's level to this aim; from scratch while the level isn't known"
+                }
+              },
+              "required": [
+                "aim",
+                "hours"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The aims above the learner's level, lowest first, to offer as a change"
+          }
+        },
+        "required": [
+          "aim",
+          "choices"
+        ],
+        "additionalProperties": false,
+        "description": "Language goals only, null for others: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`"
       },
       "PlanPhase": {
         "type": "object",
@@ -82172,6 +82489,13 @@
             ],
             "additionalProperties": false
           },
+          "finishDate": {
+            "nullable": true,
+            "description": "When the plan would finish its whole course after the change: null while it's being built, for a plan with a date (it ends on that date whatever it covers), and when the course doesn't fit in the days a plan lays out. Date a language aim's choice by this, as the time advice's `endDate` does",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
           "ready": {
             "type": "boolean",
             "description": "False while the plan is being built: ask again in a few seconds"
@@ -82184,6 +82508,7 @@
         "required": [
           "effect",
           "feasibility",
+          "finishDate",
           "ready",
           "unchanged"
         ],
@@ -87061,12 +87386,23 @@
               "$ref": "#/components/schemas/OnboardingExamDate"
             },
             "description": "The exam's dates for the named year (or the next ones): from its stored notice, or estimated from its usual timing"
+          },
+          "languageAim": {
+            "default": null,
+            "description": "Language goals only: the level the words aim for and the aims the card offers instead. Edit it with field targetScore set to one of the choices' aims; null for other goals",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguageAim"
+              }
+            ]
           }
         },
         "required": [
           "cutoff",
           "draft",
-          "examDates"
+          "examDates",
+          "languageAim"
         ],
         "additionalProperties": false
       },
@@ -87480,6 +87816,38 @@
             },
             "description": "An exam's subjects from its stored notice, with only the options of its choices the learner picked; empty for other goals"
           },
+          "firstLesson": {
+            "nullable": true,
+            "description": "A learn goal's first lesson, picked and written while the plan is still being built, so the learner can start it before the plan is ready. The goal's run reports it live (`writeFirstLesson`, then `firstLessonReady`); this read is the truth after a reconnect. Null until it's picked, and for goals whose first lesson comes from the plan",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "Open it at GET /v1/library/lessons/{lessonId}"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "done",
+                  "ready",
+                  "stopped",
+                  "writing"
+                ],
+                "description": "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "followUps": {
             "type": "array",
             "items": {
@@ -87503,6 +87871,68 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
             "description": "Goals created in the same onboarding, which share the day's time"
+          },
+          "languageAim": {
+            "nullable": true,
+            "description": "Language goals only: the `reason` question's choices, and the aim the `schedule` screen shows with the aims to change it to, which a plan change `setAim` applies. Null for other goals",
+            "type": "object",
+            "properties": {
+              "aim": {
+                "nullable": true,
+                "description": "The level the course goes up to; null when none is set yet",
+                "type": "string",
+                "enum": [
+                  "A1",
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1",
+                  "C2"
+                ]
+              },
+              "choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "aim": {
+                      "type": "string",
+                      "enum": [
+                        "A2",
+                        "B1",
+                        "B2",
+                        "C1"
+                      ]
+                    },
+                    "hours": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Hours of study, practice included, from the learner's level to this aim; from scratch while the level isn't known"
+                    }
+                  },
+                  "required": [
+                    "aim",
+                    "hours"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "The aims above the learner's level, lowest first, to offer as a change"
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LanguageReason"
+                },
+                "description": "The `reason` question's choices, in order, each with the level it aims for and its hours from scratch"
+              }
+            },
+            "required": [
+              "aim",
+              "choices",
+              "reasons"
+            ],
+            "additionalProperties": false
           },
           "libraryCourse": {
             "nullable": true,
@@ -87558,6 +87988,10 @@
             ],
             "additionalProperties": false,
             "description": "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes"
+          },
+          "planRevealed": {
+            "type": "boolean",
+            "description": "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state"
           },
           "quickTestMinutes": {
             "type": "integer",
@@ -87631,6 +88065,32 @@
               "additionalProperties": false
             },
             "description": "The daily times the time question offers, in order, `recommendedMinutes` among them, each with how it splits among the goals typed together"
+          },
+          "warmUp": {
+            "nullable": true,
+            "description": "The goal's quiz deck for its waits. Null when none is coming (a private goal, or a deck that failed): open a wait on its progress. A deck that fails while a wait shows its skeleton turns the wait to its progress, the one switch it makes by itself",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "Read its cards at GET /v1/warm-ups/{warmUpId} once `ready`"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ready",
+                  "writing"
+                ],
+                "description": "`writing` once a run claimed the deck: open a wait on the quiz with a card skeleton and fill it when the run's `warmUpReady` names this deck. `ready` once its cards can be read"
+              }
+            },
+            "required": [
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -87638,16 +88098,60 @@
           "examChoices",
           "examDays",
           "examSubjects",
+          "firstLesson",
           "followUps",
           "generationId",
           "goal",
           "goalIds",
+          "languageAim",
           "libraryCourse",
           "planReadiness",
+          "planRevealed",
           "quickTestMinutes",
           "recommendedMinutes",
           "steps",
-          "timeChoices"
+          "timeChoices",
+          "warmUp"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageReason": {
+        "type": "object",
+        "properties": {
+          "aim": {
+            "nullable": true,
+            "description": "The level this reason aims for; null for a certificate, whose exam decides",
+            "type": "string",
+            "enum": [
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "hours": {
+            "nullable": true,
+            "description": "Hours of study from scratch, practice included; null for a certificate",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "travel",
+              "talk",
+              "work",
+              "fluent",
+              "certificate",
+              "other"
+            ]
+          }
+        },
+        "required": [
+          "aim",
+          "hours",
+          "reason"
         ],
         "additionalProperties": false
       },
@@ -87667,6 +88171,1627 @@
           "placement",
           "plan"
         ]
+      },
+      "PlanRevealToday": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The minutes of what `today` lists, from its blocks' estimates: show it beside Today's date"
+          },
+          "nextDays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanDay"
+            },
+            "description": "The six days after today, composed with `today` so each lesson shows once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days shows on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items. Draw them as given"
+          },
+          "today": {
+            "$ref": "#/components/schemas/StudyDay"
+          },
+          "week": {
+            "type": "object",
+            "properties": {
+              "days": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "days",
+              "minutes"
+            ],
+            "additionalProperties": false,
+            "description": "The first week's study days, today among them when `today` lists something, and their time a day added up: the first week's header"
+          }
+        },
+        "required": [
+          "minutes",
+          "nextDays",
+          "today",
+          "week"
+        ],
+        "additionalProperties": false
+      },
+      "StudyDay": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StudySession"
+          },
+          {
+            "$ref": "#/components/schemas/UnstartedStudyDay"
+          }
+        ],
+        "description": "A saved authoritative session or the read-only unopened preview",
+        "type": "object",
+        "discriminator": {
+          "propertyName": "status",
+          "mapping": {
+            "planned": "#/components/schemas/StudySession",
+            "active": "#/components/schemas/StudySession",
+            "completed": "#/components/schemas/StudySession",
+            "unstarted": "#/components/schemas/UnstartedStudyDay"
+          }
+        }
+      },
+      "StudySession": {
+        "type": "object",
+        "properties": {
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudyBlock"
+            }
+          },
+          "brainPower": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "catchUp": {
+            "nullable": true,
+            "description": "Catching up on lessons earlier days left, which the day opens with; null when the learner is on pace, on a fresh start (a fresh start carries no backlog) and when a free exam plan's first week has ended",
+            "type": "object",
+            "properties": {
+              "blockIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "description": "The day's blocks that catch up: label them so"
+              },
+              "later": {
+                "type": "object",
+                "properties": {
+                  "lessons": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "offered": {
+                    "type": "boolean",
+                    "description": "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days"
+                  }
+                },
+                "required": [
+                  "lessons",
+                  "minutes",
+                  "offered"
+                ],
+                "additionalProperties": false,
+                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered"
+              },
+              "lessonsLeft": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "positions": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              }
+            },
+            "required": [
+              "blockIds",
+              "later",
+              "lessonsLeft",
+              "positions"
+            ],
+            "additionalProperties": false
+          },
+          "current": {
+            "type": "boolean",
+            "description": "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's"
+          },
+          "dayEndsAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Epoch milliseconds when this current day gives way, including a carried session after midnight"
+          },
+          "emptyDay": {
+            "nullable": true,
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
+            "type": "string",
+            "enum": [
+              "lessonsComing",
+              "lessonsToPrepare",
+              "nothingNew"
+            ]
+          },
+          "examAccess": {
+            "type": "object",
+            "properties": {
+              "includesMockExams": {
+                "type": "boolean"
+              },
+              "trialEnded": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "includesMockExams",
+              "trialEnded"
+            ],
+            "additionalProperties": false
+          },
+          "examTomorrow": {
+            "type": "boolean",
+            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there"
+          },
+          "extraTime": {
+            "$ref": "#/components/schemas/StudyExtraTime"
+          },
+          "freshStart": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "welcomeBack",
+              "newWeek",
+              "newPhase"
+            ]
+          },
+          "fullMeal": {
+            "type": "object",
+            "properties": {
+              "bonus": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "earned": {
+                "type": "boolean"
+              },
+              "ready": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "bonus",
+              "earned",
+              "ready"
+            ],
+            "additionalProperties": false,
+            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
+          },
+          "goalId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "hyperdrive": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "streak": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "level",
+              "streak"
+            ],
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "lessonsComing": {
+            "type": "boolean",
+            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)"
+          },
+          "lessonsToPrepare": {
+            "type": "boolean",
+            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)"
+          },
+          "localDate": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Learner-local calendar date"
+          },
+          "minutes": {
+            "type": "object",
+            "properties": {
+              "dailyGoal": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example 15 min.",
+                "example": 15
+              },
+              "done": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`"
+              },
+              "planned": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks"
+              }
+            },
+            "required": [
+              "dailyGoal",
+              "done",
+              "planned"
+            ],
+            "additionalProperties": false
+          },
+          "missions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudyMission"
+            },
+            "description": "Zero to three achievable missions picked and saved when the day's session is built, ordered as Remember, New, Use. Reads update progress without adding or swapping missions. An unfinished mission whose planned anchor was removed is dropped; completed missions stay. A rebuild before any work starts or finishes may pick again. A session still running after midnight keeps its original missions until it ends."
+          },
+          "nextBlockId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "nextPosition": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "pauseSuggested": {
+            "type": "boolean"
+          },
+          "plusLessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan"
+          },
+          "sessionBar": {
+            "type": "object",
+            "properties": {
+              "completed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "completed",
+              "total"
+            ],
+            "additionalProperties": false,
+            "description": "One step per block still in the day, filled as blocks are done"
+          },
+          "state": {
+            "default": "underway",
+            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+            "type": "string",
+            "enum": [
+              "ahead",
+              "done",
+              "prepare",
+              "rest",
+              "underway",
+              "waiting"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "active",
+              "completed"
+            ]
+          },
+          "week": {
+            "type": "object",
+            "properties": {
+              "days": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                      "description": "Learner-local calendar date"
+                    },
+                    "goalMinutes": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "example": 15
+                    },
+                    "hitGoal": {
+                      "type": "boolean"
+                    },
+                    "isToday": {
+                      "type": "boolean"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "afterEnd",
+                        "beforeStart",
+                        "deadline",
+                        "exam",
+                        "rest",
+                        "study"
+                      ],
+                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                    },
+                    "minutes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                    },
+                    "studied": {
+                      "type": "boolean",
+                      "description": "Any study counts, partial days included"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "goalMinutes",
+                    "hitGoal",
+                    "isToday",
+                    "kind",
+                    "minutes",
+                    "studied"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "nextStudyDate": {
+                "nullable": true,
+                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "time": {
+                "type": "object",
+                "properties": {
+                  "studiedMinutes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991,
+                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
+                  },
+                  "targetMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                    "example": 105
+                  }
+                },
+                "required": [
+                  "studiedMinutes",
+                  "targetMinutes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "days",
+              "nextStudyDate",
+              "time"
+            ],
+            "additionalProperties": false,
+            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+          }
+        },
+        "required": [
+          "blocks",
+          "brainPower",
+          "catchUp",
+          "current",
+          "dayEndsAt",
+          "emptyDay",
+          "examAccess",
+          "examTomorrow",
+          "extraTime",
+          "freshStart",
+          "fullMeal",
+          "goalId",
+          "hyperdrive",
+          "id",
+          "lessonsComing",
+          "lessonsToPrepare",
+          "localDate",
+          "minutes",
+          "missions",
+          "nextBlockId",
+          "nextPosition",
+          "pauseSuggested",
+          "plusLessons",
+          "sessionBar",
+          "state",
+          "status",
+          "week"
+        ],
+        "additionalProperties": false
+      },
+      "StudyExtraTime": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "minutes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "minutes",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "reason": {
+            "nullable": true,
+            "description": "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+            "type": "string",
+            "enum": [
+              "nothingToStudy",
+              "plusRequired",
+              "sessionNotFinished"
+            ]
+          }
+        },
+        "required": [
+          "available",
+          "lessons",
+          "minutes",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "UnstartedStudyDay": {
+        "type": "object",
+        "properties": {
+          "brainPower": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "current": {
+            "type": "boolean",
+            "description": "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's"
+          },
+          "dayEndsAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Epoch milliseconds when this current day gives way, including a carried session after midnight"
+          },
+          "emptyDay": {
+            "nullable": true,
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
+            "type": "string",
+            "enum": [
+              "lessonsComing",
+              "lessonsToPrepare",
+              "nothingNew"
+            ]
+          },
+          "examAccess": {
+            "type": "object",
+            "properties": {
+              "includesMockExams": {
+                "type": "boolean"
+              },
+              "trialEnded": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "includesMockExams",
+              "trialEnded"
+            ],
+            "additionalProperties": false
+          },
+          "examTomorrow": {
+            "type": "boolean",
+            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there"
+          },
+          "extraTime": {
+            "$ref": "#/components/schemas/StudyExtraTime"
+          },
+          "freshStart": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "welcomeBack",
+              "newWeek",
+              "newPhase"
+            ]
+          },
+          "fullMeal": {
+            "type": "object",
+            "properties": {
+              "bonus": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "earned": {
+                "type": "boolean"
+              },
+              "ready": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "bonus",
+              "earned",
+              "ready"
+            ],
+            "additionalProperties": false,
+            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
+          },
+          "goalId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "hyperdrive": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "streak": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "level",
+              "streak"
+            ],
+            "additionalProperties": false
+          },
+          "lessonsComing": {
+            "type": "boolean",
+            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)"
+          },
+          "lessonsToPrepare": {
+            "type": "boolean",
+            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)"
+          },
+          "localDate": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Learner-local calendar date"
+          },
+          "minutes": {
+            "type": "object",
+            "properties": {
+              "dailyGoal": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example 15 min.",
+                "example": 15
+              },
+              "done": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`"
+              },
+              "planned": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks"
+              }
+            },
+            "required": [
+              "dailyGoal",
+              "done",
+              "planned"
+            ],
+            "additionalProperties": false
+          },
+          "nextPosition": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "pauseSuggested": {
+            "type": "boolean"
+          },
+          "plusLessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan"
+          },
+          "sessionBar": {
+            "type": "object",
+            "properties": {
+              "completed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "completed",
+              "total"
+            ],
+            "additionalProperties": false,
+            "description": "One step per block still in the day, filled as blocks are done"
+          },
+          "state": {
+            "default": "underway",
+            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+            "type": "string",
+            "enum": [
+              "ahead",
+              "done",
+              "prepare",
+              "rest",
+              "underway",
+              "waiting"
+            ]
+          },
+          "week": {
+            "type": "object",
+            "properties": {
+              "days": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                      "description": "Learner-local calendar date"
+                    },
+                    "goalMinutes": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "example": 15
+                    },
+                    "hitGoal": {
+                      "type": "boolean"
+                    },
+                    "isToday": {
+                      "type": "boolean"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "afterEnd",
+                        "beforeStart",
+                        "deadline",
+                        "exam",
+                        "rest",
+                        "study"
+                      ],
+                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+                    },
+                    "minutes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
+                    },
+                    "studied": {
+                      "type": "boolean",
+                      "description": "Any study counts, partial days included"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "goalMinutes",
+                    "hitGoal",
+                    "isToday",
+                    "kind",
+                    "minutes",
+                    "studied"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "nextStudyDate": {
+                "nullable": true,
+                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "time": {
+                "type": "object",
+                "properties": {
+                  "studiedMinutes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991,
+                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
+                  },
+                  "targetMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                    "example": 105
+                  }
+                },
+                "required": [
+                  "studiedMinutes",
+                  "targetMinutes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "days",
+              "nextStudyDate",
+              "time"
+            ],
+            "additionalProperties": false,
+            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "answered": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "areaId": {
+                  "nullable": true,
+                  "description": "The area a chapter's \"Practice now\" practices: the chapter's id, or `phase:N` for skills not in a chapter yet. Null for every other block",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "areas": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them: name its row after them (\"Practice: Math and Languages\"). Empty for other blocks"
+                },
+                "brainPower": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Brain Power the block earned"
+                },
+                "canDo": {
+                  "nullable": true,
+                  "description": "What the learner will be able to do",
+                  "type": "string"
+                },
+                "canTestOut": {
+                  "type": "boolean",
+                  "description": "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter"
+                },
+                "capsules": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "rapidFire",
+                          "matchPairs",
+                          "swipe"
+                        ]
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "lessonId": {
+                        "nullable": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "opened": {
+                        "type": "boolean"
+                      },
+                      "questions": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "title": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "format",
+                      "key",
+                      "lessonId",
+                      "opened",
+                      "questions",
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "chapterId": {
+                  "nullable": true,
+                  "description": "A chapter whose lesson is written just in time",
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "checkpoint": {
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/StudyCheckpoint"
+                    }
+                  ]
+                },
+                "estimatedBrainPower": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "estimatedMinutes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "extra": {
+                  "type": "boolean",
+                  "description": "A \"10 more minutes\" block after the day's session"
+                },
+                "fullReview": {
+                  "type": "boolean",
+                  "description": "A full review: every topic, in place of a mock the plan doesn't have"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "review",
+                    "learn",
+                    "practice",
+                    "produce",
+                    "checkpoint"
+                  ]
+                },
+                "lessonId": {
+                  "nullable": true,
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "mistakesOnly": {
+                  "type": "boolean",
+                  "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice"
+                },
+                "netScored": {
+                  "type": "boolean",
+                  "description": "Practice scored net (a wrong answer cancels a right one, as in Cebraspe exams): statements can be answered with dontKnow to leave them blank. Swipe capsules are scored net on their own"
+                },
+                "oftenTested": {
+                  "type": "boolean",
+                  "description": "An exam topic the board asks a lot in past papers: tiles tag it Often tested"
+                },
+                "opensInPlayer": {
+                  "type": "boolean",
+                  "description": "Written work that can navigate to the player before the combined start admits it"
+                },
+                "planItemId": {
+                  "nullable": true,
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "planItemKey": {
+                  "nullable": true,
+                  "description": "Logical plan work identity; never a database UUID",
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "position": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "questions": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "refresh": {
+                  "type": "boolean",
+                  "description": "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today"
+                },
+                "reinforcement": {
+                  "type": "boolean",
+                  "description": "A short lesson before a boss rematch"
+                },
+                "screen": {
+                  "type": "string",
+                  "enum": [
+                    "session",
+                    "lesson",
+                    "challenge",
+                    "essay",
+                    "unknown"
+                  ],
+                  "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "active",
+                    "completed",
+                    "skipped"
+                  ]
+                },
+                "subject": {
+                  "nullable": true,
+                  "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
+                  "type": "string"
+                },
+                "title": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "A practice block's topics as the plan names them, most asked first: under its row, name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+                },
+                "waitReason": {
+                  "nullable": true,
+                  "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+                  "type": "string",
+                  "enum": [
+                    "lessons",
+                    "challenge"
+                  ]
+                },
+                "weakest": {
+                  "type": "boolean",
+                  "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due"
+                }
+              },
+              "required": [
+                "answered",
+                "areaId",
+                "areas",
+                "brainPower",
+                "canDo",
+                "canTestOut",
+                "capsules",
+                "chapterId",
+                "checkpoint",
+                "estimatedBrainPower",
+                "estimatedMinutes",
+                "extra",
+                "fullReview",
+                "kind",
+                "lessonId",
+                "mistakesOnly",
+                "netScored",
+                "oftenTested",
+                "opensInPlayer",
+                "planItemId",
+                "planItemKey",
+                "position",
+                "questions",
+                "refresh",
+                "reinforcement",
+                "screen",
+                "status",
+                "subject",
+                "title",
+                "topics",
+                "waitReason",
+                "weakest"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "catchUp": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "later": {
+                "type": "object",
+                "properties": {
+                  "lessons": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "offered": {
+                    "type": "boolean",
+                    "description": "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days"
+                  }
+                },
+                "required": [
+                  "lessons",
+                  "minutes",
+                  "offered"
+                ],
+                "additionalProperties": false,
+                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered"
+              },
+              "lessonsLeft": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "positions": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              }
+            },
+            "required": [
+              "later",
+              "lessonsLeft",
+              "positions"
+            ],
+            "additionalProperties": false
+          },
+          "missions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/StudyMissionDetail"
+                    }
+                  ]
+                },
+                "done": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "firstStep": {
+                  "type": "boolean"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "review",
+                    "somethingNew",
+                    "finishChapter",
+                    "challenge",
+                    "weeklyChallenge",
+                    "mock",
+                    "essay",
+                    "practice",
+                    "fixMistake",
+                    "pattern",
+                    "pronunciation",
+                    "call",
+                    "askBuddy",
+                    "weakSpot"
+                  ]
+                },
+                "minutes": {
+                  "description": "About how many minutes a mission still to do asks: the planned minutes of its unfinished blocks (a waiting challenge's included), or an estimate for work outside the day's blocks. Absent once done.",
+                  "type": "number",
+                  "minimum": 0
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "todo",
+                    "done"
+                  ]
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "waitReason": {
+                  "type": "string",
+                  "enum": [
+                    "challenge",
+                    "lessons"
+                  ],
+                  "description": "Why the block this mission or first step opens can't start yet: a phase challenge waits for the day's lessons before it, or for the challenge before it. Absent once it can start."
+                },
+                "opens": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "block"
+                          ]
+                        },
+                        "ref": {
+                          "type": "object",
+                          "properties": {
+                            "areaId": {
+                              "nullable": true,
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 100
+                            },
+                            "chapterId": {
+                              "nullable": true,
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "checkpoint": {
+                              "nullable": true,
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "boss",
+                                        "finalBoss",
+                                        "weekly"
+                                      ]
+                                    },
+                                    "phase": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "rematch": {
+                                      "type": "boolean"
+                                    },
+                                    "mock": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        true
+                                      ]
+                                    },
+                                    "mockIdentity": {
+                                      "type": "object",
+                                      "properties": {
+                                        "day": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "exclusiveMinimum": true,
+                                          "maximum": 9007199254740991
+                                        },
+                                        "fullLength": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "day",
+                                        "fullLength"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "phase",
+                                    "rematch",
+                                    "mock",
+                                    "mockIdentity"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "boss",
+                                        "finalBoss",
+                                        "weekly"
+                                      ]
+                                    },
+                                    "phase": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "rematch": {
+                                      "type": "boolean"
+                                    },
+                                    "mock": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        false
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "phase",
+                                    "rematch",
+                                    "mock"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ],
+                              "type": "object"
+                            },
+                            "flags": {
+                              "type": "object",
+                              "properties": {
+                                "extra": {
+                                  "type": "boolean"
+                                },
+                                "fullReview": {
+                                  "type": "boolean"
+                                },
+                                "mistakesOnly": {
+                                  "type": "boolean"
+                                },
+                                "refresh": {
+                                  "type": "boolean"
+                                },
+                                "reinforcement": {
+                                  "type": "boolean"
+                                },
+                                "weakest": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "extra",
+                                "fullReview",
+                                "mistakesOnly",
+                                "refresh",
+                                "reinforcement",
+                                "weakest"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "learn",
+                                "review",
+                                "practice",
+                                "produce",
+                                "checkpoint"
+                              ]
+                            },
+                            "lessonId": {
+                              "nullable": true,
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "planItemKey": {
+                              "nullable": true,
+                              "type": "string",
+                              "maxLength": 120
+                            },
+                            "position": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "areaId",
+                            "chapterId",
+                            "checkpoint",
+                            "flags",
+                            "kind",
+                            "lessonId",
+                            "planItemKey",
+                            "position"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "ref"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "mistakesPractice"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "pattern"
+                          ]
+                        },
+                        "patternId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "patternId"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "pronunciation"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "chapterId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "call"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "chapterId",
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "buddy"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "areaId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "areaPractice"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "areaId",
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "mockChooser"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "done",
+                "kind",
+                "status",
+                "total"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "unstarted"
+            ]
+          }
+        },
+        "required": [
+          "brainPower",
+          "current",
+          "dayEndsAt",
+          "emptyDay",
+          "examAccess",
+          "examTomorrow",
+          "extraTime",
+          "freshStart",
+          "fullMeal",
+          "goalId",
+          "hyperdrive",
+          "lessonsComing",
+          "lessonsToPrepare",
+          "localDate",
+          "minutes",
+          "nextPosition",
+          "pauseSuggested",
+          "plusLessons",
+          "sessionBar",
+          "state",
+          "week",
+          "blocks",
+          "catchUp",
+          "missions",
+          "status"
+        ],
+        "additionalProperties": false
       },
       "OnboardingResume": {
         "type": "object",
@@ -89669,493 +91794,6 @@
         ],
         "additionalProperties": false
       },
-      "StudySession": {
-        "type": "object",
-        "properties": {
-          "blocks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StudyBlock"
-            }
-          },
-          "brainPower": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "catchUp": {
-            "nullable": true,
-            "description": "Catching up on lessons earlier days left, which the day opens with; null when the learner is on pace, on a fresh start (a fresh start carries no backlog) and when a free exam plan's first week has ended",
-            "type": "object",
-            "properties": {
-              "blockIds": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                "description": "The day's blocks that catch up: label them so"
-              },
-              "later": {
-                "type": "object",
-                "properties": {
-                  "lessons": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "minutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "offered": {
-                    "type": "boolean",
-                    "description": "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days"
-                  }
-                },
-                "required": [
-                  "lessons",
-                  "minutes",
-                  "offered"
-                ],
-                "additionalProperties": false,
-                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered"
-              },
-              "lessonsLeft": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "positions": {
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                }
-              }
-            },
-            "required": [
-              "blockIds",
-              "later",
-              "lessonsLeft",
-              "positions"
-            ],
-            "additionalProperties": false
-          },
-          "current": {
-            "type": "boolean",
-            "description": "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's"
-          },
-          "dayEndsAt": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Epoch milliseconds when this current day gives way, including a carried session after midnight"
-          },
-          "emptyDay": {
-            "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
-            "type": "string",
-            "enum": [
-              "lessonsComing",
-              "lessonsToPrepare",
-              "nothingNew"
-            ]
-          },
-          "examAccess": {
-            "type": "object",
-            "properties": {
-              "includesMockExams": {
-                "type": "boolean"
-              },
-              "trialEnded": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "includesMockExams",
-              "trialEnded"
-            ],
-            "additionalProperties": false
-          },
-          "examTomorrow": {
-            "type": "boolean",
-            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there"
-          },
-          "extraTime": {
-            "$ref": "#/components/schemas/StudyExtraTime"
-          },
-          "freshStart": {
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "welcomeBack",
-              "newWeek",
-              "newPhase"
-            ]
-          },
-          "fullMeal": {
-            "type": "object",
-            "properties": {
-              "bonus": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "earned": {
-                "type": "boolean"
-              },
-              "ready": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "bonus",
-              "earned",
-              "ready"
-            ],
-            "additionalProperties": false,
-            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
-          },
-          "goalId": {
-            "nullable": true,
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "hyperdrive": {
-            "type": "object",
-            "properties": {
-              "level": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "streak": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "level",
-              "streak"
-            ],
-            "additionalProperties": false
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "lessonsComing": {
-            "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)"
-          },
-          "lessonsToPrepare": {
-            "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)"
-          },
-          "localDate": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-            "description": "Learner-local calendar date"
-          },
-          "minutes": {
-            "type": "object",
-            "properties": {
-              "dailyGoal": {
-                "type": "number",
-                "minimum": 0,
-                "description": "The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example 15 min.",
-                "example": 15
-              },
-              "done": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`"
-              },
-              "planned": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "dailyGoal",
-              "done",
-              "planned"
-            ],
-            "additionalProperties": false
-          },
-          "missions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StudyMission"
-            },
-            "description": "Zero to three achievable missions picked and saved when the day's session is built, ordered as Remember, New, Use. Reads update progress without adding or swapping missions. An unfinished mission whose planned anchor was removed is dropped; completed missions stay. A rebuild before any work starts or finishes may pick again. A session still running after midnight keeps its original missions until it ends."
-          },
-          "nextBlockId": {
-            "nullable": true,
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "nextPosition": {
-            "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "pauseSuggested": {
-            "type": "boolean"
-          },
-          "plusLessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan"
-          },
-          "sessionBar": {
-            "type": "object",
-            "properties": {
-              "completed": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "total": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "completed",
-              "total"
-            ],
-            "additionalProperties": false,
-            "description": "One step per block still in the day, filled as blocks are done"
-          },
-          "state": {
-            "default": "underway",
-            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
-            "type": "string",
-            "enum": [
-              "ahead",
-              "done",
-              "prepare",
-              "rest",
-              "underway",
-              "waiting"
-            ]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "planned",
-              "active",
-              "completed"
-            ]
-          },
-          "week": {
-            "type": "object",
-            "properties": {
-              "days": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "Learner-local calendar date"
-                    },
-                    "goalMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
-                      "example": 15
-                    },
-                    "hitGoal": {
-                      "type": "boolean"
-                    },
-                    "isToday": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "afterEnd",
-                        "beforeStart",
-                        "deadline",
-                        "exam",
-                        "rest",
-                        "study"
-                      ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                    },
-                    "minutes": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
-                    },
-                    "studied": {
-                      "type": "boolean",
-                      "description": "Any study counts, partial days included"
-                    }
-                  },
-                  "required": [
-                    "date",
-                    "goalMinutes",
-                    "hitGoal",
-                    "isToday",
-                    "kind",
-                    "minutes",
-                    "studied"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "nextStudyDate": {
-                "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "days",
-              "nextStudyDate",
-              "time"
-            ],
-            "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
-          }
-        },
-        "required": [
-          "blocks",
-          "brainPower",
-          "catchUp",
-          "current",
-          "dayEndsAt",
-          "emptyDay",
-          "examAccess",
-          "examTomorrow",
-          "extraTime",
-          "freshStart",
-          "fullMeal",
-          "goalId",
-          "hyperdrive",
-          "id",
-          "lessonsComing",
-          "lessonsToPrepare",
-          "localDate",
-          "minutes",
-          "missions",
-          "nextBlockId",
-          "nextPosition",
-          "pauseSuggested",
-          "plusLessons",
-          "sessionBar",
-          "state",
-          "status",
-          "week"
-        ],
-        "additionalProperties": false
-      },
-      "StudyExtraTime": {
-        "type": "object",
-        "properties": {
-          "available": {
-            "type": "boolean"
-          },
-          "lessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "minutes": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "minutes",
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available"
-          },
-          "minutes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "reason": {
-            "nullable": true,
-            "description": "Why it isn't offered: nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
-            "type": "string",
-            "enum": [
-              "nothingToStudy",
-              "plusRequired",
-              "sessionNotFinished"
-            ]
-          }
-        },
-        "required": [
-          "available",
-          "lessons",
-          "minutes",
-          "reason"
-        ],
-        "additionalProperties": false
-      },
       "WeeklyChallenge": {
         "type": "object",
         "properties": {
@@ -91872,1089 +93510,6 @@
           "failed"
         ]
       },
-      "StudyDay": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/StudySession"
-          },
-          {
-            "$ref": "#/components/schemas/UnstartedStudyDay"
-          }
-        ],
-        "description": "A saved authoritative session or the read-only unopened preview",
-        "type": "object",
-        "discriminator": {
-          "propertyName": "status",
-          "mapping": {
-            "planned": "#/components/schemas/StudySession",
-            "active": "#/components/schemas/StudySession",
-            "completed": "#/components/schemas/StudySession",
-            "unstarted": "#/components/schemas/UnstartedStudyDay"
-          }
-        }
-      },
-      "UnstartedStudyDay": {
-        "type": "object",
-        "properties": {
-          "brainPower": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "current": {
-            "type": "boolean",
-            "description": "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's"
-          },
-          "dayEndsAt": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Epoch milliseconds when this current day gives way, including a carried session after midnight"
-          },
-          "emptyDay": {
-            "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
-            "type": "string",
-            "enum": [
-              "lessonsComing",
-              "lessonsToPrepare",
-              "nothingNew"
-            ]
-          },
-          "examAccess": {
-            "type": "object",
-            "properties": {
-              "includesMockExams": {
-                "type": "boolean"
-              },
-              "trialEnded": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "includesMockExams",
-              "trialEnded"
-            ],
-            "additionalProperties": false
-          },
-          "examTomorrow": {
-            "type": "boolean",
-            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there"
-          },
-          "extraTime": {
-            "$ref": "#/components/schemas/StudyExtraTime"
-          },
-          "freshStart": {
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "welcomeBack",
-              "newWeek",
-              "newPhase"
-            ]
-          },
-          "fullMeal": {
-            "type": "object",
-            "properties": {
-              "bonus": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "earned": {
-                "type": "boolean"
-              },
-              "ready": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "bonus",
-              "earned",
-              "ready"
-            ],
-            "additionalProperties": false,
-            "description": "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals."
-          },
-          "goalId": {
-            "nullable": true,
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "hyperdrive": {
-            "type": "object",
-            "properties": {
-              "level": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "streak": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "level",
-              "streak"
-            ],
-            "additionalProperties": false
-          },
-          "lessonsComing": {
-            "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)"
-          },
-          "lessonsToPrepare": {
-            "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)"
-          },
-          "localDate": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-            "description": "Learner-local calendar date"
-          },
-          "minutes": {
-            "type": "object",
-            "properties": {
-              "dailyGoal": {
-                "type": "number",
-                "minimum": 0,
-                "description": "The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example 15 min.",
-                "example": 15
-              },
-              "done": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`"
-              },
-              "planned": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "dailyGoal",
-              "done",
-              "planned"
-            ],
-            "additionalProperties": false
-          },
-          "nextPosition": {
-            "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "pauseSuggested": {
-            "type": "boolean"
-          },
-          "plusLessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan"
-          },
-          "sessionBar": {
-            "type": "object",
-            "properties": {
-              "completed": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "total": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "completed",
-              "total"
-            ],
-            "additionalProperties": false,
-            "description": "One step per block still in the day, filled as blocks are done"
-          },
-          "state": {
-            "default": "underway",
-            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
-            "type": "string",
-            "enum": [
-              "ahead",
-              "done",
-              "prepare",
-              "rest",
-              "underway",
-              "waiting"
-            ]
-          },
-          "week": {
-            "type": "object",
-            "properties": {
-              "days": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "Learner-local calendar date"
-                    },
-                    "goalMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
-                      "example": 15
-                    },
-                    "hitGoal": {
-                      "type": "boolean"
-                    },
-                    "isToday": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "afterEnd",
-                        "beforeStart",
-                        "deadline",
-                        "exam",
-                        "rest",
-                        "study"
-                      ],
-                      "description": "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                    },
-                    "minutes": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
-                    },
-                    "studied": {
-                      "type": "boolean",
-                      "description": "Any study counts, partial days included"
-                    }
-                  },
-                  "required": [
-                    "date",
-                    "goalMinutes",
-                    "hitGoal",
-                    "isToday",
-                    "kind",
-                    "minutes",
-                    "studied"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "nextStudyDate": {
-                "nullable": true,
-                "description": "The learner's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "time": {
-                "type": "object",
-                "properties": {
-                  "studiedMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
-                  },
-                  "targetMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-                    "example": 105
-                  }
-                },
-                "required": [
-                  "studiedMinutes",
-                  "targetMinutes"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "days",
-              "nextStudyDate",
-              "time"
-            ],
-            "additionalProperties": false,
-            "description": "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate"
-          },
-          "blocks": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "answered": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "areaId": {
-                  "nullable": true,
-                  "description": "The area a chapter's \"Practice now\" practices: the chapter's id, or `phase:N` for skills not in a chapter yet. Null for every other block",
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 100
-                },
-                "areas": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "The areas most of a practice block asks about, at most two, as the plan names them: name its row after them (\"Practice: Math and Languages\"). Empty for other blocks"
-                },
-                "brainPower": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991,
-                  "description": "Brain Power the block earned"
-                },
-                "canDo": {
-                  "nullable": true,
-                  "description": "What the learner will be able to do",
-                  "type": "string"
-                },
-                "canTestOut": {
-                  "type": "boolean",
-                  "description": "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter"
-                },
-                "capsules": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "format": {
-                        "type": "string",
-                        "enum": [
-                          "rapidFire",
-                          "matchPairs",
-                          "swipe"
-                        ]
-                      },
-                      "key": {
-                        "type": "string"
-                      },
-                      "lessonId": {
-                        "nullable": true,
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                      },
-                      "opened": {
-                        "type": "boolean"
-                      },
-                      "questions": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 9007199254740991
-                      },
-                      "title": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "format",
-                      "key",
-                      "lessonId",
-                      "opened",
-                      "questions",
-                      "title"
-                    ],
-                    "additionalProperties": false
-                  }
-                },
-                "chapterId": {
-                  "nullable": true,
-                  "description": "A chapter whose lesson is written just in time",
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                "checkpoint": {
-                  "nullable": true,
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/StudyCheckpoint"
-                    }
-                  ]
-                },
-                "estimatedBrainPower": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "estimatedMinutes": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "extra": {
-                  "type": "boolean",
-                  "description": "A \"10 more minutes\" block after the day's session"
-                },
-                "fullReview": {
-                  "type": "boolean",
-                  "description": "A full review: every topic, in place of a mock the plan doesn't have"
-                },
-                "kind": {
-                  "type": "string",
-                  "enum": [
-                    "review",
-                    "learn",
-                    "practice",
-                    "produce",
-                    "checkpoint"
-                  ]
-                },
-                "lessonId": {
-                  "nullable": true,
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                "mistakesOnly": {
-                  "type": "boolean",
-                  "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice"
-                },
-                "netScored": {
-                  "type": "boolean",
-                  "description": "Practice scored net (a wrong answer cancels a right one, as in Cebraspe exams): statements can be answered with dontKnow to leave them blank. Swipe capsules are scored net on their own"
-                },
-                "oftenTested": {
-                  "type": "boolean",
-                  "description": "An exam topic the board asks a lot in past papers: tiles tag it Often tested"
-                },
-                "opensInPlayer": {
-                  "type": "boolean",
-                  "description": "Written work that can navigate to the player before the combined start admits it"
-                },
-                "planItemId": {
-                  "nullable": true,
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                "planItemKey": {
-                  "nullable": true,
-                  "description": "Logical plan work identity; never a database UUID",
-                  "type": "string",
-                  "maxLength": 120
-                },
-                "position": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "questions": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "refresh": {
-                  "type": "boolean",
-                  "description": "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today"
-                },
-                "reinforcement": {
-                  "type": "boolean",
-                  "description": "A short lesson before a boss rematch"
-                },
-                "screen": {
-                  "type": "string",
-                  "enum": [
-                    "session",
-                    "lesson",
-                    "challenge",
-                    "essay",
-                    "unknown"
-                  ],
-                  "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
-                },
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "pending",
-                    "active",
-                    "completed",
-                    "skipped"
-                  ]
-                },
-                "subject": {
-                  "nullable": true,
-                  "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
-                  "type": "string"
-                },
-                "title": {
-                  "nullable": true,
-                  "type": "string"
-                },
-                "topics": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "A practice block's topics as the plan names them, most asked first: under its row, name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
-                },
-                "waitReason": {
-                  "nullable": true,
-                  "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
-                  "type": "string",
-                  "enum": [
-                    "lessons",
-                    "challenge"
-                  ]
-                },
-                "weakest": {
-                  "type": "boolean",
-                  "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due"
-                }
-              },
-              "required": [
-                "answered",
-                "areaId",
-                "areas",
-                "brainPower",
-                "canDo",
-                "canTestOut",
-                "capsules",
-                "chapterId",
-                "checkpoint",
-                "estimatedBrainPower",
-                "estimatedMinutes",
-                "extra",
-                "fullReview",
-                "kind",
-                "lessonId",
-                "mistakesOnly",
-                "netScored",
-                "oftenTested",
-                "opensInPlayer",
-                "planItemId",
-                "planItemKey",
-                "position",
-                "questions",
-                "refresh",
-                "reinforcement",
-                "screen",
-                "status",
-                "subject",
-                "title",
-                "topics",
-                "waitReason",
-                "weakest"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "catchUp": {
-            "nullable": true,
-            "type": "object",
-            "properties": {
-              "later": {
-                "type": "object",
-                "properties": {
-                  "lessons": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "minutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "offered": {
-                    "type": "boolean",
-                    "description": "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days"
-                  }
-                },
-                "required": [
-                  "lessons",
-                  "minutes",
-                  "offered"
-                ],
-                "additionalProperties": false,
-                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered"
-              },
-              "lessonsLeft": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "positions": {
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                }
-              }
-            },
-            "required": [
-              "later",
-              "lessonsLeft",
-              "positions"
-            ],
-            "additionalProperties": false
-          },
-          "missions": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "detail": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/StudyMissionDetail"
-                    }
-                  ]
-                },
-                "done": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "firstStep": {
-                  "type": "boolean"
-                },
-                "kind": {
-                  "type": "string",
-                  "enum": [
-                    "review",
-                    "somethingNew",
-                    "finishChapter",
-                    "challenge",
-                    "weeklyChallenge",
-                    "mock",
-                    "essay",
-                    "practice",
-                    "fixMistake",
-                    "pattern",
-                    "pronunciation",
-                    "call",
-                    "askBuddy",
-                    "weakSpot"
-                  ]
-                },
-                "minutes": {
-                  "description": "About how many minutes a mission still to do asks: the planned minutes of its unfinished blocks (a waiting challenge's included), or an estimate for work outside the day's blocks. Absent once done.",
-                  "type": "number",
-                  "minimum": 0
-                },
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "todo",
-                    "done"
-                  ]
-                },
-                "total": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "waitReason": {
-                  "type": "string",
-                  "enum": [
-                    "challenge",
-                    "lessons"
-                  ],
-                  "description": "Why the block this mission or first step opens can't start yet: a phase challenge waits for the day's lessons before it, or for the challenge before it. Absent once it can start."
-                },
-                "opens": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "block"
-                          ]
-                        },
-                        "ref": {
-                          "type": "object",
-                          "properties": {
-                            "areaId": {
-                              "nullable": true,
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 100
-                            },
-                            "chapterId": {
-                              "nullable": true,
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "checkpoint": {
-                              "nullable": true,
-                              "oneOf": [
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "kind": {
-                                      "type": "string",
-                                      "enum": [
-                                        "boss",
-                                        "finalBoss",
-                                        "weekly"
-                                      ]
-                                    },
-                                    "phase": {
-                                      "nullable": true,
-                                      "type": "integer",
-                                      "minimum": -9007199254740991,
-                                      "maximum": 9007199254740991
-                                    },
-                                    "rematch": {
-                                      "type": "boolean"
-                                    },
-                                    "mock": {
-                                      "type": "boolean",
-                                      "enum": [
-                                        true
-                                      ]
-                                    },
-                                    "mockIdentity": {
-                                      "type": "object",
-                                      "properties": {
-                                        "day": {
-                                          "nullable": true,
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "exclusiveMinimum": true,
-                                          "maximum": 9007199254740991
-                                        },
-                                        "fullLength": {
-                                          "type": "boolean"
-                                        }
-                                      },
-                                      "required": [
-                                        "day",
-                                        "fullLength"
-                                      ],
-                                      "additionalProperties": false
-                                    }
-                                  },
-                                  "required": [
-                                    "kind",
-                                    "phase",
-                                    "rematch",
-                                    "mock",
-                                    "mockIdentity"
-                                  ],
-                                  "additionalProperties": false
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "kind": {
-                                      "type": "string",
-                                      "enum": [
-                                        "boss",
-                                        "finalBoss",
-                                        "weekly"
-                                      ]
-                                    },
-                                    "phase": {
-                                      "nullable": true,
-                                      "type": "integer",
-                                      "minimum": -9007199254740991,
-                                      "maximum": 9007199254740991
-                                    },
-                                    "rematch": {
-                                      "type": "boolean"
-                                    },
-                                    "mock": {
-                                      "type": "boolean",
-                                      "enum": [
-                                        false
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "kind",
-                                    "phase",
-                                    "rematch",
-                                    "mock"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              ],
-                              "type": "object"
-                            },
-                            "flags": {
-                              "type": "object",
-                              "properties": {
-                                "extra": {
-                                  "type": "boolean"
-                                },
-                                "fullReview": {
-                                  "type": "boolean"
-                                },
-                                "mistakesOnly": {
-                                  "type": "boolean"
-                                },
-                                "refresh": {
-                                  "type": "boolean"
-                                },
-                                "reinforcement": {
-                                  "type": "boolean"
-                                },
-                                "weakest": {
-                                  "type": "boolean"
-                                }
-                              },
-                              "required": [
-                                "extra",
-                                "fullReview",
-                                "mistakesOnly",
-                                "refresh",
-                                "reinforcement",
-                                "weakest"
-                              ],
-                              "additionalProperties": false
-                            },
-                            "kind": {
-                              "type": "string",
-                              "enum": [
-                                "learn",
-                                "review",
-                                "practice",
-                                "produce",
-                                "checkpoint"
-                              ]
-                            },
-                            "lessonId": {
-                              "nullable": true,
-                              "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                            },
-                            "planItemKey": {
-                              "nullable": true,
-                              "type": "string",
-                              "maxLength": 120
-                            },
-                            "position": {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 9007199254740991
-                            }
-                          },
-                          "required": [
-                            "areaId",
-                            "chapterId",
-                            "checkpoint",
-                            "flags",
-                            "kind",
-                            "lessonId",
-                            "planItemKey",
-                            "position"
-                          ],
-                          "additionalProperties": false
-                        }
-                      },
-                      "required": [
-                        "kind",
-                        "ref"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "mistakesPractice"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "pattern"
-                          ]
-                        },
-                        "patternId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        }
-                      },
-                      "required": [
-                        "kind",
-                        "patternId"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "pronunciation"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "chapterId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "call"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "chapterId",
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "buddy"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "areaId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                        },
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "areaPractice"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "areaId",
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "mockChooser"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    }
-                  ]
-                }
-              },
-              "required": [
-                "done",
-                "kind",
-                "status",
-                "total"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "unstarted"
-            ]
-          }
-        },
-        "required": [
-          "brainPower",
-          "current",
-          "dayEndsAt",
-          "emptyDay",
-          "examAccess",
-          "examTomorrow",
-          "extraTime",
-          "freshStart",
-          "fullMeal",
-          "goalId",
-          "hyperdrive",
-          "lessonsComing",
-          "lessonsToPrepare",
-          "localDate",
-          "minutes",
-          "nextPosition",
-          "pauseSuggested",
-          "plusLessons",
-          "sessionBar",
-          "state",
-          "week",
-          "blocks",
-          "catchUp",
-          "missions",
-          "status"
-        ],
-        "additionalProperties": false
-      },
       "WarmUpDeck": {
         "type": "object",
         "properties": {
@@ -93512,6 +94067,32 @@
             ],
             "additionalProperties": false,
             "description": "Brings in the lessons the learner's own time fits by the plan's date, at the time, date and pace their plan has: the plan is planned again from today as a change of theirs plans it, so topics its date left out, or more depth, come in where they fit. The plan offers it as `fitOffer` (GET /v1/goals/{goalId}/plan) when it adds lessons"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "aim": {
+                "type": "string",
+                "enum": [
+                  "A2",
+                  "B1",
+                  "B2",
+                  "C1"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "setAim"
+                ]
+              }
+            },
+            "required": [
+              "aim",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "Language goals only: the level the course goes up to (`languageAim`'s choices on the plan). The plan studies the situations up to that level, sized to the hours it takes from the learner's level, and re-plans from today; it can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason notLanguage for other goals"
           },
           {
             "type": "object",

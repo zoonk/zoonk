@@ -1,12 +1,21 @@
 import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
+import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../../_test-utils/deferred-work";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { checkWarmUp } from "./check-warm-up";
-import { type WarmUpClaim, claimWarmUp, failWarmUp, readWarmUpStatus } from "./claim-warm-up";
+import {
+  type WarmUpClaim,
+  claimWarmUp,
+  failWarmUp,
+  readWarmUpState,
+  readWarmUpStatus,
+} from "./claim-warm-up";
 import { saveWarmUp } from "./save-warm-up";
 import { warmUpDeckSchema } from "./warm-up-contract";
 import { getWarmUpKey } from "./warm-up-key";
@@ -99,6 +108,11 @@ async function writeDeck({
   return saveWarmUp({ checked, goalId, id: claim.id, workflowRunId, written });
 }
 
+async function goalWarmUp(goalId: string) {
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+  return readWarmUpState(goal.warmUpId);
+}
+
 describe("shared warm-up writing", () => {
   beforeEach(() => {
     vi.mocked(generateWarmUpCards).mockResolvedValue(result({ cards: rawCards() }));
@@ -111,7 +125,43 @@ describe("shared warm-up writing", () => {
     );
   });
 
-  it("admits one writer for simultaneous goals, then links both when they observe ready", async () => {
+  it("records one deck save when the successful save is replayed", async () => {
+    const { goals, scope } = await newGoals();
+    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+    const claim = await claimWarmUp(request);
+
+    if (claim.status !== "claimed") {
+      throw new Error("Expected the test to own this deck");
+    }
+
+    const written = result({ cards: toWarmUpCards(rawCards()) });
+
+    const checked = result({
+      verdicts: written.data.cards.map(({ id }) => ({ id, keep: true, problem: null })),
+    });
+
+    const input = {
+      checked: { ...checked.data, provenance: checked.provenance },
+      goalId: request.goalId,
+      id: claim.id,
+      workflowRunId: request.workflowRunId,
+      written: { ...written.data, provenance: written.provenance },
+    };
+
+    const flush = runDeferredWork();
+
+    await expect(saveWarmUp(input)).resolves.toBe(claim.id);
+    await expect(saveWarmUp(input)).resolves.toBe(claim.id);
+    await flush();
+
+    expect(
+      analytics.trackServerEvent.mock.calls.filter(
+        ([event]) => event.properties.stage === "deck_saved",
+      ),
+    ).toHaveLength(1);
+  });
+
+  it("admits one writer for simultaneous goals, and links both to the deck it writes", async () => {
     const { goals, scope } = await newGoals(2);
     const first = goals[0]!;
     const second = goals[1]!;
@@ -126,8 +176,8 @@ describe("shared warm-up writing", () => {
     expect(claims.map(({ status }) => status).toSorted()).toStrictEqual(["claimed", "following"]);
 
     await expect(
-      prisma.warmUp.count({ where: { goals: { some: { id: first.id } } } }),
-    ).resolves.toBe(0);
+      prisma.warmUp.findMany({ where: { goals: { some: { id: { in: [first.id, second.id] } } } } }),
+    ).resolves.toMatchObject([{ status: "writing" }]);
 
     const owner = claims.findIndex(({ status }) => status === "claimed");
     const id = await writeDeck({ ...requests[owner]!, claim: claims[owner]! });
@@ -139,6 +189,16 @@ describe("shared warm-up writing", () => {
     expect(linked.map(({ warmUpId }) => warmUpId)).toStrictEqual([id, id]);
     expect(generateWarmUpCards).toHaveBeenCalledOnce();
     expect(checkWarmUpCards).toHaveBeenCalledOnce();
+  });
+
+  it("writes and checks a cold deck at the learner's tier, since the learner's wait shows it", async () => {
+    const { goals, scope } = await newGoals();
+    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+
+    await writeDeck({ ...request, claim: await claimWarmUp(request) });
+
+    expect(vi.mocked(generateWarmUpCards).mock.calls[0]?.[0].serviceTier).toBe("priority");
+    expect(vi.mocked(checkWarmUpCards).mock.calls[0]?.[0].serviceTier).toBe("priority");
   });
 
   it("reuses ready content and makes repeated links without another model call", async () => {
@@ -274,6 +334,21 @@ describe("shared warm-up writing", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it("tells a goal's waits its deck is on its way from the claim, and ready once saved", async () => {
+    const { goals, scope } = await newGoals(2);
+    const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
+    const claim = await claimWarmUp(request);
+    const following = { ...request, goalId: goals[1]!.id, workflowRunId: crypto.randomUUID() };
+    await claimWarmUp(following);
+
+    const id = "id" in claim ? claim.id : "";
+    await expect(goalWarmUp(request.goalId)).resolves.toStrictEqual({ id, status: "writing" });
+    await expect(goalWarmUp(following.goalId)).resolves.toStrictEqual({ id, status: "writing" });
+
+    await writeDeck({ ...request, claim });
+    await expect(goalWarmUp(request.goalId)).resolves.toStrictEqual({ id, status: "ready" });
+  });
+
   it("records failed content and never pays for the key again", async () => {
     const { goals, scope } = await newGoals(2);
     const request = { goalId: goals[0]!.id, scope, workflowRunId: crypto.randomUUID() };
@@ -289,9 +364,8 @@ describe("shared warm-up writing", () => {
     expect(generateWarmUpCards).toHaveBeenCalledOnce();
     expect(checkWarmUpCards).toHaveBeenCalledOnce();
 
-    await expect(
-      prisma.goal.findUniqueOrThrow({ where: { id: request.goalId } }),
-    ).resolves.toMatchObject({ warmUpId: null });
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: request.goalId } });
+    await expect(readWarmUpState(goal.warmUpId)).resolves.toBeNull();
   });
 
   it("gives a private scope nothing", async () => {
@@ -425,7 +499,7 @@ describe("shared warm-up writing", () => {
       goal: scope.generalGoal,
       kind: "exam",
       language: "en",
-      serviceTier: undefined,
+      serviceTier: "priority",
       subjects: ["Arithmetic"],
     });
 

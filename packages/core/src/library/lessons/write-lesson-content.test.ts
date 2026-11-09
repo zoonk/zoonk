@@ -278,7 +278,7 @@ describe(writeLessonContent, () => {
     ]);
 
     expect(steps).toStrictEqual([]);
-    expect(stored.contentStatus).toBe("failed");
+    expect(stored.contentStatus).toBe("pending");
 
     expect(fixLessonDraft).toHaveBeenCalledOnce();
     expect(stored.setAsideAt).toBeNull();

@@ -5,6 +5,7 @@ import { after } from "next/server";
 import { type FollowUp } from "./follow-up-contract";
 import { startFollowUps } from "./follow-up-starter";
 
+// oxlint-disable-next-line complexity -- Each follow-up kind names its persisted deduplication key.
 function getFollowUpKey(followUp: FollowUp): string {
   switch (followUp.kind) {
     case "refreshStudyDay":
@@ -13,6 +14,8 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "settleSessionDay":
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;
     case "prepareGoalLessons":
+    case "preparePlacementItems":
+    case "rebuildGoalCurriculum":
     case "rememberOnboarding":
       return followUp.input.goalId;
     case "writeLesson":
@@ -62,7 +65,7 @@ function askFor({
 
   return db.followUp.upsert({
     create: { input, key, kind, requestedAt, userId },
-    update: { input, requestedAt, revision: { increment: 1 } },
+    update: { failedAt: null, input, requestedAt, revision: { increment: 1 } },
     where: { userKindKey: { key, kind, userId } },
   });
 }

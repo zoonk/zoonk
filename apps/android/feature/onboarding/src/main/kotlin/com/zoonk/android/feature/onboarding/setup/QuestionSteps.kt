@@ -109,39 +109,41 @@ internal fun ColumnScope.StepForm(
     skipLabel: String? = null,
     content: @Composable ColumnScope.(continueStep: () -> Unit) -> Unit = {},
 ) {
-    var sender by rememberSaveable { mutableStateOf<StepSender?>(null) }
-    // A save something else starts (a pick, "Use this date") has no sender, and a press that saves nothing keeps none.
-    LaunchedEffect(sender, pending) { if (!pending) sender = null }
-    val send = { by: StepSender, action: () -> Unit ->
-        sender = by
-        action()
-    }
-    val continueStep = { send(StepSender.Continue, onContinue) }
-
-    StepHeading(title, description, subject)
-    content(continueStep)
-    OnboardingActions {
-        PlanStartNotice()
-        Button(
-            busy = pending && sender == StepSender.Continue,
-            onClick = continueStep,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = canContinue && !pending,
-            focusableWhenDisabled = pending,
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(continueLabel ?: stringResource(R.string.onboarding_continue))
+    SetupContent {
+        var sender by rememberSaveable { mutableStateOf<StepSender?>(null) }
+        // A save something else starts (a pick, "Use this date") has no sender, and a press that saves nothing keeps none.
+        LaunchedEffect(sender, pending) { if (!pending) sender = null }
+        val send = { by: StepSender, action: () -> Unit ->
+            sender = by
+            action()
         }
-        if (onSkip != null) {
-            TextButton(
-                busy = pending && sender == StepSender.Skip,
-                onClick = { send(StepSender.Skip, onSkip) },
+        val continueStep = { send(StepSender.Continue, onContinue) }
+
+        StepHeading(title, description, subject)
+        content(continueStep)
+        OnboardingActions {
+            PlanStartNotice()
+            Button(
+                busy = pending && sender == StepSender.Continue,
+                onClick = continueStep,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !pending,
+                enabled = canContinue && !pending,
                 focusableWhenDisabled = pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
-                Text(skipLabel ?: stringResource(R.string.onboarding_skip))
+                Text(continueLabel ?: stringResource(R.string.onboarding_continue))
+            }
+            if (onSkip != null) {
+                TextButton(
+                    busy = pending && sender == StepSender.Skip,
+                    onClick = { send(StepSender.Skip, onSkip) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !pending,
+                    focusableWhenDisabled = pending,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                ) {
+                    Text(skipLabel ?: stringResource(R.string.onboarding_skip))
+                }
             }
         }
     }
@@ -379,7 +381,7 @@ internal fun ColumnScope.SubjectsLevelStep(
     }
 }
 
-internal enum class TextQuestion { Reason, Admission, Position, Score }
+internal enum class TextQuestion { Admission, Position, Score }
 
 private data class TextQuestionCopy(
     @StringRes val title: Int,
@@ -399,28 +401,13 @@ internal fun ColumnScope.TextStep(
     var value by words.field(0)
     val answer = { text: String? ->
         onAnswer(
-            if (question == TextQuestion.Reason) {
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf2Value(
-                    OnboardingAnswerInputOneOf2(OnboardingAnswerInputOneOf2.Question.REASON, text),
-                )
-            } else {
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf3Value(
-                    OnboardingAnswerInputOneOf3(OnboardingAnswerInputOneOf3.Question.TARGET, text),
-                )
-            },
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf3Value(
+                OnboardingAnswerInputOneOf3(OnboardingAnswerInputOneOf3.Question.TARGET, text),
+            ),
         )
     }
     val (title, description, label, placeholder) =
         when (question) {
-            TextQuestion.Reason -> {
-                TextQuestionCopy(
-                    R.string.onboarding_reason_title,
-                    R.string.onboarding_reason_description,
-                    R.string.onboarding_reason_label,
-                    R.string.onboarding_reason_placeholder,
-                )
-            }
-
             TextQuestion.Admission -> {
                 TextQuestionCopy(
                     R.string.onboarding_admission_title,
@@ -731,7 +718,8 @@ private fun NoSittingLine(
 internal fun goalZone(timeZone: String?): ZoneId = timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
 
 /** From tomorrow to ten years ahead, the deadlines core accepts. */
-internal fun targetDateBounds(today: LocalDate): ClosedRange<LocalDate> = today.plusDays(1)..today.plusDays(MAX_DAYS_AHEAD)
+internal fun targetDateBounds(today: LocalDate): ClosedRange<LocalDate> =
+    today.plusDays(1)..today.plusDays(com.zoonk.android.feature.plan.MAX_PLAN_DAYS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -946,4 +934,3 @@ private fun AnswerField(
 }
 
 private const val MAX_ANSWER_LENGTH = 200
-private const val MAX_DAYS_AHEAD = 3650L

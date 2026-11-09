@@ -89,7 +89,7 @@ describe("write outcome analytics", () => {
 
     await flush();
 
-    expect(analytics.trackServerEvent).toHaveBeenCalledExactlyOnceWith(
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         distinctId: user.id,
         name: "Buddy Chosen",

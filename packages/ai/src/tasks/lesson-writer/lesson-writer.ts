@@ -6,6 +6,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import {
   type CallReuse,
   type Reasoning,
+  type ServedSpeed,
   type ServiceTier,
   buildProviderOptions,
 } from "../../provider-options";
@@ -57,6 +58,7 @@ export type WriteLessonDraftParams = LessonWritingContext & {
   heldBackProblems?: readonly LessonProblem[];
   model?: string;
   serviceTier?: ServiceTier;
+  speed?: ServedSpeed;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
@@ -105,7 +107,8 @@ ${formatLessonProblems(problems)}
 
 /** Callers run the lesson checks in `@zoonk/core` and send what fails to `fixLessonDraft`. */
 export async function writeLessonDraft(params: WriteLessonDraftParams) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const { analytics, model = defaultModel, reasoning, serviceTier, speed } = params;
+  const { useFallback = true } = params;
   const instructions = `${buildSystemPrompt(params)}\n\n${lessonOutput.outputRules}`;
   const userPrompt = formatWriterPrompt(params);
 
@@ -113,6 +116,7 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
     fallbackModels: WRITER_MODELS,
     model,
     serviceTier,
+    speed,
     useFallback,
   });
 

@@ -36,6 +36,7 @@
     "./tasks/curriculum/outline-areas": "./src/tasks/curriculum/_utils/outline-areas.ts",
     "./tasks/curriculum/setup-lesson-outline": "./src/tasks/curriculum/setup-lesson-outline.ts",
     "./tasks/curriculum/empty-skill-graph-error": "./src/tasks/curriculum/_utils/empty-skill-graph-error.ts",
+    "./tasks/curriculum/goal-opening": "./src/tasks/curriculum/goal-opening.ts",
     "./tasks/curriculum/skill-graph-calls": "./src/tasks/curriculum/skill-graph-calls.ts",
     "./tasks/curriculum/skill-graph-generation": "./src/tasks/curriculum/skill-graph-generation.ts",
     "./tasks/curriculum/skill-graph": "./src/tasks/curriculum/skill-graph.ts",
