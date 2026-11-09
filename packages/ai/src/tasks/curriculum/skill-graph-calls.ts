@@ -21,8 +21,11 @@ import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-sy
  * at $6.06/1k, and 8.70 to 8.30 on the ten huge goals, keeping foundations Luna dropped. Haiku 5.5
  * scored 8.46 on a 15-case sample.
  */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
+export const skillGraphModel = "openai/gpt-6.1-terra";
+export const skillGraphFallbackModels = [
+  "openai/gpt-6-luna",
+  "anthropic/claude-haiku-5.5",
+] as const;
 
 export const courseSchema = z.object({
   key: z.string(),
@@ -250,10 +253,16 @@ async function writePart<TOutput>({
   part: GraphPart;
   partSchema: z.ZodType<TOutput>;
 }) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const { analytics, model = skillGraphModel, reasoning, serviceTier, useFallback = true } = params;
   const systemPrompt = buildSkillGraphSystemPrompt(params);
   const userPrompt = buildUserPrompt({ params, part });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels: skillGraphFallbackModels,
+    model,
+    serviceTier,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

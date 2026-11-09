@@ -12,12 +12,10 @@ import {
   type SkillGraphParams,
   courseSchema,
   formatGoalPrompt,
+  skillGraphFallbackModels,
+  skillGraphModel,
   skillSchema,
 } from "./skill-graph-calls";
-
-/** The skill graph's and the course outline's model, so the opening reads like the path it starts. */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 const schema = z.object({
   chapter: chapterSchema,
@@ -77,7 +75,8 @@ function toOpening(raw: z.infer<typeof schema>) {
  * skill graph reads, so the learner's first lesson can be written before the graph is.
  */
 export async function generateGoalOpening(params: GoalOpeningParams) {
-  const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  // The skill graph's models, so the opening reads like the path it starts.
+  const { analytics, model = skillGraphModel, reasoning, serviceTier, useFallback = true } = params;
 
   const systemPrompt = selectPromptVariants({
     template,
@@ -85,7 +84,13 @@ export async function generateGoalOpening(params: GoalOpeningParams) {
   });
 
   const userPrompt = formatGoalPrompt({ ...params, goalKind: "learn" });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels: skillGraphFallbackModels,
+    model,
+    serviceTier,
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
