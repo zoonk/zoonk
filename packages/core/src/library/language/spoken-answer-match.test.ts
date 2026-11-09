@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { matchSpokenAnswer, pickWordsToExplain } from "./spoken-answer-match";
+import {
+  hasTranscribedLetterNames,
+  matchSpokenAnswer,
+  pickWordsToExplain,
+} from "./spoken-answer-match";
 
 describe(matchSpokenAnswer, () => {
   it("accepts the sentence regardless of case and punctuation", () => {
@@ -144,6 +148,73 @@ describe(matchSpokenAnswer, () => {
     });
 
     expect(match.isCorrect).toBe(true);
+  });
+
+  it("reads letters joined by hyphens as the letters spelled out", () => {
+    const match = matchSpokenAnswer({
+      expected: "My name is Emma, E-M-M-A.",
+      heard: "My name is Emma. E, M, M, A.",
+      language: "en",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
+});
+
+function hasLetterNames({
+  expected,
+  heard,
+  language,
+}: {
+  expected: string;
+  heard: string;
+  language: string;
+}) {
+  const { words } = matchSpokenAnswer({ expected, heard, language });
+  return hasTranscribedLetterNames({ language, words });
+}
+
+describe(hasTranscribedLetterNames, () => {
+  it("finds letter names the transcript wrote as bare letters", () => {
+    expect(
+      hasLetterNames({
+        expected: "Emma si scrive: e, emme, emme, a",
+        heard: "Emma si scrive E, M, M, A.",
+        language: "it",
+      }),
+    ).toBe(true);
+
+    expect(
+      hasLetterNames({
+        expected: "Wes is spelled double-u, e, s",
+        heard: "Wes is spelled W-E-S.",
+        language: "en",
+      }),
+    ).toBe(true);
+  });
+
+  it("leaves letters to the transcript when the sentence writes them as letters", () => {
+    expect(
+      hasLetterNames({
+        expected: "Emma si scrive: E, M, M, A",
+        heard: "Emma si scrive E, N, M, A.",
+        language: "it",
+      }),
+    ).toBe(false);
+  });
+
+  it("leaves ordinary mistakes to the transcript", () => {
+    expect(
+      hasLetterNames({
+        expected: "How much is the rent?",
+        heard: "How much is the hent?",
+        language: "en",
+      }),
+    ).toBe(false);
+  });
+
+  it("doesn't take a Chinese character heard for a word as a letter", () => {
+    expect(hasLetterNames({ expected: "你好", heard: "你", language: "zh" })).toBe(false);
   });
 });
 
