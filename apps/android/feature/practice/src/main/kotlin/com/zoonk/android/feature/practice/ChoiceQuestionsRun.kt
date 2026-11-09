@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemSupport
@@ -114,6 +115,7 @@ internal fun ChoiceQuestionsRun(
     upcoming: UpcomingQuestions? = null,
     waiting: @Composable ColumnScope.() -> Unit = {},
 ) {
+    val saveReport = rememberSaveFailureReport(app, screen)
     val total = maxOf(questions.size, upcoming?.total ?: 0)
     val waitingForMore = answered >= questions.size && answered < total
     val finishNow = waitingForMore && upcoming?.ended == true
@@ -155,7 +157,7 @@ internal fun ChoiceQuestionsRun(
                 null
             } else {
                 {
-                    if (failures > 0 && !pending) SaveErrorText(failures, onSend)
+                    if (failures > 0 && !pending) SaveErrorText(failures, onSend, onReport = saveReport::open)
                     TaskActions { width ->
                         if (question != null) {
                             NotSureButton(

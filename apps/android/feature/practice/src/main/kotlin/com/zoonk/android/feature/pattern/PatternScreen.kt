@@ -47,6 +47,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunFrame
@@ -237,6 +238,7 @@ private fun PatternQuestion(
     app: AppContainer,
     onClose: () -> Unit,
 ) {
+    val saveReport = rememberSaveFailureReport(app, "pattern")
     val pattern = drill.pattern
     val question = pattern.drill[index]
     val checked = drill.answer
@@ -258,7 +260,7 @@ private fun PatternQuestion(
         // Main's pattern drill counts a checked answer as done before Continue; a study block doesn't.
         progress = { RunMeter(index, pattern.drill.size, drill.segments, done = if (checked == null) index else index + 1) },
         actions = { ruleShown ->
-            if (drill.failures > 0 && !drill.saving) SaveErrorText(drill.failures, viewModel::retry)
+            if (drill.failures > 0 && !drill.saving) SaveErrorText(drill.failures, viewModel::retry, onReport = saveReport::open)
             TaskActions { width ->
                 if (!ruleShown) {
                     OutlinedButton(onClick = { ruleOpen = true }) {

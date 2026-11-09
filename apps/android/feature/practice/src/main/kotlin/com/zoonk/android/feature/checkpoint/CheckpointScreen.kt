@@ -62,6 +62,7 @@ import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.ListeningSet
@@ -264,6 +265,7 @@ internal fun DuelPlay(
     viewModel: CheckpointViewModel,
     app: AppContainer,
 ) {
+    val saveReport = rememberSaveFailureReport(app, "checkpoint")
     val (read, state) = duel
     val score = state.score(read)
     val question = state.current(read)
@@ -297,7 +299,7 @@ internal fun DuelPlay(
                 }
             }
         },
-        actions = { DuelActions(state, score, question, viewModel) },
+        actions = { DuelActions(state, score, question, viewModel, onReportSaveFailure = saveReport::open) },
         aside = if (empty) null else ({ DuelAside(read, score, trickster) }),
     ) { part, _, _ ->
         when {
@@ -437,8 +439,13 @@ private fun DuelActions(
     score: DuelScore,
     question: Question?,
     viewModel: CheckpointViewModel,
+    onReportSaveFailure: () -> Unit,
 ) {
-    if (state.error != null) SaveErrorText(state.saveFailures, onRetry = viewModel::retry.takeIf { !state.pending })
+    if (state.error !=
+        null
+    ) {
+        SaveErrorText(state.saveFailures, onRetry = viewModel::retry.takeIf { !state.pending }, onReport = onReportSaveFailure)
+    }
     TaskActions { width ->
         when {
             question == null || state.feedback != null -> {

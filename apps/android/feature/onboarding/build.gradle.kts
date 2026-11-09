@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:account"))
     implementation(project(":feature:plan"))
 
     implementation(libs.androidx.compose.material3.adaptive)

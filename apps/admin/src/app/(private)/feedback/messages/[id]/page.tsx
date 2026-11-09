@@ -12,12 +12,13 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getLearnerLabel } from "@/lib/learner-label";
-import { feedbackStatusLabels } from "../../_utils/feedback-labels";
+import { feedbackStatusLabels, getFeedbackLearnerLabel } from "../../_utils/feedback-labels";
 import { type FeedbackMessage, MessageDetail } from "./message-detail";
 import { MessageStatusForm } from "./message-status-form";
 
-export async function generateMetadata({ params }: PageProps<"/feedback/messages/[id]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/feedback/messages/[id]">): Promise<Metadata> {
   const { id } = await params;
 
   if (!isUuid(id)) {
@@ -46,7 +47,7 @@ export default function FeedbackMessagePage({ params }: PageProps<"/feedback/mes
 }
 
 function getMessageTitle({ email, user }: FeedbackMessage): string {
-  const sender = user ? getLearnerLabel(user) : email;
+  const sender = user ? getFeedbackLearnerLabel(user) : email;
   return sender ? `Message from ${sender}` : "Message";
 }
 

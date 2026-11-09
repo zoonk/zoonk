@@ -469,6 +469,14 @@ msgid "That didn't work. Try again in a moment."
 msgstr "Bir sorun oluştu. Birazdan tekrar dene."
 
 #: src/_components/save-error.tsx
+#: src/feedback/feedback-form-dialog.tsx
+#: src/feedback/report-problem-item.tsx
+#: src/journey/journey-menu.tsx
+msgctxt "feedback.Hf_X9X"
+msgid "Report a problem"
+msgstr "Sorun bildir"
+
+#: src/_components/save-error.tsx
 msgctxt "71Gfs0"
 msgid "Still not going through. You can come back later."
 msgstr "Yine gönderilemedi. Daha sonra geri dönebilirsin."
@@ -3842,13 +3850,6 @@ msgstr "Hızlı açıklama · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
-msgctxt "feedback.Hf_X9X"
-msgid "Report a problem"
-msgstr "Sorun bildir"
-
-#: src/feedback/feedback-form-dialog.tsx
-#: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
 msgstr "Geri bildirim gönder"
@@ -3873,6 +3874,11 @@ msgctxt "feedback.IVDs_9"
 msgid "Your email, for our reply"
 msgstr "Yanıt verebilmemiz için e-posta adresin"
 
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.hBQCdX"
+msgid "Your email, if you'd like a reply"
+msgstr "Cevap almak istersen e-posta adresin"
+
 #. An example email address in an empty field. Adapt it to the language.
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.OiSL94"
@@ -3883,6 +3889,11 @@ msgstr "epostam@gmail.com"
 msgctxt "feedback.Xx0WZV"
 msgid "Send message"
 msgstr "Mesaj gönder"
+
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.f7aJd1"
+msgid "I couldn't save my answers."
+msgstr "Cevaplarımı kaydedemedim."
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.T7Ry38"

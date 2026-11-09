@@ -2,8 +2,36 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
+import { useContentFeedback } from "../feedback/feedback-context";
+
+function ReportSaveProblem() {
+  const t = useExtracted("feedback");
+  const feedback = useContentFeedback();
+
+  if (!feedback) {
+    return null;
+  }
+
+  return (
+    <Button
+      className="inline-flex"
+      icon={<FlagIcon aria-hidden="true" />}
+      onClick={() =>
+        feedback.openFeedbackForm({
+          context: { reportType: "saveFailure", screen: "answers-save-error" },
+          isReport: true,
+        })
+      }
+      type="button"
+      variant="link"
+    >
+      {t("Report a problem")}
+    </Button>
+  );
+}
 
 /** Answers a save didn't take, kept for Try again, with the saves that failed in a row. */
 export type UnsentAnswers<Answers> = { answers: Answers; failures: number };
@@ -20,19 +48,22 @@ export function AnswersSaveError({
   const space = useSentenceSpace();
 
   return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {failures > 1
-        ? t("Still not going through. You can come back later.")
-        : t("That didn't go through. Your answers are kept.")}
-      {onRetry && (
-        <>
-          {space}
-          <Button onClick={onRetry} variant="link">
-            {t("Try again")}
-          </Button>
-        </>
-      )}
-    </p>
+    <div className="flex flex-col items-start gap-1">
+      <p className="text-destructive-text text-sm" role="alert">
+        {failures > 1
+          ? t("Still not going through. You can come back later.")
+          : t("That didn't go through. Your answers are kept.")}
+        {onRetry && (
+          <>
+            {space}
+            <Button onClick={onRetry} variant="link">
+              {t("Try again")}
+            </Button>
+          </>
+        )}
+      </p>
+      {failures > 1 && <ReportSaveProblem />}
+    </div>
   );
 }
 

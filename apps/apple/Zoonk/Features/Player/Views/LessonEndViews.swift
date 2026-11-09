@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LessonCompletionView: View {
   @Environment(AppRouter.self) private var router
+  @State private var showsSaveReport = false
   let completion: LessonPlayerState.Completion
   let correct: Int
   let answered: Int
@@ -36,6 +37,10 @@ struct LessonCompletionView: View {
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .completionMoments(day)
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "lesson-end", reportType: .saveFailure), isReport: true
+    )
     .sensoryFeedback(.success, trigger: completion.status == .saved)
     .onChange(of: completion.status) { _, status in
       if status == .saved, soundsEnabled {
@@ -71,12 +76,12 @@ struct LessonCompletionView: View {
     case .saving:
       ProgressView()
     case .failed:
-      FailureLine(
-        message: completion.saveFailures > 1
-          ? PracticeSaveError.repeatedMessage
-          : LocalizedStringResource(
-            "That didn't go through. Your answers are kept.", table: "Player",
-            comment: "Under the title of a finished lesson whose save failed, above Try again"))
+      SaveFailureNotice(
+        failures: completion.saveFailures,
+        firstMessage: LocalizedStringResource(
+          "That didn't go through. Your answers are kept.", table: "Player",
+          comment: "Under the title of a finished lesson whose save failed, above Try again"),
+        onReport: { showsSaveReport = true })
     case .saved:
       if let summary = completion.summary {
         readouts(summary)

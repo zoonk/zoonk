@@ -17,6 +17,7 @@ struct PlacementStep: View {
   @State private var isStarting = false
   @State private var questionFailures = 0
   @State private var finishFailed = false
+  @State private var showsSaveReport = false
   @State private var failedAnswer: SentAnswer?
   @State private var waitRound = 0
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
@@ -100,6 +101,10 @@ struct PlacementStep: View {
       }
     }
     .modifier(PlacementMockLoading(goalId: view.goal.id, isExam: view.goal.kind == .exam))
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
+      isReport: true)
   }
 
   /// Questions that couldn't be written show at once, as on main: there's nothing to be ready for.
@@ -133,6 +138,7 @@ struct PlacementStep: View {
         subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
         labels: labels, isSaving: isSaving, failures: questionFailures,
         saveFailure: finishFailed ? Self.saveFailureMessage : nil,
+        onReport: { showsSaveReport = true },
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
@@ -571,6 +577,7 @@ struct PlacementQuestionScreen<Media: View>: View {
   let isSaving: Bool
   let failures: Int
   var saveFailure: LocalizedStringResource?
+  let onReport: () -> Void
   let onAnswer: (PracticeAnswer) -> Void
   let onStop: () -> Void
   @ViewBuilder var media: () -> Media
@@ -610,7 +617,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       }
 
       if failures > 0, !isSaving {
-        FailureLine(message: PracticeSaveError.message(failures: failures))
+        SaveFailureNotice(failures: failures, onReport: onReport)
       }
     } actions: {
       PracticeMainButton(
@@ -662,12 +669,13 @@ extension PlacementQuestionScreen where Media == EmptyView {
     isSaving: Bool,
     failures: Int,
     saveFailure: LocalizedStringResource? = nil,
+    onReport: @escaping () -> Void,
     onAnswer: @escaping (PracticeAnswer) -> Void,
     onStop: @escaping () -> Void
   ) {
     self.init(
       subject: subject, number: number, progress: progress, question: question, labels: labels,
-      isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      isSaving: isSaving, failures: failures, saveFailure: saveFailure, onReport: onReport,
       onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
     )
