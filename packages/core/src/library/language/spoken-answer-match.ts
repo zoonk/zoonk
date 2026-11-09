@@ -205,37 +205,35 @@ export function matchSpokenAnswer({
   };
 }
 
-function groupMistakes(words: readonly SpokenWordResult[]): SpokenWordResult[][] {
-  const groups: SpokenWordResult[][] = [[]];
-
-  for (const word of words) {
-    if (word.status === "correct") {
-      groups.push([]);
-    } else {
-      groups.at(-1)?.push(word);
-    }
-  }
-
-  return groups.filter((group) => group.length > 0);
+function isWrittenAsLetters({ language, text }: { language: string; text: string }): boolean {
+  return toTokens({ language, text }).every((token) => isLoneLetter(token));
 }
 
-/** A letter's name can take two words ("double u", "i griega") for one letter heard. */
+/** A letter's name can take two words ("double u", "i griega"), one of them missed beside it. */
 function isLetterNameHeardAsLetters({
+  index,
   language,
-  mistake,
+  words,
 }: {
+  index: number;
   language: string;
-  mistake: readonly SpokenWordResult[];
+  words: readonly SpokenWordResult[];
 }): boolean {
-  const heard = mistake.flatMap((word) => word.heard?.split(" ") ?? []);
+  const word = words[index];
 
-  return (
-    heard.length > 0 &&
-    heard.every((token) => isLoneLetter(token)) &&
-    mistake.some(
-      (word) => !toTokens({ language, text: word.text }).every((token) => isLoneLetter(token)),
-    )
+  if (
+    word?.status !== "different" ||
+    word.heard === null ||
+    !word.heard.split(" ").every((token) => isLoneLetter(token))
+  ) {
+    return false;
+  }
+
+  const name = [words[index - 1], word, words[index + 1]].filter(
+    (part): part is SpokenWordResult => part === word || part?.status === "missed",
   );
+
+  return name.some((part) => !isWrittenAsLetters({ language, text: part.text }));
 }
 
 /**
@@ -254,7 +252,7 @@ export function hasTranscribedLetterNames({
     return false;
   }
 
-  return groupMistakes(words).some((mistake) => isLetterNameHeardAsLetters({ language, mistake }));
+  return words.some((_, index) => isLetterNameHeardAsLetters({ index, language, words }));
 }
 
 export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWordResult[] {

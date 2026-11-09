@@ -219,6 +219,16 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
   });
 
+  it("finds a letter name next to another mistake", () => {
+    expect(
+      hasLetterNames({
+        expected: "Il codice è emme uno",
+        heard: "Il codice è M 1",
+        language: "it",
+      }),
+    ).toBe(true);
+  });
+
   it("leaves letters to the transcript when the sentence writes them as letters", () => {
     expect(
       hasLetterNames({
