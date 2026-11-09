@@ -1,5 +1,6 @@
 import { type ExtractedMemoryFact } from "@zoonk/ai/tasks/memory/extraction";
 import { describe, expect, it } from "vitest";
+import { memoryFactUpdateSchema } from "../memory-contract";
 import { isSameStatement, toMemoryCandidates, toSessionFacts } from "./memory-candidates";
 
 const TODAY = new Date(Date.UTC(2026, 8, 26));
@@ -93,11 +94,12 @@ describe(toMemoryCandidates, () => {
     ]);
   });
 
-  it("keeps a statement past its target whole", () => {
+  it("keeps a statement past its target whole, and a learner can correct it", () => {
     const statement = "x".repeat(161);
     const candidates = toMemoryCandidates({ facts: [fact({ statement })], today: TODAY });
 
     expect(candidates.map((candidate) => candidate.statement)).toStrictEqual([statement]);
+    expect(memoryFactUpdateSchema.safeParse({ statement: `${statement}y` }).success).toBe(true);
   });
 });
 

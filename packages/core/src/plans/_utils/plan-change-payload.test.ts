@@ -1,23 +1,42 @@
 import { describe, expect, it } from "vitest";
-import { parsePlanChangePayload } from "./plan-change-payload";
+import { planChangeInputSchema } from "../plan-contract";
+import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
+
+function acceptsPartName(name: string): boolean {
+  return planChangeInputSchema.safeParse({
+    operations: [
+      {
+        areas: ["Natural sciences"],
+        kind: "focusAreas",
+        parts: [{ area: "Natural sciences", name, skillIds: ["skill-1"] }],
+      },
+    ],
+    timeZone: "America/Sao_Paulo",
+  }).success;
+}
 
 describe(parsePlanChangePayload, () => {
-  it("keeps a focus change whose joined part name runs long, rather than reading it as empty", () => {
+  it("saves and reads a focus change whose joined part name runs long", () => {
     const operation = {
-      areas: ["Ciências"],
-      kind: "focusAreas",
+      areas: ["Natural sciences"],
+      kind: "focusAreas" as const,
       parts: [
         {
-          area: "Ciências",
-          name: "Biologia celular e molecular, química orgânica e inorgânica e física clássica e moderna",
+          area: "Natural sciences",
+          name: "Cell biology, molecular genetics, heredity and biotechnology. ".repeat(6).trim(),
           skillIds: ["skill-1"],
         },
       ],
     };
 
-    expect(
-      parsePlanChangePayload({ operations: [operation], source: "tutor" }).operations,
-    ).toStrictEqual([operation]);
+    const saved = toPlanChangePayload({ operations: [operation], source: "tutor" });
+
+    expect(parsePlanChangePayload(saved).operations).toStrictEqual([operation]);
+  });
+
+  it("caps a part's name only in what a client sends", () => {
+    expect(acceptsPartName("x".repeat(80))).toBe(true);
+    expect(acceptsPartName("x".repeat(81))).toBe(false);
   });
 
   it("reads a falling-behind change saved with the time and date a search found, keeping its facts", () => {

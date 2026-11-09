@@ -16,8 +16,7 @@ import {
 
 const MAX_OPERATIONS = 10;
 const MAX_AREAS = 20;
-/** Well past any real name, since a model's name joining an area's parts comes back through here. */
-const MAX_PART_NAME_LENGTH = 300;
+const MAX_PART_NAME_LENGTH = 80;
 const MAX_PART_SKILLS = 200;
 const MAX_BASE_CHOICES = 200;
 
@@ -35,8 +34,9 @@ const focusPartInputSchema = z
       .string()
       .trim()
       .min(1)
-      .max(MAX_PART_NAME_LENGTH)
-      .meta({ description: "The part as the learner says it, such as biology and chemistry" }),
+      .meta({
+        description: `The part as the learner says it, such as biology and chemistry. A request's name is at most ${MAX_PART_NAME_LENGTH} characters`,
+      }),
     skillIds: z
       .array(z.string().trim().min(1).overwrite(lowercaseUuid))
       .min(1)
@@ -260,12 +260,27 @@ export const anyPlanOperationSchema = z.union([
 export type PlanOperation = z.infer<typeof anyPlanOperationSchema>;
 export type AddedSkill = z.infer<typeof addSkillsOperationSchema>["skills"][number];
 
+/**
+ * Only a request caps a part's name: stored plan changes share the operation schema, and a model's
+ * name joining an area's parts runs as long as it needs.
+ */
+function hasShortPartNames({ operations }: { operations: LearnerPlanOperation[] }): boolean {
+  return operations.every(
+    (operation) =>
+      operation.kind !== "focusAreas" ||
+      (operation.parts ?? []).every((part) => part.name.length <= MAX_PART_NAME_LENGTH),
+  );
+}
+
 export const planChangeInputSchema = z
   .object({
     operations: z.array(planOperationSchema).min(1).max(MAX_OPERATIONS),
     timeZone: answerTimeZoneSchema,
   })
   .strict()
+  .refine(hasShortPartNames, {
+    message: `A part's name is at most ${MAX_PART_NAME_LENGTH} characters`,
+  })
   .meta({ id: "PlanChangeInput" });
 
 export type PlanChangeInput = z.infer<typeof planChangeInputSchema>;

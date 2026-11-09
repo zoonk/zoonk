@@ -27895,8 +27895,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 300,
-            "description": "The part as the learner says it, such as biology and chemistry"
+            "description": "The part as the learner says it, such as biology and chemistry. A request's name is at most 80 characters"
           },
           "skillIds": {
             "minItems": 1,
@@ -28206,7 +28205,7 @@
           "statement": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 160
+            "maxLength": 300
           }
         },
         "additionalProperties": false,
@@ -93561,8 +93560,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 300,
-            "description": "The part as the learner says it, such as biology and chemistry"
+            "description": "The part as the learner says it, such as biology and chemistry. A request's name is at most 80 characters"
           },
           "skillIds": {
             "minItems": 1,
