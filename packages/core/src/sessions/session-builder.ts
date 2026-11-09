@@ -67,6 +67,7 @@ export type SessionBuildInput = {
   freshStart: StudyFreshStart | null;
   lessons: PlannedLesson[];
   fillLessons?: PlannedLesson[];
+  mockReplacesDay?: boolean;
   /** An exam where a wrong answer cancels a right one: mixed practice is scored net. */
   netScored: boolean;
   practice: PracticeItem[];

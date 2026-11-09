@@ -15,6 +15,7 @@ import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "
 import { loadDayCapsules } from "./day-capsules";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
 import { pickDayLessons } from "./day-lessons";
+import { isMockOnlyDay } from "./day-mock";
 import { loadDayPlan } from "./day-plan";
 import {
   getDayFreshStart,
@@ -211,15 +212,15 @@ export async function loadSessionBuildInput(
     }),
   ]);
 
-  const lessons = [
-    ...toAlphabetLessons(alphabet),
-    ...markLessonsAroundChallenges({
+  const markLessons = (entries: PlannedLesson[]) =>
+    markLessonsAroundChallenges({
       checkpoints: boss.checkpoints,
       items: plan.items,
-      lessons: planLessons,
+      lessons: entries,
       today: localDate,
-    }),
-  ];
+    });
+
+  const lessons = [...toAlphabetLessons(alphabet), ...markLessons(planLessons)];
 
   const checkpoints = listDayCheckpoints({ access, boss, weekly });
 
@@ -268,15 +269,16 @@ export async function loadSessionBuildInput(
     dailyMinutes: dayMinutes,
     drills,
     examTrialEnded: access.trialEnded,
-    fillLessons: markLessonsAroundChallenges({
-      checkpoints: boss.checkpoints,
-      items: plan.items,
-      lessons: fillLessons,
-      today: localDate,
-    }),
+    fillLessons: markLessons(fillLessons),
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lessons,
+    mockReplacesDay: isMockOnlyDay({
+      goal,
+      hasMock: checkpoints.some((checkpoint) => checkpoint.mock),
+      planSettings: plan.settings,
+      today: localDate,
+    }),
     netScored,
     placementItemIds,
     practice,

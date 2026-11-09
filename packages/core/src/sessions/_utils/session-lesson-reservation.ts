@@ -5,6 +5,7 @@ import { readBlockPayload } from "../block-payload";
 import { getSessionDayMinutes } from "../fresh-start";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { pickDayLessons } from "./day-lessons";
+import { isMockOnlyDay } from "./day-mock";
 import { findPlannedReview } from "./day-review";
 import { keepDuelLessons, markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { canAddSessionLessons } from "./session-lessons";
@@ -26,7 +27,7 @@ export function getSessionLessonCandidates({
   prerequisites = new Map(),
   trialEnded = false,
 }: {
-  goal: Pick<Goal, "kind">;
+  goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   localDate: Date;
   plan: ReservationPlan;
   blocks: readonly ReservationBlock[];
@@ -39,6 +40,12 @@ export function getSessionLessonCandidates({
         Boolean(findPlannedReview({ items: plan.items, today: localDate })) ||
         blocks.some((block) => readBlockPayload(block).fullReview),
       trialEnded,
+    }) ||
+    isMockOnlyDay({
+      goal,
+      hasMock: blocks.some((block) => readBlockPayload(block).checkpoint?.mock),
+      planSettings: plan.settings,
+      today: localDate,
     })
   ) {
     return [];
