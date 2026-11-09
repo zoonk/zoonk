@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -13,6 +14,7 @@ import { openStudyDay } from "./open-study-day";
 async function setup() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ challengesDone: true, userId: user.id });
+  await layOutPlanFixture(fixture.plan.id);
   await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
   mockSession(user.id);
 
