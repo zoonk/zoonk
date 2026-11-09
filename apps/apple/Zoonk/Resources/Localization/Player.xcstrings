@@ -835,7 +835,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@ auf einen anderen Tag verschoben, damit du heute mit %2$@ Lernzeit auskommst."
+            "value" : "%#@lessons@ auf einen anderen Tag verschoben, damit du heute nicht länger als %2$@ lernst."
           },
           "substitutions" : {
             "lessons" : {
@@ -975,7 +975,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@lessons@を別の日に移し、今日の学習が%2$@に収まるようにしました。"
+            "value" : "%#@lessons@を別の日に移して、今日の学習時間が%2$@に収まるようにしました。"
           },
           "substitutions" : {
             "lessons" : {
@@ -1019,7 +1019,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przeniesiono %#@lessons@ na inny dzień, by nie przekroczyć limitu %2$@ nauki na dziś."
+            "value" : "Przeniesiono %#@lessons@ na inny dzień, żeby dziś zmieścić się w %2$@ nauki."
           },
           "substitutions" : {
             "lessons" : {

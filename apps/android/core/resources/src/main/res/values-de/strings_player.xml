@@ -98,7 +98,7 @@
   "player_lesson_map_nested": "3e789594c52802639bc04affd6bcf494d4db65a6184a9229ff76d6de8099b591",
   "player_lesson_not_saved": "f21dc1a4c4c71bc082ed16f72edc4ff79b9f9ba1eb709c0ea011bfc16a01681d",
   "player_lesson_of": "fe70475c2e119fa632dc56cad8fb9c65b09af2e3a5b969e9ac08dc41916015af",
-  "player_lessons_deferred": "dcf3a79d5bf471f9e4b0b6d5a774967c08a056fcfe102136e03ff28e7d1fa28a",
+  "player_lessons_deferred": "3e2a671b3a5aa2bb2e005de9f3d0ade205466e9b5165943c4724788494136e1a",
   "player_listen": "7a797408f10f7db925cf55836a89b1844f9663758f6a04d19378c20112163cb1",
   "player_microphone_blocked": "1d4b5eefec38d47cde390b32a9a0df73973b11f0f8a3968c9feaefe502e2cafe",
   "player_next_lesson": "a686aba05df320bb7261ba0442876fb13bfc67e3135c6866dbc7ad540ec5318f",
@@ -417,8 +417,8 @@
     <string name="player_review_on">Wiederholung am %1$s</string>
     <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
     <plurals name="player_lessons_deferred">
-        <item quantity="one">%1$s Lektion wurde auf einen anderen Tag verschoben, damit alles in deine heutige Lernzeit von %2$s passt.</item>
-        <item quantity="other">%1$s Lektionen wurden auf einen anderen Tag verschoben, damit alles in deine heutige Lernzeit von %2$s passt.</item>
+        <item quantity="one">%1$s Lektion wurde auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
+        <item quantity="other">%1$s Lektionen wurden auf einen anderen Tag verschoben, damit du heute nicht länger als %2$s lernst.</item>
     </plurals>
     <string name="player_next_lesson">Nächste Lektion</string>
     <string name="player_stop_for_today">Für heute aufhören</string>
