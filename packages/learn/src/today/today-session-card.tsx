@@ -63,7 +63,11 @@ function SessionQueue({ next }: { next: DayStep }) {
   const wideMore = Math.max(0, upcoming - rows.wide);
 
   const foldMinutes = (shownAfter: number) =>
-    getFoldMinutes({ left: minutes.left, shown: [...before, next, ...after.slice(0, shownAfter)] });
+    getFoldMinutes({
+      hasHiddenRows: after.length + coming > shownAfter,
+      left: minutes.left,
+      shown: [...before, next, ...after.slice(0, shownAfter)],
+    });
 
   return (
     <div className="flex flex-col" data-slot="today-session-list">

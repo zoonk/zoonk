@@ -44,13 +44,19 @@ export function getHeldMinutes(day: Omit<TimedDay, "state">): number {
   );
 }
 
+export function getDaySegmentCount(day: Omit<TimedDay, "state">): number {
+  return day.blocks.length === 0 ? 0 : day.blocks.length + Number(getHeldMinutes(day) > 0);
+}
+
 /** What's left beyond the rows above the fold, so the time held for unwritten lessons sits inside it. */
 export function getFoldMinutes({
+  hasHiddenRows,
   left,
   shown,
 }: {
+  hasHiddenRows: boolean;
   left: number;
   shown: readonly Pick<DayStep, "estimatedMinutes">[];
-}): number {
-  return Math.max(0, left - sumMinutes(shown));
+}): number | undefined {
+  return hasHiddenRows ? Math.max(0, left - sumMinutes(shown)) : undefined;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDayTime, getFoldMinutes, getHeldMinutes } from "./today-time";
+import { getDaySegmentCount, getDayTime, getFoldMinutes, getHeldMinutes } from "./today-time";
 
 function step(estimatedMinutes: number, status: "active" | "completed" | "pending" | "skipped") {
   return { estimatedMinutes, status };
@@ -81,12 +81,47 @@ describe(getHeldMinutes, () => {
   });
 });
 
+describe(getDaySegmentCount, () => {
+  it.each([
+    { blocks: [], held: true, segments: 0 },
+    { blocks: [step(10, "pending")], held: true, segments: 2 },
+    { blocks: [step(10, "pending")], held: false, segments: 1 },
+    { blocks: [step(10, "pending"), step(10, "pending")], held: false, segments: 2 },
+  ])(
+    "counts $segments progress segments for $blocks with held time: $held",
+    ({ blocks, held, segments }) => {
+      expect(
+        getDaySegmentCount({
+          blocks,
+          lessonsComing: held,
+          lessonsToPrepare: false,
+          minutes: { left: 30 },
+        }),
+      ).toBe(segments);
+    },
+  );
+});
+
 describe(getFoldMinutes, () => {
+  it.each([240, 35.3])("omits time when only Plus lessons are folded (left: %s)", (left) => {
+    expect(
+      getFoldMinutes({
+        hasHiddenRows: false,
+        left,
+        shown: Array.from({ length: 5 }, () => step(7, "pending")),
+      }),
+    ).toBeUndefined();
+  });
+
   it("puts the held time inside the fold, past the rows shown above it", () => {
-    expect(getFoldMinutes({ left: 240, shown: SIXTEEN_LESSONS.slice(0, 7) })).toBe(211);
+    expect(
+      getFoldMinutes({ hasHiddenRows: true, left: 240, shown: SIXTEEN_LESSONS.slice(0, 7) }),
+    ).toBe(211);
   });
 
   it("never goes below zero", () => {
-    expect(getFoldMinutes({ left: 10, shown: SIXTEEN_LESSONS.slice(0, 7) })).toBe(0);
+    expect(
+      getFoldMinutes({ hasHiddenRows: true, left: 10, shown: SIXTEEN_LESSONS.slice(0, 7) }),
+    ).toBe(0);
   });
 });
