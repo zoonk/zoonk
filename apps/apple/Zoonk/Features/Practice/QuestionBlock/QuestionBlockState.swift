@@ -170,19 +170,13 @@ extension QuestionBlockDetail {
 enum DrillStage: Equatable {
   case idea
   case open
-  case reading
 
-  /// A gap's idea opens only on the first question of its drill; a misread reads every one first.
+  /// A gap's idea opens only on the first question of its drill.
   static func opening(drill: PracticeDrill?, isFirstOfDrill: Bool) -> DrillStage {
     if isFirstOfDrill, drill?.isIdeaFirst == true {
       return .idea
     }
 
-    return drill?.isReadFirst == true ? .reading : .open
-  }
-
-  /// After the idea screen's Start: a misread still reads first.
-  static func afterIdea(drill: PracticeDrill?) -> DrillStage {
-    drill?.isReadFirst == true ? .reading : .open
+    return .open
   }
 }

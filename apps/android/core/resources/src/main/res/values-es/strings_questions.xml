@@ -9,11 +9,10 @@
   "questions_drill_not_sure_praise": "1bc7b0fd0cc1b59f319301aa99e5947efb340bffe37d33ea872176e64eae57fe",
   "questions_drill_open_lesson": "57ca868893639d92a4648fc01df4c73bdabcd27efaa0ba4ef55ba7fa3f1d805d",
   "questions_drill_read_carefully": "555f3264c5fc582f9d77440849e6a458f338aa5e7f0c4acf2215bb7fc3467ddc",
-  "questions_drill_reteach": "7c7f83bea269c5fb9919b96bf4ab4bdf380553b250a4d1530a736565eadc82d8",
-  "questions_drill_reteach_ideas": "1ef626de97d12edae9af42c017e2ce0986eb3cbd428a5c94525864f611050fff",
+  "questions_drill_reteach": "952ea7cc074ab870f75bd7c8b26fe55fe1dcc1157903adfd0faa802147cd2302",
+  "questions_drill_reteach_ideas": "d4636792c9382d3024ccd5d10466160ba6ce002f9b2f011afdb96626dcffdc09",
   "questions_drill_retry": "6952195b3c7aa97b728c85779f07b52586a8f33e15adb9b35739d3d31eba62e1",
   "questions_drill_seconds_left": "431fc245f6010bb4b376ebb8624ea556a6332a52f1fa3ad789800475ea28cf8e",
-  "questions_drill_show_answers": "394f6850252b54f412e2ae544f79c57b991ba102ade00e91cde7cd81a8574655",
   "questions_drill_spot_the_trap": "d04bb0f40673a72267ddd2e27e84a897944ce0e494a270dbdded0cf1d6bd1359",
   "questions_drill_start": "fc61a4e3e8eed85c6b4a65c62c9c74f008a6f6328bb90094da7525d33a35d086",
   "questions_drill_time_left": "ecd9e2f6fd478218cbe49a85437c752e959fd1bb90a2b3ee4294018f5ce7744f",
@@ -131,8 +130,8 @@
     <string name="questions_placement_note">Afinando tu plan. Aquí, las respuestas incorrectas nunca se guardan como errores.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Pregunta de un examen anterior · %1$s</string>
-    <string name="questions_drill_reteach_ideas">Primero la idea y luego unas preguntas sobre ella.</string>
-    <string name="questions_drill_reteach">Unas preguntas sobre una idea que no te quedó clara.</string>
+    <string name="questions_drill_reteach_ideas">Primero la idea, luego ponla en práctica.</string>
+    <string name="questions_drill_reteach">Volvamos a una idea que no te quedó clara.</string>
     <string name="questions_drill_read_carefully">Lee cada palabra antes de responder.</string>
     <string name="questions_drill_spot_the_trap">Aquí hay una trampa. Encuéntrala antes de responder.</string>
     <plurals name="questions_drill_timed">
@@ -155,7 +154,6 @@
         <item quantity="many">Quedan %d segundos</item>
         <item quantity="other">Quedan %d segundos</item>
     </plurals>
-    <string name="questions_drill_show_answers">Ya lo leí. Mostrar las respuestas</string>
     <string name="questions_drill_not_sure">No lo tengo claro</string>
     <string name="questions_drill_open_lesson">Repasar la lección</string>
 </resources>

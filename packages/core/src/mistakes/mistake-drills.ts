@@ -59,6 +59,11 @@ export function getDrillTimeLimitSeconds(kind: MistakeDrillKind): number | null 
   return kind === "timed" ? TIMED_DRILL_SECONDS : null;
 }
 
+/** A timed mistake is proven only under its own clock, so no other question's answer fixes it. */
+export function isFixedByItsSkill(cause: MistakeCause | null): boolean {
+  return getDrillTimeLimitSeconds(getDrillKind(cause)) === null;
+}
+
 /** The exact deadline is already late, not only durations exceeding it. */
 export function isPastTimeLimit({
   durationMs,
@@ -113,6 +118,60 @@ export function selectMistakeDrill({
     lessonId: kind === "reteach" ? lessonId : null,
     timeLimitSeconds: getDrillTimeLimitSeconds(kind),
   };
+}
+
+/**
+ * One question per mistake, none twice. A mistake's own question is kept for it. One with no question
+ * of its own takes a free one on its skill, unless the run already asks a question on a skill whose
+ * right answer fixes it too (`coveringSkillIds`, as `answerMistakePractice` decides). A lesson's idea
+ * shows before its first question only.
+ */
+export function selectPracticeRun<
+  TMistake extends Pick<
+    Parameters<typeof selectMistakeDrill>[0],
+    "cause" | "lessonId" | "originalItemId"
+  > & {
+    candidates: readonly (DrillItemCandidate & { skillId: string })[];
+    coveringSkillIds: readonly string[];
+  },
+>(mistakes: readonly TMistake[]): (TMistake & { drill: MistakeDrill })[] {
+  const owned = new Set(mistakes.map((mistake) => mistake.originalItemId));
+  const asked = new Set<string>();
+  const askedSkillIds = new Set<string>();
+  const taught = new Set<string>();
+
+  return mistakes.flatMap((mistake) => {
+    const own = mistake.candidates.find(({ id }) => id === mistake.originalItemId);
+
+    if (!own && mistake.coveringSkillIds.some((skillId) => askedSkillIds.has(skillId))) {
+      return [];
+    }
+
+    const drill = selectMistakeDrill({
+      ...mistake,
+      candidates: mistake.candidates.filter(
+        ({ id }) => !asked.has(id) && (id === mistake.originalItemId || !owned.has(id)),
+      ),
+    });
+
+    const [itemId] = drill.itemIds;
+    const question = mistake.candidates.find(({ id }) => id === itemId);
+
+    if (!itemId || !question) {
+      return [];
+    }
+
+    const lessonId = drill.lessonId && taught.has(drill.lessonId) ? null : drill.lessonId;
+
+    asked.add(itemId);
+    askedSkillIds.add(question.skillId);
+
+    if (lessonId) {
+      taught.add(lessonId);
+    }
+
+    return [{ ...mistake, drill: { ...drill, itemIds: [itemId], lessonId } }];
+  });
 }
 
 export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };

@@ -93,18 +93,11 @@ class MistakePracticeScreenshots {
     private fun planet(vararg fields: Pair<String, Any?>) =
         practiceQuestion("3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b", "question" to "Which is a planet?", *fields)
 
-    private val similar =
-        practiceQuestion(
-            "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
-            "question" to "Which of these orbits the Sun directly?",
-            "options" to JsonArray(listOf("Venus", "Titan").map(::JsonPrimitive)),
-        )
-
     private fun show(
         name: String,
         drill: JsonObject = drill("retry"),
         dark: Boolean = false,
-        vararg questions: JsonObject = arrayOf(planet(), similar),
+        vararg questions: JsonObject = arrayOf(planet()),
         play: () -> Unit = {},
         fold: Boolean = false,
     ) {
@@ -144,6 +137,12 @@ class MistakePracticeScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phone() {
         show("phone-answering")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMisread() {
+        show("phone-misread", drill = drill("readCarefully"))
     }
 
     @Test
@@ -210,7 +209,7 @@ class MistakePracticeScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletPassageBeside() {
-        show("tablet-passage", questions = arrayOf(planet("set" to passage), similar))
+        show("tablet-passage", questions = arrayOf(planet("set" to passage)))
     }
 
     @Test

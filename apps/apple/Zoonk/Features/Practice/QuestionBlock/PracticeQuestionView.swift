@@ -16,8 +16,6 @@ struct PracticeQuestionView: View {
   let isLocked: Bool
   /// The question before it shared its text, so a long one folds.
   let continuesSet: Bool
-  /// A misread's drill shows the question before its answers.
-  let hidesAnswers: Bool
   let askedIn: String?
   let recordingQuestions: (prompts: [String], current: Int)?
   let transcript: [PracticeTranscriptLine]?
@@ -31,7 +29,7 @@ struct PracticeQuestionView: View {
   init(
     question: PracticeQuestion, labels: PracticeTrueFalseLabels, allowsBlank: Bool = false,
     result: PracticeItemResult? = nil, isLocked: Bool = false, continuesSet: Bool = false,
-    hidesAnswers: Bool = false, askedIn: String? = nil,
+    askedIn: String? = nil,
     recordingQuestions: (prompts: [String], current: Int)? = nil,
     transcript: [PracticeTranscriptLine]? = nil, served: ServedPlays? = nil,
     draft: Binding<PracticeAnswer?>, onSubmit: @escaping (PracticeAnswer) -> Void = { _ in }
@@ -42,7 +40,6 @@ struct PracticeQuestionView: View {
     self.result = result
     self.isLocked = isLocked
     self.continuesSet = continuesSet
-    self.hidesAnswers = hidesAnswers
     self.askedIn = askedIn
     self.recordingQuestions = recordingQuestions
     self.transcript = transcript
@@ -85,11 +82,11 @@ struct PracticeQuestionView: View {
   }
 
   private var showsTitle: Bool {
-    question.format != .trueFalse || hidesAnswers
+    question.format != .trueFalse
   }
 
   private var statementLeads: Bool {
-    drawn != .whole && question.format == .trueFalse && !hidesAnswers
+    drawn != .whole && question.format == .trueFalse
   }
 
   private var showsStatementCard: Bool {
@@ -141,14 +138,12 @@ struct PracticeQuestionView: View {
     }
   }
 
-  @ViewBuilder private var responseContent: some View {
-    if !hidesAnswers {
-      PracticeItemView(
-        question: question, labels: labels, allowsBlank: allowsBlank, result: result,
-        isLocked: isLocked, showsStatement: !statementLeads, draft: $draft, onSubmit: onSubmit
-      )
-      .id(question.id)
-    }
+  private var responseContent: some View {
+    PracticeItemView(
+      question: question, labels: labels, allowsBlank: allowsBlank, result: result,
+      isLocked: isLocked, showsStatement: !statementLeads, draft: $draft, onSubmit: onSubmit
+    )
+    .id(question.id)
   }
 
   private func drawing(_ part: Part) -> Self {

@@ -10,8 +10,8 @@ export function useDrillLine() {
     switch (drill.kind) {
       case "reteach":
         return isIdeaFirst(drill)
-          ? t("The idea first, then a few questions on it.")
-          : t("A few questions on an idea you missed.");
+          ? t("The idea first, then put it to use.")
+          : t("Back to an idea you missed.");
       case "readCarefully":
         return t("Read every word before you answer.");
       case "spotTheTrap":

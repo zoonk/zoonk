@@ -9,11 +9,10 @@
   "questions_drill_not_sure_praise": "a1817a538cab84782ed293ccaa4ca982b625c7abef363a1dea1ea25e4bf7b492",
   "questions_drill_open_lesson": "3f349b3fec1344e5d428e02e746f8de27a32171022dd43da11846b952e5409a1",
   "questions_drill_read_carefully": "4443ce7357c2b0b188eb7e694bd12d96189ab8972c0d0fb3bbb90133b893991c",
-  "questions_drill_reteach": "50fd5990d8140a1353689ad650d25faaad3f84ed40107c29fba810a75c5c7f32",
-  "questions_drill_reteach_ideas": "44bd5fecda3abd3d95f7b64f8da4c5d71fb5b258dbddf164eff402f5e30fa5e1",
+  "questions_drill_reteach": "44345ac9eadf756c28b0415f7cd2f164c7c2e133ee9e38ce161cd9d22a40f2af",
+  "questions_drill_reteach_ideas": "8269cb30bd9ee2088c96399916d4d812540cdd080442015e4d4d6c06e3580928",
   "questions_drill_retry": "64dc3ffd5dea69a2f43709ef700aef116a39a66f7451347a5c902d917f5298c7",
   "questions_drill_seconds_left": "7579d05979e953e1de6ecdf07851cbc21da058fb4eeab116f1c31a39118208c0",
-  "questions_drill_show_answers": "8c357afd210c21cf0c49b56235f79e8f80c269466fd7257fe7f6e993082f8b22",
   "questions_drill_spot_the_trap": "87685a98a12777df8f5ef6a20a218dec0a5209613118f212f6218ccc1c68ff41",
   "questions_drill_start": "c4eb2dd5aa0dc21f9a14d81db8ddc6858db5fbd988deec0e9fa39bfa1b4a4310",
   "questions_drill_time_left": "9762d65f9574cb1c027f615075a647e5d943cba8d406f99a1be5011f17ad5a4d",
@@ -123,8 +122,8 @@
     <string name="questions_placement_note">계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">기출문제 · %1$s</string>
-    <string name="questions_drill_reteach_ideas">먼저 개념을 살펴보고 관련 문제를 몇 개 풀어요.</string>
-    <string name="questions_drill_reteach">놓쳤던 개념에 관한 문제를 몇 개 풀어요.</string>
+    <string name="questions_drill_reteach_ideas">먼저 개념을 익힌 뒤 활용해 보세요.</string>
+    <string name="questions_drill_reteach">놓쳤던 개념을 다시 살펴보세요.</string>
     <string name="questions_drill_read_carefully">답하기 전에 단어 하나하나 꼼꼼히 읽어 보세요.</string>
     <string name="questions_drill_spot_the_trap">함정이 숨어 있어요. 답하기 전에 찾아보세요.</string>
     <plurals name="questions_drill_timed">
@@ -143,7 +142,6 @@
     <plurals name="questions_drill_seconds_left">
         <item quantity="other">%d초 남음</item>
     </plurals>
-    <string name="questions_drill_show_answers">읽기 완료. 정답 보기</string>
     <string name="questions_drill_not_sure">잘 모르겠어요</string>
     <string name="questions_drill_open_lesson">레슨 복습하기</string>
 </resources>

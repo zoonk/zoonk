@@ -26,7 +26,6 @@ enum MistakePracticePhase: Equatable {
   case ending
   case feedback(answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)
   case idea
-  case reading
 
   var failed: SentAnswer? {
     if case .answerFailed(let sent) = self { sent } else { nil }
@@ -71,18 +70,14 @@ struct MistakePracticeState: Equatable {
     }
   }
 
-  /// A content gap's first question waits behind its idea; a misread's show answers once read.
+  /// A content gap's first question waits behind its idea.
   private static func opening(_ step: MistakePracticeStep?) -> MistakePracticePhase {
     guard let step else { return .ending }
     if step.isFirstOfEntry, step.entry.drill.isIdeaFirst { return .idea }
-    return step.entry.drill.isReadFirst ? .reading : .answering
+    return .answering
   }
 
   mutating func start() {
-    phase = step?.entry.drill.isReadFirst == true ? .reading : .answering
-  }
-
-  mutating func reveal() {
     phase = .answering
   }
 

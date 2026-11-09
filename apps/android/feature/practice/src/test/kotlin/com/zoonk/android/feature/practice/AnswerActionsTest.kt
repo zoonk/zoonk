@@ -41,9 +41,7 @@ class AnswerActionsTest {
             object : RunControls {
                 override val canRetry = false
 
-                override fun startDrill(questions: List<Question>) = Unit
-
-                override fun reveal() = Unit
+                override fun startDrill() = Unit
 
                 override fun submit(
                     question: Question,

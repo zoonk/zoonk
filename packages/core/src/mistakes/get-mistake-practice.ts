@@ -2,11 +2,7 @@ import "server-only";
 import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
-import {
-  isDrillQuestion,
-  loadLearnerListeningSkillIds,
-  loadListeningSkillIds,
-} from "../exams/listening/listening-skills";
+import { isDrillQuestion } from "../exams/listening/listening-skills";
 import {
   GRADABLE_ITEM_FORMATS,
   type QuestionView,
@@ -14,8 +10,7 @@ import {
   parseChoiceItem,
   toQuestionView,
 } from "../learner/_utils/choice-items";
-import { getSkillOwners, loadGoalPlan } from "../learner/_utils/goal-skill-graph";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { IN_BANK, getGoalField, getItemAudienceFilter } from "../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
@@ -23,19 +18,19 @@ import { type ItemSetView } from "../library/items/item-set-view";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
-import { type MistakePracticeInput } from "./contract";
+import { resolvePracticeScope } from "./_utils/practice-scope";
+import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
 import { getMistakePracticeBefore } from "./mistake-availability";
 import {
   type DrillView,
+  isFixedByItsSkill,
   isMistakeSkill,
-  selectMistakeDrill,
   selectMistakesToPractice,
+  selectPracticeRun,
 } from "./mistake-drills";
 import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
-
-const PRACTICE_SIZE = 5;
 
 type MistakePracticeEntry = {
   cause: Mistake["cause"];
@@ -55,33 +50,6 @@ export type MistakePracticeResult =
     }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-async function resolveScope({ goalId, userId }: { goalId: string | undefined; userId: string }) {
-  // Unscoped practice must respect listening-only skills from any of the learner's goals.
-  if (!goalId) {
-    return {
-      goal: null,
-      listeningSkillIds: await loadLearnerListeningSkillIds(userId),
-      ownerOf: new Map<string, string>(),
-      skillIds: null,
-    };
-  }
-
-  const owned = await findOwnedGoal(goalId);
-
-  if (owned.status !== "ready") {
-    return null;
-  }
-
-  const [plan, listeningSkillIds] = await Promise.all([
-    loadGoalPlan(goalId),
-    loadListeningSkillIds(goalId),
-  ]);
-
-  const ownerOf = getSkillOwners(plan.skills);
-
-  return { goal: owned.goal, listeningSkillIds, ownerOf, skillIds: [...ownerOf.keys()] };
-}
 
 function getPracticeSkillIds({
   scopeSkillIds,
@@ -162,7 +130,7 @@ async function loadDrillMaterial({
   return { bankIds, choices, lessons, seen, sets };
 }
 
-/** At most five mistakes, oldest first with skill breadth; excludes today. Submit each answer to answerMistakePractice. */
+/** Every ready mistake a run holds, oldest first with skill breadth, one question each; excludes today. Submit each answer to answerMistakePractice. */
 export async function getMistakePractice(
   input: MistakePracticeInput,
 ): Promise<MistakePracticeResult> {
@@ -173,7 +141,7 @@ export async function getMistakePractice(
   }
 
   const userId = session.user.id;
-  const scope = await resolveScope({ goalId: input.goalId, userId });
+  const scope = await resolvePracticeScope({ goalId: input.goalId, userId });
 
   if (!scope) {
     return { status: "notFound" };
@@ -208,7 +176,7 @@ export async function getMistakePractice(
   });
 
   const selected = selectMistakesToPractice({
-    limit: PRACTICE_SIZE,
+    limit: MAX_PRACTICE_ANSWERS,
     mistakes: drillable.map((mistake) => ({
       ...mistake,
       createdLocalDate: getDateInTimeZone({ date: mistake.createdAt, timeZone }),
@@ -224,38 +192,47 @@ export async function getMistakePractice(
     userId,
   });
 
-  const drills = selected.map((mistake) => {
-    const skillItems = choices.filter(
-      (item) =>
-        (bankIds.has(item.id) || item.id === mistake.itemId) &&
-        isMistakeSkill({
-          itemSkillId: item.skillId,
-          mistakeSkillId: mistake.skillId,
-          ownerOf: scope.ownerOf,
-        }) &&
-        isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
-    );
+  const run = selectPracticeRun(
+    selected.map((mistake) => {
+      const skillItems = choices.filter(
+        (item) =>
+          (bankIds.has(item.id) || item.id === mistake.itemId) &&
+          isMistakeSkill({
+            itemSkillId: item.skillId,
+            mistakeSkillId: mistake.skillId,
+            ownerOf: scope.ownerOf,
+          }) &&
+          isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
+      );
 
-    const drill = selectMistakeDrill({
-      candidates: skillItems.map((item) => ({
-        hasMisconceptions: hasMisconceptions(item),
-        id: item.id,
-        seen: seen.has(item.id),
-      })),
-      cause: mistake.cause,
-      lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
-      originalItemId: mistake.itemId,
-    });
-
-    return { drill, mistake, skillItems };
-  });
+      return {
+        candidates: skillItems.map((item) => ({
+          hasMisconceptions: hasMisconceptions(item),
+          id: item.id,
+          seen: seen.has(item.id),
+          skillId: item.skillId,
+        })),
+        cause: mistake.cause,
+        coveringSkillIds:
+          mistake.skillId &&
+          !listeningSkillIds.has(mistake.skillId) &&
+          isFixedByItsSkill(mistake.cause)
+            ? [mistake.skillId, scope.ownerOf.get(mistake.skillId) ?? mistake.skillId]
+            : [],
+        lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
+        mistake,
+        originalItemId: mistake.itemId,
+        skillItems,
+      };
+    }),
+  );
 
   const [drillLessons, structure] = await Promise.all([
-    loadDrillLessons(drills.map(({ drill }) => drill.lessonId)),
+    loadDrillLessons(run.map(({ drill }) => drill.lessonId)),
     scope.goal ? loadExamStructure(scope.goal) : null,
   ]);
 
-  const practice = drills.map(({ drill, mistake, skillItems }) => ({
+  const practice = run.map(({ drill, mistake, skillItems }) => ({
     cause: mistake.cause,
     drill: toDrillView({ drill, lessons: drillLessons }),
     mistakeId: mistake.id,

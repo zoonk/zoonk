@@ -38,7 +38,3 @@ function getDrillIdeas(drill: Drill | null): string[] {
 export function isIdeaFirst(drill: Drill | null): boolean {
   return getDrillIdeas(drill).length > 0;
 }
-
-export function isReadFirst(drill: Drill | null): boolean {
-  return drill?.kind === "readCarefully";
-}

@@ -196,7 +196,7 @@ struct QuestionBlockView: View {
           }
         }
 
-        if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill || drill.isReadFirst {
+        if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill {
           DrillNoteView(drill: drill)
         }
 
@@ -245,7 +245,6 @@ struct QuestionBlockView: View {
       result: result,
       isLocked: !phase.acceptsAnswer,
       continuesSet: run.detail.continuesSet(at: run.state.index),
-      hidesAnswers: run.drillStage == .reading,
       askedIn: run.detail.block.id,
       recordingQuestions: run.detail.recordingQuestions(for: question),
       transcript: graded(phase)?.feedback.transcript,
@@ -356,17 +355,6 @@ struct QuestionBlockView: View {
             comment: "Starts a content-gap drill's questions after its idea."),
           icon: .play
         ) { run.startDrill() }
-      } else if run.drillStage == .reading {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "I've read it. Show the answers", table: "Practice",
-            comment: "Shows a misread drill's answers once the question was read."),
-          icon: .reveal
-        ) {
-          if focuses.has(.reveal) { focuses.move(to: .answer) }
-          run.revealAnswers()
-        }
-        .practiceFocus(.reveal)
       } else {
         answerButtons(phase: phase)
       }
