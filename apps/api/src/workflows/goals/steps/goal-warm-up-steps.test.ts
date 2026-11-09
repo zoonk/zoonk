@@ -46,6 +46,8 @@ describe(claimWarmUpStep, () => {
     await claimWarmUpStep({ goalId: goals[2]!.id, scope, workflowRunId: "reuse" });
     await Promise.all(pending);
 
+    expect(after).toHaveBeenCalledTimes(3);
+
     const claims = vi
       .mocked(trackServerEvent)
       .mock.calls.filter(([event]) => event.name === "Onboarding Progressed")

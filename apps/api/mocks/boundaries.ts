@@ -1,6 +1,8 @@
 import { vi } from "vitest";
 import { solveLikeTheKeys } from "../src/workflows/_test-utils/solved-items";
 
+export const nextServer = { after: vi.fn() };
+
 /**
  * Test files share workers, so these are mocked once per worker and reset for each file. A new
  * model call a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
@@ -97,9 +99,10 @@ export const boundaries = {
 };
 
 export function resetBoundaries(): void {
-  Object.values(boundaries)
-    .flatMap((mocks) => Object.values(mocks))
-    .forEach((mock) => {
-      mock.mockReset();
-    });
+  [
+    ...Object.values(nextServer),
+    ...Object.values(boundaries).flatMap((mocks) => Object.values(mocks)),
+  ].forEach((mock) => {
+    mock.mockReset();
+  });
 }
