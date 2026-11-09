@@ -1012,6 +1012,7 @@ msgstr "メガネ"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1025,6 +1026,7 @@ msgstr "キャンセル"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -1329,6 +1331,7 @@ msgid "Buddy"
 msgstr "相棒"
 
 #: src/buddies/buddy-picker.tsx
+#: src/journey/rename-goal-dialog.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "名前"
@@ -4687,6 +4690,12 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "学習計画を共有する"
 
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "目標の名前を変更"
+
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -5196,6 +5205,11 @@ msgstr "初めての模試を受ける"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "初めての週間チャレンジに挑戦する"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "わかりやすい名前を付けてください。学習計画は変わりません。"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"

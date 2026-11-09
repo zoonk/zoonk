@@ -1,10 +1,11 @@
-import "server-only";
 import { type Goal } from "@zoonk/db";
+import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { getExamDocument } from "../../exams/exam-document";
+import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readSharedExams } from "../../plans/_utils/shared-exams";
@@ -91,7 +92,12 @@ export async function getSyllabusView(
     status: "ready",
     syllabus: {
       examDocument: getExamDocument(goal),
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: {
+        displayName: resolveGoalDisplayName(goal),
+        id: goal.id,
+        kind: goal.kind,
+        title: goal.title,
+      },
       knownTopicsReturn: await getKnownTopicsReturn({ goal, timeZone, today }),
       sharedExams: shared.exams,
       ...buildSyllabus({

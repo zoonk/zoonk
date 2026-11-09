@@ -1,6 +1,6 @@
 import { LanguageFlag, hasLanguageFlag } from "@zoonk/ui/components/language-flag";
 
-type GoalMarkGoal = { kind: string; targetLanguage: string | null; title: string };
+type GoalMarkGoal = { kind: string; targetLanguage: string | null; displayName: string };
 
 function getFirstLetter(title: string): string {
   const [first] = new Intl.Segmenter().segment(title.trim());
@@ -20,7 +20,7 @@ export function GoalMark({ goal }: { goal: GoalMarkGoal }) {
       aria-hidden="true"
       className="bg-muted text-foreground ring-input grid size-4.5 shrink-0 place-items-center rounded-[0.3125rem] text-[0.625rem] leading-none font-bold uppercase ring-1 ring-inset"
     >
-      {getFirstLetter(goal.title)}
+      {getFirstLetter(goal.displayName)}
     </span>
   );
 }

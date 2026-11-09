@@ -260,7 +260,9 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
       return <FreeWeekSuggestion />;
     case "paused":
       return (
-        host.goalStatus && <GoalPausedSuggestion control={host.goalStatus} goalTitle={goal.title} />
+        host.goalStatus && (
+          <GoalPausedSuggestion control={host.goalStatus} goalTitle={goal.displayName} />
+        )
       );
     case "pastDate":
       return <PastDateSuggestion item={item} />;

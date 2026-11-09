@@ -1012,6 +1012,7 @@ msgstr "Lunettes"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1025,6 +1026,7 @@ msgstr "Annuler"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -1329,6 +1331,7 @@ msgid "Buddy"
 msgstr "Compagnon"
 
 #: src/buddies/buddy-picker.tsx
+#: src/journey/rename-goal-dialog.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nom"
@@ -4687,6 +4690,12 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "Partager le plan"
 
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "Renommer l’objectif"
+
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -5196,6 +5205,11 @@ msgstr "Passe ton premier examen blanc"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "Participe à ton premier défi hebdomadaire"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "Choisis un nom facile à reconnaître. Ton plan d’étude reste le même."
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"

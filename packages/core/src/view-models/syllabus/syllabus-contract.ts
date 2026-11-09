@@ -1,8 +1,8 @@
-import { GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { displayWeightSchema } from "../../exams/display-weight-contract";
 import { examDocumentSchema } from "../../exams/exam-document";
+import { goalReferenceSchema } from "../../goals/goal-reference-schema";
 import { TOPIC_FREQUENCY_LEVELS } from "../../library/exams/blueprint-past-contract";
 import { passMarksSchema } from "../../library/exams/pass-marks";
 import { sharedExamsSchema, sharedWithSchema } from "../../plans/shared-exams-contract";
@@ -240,7 +240,7 @@ export const syllabusViewSchema = z
         description:
           "The subjects and topics come from the learner's own material (a class test's slides or notes), not an official notice",
       }),
-    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: goalReferenceSchema,
     kind: z
       .enum(["notice", "modules"])
       .meta({

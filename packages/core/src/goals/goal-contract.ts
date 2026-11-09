@@ -85,6 +85,7 @@ export const goalDraftSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
+    displayName: z.string().trim().min(1).optional(),
     examBlueprintId: uuidSchema().optional(),
     kind: z.enum(GoalKind),
     language: languageSchema.meta({ description: "The language the learner studies in" }),
@@ -140,6 +141,7 @@ export const goalUpdateInputSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
+    displayName: z.string().trim().min(1).max(MAX_TITLE_LENGTH).optional(),
     status: z
       .enum(["active", "paused", "archived", "completed"])
       .optional()
@@ -172,6 +174,7 @@ export const goalUpdateInputSchema = z
 export type GoalUpdateInput = z.infer<typeof goalUpdateInputSchema>;
 
 export type GoalView = {
+  displayName: string;
   createdAt: string;
   dailyMinutes: number;
   details: Record<string, unknown>;

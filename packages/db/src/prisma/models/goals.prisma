@@ -63,6 +63,7 @@ model Goal {
   kind                  GoalKind
   status                GoalStatus             @default(active)
   prompt                String
+  displayName           String?                @map("display_name")
   title                 String
   details               Json                   @default("{}")
   language              String                 @db.VarChar(10)

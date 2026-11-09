@@ -104,6 +104,7 @@ function toCourseGoalDraft({
       courseStart,
       ...(input.level && { level: input.level }),
     },
+    displayName: course.title,
     examBlueprintId,
     kind: getCourseGoalKind({
       format: course.format,
