@@ -221,7 +221,7 @@ export const challengeResponseSchema = z
       .enum(CHALLENGE_STATUSES)
       .meta({
         description:
-          "upcoming before its preceding lessons finish, while a reached phase challenge with an established offer waits for a day with room, or before a weekly challenge or mock's calendar date; ready or started when offered; tried after a loss today; done once won; plusRequired while locked; waiting when reached but its offer is not yet established. queued is retained for older clients and is never returned",
+          "upcoming before its preceding lessons finish, while a reached phase challenge with an established offer waits for a day with room, or before a weekly challenge or mock's calendar date; ready or started when offered; tried after a loss today; done once won; plusRequired while locked; waiting when reached but its offer is not yet established, or while its goal is paused. queued is retained for older clients and is never returned",
       }),
     timeZone: z.string().nullable(),
     title: z.string(),
