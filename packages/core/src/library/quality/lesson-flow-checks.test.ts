@@ -45,6 +45,10 @@ function lengths(lesson: WrittenLesson) {
   return flowCodes(lesson).filter(([, code]) => code === "screenLength");
 }
 
+function workedStep(length: number) {
+  return { math: null, text: "s".repeat(length) };
+}
+
 function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
   return {
     exampleLineIdea: null,
@@ -224,26 +228,53 @@ describe("checkWrittenLesson's flow checks", () => {
     ]);
   });
 
-  it("counts a worked example's problem, steps and result together, and a check's context with its question", () => {
+  it("counts a worked example tap by tap: the problem with step 1, each later step, the last step with the result", () => {
     const { screens } = writtenTemperatureLesson();
     const worked = screens[2];
-    const check = screens[3];
 
-    if (worked?.kind !== "workedExample" || check?.kind !== "mathCheck") {
-      throw new Error("Screens 3 and 4 are a worked example and a calculation.");
+    if (worked?.kind !== "workedExample") {
+      throw new Error("Screen 3 is a worked example.");
     }
 
-    const steps = ["a", "b", "c"].map((letter) => ({ math: null, text: letter.repeat(90) }));
-    const shortSteps = { ...worked, problem: "p", result: "r", steps: steps.slice(0, 2) };
-    const pilingSteps = { ...worked, problem: "p", result: "r", steps };
+    const fits = {
+      ...worked,
+      problem: "p",
+      result: "r",
+      steps: [workedStep(200), workedStep(240), workedStep(200)],
+    };
+
+    const over = {
+      ...worked,
+      problem: "p".repeat(150),
+      result: "r".repeat(120),
+      steps: [workedStep(120), workedStep(260), workedStep(150)],
+    };
+
+    expect(lengths(withScreens({ 2: fits }))).toStrictEqual([]);
+
+    expect(
+      checkWrittenLesson({
+        language: "en",
+        lesson: withScreens({ 2: over }),
+        level: "beginner",
+        spec: temperatureSpec(),
+      })
+        .problems.filter((problem) => problem.code === "screenLength")
+        .map((problem) => problem.problem.split(" reads as")[0]),
+    ).toStrictEqual(["Its problem with step 1", "Its step 2", "Its step 3 and result"]);
+  });
+
+  it("counts a check's context with its question", () => {
+    const { screens } = writtenTemperatureLesson();
+    const check = screens[3];
+
+    if (check?.kind !== "mathCheck") {
+      throw new Error("Screen 4 is a calculation.");
+    }
+
     const longCheck = { ...check, context: "c".repeat(200), question: "d".repeat(60) };
 
-    expect(lengths(withScreens({ 2: shortSteps }))).toStrictEqual([]);
-
-    expect(lengths(withScreens({ 2: pilingSteps, 3: longCheck }))).toStrictEqual([
-      [2, "screenLength"],
-      [3, "screenLength"],
-    ]);
+    expect(lengths(withScreens({ 3: longCheck }))).toStrictEqual([[3, "screenLength"]]);
   });
 
   it("measures each later moment too: a guess's reveal, each reason and an activity's prompt with its question", () => {

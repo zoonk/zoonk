@@ -44,10 +44,27 @@ function getActivityStages(content: string): ReadingStage[] {
 }
 
 /**
+ * The player opens a worked example on its problem and first step, then shows one more step per
+ * tap, the last with the result, so each of those is a moment's reading. Its math isn't prose.
+ */
+function getWorkedExampleStages(
+  screen: Extract<WrittenScreen, { kind: "workedExample" }>,
+): ReadingStage[] {
+  const last = screen.steps.length - 1;
+
+  return screen.steps.map((step, index) => ({
+    part: `${index === 0 ? "problem with step 1" : `step ${index + 1}`}${index === last ? " and result" : ""}`,
+    texts: [
+      ...(index === 0 ? [screen.title, screen.problem] : []),
+      step.text,
+      ...(index === last ? [screen.result] : []),
+    ],
+  }));
+}
+
+/**
  * Each moment's reading on a screen, tables left out since detail belongs in them: what it asks
- * before the learner acts, then each piece of feedback. A worked example keeps its problem and every
- * step it has revealed on screen, so all of it, result included, is one moment; its math isn't
- * prose.
+ * before the learner acts, then each piece of feedback or each step it reveals.
  */
 function getReadingStages(screen: WrittenScreen): ReadingStage[] {
   switch (screen.kind) {
@@ -61,17 +78,7 @@ function getReadingStages(screen: WrittenScreen): ReadingStage[] {
         { part: "reveal", texts: [screen.reveal] },
       ];
     case "workedExample":
-      return [
-        {
-          part: "problem, steps and result, shown together",
-          texts: [
-            screen.title,
-            screen.problem,
-            ...screen.steps.map((step) => step.text),
-            screen.result,
-          ],
-        },
-      ];
+      return getWorkedExampleStages(screen);
     case "check":
       return [
         { part: null, texts: [screen.context, screen.question] },
