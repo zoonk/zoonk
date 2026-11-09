@@ -16,7 +16,8 @@ import {
 
 const MAX_OPERATIONS = 10;
 const MAX_AREAS = 20;
-const MAX_PART_NAME_LENGTH = 80;
+/** Well past any real name, since a model's name joining an area's parts comes back through here. */
+const MAX_PART_NAME_LENGTH = 300;
 const MAX_PART_SKILLS = 200;
 const MAX_BASE_CHOICES = 200;
 

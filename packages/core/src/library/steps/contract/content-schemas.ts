@@ -4,7 +4,6 @@ import { z } from "zod";
 
 const STEP_TEXT_TARGETS = {
   explanation: 400,
-  id: 40,
   label: 40,
   option: 160,
   part: 80,
@@ -12,7 +11,10 @@ const STEP_TEXT_TARGETS = {
   richText: 1200,
 } as const;
 
-export const idSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.id);
+/** A technical key, not text: an answer sends it back, so a longer one could never be submitted. */
+export const MAX_STEP_ID_LENGTH = 40;
+
+export const idSchema = z.string().min(1).max(MAX_STEP_ID_LENGTH);
 export const labelSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.label);
 export const optionTextSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.option);
 export const promptSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.prompt);

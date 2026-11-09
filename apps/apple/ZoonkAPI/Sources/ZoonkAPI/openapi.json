@@ -27895,7 +27895,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 80,
+            "maxLength": 300,
             "description": "The part as the learner says it, such as biology and chemistry"
           },
           "skillIds": {
@@ -42835,7 +42835,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -42853,7 +42853,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -42942,7 +42942,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -43102,7 +43102,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -43133,7 +43133,7 @@
                               "y": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               }
                             },
                             "required": [
@@ -43283,7 +43283,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -43301,7 +43301,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -43390,7 +43390,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -43648,7 +43648,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -43666,7 +43666,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -43755,7 +43755,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -44091,7 +44091,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -44109,7 +44109,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -44198,7 +44198,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -44514,7 +44514,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -44532,7 +44532,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -44621,7 +44621,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -44762,7 +44762,7 @@
                                       "id": {
                                         "type": "string",
                                         "minLength": 1,
-                                        "description": "Aim for 40 characters or fewer."
+                                        "maxLength": 40
                                       },
                                       "isCorrect": {
                                         "type": "boolean"
@@ -44795,7 +44795,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "math": {
                                   "type": "string",
@@ -44916,7 +44916,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -44934,7 +44934,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -45023,7 +45023,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -45334,7 +45334,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -45352,7 +45352,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -45441,7 +45441,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -45584,7 +45584,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -45707,7 +45707,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -45725,7 +45725,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -45814,7 +45814,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -46052,7 +46052,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -46070,7 +46070,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -46159,7 +46159,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -46634,7 +46634,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -46652,7 +46652,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -46741,7 +46741,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -47047,7 +47047,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -47065,7 +47065,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -47154,7 +47154,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -47307,7 +47307,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -47442,7 +47442,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -47460,7 +47460,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -47549,7 +47549,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -47842,7 +47842,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -47860,7 +47860,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -47949,7 +47949,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -48200,7 +48200,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "text": {
                                   "type": "string",
@@ -48308,7 +48308,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -48326,7 +48326,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -48415,7 +48415,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -48637,7 +48637,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -48655,7 +48655,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -48744,7 +48744,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -49177,7 +49177,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -49195,7 +49195,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -49284,7 +49284,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -49438,7 +49438,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "intercept": {
                                   "type": "number"
@@ -49481,7 +49481,7 @@
                               "line": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               }
                             },
                             "required": [
@@ -49594,7 +49594,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -49612,7 +49612,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -49701,7 +49701,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -49974,7 +49974,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -49992,7 +49992,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -50081,7 +50081,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -50229,7 +50229,7 @@
                                       "id": {
                                         "type": "string",
                                         "minLength": 1,
-                                        "description": "Aim for 40 characters or fewer."
+                                        "maxLength": 40
                                       },
                                       "text": {
                                         "type": "string",
@@ -50422,7 +50422,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -50440,7 +50440,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -50529,7 +50529,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -50890,7 +50890,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -50908,7 +50908,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -50997,7 +50997,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -51387,7 +51387,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -51405,7 +51405,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -51494,7 +51494,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -51774,7 +51774,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -51792,7 +51792,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -51881,7 +51881,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -52047,7 +52047,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "isBest": {
                                   "type": "boolean"
@@ -52174,7 +52174,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -52192,7 +52192,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -52281,7 +52281,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -52440,7 +52440,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -52557,7 +52557,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -52575,7 +52575,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -52664,7 +52664,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -52798,7 +52798,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -52920,7 +52920,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -52938,7 +52938,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -53027,7 +53027,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -53156,12 +53156,12 @@
                                 "from": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "to": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "why": {
                                   "type": "string",
@@ -53187,7 +53187,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -53296,7 +53296,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -53314,7 +53314,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -53403,7 +53403,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -53580,7 +53580,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "passages": {
                                   "minItems": 1,
@@ -53592,7 +53592,7 @@
                                       "id": {
                                         "type": "string",
                                         "minLength": 1,
-                                        "description": "Aim for 40 characters or fewer."
+                                        "maxLength": 40
                                       },
                                       "isTarget": {
                                         "type": "boolean"
@@ -53712,7 +53712,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -53730,7 +53730,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -53819,7 +53819,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -53948,7 +53948,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "label": {
                                   "type": "string",
@@ -53979,12 +53979,12 @@
                                 "groupId": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "text": {
                                   "type": "string",
@@ -54095,7 +54095,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -54113,7 +54113,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -54202,7 +54202,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -54363,7 +54363,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "left": {
                                   "type": "string",
@@ -54478,7 +54478,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -54496,7 +54496,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -54585,7 +54585,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -54719,7 +54719,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "isStrong": {
                                   "type": "boolean"
@@ -54760,7 +54760,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "isStrong": {
                                   "type": "boolean"
@@ -54875,7 +54875,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -54893,7 +54893,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -54982,7 +54982,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -55115,7 +55115,7 @@
                           "errorStepId": {
                             "type": "string",
                             "minLength": 1,
-                            "description": "Aim for 40 characters or fewer."
+                            "maxLength": 40
                           },
                           "problem": {
                             "type": "string",
@@ -55137,7 +55137,7 @@
                                 "id": {
                                   "type": "string",
                                   "minLength": 1,
-                                  "description": "Aim for 40 characters or fewer."
+                                  "maxLength": 40
                                 },
                                 "result": {
                                   "type": "number"
@@ -55252,7 +55252,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -55270,7 +55270,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -55359,7 +55359,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -55708,7 +55708,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -55726,7 +55726,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -55815,7 +55815,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -56041,7 +56041,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -56059,7 +56059,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -56148,7 +56148,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -56385,7 +56385,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "kind": {
                                 "type": "string",
@@ -56403,7 +56403,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "isCorrect": {
                                       "type": "boolean"
@@ -56492,7 +56492,7 @@
                               "output": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "answer": {
                                 "type": "number"
@@ -56629,7 +56629,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -56684,7 +56684,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -57065,7 +57065,7 @@
                         "id": {
                           "type": "string",
                           "minLength": 1,
-                          "description": "Aim for 40 characters or fewer."
+                          "maxLength": 40
                         },
                         "outcome": {
                           "type": "string",
@@ -57097,7 +57097,7 @@
                         "id": {
                           "type": "string",
                           "minLength": 1,
-                          "description": "Aim for 40 characters or fewer."
+                          "maxLength": 40
                         },
                         "label": {
                           "type": "string",
@@ -57152,7 +57152,7 @@
                                     "meter": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     }
                                   },
                                   "required": [
@@ -57165,12 +57165,12 @@
                               "id": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "next": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "notes": {
                                 "maxItems": 2,
@@ -57193,7 +57193,7 @@
                                     "skill": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "text": {
                                       "type": "string",
@@ -57226,7 +57226,7 @@
                                     "from": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "text": {
                                       "type": "string",
@@ -57325,7 +57325,7 @@
                         "id": {
                           "type": "string",
                           "minLength": 1,
-                          "description": "Aim for 40 characters or fewer."
+                          "maxLength": 40
                         },
                         "messages": {
                           "maxItems": 4,
@@ -57336,7 +57336,7 @@
                               "from": {
                                 "type": "string",
                                 "minLength": 1,
-                                "description": "Aim for 40 characters or fewer."
+                                "maxLength": 40
                               },
                               "text": {
                                 "type": "string",
@@ -57434,7 +57434,7 @@
                         "id": {
                           "type": "string",
                           "minLength": 1,
-                          "description": "Aim for 40 characters or fewer."
+                          "maxLength": 40
                         },
                         "name": {
                           "type": "string",
@@ -57458,7 +57458,7 @@
                   "startNodeId": {
                     "type": "string",
                     "minLength": 1,
-                    "description": "Aim for 40 characters or fewer."
+                    "maxLength": 40
                   },
                   "team": {
                     "minItems": 1,
@@ -57478,7 +57478,7 @@
                         "id": {
                           "type": "string",
                           "minLength": 1,
-                          "description": "Aim for 40 characters or fewer."
+                          "maxLength": 40
                         },
                         "role": {
                           "type": "string",
@@ -57824,7 +57824,7 @@
                         "id": {
                           "type": "string",
                           "minLength": 1,
-                          "description": "Aim for 40 characters or fewer."
+                          "maxLength": 40
                         },
                         "isCorrect": {
                           "type": "boolean"
@@ -58383,7 +58383,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -58414,7 +58414,7 @@
                                   "y": {
                                     "type": "string",
                                     "minLength": 1,
-                                    "description": "Aim for 40 characters or fewer."
+                                    "maxLength": 40
                                   }
                                 },
                                 "required": [
@@ -59113,7 +59113,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -59904,7 +59904,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -60331,7 +60331,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "text": {
                                       "type": "string",
@@ -60870,7 +60870,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "intercept": {
                                       "type": "number"
@@ -60913,7 +60913,7 @@
                                   "line": {
                                     "type": "string",
                                     "minLength": 1,
-                                    "description": "Aim for 40 characters or fewer."
+                                    "maxLength": 40
                                   }
                                 },
                                 "required": [
@@ -61195,7 +61195,7 @@
                                           "id": {
                                             "type": "string",
                                             "minLength": 1,
-                                            "description": "Aim for 40 characters or fewer."
+                                            "maxLength": 40
                                           },
                                           "text": {
                                             "type": "string",
@@ -61920,7 +61920,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -62045,7 +62045,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -62170,12 +62170,12 @@
                                     "from": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "to": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "why": {
                                       "type": "string",
@@ -62201,7 +62201,7 @@
                                     "id": {
                                       "type": "string",
                                       "minLength": 1,
-                                      "description": "Aim for 40 characters or fewer."
+                                      "maxLength": 40
                                     },
                                     "label": {
                                       "type": "string",
@@ -62644,7 +62644,7 @@
                                         "id": {
                                           "type": "string",
                                           "minLength": 1,
-                                          "description": "Aim for 40 characters or fewer."
+                                          "maxLength": 40
                                         },
                                         "label": {
                                           "type": "string",
@@ -62699,7 +62699,7 @@
                                         "id": {
                                           "type": "string",
                                           "minLength": 1,
-                                          "description": "Aim for 40 characters or fewer."
+                                          "maxLength": 40
                                         },
                                         "label": {
                                           "type": "string",
@@ -63261,7 +63261,7 @@
                             "id": {
                               "type": "string",
                               "minLength": 1,
-                              "description": "Aim for 40 characters or fewer."
+                              "maxLength": 40
                             },
                             "isCorrect": {
                               "type": "boolean"
@@ -93561,7 +93561,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 80,
+            "maxLength": 300,
             "description": "The part as the learner says it, such as biology and chemistry"
           },
           "skillIds": {
