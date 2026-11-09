@@ -40,7 +40,7 @@ export async function TodayGoalPaused() {
         clause={t("Start a new goal, or pick another one above.")}
         date={date}
         icon={<FlagIcon />}
-        sentence={t("You finished {goal}.", { goal: goal.displayName })}
+        sentence={t("You finished your {goal} goal.", { goal: goal.displayName })}
         state={t("Finished")}
         title={t("Today")}
       />
@@ -65,7 +65,9 @@ export async function TodayGoalPaused() {
       detail={<ResumeEffect preview={resume} />}
       icon={<PauseIcon />}
       sentence={
-        goal ? t("{goal} is paused.", { goal: goal.displayName }) : t("This goal is paused.")
+        goal
+          ? t("Your {goal} goal is paused.", { goal: goal.displayName })
+          : t("This goal is paused.")
       }
       state={t("Paused")}
       title={t("Today")}

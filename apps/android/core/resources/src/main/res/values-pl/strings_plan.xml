@@ -13,7 +13,7 @@
   "plan_archive": "c19545e8006338f04df319f2de591bcd9e43f0c01d2490882a77370ae409b8d1",
   "plan_archive_description": "88d94eca628ee484b4bbf3b404d2c0e5113b551c6e2d92492f67f88f1fc0cd48",
   "plan_archive_goal": "20e115e29de9e1841d6109dedbe417f925934aa1a243afa7769bb408ff23e2a2",
-  "plan_archive_title": "052a67fcffb05b66a98499d5ecc24d30f21ea05ea57ae71bbe4dff33d1fbbd3c",
+  "plan_archive_title": "24c1c78648124319e5dc10ed0f82ce542b99265d6869f2641677c95e41bda5ee",
   "plan_base_deep": "7be1ab8ba3cc7d1ea3d36e8521cc9d2ccd83c33f018d202c55e660d1e8a15ee5",
   "plan_base_deep_description": "9273ccb57d1933c2cc23b24f407962252528e3fd9b22463bce0d814997fe79aa",
   "plan_base_essential": "12a9e26cf86d538c8765e98c537459eca5c2c3f7d3423890f66f7aa133d5e651",
@@ -42,7 +42,7 @@
   "plan_bases_topics_come_in": "5291b879f2a0da4ee4d4b765450e99158408c37fe826c0b458eaa937c5609eca",
   "plan_bases_topics_leave": "261bcb195131ca779721e4a9b81b9bc2856a62333ddbf8c2f4f393bbe82c95b3",
   "plan_building_description": "f5a0f06b20575cdfe3747e1b1369615ced611a9e3b7f67c2ae2d0ac24d249de5",
-  "plan_building_eyebrow": "21cacafb578ed93ce89ac546f7980ea63063dc8fa8afe29db2e5f40f84ff82b9",
+  "plan_building_eyebrow": "c2a1d058d7e31d4dabcc9e6be33c3ee58adb2bfde40b3f1a180d441704afe45e",
   "plan_cadence_biweekly": "60790e8f35ff9e62499b80deec688ff4a6482eac667195ab6ec035ed498124aa",
   "plan_cadence_biweekly_effect": "5539464b2e12ef0f88c7d2e5efd4021236b3e24dedcdfac6648c1175a9281c76",
   "plan_cadence_final_weeks": "b420d226861bdfa56a3697128194354bf5024598cadd14e6b1585d56d93fa89f",
@@ -301,7 +301,7 @@
   "plan_go_to_today": "29b18f35a7dd5a9252a006122ff9e37a71b245b5a94deb90f5d226330b1ac15a",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
   "plan_goal_limit_reached": "dbcfa485448d82bebcdd73c6a3c4209562865dd713194b48d9f3c703ba7d2899",
-  "plan_goal_paused": "7e8910e21a0ecf58dd55fd195c25abc9dd85bf70ef221a746fb8c7b63431a840",
+  "plan_goal_paused": "933537f92adfccf676899e3895b8d778520b827afea33f261f0c054f9f39d0fd",
   "plan_going_deeper": "447bbdfa0893be60d0b8d121cef6526c25808a3775dd6366054e023b88a0c06c",
   "plan_how_is_it_going": "31f83eced9ed98a469d61c0eeed564e671e75eb6ae5ba536dc4337520740d5c5",
   "plan_last_week_recap": "f18af2a2e609189b84e5b87444390f224a08e688969e4b6c81049499fab22102",
@@ -424,7 +424,7 @@
   "plan_resume": "cdc91b74bbedd52eab01e54102568420735efa39d252462f009c0c471161b426",
   "plan_resume_effect": "8948de93c295cfd975daeba456aad63adb6b60454b7caeabdf36ad23d12a57e3",
   "plan_resume_goal": "9d74c336a43e7f86b0b36945a79b2eb80fe8650bc36548ff6a2e8c7923f4dcdf",
-  "plan_resume_title": "b8446f838ef238725d4d5e2e8e331ba7d54a4c92f124aeea0cc4f2ecfcb864eb",
+  "plan_resume_title": "1a902d4299dbf689697fd55d4ce73fc36d9dc1766d2007ba7feffb906fa67960",
   "plan_retention_caption": "ee381115e82cdafed59134f86c30290047bd455d4245f489d6d22743235b94f7",
   "plan_roadmap_day_of": "3d68067841c7ba73d0bbbcc2b7b2f40644118a25d26f38f68efa32e53a212e91",
   "plan_roadmap_from": "6e9a0b2bb1689856969465cfd0310d9c1eb85f5605da0155f4d5640f6f638fef",
@@ -631,7 +631,7 @@
     <string name="plan_setup_left_title">Najpierw kilka pytań, potem twój plan</string>
     <string name="plan_setup_left_description">Odpowiedz na nie, a zaplanujemy naukę na każdy dzień, aż osiągniesz cel.</string>
     <string name="plan_continue">Kontynuuj</string>
-    <string name="plan_building_eyebrow">%1$s · Układamy twój plan</string>
+    <string name="plan_building_eyebrow">%1$s · Przygotowujemy twój plan</string>
     <string name="plan_building_description">Zwykle trwa to minutę lub dwie. Twój plan otworzy się tutaj, gdy tylko będzie gotowy.</string>
     <string name="plan_options">Opcje planu</string>
     <string name="plan_adjust_plan">Dostosuj plan</string>
@@ -646,10 +646,10 @@
     <string name="plan_pause_goal">Wstrzymaj ten cel</string>
     <string name="plan_resume_goal">Wznów ten cel</string>
     <string name="plan_archive_goal">Przenieś ten cel do archiwum</string>
-    <string name="plan_archive_title">Przenieść do archiwum: %1$s?</string>
+    <string name="plan_archive_title">Zarchiwizować cel: %1$s?</string>
     <string name="plan_archive_description">Cel znika z twojej listy celów, a jego plan zostaje zatrzymany. Twoje postępy w nauce zostają zachowane.</string>
     <string name="plan_archive">Przenieś do archiwum</string>
-    <string name="plan_resume_title">Wznowić cel: %1$s?</string>
+    <string name="plan_resume_title">Wznowić realizację celu: %1$s?</string>
     <string name="plan_resume_effect">Od dziś kontynuujesz plan, zaczynając od lekcji zaplanowanych na dni przerwy.</string>
     <string name="plan_resume">Wznów</string>
     <string name="plan_cancel">Anuluj</string>
@@ -1682,7 +1682,7 @@
     <string name="plan_suggestion_previous">Pokaż poprzednią</string>
     <string name="plan_suggestion_next">Dalej</string>
     <string name="plan_suggestion_position">%1$s z %2$s</string>
-    <string name="plan_goal_paused">Cel wstrzymany: %1$s</string>
+    <string name="plan_goal_paused">Twój cel jest wstrzymany: %1$s</string>
     <string name="plan_no_longer_fits">Twój plan jest już zbyt napięty</string>
     <string name="plan_catch_up">Trochę do nadrobienia</string>
     <string name="plan_adjust">Dostosuj</string>

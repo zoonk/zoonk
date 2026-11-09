@@ -198,6 +198,7 @@ msgstr "{percent}% concluído"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -4510,9 +4511,9 @@ msgid "Archive this goal"
 msgstr "Arquivar este objetivo"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
-msgstr "Retomar {goal}?"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
+msgstr "Retomar seu objetivo de {goal}?"
 
 #: src/journey/goal-actions.tsx
 msgctxt "3y9DGg"
@@ -4520,9 +4521,9 @@ msgid "Resume"
 msgstr "Retomar"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
-msgstr "Arquivar {goal}?"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
+msgstr "Arquivar seu objetivo de {goal}?"
 
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
@@ -4535,9 +4536,9 @@ msgid "Archive"
 msgstr "Arquivar"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "Objetivo em pausa: {goal}"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "Seu objetivo de {goal} está pausado"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -14178,9 +14179,9 @@ msgid "Practice anytime"
 msgstr "Pratique quando quiser"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
-msgstr "Criando seu plano para {goal}"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
+msgstr "Criando seu plano de {goal}"
 
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"

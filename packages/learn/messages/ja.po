@@ -198,6 +198,7 @@ msgstr "{percent}%完了"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -4510,9 +4511,9 @@ msgid "Archive this goal"
 msgstr "この目標をアーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
-msgstr "「{goal}」を再開しますか？"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
+msgstr "目標「{goal}」を再開しますか？"
 
 #: src/journey/goal-actions.tsx
 msgctxt "3y9DGg"
@@ -4520,9 +4521,9 @@ msgid "Resume"
 msgstr "再開する"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
-msgstr "「{goal}」をアーカイブしますか？"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
+msgstr "目標「{goal}」をアーカイブしますか？"
 
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
@@ -4535,9 +4536,9 @@ msgid "Archive"
 msgstr "アーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "「{goal}」は一時停止中です"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "目標「{goal}」は一時停止中です"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -14178,9 +14179,9 @@ msgid "Practice anytime"
 msgstr "いつでも練習"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
-msgstr "{goal}に向けた学習計画を作成しています"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
+msgstr "{goal}の学習計画を作成しています"
 
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"

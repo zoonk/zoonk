@@ -39,10 +39,10 @@
     <string name="plan_pause_goal">Pause this goal</string>
     <string name="plan_resume_goal">Resume this goal</string>
     <string name="plan_archive_goal">Archive this goal</string>
-    <string name="plan_archive_title">Archive %1$s?</string>
+    <string name="plan_archive_title">Archive your %1$s goal?</string>
     <string name="plan_archive_description">It leaves your goals and its plan stops. What you learned stays in your progress.</string>
     <string name="plan_archive">Archive</string>
-    <string name="plan_resume_title">Resume %1$s?</string>
+    <string name="plan_resume_title">Resume your %1$s goal?</string>
     <string name="plan_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
     <string name="plan_resume">Resume</string>
     <string name="plan_cancel">Cancel</string>
@@ -931,7 +931,7 @@
     <string name="plan_suggestion_previous">Previous</string>
     <string name="plan_suggestion_next">Next</string>
     <string name="plan_suggestion_position">%1$s of %2$s</string>
-    <string name="plan_goal_paused">%1$s is paused</string>
+    <string name="plan_goal_paused">Your %1$s goal is paused</string>
     <string name="plan_no_longer_fits">Your plan no longer fits</string>
     <string name="plan_catch_up">A little to catch up</string>
     <string name="plan_adjust">Adjust</string>

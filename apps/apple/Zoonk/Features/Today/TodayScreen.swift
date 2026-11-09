@@ -193,7 +193,7 @@ private struct TodayPreparing: View {
         ContentUnavailableView {
           Label {
             Text(
-              "Your plan for \(displayName) is ready.", tableName: "Today",
+              "Your \(displayName) plan is ready.", tableName: "Today",
               comment: "A goal whose plan the learner hasn't looked at yet")
           } icon: {
             Image(systemName: "map")
@@ -217,7 +217,7 @@ private struct TodayPreparing: View {
         ContentUnavailableView {
           Label {
             Text(
-              "Your plan for \(displayName) needs a few more answers.", tableName: "Today",
+              "Your \(displayName) plan needs a few more answers.", tableName: "Today",
               comment: "A goal left halfway through its questions")
           } icon: {
             Image(systemName: "list.bullet.clipboard")
@@ -244,7 +244,7 @@ private struct TodayPreparing: View {
           }
         } description: {
           Text(
-            "Building your plan for \(displayName)", tableName: "Today",
+            "Building your \(displayName) plan", tableName: "Today",
             comment: "A plan is being built for the goal")
         } actions: {
           if stoppedFollowing {
@@ -325,7 +325,7 @@ private struct TodayGoalPaused: View {
       ContentUnavailableView {
         Label {
           Text(
-            "You finished \(goal.displayName).", tableName: "Today",
+            "You finished your \(goal.displayName) goal.", tableName: "Today",
             comment: "Today for a finished goal")
         } icon: {
           Image(systemName: "flag.checkered")
@@ -347,7 +347,8 @@ private struct TodayGoalPaused: View {
       Label {
         if let goal {
           Text(
-            "\(goal.displayName) is paused.", tableName: "Today", comment: "Today for a paused goal"
+            "Your \(goal.displayName) goal is paused.", tableName: "Today",
+            comment: "Today for a paused goal"
           )
         } else {
           Text("This goal is paused.", tableName: "Today", comment: "Today for a paused goal")

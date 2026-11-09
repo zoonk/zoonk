@@ -247,11 +247,11 @@ struct PlanToolbar: ViewModifier {
     switch confirming {
     case .resume:
       Text(
-        "Resume \(context.goal.displayName)?", tableName: "Plan",
+        "Resume your \(context.goal.displayName) goal?", tableName: "Plan",
         comment: "Asks before resuming the paused goal named here")
     default:
       Text(
-        "Archive \(context.goal.displayName)?", tableName: "Plan",
+        "Archive your \(context.goal.displayName) goal?", tableName: "Plan",
         comment: "Asks before archiving the goal named here")
     }
   }
