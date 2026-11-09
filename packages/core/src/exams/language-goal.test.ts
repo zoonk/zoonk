@@ -309,23 +309,26 @@ describe("onboarding's reason answer", () => {
     });
   });
 
-  it("gives a reason sent again after its goal moved the same exam goal, without writing to the old one", async () => {
-    const { goal } = await languageGoalInOnboarding();
-    const first = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
-    const archived = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-    const again = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
+  it.each([IELTS_REASON, { question: "reason", reason: "travel" }] as const)(
+    "gives a $reason reason after its goal moved the same exam goal, without writing to the old one",
+    async (input) => {
+      const { goal } = await languageGoalInOnboarding();
+      const first = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
+      const archived = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      const again = await answerOnboardingQuestion({ goalId: goal.id, input });
 
-    expect(first).toMatchObject({ movedTo: { created: true }, status: "saved" });
+      expect(first).toMatchObject({ movedTo: { created: true }, status: "saved" });
 
-    expect(again).toStrictEqual({
-      movedTo: { created: false, goal: first.status === "saved" && first.movedTo?.goal },
-      status: "saved",
-    });
+      expect(again).toStrictEqual({
+        movedTo: { created: false, goal: first.status === "saved" && first.movedTo?.goal },
+        status: "saved",
+      });
 
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toStrictEqual(
-      archived,
-    );
-  });
+      await expect(
+        prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      ).resolves.toStrictEqual(archived);
+    },
+  );
 
   it("makes one exam goal when the same reason is sent twice at once", async () => {
     const { goal, user } = await languageGoalInOnboarding();

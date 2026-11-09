@@ -121,9 +121,9 @@ export async function answerOnboardingQuestion({
 
   const { goal } = owned;
 
-  // A reason answer sent again after its goal moved (its response was lost) goes on with the
-  // exam goal, without writing to the archived one.
-  if (isCertificateAnswer(input) && goal.kind === "language" && goal.status !== "active") {
+  // A stale tab's reason answer follows the exam goal without writing to the archived one,
+  // even when the learner picked a different reason after the move.
+  if (input.question === "reason" && goal.kind === "language" && goal.status !== "active") {
     const movedTo = toMovedGoal(await moveLanguageGoalToExam(goalId));
 
     if (movedTo) {
