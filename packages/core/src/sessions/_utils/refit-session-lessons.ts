@@ -1,6 +1,7 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
@@ -95,7 +96,7 @@ async function refillSessionLessons(
       include: { items: { orderBy: { position: "asc" } } },
       where: { goalId: session.goal.id },
     }),
-    session.goal.kind === "exam"
+    session.goal.kind === "exam" || session.goal.kind === "language"
       ? findActiveSubscriptionForUser({ client: tx, now: new Date(), userId: session.userId })
       : null,
   ]);
@@ -116,10 +117,17 @@ async function refillSessionLessons(
     today: session.localDate,
   });
 
+  const phaseChallengesRequired = await arePhaseChallengesRequired({
+    goalKind: session.goal.kind,
+    readSubscription: async () => subscription,
+    userId: session.userId,
+  });
+
   const candidates = getSessionLessonCandidates({
     blocks,
     goal: session.goal,
     localDate: session.localDate,
+    phaseChallengesRequired,
     plan,
     prerequisites,
     trialEnded: access.trialEnded,
@@ -154,6 +162,7 @@ async function refillSessionLessons(
   const current = { ...session, blocks: [...blocks, ...added] };
 
   const reserved = hasSessionLessonReservation({
+    phaseChallengesRequired,
     plan,
     prerequisites,
     session: current,

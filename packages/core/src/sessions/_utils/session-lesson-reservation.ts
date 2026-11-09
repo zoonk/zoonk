@@ -1,4 +1,5 @@
 import { type Goal, type StudySessionBlock } from "@zoonk/db";
+import { isBossDue } from "../../checkpoints/_utils/boss-reached";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
@@ -22,6 +23,7 @@ type ReservationPlan = { graph: unknown; settings: unknown; items: readonly Sess
 export function getSessionLessonCandidates({
   goal,
   localDate,
+  phaseChallengesRequired = true,
   plan,
   blocks,
   prerequisites = new Map(),
@@ -29,6 +31,7 @@ export function getSessionLessonCandidates({
 }: {
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   localDate: Date;
+  phaseChallengesRequired?: boolean;
   plan: ReservationPlan;
   blocks: readonly ReservationBlock[];
   prerequisites?: ReadonlyMap<string, readonly string[]>;
@@ -59,10 +62,30 @@ export function getSessionLessonCandidates({
     plan: { ...plan, graph: parsePlanGraph(plan.graph), prerequisites },
   });
 
-  const checkpoints = blocks.flatMap((block) => {
-    const checkpoint = readBlockPayload(block).checkpoint;
-    return checkpoint ? [{ ...checkpoint, planItemId: readBlockPayload(block).planItemId }] : [];
+  const queuedCheckpoints = blocks.flatMap((block) => {
+    const { checkpoint, planItemId, planItemKey } = readBlockPayload(block);
+    return checkpoint ? [{ ...checkpoint, planItemId, planItemKey }] : [];
   });
+
+  const checkpoints = [
+    ...queuedCheckpoints,
+    ...plan.items
+      .filter(
+        (item) =>
+          phaseChallengesRequired &&
+          isBossDue({ boss: item, today: localDate }) &&
+          !queuedCheckpoints.some(
+            (checkpoint) =>
+              (checkpoint.planItemId ?? checkpoint.planItemKey) === (item.id ?? item.key),
+          ),
+      )
+      .map((item) => ({
+        kind: "boss" as const,
+        planItemId: item.id,
+        planItemKey: item.key,
+        rematch: false,
+      })),
+  ];
 
   const selected = [...new Set([...fillItems, ...reservedItems])].toSorted(
     (a, b) => a.position - b.position,
@@ -84,6 +107,7 @@ export function getSessionLessonCandidates({
 
 export function hasSessionLessonReservation({
   session,
+  phaseChallengesRequired = true,
   plan,
   prerequisites,
   trialEnded = false,
@@ -93,6 +117,7 @@ export function hasSessionLessonReservation({
     status?: StudySessionRow["status"];
   };
   plan: ReservationPlan | null;
+  phaseChallengesRequired?: boolean;
   prerequisites?: ReadonlyMap<string, readonly string[]>;
   trialEnded?: boolean;
 }): boolean {
@@ -114,6 +139,7 @@ export function hasSessionLessonReservation({
     blocks: session.blocks,
     goal: session.goal,
     localDate: session.localDate,
+    phaseChallengesRequired,
     plan,
     prerequisites,
     trialEnded,

@@ -82,6 +82,7 @@ export async function loadUnstartedDayView({
   const missions = missionViews.map((mission) => asDayMission(mission));
 
   const reserved = hasSessionLessonReservation({
+    phaseChallengesRequired: goal.kind !== "language" || day.plan.tier === "plus",
     plan: day.plan,
     prerequisites: day.plan.prerequisites,
     session: {
