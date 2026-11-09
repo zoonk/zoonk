@@ -2,7 +2,7 @@ import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { pullLessonStep } from "../quality/steps/later-review-steps";
+import { pullLessonStep } from "../review-flags/steps/pull-lesson-step";
 import {
   prepareFlaggedContentStep,
   recordFailedDrillRewriteStep,
@@ -36,11 +36,7 @@ export async function flaggedContentWorkflow({
   const [, rewritten] = await Promise.all([
     Promise.all(
       lessonsPulled.map((lessonId) =>
-        startOnce(
-          lessonContentWorkflow,
-          [{ forceReview: true, lessonId }],
-          getLessonContentHookToken(lessonId),
-        ),
+        startOnce(lessonContentWorkflow, [{ lessonId }], getLessonContentHookToken(lessonId)),
       ),
     ),
     Promise.allSettled(drillGroups.map((group) => rewriteFlaggedDrills({ group, workflowRunId }))),

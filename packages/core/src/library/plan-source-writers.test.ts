@@ -78,7 +78,7 @@ import { placeChapterLessons } from "./lessons/place-chapter-lessons";
 import { voiceListeningSet } from "./listening/voice-listening-set";
 import { removeImageAsset } from "./media/check-image-asset";
 import { temperatureSpec, writtenTemperatureLesson } from "./quality/_test-utils/written-lessons";
-import { setAsidePublishedLesson } from "./quality/published-lesson-check";
+import { setAsidePublishedLesson } from "./quality/set-aside-published-lesson";
 import { replaceFlaggedDrills } from "./review-flags/rewrite-flagged-drills";
 import { toStepContent } from "./steps/written-screens";
 
@@ -396,7 +396,7 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.updateMany"],
     },
   ],
-  "library/quality/later-reviews.ts": [
+  "library/quality/pull-lesson-for-fix.ts": [
     {
       fields: ["contentStatus"],
       verdict: "excluded",
@@ -404,7 +404,7 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.updateMany"],
     },
   ],
-  "library/quality/published-lesson-check.ts": [
+  "library/quality/set-aside-published-lesson.ts": [
     { verdict: "marks", why: "a set-aside lesson leaves plans", writes: ["lesson.update"] },
   ],
   "library/review-flags/rewrite-flagged-drills.ts": [
@@ -1660,7 +1660,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
   "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
-  "library/quality/published-lesson-check.ts": { setAsidePublishedLesson: setAsideCase },
+  "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
 };
 

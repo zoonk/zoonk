@@ -6,7 +6,7 @@ import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-rules";
 import { getLessonCheckModels } from "../quality/lesson-check-models";
-import { getLessonRewriteModel, getLessonWriterModel, writeLessonDraft } from "./lesson-writer";
+import { getLessonWriterModel, writeLessonDraft } from "./lesson-writer";
 import type * as Ai from "ai";
 
 /** Where the schema the answer follows starts, after the writer's rules. */
@@ -95,27 +95,10 @@ describe(getLessonWriterModel, () => {
   it("gives every writer the chain may serve a reviewer from another family", () => {
     for (const reuse of REUSES) {
       for (const writerModel of [getLessonWriterModel({ reuse }), OPUS, TERRA, ARGON]) {
-        const { model } = getLessonCheckModels({ reuse, writerModel });
+        const { model } = getLessonCheckModels({ writerModel });
         expect(getModelFamily(model)).not.toBe(getModelFamily(writerModel));
       }
     }
-  });
-});
-
-describe(getLessonRewriteModel, () => {
-  it("picks the writer chain's first model from a family whose drafts weren't held back", () => {
-    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "openai/gpt-6.1-terra"])).toBe(
-      "anthropic/claude-opus-5.5",
-    );
-
-    expect(getLessonRewriteModel(["google/gemini-4-argon", "google/gemini-4-argon"])).toBe(
-      "openai/gpt-6.1-terra",
-    );
-
-    // A fallback wrote one of them: both families are left out.
-    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
-      "google/gemini-4-argon",
-    );
   });
 });
 

@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
 import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
@@ -60,6 +61,9 @@ function lostBases({
     .filter((question) => !kept.has(question));
 }
 
+/** The exclusive claims the `real-term` lesson makes on screens 14 and 16 and its map. */
+const REAL_TERM_FALSE_CLAIMS = ["só sai antes do prazo", "só um ato grave", "só o impeachment"];
+
 export const scoreLessonFix: TaskScorer<LessonFixExpected> = async ({ output, testCase }) => {
   const input = testCase.userInput as FixLessonDraftParams;
   const expected = testCase.expected;
@@ -69,6 +73,47 @@ export const scoreLessonFix: TaskScorer<LessonFixExpected> = async ({ output, te
   }
 
   const { changedScreens, lesson } = JSON.parse(output) as FixOutput;
+
+  if (expected.real) {
+    const changed = lesson.screens.flatMap((screen, index) =>
+      isDeepStrictEqual(screen, input.lesson.screens[index]) ? [] : [index],
+    );
+
+    const summaryChanged = !isDeepStrictEqual(lesson.summary, input.lesson.summary);
+
+    if (expected.real === "citation") {
+      const kept =
+        JSON.stringify(lesson.screens[3]).includes("§ 2º") &&
+        changed.length === 0 &&
+        !summaryChanged;
+
+      return createFixedScore({
+        conclusion: kept
+          ? "Kept the correct citation and all content."
+          : "Changed correct content.",
+        score: kept ? 10 : 6,
+      });
+    }
+
+    const corrected = JSON.stringify([
+      lesson.screens[13],
+      lesson.screens[15],
+      lesson.summary,
+    ]).toLowerCase();
+
+    const fixed =
+      [13, 15].every((index) => changed.includes(index)) &&
+      summaryChanged &&
+      changed.every((index) => index === 13 || index === 15) &&
+      REAL_TERM_FALSE_CLAIMS.every((claim) => !corrected.includes(claim));
+
+    return createFixedScore({
+      conclusion: fixed
+        ? "Updated both claims and the summary; inspect the factual correction."
+        : "Kept a false claim, missed a repeated one or changed unrelated screens.",
+      score: fixed ? 10 : 6,
+    });
+  }
 
   const checked = checkLesson(input, lesson);
 

@@ -102,11 +102,9 @@ describe(flaggedContentWorkflow, () => {
       lessonsPulled: [lesson.id],
     });
 
-    expect(start).toHaveBeenCalledWith(
-      lessonContentWorkflow,
-      [{ forceReview: true, lessonId: lesson.id }],
-      { experimental_hook: { token: `lesson-content:${lesson.id}` } },
-    );
+    expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [{ lessonId: lesson.id }], {
+      experimental_hook: { token: `lesson-content:${lesson.id}` },
+    });
 
     expect(vi.mocked(generateStatuteDrills).mock.calls[0]?.[0]).toMatchObject({
       articles: [{ reference: "Art. 13", text: expect.stringContaining("quinze dias") }],

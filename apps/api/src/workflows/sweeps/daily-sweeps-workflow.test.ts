@@ -37,7 +37,6 @@ import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
 import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
-import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
@@ -92,12 +91,7 @@ describe(dailySweepsWorkflow, () => {
       where: { id: guest.id },
     });
 
-    const [lesson, oldCode, expiredCode] = await Promise.all([
-      // Ids ending this way land in the later review's one-in-five sample.
-      libraryLessonFixture({
-        contentStatus: "completed",
-        id: `${randomUUID().slice(0, -8)}0000000a`,
-      }),
+    const [oldCode, expiredCode] = await Promise.all([
       verificationFixture(new Date(now - 2 * DAY_MS)),
       verificationFixture(new Date(now - 60_000)),
       memoryFactFixture({
@@ -165,13 +159,6 @@ describe(dailySweepsWorkflow, () => {
     );
 
     expect(result.freshnessChecks).toBeGreaterThanOrEqual(1);
-
-    const reviewed = getStartMock()
-      .mock.calls.filter(([workflow]) => workflow === laterReviewWorkflow)
-      .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
-
-    expect(reviewed).toContain(lesson.id);
-    expect(result.laterReviews).toBe(reviewed.length);
   });
 
   it("starts the follow-ups of learners whose owed work no run took", async () => {

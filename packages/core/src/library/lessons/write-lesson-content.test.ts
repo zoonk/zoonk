@@ -243,7 +243,7 @@ describe(writeLessonContent, () => {
     expect(checkLessonQuality).not.toHaveBeenCalled();
 
     expect(vi.mocked(fixLessonDraft).mock.calls[0]?.[0].problems).toStrictEqual([
-      expect.objectContaining({ screen: 1, source: "code" }),
+      expect.objectContaining({ screen: 1, source: "check" }),
     ]);
 
     const steps = await listSteps(lesson.id);
@@ -284,30 +284,24 @@ describe(writeLessonContent, () => {
     expect(stored.setAsideAt).toBeNull();
   });
 
-  it("gives a private lesson a second fix pass on what the code checks still flag", async () => {
+  it("gives a private lesson only one fix pass", async () => {
     const user = await userFixture();
     const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
-    const written = writtenTemperatureLesson();
-    const filler = withScreen(written, 4, explanation("It's worth noting that zero is a mark."));
+
+    const filler = withScreen(
+      writtenTemperatureLesson(),
+      4,
+      explanation("It's worth noting that zero is a mark."),
+    );
 
     mockDraft(filler);
     mockFix({ changedScreens: [], lesson: filler });
-    const fix = mockFix({ changedScreens: [4], lesson: written });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { check: { lesson: written }, fixed: true, status: "published" },
+      { status: "heldBack" },
     );
 
-    expect(writeLessonDraft).toHaveBeenCalledOnce();
-    expect(fixLessonDraft).toHaveBeenCalledTimes(2);
-
-    expect(vi.mocked(fixLessonDraft).mock.calls[1]?.[0]).toMatchObject({
-      lesson: filler,
-      problems: [expect.objectContaining({ screen: 4, source: "code" })],
-    });
-
-    const steps = await listSteps(lesson.id);
-    expect(steps.find((step) => step.position === 4)?.runId).toBe(fix.runId);
+    expect(fixLessonDraft).toHaveBeenCalledOnce();
   });
 
   it("repairs Markdown learners would see and an option written twice in code, with no fix pass", async () => {
@@ -366,7 +360,7 @@ describe(writeLessonContent, () => {
     );
 
     expect(vi.mocked(fixLessonDraft).mock.calls[0]?.[0]).toMatchObject({
-      problems: [expect.objectContaining({ screen: 4, source: "code" })],
+      problems: [expect.objectContaining({ screen: 4, source: "check" })],
     });
 
     expect(checkLessonQuality).not.toHaveBeenCalled();
@@ -394,7 +388,6 @@ describe(writeLessonContent, () => {
 
     mockDraft(filler);
     mockFix({ changedScreens: [], lesson: filler });
-    mockFix({ changedScreens: [], lesson: filler });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { status: "heldBack" },
@@ -415,9 +408,9 @@ describe(writeLessonContent, () => {
     const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
     mockDraft(writtenTemperatureLesson());
 
-    await expect(
-      writeLessonContent({ forceReview: true, lessonId: lesson.id, workflowRunId }),
-    ).resolves.toMatchObject({ check: { cite: false, review: false }, status: "published" });
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { check: { cite: false, review: false }, status: "published" },
+    );
   });
 
   it("holds back a lesson whose code activity doesn't print its expected output", async () => {
@@ -470,20 +463,19 @@ describe(writeLessonContent, () => {
     await expect(listSteps(lesson.id)).resolves.toStrictEqual([]);
   });
 
-  it("publishes after its fix pass when a sentence is still a little long for the level", async () => {
+  it("publishes advisory sentence length without a fix", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const long = `A rise ${"always moves the mark up the thermometer ".repeat(5)}even below zero.`;
     const draft = withScreen(writtenTemperatureLesson(), 1, explanation(long));
 
     mockDraft(draft);
-    mockFix({ changedScreens: [], lesson: draft });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { fixed: true, status: "published" },
+      { fixed: false, status: "published" },
     );
   });
 
-  it("sends a term used before its explanation to the fix pass", async () => {
+  it("publishes advisory term order without a fix", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
     const [hook] = written.screens;
@@ -500,15 +492,12 @@ describe(writeLessonContent, () => {
     };
 
     mockDraft(early);
-    mockFix({ changedScreens: [0], lesson: early });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { fixed: true, status: "published" },
+      { fixed: false, status: "published" },
     );
 
-    expect(vi.mocked(fixLessonDraft).mock.calls.at(-1)?.[0].problems).toContainEqual(
-      expect.objectContaining({ problem: expect.stringContaining('Uses "TMP"'), screen: 0 }),
-    );
+    expect(fixLessonDraft).not.toHaveBeenCalled();
   });
 
   it("writes a private lesson from its owner's material and leaves its citations to the check after publishing", async () => {
@@ -662,7 +651,7 @@ describe(writeLessonContent, () => {
     await expect(listSteps(lesson.id)).resolves.toStrictEqual([]);
   });
 
-  it("gives the writer the chapter's other lessons and sends an earlier lesson's example to the fix pass", async () => {
+  it("gives the writer the chapter's other lessons and leaves repeated examples advisory", async () => {
     const chapter = await libraryChapterFixture();
     const { lesson, workflowRunId } = await createClaimedLesson({ homeChapterId: chapter.id });
 
@@ -721,10 +710,9 @@ describe(writeLessonContent, () => {
     });
 
     mockDraft(repeated);
-    mockFix({ changedScreens: [7], lesson: written });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { fixed: true, status: "published" },
+      { fixed: false, status: "published" },
     );
 
     expect(vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0].chapterLessons).toStrictEqual([
@@ -744,14 +732,6 @@ describe(writeLessonContent, () => {
       },
     ]);
 
-    expect(vi.mocked(fixLessonDraft).mock.calls.at(-1)?.[0].problems).toContainEqual(
-      expect.objectContaining({
-        problem: expect.stringContaining(
-          'Reuses the numbers 12, 15 from the earlier lesson "Temperatures below zero"',
-        ),
-        screen: 7,
-        source: "code",
-      }),
-    );
+    expect(fixLessonDraft).not.toHaveBeenCalled();
   });
 });

@@ -6,7 +6,9 @@ You fix short lessons for a learning app. Automatic checks and a reviewer found 
 
 Read the lesson plan, the current lesson in `LESSON` and the problems in `PROBLEMS`, then return the fixed screens and, when needed, a fixed summary card.
 
-- Fix every problem. A problem names a screen by its number, or the whole lesson when it has no number.
+- A reviewer can be wrong. Check its finding against MATERIAL, SOURCES and expert knowledge. The plan can be wrong too. When the lesson is already right, leave that screen unchanged. Automatic check problems are always real.
+- When a fix changes a fact, name, case or number, return every other screen mentioning it, updated to match, including questions' basis and reasons and the summary. Keep everything else as it is.
+- Fix every real problem. A problem names a screen by its number, or the whole lesson when it has no number.
 - Return each screen you change in full, with `screen` set to its number (1 is the first screen). Leave out screens you don't change.
 - A screen keeps its place and stays one of the kinds its plan allows. Change a screen's kind only when that's the fix, such as a `check` that asks for a calculation becoming a `mathCheck`.
 - When an activity can't be fixed, write that screen as a `check` that makes the learner use the same idea.
@@ -36,4 +38,4 @@ Follow the same rules the writer followed:
 
 # Final check
 
-Before answering, make sure each problem in `PROBLEMS` is fixed, no fix breaks another rule, and every screen you return is complete.
+Before answering, make sure each confirmed problem in `PROBLEMS` is fixed, no fix breaks another rule, and every screen you return is complete.

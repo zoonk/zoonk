@@ -23,10 +23,8 @@ type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 const recordedSpec = recordedOutput<RecordedSpec>("lesson-spec");
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
-const ARGON = "google/gemini-4-argon";
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";
-const TERRA = "openai/gpt-6.1-terra";
 
 const heldBack: RecordedDraft = {
   ...recordedDraft,
@@ -114,7 +112,7 @@ describe("lesson content redrafts", () => {
     ).resolves.toMatchObject({ contentStatus: "completed", heldBackDrafts: [], setAsideAt: null });
   });
 
-  it("gives the last draft to another family's writer, then sets the lesson aside and the plan moves on", async () => {
+  it("keeps the same writer for every draft, then sets the lesson aside and the plan moves on", async () => {
     const { item, lesson } = await plannedLesson();
     mockDrafts(3);
 
@@ -125,7 +123,7 @@ describe("lesson content redrafts", () => {
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
       OPUS,
       OPUS,
-      TERRA,
+      OPUS,
     ]);
 
     const [stored, planItem] = await Promise.all([
@@ -152,7 +150,7 @@ describe("lesson content redrafts", () => {
     });
 
     expect(writeLessonDraft).toHaveBeenCalledOnce();
-    expect(fixLessonDraft).toHaveBeenCalledTimes(2);
+    expect(fixLessonDraft).toHaveBeenCalledOnce();
 
     const [stored, planItem] = await Promise.all([
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
@@ -178,7 +176,7 @@ describe("lesson content redrafts", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
       OPUS,
-      ARGON,
+      OPUS,
     ]);
   });
 

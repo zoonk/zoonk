@@ -5,6 +5,7 @@ import { type HeldBackDraft } from "../../generation/held-back-drafts";
 import {
   type LessonAnalytics,
   type LessonGate,
+  type WrittenVersion,
   readLessonSources,
 } from "../../lessons/_utils/checked-version";
 import {
@@ -16,7 +17,6 @@ import {
   type LessonScreenToSave,
   type ScreenProvenance,
 } from "../../lessons/_utils/save-lesson-content";
-import { loadLessonReuse } from "../../lessons/lesson-reuse";
 import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { getPictureKey } from "../../media/_utils/step-image-request";
 
@@ -28,6 +28,24 @@ export type CheckContext = {
   lessonId: string;
   workflowRunId: string;
 };
+
+export type PublishedDraftState = {
+  context: CheckContext;
+  inputs: LessonWritingInputs;
+  live: boolean;
+  gate: LessonGate;
+  version: WrittenVersion;
+  replaces: number;
+};
+
+export type PublishedFix =
+  | { status: "passed" }
+  | {
+      before: WrittenVersion["lesson"];
+      flaggedScreens: (number | null)[];
+      state: PublishedDraftState;
+      status: "fixed";
+    };
 
 export async function toTaskAnalytics({
   analytics,
@@ -55,9 +73,8 @@ export async function loadCheck({
   version: number;
   writerModel: string;
 }): Promise<{ gate: LessonGate; inputs: LessonWritingInputs } | null> {
-  const [inputs, reuse, current, analytics] = await Promise.all([
+  const [inputs, current, analytics] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
-    loadLessonReuse({ forExam: context.forExam, lessonId: context.lessonId }),
     readCurrentLessonVersion(context.lessonId),
     toTaskAnalytics(context),
   ]);
@@ -70,7 +87,6 @@ export async function loadCheck({
     gate: {
       analytics,
       context: toWritingContext(inputs),
-      reuse,
       serviceTier: BACKGROUND_TIER,
       sources: readLessonSources(inputs),
       writerModel,

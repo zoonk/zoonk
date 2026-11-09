@@ -1,6 +1,5 @@
 import "server-only";
 import { generateText } from "ai";
-import { getModelFamily } from "../../_utils/model-family";
 import { schemaInPrompt } from "../../_utils/schema-in-prompt";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
@@ -35,7 +34,7 @@ const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBou
  * `getLessonWriterModel` picks the first writer; each model falls back to the others, all from other
  * families, so an outage at one provider doesn't stop lessons. Argon hasn't run the current prompt.
  */
-const WRITER_MODELS = [
+export const WRITER_MODELS = [
   "openai/gpt-6.1-terra",
   "anthropic/claude-opus-5.5",
   "google/gemini-4-argon",
@@ -62,16 +61,6 @@ export type WriteLessonDraftParams = LessonWritingContext & {
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
-
-/**
- * The first model of the writer's chain from a family that wrote none of the held-back drafts. The
- * reviewer follows the writer, so it stays from another family.
- */
-export function getLessonRewriteModel(heldBackModels: readonly string[]): string {
-  const families = new Set(heldBackModels.map((model) => getModelFamily(model)));
-
-  return WRITER_MODELS.find((model) => !families.has(getModelFamily(model))) ?? defaultModel;
-}
 
 const FIND_ERROR_TEMPLATE = "findError";
 

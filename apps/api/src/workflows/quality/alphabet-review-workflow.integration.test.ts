@@ -83,10 +83,8 @@ function review(screens: number[]) {
   return taskResult({
     issues: screens.map((screen) => ({
       fix: "Use a sound the learner knows.",
-      kind: "incorrect" as const,
       problem: "The cue compares it with a sound it doesn't have.",
       screen,
-      severity: "blocking" as const,
     })),
   });
 }
@@ -154,7 +152,10 @@ describe(alphabetReviewWorkflow, () => {
 
   it("voices each new clip of a fix in its own step, retrying only the one that failed", async () => {
     const { lessonId } = await publishCyrillic();
-    vi.mocked(checkLessonQuality).mockResolvedValue(review([2, 3]));
+
+    vi.mocked(checkLessonQuality)
+      .mockResolvedValueOnce(review([2, 3]))
+      .mockResolvedValue(review([]));
 
     vi.mocked(fixAlphabetLesson).mockImplementation(async ({ lesson }) =>
       taskResult({
@@ -179,6 +180,8 @@ describe(alphabetReviewWorkflow, () => {
 
     const run = await start(alphabetReviewWorkflow, [{ lessonId, version: 1 }]);
     await expect(run.returnValue).resolves.toBe("republished");
+
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
 
     expect(
       vi

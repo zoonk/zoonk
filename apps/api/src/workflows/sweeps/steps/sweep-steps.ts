@@ -8,7 +8,6 @@ import { recalibrateItemDifficulties } from "@zoonk/core/library/items/recalibra
 import { listOwedSentenceOrders } from "@zoonk/core/library/language/write-owed-sentence-orders";
 import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
 import { listOwedPictureChecks } from "@zoonk/core/library/media/check-image";
-import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
 import { countOpenReviewFlags } from "@zoonk/core/library/review-flags/flagged";
 import { listOwedSkillLevels } from "@zoonk/core/library/skills/tag-levels";
 import { purgeMemoryFacts } from "@zoonk/core/memory/purge";
@@ -39,12 +38,6 @@ export async function purgeEvaluationRunsStep(): Promise<number> {
 
   const { purged } = await purgeEvaluationRuns();
   return purged;
-}
-
-export async function listLessonsForLaterReviewStep(): Promise<string[]> {
-  "use step";
-
-  return listLessonsForLaterReview();
 }
 
 export async function listOwedPictureChecksStep(): Promise<string[]> {
