@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
 import { type LibraryLessonCompletion } from "../contract";
 
@@ -13,7 +14,7 @@ export async function findOwedPlanReveal({
 }): Promise<LibraryLessonCompletion["planReveal"]> {
   const goal = await prisma.goal.findFirst({
     orderBy: { createdAt: "desc" },
-    select: { id: true, title: true },
+    select: { displayName: true, id: true, title: true },
     where: { openingLessonId: lessonId, planRevealedAt: null, status: "active", userId },
   });
 
@@ -22,5 +23,10 @@ export async function findOwedPlanReveal({
   }
 
   const readiness = await readPlanReadiness({ goalId: goal.id, userId });
-  return { goalId: goal.id, goalTitle: goal.title, planReady: readiness?.ready ?? false };
+
+  return {
+    goalId: goal.id,
+    goalTitle: resolveGoalDisplayName(goal),
+    planReady: readiness?.ready ?? false,
+  };
 }
