@@ -51,7 +51,6 @@
   "plan_cadence_weekly_effect": "0a9d057f575bdf5fa1708c205fe6b28fe558ce2a0508a844bb6625cee40bfe2d",
   "plan_cancel": "4f8e8234a33f8e6a966fd36361c1ca533fc6ac2c7065e630b52bb546c7c7fba3",
   "plan_catch_up": "6d50f3d5a75f8a68182f58aa75c1189a970f6ab5ed8eeae59a7ebab741fd0b3f",
-  "plan_challenge_after_previous": "3f86f7d20286d80ccd10a0422f6b4aff0d581fe63cbb60c723a82af0c64f2bc3",
   "plan_challenge_left_out": "71c55c9450d5ea4956ec48be5b5501cf7375d697b0b7aeb56caf6f91b1869b82",
   "plan_challenge_live_call": "f7a6e77ab091ca4de038d0afe2c60b27853be1fb6d073985bb5e5416bf5ec149",
   "plan_challenge_next_session": "01874489d209cdd75ecafbec5d880e9c02c0c2193d5374e316ea434b71919074",
@@ -741,7 +740,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">승리</string>
     <string name="plan_challenge_next_session">다음 학습 때</string>
-    <string name="plan_challenge_after_previous">앞선 챌린지를 마친 후</string>
     <string name="plan_challenge_opens_after_lessons">이 단계의 레슨을 마치면 열려요</string>
     <string name="plan_challenge_questions">힌트 없이 푸는 이번 단계의 문제</string>
     <string name="plan_challenge_live_call">하고 싶은 말을 전하는 실시간 대화</string>

@@ -51,7 +51,6 @@
   "plan_cadence_weekly_effect": "59fbc5b436bf465f790e3ab7ece0e96f1029bed3feb39ddcd8d10645027e26ec",
   "plan_cancel": "824454a3774b06d69b4fe4d10b0dec13e6588bbfef88fb57ff02164d4bcba937",
   "plan_catch_up": "5a53845ce51368eb4cd2248fe0b7a1770e372ec26d0fb1eb3a253e6816f6ee3c",
-  "plan_challenge_after_previous": "9dbd5e273f8531dc1dc13aa3b5410d2698868033758bf0eac9090eeba1006390",
   "plan_challenge_left_out": "82a05e74f1836d7bfc4768997b9328f3763648bc0822fe1eae87fd2647b99e02",
   "plan_challenge_live_call": "5d4553e44800a8febf240326085026dcefd62e00b829449fa000920a2282a3d5",
   "plan_challenge_next_session": "4b999c4c9c694f66ff0824999ec15c1ef268b72d3b2239e184d10e40484ca01a",
@@ -741,7 +740,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">勝利</string>
     <string name="plan_challenge_next_session">次の学習で</string>
-    <string name="plan_challenge_after_previous">前のチャレンジが終わった後</string>
     <string name="plan_challenge_opens_after_lessons">このフェーズのレッスンを終えると挑戦できます</string>
     <string name="plan_challenge_questions">このフェーズの問題（ヒントなし）</string>
     <string name="plan_challenge_live_call">言いたいことをその場で伝える会話</string>

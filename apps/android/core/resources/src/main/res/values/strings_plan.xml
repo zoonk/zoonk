@@ -156,7 +156,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Won</string>
     <string name="plan_challenge_next_session">In your next session</string>
-    <string name="plan_challenge_after_previous">After the challenge before it</string>
     <string name="plan_challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
     <string name="plan_challenge_questions">Questions on this phase, with no hints</string>
     <string name="plan_challenge_live_call">A live call where you get your point across</string>
