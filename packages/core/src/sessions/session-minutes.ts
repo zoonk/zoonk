@@ -39,7 +39,7 @@ export type SessionMinutes = z.infer<typeof sessionMinutesSchema>;
 
 type MinuteBlock = { status: string; estimatedMinutes: number | null; payload?: unknown };
 
-export function getCreditedMinutes(block: MinuteBlock): number {
+function getCreditedMinutes(block: MinuteBlock): number {
   if (block.status !== "completed") {
     return 0;
   }
