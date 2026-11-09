@@ -395,7 +395,7 @@ struct TodayDayLead: View {
 
   private var session: StudyDay { view.session }
 
-  var isEmpty: Bool { freshStart == nil && mockDay == nil && session.meterParts.isEmpty }
+  var isEmpty: Bool { freshStart == nil && mockDay == nil && !session.showsDayProgress }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -407,7 +407,7 @@ struct TodayDayLead: View {
 
       mockFunding
 
-      if !session.meterParts.isEmpty {
+      if session.showsDayProgress {
         DayProgressRow(session: session)
       }
     }
