@@ -5,6 +5,7 @@ import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits"
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
+import { getStoredBlockWait } from "../block-wait";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { getLessonLookahead, getUnwrittenMinutesOn } from "./day-lessons";
 import { getExamPrepAccess } from "./exam-access";
@@ -43,12 +44,23 @@ async function trimSessionLessons({
 
   const usedMinutes = getSessionUsedMinutes(session.blocks);
 
-  const leaving = tail.filter(
+  const lessons = tail.filter(
     (_, index) =>
       usedMinutes -
         tail.slice(0, index).reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0) >
       session.plannedMinutes,
   );
+
+  const checkpoints = session.blocks.filter(
+    (block) =>
+      block.status === "pending" &&
+      block.startedAt === null &&
+      !readBlockPayload(block).extra &&
+      !readBlockPayload(block).reinforcement &&
+      getStoredBlockWait({ block, blocks: lessons }) === "lessons",
+  );
+
+  const leaving = [...lessons, ...checkpoints];
 
   if (leaving.length > 0) {
     await tx.studySessionBlock.deleteMany({
@@ -57,44 +69,25 @@ async function trimSessionLessons({
   }
 
   const leavingIds = new Set(leaving.map((block) => block.id));
-  const blocks = session.blocks.filter((block) => !leavingIds.has(block.id));
-
-  if (leaving.length > 0) {
-    const completed = blocks.find((block) => block.id === completedBlockId);
-
-    if (!completed) {
-      throw new Error("The completed lesson is missing from its locked day.");
-    }
-
-    await tx.studySessionBlock.update({
-      data: { payload: { ...readBlockPayload(completed), deferredLessonsCount: leaving.length } },
-      where: { id: completedBlockId },
-    });
-  }
-
-  return blocks;
+  return session.blocks.filter((block) => !leavingIds.has(block.id));
 }
 
-/** The learner lock is already held; only the completion may remove unstarted tail lessons. */
-export async function refitSessionLessons(
+async function refillSessionLessons(
   tx: TransactionClient,
   {
-    sessionId,
-    completedBlockId,
+    session,
     timeZone,
-  }: { sessionId: string; completedBlockId?: string; timeZone: string },
-): Promise<boolean> {
-  const session = await lockSessionQueue({ sessionId, tx });
+  }: {
+    session: StudySessionRow & { goal: NonNullable<StudySessionRow["goal"]> };
+    timeZone: string;
+  },
+) {
+  const { blocks, id: sessionId } = session;
 
-  if (!session?.goal || session.status === "completed") {
-    return false;
-  }
-
-  const blocks = await trimSessionLessons({ completedBlockId, session, tx });
   const room = session.plannedMinutes - getSessionUsedMinutes(blocks);
 
   if (room < 1) {
-    return false;
+    return { blocks, reserved: false };
   }
 
   const [plan, subscription] = await Promise.all([
@@ -108,7 +101,7 @@ export async function refitSessionLessons(
   ]);
 
   if (!plan) {
-    return false;
+    return { blocks, reserved: false };
   }
 
   const prerequisites = await loadSkillPrerequisites(
@@ -177,6 +170,53 @@ export async function refitSessionLessons(
     await tx.studySession.update({
       data: { plannedMinutes: Math.ceil(getSessionUsedMinutes(blocks)) },
       where: { id: sessionId },
+    });
+  }
+
+  return { blocks: current.blocks, reserved };
+}
+
+/** The learner lock is already held; only the completion may remove unstarted tail lessons. */
+export async function refitSessionLessons(
+  tx: TransactionClient,
+  {
+    sessionId,
+    completedBlockId,
+    timeZone,
+  }: { sessionId: string; completedBlockId?: string; timeZone: string },
+): Promise<boolean> {
+  const session = await lockSessionQueue({ sessionId, tx });
+
+  if (!session?.goal || session.status === "completed") {
+    return false;
+  }
+
+  const trimmed = await trimSessionLessons({ completedBlockId, session, tx });
+
+  const { blocks, reserved } = await refillSessionLessons(tx, {
+    session: { ...session, blocks: trimmed, goal: session.goal },
+    timeZone,
+  });
+
+  if (completedBlockId && trimmed.length < session.blocks.length) {
+    const completed = blocks.find((block) => block.id === completedBlockId);
+
+    if (!completed) {
+      throw new Error("The completed lesson is missing from its locked day.");
+    }
+
+    const deferredLessonsCount = session.blocks.filter(
+      (block) =>
+        block.kind === "learn" &&
+        !blocks.some(
+          (current) =>
+            current.id === block.id || (block.lessonId && current.lessonId === block.lessonId),
+        ),
+    ).length;
+
+    await tx.studySessionBlock.update({
+      data: { payload: { ...readBlockPayload(completed), deferredLessonsCount } },
+      where: { id: completedBlockId },
     });
   }
 

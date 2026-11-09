@@ -5,8 +5,9 @@ import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
-import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { type SessionBuildInput } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
+import { buildRestOfDay } from "./build-rest-of-day";
 import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
@@ -122,17 +123,23 @@ export async function planRestOfDayWithPlan({
     selection,
   });
 
+  const plan = await dayPlan;
+
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
-  const { blocks, plannedMinutes } = buildSessionBlocks(
-    withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
-  );
+  const built = buildRestOfDay({
+    input: withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
+    items: plan.items,
+    kept,
+  });
 
   const keptKinds = new Set(kept.map((block) => block.kind));
 
   return {
-    blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
-    plan: await dayPlan,
-    plannedMinutes: getSessionUsedMinutes(kept) + plannedMinutes,
+    blocks: built.blocks.filter(
+      (block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind),
+    ),
+    plan,
+    plannedMinutes: getSessionUsedMinutes(kept) + built.plannedMinutes,
   };
 }
 

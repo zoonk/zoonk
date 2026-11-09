@@ -8,7 +8,7 @@ type BlockWaitFields = {
   status: StudyBlockStatus;
 };
 
-function isPhaseChallenge(block: Pick<BlockWaitFields, "checkpoint">): boolean {
+export function isPhaseChallenge(block: Pick<BlockWaitFields, "checkpoint">): boolean {
   return block.checkpoint !== null && !block.checkpoint.mock && block.checkpoint.kind !== "weekly";
 }
 
