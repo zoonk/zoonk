@@ -154,15 +154,25 @@ describe(selectPracticeRun, () => {
     ]);
   });
 
-  it("gives mistakes with no question of their own different questions while they last", () => {
+  it("asks one question for mistakes with no question of their own on one skill", () => {
     const run = selectPracticeRun([
       runMistake("m1", { candidates: ["a", "b"] }),
       runMistake("m2", { candidates: ["a", "b"] }),
     ]);
 
+    expect(asked(run)).toStrictEqual([["m1", ["a"]]]);
+  });
+
+  it("leaves out a mistake with no question of its own once its skill has one in the run", () => {
+    const run = selectPracticeRun([
+      runMistake("own", { candidates: ["a", "b"], own: "a" }),
+      runMistake("no-own", { candidates: ["a", "b"] }),
+      runMistake("elsewhere", { candidates: ["c"] }),
+    ]);
+
     expect(asked(run)).toStrictEqual([
-      ["m1", ["a"]],
-      ["m2", ["b"]],
+      ["own", ["a"]],
+      ["elsewhere", ["c"]],
     ]);
   });
 

@@ -117,8 +117,8 @@ export function selectMistakeDrill({
 
 /**
  * One question per mistake, none twice. A mistake's own question is kept for it. One with no question
- * of its own takes the next free one on its skill, or sits out when none is left, since a right answer
- * on its skill fixes it too (`answerMistakePractice`). A lesson's idea shows before its first question
+ * of its own takes a free one on its skill, unless the run already asks one there: a right answer on
+ * its skill fixes it too (`answerMistakePractice`). A lesson's idea shows before its first question
  * only.
  */
 export function selectPracticeRun<
@@ -132,6 +132,12 @@ export function selectPracticeRun<
   const taught = new Set<string>();
 
   return mistakes.flatMap((mistake) => {
+    const hasOwn = mistake.candidates.some(({ id }) => id === mistake.originalItemId);
+
+    if (!hasOwn && mistake.candidates.some(({ id }) => asked.has(id))) {
+      return [];
+    }
+
     const drill = selectMistakeDrill({
       ...mistake,
       candidates: mistake.candidates.filter(
