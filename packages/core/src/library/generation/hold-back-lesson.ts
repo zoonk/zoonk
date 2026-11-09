@@ -192,10 +192,6 @@ export async function holdBackLessonDraft({
       if (lesson.contentStatus !== "running") {
         const saved = previous.find((draft) => draft.runId === workflowRunId);
 
-        if (lesson.contentStatus === "pending" && saved) {
-          return { planIds: [], setAside: false };
-        }
-
         return lesson.setAsideAt && saved
           ? { planIds: await readHeldPlanIds(tx, holdKey), setAside: true }
           : null;
