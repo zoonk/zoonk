@@ -7,7 +7,7 @@ import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
 import { readMissionDocument } from "./catalog";
-import { asSavedMission, loadMissionDayViews } from "./mission-day-views";
+import { type DayProgressReader, asSavedMission, loadMissionDayViews } from "./mission-day-views";
 
 /** Read-only shared mission projection; never replaces a saved pick. */
 export async function getDayMissions({
@@ -15,6 +15,7 @@ export async function getDayMissions({
   displayBlocks,
   timeZone,
   client = prisma,
+  readProgress,
   through,
 }: {
   session: StudySessionRow;
@@ -22,6 +23,7 @@ export async function getDayMissions({
   displayBlocks?: StudySessionBlock[];
   timeZone: string;
   client?: TransactionClient;
+  readProgress?: DayProgressReader;
   through?: Date;
 }): Promise<Mission[]> {
   const document = readMissionDocument(storedSession.missions);
@@ -35,6 +37,7 @@ export async function getDayMissions({
   const missions = await loadMissionDayViews({
     client,
     picks: document.picks,
+    readProgress,
     session: { ...storedSession, blocks },
     through,
     timeZone,

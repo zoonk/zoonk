@@ -9,6 +9,7 @@ import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
+import { type DayProgressReader } from "../missions/mission-day-views";
 import { getVisibleSessionTotal } from "../session-minutes";
 import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
@@ -89,6 +90,7 @@ export async function loadStudySessionView({
   blueprint,
   initialDay,
   readCatchUp,
+  readDayProgress,
   readLessonStates,
   session: storedSession,
   timeZone,
@@ -98,6 +100,7 @@ export async function loadStudySessionView({
   blueprint?: ExamBlueprint | null;
   /** A GET's request-wide catch-up items; without it, they're read fresh. */
   readCatchUp?: () => Promise<readonly SessionPlanItem[]>;
+  readDayProgress?: DayProgressReader;
   readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
   timeZone: string;
@@ -169,7 +172,13 @@ export async function loadStudySessionView({
 
   const [outlines, missions, fullMealEarned, plusLessons, reserved] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
-    getDayMissions({ displayBlocks, session, timeZone, ...(current && { through: new Date() }) }),
+    getDayMissions({
+      displayBlocks,
+      readProgress: readDayProgress,
+      session,
+      timeZone,
+      ...(current && { through: new Date() }),
+    }),
     hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
     loadDayPlusLessons({
       access: examAccess,

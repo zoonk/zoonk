@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
 import { readLessonStates } from "../../learner/facts/lesson-states";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
@@ -40,6 +41,7 @@ export async function readSavedDayView({
     loadStudySessionView({
       blueprint,
       readCatchUp,
+      readDayProgress: readDayMissionProgress,
       readLessonStates,
       session,
       timeZone,
