@@ -5,6 +5,7 @@ import { type HeldBackDraft } from "../../generation/held-back-drafts";
 import {
   type LessonAnalytics,
   type LessonGate,
+  type WrittenVersion,
   readLessonSources,
 } from "../../lessons/_utils/checked-version";
 import {
@@ -26,6 +27,15 @@ export type CheckContext = {
   forExam?: boolean;
   lessonId: string;
   workflowRunId: string;
+};
+
+export type PublishedDraftState = {
+  context: CheckContext;
+  inputs: LessonWritingInputs;
+  live: boolean;
+  gate: LessonGate;
+  version: WrittenVersion;
+  replaces: number;
 };
 
 export async function toTaskAnalytics({

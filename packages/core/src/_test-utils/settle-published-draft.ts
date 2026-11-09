@@ -27,6 +27,6 @@ export async function settlePublishedDraft(
     return fixed;
   }
 
-  const rechecked = await recheckPublishedDraft({ state: fixed.state });
+  const rechecked = await recheckPublishedDraft({ before: fixed.before, state: fixed.state });
   return rechecked.status === "checked" ? stagePublishedDraft(rechecked) : rechecked;
 }

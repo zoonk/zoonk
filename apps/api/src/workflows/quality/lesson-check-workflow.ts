@@ -59,7 +59,7 @@ async function finishDraft(outcome: PublishedDraftOutcome): Promise<PublishedLes
     return fixed;
   }
 
-  const rechecked = await recheckPublishedDraftStep({ state: fixed.state });
+  const rechecked = await recheckPublishedDraftStep({ before: fixed.before, state: fixed.state });
   return rechecked.status === "checked" ? stagePublishedDraftStep(rechecked) : rechecked;
 }
 

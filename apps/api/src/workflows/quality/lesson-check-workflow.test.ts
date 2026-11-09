@@ -169,6 +169,22 @@ describe(lessonCheckWorkflow, () => {
     expect(start).not.toHaveBeenCalled();
   });
 
+  it("keeps a declined live version without rechecking, staging or starting marks and pictures", async () => {
+    const { input, lesson } = await publishedLesson();
+    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+
+    vi.mocked(fixLessonDraft).mockImplementation(async ({ lesson: candidate }) =>
+      taskResult({ changedScreens: [], lesson: structuredClone(candidate) }),
+    );
+
+    await expect(lessonCheckWorkflow(input)).resolves.toStrictEqual({ cited: 0, status: "passed" });
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    expect(start).not.toHaveBeenCalled();
+    expect(citePublishedLessonStep).not.toHaveBeenCalled();
+    const steps = await prisma.step.findMany({ where: { lessonId: lesson.id } });
+    expect(steps.every((step) => step.version === input.plan.version && !step.staged)).toBe(true);
+  });
+
   it("tags the fix of what its reviewer found and draws the pictures it lacks, keeping the version learners get until they settle", async () => {
     const { input, lesson } = await publishedLesson();
 

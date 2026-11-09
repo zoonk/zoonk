@@ -1,12 +1,11 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
 import {
   type CheckedVersion,
   type GateResult,
-  type LessonGate,
-  type WrittenVersion,
   checkFixedLesson,
   citeScreensIfPossible,
   fixVersionDraft,
@@ -29,6 +28,7 @@ import { type LessonCheckPlan } from "../lessons/write-lesson-content";
 import {
   BACKGROUND_TIER,
   type CheckContext,
+  type PublishedDraftState,
   keepPictures,
   loadCheck,
   loadVersionSteps,
@@ -140,15 +140,6 @@ export async function checkPublishedLesson({
   };
 }
 
-export type PublishedDraftState = {
-  context: CheckContext;
-  inputs: LessonWritingInputs;
-  live: boolean;
-  gate: LessonGate;
-  version: WrittenVersion;
-  replaces: number;
-};
-
 export type PublishedDraftOutcome =
   | PublishedLessonOutcome
   | { first: GateResult; status: "needsFix"; state: PublishedDraftState }
@@ -165,20 +156,16 @@ export async function fixPublishedDraft({
 }: {
   first: GateResult;
   state: PublishedDraftState;
-}): Promise<{ status: "passed" } | { status: "fixed"; state: PublishedDraftState }> {
+}): Promise<
+  { status: "passed" } | { before: WrittenLesson; status: "fixed"; state: PublishedDraftState }
+> {
   const version = await fixVersionDraft({ draft: state.version, first, gate: state.gate });
   const before = state.version.lesson;
   const after = version.lesson;
 
-  const declined = first.blocking.every(({ screen }) =>
-    screen === null
-      ? isDeepStrictEqual(before, after)
-      : isDeepStrictEqual(before.screens[screen], after.screens[screen]),
-  );
-
-  return state.live && declined
+  return state.live && isDeepStrictEqual(before, after)
     ? { status: "passed" }
-    : { state: { ...state, version }, status: "fixed" };
+    : { before, state: { ...state, version }, status: "fixed" };
 }
 
 export async function checkPublishedDraft({
@@ -208,8 +195,10 @@ export async function checkPublishedDraft({
 }
 
 export async function recheckPublishedDraft({
+  before,
   state,
 }: {
+  before: WrittenLesson;
   state: PublishedDraftState;
 }): Promise<
   Extract<PublishedDraftOutcome, { status: "checked" | "heldBack" }> | { status: "replaced" }
@@ -221,14 +210,26 @@ export async function recheckPublishedDraft({
   const checked = await checkFixedLesson({
     fixed: state.version.lesson,
     gate: state.gate,
-    review: true,
+    review: !isDeepStrictEqual(before, state.version.lesson),
   });
 
-  return checked.blocking.length > 0
+  // The writer's response to a finding is final; the second review checks the fix.
+  const blocking = checked.blocking.filter(
+    (problem) =>
+      problem.source === "code" ||
+      !isDeepStrictEqual(
+        problem.screen === null ? before.summary : before.screens[problem.screen],
+        problem.screen === null
+          ? state.version.lesson.summary
+          : state.version.lesson.screens[problem.screen],
+      ),
+  );
+
+  return blocking.length > 0
     ? {
         draft: toHeldBackDraft({
           model: state.gate.writerModel,
-          problems: checked.blocking,
+          problems: blocking,
           workflowRunId: state.context.workflowRunId,
         }),
         status: "heldBack",
