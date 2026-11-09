@@ -209,7 +209,7 @@ function isWrittenAsLetters({ language, text }: { language: string; text: string
   return toTokens({ language, text }).every((token) => isLoneLetter(token));
 }
 
-/** A letter's name can take two words ("double u", "i griega"), one of them missed beside it. */
+/** A letter's name can take two words ("double u", "i griega"), so a mistake beside it may be the rest. */
 function isLetterNameHeardAsLetters({
   index,
   language,
@@ -230,7 +230,7 @@ function isLetterNameHeardAsLetters({
   }
 
   const name = [words[index - 1], word, words[index + 1]].filter(
-    (part): part is SpokenWordResult => part === word || part?.status === "missed",
+    (part): part is SpokenWordResult => part !== undefined && part.status !== "correct",
   );
 
   return name.some((part) => !isWrittenAsLetters({ language, text: part.text }));

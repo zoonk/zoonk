@@ -227,6 +227,14 @@ describe(hasTranscribedLetterNames, () => {
         language: "it",
       }),
     ).toBe(true);
+
+    expect(
+      hasLetterNames({
+        expected: "The code is one double u",
+        heard: "The code is 1 W",
+        language: "en",
+      }),
+    ).toBe(true);
   });
 
   it("leaves letters to the transcript when the sentence writes them as letters", () => {
