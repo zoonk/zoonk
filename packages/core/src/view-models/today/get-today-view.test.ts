@@ -527,6 +527,7 @@ describe(getTodayView, () => {
 
   it("waits for a plan that is still being built instead of fixing an empty day", async () => {
     const user = await userFixture();
+
     const goal = await goalFixture({
       displayName: "Quantum",
       title: "Quantum physics",
