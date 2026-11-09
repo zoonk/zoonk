@@ -8,6 +8,7 @@ import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
+import { getSessionChallenges } from "../sessions/_utils/day-stretch";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
@@ -151,7 +152,7 @@ function getSavedWaitReason({
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, today, userId } = challenge;
 
-  const [results, plusRequired, block, savedDay] = await Promise.all([
+  const [results, plusRequired, block, latestDay] = await Promise.all([
     item.kind === "boss"
       ? readChallengeResults(
           userId,
@@ -160,7 +161,8 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       : Promise.resolve(new Map<string, CheckpointResult>()),
     needsPlus(challenge),
     findChallengeBlock({ challenge }),
-    prisma.studySession.findUnique({
+    prisma.studySession.findFirst({
+      orderBy: { localDate: "desc" },
       select: {
         blocks: {
           select: {
@@ -173,10 +175,13 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
           },
         },
         id: true,
+        localDate: true,
       },
-      where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
+      where: { goalId: goal.id, localDate: { lte: today }, userId },
     }),
   ]);
+
+  const savedDay = latestDay?.localDate.getTime() === today.getTime() ? latestDay : null;
 
   const due =
     item.kind === "boss"
@@ -188,6 +193,8 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       ? getChallengeTimings({
           goal,
           items: challenge.items,
+          lastSessionChallenges:
+            latestDay && !savedDay ? getSessionChallenges(latestDay.blocks) : undefined,
           results,
           savedDay: savedDay !== null,
           settings: parsePlanSettings(challenge.plan.settings),

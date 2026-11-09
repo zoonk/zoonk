@@ -19,12 +19,13 @@ type PathInput = Pick<
 > & {
   challengesOpen: boolean;
   context: PlanReadContext;
-  todaySession: Awaited<ReturnType<typeof readTodayPlanSession>>;
+  todayPlan: Awaited<ReturnType<typeof readTodayPlanSession>>;
   challengeResults: ReadonlyMap<string, CheckpointResult>;
 };
 
-export function buildPlanPath({ context, todaySession, challengeResults, ...input }: PathInput) {
+export function buildPlanPath({ context, todayPlan, challengeResults, ...input }: PathInput) {
   const { goal, items, phases, state } = context;
+  const todaySession = todayPlan.session;
 
   const todayBlocks = listTodayLearnBlocks(todaySession?.blocks ?? []);
 
@@ -42,6 +43,7 @@ export function buildPlanPath({ context, todaySession, challengeResults, ...inpu
     timings: getChallengeTimings({
       goal,
       items,
+      lastSessionChallenges: new Map(todayPlan.lastSessionChallenges),
       results: challengeResults,
       savedDay: todaySession !== null,
       settings: state.settings,

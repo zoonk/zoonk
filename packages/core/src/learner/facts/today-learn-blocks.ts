@@ -6,12 +6,12 @@ export async function readTodayLearnBlocks(
   userId: string,
   goalId: string,
 ): Promise<TodayLearnBlock[]> {
-  const session = await readTodayPlanSession(userId, goalId);
+  const { session } = await readTodayPlanSession(userId, goalId);
   return listTodayLearnBlocks(session?.blocks ?? []);
 }
 
 export function listTodayLearnBlocks(
-  blocksInDay: NonNullable<Awaited<ReturnType<typeof readTodayPlanSession>>>["blocks"],
+  blocksInDay: NonNullable<Awaited<ReturnType<typeof readTodayPlanSession>>["session"]>["blocks"],
 ): TodayLearnBlock[] {
   const blocks = blocksInDay.filter(
     (block) => block.kind === "learn" && (block.status === "active" || block.status === "pending"),

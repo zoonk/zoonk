@@ -3,6 +3,7 @@ import { type PlannedBlock, type PlannedCheckpoint } from "../session-builder";
 
 export function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBlock {
   const {
+    afterLessons = false,
     itemIds,
     reinforcement: _reinforcement,
     minutes,
@@ -19,6 +20,7 @@ export function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBloc
     kind: "checkpoint",
     lessonId: null,
     payload: toBlockPayload({
+      afterLessons,
       checkpoint: details,
       itemIds,
       planItemId,

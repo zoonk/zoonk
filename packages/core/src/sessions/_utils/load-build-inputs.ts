@@ -282,6 +282,7 @@ export async function loadSessionBuildInput(
     fillLessons,
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
+    lastSessionChallenges: plan.lastSessionChallenges,
     lessons,
     mockReplacesDay: isMockOnlyDay({
       goal,
