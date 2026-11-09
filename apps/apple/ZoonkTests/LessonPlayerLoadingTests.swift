@@ -1023,12 +1023,6 @@ private actor FirstLessonWritingTransport: ClientTransport {
         HTTPResponse(status: .ok, headerFields: headerFields),
         HTTPBody(#"data: {"status":"completed","step":"lessonReady"}"# + "\n\n")
       )
-    case "getGeneration":
-      headerFields[.contentType] = "application/json"
-      return (
-        HTTPResponse(status: .ok, headerFields: headerFields),
-        HTTPBody(#"{"id":"run-1","status":"running"}"#)
-      )
     default:
       XCTFail("Unexpected player request: \(operationID)")
       throw APIError.network
