@@ -13,6 +13,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.api.models.LessonClockInput
+import com.zoonk.api.models.LessonClockResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -82,6 +83,29 @@ class LessonClockTest {
             assertEquals(listOf(update(1, PAUSED), update(2, RUNNING), update(3, PAUSED)), api.clockUpdates.map { it.second })
             assertEquals(listOf(ana, ana, ana), api.clockUpdates.map { it.first })
             assertEquals(1, api.startOpenings.size)
+        }
+
+    @Test fun ignoredRunningRestartsOnceWithTheRunAndUsesTheNewClock() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            val nextClock = UUID.randomUUID()
+            api.clockId = nextClock
+            api.clockResponse = { LessonClockResult(LessonClockResult.Status.IGNORED) }
+            player.leave()
+            advanceUntilIdle()
+            assertEquals(listOf(null), api.startRunIds)
+            player.resume()
+            advanceUntilIdle()
+            player.resume()
+            player.leave()
+            advanceUntilIdle()
+
+            assertEquals(listOf(null, RUN_ID), api.startRunIds)
+            assertEquals(
+                listOf(update(1, PAUSED), update(2, RUNNING), update(1, PAUSED).copy(clockId = nextClock)),
+                api.clockUpdates.map { it.second },
+            )
         }
 
     @Test fun standaloneLessonsSkipClockCalls() =
@@ -186,7 +210,7 @@ class LessonClockTest {
             advanceUntilIdle()
             assertEquals(before, player.state.value)
             assertTrue(player.state.value?.run is LessonRun.Started)
-            api.clockResponse = {}
+            api.clockResponse = { LessonClockResult(LessonClockResult.Status.UPDATED) }
             player.resume()
             advanceUntilIdle()
 
@@ -198,7 +222,10 @@ class LessonClockTest {
             val player = player()
             advanceUntilIdle()
             val paused = CompletableDeferred<Unit>()
-            api.clockResponse = { if (it.state == PAUSED && it.sequence == 1L) paused.await() }
+            api.clockResponse = {
+                if (it.state == PAUSED && it.sequence == 1L) paused.await()
+                LessonClockResult(LessonClockResult.Status.UPDATED)
+            }
             player.leave()
             runCurrent()
             player.resume()
@@ -220,6 +247,7 @@ class LessonClockTest {
             api.clockResponse = {
                 reply.await()
                 delivered = true
+                LessonClockResult(LessonClockResult.Status.UPDATED)
             }
             player.leave()
             player.viewModelScope.cancel()

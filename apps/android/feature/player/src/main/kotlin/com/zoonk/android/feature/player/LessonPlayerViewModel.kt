@@ -60,6 +60,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonClockInput
+import com.zoonk.api.models.LessonClockResult
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.LessonStepCheckInput
@@ -343,10 +344,17 @@ class LessonPlayerViewModel(
         clock = input
         viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
             // The exit pause must outlive the navigation entry that clears this ViewModel.
-            withContext(NonCancellable) {
-                cache.mutate { current ->
-                    if (current == session) store.api.clock(current, lessonId, input)
+            val result =
+                withContext(NonCancellable) {
+                    cache.mutate { current ->
+                        if (current == session) store.api.clock(current, lessonId, input) else null
+                    }
                 }
+            if (input.state == LessonClockInput.State.RUNNING &&
+                result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
+                sessions.current == session && clock?.clockId == input.clockId
+            ) {
+                start(input.runId.toString())
             }
         }
     }
