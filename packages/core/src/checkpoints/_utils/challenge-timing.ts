@@ -23,7 +23,6 @@ export function getChallengeTimings({
   settings,
   today,
   todayBlocks = [],
-  challengesOpen = true,
   savedDay = false,
   results = new Map(),
 }: {
@@ -32,7 +31,6 @@ export function getChallengeTimings({
   settings: PlanSettings;
   today: Date;
   todayBlocks?: readonly Pick<StudySessionBlock, "payload" | "status">[];
-  challengesOpen?: boolean;
   savedDay?: boolean;
   results?: ReadonlyMap<string, CheckpointResult>;
 }): ReadonlyMap<string, ChallengeTiming> {
@@ -63,7 +61,7 @@ export function getChallengeTimings({
         today: date,
       }),
       reviewDay: blocked,
-      trialEnded: !challengesOpen,
+      trialEnded: false,
     })
       ? getGoalDayMinutes({ date, goal, planSettings: settings })
       : 0;

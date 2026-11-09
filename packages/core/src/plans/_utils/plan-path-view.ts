@@ -40,7 +40,6 @@ export function buildPlanPath({ context, todaySession, challengeResults, ...inpu
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
     targetDate: goal.targetDate,
     timings: getChallengeTimings({
-      challengesOpen: input.challengesOpen,
       goal,
       items,
       results: challengeResults,
