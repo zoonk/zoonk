@@ -253,7 +253,7 @@ describe("a finished plan", () => {
 
     expect(checkpointIds(view)).toStrictEqual(bosses.map((boss) => boss.id));
     await expect(readChallengeStatus(first.id)).resolves.toBe("ready");
-    await expect(readChallengeStatus(second.id)).resolves.toBe("waiting");
+    await expect(readChallengeStatus(second.id)).resolves.toBe("upcoming");
 
     await expect(readTodayStatus(goal.id)).resolves.toStrictEqual(view?.status);
     await expect(readNext()).resolves.toBeNull();

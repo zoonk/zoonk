@@ -292,7 +292,7 @@ async function expectTuesdayStable({
   );
 
   expect(monday.card).toMatchObject({
-    challenge: { date: null, minutes: 15, questions: 10, status: "waiting" },
+    challenge: { date: TUESDAY, minutes: 15, questions: 10, status: "upcoming" },
     status: "ready",
   });
 

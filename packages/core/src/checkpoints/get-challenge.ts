@@ -23,6 +23,7 @@ import { isChallengeReached } from "./_utils/challenge-reach";
 import { loadChallengeSize } from "./_utils/challenge-size";
 import { getChallengeStatus } from "./_utils/challenge-status";
 import { getChallengeTimings } from "./_utils/challenge-timing";
+import { getWaitingTiming } from "./_utils/challenge-timing-view";
 import { loadChallengeTopics } from "./_utils/challenge-topics";
 import { getAskablePassMark } from "./_utils/checkpoint-outcome";
 import { loadResultReinforcement } from "./_utils/checkpoint-reinforcement";
@@ -161,7 +162,16 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
     findChallengeBlock({ challenge }),
     prisma.studySession.findUnique({
       select: {
-        blocks: { select: { id: true, kind: true, payload: true, position: true, status: true } },
+        blocks: {
+          select: {
+            id: true,
+            kind: true,
+            payload: true,
+            position: true,
+            startedAt: true,
+            status: true,
+          },
+        },
         id: true,
       },
       where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
@@ -173,17 +183,20 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       ? isChallengeReached({ boss: item, items: challenge.items })
       : item.scheduledFor !== null && item.scheduledFor <= today && item.status === "todo";
 
-  const nextOffer =
-    item.kind !== "boss" ||
-    getChallengeTimings({
-      goal,
-      items: challenge.items,
-      results,
-      savedDay: savedDay !== null,
-      settings: parsePlanSettings(challenge.plan.settings),
-      today,
-      todayBlocks: savedDay?.blocks,
-    }).get(item.id)?.when === "nextSession";
+  const timing =
+    item.kind === "boss"
+      ? getChallengeTimings({
+          goal,
+          items: challenge.items,
+          results,
+          savedDay: savedDay !== null,
+          settings: parsePlanSettings(challenge.plan.settings),
+          today,
+          todayBlocks: savedDay?.blocks,
+        }).get(item.id)
+      : null;
+
+  const nextOffer = item.kind !== "boss" || timing?.when === "nextSession";
 
   const todayBlock = getTodayBlock({ block, today });
 
@@ -205,10 +218,10 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
 
   // An earlier day's block isn't the one Start opens today: the offer is sized as its item keeps it.
   return {
+    ...getWaitingTiming({ challenge, due, status, timing }),
     lastResult: results.get(item.id) ?? null,
     plusRequired,
     previewBlock: offered ? null : block,
-    status,
     todayBlock,
     waitReason: getSavedWaitReason({ savedBlocks: savedDay?.blocks ?? [], todayBlock }),
   };
@@ -252,7 +265,7 @@ export async function getChallenge({
   const kind = getKind(challenge);
   const isMock = item.kind === "mock";
 
-  const { lastResult, plusRequired, previewBlock, status, todayBlock, waitReason } =
+  const { date, lastResult, plusRequired, previewBlock, status, todayBlock, waitReason } =
     await loadChallengeDay(challenge);
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
@@ -275,7 +288,7 @@ export async function getChallenge({
       blockId,
       call,
       canMove: canMoveIt,
-      date: item.kind !== "boss" && item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
+      date,
       estimatedMinutes: size.estimatedMinutes,
       examName: isMock ? getExamName({ blueprint: goal.examBlueprint, goal }) : null,
       fullLength: size.fullLength,

@@ -33028,7 +33028,7 @@
           },
           "date": {
             "nullable": true,
-            "description": "Null for a phase challenge, which opens after its preceding lessons finish. Weekly challenges and mocks keep their real calendar date.",
+            "description": "A reached phase challenge's next capable day when it is upcoming, from the same estimate the Plan shows. Null before its preceding lessons finish or when it is offered in the next session. Weekly challenges and mocks keep their real calendar date.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"

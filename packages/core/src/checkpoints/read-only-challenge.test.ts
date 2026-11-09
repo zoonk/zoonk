@@ -142,6 +142,29 @@ describe("a challenge intro is a read", () => {
 
   afterEach(() => vi.useRealTimers());
 
+  it("dates a reached challenge left outside today's saved session from the Plan's timing", async () => {
+    const { boss, goal, user } = await dueBossFixture((skillIds) => ({
+      kind: "text",
+      minutes: 15,
+      questions: 10,
+      testedKeys: [],
+      testedSkillIds: skillIds,
+      waiting: false,
+    }));
+
+    await prisma.planItem.update({
+      data: { scheduledFor: new Date("2027-01-16") },
+      where: { id: boss.id },
+    });
+
+    await studySessionFixture({ goalId: goal.id, localDate: SESSION_TODAY, userId: user.id });
+
+    await expect(readIntro(boss.id)).resolves.toMatchObject({
+      date: "2026-10-01",
+      status: "upcoming",
+    });
+  });
+
   it("previews unskipped teaching before an unreached challenge without expanding a reached offer", async () => {
     const { boss, plan, skills } = await dueBossFixture(() => ({
       kind: "text",
