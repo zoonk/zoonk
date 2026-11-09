@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
+import { getGoalPlan } from "../plans/get-goal-plan";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -17,6 +18,7 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
+import { readStudyDay } from "../sessions/_utils/read-study-day";
 import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 import { buildSessionBlocks } from "../sessions/session-builder";
 import { getPassMark } from "./checkpoint-rules";
@@ -141,6 +143,60 @@ describe("a challenge intro is a read", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it.each([0, 45])(
+    "keeps Today's carried challenge after midnight with %i minutes today",
+    async (minutes) => {
+      const { boss, goal, plan, user } = await dueBossFixture((skillIds) => ({
+        kind: "text",
+        minutes: 15,
+        questions: 10,
+        testedKeys: [],
+        testedSkillIds: skillIds,
+        waiting: false,
+      }));
+
+      await prisma.plan.update({
+        data: { settings: { weekdayMinutes: [45, 45, 45, 45, minutes, 45, 45] } },
+        where: { id: plan.id },
+      });
+
+      vi.setSystemTime(new Date("2026-09-30T23:50:00Z"));
+      const opened = await startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id });
+
+      if (opened.status !== "ready") {
+        throw new Error("Expected a started challenge");
+      }
+
+      vi.setSystemTime(new Date("2026-10-01T00:05:00Z"));
+
+      const [today, view, screen] = await Promise.all([
+        readStudyDay({ goal, now: new Date(), timeZone: "UTC", userId: user.id }),
+        getGoalPlan(goal.id),
+        readIntro(boss.id),
+      ]);
+
+      const resumed = await startChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id });
+      expect(today?.session.localDate).toStrictEqual(SESSION_TODAY);
+
+      expect(today?.session.blocks).toStrictEqual(
+        expect.arrayContaining([expect.objectContaining({ id: opened.destination.blockId })]),
+      );
+
+      expect(resumed).toMatchObject({ destination: opened.destination, status: "ready" });
+
+      if (view.status !== "ready") {
+        throw new Error("Expected the Plan");
+      }
+
+      const checkpoint = view.plan.phases
+        .flatMap((phase) => phase.checkpoint ?? [])
+        .find((entry) => entry.planItemId === boss.id);
+
+      expect.soft(checkpoint?.when).toBe("nextSession");
+      expect(screen).toMatchObject({ blockId: opened.destination.blockId, status: "started" });
+    },
+  );
 
   it("dates a reached challenge left outside today's saved session from the Plan's timing", async () => {
     const { boss, goal, user } = await dueBossFixture((skillIds) => ({

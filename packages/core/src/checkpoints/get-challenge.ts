@@ -1,8 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { getExamName } from "../exams/exam-name";
 import { getWrongPenalty } from "../exams/scoring/mock-scoring";
 import { readChallengeResults } from "../learner/facts/challenge-results";
+import { readTodayPlanSession } from "../learner/facts/today-plan-session";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
@@ -36,7 +36,6 @@ import {
   type OwnedChallenge,
   findChallengeBlock,
   findOwnedChallenge,
-  getTodayBlock,
 } from "./_utils/owned-challenge";
 import { type ChallengeCall, type ChallengeView } from "./challenge-contract";
 import { getCheckpointReward } from "./checkpoint-reward";
@@ -134,15 +133,6 @@ function isOfferedBeforeOpen({
   return offerable && !readBossOffer(challenge)?.waiting;
 }
 
-function readSavedDay({ goal, today, userId }: OwnedChallenge) {
-  return prisma.studySession.findUnique({
-    select: {
-      blocks: { select: { id: true, kind: true, payload: true, position: true, status: true } },
-    },
-    where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
-  });
-}
-
 /** The day Today plans while Start hasn't built today; only a phase challenge's offer reads it. */
 function previewChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, now, timeZone, userId } = challenge;
@@ -154,7 +144,7 @@ function previewChallengeDay(challenge: OwnedChallenge) {
 
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, today, userId } = challenge;
-  const savedDayRead = readSavedDay(challenge);
+  const savedDayRead = readTodayPlanSession(userId, goal.id);
 
   const [results, plusRequired, block, savedDay, previewBlocks] = await Promise.all([
     item.kind === "boss"
@@ -188,7 +178,7 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
         }).get(item.id)
       : null;
 
-  const todayBlock = getTodayBlock({ block, today });
+  const todayBlock = block?.session.id === savedDay?.id ? block : null;
 
   const offered =
     !savedDay &&
