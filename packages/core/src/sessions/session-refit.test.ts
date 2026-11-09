@@ -15,7 +15,6 @@ import { loadPlanAtToken } from "../plans/_utils/plan-token";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import { appendLandedLessons } from "./_utils/append-landed-lessons";
 import { savedSelection } from "./_utils/saved-day-plan";
-import { settleSessionDay } from "./_utils/settle-session-day";
 import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { STUDY_SESSION_INCLUDE } from "./_utils/study-session-access";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
@@ -28,8 +27,7 @@ async function setup({
   minutes = 100,
   queued = 10,
   lessons = 14,
-  firstPhaseLessons = lessons,
-}: { minutes?: number; queued?: number; lessons?: number; firstPhaseLessons?: number } = {}) {
+}: { minutes?: number; queued?: number; lessons?: number } = {}) {
   freezeClock();
   vi.setSystemTime(NOW);
 
@@ -49,11 +47,7 @@ async function setup({
 
   const plan = await planFixture({
     goalId: goal.id,
-    items: playable.map(({ lesson }, index) => ({
-      lessonId: lesson.id,
-      minutes: 10,
-      phase: index < firstPhaseLessons ? 0 : 1,
-    })),
+    items: playable.map(({ lesson }) => ({ lessonId: lesson.id, minutes: 10 })),
   });
 
   const session = await studySessionFixture({
@@ -123,23 +117,21 @@ async function finish({
 async function addCheckpoint({
   fixture,
   kind = "boss",
-  estimatedMinutes = 10,
   position = fixture.blocks.length,
 }: {
   fixture: Awaited<ReturnType<typeof setup>>;
   kind?: "boss" | "finalBoss" | "weekly";
-  estimatedMinutes?: number;
   position?: number;
 }) {
   const item =
     kind === "weekly"
       ? await planItemFixture({ kind: "checkpoint", planId: fixture.plan.id })
       : await prisma.planItem.findFirstOrThrow({
-          where: { kind: "boss", phase: 0, planId: fixture.plan.id },
+          where: { kind: "boss", planId: fixture.plan.id },
         });
 
   const block = await studySessionBlockFixture({
-    estimatedMinutes,
+    estimatedMinutes: 10,
     kind: "checkpoint",
     payload: toBlockPayload({
       checkpoint: {
@@ -180,107 +172,6 @@ async function appendSavedPlan(fixture: Awaited<ReturnType<typeof setup>>) {
 }
 
 describe("completion refits today's lessons", () => {
-  it("does not refill from the next phase after deferring its duel", async () => {
-    const fixture = await setup({ firstPhaseLessons: 2, lessons: 4, minutes: 40, queued: 2 });
-
-    const { block: checkpoint, item: checkpointItem } = await addCheckpoint({
-      estimatedMinutes: 20,
-      fixture,
-    });
-
-    await prisma.planItem.update({
-      data: { scheduledFor: fixture.session.localDate },
-      where: { id: checkpointItem.id },
-    });
-
-    const { completion } = await finish({
-      block: fixture.blocks[0]!,
-      elapsedMinutes: 20,
-      sessionId: fixture.session.id,
-    });
-
-    expect(completion.blocks.map((block) => block.lessonId)).toStrictEqual(
-      fixture.playable.slice(0, 2).map(({ lesson }) => lesson.id),
-    );
-
-    expect(completion.blocks.map((block) => block.id)).not.toContain(checkpoint.id);
-    expect(completion.deferredLessonsCount).toBe(0);
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: checkpointItem.id } }),
-    ).resolves.toMatchObject({ status: "todo" });
-  });
-
-  it("does not refill from the next phase when settling a day whose duel was deferred", async () => {
-    const fixture = await setup({ firstPhaseLessons: 2, lessons: 4, minutes: 40, queued: 2 });
-
-    await Promise.all([
-      prisma.planItem.updateMany({
-        data: { scheduledFor: fixture.session.localDate },
-        where: { kind: "boss", phase: 0, planId: fixture.plan.id },
-      }),
-      prisma.planItem.updateMany({
-        data: { completedAt: NOW, status: "done" },
-        where: { id: { in: fixture.plan.items.slice(0, 2).map((item) => item.id) } },
-      }),
-      prisma.studySessionBlock.updateMany({
-        data: { completedAt: NOW, status: "completed" },
-        where: { sessionId: fixture.session.id },
-      }),
-    ]);
-
-    await expect(
-      settleSessionDay({ sessionId: fixture.session.id, timeZone: "UTC", userId: fixture.user.id }),
-    ).resolves.toMatchObject({ sessionCompleted: true });
-
-    const saved = await prisma.studySession.findUniqueOrThrow({
-      include: { blocks: { orderBy: { position: "asc" } } },
-      where: { id: fixture.session.id },
-    });
-
-    expect(saved.blocks.map((block) => block.lessonId)).toStrictEqual(
-      fixture.playable.slice(0, 2).map(({ lesson }) => lesson.id),
-    );
-
-    expect(saved.status).toBe("completed");
-  });
-
-  it.each([false, true])(
-    "refills across a language duel only for free (plus: %s)",
-    async (plus) => {
-      const fixture = await setup({ firstPhaseLessons: 1, lessons: 2, minutes: 20, queued: 1 });
-
-      await Promise.all([
-        prisma.goal.update({
-          data: { kind: "language", targetLanguage: "en" },
-          where: { id: fixture.goal.id },
-        }),
-        prisma.planItem.updateMany({
-          data: { scheduledFor: fixture.session.localDate },
-          where: { kind: "boss", phase: 0, planId: fixture.plan.id },
-        }),
-      ]);
-
-      if (plus) {
-        await prisma.subscription.create({
-          data: { plan: "plus", provider: "zoonk", referenceId: fixture.user.id, status: "active" },
-        });
-      }
-
-      const { completion } = await finish({
-        block: fixture.blocks[0]!,
-        elapsedMinutes: 5,
-        sessionId: fixture.session.id,
-      });
-
-      expect(
-        completion.blocks.some((block) => block.lessonId === fixture.playable[1]?.lesson.id),
-      ).toBe(!plus);
-
-      expect(completion.sessionCompleted).toBe(plus);
-    },
-  );
-
   it.each(["boss", "finalBoss"] as const)(
     "defers a %s when a slow lesson removes its unfinished teaching",
     async (kind) => {

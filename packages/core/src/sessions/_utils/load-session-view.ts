@@ -114,12 +114,9 @@ export async function loadStudySessionView({
   const { plan, viewer } = basics;
   const { answers } = blockViews;
 
-  const phaseChallengesRequired =
-    storedSession.goal?.kind !== "language" || viewer?.tier === "plus";
-
   const visibleBlocks = withoutLockedPhaseChallenges({
     blocks: storedSession.blocks,
-    phaseChallengesRequired,
+    phaseChallengesRequired: storedSession.goal?.kind !== "language" || viewer?.tier === "plus",
   });
 
   const visibleBlockIds = new Set(visibleBlocks.map((block) => block.id));
@@ -170,13 +167,7 @@ export async function loadStudySessionView({
       localDate: session.localDate,
       userId,
     }),
-    loadLessonReservation({
-      current,
-      phaseChallengesRequired,
-      plan,
-      session,
-      trialEnded: examAccess.trialEnded,
-    }),
+    loadLessonReservation({ current, plan, session, trialEnded: examAccess.trialEnded }),
   ]);
 
   const view = toStudySessionView({

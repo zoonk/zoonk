@@ -61,7 +61,6 @@ export async function loadCompletionQueue({
     : new Map();
 
   const reserved = hasSessionLessonReservation({
-    phaseChallengesRequired: required,
     plan,
     prerequisites,
     session,
