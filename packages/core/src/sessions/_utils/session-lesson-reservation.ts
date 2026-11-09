@@ -8,7 +8,11 @@ import { getSessionUsedMinutes } from "../session-minutes";
 import { pickDayLessons } from "./day-lessons";
 import { isMockOnlyDay } from "./day-mock";
 import { findPlannedReview } from "./day-review";
-import { keepDuelLessons, markLessonsAroundChallenges } from "./lessons-before-challenges";
+import {
+  keepDuelLessons,
+  keepLessonsBeforeUnqueuedDuels,
+  markLessonsAroundChallenges,
+} from "./lessons-before-challenges";
 import { canAddSessionLessons } from "./session-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionRow } from "./study-session-access";
@@ -67,25 +71,24 @@ export function getSessionLessonCandidates({
     return checkpoint ? [{ ...checkpoint, planItemId, planItemKey }] : [];
   });
 
-  const checkpoints = [
-    ...queuedCheckpoints,
-    ...plan.items
-      .filter(
-        (item) =>
-          phaseChallengesRequired &&
-          isBossDue({ boss: item, today: localDate }) &&
-          !queuedCheckpoints.some(
-            (checkpoint) =>
-              (checkpoint.planItemId ?? checkpoint.planItemKey) === (item.id ?? item.key),
-          ),
-      )
-      .map((item) => ({
-        kind: "boss" as const,
-        planItemId: item.id,
-        planItemKey: item.key,
-        rematch: false,
-      })),
-  ];
+  const unqueuedCheckpoints = plan.items
+    .filter(
+      (item) =>
+        phaseChallengesRequired &&
+        isBossDue({ boss: item, today: localDate }) &&
+        !queuedCheckpoints.some(
+          (checkpoint) =>
+            (checkpoint.planItemId ?? checkpoint.planItemKey) === (item.id ?? item.key),
+        ),
+    )
+    .map((item) => ({
+      kind: "boss" as const,
+      planItemId: item.id,
+      planItemKey: item.key,
+      rematch: false,
+    }));
+
+  const checkpoints = [...queuedCheckpoints, ...unqueuedCheckpoints];
 
   const selected = [...new Set([...fillItems, ...reservedItems])].toSorted(
     (a, b) => a.position - b.position,
@@ -94,7 +97,11 @@ export function getSessionLessonCandidates({
   const marked = markLessonsAroundChallenges({
     checkpoints,
     items: plan.items,
-    lessons: selected.map((item) => ({ ...item, planItemId: item.id, planItemKey: item.key })),
+    lessons: keepLessonsBeforeUnqueuedDuels({
+      checkpoints: unqueuedCheckpoints,
+      items: plan.items,
+      lessons: selected.map((item) => ({ ...item, planItemId: item.id, planItemKey: item.key })),
+    }),
     today: localDate,
   });
 

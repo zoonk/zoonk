@@ -90,6 +90,33 @@ export function keepDuelLessons<TLesson extends DayLesson>({
     : lessons;
 }
 
+/** Promises after a duel apply only while the duel remains in today's queue. */
+export function keepLessonsBeforeUnqueuedDuels<TLesson extends DayLesson>({
+  checkpoints,
+  items,
+  lessons,
+}: {
+  checkpoints: readonly DayChallenge[];
+  items: readonly (Pick<PlanItem, "position"> & { id: string | null; key?: string })[];
+  lessons: readonly TLesson[];
+}): TLesson[] {
+  const positions = new Map(items.map((item) => [item.id ?? item.key, item.position]));
+
+  const boundary = Math.min(
+    Infinity,
+    ...checkpoints.flatMap((checkpoint) =>
+      isFirstDuel(checkpoint)
+        ? [positions.get(checkpoint.planItemId ?? checkpoint.planItemKey ?? undefined) ?? Infinity]
+        : [],
+    ),
+  );
+
+  return lessons.filter(
+    (lesson) =>
+      (positions.get(lesson.planItemId ?? lesson.planItemKey ?? undefined) ?? -1) < boundary,
+  );
+}
+
 /** Preserves plan order within each side of the duel. */
 export function splitAtDuel<TLesson extends DuelMarks>(
   lessons: readonly TLesson[],

@@ -43,6 +43,7 @@ function shouldDeferCheckpoint({
     block.status !== "pending" ||
     block.startedAt !== null ||
     !checkpoint ||
+    checkpoint.kind === "finalBoss" ||
     checkpoint.mock ||
     extra ||
     reinforcement
@@ -73,15 +74,32 @@ async function trimSessionLessons({
     return session.blocks;
   }
 
-  const tail = session.blocks
+  const finalBosses = session.blocks.flatMap((block) => {
+    const { checkpoint, planItemId, planItemKey } = readBlockPayload(block);
+
+    return checkpoint?.kind === "finalBoss" &&
+      !checkpoint.mock &&
+      (block.status === "pending" || block.status === "active")
+      ? [{ ...checkpoint, planItemId, planItemKey, rematch: false }]
+      : [];
+  });
+
+  const tail = markLessonsAroundChallenges({
+    checkpoints: finalBosses,
+    items: plan?.items ?? [],
+    lessons: session.blocks.map((block) => ({ ...readBlockPayload(block), block })),
+    today: session.localDate,
+  })
     .filter(
-      (block) =>
+      ({ beforeChallenge, block, extra, reinforcement }) =>
+        !beforeChallenge &&
         block.kind === "learn" &&
         block.status === "pending" &&
         block.startedAt === null &&
-        !readBlockPayload(block).extra &&
-        !readBlockPayload(block).reinforcement,
+        !extra &&
+        !reinforcement,
     )
+    .map(({ block }) => block)
     .toReversed();
 
   const usedMinutes = getSessionUsedMinutes(session.blocks);
