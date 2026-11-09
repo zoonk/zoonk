@@ -196,7 +196,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
     ),
   },
   {
-    expected: { screens: [8, 9] },
+    expected: { screens: [9] },
     id: "en-scientific-notation-keeps-math",
     userInput: RECORDED_SCIENTIFIC_NOTATION_FIX,
   },
