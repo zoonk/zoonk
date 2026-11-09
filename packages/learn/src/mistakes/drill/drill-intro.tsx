@@ -82,7 +82,7 @@ function IdeaScreen({
         <section className="flex flex-col items-start gap-5">
           <div className="flex flex-col gap-1.5">
             <h2 className="text-title">{lesson.title}</h2>
-            <p className="text-muted-foreground text-balance">{drillLine(drill)}</p>
+            <p className="text-muted-foreground text-pretty">{drillLine(drill)}</p>
           </div>
 
           <ol className="flex w-full flex-col leading-relaxed [&>li+li]:border-t">

@@ -23,10 +23,10 @@ import {
   type TrueFalseResult,
 } from "../session/question-block/true-false-question";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
-import { NotSureButton, useFocusAnswersOnReveal } from "./drill/drill-controls";
+import { NotSureButton } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
-import { type LessonHref, isIdeaFirst, isReadFirst, pressesCheck } from "./drill/drill-types";
+import { type LessonHref, isIdeaFirst, pressesCheck } from "./drill/drill-types";
 import {
   type MistakePracticeFeedback,
   type PracticeStep as Step,
@@ -76,10 +76,6 @@ function getTrueFalseResult({
 function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton> {
   const { phase } = run.state;
 
-  if (phase.kind === "reading") {
-    return { action: "reveal", onPress: run.reveal };
-  }
-
   if (phase.kind === "feedback") {
     return { action: "continue", onPress: run.next };
   }
@@ -98,7 +94,7 @@ function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton
 export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const t = useExtracted();
   const { phase } = run.state;
-  const answering = phase.kind !== "reading" && phase.kind !== "feedback";
+  const answering = phase.kind !== "feedback";
   const sender = phase.kind === "checking" ? phase.sender : null;
   const checking = sender !== null;
 
@@ -191,7 +187,6 @@ export function PracticeStepView({
   const { drill } = step.entry;
   const { question } = step;
   const runId = useMemo(() => crypto.randomUUID(), []);
-  const answers = useFocusAnswersOnReveal(phase.kind === "reading");
 
   // The earlier answer belongs to the mistake's own question; next to another one it misleads.
   const lastAnswer = isMistakeQuestion(step) ? answerText(step.entry.snapshot.answer) : null;
@@ -211,7 +206,7 @@ export function PracticeStepView({
   const disabled = phase.kind === "checking";
   const ideaFirst = isIdeaFirst(drill);
 
-  const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry || isReadFirst(drill);
+  const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry;
 
   return (
     <>
@@ -219,7 +214,7 @@ export function PracticeStepView({
         <DrillIntro
           answered={graded !== null || ideaFirst}
           drill={drill}
-          lastAnswer={step.firstOfEntry || ideaFirst ? lastAnswer : null}
+          lastAnswer={lastAnswer}
           lessonHref={lessonHref}
         />
       )}
@@ -241,37 +236,29 @@ export function PracticeStepView({
         className="flex flex-col gap-4"
         key={question.itemId}
       >
-        {phase.kind === "reading" ? (
-          <QuestionLead graded={false} question={question} withTitle />
-        ) : (
-          <>
-            <QuestionLead
-              graded={graded !== null}
-              question={question}
-              withTitle={question.format !== "trueFalse"}
-            />
+        <QuestionLead
+          graded={graded !== null}
+          question={question}
+          withTitle={question.format !== "trueFalse"}
+        />
 
-            <div ref={answers}>
-              {question.format === "trueFalse" ? (
-                <TrueFalseQuestion
-                  allowBlank={false}
-                  disabled={disabled}
-                  onChange={run.select}
-                  result={graded ? getTrueFalseResult(graded) : null}
-                  statement={question.question}
-                  trueFalseLabels={trueFalseLabels}
-                />
-              ) : (
-                <ChoiceQuestion
-                  disabled={disabled}
-                  onChange={run.select}
-                  options={question.options ?? []}
-                  result={graded ? getChoiceResult(graded) : null}
-                  select={question.select}
-                />
-              )}
-            </div>
-          </>
+        {question.format === "trueFalse" ? (
+          <TrueFalseQuestion
+            allowBlank={false}
+            disabled={disabled}
+            onChange={run.select}
+            result={graded ? getTrueFalseResult(graded) : null}
+            statement={question.question}
+            trueFalseLabels={trueFalseLabels}
+          />
+        ) : (
+          <ChoiceQuestion
+            disabled={disabled}
+            onChange={run.select}
+            options={question.options ?? []}
+            result={graded ? getChoiceResult(graded) : null}
+            select={question.select}
+          />
         )}
       </section>
 

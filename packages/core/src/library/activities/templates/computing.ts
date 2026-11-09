@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import {
   explanationSchema,
@@ -13,13 +14,13 @@ import { duplicateIssues, issue } from "./_utils/template-helpers";
 import { normalizeProgramOutput } from "./_utils/text-normalizers";
 
 const MAX_EDITABLE_LINES = 10;
-const MAX_OUTPUT_LENGTH = 500;
+const OUTPUT_TARGET = 500;
 const MAX_MISTAKES = 4;
 const MAX_PAUSES = 4;
 const MAX_PAUSE_OPTIONS = 4;
 const MAX_TRACE_STEPS = 40;
 const MAX_WATCHED = 4;
-const MAX_TRACE_VALUE_LENGTH = 60;
+const TRACE_VALUE_TARGET = 60;
 const MAX_COLUMNS = 6;
 const MAX_ROWS = 30;
 const MAX_TABLES = 3;
@@ -37,13 +38,16 @@ function lineCount(code: string): number {
 const codeRunnerFields = z
   .object({
     editableLines: z.array(z.number().int().positive()).min(1).max(MAX_EDITABLE_LINES),
-    expectedOutput: z.string().min(1).max(MAX_OUTPUT_LENGTH),
+    expectedOutput: aimForCharacters(z.string().min(1), OUTPUT_TARGET),
     fileName: labelSchema.optional(),
     language: languageSchema,
     mistakes: z
       .array(
         z
-          .object({ feedback: explanationSchema, output: z.string().max(MAX_OUTPUT_LENGTH) })
+          .object({
+            feedback: explanationSchema,
+            output: aimForCharacters(z.string(), OUTPUT_TARGET),
+          })
           .strict(),
       )
       .max(MAX_MISTAKES),
@@ -112,7 +116,11 @@ export const codeRunnerTemplate = defineActivityTemplate({
   ],
 });
 
-const traceValueSchema = z.union([z.string().max(MAX_TRACE_VALUE_LENGTH), z.number(), z.boolean()]);
+const traceValueSchema = z.union([
+  aimForCharacters(z.string(), TRACE_VALUE_TARGET),
+  z.number(),
+  z.boolean(),
+]);
 
 const codeTracerFields = z
   .object({
@@ -209,7 +217,12 @@ export const codeTracerTemplate = defineActivityTemplate({
   verify: (fields) => tracerIssues(fields),
 });
 
-const cellSchema = z.union([z.string().max(MAX_TRACE_VALUE_LENGTH), z.number(), z.null()]);
+const cellSchema = z.union([
+  aimForCharacters(z.string(), TRACE_VALUE_TARGET),
+  z.number(),
+  z.null(),
+]);
+
 const columnTypeSchema = z.enum(["integer", "real", "text"]);
 
 const sqlFields = z

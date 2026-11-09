@@ -528,8 +528,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "5 of 6 parts passed. Screen 2: What it asks reads as 256 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.5,
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -1481,8 +1481,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "8 of 11 parts passed. Screen 2: What it asks reads as 263 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 7: What it asks reads as 265 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 8: Its problem, steps and result, shown together reads as 287 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 7.545454545454546,
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -1703,8 +1703,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "7 of 11 parts passed. Screen 9: check.kind: \"guessReveal\" doesn't support choice checks here Screen 5: Its basis quotes words screen 3 doesn't have: \"Divide the change by the starting value, then multiply by 100.\". Copy the sentence exactly as that screen says it. Screen 7: Its basis quotes words screen 3 doesn't have: \"Divide the change by the starting value, then multiply by 100.\". Copy the sentence exactly as that screen says it. Screen 6: Its problem, steps and result, shown together reads as 277 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 6.7272727272727275,
+          "reasoning": "8 of 11 parts passed. Screen 9: check.kind: \"guessReveal\" doesn't support choice checks here Screen 5: Its basis quotes words screen 3 doesn't have: \"Divide the change by the starting value, then multiply by 100.\". Copy the sentence exactly as that screen says it. Screen 7: Its basis quotes words screen 3 doesn't have: \"Divide the change by the starting value, then multiply by 100.\". Copy the sentence exactly as that screen says it.",
+          "score": 7.545454545454546,
           "weight": 30
         }
       ],
@@ -2089,8 +2089,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "8 of 12 parts passed. Screen 8: data: Cite the data's source or mark it as an example Screen 8: check.options: The correct option must be the one closest to the computed 9 Screen 5: Its problem, steps and result, shown together reads as 323 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 9: Its problem, steps and result, shown together reads as 319 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 11: What it asks reads as 306 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 7,
+          "reasoning": "11 of 12 parts passed. Screen 8: data: Cite the data's source or mark it as an example Screen 8: check.options: The correct option must be the one closest to the computed 9",
+          "score": 9.25,
           "weight": 30
         }
       ],
@@ -2326,7 +2326,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "5 of 6 parts passed. Screen 2: This sentence is too long for a beginner learner; split it: \"Quem passa em concurso e assume um cargo público permanente só ganha proteção após três anos de trabalho e aprovação numa avaliação especial do desempenho, feita por um grupo que avalia seu trabalho.\" Screen 2: What it asks reads as 258 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
+          "reasoning": "5 of 6 parts passed. Screen 2: This sentence is too long for a beginner learner; split it: \"Quem passa em concurso e assume um cargo público permanente só ganha proteção após três anos de trabalho e aprovação numa avaliação especial do desempenho, feita por um grupo que avalia seu trabalho.\"",
           "score": 8.5,
           "weight": 30
         }
@@ -2485,8 +2485,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "5 of 7 parts passed. Screen 5: Its problem, steps and result, shown together reads as 372 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 1: Uses \"Python\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
-          "score": 7.428571428571429,
+          "reasoning": "6 of 7 parts passed. Screen 1: Uses \"Python\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.714285714285714,
           "weight": 30
         }
       ],

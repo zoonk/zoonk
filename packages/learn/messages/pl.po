@@ -7712,14 +7712,14 @@ msgid "Last time you answered: {answer}"
 msgstr "Twoja poprzednia odpowiedź: {answer}"
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "T-LPPU"
-msgid "The idea first, then a few questions on it."
-msgstr "Najpierw wyjaśnienie, potem kilka pytań na ten temat."
+msgctxt "49QdsH"
+msgid "The idea first, then put it to use."
+msgstr "Najpierw poznaj zagadnienie, potem je przećwicz."
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "BagRap"
-msgid "A few questions on an idea you missed."
-msgstr "Kilka pytań na temat, który sprawił ci trudność."
+msgctxt "OYk1Dn"
+msgid "Back to an idea you missed."
+msgstr "Wróćmy do zagadnienia, które ci umknęło."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "I2TE37"
@@ -12958,11 +12958,6 @@ msgstr "Kilka pomyłek z rzędu. Krótka przerwa często pomaga, a cała dzisiej
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Dopracowujemy twój plan. Pomyłki w tym zadaniu nigdy nie trafiają do zeszytu błędów."
-
-#: src/session/question-block/question-actions.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Przeczytane. Pokaż odpowiedzi"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

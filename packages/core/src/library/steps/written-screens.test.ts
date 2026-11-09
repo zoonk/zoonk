@@ -186,15 +186,14 @@ describe(toStepContent, () => {
     });
   });
 
-  it("keeps short accepted answers and leaves out a sentence-long one", () => {
+  it("keeps every accepted answer, however long, and leaves out an empty one", () => {
+    const long = `It goes up ${"one degree at a time ".repeat(10)}`.trim();
+
     const converted = toStepContent(
-      {
-        ...writtenTypedAnswer(),
-        acceptedAnswers: ["3 °C", `It goes up ${"one degree at a time ".repeat(10)}`],
-      },
+      { ...writtenTypedAnswer(), acceptedAnswers: ["3 °C", " ", long] },
       { allowImage: false, language: "en" },
     );
 
-    expect(converted).toMatchObject({ content: { acceptedAnswers: ["3 °C"] }, ok: true });
+    expect(converted).toMatchObject({ content: { acceptedAnswers: ["3 °C", long] }, ok: true });
   });
 });

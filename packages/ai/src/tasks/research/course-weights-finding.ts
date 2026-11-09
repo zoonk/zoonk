@@ -1,6 +1,3 @@
-const MAX_TITLE_LENGTH = 200;
-const MAX_EDITION_LENGTH = 80;
-
 /** No selection weighs a part ten times another: a bigger number is a score, not a weight. */
 const MAX_WEIGHT = 10;
 
@@ -76,8 +73,8 @@ export function toCourseWeightsFinding({
   }
 
   return {
-    edition: raw.edition?.trim().slice(0, MAX_EDITION_LENGTH) || null,
-    source: { title: raw.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null, url },
+    edition: raw.edition?.trim() || null,
+    source: { title: raw.sourceTitle?.trim() || null, url },
     status: "found",
     weights,
   };

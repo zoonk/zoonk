@@ -33,6 +33,19 @@ const stamp = { description: "A wooden rubber stamp", name: "Rubber Stamp", sear
 const oven = { description: "A bakery's brick oven", name: "brick oven", searchWords: ["bakery"] };
 
 describe(normalizeLessonMarks, () => {
+  it("keeps an about line whole past its target, so the lesson's map still shows", () => {
+    const about =
+      "O que entra no ativo de uma empresa quando ela compra à vista e também a prazo agora";
+
+    const marks = normalizeLessonMarks({
+      ideas,
+      output: { ideas: [{ about, icon: null, idea: 1 }], screens: [] },
+      screens: [explanation],
+    });
+
+    expect(marks.ideas[0]?.about).toBe(about);
+  });
+
   it("keeps exact quotes, ideas as indexes from 0 and icons only where a screen may show one", () => {
     const marks = normalizeLessonMarks({
       ideas,

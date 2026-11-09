@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { selectMistakeDrill, selectMistakesToPractice } from "./mistake-drills";
+import { selectMistakeDrill, selectMistakesToPractice, selectPracticeRun } from "./mistake-drills";
 
 const CANDIDATES = [
   { hasMisconceptions: false, id: "original", seen: true },
@@ -95,5 +95,140 @@ describe(selectMistakesToPractice, () => {
     });
 
     expect(picked.map((mistake) => mistake.id)).toStrictEqual(["m1", "m3", "m4"]);
+  });
+});
+
+function candidate(id: string, skillId: string) {
+  return { hasMisconceptions: false, id, seen: false, skillId };
+}
+
+/** Candidates are on skill "k" unless `skillOf` says otherwise, and so is the mistake. */
+function runMistake(
+  mistakeId: string,
+  {
+    candidates,
+    cause = "gap",
+    coveringSkillIds = ["k"],
+    lessonId = null,
+    own = null,
+    skillOf = {},
+  }: {
+    candidates: string[];
+    cause?: "gap" | "misread";
+    coveringSkillIds?: string[];
+    lessonId?: string | null;
+    own?: string | null;
+    skillOf?: Record<string, string>;
+  },
+) {
+  return {
+    candidates: candidates.map((id) => candidate(id, skillOf[id] ?? "k")),
+    cause,
+    coveringSkillIds,
+    lessonId,
+    mistakeId,
+    originalItemId: own,
+  };
+}
+
+function asked(run: ReturnType<typeof selectPracticeRun<ReturnType<typeof runMistake>>>) {
+  return run.map(({ drill, mistakeId }) => [mistakeId, drill.itemIds]);
+}
+
+describe(selectPracticeRun, () => {
+  it("asks one question per mistake, its own, however many its skill has", () => {
+    const run = selectPracticeRun([
+      runMistake("m1", { candidates: ["a", "b", "c"], own: "a" }),
+      runMistake("m2", { candidates: ["a", "b", "c"], own: "b" }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([
+      ["m1", ["a"]],
+      ["m2", ["b"]],
+    ]);
+  });
+
+  it("never hands a mistake's own question to an earlier mistake", () => {
+    const run = selectPracticeRun([
+      runMistake("no-own", { candidates: ["taken", "free"] }),
+      runMistake("own", { candidates: ["taken", "free"], own: "taken" }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([
+      ["no-own", ["free"]],
+      ["own", ["taken"]],
+    ]);
+  });
+
+  it("asks one question for mistakes with no question of their own on one skill", () => {
+    const run = selectPracticeRun([
+      runMistake("m1", { candidates: ["a", "b"] }),
+      runMistake("m2", { candidates: ["a", "b"] }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([["m1", ["a"]]]);
+  });
+
+  it("leaves out a mistake with no question of its own once another's own question is on its skill", () => {
+    const run = selectPracticeRun([
+      runMistake("own", { candidates: ["outside"], own: "outside", skillOf: { outside: "k" } }),
+      runMistake("no-own", { candidates: ["a", "b"], coveringSkillIds: ["k"] }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([["own", ["outside"]]]);
+  });
+
+  it("leaves out a mistake with no question of its own once its skill has one in the run", () => {
+    const run = selectPracticeRun([
+      runMistake("own", { candidates: ["a", "b"], own: "a" }),
+      runMistake("no-own", { candidates: ["a", "b"] }),
+      runMistake("elsewhere", {
+        candidates: ["other"],
+        coveringSkillIds: ["elsewhere"],
+        skillOf: { other: "elsewhere" },
+      }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([
+      ["own", ["a"]],
+      ["elsewhere", ["other"]],
+    ]);
+  });
+
+  it("leaves a mistake out rather than asking a question twice", () => {
+    const run = selectPracticeRun([
+      runMistake("m1", { candidates: ["only"] }),
+      runMistake("m2", { candidates: ["only"] }),
+      runMistake("m3", { candidates: ["only"] }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([["m1", ["only"]]]);
+  });
+
+  it("asks a question once when two mistakes both have it as their own", () => {
+    const run = selectPracticeRun([
+      runMistake("m1", { candidates: ["same"], own: "same" }),
+      runMistake("m2", { candidates: ["same"], own: "same" }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([["m1", ["same"]]]);
+  });
+
+  it("goes over a lesson the first time only, so its idea doesn't come back between questions", () => {
+    const run = selectPracticeRun([
+      runMistake("m1", { candidates: ["a"], lessonId: "lesson", own: "a" }),
+      runMistake("m2", { candidates: ["b"], lessonId: "lesson", own: "b" }),
+      runMistake("m3", { candidates: ["c"], lessonId: "other", own: "c" }),
+    ]);
+
+    expect(run.map(({ drill }) => drill.lessonId)).toStrictEqual(["lesson", null, "other"]);
+  });
+
+  it("keeps the drill the mistake's cause calls for", () => {
+    const [entry] = selectPracticeRun([
+      runMistake("misread", { candidates: ["a"], cause: "misread", own: "a" }),
+    ]);
+
+    expect(entry?.drill.kind).toBe("readCarefully");
   });
 });

@@ -41,14 +41,14 @@ sealed interface RunPhase {
     ) : RunPhase
 }
 
-enum class DrillStage { Ideas, Reading, Open }
+enum class DrillStage { Ideas, Open }
 
 data class Graded(
     val isCorrect: Boolean,
     val blank: Boolean,
 )
 
-/** [answers] are this visit's, by step: a mistakes practice can ask one item under two mistakes. */
+/** [answers] are this visit's, by step. */
 data class QuestionRun(
     val index: Int,
     val phase: RunPhase,
@@ -80,20 +80,7 @@ data class QuestionRun(
 
     fun timeUp() = copy(timedOut = true)
 
-    /** A content gap's ideas lead to its questions, read first when the drill asks for that. */
-    fun start(questions: List<Question>) =
-        copy(
-            stage =
-                if (questions.getOrNull(index)?.drill?.isReadFirst ==
-                    true
-                ) {
-                    DrillStage.Reading
-                } else {
-                    DrillStage.Open
-                },
-        )
-
-    fun reveal() = copy(stage = DrillStage.Open)
+    fun start() = copy(stage = DrillStage.Open)
 
     fun next(questions: List<Question>): QuestionRun {
         val next = index + 1
@@ -124,7 +111,6 @@ data class QuestionRun(
             val first = questions.getOrNull(index - 1)?.mistakeId != questions[index].mistakeId
             return when {
                 first && drill.isIdeaFirst -> DrillStage.Ideas
-                drill.isReadFirst -> DrillStage.Reading
                 else -> DrillStage.Open
             }
         }

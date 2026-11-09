@@ -85,7 +85,7 @@ describe(buildLanguageLessonSteps, () => {
     });
   });
 
-  it("leaves out a screen too long for the contract instead of storing it broken", () => {
+  it("keeps a long sentence's screens, since a length is only a target", () => {
     const draft = languageLessonDraft();
     const longSentence = `${"very ".repeat(40)}long sentence`;
 
@@ -94,8 +94,7 @@ describe(buildLanguageLessonSteps, () => {
       sentences: draft.sentences.map((sentence) => ({ ...sentence, sentence: longSentence })),
     });
 
-    expect(steps.some((step) => step.kind === "spokenAnswer")).toBe(false);
-    expect(steps.filter((step) => step.kind === "reading")).toHaveLength(2);
+    expect(steps.map((step) => step.kind)).toStrictEqual(build(draft).map((step) => step.kind));
   });
 
   it("in the learner's own language, hears and builds every sentence instead of translating it", () => {

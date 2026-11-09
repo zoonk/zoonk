@@ -2233,7 +2233,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "10 of 11 parts passed. Screen 1: question: Too big: expected string to have <=240 characters Screen 1: The data lists A, B, C, D, E but the options offer only A, B, C, D: E can't be picked.",
+          "reasoning": "10 of 11 parts passed. Screen 1: The data lists A, B, C, D, E but the options offer only A, B, C, D: E can't be picked.",
           "score": 9.181818181818182,
           "weight": 30
         }

@@ -20,7 +20,12 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [1, 3] },
+        "expected": {
+          "screens": [
+            1,
+            3
+          ]
+        },
         "id": "en-temperature-code-problems-1",
         "userInput": {
           "chapterTitle": "Negative numbers",
@@ -32,9 +37,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -58,7 +72,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -92,9 +109,15 @@
                       "expression": null,
                       "text": "Start at {start} °C and move {rise} degrees up."
                     },
-                    { "expression": null, "text": "You land on {result} °C." }
+                    {
+                      "expression": null,
+                      "text": "You land on {result} °C."
+                    }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -105,7 +128,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -198,49 +228,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -269,7 +313,10 @@
               "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
               "screen": 1
             },
-            { "problem": "Step 2 shows {result} without an expression.", "screen": 3 }
+            {
+              "problem": "Step 2 shows {result} without an expression.",
+              "screen": 3
+            }
           ]
         }
       }
@@ -293,7 +340,12 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [1, 3] },
+        "expected": {
+          "screens": [
+            1,
+            3
+          ]
+        },
         "id": "en-temperature-basis-follows-1",
         "userInput": {
           "chapterTitle": "Negative numbers",
@@ -305,9 +357,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -331,7 +392,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -341,7 +405,10 @@
                 "visual": null
               },
               {
-                "basis": { "quote": "a rise always moves **up** the thermometer.", "screen": 2 },
+                "basis": {
+                  "quote": "a rise always moves **up** the thermometer.",
+                  "screen": 2
+                },
                 "context": null,
                 "correctReason": "You start at {start} °C and move {rise} degrees up.",
                 "kind": "mathCheck",
@@ -365,9 +432,15 @@
                       "expression": null,
                       "text": "Start at {start} °C and move {rise} degrees up."
                     },
-                    { "expression": null, "text": "You land on {result} °C." }
+                    {
+                      "expression": null,
+                      "text": "You land on {result} °C."
+                    }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -378,7 +451,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -471,49 +551,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -542,7 +636,10 @@
               "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
               "screen": 1
             },
-            { "problem": "Step 2 shows {result} without an expression.", "screen": 3 }
+            {
+              "problem": "Step 2 shows {result} without an expression.",
+              "screen": 3
+            }
           ]
         }
       }
@@ -566,7 +663,11 @@
         }
       ],
       "testCase": {
-        "expected": { "screens": [5] },
+        "expected": {
+          "screens": [
+            5
+          ]
+        },
         "id": "en-temperature-activity-answer-1",
         "userInput": {
           "chapterTitle": "Negative numbers",
@@ -578,9 +679,18 @@
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  { "isCorrect": true, "text": "2 °C" },
-                  { "isCorrect": false, "text": "8 °C" },
-                  { "isCorrect": false, "text": "−8 °C" }
+                  {
+                    "isCorrect": true,
+                    "text": "2 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "8 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "text": "−8 °C"
+                  }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
                 "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
@@ -604,7 +714,10 @@
                 "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
                 "result": "It's 2 °C: two degrees above zero.",
                 "steps": [
-                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "-3 + 3 = 0",
+                    "text": "First climb to zero: that takes 3 degrees."
+                  },
                   {
                     "math": "0 + 2 = 2",
                     "text": "Two degrees of the rise are left, so keep going up."
@@ -639,7 +752,10 @@
                       "text": "Move {rise} degrees up from {start} °C: {result} °C."
                     }
                   ],
-                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "tolerance": {
+                    "kind": "absolute",
+                    "value": 0
+                  },
                   "unit": "°C",
                   "variables": [
                     {
@@ -650,7 +766,14 @@
                       "unit": "°C",
                       "value": -4
                     },
-                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                    {
+                      "max": 15,
+                      "min": 2,
+                      "name": "rise",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": 7
+                    }
                   ]
                 },
                 "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
@@ -743,49 +866,63 @@
                 "activityTemplate": null,
                 "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
               },
               {
                 "activityTemplate": null,
                 "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Zero is just a mark on the way up: count to zero, then past it.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "numberLine",
                 "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explain in your own words why −3 + 5 is 2.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -810,7 +947,10 @@
             }
           ],
           "problems": [
-            { "problem": "check.answer: The answer 6 doesn't match the computed 5", "screen": 5 }
+            {
+              "problem": "check.answer: The answer 6 doesn't match the computed 5",
+              "screen": 5
+            }
           ]
         }
       }
@@ -909,7 +1049,10 @@
                 "activityTemplate": null,
                 "brief": "Raimundo recebe para análise um pedido de uma empresa da qual é sócio e pensa: “Vou seguir todos os critérios técnicos”. Isso basta para que ele possa conduzir a análise?",
                 "kind": "hook",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -917,7 +1060,9 @@
                 "activityTemplate": null,
                 "brief": "Conflito de interesses é o confronto entre interesses públicos e privados capaz de comprometer o interesse coletivo ou influenciar impropriamente a função pública: analisar um pedido da própria empresa cria esse risco (Lei nº 12.813/2013, art. 3º, I).",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -925,7 +1070,9 @@
                 "activityTemplate": null,
                 "brief": "Um servidor presta consultoria a uma empresa interessada em decisão sua; se dispensar os honorários, o que acontece com o conflito? Opções: “Desaparece”; “Permanece”; “Depende de prejuízo ao erário”; resposta: “Permanece”, com justificativa imediata.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -933,7 +1080,9 @@
                 "activityTemplate": null,
                 "brief": "O conflito independe de lesão ao patrimônio público ou de vantagem recebida: dispensar os honorários não elimina, por si só, o conflito da consultoria (Lei nº 12.813/2013, art. 4º, § 1º).",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -941,7 +1090,9 @@
                 "activityTemplate": null,
                 "brief": "Resolver em etapas: Thaís presta consultoria à empresa interessada em decisão que ela tomará — identificar o serviço privado → ligar a empresa à decisão → reconhecer o conflito, mesmo sem favorecimento consumado (Lei nº 12.813/2013, art. 5º, II).",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -949,7 +1100,9 @@
                 "activityTemplate": null,
                 "brief": "Julgar Certo ou Errado: “Murilo presta consultoria gratuita a uma empresa interessada em decisão sua; sem remuneração nem prejuízo ao erário, inexiste conflito”. Gabarito: Errado; explorar a confusão entre conflito e dano efetivo (arts. 4º, § 1º, e 5º, II).",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -957,7 +1110,9 @@
                 "activityTemplate": null,
                 "brief": "Ter interesse direto ou indireto na matéria impede a atuação no processo: Sabrina não pode analisar pedido que afeta o lucro da empresa de que é sócia, mesmo prometendo neutralidade (Lei nº 9.784/1999, art. 18, I).",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -965,7 +1120,9 @@
                 "activityTemplate": null,
                 "brief": "Cauê analisaria recurso que afeta sua própria empresa: reconhecer o interesse direto → comunicar o impedimento à autoridade competente → abster-se de atuar, sem aguardar autorização para parar (Lei nº 9.784/1999, arts. 18, I, e 19).",
                 "kind": "workedExample",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -973,7 +1130,9 @@
                 "activityTemplate": null,
                 "brief": "Julgar Certo ou Errado: “Rosana tem interesse financeiro no resultado do processo e comunica o impedimento, mas pode continuar instruindo-o até receber substituto”. Gabarito: Errado; comunicar não dispensa a abstenção de atuar (Lei nº 9.784/1999, art. 19).",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -981,7 +1140,9 @@
                 "activityTemplate": null,
                 "brief": "Amizade íntima com um interessado permite arguir suspeição, fundamento distinto do impedimento: a relação próxima de Leandro com o requerente importa, mas ser mero conhecido não basta para esse enquadramento (Lei nº 9.784/1999, art. 20).",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -989,7 +1150,9 @@
                 "activityTemplate": null,
                 "brief": "Julgar Certo ou Errado: “Valéria encontra a requerente ocasionalmente em eventos profissionais; isso basta para caracterizar suspeição por amizade íntima”. Gabarito: Errado; o contato descrito não demonstra a proximidade exigida pelo art. 20 da Lei nº 9.784/1999.",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -997,7 +1160,10 @@
                 "activityTemplate": null,
                 "brief": "Uma servidora presta consultoria gratuita à empresa da qual é sócia e recebe processo sobre pedido dessa empresa: identificar o conflito e indicar como agir. Esperado: reconhecer o vínculo privado, comunicar o impedimento e abster-se; rejeitar apenas prometer uma análise técnica.",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -1042,9 +1208,18 @@
               {
                 "reveal": "O conflito permanece, mesmo sem honorários e sem prejuízo ao erário.",
                 "options": [
-                  { "text": "O conflito permanece", "isCorrect": true },
-                  { "text": "O conflito desaparece", "isCorrect": false },
-                  { "text": "Só existe se houver prejuízo ao erário", "isCorrect": false }
+                  {
+                    "text": "O conflito permanece",
+                    "isCorrect": true
+                  },
+                  {
+                    "text": "O conflito desaparece",
+                    "isCorrect": false
+                  },
+                  {
+                    "text": "Só existe se houver prejuízo ao erário",
+                    "isCorrect": false
+                  }
                 ],
                 "question": "Um auditor dá consultoria a uma empresa que aguarda uma decisão dele. Para evitar problemas, ele deixa de cobrar honorários. O que acontece com o conflito de interesses?",
                 "kind": "hookGuess",
@@ -1062,9 +1237,18 @@
               },
               {
                 "steps": [
-                  { "text": "Ela presta serviço privado à empresa.", "math": null },
-                  { "text": "A empresa tem interesse na decisão.", "math": null },
-                  { "text": "Não é preciso haver favorecimento.", "math": null }
+                  {
+                    "text": "Ela presta serviço privado à empresa.",
+                    "math": null
+                  },
+                  {
+                    "text": "A empresa tem interesse na decisão.",
+                    "math": null
+                  },
+                  {
+                    "text": "Não é preciso haver favorecimento.",
+                    "math": null
+                  }
                 ],
                 "title": "Consultoria e decisão",
                 "result": "Há conflito (Lei nº 12.813/2013, art. 5º, II).",
@@ -1109,9 +1293,18 @@
               },
               {
                 "steps": [
-                  { "text": "Ele tem interesse direto na matéria.", "math": null },
-                  { "text": "Comunica o impedimento à autoridade competente.", "math": null },
-                  { "text": "Abstém-se de atuar sem esperar autorização.", "math": null }
+                  {
+                    "text": "Ele tem interesse direto na matéria.",
+                    "math": null
+                  },
+                  {
+                    "text": "Comunica o impedimento à autoridade competente.",
+                    "math": null
+                  },
+                  {
+                    "text": "Abstém-se de atuar sem esperar autorização.",
+                    "math": null
+                  }
                 ],
                 "title": "Como agir no impedimento",
                 "result": "É o procedimento dos arts. 18, I, e 19 da Lei nº 9.784/1999.",
@@ -1152,7 +1345,10 @@
                 "explore": null
               },
               {
-                "basis": { "quote": "Ser só conhecido não basta.", "screen": 10 },
+                "basis": {
+                  "quote": "Ser só conhecido não basta.",
+                  "screen": 10
+                },
                 "context": "Valéria vai decidir o pedido de uma advogada que ela encontra de vez em quando em eventos profissionais.",
                 "options": [
                   {
@@ -1218,7 +1414,11 @@
                   "iconNeed": {
                     "name": "balance scale",
                     "description": "A traditional balance scale with two hanging pans.",
-                    "searchWords": ["scales", "justice", "law"]
+                    "searchWords": [
+                      "scales",
+                      "justice",
+                      "law"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1230,7 +1430,11 @@
                   "iconNeed": {
                     "name": "wallet",
                     "description": "A simple closed leather wallet.",
-                    "searchWords": ["purse", "money", "billfold"]
+                    "searchWords": [
+                      "purse",
+                      "money",
+                      "billfold"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1242,7 +1446,11 @@
                   "iconNeed": {
                     "name": "road barrier",
                     "description": "A striped barrier lowered across a road.",
-                    "searchWords": ["barricade", "gate", "obstacle"]
+                    "searchWords": [
+                      "barricade",
+                      "gate",
+                      "obstacle"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1254,7 +1462,11 @@
                   "iconNeed": {
                     "name": "friendship bracelet",
                     "description": "A colorful woven bracelet made from thin threads.",
-                    "searchWords": ["woven bracelet", "cord bracelet", "friendship band"]
+                    "searchWords": [
+                      "woven bracelet",
+                      "cord bracelet",
+                      "friendship band"
+                    ]
                   },
                   "iconPending": false
                 }
@@ -1270,7 +1482,10 @@
             }
           ]
         },
-        "expected": { "screens": [], "real": "citation" }
+        "expected": {
+          "screens": [],
+          "real": "citation"
+        }
       }
     },
     {
@@ -1381,7 +1596,9 @@
                 "activityTemplate": null,
                 "brief": "Forma de Estado é a maneira de distribuir o poder político pelo território: no Brasil, um município decide assuntos locais sem ser outro país.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1389,7 +1606,9 @@
                 "activityTemplate": null,
                 "brief": "Se toda a população de um estado votar pela separação do Brasil, o que acontecerá juridicamente? Opções: “A separação terá efeito”; “A votação não criará outro país”; correta: a segunda.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1397,7 +1616,9 @@
                 "activityTemplate": null,
                 "brief": "A federação brasileira reúne entes com poder político próprio numa união indissolúvel: nem uma votação unânime permite a um estado separar-se do país (CF, art. 1º, caput).",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1405,7 +1626,9 @@
                 "activityTemplate": null,
                 "brief": "Autonomia é governar-se dentro da Constituição: União, estados, Distrito Federal e municípios a possuem, sem serem países soberanos; um estado pode ter sua própria Constituição (CF, arts. 18 e 25).",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1413,7 +1636,9 @@
                 "activityTemplate": null,
                 "brief": "Julgar: “Ao aprovar sua própria Constituição, um estado passa a ter soberania, como o Brasil”. Gabarito: Errado; a armadilha é confundir autonomia estadual com soberania.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1421,7 +1646,9 @@
                 "activityTemplate": null,
                 "brief": "Forma de governo trata do acesso ao poder e da responsabilidade de quem o exerce: ocupar um cargo por mandato é diferente de herdá-lo por toda a vida.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1429,7 +1656,9 @@
                 "activityTemplate": null,
                 "brief": "Na república, o poder não pertence a uma família: os governantes têm mandatos temporários, são escolhidos por eleição e respondem por seus atos; o presidente brasileiro exemplifica isso (CF, arts. 1º, 77, 82 e 85).",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1437,7 +1666,9 @@
                 "activityTemplate": null,
                 "brief": "Na monarquia, a chefia do Estado é, em regra, hereditária e vitalícia: no Reino Unido, a Coroa passa pela linha de sucessão, não por eleição periódica.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1445,7 +1676,9 @@
                 "activityTemplate": null,
                 "brief": "Julgar: “Um país mantém a forma republicana se eleger um presidente para ocupar o cargo vitaliciamente”. Gabarito: Errado; a armadilha é considerar a eleição suficiente, ignorando a temporariedade.",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1453,7 +1686,9 @@
                 "activityTemplate": null,
                 "brief": "Sistema de governo descreve a relação entre Executivo e Legislativo: uma questão é saber se o governante precisa conservar o apoio do Parlamento para permanecer no cargo.",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1461,7 +1696,9 @@
                 "activityTemplate": null,
                 "brief": "No presidencialismo, o presidente representa o Estado e dirige o governo com mandato próprio: no Brasil, perder uma votação no Congresso não encerra esse mandato (CF, arts. 76, 82 e 84).",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1469,7 +1706,9 @@
                 "activityTemplate": null,
                 "brief": "No parlamentarismo, quem dirige o governo depende da confiança do Parlamento: no Reino Unido, a perda formal desse apoio pode levar à substituição do primeiro-ministro.",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1477,7 +1716,9 @@
                 "activityTemplate": null,
                 "brief": "Impeachment é um processo de responsabilização por crime de responsabilidade: pode retirar o presidente antes do fim do mandato, mas não equivale a perder apoio político (CF, arts. 85 e 86).",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -1485,7 +1726,11 @@
                 "activityTemplate": "categorize",
                 "brief": "Separar três casos entre forma de Estado, forma de governo e sistema de governo: município com poder próprio; cargo máximo hereditário e vitalício; governo substituído por perda de confiança parlamentar. Gabarito: Estado, governo, sistema; explorar a troca entre os dois últimos.",
                 "kind": "activity",
-                "skills": [0, 1, 2],
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -1493,7 +1738,11 @@
                 "activityTemplate": null,
                 "brief": "Uma nota diz: I — município autônomo é soberano; II — mandato temporário e responsabilização são republicanos; III — derrota parlamentar encerra o mandato presidencial. Selecionar as corretas e corrigir as demais: apenas II; a armadilha é aceitar III como impeachment.",
                 "kind": "application",
-                "skills": [0, 1, 2],
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -1546,9 +1795,18 @@
               {
                 "reveal": "O estado continua parte do Brasil. Nenhuma votação permite que um estado saia do país.",
                 "options": [
-                  { "text": "O estado sai, se o Congresso aprovar", "isCorrect": false },
-                  { "text": "O estado vira um país independente", "isCorrect": false },
-                  { "text": "O estado continua parte do Brasil", "isCorrect": true }
+                  {
+                    "text": "O estado sai, se o Congresso aprovar",
+                    "isCorrect": false
+                  },
+                  {
+                    "text": "O estado vira um país independente",
+                    "isCorrect": false
+                  },
+                  {
+                    "text": "O estado continua parte do Brasil",
+                    "isCorrect": true
+                  }
                 ],
                 "question": "Numa votação, 100% dos moradores de um estado escolhem sair do Brasil. Pela Constituição, o que acontece?",
                 "kind": "hookGuess",
@@ -1754,7 +2012,11 @@
                   "iconNeed": {
                     "name": "puzzle piece",
                     "description": "A single interlocking puzzle piece with rounded tabs.",
-                    "searchWords": ["jigsaw", "piece", "puzzle"]
+                    "searchWords": [
+                      "jigsaw",
+                      "piece",
+                      "puzzle"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1766,7 +2028,11 @@
                   "iconNeed": {
                     "name": "house",
                     "description": "A simple small house with a pitched roof.",
-                    "searchWords": ["home", "residence", "building"]
+                    "searchWords": [
+                      "home",
+                      "residence",
+                      "building"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1778,7 +2044,11 @@
                   "iconNeed": {
                     "name": "ballot box",
                     "description": "A ballot box with a slot in its top.",
-                    "searchWords": ["election", "voting", "poll"]
+                    "searchWords": [
+                      "election",
+                      "voting",
+                      "poll"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1790,7 +2060,11 @@
                   "iconNeed": {
                     "name": "hourglass",
                     "description": "A classic hourglass with sand falling between its chambers.",
-                    "searchWords": ["timer", "sand clock", "time"]
+                    "searchWords": [
+                      "timer",
+                      "sand clock",
+                      "time"
+                    ]
                   },
                   "iconPending": false
                 },
@@ -1802,7 +2076,11 @@
                   "iconNeed": {
                     "name": "parliament building",
                     "description": "A neoclassical building with columns and a broad central facade.",
-                    "searchWords": ["assembly", "legislature", "capitol"]
+                    "searchWords": [
+                      "assembly",
+                      "legislature",
+                      "capitol"
+                    ]
                   },
                   "iconPending": false
                 }
@@ -1818,7 +2096,485 @@
             }
           ]
         },
-        "expected": { "screens": [13, 15], "real": "term" }
+        "expected": {
+          "screens": [
+            13,
+            15
+          ],
+          "real": "term"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "screens": [
+            9
+          ]
+        },
+        "id": "en-scientific-notation-keeps-math-1",
+        "userInput": {
+          "activityTemplates": [],
+          "chapterLessons": [
+            {
+              "examples": [],
+              "ideas": [],
+              "order": "before",
+              "title": "Powers of ten"
+            },
+            {
+              "canDo": "Multiply and divide measurements written in scientific notation",
+              "examples": [
+                "(2 × 10^-3) × (3 × 10^2) = 6 × 10^-1.",
+                "(6 × 10^-3) ÷ (2 × 10^-5) = 3 × 10^2.",
+                "A lab display must multiply 10^4 by 10^-2. Ask learners to guess what it should show: 10^2, 10^6, or 10^-8. Reveal 10^2 as soon as they pick; leave the reason for the next screen.",
+                "Work through Mei's laser: each pulse uses 2 × 10^-3 J, and there are 3 × 10^2 pulses. Multiply the front numbers, 2 × 3 = 6, then add the powers, -3 + 2 = -1, to get 6 × 10^-1 J.",
+                "A sample contains 2 × 10^3 pellets, each with a mass of 4 × 10^-2 g. Ask for their total mass: 8 × 10^1 g. Include 8 × 10^5 g as a tempting answer from subtracting instead of adding the powers.",
+                "Work through a 6 × 10^-3 m crystal divided into lengths of 2 × 10^-5 m. Divide the front numbers, 6 ÷ 2 = 3, then subtract the powers, -3 - (-5) = 2: the crystal spans 3 × 10^2 of those lengths."
+              ],
+              "ideas": [
+                "To multiply numbers in scientific notation, multiply the front numbers and add the powers of ten.",
+                "To divide numbers in scientific notation, divide the front numbers and subtract the divisor’s power of ten.",
+                "For an amount per group, find the total amount first, then divide by the number of groups."
+              ],
+              "order": "after",
+              "title": "Multiplying and dividing powers of ten"
+            }
+          ],
+          "chapterTitle": "Exponents and scientific notation",
+          "courseTitle": "Quantum physics from scratch",
+          "exams": [],
+          "language": "en",
+          "lesson": {
+            "screens": [
+              {
+                "image": null,
+                "kind": "hookText",
+                "text": "A physics book lists the width of an atom as about 0.0000000001 m. That's nine zeros after the decimal point before you reach the 1. How could you write that number without all those zeros?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "a very large number from the learner's life, like their city's population or a national budget",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "You can write 4,200,000 as $4.2 \\times 10^6$, because $10^6$ is 1,000,000. The front number must be at least 1 and less than 10. This is called **scientific notation**.",
+                "title": "Big numbers, written short",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  {
+                    "isCorrect": false,
+                    "text": "The $7 \\times 10^{-8}$ m scratch"
+                  },
+                  {
+                    "isCorrect": true,
+                    "text": "The $2 \\times 10^{-7}$ m scratch"
+                  }
+                ],
+                "question": "Two scratches on a microscope lens measure $7 \\times 10^{-8}$ m and $2 \\times 10^{-7}$ m long. Which scratch is longer?",
+                "reveal": "The longer scratch is the one that measures $2 \\times 10^{-7}$ m.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "$2 \\times 10^{-7}$ m is 0.0000002 m. $7 \\times 10^{-8}$ m is only 0.00000007 m. The power of ten decides first: −7 is bigger than −8, so $10^{-7}$ is bigger than $10^{-8}$.",
+                "title": "Check the power first",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Which is longer: $3.2 \\times 10^0$ m or $3.8 \\times 10^0$ m?",
+                "result": "$3.8 \\times 10^0$ m, which is 3.8 m, is the longer length.",
+                "steps": [
+                  {
+                    "math": "10^0 = 1",
+                    "text": "Both lengths use the power $10^0$, which is 1."
+                  },
+                  {
+                    "math": "3.8 > 3.2",
+                    "text": "The powers match, so compare the front numbers."
+                  }
+                ],
+                "title": "When the powers match",
+                "visual": null
+              },
+              {
+                "basis": {
+                  "quote": "The powers match, so compare the front numbers.",
+                  "screen": 5
+                },
+                "context": "Two dust grains measure $4.12 \\times 10^{-6}$ m and $4.9 \\times 10^{-6}$ m across.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The powers match, so 4.9 and 4.12 decide. Think of 4.9 as 4.90, which is bigger than 4.12.",
+                    "text": "The $4.9 \\times 10^{-6}$ m grain"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "More digits don't make a number bigger. 4.12 is less than 4.90, so this grain is narrower.",
+                    "text": "The $4.12 \\times 10^{-6}$ m grain"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "Matching powers don't mean matching sizes. With the same power, the front numbers decide, and 4.9 is bigger.",
+                    "text": "Both grains are the same width"
+                  }
+                ],
+                "question": "Which grain is wider?",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Write 58,000 m in scientific notation.",
+                "result": "58,000 m is $5.8 \\times 10^4$ m.",
+                "steps": [
+                  {
+                    "math": "58{,}000 \\to 5.8",
+                    "text": "Put the decimal point after the first digit."
+                  },
+                  {
+                    "math": "4 \\text{ places}",
+                    "text": "Count the places the decimal point moved left."
+                  },
+                  {
+                    "math": "5.8 \\times 10^4 = 58{,}000",
+                    "text": "Moving left shrank it, so a positive power grows it back."
+                  }
+                ],
+                "title": "Writing a big number",
+                "visual": null
+              },
+              {
+                "basis": {
+                  "quote": "Count the places the decimal point moved left.",
+                  "screen": 7
+                },
+                "context": "A satellite circles about 7,200,000 m from the center of Earth.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The decimal point moves 6 places left to land after the 7, so the power is 6.",
+                    "text": "$7.2 \\times 10^6$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "That counts the 5 written zeros. The point also moves past the 2, so it moves 6 places.",
+                    "text": "$7.2 \\times 10^5$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "7,200,000 has 7 digits, but the point only moves 6 places to land after the 7.",
+                    "text": "$7.2 \\times 10^7$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "This equals 7,200,000, but 72 isn't less than 10. The front number must be at least 1 and less than 10.",
+                    "text": "$72 \\times 10^5$ m"
+                  }
+                ],
+                "question": "How do you write that distance in scientific notation?",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "Write 0.000406 m in scientific notation.",
+                "result": "0.000406 m is $4.06 \\times 10^{-4}$ m.",
+                "steps": [
+                  {
+                    "math": "0.000406 \\to 4.06",
+                    "text": "Put the point after the 4, keeping the zero inside."
+                  },
+                  {
+                    "math": "4 \\text{ places}",
+                    "text": "Count the places the decimal point moved right."
+                  },
+                  {
+                    "math": "4.06 \\times 10^{-4} = 0.000406",
+                    "text": "Moving right grew it, so a negative power shrinks it back."
+                  }
+                ],
+                "title": "Writing a tiny number",
+                "visual": null
+              },
+              {
+                "basis": {
+                  "quote": "Count the places the decimal point moved right.",
+                  "screen": 9
+                },
+                "context": "A strand of hair measures 0.0000702 m across.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "The point moves 5 places right to land after the 7. A negative power shrinks 7.02 back to the tiny width.",
+                    "text": "$7.02 \\times 10^{-5}$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "A positive power would make 702,000 m. A tiny number needs a negative power.",
+                    "text": "$7.02 \\times 10^{5}$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "That counts the 4 zeros after the point. The point also has to move past the 7, so it moves 5 places.",
+                    "text": "$7.02 \\times 10^{-4}$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "That drops the zero inside 702. The inside zero stays, so the front number is 7.02.",
+                    "text": "$7.2 \\times 10^{-5}$ m"
+                  }
+                ],
+                "question": "How do you write that width in scientific notation?",
+                "visual": null
+              },
+              {
+                "basis": null,
+                "context": "You're writing a card for the Adler Planetarium in Chicago. It shows an atom's width, 0.0000000001 m, and Earth's average distance from the Sun, 149,600,000,000 m.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "From 149,600,000,000, the decimal point moves 11 places left to land after the 1.",
+                    "text": "Earth–Sun distance: $1.496 \\times 10^{11}$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "That counts only the 8 zeros. The point also moves past the 4, 9 and 6, which makes 11 places.",
+                    "text": "Earth–Sun distance: $1.496 \\times 10^{8}$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The 1 comes after nine zeros, but the point moves 10 places to reach it. So the atom is $1 \\times 10^{-10}$ m.",
+                    "text": "Atom width: $1 \\times 10^{-9}$ m"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "The atom is $1 \\times 10^{-10}$ m, and −11 is smaller than −10. So the particle is smaller, even with its bigger front number.",
+                    "text": "A particle $8 \\times 10^{-11}$ m wide is bigger than the atom"
+                  }
+                ],
+                "question": "Which line belongs on the card?",
+                "visual": null
+              }
+            ],
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Scientific notation",
+                  "text": "Scientific notation writes a number as a front number of at least 1 and less than 10, times a power of ten."
+                },
+                {
+                  "label": "Check the power first",
+                  "text": "For positive numbers in scientific notation, the larger power of ten means the larger value, so compare the powers first."
+                },
+                {
+                  "label": "When the powers match",
+                  "text": "When two numbers have the same power of ten, the bigger front number gives the bigger value."
+                },
+                {
+                  "label": "Count decimal moves",
+                  "text": "The power counts the places the decimal point moves: moving left gives a positive power, and moving right gives a negative power."
+                }
+              ],
+              "shape": "hub"
+            }
+          },
+          "level": "beginner",
+          "problems": [
+            {
+              "problem": "Asks the question of screen 8 again with other numbers or names. Keep this screen's idea but ask something new about it: the reverse question, a harder case, a mistake to spot or a decision in a real situation.",
+              "screen": 9,
+              "source": "check"
+            }
+          ],
+          "setup": false,
+          "shortAnswers": false,
+          "spec": {
+            "canDo": "Write measurements in scientific notation and compare their sizes",
+            "description": "Write very large and very small measurements compactly, then compare their sizes using powers of ten.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "A physics reference lists an atom’s width as about 0.0000000001 m. How can you write that without a string of zeros?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Scientific notation writes a positive number as a number from 1 up to—but not including—10, multiplied by a power of ten: 4,200,000 = 4.2 × 10^6.",
+                "kind": "explanation",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Which measurement will turn out to be longer: 7 × 10^-8 m or 2 × 10^-7 m? Offer those two options; reveal 2 × 10^-7 m as correct, countering the temptation to choose the larger front number.",
+                "kind": "guess",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "For positive numbers in scientific notation, a larger exponent means a larger value: −7 is greater than −8, so 2 × 10^-7 m is longer than 7 × 10^-8 m.",
+                "kind": "explanation",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Compare 3.2 × 10^0 m with 3.8 × 10^0 m: the powers match, so compare 3.2 with 3.8; the second length is greater. Reveal these short moves in order, recalling that 10^0 = 1.",
+                "kind": "workedExample",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask which is longer: 4.12 × 10^-6 m or 4.9 × 10^-6 m; the answer is 4.9 × 10^-6 m. Include the first as the tempting choice from treating more decimal digits as a larger value.",
+                "kind": "check",
+                "skills": [
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Write 58,000 m in scientific notation: 58,000 → 5.8; move the decimal left 4 places; write 5.8 × 10^4 m. Reveal one move at a time, explaining that the positive power restores the larger original value.",
+                "kind": "workedExample",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask the learner to write 7,200,000 m in scientific notation; accept 7.2 × 10^6 m. Include 7.2 × 10^5 m as the tempting answer from counting written zeros instead of decimal moves.",
+                "kind": "check",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Write 0.000406 m compactly: keep the internal zero to make 4.06; the decimal moved right 4 places; write 4.06 × 10^-4 m. Reveal one move at a time, explaining that the negative power restores the small original value.",
+                "kind": "workedExample",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask the learner to write 0.0000702 m in scientific notation; accept 7.02 × 10^-5 m. Include 7.02 × 10^5 m for reversing the sign and 7.02 × 10^-4 m for counting leading zeros instead of moves.",
+                "kind": "check",
+                "skills": [
+                  0
+                ],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "For a reference card, rewrite an atom’s approximate width, 0.0000000001 m, and the mean Earth–Sun distance, 149,600,000,000 m; accept 1 × 10^-10 m and 1.496 × 10^11 m. Then ask whether an object 8 × 10^-11 m wide is smaller than the listed atom: yes, despite its larger front number.",
+                "kind": "application",
+                "skills": [
+                  0,
+                  1
+                ],
+                "visual": null,
+                "visualKind": "none"
+              }
+            ],
+            "skills": [
+              {
+                "description": "Express a positive measurement as a number from 1 up to 10, excluding 10, multiplied by a power of ten.",
+                "example": "0.000406 m = 4.06 × 10^-4 m.",
+                "hard": true,
+                "name": "Write a number in scientific notation",
+                "topic": "Scientific notation",
+                "useCase": "Record atomic sizes and astronomical distances without long strings of zeros."
+              },
+              {
+                "description": "Compare positive numbers in scientific notation by their exponents first, then their front numbers when the exponents match.",
+                "example": "6 × 10^-9 m is smaller than 2 × 10^-8 m.",
+                "hard": true,
+                "name": "Compare numbers in scientific notation",
+                "topic": "Comparing scientific notation",
+                "useCase": "Decide which of two tiny or enormous physics measurements is larger."
+              }
+            ],
+            "title": "Writing very big and very small numbers"
+          }
+        }
       }
     }
   ],

@@ -448,6 +448,7 @@
     "./library/sources/visibility": "./src/library/sources/source-visibility.ts",
     "./library/sources/web": "./src/library/sources/web-sources.ts",
     "./library/steps/contract": "./src/library/steps/contract/step-contract.ts",
+    "./library/steps/contract/chart-unit": "./src/library/steps/contract/chart-unit.ts",
     "./library/steps/contract/language-exercises": "./src/library/steps/contract/language-exercises.ts",
     "./library/steps/question-bases": "./src/library/steps/question-bases.ts",
     "./library/tools/setup-lesson-contract": "./src/library/tools/setup-lesson-contract.ts",

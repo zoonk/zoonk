@@ -7712,14 +7712,14 @@ msgid "Last time you answered: {answer}"
 msgstr "前回の答え：{answer}"
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "T-LPPU"
-msgid "The idea first, then a few questions on it."
-msgstr "まず考え方を学んでから、問題をいくつか解きます。"
+msgctxt "49QdsH"
+msgid "The idea first, then put it to use."
+msgstr "まずポイントを学んでから、実際に使ってみます。"
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "BagRap"
-msgid "A few questions on an idea you missed."
-msgstr "つまずいた内容について、問題をいくつか解きます。"
+msgctxt "OYk1Dn"
+msgid "Back to an idea you missed."
+msgstr "つまずいたポイントに戻ります。"
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "I2TE37"
@@ -12958,11 +12958,6 @@ msgstr "何問か間違いが続いています。ひと休みすると、集中
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "学習計画を調整しています。ここで間違えても、間違いノートには保存されません。"
-
-#: src/session/question-block/question-actions.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "読み終えたので答えを見る"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

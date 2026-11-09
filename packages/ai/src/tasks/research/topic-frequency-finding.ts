@@ -1,8 +1,5 @@
 import { isFromCurrentBoard } from "@zoonk/utils/exam-boards";
 
-const MAX_TITLE_LENGTH = 200;
-const MAX_BASIS_LENGTH = 120;
-
 export const TOPIC_FREQUENCY_LEVELS = ["high", "medium", "low"] as const;
 
 type Level = (typeof TOPIC_FREQUENCY_LEVELS)[number];
@@ -118,10 +115,10 @@ export function toTopicFrequencyFinding({
     return topics.length > 0
       ? [
           {
-            basis: entry.basis.trim().slice(0, MAX_BASIS_LENGTH),
+            basis: entry.basis.trim(),
             board: countedBoard,
             name: subject.name,
-            source: { title: entry.sourceTitle?.trim().slice(0, MAX_TITLE_LENGTH) || null, url },
+            source: { title: entry.sourceTitle?.trim() || null, url },
             topics,
           },
         ]

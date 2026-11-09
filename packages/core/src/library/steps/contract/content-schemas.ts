@@ -1,9 +1,9 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
 import { z } from "zod";
 
-const STEP_TEXT_LIMITS = {
+const STEP_TEXT_TARGETS = {
   explanation: 400,
-  id: 40,
   label: 40,
   option: 160,
   part: 80,
@@ -11,16 +11,20 @@ const STEP_TEXT_LIMITS = {
   richText: 1200,
 } as const;
 
-export const idSchema = z.string().min(1).max(STEP_TEXT_LIMITS.id);
-export const labelSchema = z.string().min(1).max(STEP_TEXT_LIMITS.label);
-export const optionTextSchema = z.string().min(1).max(STEP_TEXT_LIMITS.option);
-export const promptSchema = z.string().min(1).max(STEP_TEXT_LIMITS.prompt);
-export const explanationSchema = z.string().min(1).max(STEP_TEXT_LIMITS.explanation);
+/** A technical key, not text: an answer sends it back, so a longer one could never be submitted. */
+export const MAX_STEP_ID_LENGTH = 40;
+
+export const idSchema = z.string().min(1).max(MAX_STEP_ID_LENGTH);
+export const labelSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.label);
+export const optionTextSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.option);
+export const promptSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.prompt);
+
+export const explanationSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.explanation);
 
 /** Use English for image generation; this description is never shown to learners. */
-export const partSchema = z.string().min(1).max(STEP_TEXT_LIMITS.part);
+export const partSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.part);
 
-export const richTextSchema = z.string().min(1).max(STEP_TEXT_LIMITS.richText);
+export const richTextSchema = aimForCharacters(z.string().min(1), STEP_TEXT_TARGETS.richText);
 
 export const languageCodeSchema = z.string().regex(LANGUAGE_CODE_PATTERN);
 

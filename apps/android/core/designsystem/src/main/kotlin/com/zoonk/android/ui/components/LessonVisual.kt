@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.moneyUnit
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -87,7 +88,7 @@ private fun ChartVisual(
             if (visual.series.size > 1) Legend(visual.series)
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(text = visual.valueLabel, modifier = Modifier.clearAndSetSemantics {}, color = muted, style = quiet)
+                Text(text = visual.unitLabel, modifier = Modifier.clearAndSetSemantics {}, color = muted, style = quiet)
                 ChartCanvas(visual)
                 Text(
                     text = visual.categoryLabel,
@@ -102,6 +103,16 @@ private fun ChartVisual(
         }
     }
 }
+
+/**
+ * Core's `placeChartUnit`: a unit past its target is shown once beside the value label, not after every number,
+ * except that money keeps its currency on each number.
+ */
+private val LessonVisual.Chart.numberUnit: String?
+    get() = unit?.let { if (it.length <= UNIT_TARGET) it else moneyUnit(it)?.currency }
+
+private val LessonVisual.Chart.unitLabel: String
+    get() = unit?.takeIf { it.length > UNIT_TARGET }?.let { "$valueLabel (${moneyUnit(it)?.rest ?: it})" } ?: valueLabel
 
 @Composable
 private fun Legend(series: List<LessonVisual.Chart.Series>) {
@@ -217,7 +228,7 @@ private class ChartLayout(
 
     val ticks =
         niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.map {
-            it to text.label(formatAmount(it, text.locale, visual.unit, compact = true))
+            it to text.label(formatAmount(it, text.locale, visual.numberUnit, compact = true))
         }
 
     val left = (ticks.maxOfOrNull { it.second.size.width } ?: 0) + gap
@@ -251,7 +262,7 @@ private class ChartLayout(
 
     val valueLabels: List<List<TextLayoutResult>>? =
         visual.series
-            .map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.unit)) } }
+            .map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.numberUnit)) } }
             .takeIf { labels ->
                 val room = if (visual.chart == LessonVisual.Chart.Kind.Bar) barWidth + gap else band
                 (visual.chart == LessonVisual.Chart.Kind.Bar || visual.series.size == 1) && labels.flatten().all { it.size.width <= room }
@@ -350,34 +361,33 @@ data class CategoryLabels(
 )
 
 /**
- * One line each when they fit their band, else two broken at the space or hyphen nearest the
- * middle, else every few labels so none overlap (main's `getCategoryLabels`).
+ * Each name wraps at a space or hyphen to fit under its bar. A word wider than a bar can't, so only
+ * every few names show, each with the room of the ones it skips (main's `getCategoryLabels`).
  */
 fun categoryLabels(
     band: Float,
     categories: List<String>,
     width: (String) -> Float,
 ): CategoryLabels {
-    val fits = { labels: List<List<String>> -> labels.all { lines -> lines.all { width(it) <= band } } }
-    val single = categories.map { listOf(it) }
-    val split = categories.map(::splitLabel)
-
-    return when {
-        fits(single) -> CategoryLabels(single, 1)
-        fits(split) -> CategoryLabels(split, 1)
-        else -> CategoryLabels(single, ceil((categories.maxOfOrNull(width) ?: band) / band).toInt().coerceAtLeast(1))
-    }
+    val widestWord = categories.flatMap(::labelWords).maxOfOrNull { width(it.trim()) } ?: band
+    val step = ceil(widestWord / band).toInt().coerceAtLeast(1)
+    return CategoryLabels(categories.map { wrapLabel(it, band * step, width) }, step)
 }
 
-private fun splitLabel(label: String): List<String> {
-    val middle = label.length / 2f
-    val at =
-        label.indices
-            .filter { label[it].isWhitespace() || label[it] == '-' }
-            .minByOrNull { abs(it - middle) } ?: return listOf(label)
-    val end = if (label[at] == '-') at + 1 else at
-    return listOf(label.substring(0, end), label.substring(at + 1))
-}
+private val LABEL_BREAK = Regex("(?<=[\\s-])")
+
+private fun labelWords(label: String): List<String> = label.split(LABEL_BREAK).filter(String::isNotEmpty)
+
+private fun wrapLabel(
+    label: String,
+    room: Float,
+    width: (String) -> Float,
+): List<String> =
+    labelWords(label)
+        .fold(emptyList<String>()) { lines, word ->
+            val line = lines.lastOrNull()
+            if (line != null && width((line + word).trim()) <= room) lines.dropLast(1) + (line + word) else lines + word
+        }.map(String::trim)
 
 @Composable
 private fun TimelineVisual(
@@ -427,6 +437,7 @@ private val LABEL_GAP = 6.dp
 private val PLOT_END = 8.dp
 private val PLOT_HEIGHT = 160.dp
 private const val PLOT_LINES = 6
+private const val UNIT_TARGET = 12
 private val BAR_RADIUS = 3.dp
 private val LINE_WIDTH = 2.dp
 private val DOT_RADIUS = 3.5.dp

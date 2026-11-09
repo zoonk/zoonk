@@ -3,6 +3,7 @@ import { z } from "zod";
 import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
+import { MAX_STEP_ID_LENGTH } from "../library/steps/contract/content-schemas";
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
 import { studyBlockCompletionSchema } from "../sessions/completion-contract";
 import {
@@ -15,7 +16,6 @@ import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
 export const MAX_TYPED_ANSWER_LENGTH = 1000;
 
-const MAX_OPTION_ID_LENGTH = 40;
 /** Leave room for malformed paths to reach semantic validation (422) instead of transport rejection (400). */
 const MAX_CHALLENGE_PICKS = 10;
 
@@ -24,13 +24,13 @@ const typedTextSchema = z.string().trim().min(1).max(MAX_TYPED_ANSWER_LENGTH);
 /** Hooks never record answers; spokenAnswer here is the typed speech fallback. */
 export const lessonStepAnswerSchema = z
   .discriminatedUnion("kind", [
-    z.object({ kind: z.literal("check"), optionId: z.string().min(1).max(MAX_OPTION_ID_LENGTH) }),
+    z.object({ kind: z.literal("check"), optionId: z.string().min(1).max(MAX_STEP_ID_LENGTH) }),
     z.object({ kind: z.literal("typedAnswer"), text: typedTextSchema }),
     z.object({ kind: z.literal("spokenAnswer"), text: typedTextSchema }),
     z.object({ answer: activityAnswerSchema, kind: z.literal("activity") }),
     z.object({
       choiceIds: z
-        .array(z.string().min(1).max(MAX_OPTION_ID_LENGTH))
+        .array(z.string().min(1).max(MAX_STEP_ID_LENGTH))
         .min(1)
         .max(MAX_CHALLENGE_PICKS)
         .meta({ description: "The choice picked at each decision of a challenge, in order" }),

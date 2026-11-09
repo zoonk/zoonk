@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import {
   citationSchema,
@@ -20,7 +21,7 @@ const MAX_PLACES = 8;
 const MAX_NODES = 8;
 const MAX_LINKS = 8;
 const MAX_PASSAGES = 4;
-const MAX_EXCERPT_LENGTH = 600;
+const EXCERPT_TARGET = 600;
 const MAX_LATITUDE = 90;
 const MAX_LONGITUDE = 180;
 
@@ -203,7 +204,7 @@ const sourceSchema = z
     author: labelSchema,
     citation: citationSchema,
     date: labelSchema,
-    excerpt: z.string().min(1).max(MAX_EXCERPT_LENGTH),
+    excerpt: aimForCharacters(z.string().min(1), EXCERPT_TARGET),
     id: idSchema,
     passages: z
       .array(z.object({ id: idSchema, isTarget: z.boolean(), text: optionTextSchema }).strict())

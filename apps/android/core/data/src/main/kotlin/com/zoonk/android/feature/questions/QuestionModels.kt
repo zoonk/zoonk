@@ -252,9 +252,6 @@ data class Drill(
 
     /** A content gap brings its lesson's ideas back on a screen of their own before the questions. */
     val isIdeaFirst: Boolean get() = kind == Kind.Reteach && !lesson?.ideas.isNullOrEmpty()
-
-    /** A misread is drilled by reading the whole question before its answers show. */
-    val isReadFirst: Boolean get() = kind == Kind.ReadCarefully
 }
 
 /** The learner's last answer to this question before today; its words only when it was wrong. */

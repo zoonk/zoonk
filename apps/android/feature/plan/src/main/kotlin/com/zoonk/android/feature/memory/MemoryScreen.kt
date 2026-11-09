@@ -342,5 +342,5 @@ private fun factDate(fact: MemoryFact): String =
 private val ICON = 16.dp
 
 /** Core's `MAX_MEMORY_STATEMENT_LENGTH`. */
-private const val MAX_STATEMENT_LENGTH = 160
+private const val MAX_STATEMENT_LENGTH = 300
 private const val EXPORT_FILE_NAME = "zoonk-memory.json"

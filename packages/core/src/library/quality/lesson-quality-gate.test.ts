@@ -26,13 +26,13 @@ function gate(text: string) {
 }
 
 describe(runLessonQualityGate, () => {
-  it("keeps length advisory on the first draft", async () => {
+  it("never holds back or flags a screen for running past its length target", async () => {
     const result = await gate(
-      `A rise ${"always moves the mark up the thermometer ".repeat(25)}even below zero.`,
+      "A rise moves the mark up the thermometer. It works the same below zero. From −3 °C, a rise of 5 degrees takes you to 2 °C. First you climb 3 degrees to reach zero. Then 2 more degrees take you above it. So a rise always adds to the temperature, whatever the sign it starts from.",
     );
 
     expect(result.blocking).toStrictEqual([]);
-    expect(result.minor).toContainEqual(expect.objectContaining({ screen: 4 }));
+    expect(result.minor).toStrictEqual([]);
   });
 
   it("blocks raw math left after repair", async () => {

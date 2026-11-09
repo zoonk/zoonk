@@ -7,8 +7,6 @@ import { normalizeString } from "@zoonk/utils/string";
 
 export type TopicSkillNamesExpected = { topics: { general: string[]; personal: string[] }[] };
 
-const MAX_NAME_LENGTH = 80;
-
 function includesText(haystack: string, needle: string): boolean {
   return normalizeString(haystack).includes(normalizeString(needle));
 }
@@ -39,12 +37,11 @@ function listProblems({
     leaks: expected.personal
       .filter((detail) => includesText(text, detail))
       .map((detail) => `"${detail}" leaked into "${skill.name}"`),
-    misses: [
+    misses:
       expected.general.length > 0 &&
-        !expected.general.some((keyword) => includesText(skill.name, keyword)) &&
-        `"${skill.name}" doesn't name ${expected.general.join(" or ")}`,
-      skill.name.length > MAX_NAME_LENGTH && `"${skill.name}" is longer than ${MAX_NAME_LENGTH}`,
-    ].filter((problem): problem is string => typeof problem === "string"),
+      !expected.general.some((keyword) => includesText(skill.name, keyword))
+        ? [`"${skill.name}" doesn't name ${expected.general.join(" or ")}`]
+        : [],
   };
 }
 

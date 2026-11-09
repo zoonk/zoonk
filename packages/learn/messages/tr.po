@@ -7712,14 +7712,14 @@ msgid "Last time you answered: {answer}"
 msgstr "Geçen seferki cevabın: {answer}"
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "T-LPPU"
-msgid "The idea first, then a few questions on it."
-msgstr "Önce konu anlatımı, sonra konuyla ilgili birkaç soru."
+msgctxt "49QdsH"
+msgid "The idea first, then put it to use."
+msgstr "Önce kavramı öğren, sonra uygula."
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "BagRap"
-msgid "A few questions on an idea you missed."
-msgstr "Takıldığın bir konuyla ilgili birkaç soru."
+msgctxt "OYk1Dn"
+msgid "Back to an idea you missed."
+msgstr "Gözden kaçırdığın bir kavrama geri dönelim."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "I2TE37"
@@ -12958,11 +12958,6 @@ msgstr "Üst üste birkaç yanlış oldu. Kısa bir mola genelde iyi gelir ve bu
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Planını sana göre ayarlıyoruz. Buradaki yanlışlar yanlış defterine kaydedilmez."
-
-#: src/session/question-block/question-actions.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Okudum. Cevapları göster"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

@@ -319,6 +319,47 @@ describe(gradeSpokenAnswer, () => {
     );
   });
 
+  it("checks word by word when the transcript writes spelled-out letter names as letters", async () => {
+    const spelled = "Emma si scrive: e, emme, emme, a";
+    const user = await userFixture();
+    const step = await createSpokenStep({ language: "pt", targetLanguage: "it" });
+
+    await prisma.step.update({
+      data: {
+        content: {
+          language: "it",
+          prompt: "Soletre o nome Emma usando os nomes italianos das letras.",
+          targetText: spelled,
+          translation: "Emma se escreve: e, eme, eme, a",
+        },
+      },
+      where: { id: step.id },
+    });
+
+    mockSession(user.id);
+    mockTranscript("Emma si scrive E, M, M, A.");
+
+    vi.mocked(assessPronunciation).mockResolvedValueOnce({
+      data: {
+        transcript: spelled,
+        words: spelled
+          .split(" ")
+          .map((text) => ({ heard: null, issue: null, status: "correct" as const, text })),
+      },
+    } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: { isCorrect: true, transcript: spelled },
+      status: "graded",
+    });
+
+    expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ expectedText: spelled, language: "it" }),
+    );
+  });
+
   it("fails instead of grading when neither check can hear the answer", async () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);

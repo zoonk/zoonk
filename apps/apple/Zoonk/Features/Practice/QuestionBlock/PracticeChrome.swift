@@ -251,7 +251,6 @@ enum PracticeFocus: Hashable {
   case check
   case next
   case notSure
-  case reveal
 }
 
 /// `move(to:)` sets both kinds of focus: a button takes keyboard focus only under Full Keyboard

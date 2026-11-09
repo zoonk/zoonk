@@ -20,10 +20,10 @@ extension PracticeDrill {
     case .reteach:
       isIdeaFirst
         ? LocalizedStringResource(
-          "The idea first, then a few questions on it.", table: "Practice",
+          "The idea first, then put it to use.", table: "Practice",
           comment: "How a content-gap drill goes, when it shows the lesson's ideas first.")
         : LocalizedStringResource(
-          "A few questions on an idea you missed.", table: "Practice",
+          "Back to an idea you missed.", table: "Practice",
           comment: "How a content-gap drill goes, without ideas to show.")
     case .readCarefully:
       LocalizedStringResource(

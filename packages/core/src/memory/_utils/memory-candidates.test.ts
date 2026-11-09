@@ -1,5 +1,6 @@
 import { type ExtractedMemoryFact } from "@zoonk/ai/tasks/memory/extraction";
 import { describe, expect, it } from "vitest";
+import { memoryFactUpdateSchema } from "../memory-contract";
 import { isSameStatement, toMemoryCandidates, toSessionFacts } from "./memory-candidates";
 
 const TODAY = new Date(Date.UTC(2026, 8, 26));
@@ -70,14 +71,13 @@ describe(toMemoryCandidates, () => {
     );
   });
 
-  it("keeps the first copy of a repeated statement, a handful at most, and drops empty or long ones", () => {
+  it("keeps the first copy of a repeated statement, a handful at most, and drops empty ones", () => {
     const candidates = toMemoryCandidates({
       facts: [
         fact({ statement: "Wants Law" }),
         fact({ statement: "wants  law" }),
         fact({ intent: "forget", statement: "Wants Law" }),
         fact({ statement: "  " }),
-        fact({ statement: "x".repeat(161) }),
         ...["A", "B", "C", "D", "E"].map((letter) => fact({ statement: `Fact ${letter}` })),
       ],
       today: TODAY,
@@ -92,6 +92,14 @@ describe(toMemoryCandidates, () => {
       "remember:Fact B",
       "remember:Fact C",
     ]);
+  });
+
+  it("keeps a statement past its target whole, and a learner can correct it", () => {
+    const statement = "x".repeat(161);
+    const candidates = toMemoryCandidates({ facts: [fact({ statement })], today: TODAY });
+
+    expect(candidates.map((candidate) => candidate.statement)).toStrictEqual([statement]);
+    expect(memoryFactUpdateSchema.safeParse({ statement: `${statement}y` }).success).toBe(true);
   });
 });
 

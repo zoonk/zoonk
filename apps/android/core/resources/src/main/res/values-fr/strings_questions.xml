@@ -9,11 +9,10 @@
   "questions_drill_not_sure_praise": "7c49c9c0d998b83c710caa0035d9db651a03e05793e680c4d1a2c5ba1e810295",
   "questions_drill_open_lesson": "1fa3e18be44e873f3b29f9e218c815ad80af39841d850ad9e8b3c53e6cffe6f4",
   "questions_drill_read_carefully": "d03466f999017130168f0b1991d2ffa224331d401487553e1aec6d0924f24d78",
-  "questions_drill_reteach": "05152c00cf994b038388cc04292545cafe218b1f42d1d2765ef3d081cb926c9a",
-  "questions_drill_reteach_ideas": "945dc7d1d096291f6b7f469cec6dbc998f8811661187064a98eff5702236c97d",
+  "questions_drill_reteach": "26af99ffcc626ca07c7b1654fb0fe46be3cbef0b9493473d793390dba63d1a4d",
+  "questions_drill_reteach_ideas": "8a8047a7b7a072923cacc314cebb1b8f143655e750772fbaa6ef4228f1e057a0",
   "questions_drill_retry": "f5fd83997db947efedb4069f45bc2b24a1685e6824af2b7558894d53a81c0997",
   "questions_drill_seconds_left": "b048c1924eada91ede8f100ebe99f69ddda079383cbb40dfdd0e08e86c00e113",
-  "questions_drill_show_answers": "dd8fe76b5d3118509155d87ac0b3f1aa63aad87bf66191e7ef0035b64fe10292",
   "questions_drill_spot_the_trap": "b3ecd71166f8f01b1ed8c3dd49e3038bc6eca744c1a6429944cef933c3906fc3",
   "questions_drill_start": "5e3dc94b40d150edd3c702eff6fbc3e3f6a0165ead32414ed37acbe634625011",
   "questions_drill_time_left": "75255af7579470cbdd83fe83e14332d0cc9aa6fbb0251632a1fb8130ae62d44c",
@@ -131,8 +130,8 @@
     <string name="questions_placement_note">Ton plan s’affine. Une erreur ici n’est jamais ajoutée à ton carnet.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Question d’un ancien examen · %1$s</string>
-    <string name="questions_drill_reteach_ideas">D’abord l’idée, puis quelques questions pour la mettre en pratique.</string>
-    <string name="questions_drill_reteach">Quelques questions sur une idée que tu n’as pas encore bien comprise.</string>
+    <string name="questions_drill_reteach_ideas">D’abord la notion, puis la mise en pratique.</string>
+    <string name="questions_drill_reteach">Revenons sur une notion qui t’a échappé.</string>
     <string name="questions_drill_read_carefully">Lis bien chaque mot avant de répondre.</string>
     <string name="questions_drill_spot_the_trap">Il y a un piège ici. Trouve-le avant de répondre.</string>
     <plurals name="questions_drill_timed">
@@ -155,7 +154,6 @@
         <item quantity="many">%d secondes restantes</item>
         <item quantity="other">%d secondes restantes</item>
     </plurals>
-    <string name="questions_drill_show_answers">J’ai tout lu. Afficher les réponses</string>
     <string name="questions_drill_not_sure">Je ne suis pas sûr</string>
     <string name="questions_drill_open_lesson">Revoir la leçon</string>
 </resources>

@@ -80,9 +80,7 @@ class QuestionBlockViewModel(
         shownAt = now()
     }
 
-    override fun startDrill(questions: List<Question>) = run.update { it?.start(questions) }
-
-    override fun reveal() = run.update { it?.reveal() }
+    override fun startDrill() = run.update { it?.start() }
 
     override fun submit(
         question: Question,

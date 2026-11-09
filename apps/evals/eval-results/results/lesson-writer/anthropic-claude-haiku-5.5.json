@@ -1155,8 +1155,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "7 of 8 parts passed. Screen 3: What it asks reads as 284 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.875,
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -1481,8 +1481,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "9 of 11 parts passed. Screen 5: Its problem, steps and result, shown together reads as 311 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 8: Its problem, steps and result, shown together reads as 284 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.363636363636363,
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -2089,8 +2089,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "9 of 12 parts passed. Screen 8: The activity content isn't valid JSON: Unexpected non-whitespace character after JSON at position 1232 (line 1 column 1233). Screen 5: Its problem, steps and result, shown together reads as 265 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest. Screen 9: Its problem, steps and result, shown together reads as 258 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 7.75,
+          "reasoning": "11 of 12 parts passed. Screen 8: The activity content isn't valid JSON: Unexpected non-whitespace character after JSON at position 1232 (line 1 column 1233).",
+          "score": 9.25,
           "weight": 30
         }
       ],
@@ -2485,8 +2485,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "6 of 7 parts passed. Screen 5: Its problem, steps and result, shown together reads as 272 characters at once besides its tables; whatever a learner reads at one moment fits a tweet, at most 250. Keep one idea, move detail into a table, a visual or a worked step's math, and cut the rest.",
-          "score": 8.714285714285714,
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],

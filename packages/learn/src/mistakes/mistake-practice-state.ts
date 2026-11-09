@@ -4,12 +4,7 @@ import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
 import { mergeReached } from "../_utils/merge-reached";
 import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
-import {
-  type AnswerSender,
-  isIdeaFirst,
-  isReadFirst,
-  isUnchangedAnswer,
-} from "./drill/drill-types";
+import { type AnswerSender, isIdeaFirst, isUnchangedAnswer } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
@@ -54,7 +49,6 @@ export type SentPracticeAnswer = { answer: ChoiceAnswer; durationMs: number; sen
 
 type PracticePhase =
   | { kind: "idea" }
-  | { kind: "reading" }
   | { kind: "answering"; selected: ChoiceAnswer | null }
   | ({ kind: "checking" } & SentPracticeAnswer)
   | ({ kind: "answerFailed" } & SentPracticeAnswer)
@@ -79,7 +73,6 @@ type PracticeState = {
 
 type PracticeAction =
   | { type: "start" }
-  | { type: "reveal" }
   | { answer: ChoiceAnswer | null; type: "select" }
   | ({ type: "check" } & SentPracticeAnswer)
   | { feedback: Graded; mistakeId: string; type: "answered" }
@@ -100,12 +93,8 @@ function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
     return { kind: "ending" };
   }
 
-  if (step.firstOfEntry && isIdeaFirst(step.entry.drill)) {
-    return { kind: "idea" };
-  }
-
-  return isReadFirst(step.entry.drill)
-    ? { kind: "reading" }
+  return step.firstOfEntry && isIdeaFirst(step.entry.drill)
+    ? { kind: "idea" }
     : { kind: "answering", selected: null };
 }
 
@@ -122,12 +111,6 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     steps,
     verdicts: [],
   };
-}
-
-function afterIdea(step: PracticeStep | undefined): PracticePhase {
-  return isReadFirst(step?.entry.drill ?? null)
-    ? { kind: "reading" }
-    : { kind: "answering", selected: null };
 }
 
 function getFixedIds(state: PracticeState, action: Extract<PracticeAction, { type: "answered" }>) {
@@ -183,8 +166,6 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
 export function practiceReducer(state: PracticeState, action: PracticeAction): PracticeState {
   switch (action.type) {
     case "start":
-      return { ...state, phase: afterIdea(state.steps[state.index]) };
-    case "reveal":
       return { ...state, phase: { kind: "answering", selected: null } };
     case "select":
       return state.phase.kind === "answerFailed" &&

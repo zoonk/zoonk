@@ -1,4 +1,5 @@
 import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import { exploreActivitySchema } from "../../activities/activity-templates";
 import {
@@ -17,9 +18,9 @@ import {
 const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;
 const MAX_SUMMARY_IDEAS = 5;
-const MAX_MATH_LENGTH = 300;
+const MATH_TARGET = 300;
 
-const mathSchema = z.string().min(1).max(MAX_MATH_LENGTH);
+const mathSchema = aimForCharacters(z.string().min(1), MATH_TARGET);
 
 const visualSchema = lessonVisualSchema.optional();
 
