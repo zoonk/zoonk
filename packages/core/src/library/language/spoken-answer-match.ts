@@ -205,18 +205,36 @@ export function matchSpokenAnswer({
   };
 }
 
-function isLetterNameHeardAsLetter({
+function groupMistakes(words: readonly SpokenWordResult[]): SpokenWordResult[][] {
+  const groups: SpokenWordResult[][] = [[]];
+
+  for (const word of words) {
+    if (word.status === "correct") {
+      groups.push([]);
+    } else {
+      groups.at(-1)?.push(word);
+    }
+  }
+
+  return groups.filter((group) => group.length > 0);
+}
+
+/** A letter's name can take two words ("double u", "i griega") for one letter heard. */
+function isLetterNameHeardAsLetters({
   language,
-  word,
+  mistake,
 }: {
   language: string;
-  word: SpokenWordResult;
+  mistake: readonly SpokenWordResult[];
 }): boolean {
+  const heard = mistake.flatMap((word) => word.heard?.split(" ") ?? []);
+
   return (
-    word.status === "different" &&
-    word.heard !== null &&
-    word.heard.split(" ").every((token) => isLoneLetter(token)) &&
-    !toTokens({ language, text: word.text }).every((token) => isLoneLetter(token))
+    heard.length > 0 &&
+    heard.every((token) => isLoneLetter(token)) &&
+    mistake.some(
+      (word) => !toTokens({ language, text: word.text }).every((token) => isLoneLetter(token)),
+    )
   );
 }
 
@@ -236,7 +254,7 @@ export function hasTranscribedLetterNames({
     return false;
   }
 
-  return words.some((word) => isLetterNameHeardAsLetter({ language, word }));
+  return groupMistakes(words).some((mistake) => isLetterNameHeardAsLetters({ language, mistake }));
 }
 
 export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWordResult[] {

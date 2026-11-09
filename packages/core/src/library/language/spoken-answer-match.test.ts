@@ -193,6 +193,32 @@ describe(hasTranscribedLetterNames, () => {
     ).toBe(true);
   });
 
+  it("finds a letter whose name is two words, one of them a letter", () => {
+    expect(
+      hasLetterNames({
+        expected: "Wes is spelled double u, e, s",
+        heard: "Wes is spelled W-E-S.",
+        language: "en",
+      }),
+    ).toBe(true);
+
+    expect(
+      hasLetterNames({
+        expected: "Wendy se escribe: uve doble, e, ene, de, i griega",
+        heard: "Wendy se escribe W, E, N, D, Y.",
+        language: "es",
+      }),
+    ).toBe(true);
+
+    expect(
+      hasLetterNames({
+        expected: "Yago se escribe: i griega, a, ge, o",
+        heard: "Yago se escribe Y, A, G, O.",
+        language: "es",
+      }),
+    ).toBe(true);
+  });
+
   it("leaves letters to the transcript when the sentence writes them as letters", () => {
     expect(
       hasLetterNames({
