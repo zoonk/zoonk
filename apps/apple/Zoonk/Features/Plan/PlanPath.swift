@@ -498,19 +498,30 @@ private struct PlanCheckpointRow: View {
 }
 
 extension PlanDate {
-  static func estimate(_ isoDate: String, today: String) -> (text: String, spoken: String) {
-    let date = text(isoDate, today: today)
+  static func estimate(_ isoDate: String, today: String, month: Bool = false) -> (
+    text: String, spoken: String
+  ) {
+    let date = text(isoDate, today: today, month: month)
 
-    return (
-      String(localized: "~\(date)", table: "Plan", comment: "An estimated day, like '~Nov 20'"),
-      String(
+    let spoken =
+      month
+      ? String(
+        localized: LocalizedStringResource(
+          "aboutMonth", defaultValue: "About \(date)", table: "Plan",
+          comment: "An estimated month, read aloud; the argument is a month like 'May 2027'"))
+      : String(
         localized: "About \(date)", table: "Plan",
         comment: "An estimated day, read aloud; the argument is a day like 'Nov 20'")
+
+    return (
+      String(
+        localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'"),
+      spoken
     )
   }
 
-  static func estimateText(_ isoDate: String, today: String) -> Text {
-    let date = estimate(isoDate, today: today)
+  static func estimateText(_ isoDate: String, today: String, month: Bool = false) -> Text {
+    let date = estimate(isoDate, today: today, month: month)
     return Text(verbatim: date.text).accessibilityLabel(Text(verbatim: date.spoken))
   }
 }

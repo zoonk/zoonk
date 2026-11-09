@@ -598,8 +598,11 @@ func planFinishText(_ context: PlanContext) -> Text? {
   let schedule = plan.schedule
 
   if let targetDate = schedule.targetDate {
-    let date = PlanDate.text(targetDate, today: plan.today, month: schedule.targetDateNamedMonth)
-    return schedule.targetDateEstimated ? Text(verbatim: "~\(date)") : Text(date)
+    let month = schedule.targetDateNamedMonth
+
+    return schedule.targetDateEstimated
+      ? PlanDate.estimateText(targetDate, today: plan.today, month: month)
+      : Text(PlanDate.text(targetDate, today: plan.today, month: month))
   }
 
   if context.goal.kind == .exam {
@@ -607,7 +610,7 @@ func planFinishText(_ context: PlanContext) -> Text? {
       "Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet")
   }
 
-  return plan.estimate.endDate.map { Text(verbatim: "~\(PlanDate.text($0, today: plan.today))") }
+  return plan.estimate.endDate.map { PlanDate.estimateText($0, today: plan.today) }
 }
 
 struct PlanMoreSection: View {
