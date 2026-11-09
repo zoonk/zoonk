@@ -41,6 +41,8 @@ const checkpointSchema = z.object({
 
 /** Freeze question ids at build time so revisits ask the same questions. */
 const blockPayloadSchema = z.object({
+  /** A put-off phase challenge: the day's order keeps it behind the lessons. */
+  afterLessons: z.boolean().default(false),
   /** A chapter's "Practice now": the area it practices, so a second tap finds it. */
   areaId: z.string().nullable().default(null),
   /** The areas most of a practice block asks about, at most two: what its row is named after. */

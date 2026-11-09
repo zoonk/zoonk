@@ -89,6 +89,77 @@ function getFullReview(input: SessionBuildInput) {
 }
 
 describe(buildSessionBlocks, () => {
+  const putOffDay = {
+    ...baseInput,
+    capsules: [],
+    checkpoints: [boss],
+    drills: [],
+    lastSessionChallenges: new Map([["plan-boss", false]]),
+    lessons: [lesson("l1", 15)],
+    planItems: [
+      { id: "plan-boss", kind: "boss" as const, position: 0, status: "todo" as const },
+      { id: "plan-l1", kind: "lesson" as const, position: 1, status: "todo" as const },
+    ],
+    practice: [],
+  };
+
+  it.each([
+    [15, ["plan-l1"]],
+    [45, ["plan-l1", "plan-boss"]],
+  ])("puts a challenge put off yesterday after a %i-minute day's lessons", (minutes, day) => {
+    const built = buildSessionBlocks({ ...putOffDay, dailyMinutes: minutes });
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(day);
+  });
+
+  it("puts every challenge after the lessons once one was put off", () => {
+    const built = buildSessionBlocks({
+      ...putOffDay,
+      checkpoints: [{ ...boss, planItemId: "plan-rematch", rematch: true }, boss],
+      dailyMinutes: 15,
+    });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-l1"]);
+  });
+
+  it("keeps a duel the learner started in that session leading", () => {
+    const built = buildSessionBlocks({
+      ...putOffDay,
+      checkpoints: [{ ...boss, planItemId: "plan-rematch", rematch: true }, boss],
+      dailyMinutes: 15,
+      lastSessionChallenges: new Map([
+        ["plan-boss", false],
+        ["plan-rematch", true],
+      ]),
+    });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-rematch"]);
+  });
+
+  it("puts a challenge put off yesterday after its own lesson and the lessons past it", () => {
+    const built = buildSessionBlocks({
+      ...putOffDay,
+      dailyMinutes: 30,
+      lessons: [lesson("l1", 15), lesson("l2", 15)],
+      planItems: [
+        { id: "plan-l1", kind: "lesson", position: 0, status: "todo" },
+        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+        { id: "plan-l2", kind: "lesson", position: 2, status: "todo" },
+      ],
+    });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual([
+      "plan-l1",
+      "plan-l2",
+    ]);
+  });
+
+  it("leads with a challenge put off yesterday once no lessons are left, even past the day's time", () => {
+    const built = buildSessionBlocks({ ...putOffDay, dailyMinutes: 10, lessons: [] });
+
+    expect(built.blocks.map((block) => block.payload.planItemId)).toStrictEqual(["plan-boss"]);
+    expect(built.plannedMinutes).toBe(15);
+  });
+
   it("keeps a reached challenge within the time left on a started day", () => {
     const built = buildSessionBlocks({
       ...baseInput,

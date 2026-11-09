@@ -588,6 +588,70 @@ describe("completion adds a reached challenge from its saved facts", () => {
   });
 });
 
+describe("a challenge put off for the day's lessons", () => {
+  it.each([true, false])(
+    "stays after them when a completion refills the day (built into the day: %s)",
+    async (inDay) => {
+      const fixture = await setup({ lessons: 5, minutes: 40, queued: 0 });
+      const [done, ...rest] = fixture.plan.items;
+
+      await prisma.planItem.update({ data: { status: "done" }, where: { id: done!.id } });
+
+      await prisma.planItem.updateMany({
+        data: { position: { increment: 10 } },
+        where: { id: { in: rest.map((item) => item.id) } },
+      });
+
+      const boss = await addSavedChallenge(fixture, { minutes: 5, position: 1 });
+
+      const lessons = await Promise.all(
+        (inDay ? [1, 2, 3] : [1, 2, 3, 4]).map((index, position) =>
+          studySessionBlockFixture({
+            estimatedMinutes: 10,
+            lessonId: fixture.playable[index]!.lesson.id,
+            payload: toBlockPayload({ planItemId: fixture.plan.items[index]!.id }),
+            position,
+            sessionId: fixture.session.id,
+          }),
+        ),
+      );
+
+      if (inDay) {
+        await studySessionBlockFixture({
+          estimatedMinutes: 5,
+          kind: "checkpoint",
+          payload: toBlockPayload({
+            afterLessons: true,
+            checkpoint: {
+              kind: "boss",
+              mock: false,
+              passMark: 7,
+              phase: 0,
+              rematch: false,
+              timeLimitMinutes: null,
+            },
+            planItemId: boss.id,
+          }),
+          position: 3,
+          sessionId: fixture.session.id,
+        });
+      }
+
+      await finish({ block: lessons[0]!, elapsedMinutes: 5, sessionId: fixture.session.id });
+
+      const pending = await prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: fixture.session.id, status: "pending" },
+      });
+
+      expect(pending.map((block) => readBlockPayload(block).planItemId)).toStrictEqual([
+        ...[2, 3, 4].map((index) => fixture.plan.items[index]!.id),
+        boss.id,
+      ]);
+    },
+  );
+});
+
 describe("completion refits today's lessons", () => {
   it("finishes a 100-minute day after five 20-minute lessons and keeps deferred work todo", async () => {
     const fixture = await setup();

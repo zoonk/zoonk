@@ -240,7 +240,7 @@ describe("the Plan's render reads", () => {
           () => Promise.all([getPlanTabView(), getSyllabusView(), listGoalMindMaps()]),
           '"public"."courses"."user_id", "public"."courses"."visibility"',
         ),
-      'SELECT "public"."study_sessions"."id" FROM',
+      'SELECT "public"."study_sessions"."id", "public"."study_sessions"."local_date" FROM',
     );
 
     const standIns = sessions.result;
