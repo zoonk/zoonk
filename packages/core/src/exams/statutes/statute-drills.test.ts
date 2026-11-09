@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { examFormat } from "../../library/exams/_test-utils/exam-formats";
+import { keyChecked } from "../../library/items/_test-utils/generated-items";
 import { loadStatuteDrillTargets, writeStatuteDrills } from "./statute-drill-targets";
 
 const LAW_TEXT = `LEI Nº 8.112, DE 11 DE DEZEMBRO DE 1990
@@ -148,7 +149,7 @@ describe("statute drills", () => {
 
     const created = await writeStatuteDrills({
       drills: [
-        {
+        keyChecked({
           context: null,
           difficulty: "easy",
           format: "trueFalse",
@@ -159,8 +160,8 @@ describe("statute drills", () => {
           reference: "Art. 7º",
           statement: "A investidura em cargo público ocorrerá com o exercício.",
           visual: null,
-        },
-        {
+        }),
+        keyChecked({
           context: null,
           difficulty: "easy",
           format: "trueFalse",
@@ -171,7 +172,7 @@ describe("statute drills", () => {
           reference: "Art. 13",
           statement: "A posse dar-se-á pela assinatura do respectivo termo.",
           visual: null,
-        },
+        }),
       ],
       optionCount: 4,
       provenance: PROVENANCE,

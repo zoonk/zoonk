@@ -22,6 +22,7 @@ An eval's job is to find the cheapest model that matches a higher tier's quality
 - Compare models on the same cases and scoring, and report quality, cost and latency for every model tried, including the ones you rejected. A decision that would rest on a handful of cases first adds cases that cover the task's fields and edge cases.
 - Compare models by their measured cost per run on the task, never by per-token price: models spend very different token counts on the same input.
 - Read the outputs, don't just trust the scores: the leading models' outputs on every case where they differ and, before switching a task's model, the old and new models' outputs on every case. Read them blind, paired in random order, and see which model wrote which only after judging every case. When a read disagrees with a score, fix the eval (expectations, scorer or rubric) or add the case that shows it, before choosing.
+- For shared items, don't choose a model with judge-flagged key flaws over one without unless its affected cases have been read; the comment beside the model states the judge-flagged count.
 - A model tends to favor its own family, as a judge, a labeler or a reader. When the judge or the leading models share a family, a reviewer from another family reads the outputs; when hand labels decide between models, label blind with two families.
 - The comment beside a model says why it was chosen: the eval evidence and any judgment beyond the scores.
 

@@ -25,9 +25,9 @@ export function meetsLatencyBudget({
   latency,
 }: {
   budget?: LatencyBudget;
-  latency: { p50: number; p95: number };
+  latency: { p50: number | null; p95: number | null };
 }): boolean | null {
-  if (!budget) {
+  if (!budget || latency.p50 === null || latency.p95 === null) {
     return null;
   }
 

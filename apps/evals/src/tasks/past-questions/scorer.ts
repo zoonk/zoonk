@@ -11,7 +11,8 @@ import { PAST_QUESTIONS_SCORE_CATEGORIES } from "./score-categories";
 function checkQuestions(output: string, input: ExtractPastQuestionsParams): CodeCheckResult {
   const { questions } = JSON.parse(output) as { questions: PastQuestion[] };
 
-  const checked = questions.map((question) => ({
+  const checked = questions.map((question, index) => ({
+    itemLocator: `questions[${index}].item (question ${question.number})`,
     problems: [
       ...checkItem({
         expectedFormat: input.format,
@@ -31,7 +32,12 @@ function checkQuestions(output: string, input: ExtractPastQuestionsParams): Code
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
-    judgedOutput: JSON.stringify({ questions: passing.map((entry) => entry.question) }, null, 2),
+    judgedOutput: JSON.stringify(
+      { questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })) },
+      null,
+      2,
+    ),
+    keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length,
     problems: checked.flatMap((entry) => entry.problems),
     total: Math.max(questions.length, 1),

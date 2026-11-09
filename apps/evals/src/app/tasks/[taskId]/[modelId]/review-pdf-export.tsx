@@ -1,5 +1,6 @@
 "use client";
 
+import { type EvalSummary } from "@/lib/eval-summary";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
@@ -23,9 +24,15 @@ function getLanguageLabel(language: string): string {
 export function ReviewPdfExport({
   entries,
   taskName,
+  summary,
+  modelId,
+  taskId,
 }: {
   entries: ReviewExportEntry[];
   taskName: string;
+  summary: EvalSummary;
+  modelId: string;
+  taskId: string;
 }) {
   const languages = [...new Set(entries.map((entry) => entry.language))].toSorted();
   const [selectedLanguages, setSelectedLanguages] = useState(languages);
@@ -53,7 +60,13 @@ export function ReviewPdfExport({
     setError(null);
 
     try {
-      const opened = printReviewOutputs({ entries: selectedEntries, taskName });
+      const opened = printReviewOutputs({
+        entries: selectedEntries,
+        modelId,
+        summary,
+        taskId,
+        taskName,
+      });
 
       if (!opened) {
         setError("The print window was blocked. Allow pop-ups and try again.");
@@ -69,7 +82,7 @@ export function ReviewPdfExport({
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger
-        render={<Button disabled={entries.length === 0} type="button" variant="outline" />}
+        render={<Button disabled={summary.attempted === 0} type="button" variant="outline" />}
       >
         <FileTextIcon />
         Export review PDF
@@ -82,6 +95,7 @@ export function ReviewPdfExport({
             Choose the output languages to include. For repeated runs, the PDF uses the
             lowest-scoring output when scores are available. Otherwise, it includes one generated
             output per test case. A print dialog will open, where you can save the review as a PDF.
+            The summary covers all saved runs, including failures.
           </DialogDescription>
         </DialogHeader>
 
@@ -119,7 +133,10 @@ export function ReviewPdfExport({
         )}
 
         <DialogFooter closeLabel="Close">
-          <Button disabled={selectedEntries.length === 0} onClick={printReview}>
+          <Button
+            disabled={entries.length > 0 && selectedEntries.length === 0}
+            onClick={printReview}
+          >
             <PrinterIcon />
             Print or save PDF
           </Button>
