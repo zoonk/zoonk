@@ -143,4 +143,18 @@ describe(getFirstLesson, () => {
       }),
     ).toBe(ready);
   });
+
+  it("resets a stopped read only when the followed run changes", () => {
+    const read = { ...writing, status: "stopped" as const };
+    const old = { ...WAITING_RUN, firstLesson: writing, id: "old" };
+    expect(getFirstLesson({ read, readGenerationId: "old", run: old })?.status).toBe("stopped");
+
+    expect(
+      getFirstLesson({ read, readGenerationId: "old", run: { ...old, id: "new" } })?.status,
+    ).toBe("writing");
+
+    expect(
+      getFirstLesson({ read, readGenerationId: "new", run: { ...old, id: "new" } })?.status,
+    ).toBe("stopped");
+  });
 });

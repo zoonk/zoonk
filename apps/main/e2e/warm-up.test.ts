@@ -341,7 +341,7 @@ test("a failed first lesson stops writing even when the goal replays its start",
     title: "Why birds sing at dawn",
   });
 
-  await openPlanWait({
+  const { goal } = await openPlanWait({
     events: [
       {
         at: Date.now(),
@@ -367,4 +367,30 @@ test("a failed first lesson stops writing even when the goal replays its start",
   await page.clock.runFor(3000);
   await expect(clock).toHaveText(stoppedTime ?? "");
   await expect(page.getByRole("button", { exact: true, name: "Try again" })).toBeVisible();
+  await page.clock.resume();
+
+  await page.route("**/v1/generations/*/events**", async (route) => {
+    if (
+      route
+        .request()
+        .url()
+        .includes(goal.generationRunId ?? "")
+    ) {
+      await route.fallback();
+      return;
+    }
+
+    await route.fulfill({
+      body: `data: ${JSON.stringify({ at: Date.now(), lessonId: lesson.id, lessonTitle: lesson.title, status: "started", step: "writeFirstLesson" })}\n\n`,
+      contentType: "text/event-stream",
+    });
+  });
+
+  await page.route(/\/v1\/generations\/[^/]+$/u, (route) =>
+    route.fulfill({ json: { status: "running" } }),
+  );
+
+  await page.getByRole("button", { exact: true, name: "Try again" }).click();
+  await expect(row.getByText("Writing about 5 short screens")).toBeVisible();
+  await expect(row.getByText("Something went wrong on our side.")).toHaveCount(0);
 });

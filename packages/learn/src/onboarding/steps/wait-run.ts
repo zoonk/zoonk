@@ -43,30 +43,37 @@ export type WaitStop = { failure: GenerationFailure; retry?: () => void };
  */
 export function getFirstLesson({
   read,
+  readGenerationId,
   run,
 }: {
   read: OnboardingFirstLesson | null;
+  readGenerationId?: string | null;
   run: GenerationRun | null;
 }): GenerationFirstLesson | null {
+  const saved: OnboardingFirstLesson | null =
+    read?.status === "stopped" && run?.id && run.id !== readGenerationId
+      ? { ...read, status: "writing" }
+      : read;
+
   const live = run?.firstLesson;
 
   if (!live) {
-    return read;
+    return saved;
   }
 
-  if (!read || read.id !== live.id) {
+  if (!saved || saved.id !== live.id) {
     return live;
   }
 
-  if (read.status === "done" || read.status === "ready") {
-    return read;
+  if (saved.status === "done" || saved.status === "ready") {
+    return saved;
   }
 
   if (live.status === "done" || live.status === "ready") {
     return live;
   }
 
-  return read;
+  return saved;
 }
 
 /**

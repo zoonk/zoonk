@@ -210,7 +210,8 @@ struct PlanBuilding: View {
       onRunEnd: onRunEnd
     ) { run in
       let firstLesson = run.wait.firstLesson(
-        read: view.firstLesson.map(GenerationWait.FirstLesson.init))
+        read: view.firstLesson.map(GenerationWait.FirstLesson.init),
+        readGenerationID: view.generationId, generationID: run.id)
       let wait = holding == nil ? run.wait : run.wait.finished
       let failure = holding == nil ? run.failure : nil
       let ready = ready(firstLesson)

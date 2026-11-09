@@ -122,7 +122,12 @@ function FirstLessonRead({
   state: FlowState;
   setState: (update: (current: FlowState) => FlowState) => void;
 }) {
-  const firstLesson = getFirstLesson({ read: state.view.firstLesson, run: generation });
+  const firstLesson = getFirstLesson({
+    read: state.view.firstLesson,
+    readGenerationId: state.view.generationId,
+    run: generation,
+  });
+
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -141,13 +146,15 @@ function FirstLessonRead({
     key: `${state.view.goal.id}:${generation?.id ?? state.view.generationId}`,
     onPoll: async (signal) => {
       const opened = state.view;
-      const goalId = opened.goal.id;
-      const read = await actions.readFirstLesson(goalId);
+
+      const view = {
+        ...opened,
+        firstLesson: await actions.readFirstLesson(opened.goal.id),
+        generationId: generation?.id ?? opened.generationId,
+      };
 
       setState((current) =>
-        !signal.aborted && current.view === opened
-          ? { ...current, view: { ...current.view, firstLesson: read } }
-          : current,
+        !signal.aborted && current.view === opened ? { ...current, view } : current,
       );
     },
   });

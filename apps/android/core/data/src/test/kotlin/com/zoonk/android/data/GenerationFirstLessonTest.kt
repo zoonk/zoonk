@@ -27,4 +27,13 @@ class GenerationFirstLessonTest {
         val writing = stopped.copy(status = OnboardingFirstLesson.Status.WRITING)
         assertEquals(false, live.withRead(stopped).withRead(writing)?.stopped)
     }
+
+    @Test fun aNewRunResetsThePreviousRunsStoppedRead() {
+        val id = UUID.randomUUID()
+        val live = GenerationFirstLesson(id.toString(), "Dawn")
+        val read = OnboardingFirstLesson(id, OnboardingFirstLesson.Status.STOPPED, "Dawn")
+        assertEquals(true, live.withRead(read, "old", "old")?.stopped)
+        assertEquals(false, live.withRead(read, "old", "new")?.stopped)
+        assertEquals(true, live.withRead(read, "new", "new")?.stopped)
+    }
 }

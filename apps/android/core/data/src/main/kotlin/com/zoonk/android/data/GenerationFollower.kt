@@ -318,7 +318,11 @@ private suspend fun <T> runCatchingApi(read: suspend () -> T): T? =
         null
     }
 
-fun GenerationFirstLesson?.withRead(read: com.zoonk.api.models.OnboardingFirstLesson?): GenerationFirstLesson? {
+fun GenerationFirstLesson?.withRead(
+    read: com.zoonk.api.models.OnboardingFirstLesson?,
+    readGenerationId: String? = null,
+    runId: String? = null,
+): GenerationFirstLesson? {
     if (read == null) return this
     val saved =
         GenerationFirstLesson(
@@ -327,7 +331,7 @@ fun GenerationFirstLesson?.withRead(read: com.zoonk.api.models.OnboardingFirstLe
             ready = read.status.value == "ready",
             done =
                 read.status.value == "done",
-            stopped = read.status.value == "stopped",
+            stopped = read.status.value == "stopped" && (runId == null || runId == readGenerationId),
         )
     if (this == null) return saved
     if (read.id.toString() != id) return this

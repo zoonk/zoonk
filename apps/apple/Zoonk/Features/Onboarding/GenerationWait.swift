@@ -111,7 +111,13 @@ struct GenerationWait: Equatable, Sendable {
 
   /// What the onboarding read says of lesson 1 outranks the stream, which replays its old steps after
   /// a reconnect: a lesson either side calls ready is ready, and one the read calls done is done.
-  func firstLesson(read: FirstLesson?) -> FirstLesson? {
+  func firstLesson(read: FirstLesson?, readGenerationID: String? = nil, generationID: String? = nil)
+    -> FirstLesson?
+  {
+    var read = read
+    if let generationID, generationID != readGenerationID, read?.isStopped == true {
+      read?.isStopped = false
+    }
     guard let live = firstLesson else {
       return read
     }

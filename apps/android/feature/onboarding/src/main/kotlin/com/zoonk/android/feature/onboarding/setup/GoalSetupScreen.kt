@@ -136,7 +136,7 @@ fun GoalSetupScreen(
     val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
-    val first = run.firstLesson.withRead(state.value?.firstLesson)
+    val first = run.firstLesson.withRead(state.value?.firstLesson, state.value?.generationId, run.id)
     val claimed = state.value?.warmUp
     val deckId = run.warmUpId ?: claimed?.takeIf { it.status.value == "ready" }?.id?.toString()
     val coming =
@@ -309,7 +309,7 @@ private fun ColumnScope.SetupStep(
     ) {
         TrackOnboardingQuestion(view.goal.id.toString(), step.value, onboardingId)
     }
-    val firstLesson = run.firstLesson.withRead(view.firstLesson)
+    val firstLesson = run.firstLesson.withRead(view.firstLesson, view.generationId, run.id)
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 

@@ -221,4 +221,18 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, false)
   }
 
+  func testANewRunResetsThePreviousRunsStoppedRead() {
+    var wait = GenerationWait(kind: .curriculum)
+    wait.apply(
+      GenerationEvent(
+        lessonID: "lesson", lessonTitle: "Dawn", status: "started", step: "writeFirstLesson"))
+    let read = GenerationWait.FirstLesson(.init(id: "lesson", status: .stopped, title: "Dawn"))
+    XCTAssertEqual(
+      wait.firstLesson(read: read, readGenerationID: "old", generationID: "old")?.isStopped, true)
+    XCTAssertEqual(
+      wait.firstLesson(read: read, readGenerationID: "old", generationID: "new")?.isStopped, false)
+    XCTAssertEqual(
+      wait.firstLesson(read: read, readGenerationID: "new", generationID: "new")?.isStopped, true)
+  }
+
 }

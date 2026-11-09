@@ -194,7 +194,11 @@ function StepScreen({
   usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });
 
   const wait = {
-    firstLesson: getFirstLesson({ read: view.firstLesson, run }),
+    firstLesson: getFirstLesson({
+      read: view.firstLesson,
+      readGenerationId: view.generationId,
+      run,
+    }),
     lessonHref: routes.lesson,
     library: view.libraryCourse
       ? { course: view.libraryCourse, href: routes.course(view.libraryCourse) }
