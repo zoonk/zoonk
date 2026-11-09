@@ -63,6 +63,7 @@ model Goal {
   kind                  GoalKind
   status                GoalStatus             @default(active)
   prompt                String
+  /// Required once released.
   displayName           String?                @map("display_name")
   title                 String
   details               Json                   @default("{}")
