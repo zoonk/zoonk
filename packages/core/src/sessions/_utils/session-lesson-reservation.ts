@@ -6,7 +6,7 @@ import { getSessionDayMinutes } from "../fresh-start";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { pickDayLessons } from "./day-lessons";
 import { isMockOnlyDay } from "./day-mock";
-import { findPlannedReview } from "./day-review";
+import { isSavedReviewDay } from "./day-review";
 import { canAddSessionLessons } from "./session-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionRow } from "./study-session-access";
@@ -35,9 +35,7 @@ export function getSessionLessonCandidates({
 }) {
   if (
     !canAddSessionLessons({
-      reviewDay:
-        Boolean(findPlannedReview({ items: plan.items, today: localDate })) ||
-        blocks.some((block) => readBlockPayload(block).fullReview),
+      reviewDay: isSavedReviewDay({ blocks, items: plan.items, today: localDate }),
       trialEnded,
     }) ||
     isMockOnlyDay({

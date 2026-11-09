@@ -12,6 +12,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
+import { refitSessionLessons } from "./_utils/refit-session-lessons";
 import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
 import { startStudyBlock } from "./start-study-block";
@@ -335,6 +336,47 @@ describe("completion adds a reached challenge from its saved facts", () => {
       ).resolves.toMatchObject({ status: "questionsNeeded" });
     },
   );
+
+  it("keeps a full-review day free of phase challenges during the final refill", async () => {
+    const fixture = await setup({ lessons: 1, minutes: 30, queued: 0 });
+    await addSavedChallenge(fixture, { position: 1 });
+
+    await prisma.goal.update({
+      data: { kind: "exam", targetDate: new Date("2026-10-04") },
+      where: { id: fixture.goal.id },
+    });
+
+    await prisma.planItem.update({
+      data: { completedAt: NOW, status: "done" },
+      where: { id: fixture.plan.items[0]!.id },
+    });
+
+    await planItemFixture({
+      kind: "mock",
+      planId: fixture.plan.id,
+      position: 2,
+      scheduledFor: fixture.session.localDate,
+    });
+
+    const review = await studySessionBlockFixture({
+      completedAt: NOW,
+      estimatedMinutes: 30,
+      kind: "practice",
+      payload: toBlockPayload({ creditedMinutes: 15, fullReview: true }),
+      position: 0,
+      sessionId: fixture.session.id,
+      startedAt: NOW,
+      status: "completed",
+    });
+
+    await prisma.$transaction((tx) =>
+      refitSessionLessons(tx, { sessionId: fixture.session.id, timeZone: "UTC" }),
+    );
+
+    await expect(
+      prisma.studySessionBlock.findMany({ where: { sessionId: fixture.session.id } }),
+    ).resolves.toMatchObject([{ id: review.id, status: "completed" }]);
+  });
 
   it("keeps a planned review day free of phase challenges during refill", async () => {
     const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });

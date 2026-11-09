@@ -110,19 +110,22 @@ describe(buildSessionBlocks, () => {
     expect(built.plannedMinutes).toBeLessThanOrEqual(5);
   });
 
-  it("offers no phase challenge on a planned review day", () => {
-    const built = buildSessionBlocks({
-      ...baseInput,
-      checkpoints: [boss],
-      planItems: [
-        { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
-        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
-      ],
-      reviewPlanItemId: "review-1",
-    });
+  it.each([{ reviewPlanItemId: "review-1" }, { fullReviewSkillIds: ["s0"] }])(
+    "offers no phase challenge on a review day: %j",
+    (review) => {
+      const built = buildSessionBlocks({
+        ...baseInput,
+        checkpoints: [boss],
+        planItems: [
+          { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
+          { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+        ],
+        ...review,
+      });
 
-    expect(built.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
-  });
+      expect(built.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+    },
+  );
 
   it("funds only one of two reached 15-minute challenges on a 20-minute day", () => {
     const built = buildSessionBlocks({
