@@ -21,7 +21,7 @@ function setVisibility(state: DocumentVisibilityState) {
 
 function clockServer(delivered: boolean[] = []) {
   return vi.fn<NonNullable<LessonPlayerAdapters["updateLessonClock"]>>(() =>
-    Promise.resolve(delivered.shift() ?? true),
+    Promise.resolve((delivered.shift() ?? true) ? { status: "updated" } : null),
   );
 }
 
@@ -101,6 +101,59 @@ describe("lesson clock", () => {
 
     expect(startLesson).toHaveBeenCalledOnce();
   });
+
+  it.each(["Activity", "visibility"])(
+    "restarts an ignored running clock once when returning through %s",
+    async (through) => {
+      const lesson = buildLesson([teachingStep("check")]);
+      const runId = crypto.randomUUID();
+      const [firstClock, secondClock] = [crypto.randomUUID(), crypto.randomUUID()];
+      const updateLessonClock = clockServer().mockResolvedValue({ status: "ignored" });
+
+      const startLesson = vi
+        .fn<LessonPlayerAdapters["startLesson"]>()
+        .mockResolvedValueOnce(startedRun({ clockId: firstClock, runId }))
+        .mockResolvedValue(startedRun({ clockId: secondClock, runId }));
+
+      const player = lessonPlayerElement({
+        adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
+        lesson,
+      });
+
+      const view = render(<Activity mode="visible">{player}</Activity>);
+      await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+
+      if (through === "Activity") {
+        view.rerender(<Activity mode="hidden">{player}</Activity>);
+      } else {
+        setVisibility("hidden");
+      }
+
+      await expect.poll(() => transitions(updateLessonClock)).toHaveLength(1);
+      expect(startLesson).toHaveBeenCalledOnce();
+
+      if (through === "Activity") {
+        view.rerender(<Activity mode="visible">{player}</Activity>);
+      } else {
+        setVisibility("visible");
+      }
+
+      await expect.poll(() => startLesson.mock.calls).toStrictEqual([[undefined], [{ runId }]]);
+      setVisibility("visible");
+      globalThis.dispatchEvent(new Event("online"));
+      setVisibility("hidden");
+
+      await expect
+        .poll(() => transitions(updateLessonClock))
+        .toStrictEqual([
+          { clockId: firstClock, runId, sequence: 1, state: "paused" },
+          { clockId: firstClock, runId, sequence: 2, state: "running" },
+          { clockId: secondClock, runId, sequence: 1, state: "paused" },
+        ]);
+
+      expect(startLesson).toHaveBeenCalledTimes(2);
+    },
+  );
 
   it("pauses the clock of a start that answers after the learner closed the lesson", async () => {
     const lesson = buildLesson([teachingStep("check")]);
