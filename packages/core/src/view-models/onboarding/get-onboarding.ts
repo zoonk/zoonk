@@ -35,6 +35,7 @@ import {
   type OnboardingView,
 } from "./onboarding-contract";
 import {
+  getAnsweredQuestions,
   getFollowUpQuestions,
   getOnboardingSteps,
   isClassTest,
@@ -296,7 +297,16 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       firstLesson,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
-      goal: view,
+      goal:
+        goal.kind !== "language" && getAnsweredQuestions(details).includes("reason")
+          ? {
+              ...view,
+              details: {
+                ...view.details,
+                answered: getAnsweredQuestions(details).filter((question) => question !== "reason"),
+              },
+            }
+          : view,
       goalIds,
       languageAim:
         goal.kind === "language"

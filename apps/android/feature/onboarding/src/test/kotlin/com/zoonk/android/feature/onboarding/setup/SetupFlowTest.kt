@@ -65,6 +65,12 @@ class SetupFlowTest {
         assertEquals(SetupProgress(answered = 2, total = 4), setupProgress(onTime.opening(TARGET_DATE), steps))
     }
 
+    @Test
+    fun aMovedGoalDoesNotKeepTheLanguageQuestionInBack() {
+        val language = SetupFlow(GOAL, com.zoonk.api.models.OnboardingStep.REASON)
+        assertEquals(SetupFlow("exam", LEVEL), language.arriving("exam", com.zoonk.api.models.OnboardingStep.REASON, LEVEL))
+    }
+
     private companion object {
         const val GOAL = "goal-1"
     }

@@ -82,6 +82,7 @@ internal fun SetupFlow.arriving(
     answered: OnboardingStep,
     next: OnboardingStep,
 ): SetupFlow {
+    if (goalId != this.goalId) return SetupFlow(goalId, next)
     val trail = history + answered
     val seen = trail.indexOf(next)
     return SetupFlow(goalId, next, if (seen < 0) trail else trail.take(seen))

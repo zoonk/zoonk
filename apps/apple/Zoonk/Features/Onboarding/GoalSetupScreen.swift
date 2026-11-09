@@ -31,6 +31,7 @@ struct GoalSetupContent: View {
       switch resource.state {
       case .loaded(let view):
         GoalSteps(view: view, onStartOver: onStartOver) { goalID = $0 }
+          .id(view.goal.id)
       case .failed:
         ContentUnavailableView {
           Text(
