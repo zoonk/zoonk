@@ -19,6 +19,15 @@ export type PlannedStudyDay = {
   plannedMinutes: number;
 };
 
+/** The day's blocks without its missions, for reads that show only what the day holds. */
+export async function planDayBlocks(
+  context: SessionDayContext & { selection: SelectedDayPlan },
+): Promise<Omit<PlannedStudyDay, "missions">> {
+  const plan = await loadDayPlan(context);
+  const input = await loadSessionBuildInput({ ...context, dayPlan: plan });
+  return { ...buildSessionBlocks(input), input, plan };
+}
+
 /** Uses the supplied selected plan; preview and persistence must never re-plan independently. */
 export async function planStudyDay(
   context: SessionDayContext & {
@@ -28,16 +37,18 @@ export async function planStudyDay(
     selection: SelectedDayPlan;
   },
 ): Promise<PlannedStudyDay> {
-  const plan = await loadDayPlan(context);
-  const input = await loadSessionBuildInput({ ...context, dayPlan: plan });
-  const { blocks, plannedMinutes } = buildSessionBlocks(input);
-  const facts = await loadDayMissionFacts({ ...context, blocks, dayPlan: plan, plannedMinutes });
+  const day = await planDayBlocks(context);
 
-  return {
-    blocks,
-    input,
-    missions: { picks: pickMissions(facts), version: 1 },
-    plan,
-    plannedMinutes,
-  };
+  const facts = await loadDayMissionFacts({
+    ...context,
+    blocks: day.blocks,
+    dayPlan: day.plan,
+    plannedMinutes: day.plannedMinutes,
+  });
+
+  return { ...day, missions: { picks: pickMissions(facts), version: 1 } };
+}
+
+export function toUnstartedBlocks(blocks: readonly PlannedBlock[]) {
+  return blocks.map((block, position) => ({ ...block, position, status: "pending" as const }));
 }

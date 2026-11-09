@@ -11,7 +11,6 @@ import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
-import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -31,7 +30,7 @@ import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
-import { buildPlanPath } from "./plan-path-view";
+import { buildPlanPath, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
@@ -193,7 +192,7 @@ export async function buildPlanView({
     noticeDates,
     catchUp,
     examChoices,
-    todayPlan,
+    today,
     partAreas,
     taughtSkillIds,
     challengeResults,
@@ -219,7 +218,7 @@ export async function buildPlanView({
     }),
     Promise.resolve(selectedCatchUp),
     loadExamChoiceViews({ examBlueprintId: goal.examBlueprintId, picks: state.settings }),
-    readTodayPlanSession(goal.userId, goal.id),
+    readPlanToday({ context, now }),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
     readChallengeResults(
@@ -303,7 +302,7 @@ export async function buildPlanView({
       shortPlan,
       skillAreas,
       taughtSkillIds,
-      todayPlan,
+      today,
     }),
     planId: context.plan.id,
     ready: savedContext.phases.length > 0 && !savedContext.plan.buildFailedAt,

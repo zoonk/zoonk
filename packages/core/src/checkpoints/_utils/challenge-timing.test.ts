@@ -35,7 +35,15 @@ const base = {
   goal: { dailyMinutes: 20, kind: "learn" as const, targetDate: null },
   settings: parsePlanSettings({}),
   today: TODAY,
+  todayBlocks: [],
 };
+
+function todayHolds(...planItemIds: string[]) {
+  return planItemIds.map((planItemId) => ({
+    payload: toBlockPayload({ planItemId }),
+    status: "pending" as const,
+  }));
+}
 
 describe(getChallengeTimings, () => {
   const lesson = {
@@ -47,39 +55,12 @@ describe(getChallengeTimings, () => {
     scheduledFor: TODAY,
   };
 
-  it.each([15, 45])(
-    "does not promise a challenge put off yesterday to a %i-minute day not built yet, which starts with lessons",
-    (dailyMinutes) => {
-      const timings = getChallengeTimings({
-        ...base,
-        goal: { ...base.goal, dailyMinutes },
-        items: [boss, lesson],
-        lastSessionChallenges: new Map([["a", false]]),
-      });
-
-      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
-    },
-  );
-
-  it("dates put-off challenges from the day after, then spends each later day's room", () => {
-    const timings = getChallengeTimings({
-      ...base,
-      goal: { ...base.goal, dailyMinutes: 15 },
-      items: [boss, { ...boss, id: "b", phase: 1, position: 2 }, { ...lesson, position: 3 }],
-      lastSessionChallenges: new Map([["a", false]]),
-    });
-
-    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
-    expect(timings.get("b")).toStrictEqual({ date: "2026-11-11", when: "date" });
-  });
-
-  it("dates a challenge left out of today's built lesson day for tomorrow", () => {
+  it("dates a challenge today's day leaves out for tomorrow", () => {
     const timings = getChallengeTimings({
       ...base,
       goal: { ...base.goal, dailyMinutes: 15 },
       items: [boss, lesson],
-      savedDay: true,
-      todayBlocks: [{ payload: toBlockPayload({ planItemId: "lesson" }), status: "pending" }],
+      todayBlocks: todayHolds("lesson"),
     });
 
     expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
@@ -91,7 +72,6 @@ describe(getChallengeTimings, () => {
       const timings = getChallengeTimings({
         ...base,
         items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
-        savedDay: true,
         todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status }],
       });
 
@@ -103,73 +83,34 @@ describe(getChallengeTimings, () => {
     const timings = getChallengeTimings({
       ...base,
       items: [boss],
-      savedDay: true,
       todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status }],
     });
 
     expect(timings.get("a")).toStrictEqual({ date: "2026-11-09", when: "nextSession" });
   });
 
-  it.each(["2026-11-08", "2026-11-09"])(
-    "holds reached challenges until after a planned review due on %s",
-    (date) => {
-      const timings = getChallengeTimings({
-        ...base,
-        items: [
-          boss,
-          { ...boss, id: "review", kind: "review", position: 2, scheduledFor: new Date(date) },
-        ],
-      });
-
-      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
-    },
-  );
-
-  it("does not reserve today for a finished past review", () => {
+  it("does not promise a challenge lost earlier today for the next session", () => {
     const timings = getChallengeTimings({
       ...base,
-      items: [
-        boss,
-        {
-          ...boss,
-          id: "review",
-          kind: "review",
-          position: 2,
-          scheduledFor: new Date("2026-11-08"),
-          status: "done",
-        },
-      ],
+      items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
+      results: new Map([
+        [
+          "a",
+          {
+            correct: 3,
+            localDate: TODAY,
+            passed: false,
+            studySessionBlockId: "b",
+            studySessionId: "s",
+            total: 10,
+          },
+        ],
+      ]),
+      todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "completed" }],
     });
 
-    expect(timings.get("a")?.when).toBe("nextSession");
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
   });
-
-  it.each([true, false])(
-    "does not promise a challenge lost earlier today for the next session (saved day: %s)",
-    (savedDay) => {
-      const timings = getChallengeTimings({
-        ...base,
-        items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
-        results: new Map([
-          [
-            "a",
-            {
-              correct: 3,
-              localDate: TODAY,
-              passed: false,
-              studySessionBlockId: "b",
-              studySessionId: "s",
-              total: 10,
-            },
-          ],
-        ]),
-        savedDay,
-        todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "completed" }],
-      });
-
-      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
-    },
-  );
 
   it("dates a challenge lost today after the first duel the next day holds", () => {
     const timings = getChallengeTimings({
@@ -188,7 +129,6 @@ describe(getChallengeTimings, () => {
           },
         ],
       ]),
-      savedDay: true,
       todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "completed" }],
     });
 
@@ -196,7 +136,7 @@ describe(getChallengeTimings, () => {
     expect(timings.get("b")).toStrictEqual({ date: "2026-11-10", when: "date" });
   });
 
-  it("does not promise a legacy or empty challenge before a day build can establish its offer", () => {
+  it("spends no later day's room on a legacy or empty challenge", () => {
     const items = [
       { ...boss, facts: null },
       {
@@ -205,40 +145,41 @@ describe(getChallengeTimings, () => {
         id: "empty",
         position: 2,
       },
+      { ...boss, id: "c", position: 3 },
     ];
 
     expect(
-      [...getChallengeTimings({ ...base, items }).values()].map((entry) => entry.when),
-    ).toStrictEqual(["date", "date"]);
+      [...getChallengeTimings({ ...base, items }).values()].map((entry) => entry.date),
+    ).toStrictEqual(["2026-11-10", "2026-11-10", "2026-11-10"]);
   });
 
-  it("waits for todo teaching before its position, including lessons due today", () => {
+  it("keeps an unreached challenge's saved estimate", () => {
     const timings = getChallengeTimings({
       ...base,
       items: [{ ...boss, id: "lesson", kind: "lesson", position: 0 }, boss],
     });
 
-    expect(timings.get("a")?.when).toBe("date");
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-20", when: "date" });
   });
 
-  it.each([20, 30])(
-    "promises a %i-minute next session only to the challenge that leads it",
-    (dailyMinutes) => {
-      const timings = getChallengeTimings({
-        ...base,
-        goal: { ...base.goal, dailyMinutes },
-        items: [boss, { ...boss, id: "b", position: 2 }],
-      });
+  it("promises today every challenge today's day holds, and dates the rest from tomorrow", () => {
+    const timings = getChallengeTimings({
+      ...base,
+      items: [boss, { ...boss, id: "b", position: 2 }, { ...boss, id: "c", position: 3 }],
+      todayBlocks: todayHolds("b", "c"),
+    });
 
-      expect(timings.get("a")?.when).toBe("nextSession");
-      expect(timings.get("b")).toStrictEqual({ date: "2026-11-10", when: "date" });
-    },
-  );
+    expect([...timings]).toStrictEqual([
+      ["a", { date: "2026-11-10", when: "date" }],
+      ["b", { date: "2026-11-09", when: "nextSession" }],
+      ["c", { date: "2026-11-09", when: "nextSession" }],
+    ]);
+  });
 
   it("dates the second reached challenge on a day that can hold it", () => {
     const items = [boss, { ...boss, id: "b", phase: 1, position: 2 }];
 
-    const timings = getChallengeTimings({ ...base, items, savedDay: true });
+    const timings = getChallengeTimings({ ...base, items });
 
     expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
     expect(timings.get("b")).toStrictEqual({ date: "2026-11-11", when: "date" });
@@ -261,7 +202,6 @@ describe(getChallengeTimings, () => {
           },
         ],
       ]),
-      savedDay: true,
     });
 
     expect(timings.get("b")?.date).toBe("2026-11-10");
@@ -273,8 +213,7 @@ describe(getChallengeTimings, () => {
     const timings = getChallengeTimings({
       ...base,
       items: [boss, { ...boss, id: "b", position: 2 }],
-      savedDay: true,
-      todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "pending" }],
+      todayBlocks: todayHolds("a"),
     });
 
     expect(timings.get("a")).toStrictEqual({ date: "2026-11-09", when: "nextSession" });
@@ -297,7 +236,6 @@ describe(getChallengeTimings, () => {
           scheduledFor: new Date("2026-11-11"),
         },
       ],
-      savedDay: true,
       settings: parsePlanSettings({ weekdayMinutes: [0, 20, 20, 20, 20, 0, 0] }),
     });
 
@@ -315,7 +253,6 @@ describe(getChallengeTimings, () => {
     const timings = getChallengeTimings({
       ...base,
       items,
-      savedDay: true,
       settings: parsePlanSettings({ weekdayMinutes: [0, 20, 0, 0, 0, 0, 0] }),
     });
 
@@ -345,7 +282,6 @@ describe(getChallengeTimings, () => {
             ...base,
             goal: { ...base.goal, dailyMinutes: budget },
             items: reversed ? items.toReversed() : items,
-            savedDay: true,
           });
 
           const perDay = Math.max(1, Math.floor(budget / minutes));
@@ -362,26 +298,21 @@ describe(getChallengeTimings, () => {
   });
 
   it("dates a reached locked challenge from the next capable day, ignoring its saved estimate", () => {
-    const timings = getChallengeTimings({ ...base, items: [boss], savedDay: true });
+    const timings = getChallengeTimings({ ...base, items: [boss] });
 
     expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
   });
 
-  it("clamps a past estimate to tomorrow unless today's saved session holds it", () => {
+  it("clamps a past estimate to tomorrow unless today's day holds it", () => {
     const items = [{ ...boss, scheduledFor: new Date("2026-11-01") }];
 
-    expect(getChallengeTimings({ ...base, items, savedDay: true }).get("a")).toStrictEqual({
+    expect(getChallengeTimings({ ...base, items }).get("a")).toStrictEqual({
       date: "2026-11-10",
       when: "date",
     });
 
     expect(
-      getChallengeTimings({
-        ...base,
-        items,
-        savedDay: true,
-        todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "pending" }],
-      }).get("a"),
+      getChallengeTimings({ ...base, items, todayBlocks: todayHolds("a") }).get("a"),
     ).toStrictEqual({ date: "2026-11-09", when: "nextSession" });
   });
 

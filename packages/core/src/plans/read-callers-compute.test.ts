@@ -72,7 +72,7 @@ describe("row-5 callers read their saved artifacts", () => {
     expect(buildPlan).toHaveBeenCalledTimes(0);
   });
 
-  it("a due challenge GET reads its offer without rebuilding the day", async () => {
+  it("a due challenge GET plans today from the saved plan without a plan build or a write", async () => {
     const user = await userFixture();
 
     const { goal, plan, planItems } = await sessionGoalFixture({
@@ -97,13 +97,12 @@ describe("row-5 callers read their saved artifacts", () => {
     );
 
     expect(read.result).toMatchObject({
-      challenge: { minutes: null, questions: null, status: "waiting", topics: [] },
+      challenge: { minutes: null, questions: null, status: "ready", topics: [] },
       status: "ready",
     });
 
     expect(read.writes).toBe(0);
     expect(buildPlan).toHaveBeenCalledTimes(0);
-    expect(buildSessionBlocks).toHaveBeenCalledTimes(0);
   });
 
   it("a lapsed summary previews the free lesson Open saves from the saved plan, without writing", async () => {

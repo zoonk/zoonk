@@ -6,13 +6,12 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getChallengeTimings } from "../checkpoints/_utils/challenge-timing";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getGoalPlan } from "../plans/get-goal-plan";
 import { getItemKey } from "../plans/planner/plan-items";
-import { parsePlanSettings } from "../plans/planner/plan-state";
 import { sessionGoalFixture } from "./_test-utils/session-goal";
 import { planStudyDay } from "./_utils/plan-study-day";
 import { selectDayPlan } from "./_utils/selected-day-plan";
@@ -21,6 +20,20 @@ import { readBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 import { openStudyDay } from "./open-study-day";
 import { startStudyBlock } from "./start-study-block";
+
+function findBossCheckpoint({
+  bossId,
+  view,
+}: {
+  bossId: string;
+  view: Awaited<ReturnType<typeof getGoalPlan>>;
+}) {
+  if (view.status !== "ready") {
+    throw new Error(`Expected the Plan, received ${view.status}`);
+  }
+
+  return view.plan.phases.find((phase) => phase.checkpoint?.planItemId === bossId)?.checkpoint;
+}
 
 const START = new Date("2026-09-28T12:00:00Z");
 const NOW = new Date("2026-09-30T12:00:00Z");
@@ -83,11 +96,6 @@ describe("a selected review day", () => {
       vi.setSystemTime(NOW);
       mockSession(user.id);
 
-      const saved = await prisma.plan.findUniqueOrThrow({
-        include: { items: { orderBy: { position: "asc" } } },
-        where: { id: fixture.plan.id },
-      });
-
       const selection = await selectDayPlan({ goal: fixture.goal, now: NOW, timeZone: "UTC" });
 
       if (!selection) {
@@ -110,15 +118,14 @@ describe("a selected review day", () => {
         selectionHasEvent: selection.items.some((item) => item.kind === kind),
       };
 
-      const plan = getChallengeTimings({
-        goal: fixture.goal,
-        items: saved.items,
-        settings: parsePlanSettings(saved.settings),
-        today: TODAY,
-      }).get(boss.id)?.when;
-
       await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
-      const read = await getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id });
+
+      const [view, read] = await Promise.all([
+        getGoalPlan(fixture.goal.id),
+        getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
+      ]);
+
+      const plan = findBossCheckpoint({ bossId: boss.id, view })?.when;
 
       const screen =
         read.status === "ready"
@@ -199,14 +206,11 @@ describe("a selected review day", () => {
     expect(planned.input.reviewPlanItemId).toBe(review.id);
     expect(planned.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
 
+    await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
+
     expect(
-      getChallengeTimings({
-        goal: fixture.goal,
-        items: selection.items,
-        settings: selection.state.settings,
-        today: TODAY,
-      }).get(boss.id),
-    ).toStrictEqual({ date: "2026-10-01", when: "date" });
+      findBossCheckpoint({ bossId: boss.id, view: await getGoalPlan(fixture.goal.id) }),
+    ).toMatchObject({ date: "2026-10-01", when: "date" });
   });
 
   it("keeps review-day behavior and binds its practice to the review saved by Open", async () => {

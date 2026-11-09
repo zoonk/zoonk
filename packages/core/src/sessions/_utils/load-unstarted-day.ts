@@ -14,7 +14,7 @@ import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
-import { type PlannedStudyDay } from "./plan-study-day";
+import { type PlannedStudyDay, toUnstartedBlocks } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
@@ -33,12 +33,7 @@ export async function loadUnstartedDayView({
 }): Promise<UnstartedDayView> {
   const { blueprint, goal, localDate, now, timeZone, userId } = context;
 
-  const blocks = day.blocks.map((block, position) => ({
-    ...block,
-    brainPower: 0,
-    position,
-    status: "pending" as const,
-  }));
+  const blocks = toUnstartedBlocks(day.blocks).map((block) => ({ ...block, brainPower: 0 }));
 
   const missionDay = { blocks, localDate, userId };
   const { dayMinutes, examPrep } = day.plan;

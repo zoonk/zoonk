@@ -8,7 +8,7 @@ import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
-import { getSessionChallenges } from "../sessions/_utils/day-stretch";
+import { previewTodayBlocks } from "../sessions/_utils/read-study-day";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
@@ -123,36 +123,40 @@ function getChallengePassMark({
 
 function isOfferedBeforeOpen({
   challenge,
-  due,
+  heldToday,
   plusRequired,
-  savedDay,
 }: {
   challenge: OwnedChallenge;
-  due: boolean;
+  heldToday: boolean;
   plusRequired: boolean;
-  savedDay: boolean;
 }): boolean {
-  const offerable = !savedDay && due && !plusRequired && challenge.goal.status === "active";
+  const offerable = heldToday && !plusRequired && challenge.goal.status === "active";
   return offerable && !readBossOffer(challenge)?.waiting;
 }
 
-type SavedDayBlock = Pick<ChallengeBlock, "id" | "kind" | "payload" | "position" | "status">;
+function readSavedDay({ goal, today, userId }: OwnedChallenge) {
+  return prisma.studySession.findUnique({
+    select: {
+      blocks: { select: { id: true, kind: true, payload: true, position: true, status: true } },
+    },
+    where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
+  });
+}
 
-function getSavedWaitReason({
-  savedBlocks,
-  todayBlock,
-}: {
-  savedBlocks: readonly SavedDayBlock[];
-  todayBlock: ChallengeBlock | null;
-}): ChallengeView["waitReason"] {
-  const saved = todayBlock ? savedBlocks.find((row) => row.id === todayBlock.id) : undefined;
-  return saved ? getStoredBlockWait({ block: saved, blocks: savedBlocks }) : null;
+/** The day Today plans while Start hasn't built today; only a phase challenge's offer reads it. */
+function previewChallengeDay(challenge: OwnedChallenge) {
+  const { goal, item, now, timeZone, userId } = challenge;
+
+  return item.kind === "boss" && item.status === "todo"
+    ? previewTodayBlocks({ blueprint: goal.examBlueprint, goal, now, timeZone, userId })
+    : [];
 }
 
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, today, userId } = challenge;
+  const savedDayRead = readSavedDay(challenge);
 
-  const [results, plusRequired, block, latestDay] = await Promise.all([
+  const [results, plusRequired, block, savedDay, previewBlocks] = await Promise.all([
     item.kind === "boss"
       ? readChallengeResults(
           userId,
@@ -161,27 +165,11 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       : Promise.resolve(new Map<string, CheckpointResult>()),
     needsPlus(challenge),
     findChallengeBlock({ challenge }),
-    prisma.studySession.findFirst({
-      orderBy: { localDate: "desc" },
-      select: {
-        blocks: {
-          select: {
-            id: true,
-            kind: true,
-            payload: true,
-            position: true,
-            startedAt: true,
-            status: true,
-          },
-        },
-        id: true,
-        localDate: true,
-      },
-      where: { goalId: goal.id, localDate: { lte: today }, userId },
-    }),
+    savedDayRead,
+    savedDayRead.then((saved) => (saved ? [] : previewChallengeDay(challenge))),
   ]);
 
-  const savedDay = latestDay?.localDate.getTime() === today.getTime() ? latestDay : null;
+  const todayBlocks = savedDay?.blocks ?? previewBlocks;
 
   const due =
     item.kind === "boss"
@@ -193,26 +181,22 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       ? getChallengeTimings({
           goal,
           items: challenge.items,
-          lastSessionChallenges:
-            latestDay && !savedDay ? getSessionChallenges(latestDay.blocks) : undefined,
           results,
-          savedDay: savedDay !== null,
           settings: parsePlanSettings(challenge.plan.settings),
           today,
-          todayBlocks: savedDay?.blocks,
+          todayBlocks,
         }).get(item.id)
       : null;
 
-  const nextOffer = item.kind !== "boss" || timing?.when === "nextSession";
-
   const todayBlock = getTodayBlock({ block, today });
 
-  const offered = isOfferedBeforeOpen({
-    challenge,
-    due: due && nextOffer,
-    plusRequired,
-    savedDay: Boolean(savedDay),
-  });
+  const offered =
+    !savedDay &&
+    isOfferedBeforeOpen({
+      challenge,
+      heldToday: item.kind === "boss" ? timing?.when === "nextSession" : due,
+      plusRequired,
+    });
 
   const status = getChallengeStatus({
     due,
@@ -223,6 +207,10 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       : await readTodayBlockStatus({ isMock: item.kind === "mock", todayBlock }),
   });
 
+  const heldBlock = savedDay
+    ? savedDay.blocks.find((row) => row.id === todayBlock?.id)
+    : previewBlocks.find((row) => row.payload.planItemId === item.id);
+
   // An earlier day's block isn't the one Start opens today: the offer is sized as its item keeps it.
   return {
     ...getWaitingTiming({ challenge, due, status, timing }),
@@ -230,7 +218,7 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
     plusRequired,
     previewBlock: offered ? null : block,
     todayBlock,
-    waitReason: getSavedWaitReason({ savedBlocks: savedDay?.blocks ?? [], todayBlock }),
+    waitReason: heldBlock ? getStoredBlockWait({ block: heldBlock, blocks: todayBlocks }) : null,
   };
 }
 

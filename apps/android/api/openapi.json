@@ -33028,7 +33028,7 @@
           },
           "date": {
             "nullable": true,
-            "description": "A reached phase challenge's next capable day when it is upcoming, from the same estimate the Plan shows. Null before its preceding lessons finish or when it is offered in the next session. Weekly challenges and mocks keep their real calendar date.",
+            "description": "A reached phase challenge's next capable day when it is upcoming, from the same estimate the Plan shows. Null before its preceding lessons finish or when today's day holds it. Weekly challenges and mocks keep their real calendar date.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -33264,7 +33264,7 @@
           },
           "waitReason": {
             "nullable": true,
-            "description": "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+            "description": "Why it waits in today's day, the saved session or, before Start builds it, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
             "type": "string",
             "enum": [
               "lessons",
@@ -81358,7 +81358,7 @@
             "properties": {
               "date": {
                 "nullable": true,
-                "description": "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless the challenge is already in today's session; weekly challenges and mocks retain their calendar dates.",
+                "description": "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -81388,7 +81388,7 @@
                   "nextSession",
                   "queued"
                 ],
-                "description": "`date` shows the approximate date for a phase challenge. `nextSession` means it leads the next session, or already belongs to today's session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week."
+                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week."
               }
             },
             "required": [
