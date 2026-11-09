@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
-import {
-  keepLessonsBeforeUnqueuedDuels,
-  markLessonsAroundChallenges,
-} from "./lessons-before-challenges";
+import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 
 const TODAY = new Date("2026-10-15T00:00:00.000Z");
 const TOMORROW = new Date("2026-10-16T00:00:00.000Z");
@@ -70,39 +67,5 @@ describe(markLessonsAroundChallenges, () => {
     expect(
       mark([checkpoint]).every((entry) => !entry.afterChallenge && !entry.beforeChallenge),
     ).toBe(true);
-  });
-});
-
-describe(keepLessonsBeforeUnqueuedDuels, () => {
-  it("bounds the day at the earliest unqueued duel, even for lessons promised today", () => {
-    expect(
-      keepLessonsBeforeUnqueuedDuels({
-        checkpoints: [{ ...boss, planItemId: "later-boss" }, boss],
-        items: [...items, { id: "later-boss", position: 7, scheduledFor: TODAY }],
-        lessons: markLessonsAroundChallenges({ checkpoints: [boss], items, lessons, today: TODAY }),
-      }).map((entry) => entry.lessonId),
-    ).toStrictEqual(["before"]);
-  });
-
-  it.each([
-    ["no challenge", []],
-    ["a rematch", [{ ...boss, rematch: true }]],
-    ["the week's challenge", [{ ...boss, kind: "weekly" as const }]],
-  ])("does not block lessons for %s", (_, checkpoints) => {
-    expect(keepLessonsBeforeUnqueuedDuels({ checkpoints, items, lessons })).toStrictEqual(lessons);
-  });
-
-  it("uses selected plan keys before the plan items have persisted IDs", () => {
-    expect(
-      keepLessonsBeforeUnqueuedDuels({
-        checkpoints: [{ ...boss, planItemId: null, planItemKey: "boss" }],
-        items: items.map((item) => ({ ...item, id: null, key: item.id })),
-        lessons: lessons.map((entry) => ({
-          ...entry,
-          planItemId: null,
-          planItemKey: entry.lessonId,
-        })),
-      }).map((entry) => entry.lessonId),
-    ).toStrictEqual(["before"]);
   });
 });

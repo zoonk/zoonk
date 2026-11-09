@@ -4,7 +4,6 @@ import { getItemKey } from "../../plans/planner/plan-items";
 import { readBlockPayload } from "../block-payload";
 import { isPhaseChallenge } from "../block-wait";
 import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
-import { keepLessonsBeforeUnqueuedDuels } from "./lessons-before-challenges";
 import { type SessionPlanItem } from "./session-plan-item";
 
 export function buildRestOfDay({
@@ -52,21 +51,7 @@ export function buildRestOfDay({
     );
   });
 
-  if (checkpoints.length === input.checkpoints.length) {
-    return built;
-  }
-
-  const unqueuedCheckpoints = input.checkpoints.filter(
-    (checkpoint) => !checkpoints.includes(checkpoint),
-  );
-
-  const keepLessons = (lessons: SessionBuildInput["lessons"]) =>
-    keepLessonsBeforeUnqueuedDuels({ checkpoints: unqueuedCheckpoints, items, lessons });
-
-  return buildSessionBlocks({
-    ...input,
-    checkpoints,
-    fillLessons: keepLessons(input.fillLessons ?? []),
-    lessons: keepLessons(input.lessons),
-  });
+  return checkpoints.length === input.checkpoints.length
+    ? built
+    : buildSessionBlocks({ ...input, checkpoints });
 }
