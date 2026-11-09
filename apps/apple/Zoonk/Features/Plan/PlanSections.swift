@@ -561,7 +561,7 @@ struct NextOnPathSection: View {
         "After the challenge before it", tableName: "Plan",
         comment: "When the phase's challenge comes")
     case .date:
-      checkpoint.date.map { Text(PlanDate.text($0, today: context.plan.today)) }
+      checkpoint.date.map { PlanDate.estimateText($0, today: context.plan.today) }
     }
   }
 
