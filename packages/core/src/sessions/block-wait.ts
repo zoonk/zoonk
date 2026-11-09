@@ -20,7 +20,7 @@ export function getBlockWait<Block extends BlockWaitFields>({
 }: {
   block: Block;
   blocks: readonly Block[];
-}): "challenge" | "lessons" | null {
+}): "lessons" | null {
   if (!isPhaseChallenge(block.checkpoint) || !isUnfinished(block)) {
     return null;
   }

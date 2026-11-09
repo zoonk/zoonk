@@ -119,10 +119,10 @@ async function orderRefilledBlocks({
   items: readonly ChallengeReachItem[];
   tx: TransactionClient;
 }) {
-  if (added.some((block) => block.kind === "checkpoint")) {
+  if (added.length > 0) {
     const pending = [...blocks, ...added].filter(
       (block) =>
-        block.status === "pending" && block.startedAt === null && !readBlockPayload(block).extra,
+        (block.status === "pending" || block.status === "active") && !readBlockPayload(block).extra,
     );
 
     const ordered = orderDayBlocks({ blocks: pending, items });
@@ -154,18 +154,12 @@ export async function refitSessionLessons(
     sessionId,
     completedBlockId,
     timeZone,
-    phaseChallengesRequired,
-  }: {
-    sessionId: string;
-    completedBlockId?: string;
-    timeZone: string;
-    phaseChallengesRequired?: boolean;
-  },
-): Promise<{ reserved: boolean; phaseChallengesRequired?: boolean }> {
+  }: { sessionId: string; completedBlockId?: string; timeZone: string },
+): Promise<{ reserved: boolean }> {
   const session = await lockSessionQueue({ sessionId, tx });
 
   if (!session?.goal || session.status === "completed") {
-    return { phaseChallengesRequired, reserved: false };
+    return { reserved: false };
   }
 
   const { blocks, leaving } = await trimSessionLessons({ completedBlockId, session, tx });
@@ -173,7 +167,7 @@ export async function refitSessionLessons(
 
   if (room < 1) {
     await saveDeferredCount({ blocks, completedBlockId, leaving, tx });
-    return { phaseChallengesRequired, reserved: false };
+    return { reserved: false };
   }
 
   const [plan, subscription] = await Promise.all([
@@ -187,7 +181,7 @@ export async function refitSessionLessons(
   ]);
 
   if (!plan) {
-    return { phaseChallengesRequired, reserved: false };
+    return { reserved: false };
   }
 
   const prerequisites = await loadSkillPrerequisites(
@@ -222,16 +216,11 @@ export async function refitSessionLessons(
         })
       : [];
 
-  const {
-    checkpoints,
-    phaseChallengesRequired: required,
-    stretch,
-  } = await fitRefillStretch({
+  const { checkpoints, stretch } = await fitRefillStretch({
     blocks,
     budget: room - writingMinutes,
     leaving,
     lessons,
-    phaseChallengesRequired,
     plan,
     session: { ...session, goal: session.goal },
     trialEnded: access.trialEnded,
@@ -283,5 +272,5 @@ export async function refitSessionLessons(
     });
   }
 
-  return { phaseChallengesRequired: required, reserved };
+  return { reserved };
 }

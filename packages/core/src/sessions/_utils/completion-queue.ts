@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import {
   arePhaseChallengesRequired,
+  shouldRefillAfterEntitlementLapse,
   withoutLockedPhaseChallenges,
 } from "../../checkpoints/_utils/phase-challenge-access";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
@@ -19,13 +20,11 @@ import { STUDY_SESSION_INCLUDE } from "./study-session-access";
 export async function loadCompletionQueue({
   blockId,
   sessionId,
-  phaseChallengesRequired,
   timeZone,
   userId,
 }: {
   blockId: string;
   sessionId: string;
-  phaseChallengesRequired?: boolean;
   timeZone: string;
   userId: string;
 }) {
@@ -35,8 +34,9 @@ export async function loadCompletionQueue({
   });
 
   const required =
-    phaseChallengesRequired ??
-    (stored.goal ? await arePhaseChallengesRequired({ goalKind: stored.goal.kind, userId }) : true);
+    !stored.goal ||
+    !shouldRefillAfterEntitlementLapse({ blocks: stored.blocks, phaseChallengesRequired: false }) ||
+    (await arePhaseChallengesRequired({ goalKind: stored.goal.kind, userId }));
 
   const session = {
     ...stored,

@@ -176,15 +176,14 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
   const nextOffer =
     item.kind !== "boss" ||
     getChallengeTimings({
+      challengesOpen: !plusRequired,
       goal,
       items: challenge.items,
       results,
       savedDay: savedDay !== null,
       settings: parsePlanSettings(challenge.plan.settings),
       today,
-      todayItemIds: new Set(
-        (savedDay?.blocks ?? []).flatMap((row) => readBlockPayload(row).planItemId ?? []),
-      ),
+      todayBlocks: savedDay?.blocks,
     }).get(item.id)?.when === "nextSession";
 
   const todayBlock = getTodayBlock({ block, today });

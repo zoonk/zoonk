@@ -4,6 +4,7 @@ import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-blo
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
 import { fundLeadingChallenges, getLeadingChallenges, listDayStretch } from "./_utils/day-stretch";
 import { fillRemainingLessonTime } from "./_utils/fill-session-time";
+import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
 import { type PracticeTopic, buildPracticeBlocks, countDrilled } from "./_utils/practice-blocks";
 import {
@@ -193,14 +194,18 @@ function getPracticeMinutes({
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {
   const planItems = input.planItems ?? [];
 
-  const available =
-    input.examTrialEnded || input.mockReplacesDay
-      ? []
-      : input.checkpoints.filter((checkpoint) => isPhaseChallenge(checkpoint));
+  const available = canHoldPhaseChallenges({
+    mockOnlyDay: input.mockReplacesDay ?? false,
+    reviewDay: isSessionReviewDay(input),
+    trialEnded: input.examTrialEnded,
+  })
+    ? input.checkpoints.filter((checkpoint) => isPhaseChallenge(checkpoint))
+    : [];
 
   const leading = fundLeadingChallenges({
     budget,
     checkpoints: getLeadingChallenges({ checkpoints: available, items: planItems }),
+    overflow: !input.usedMinutes,
   });
 
   const calendar = input.examTrialEnded

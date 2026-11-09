@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { toBlockPayload } from "../../sessions/block-payload";
 import { getChallengeTimings } from "./challenge-timing";
 
 const TODAY = new Date("2026-11-09");
@@ -35,6 +36,67 @@ const base = {
 };
 
 describe(getChallengeTimings, () => {
+  it.each(["completed", "skipped"] as const)(
+    "does not promise today's %s challenge again",
+    (status) => {
+      const timings = getChallengeTimings({
+        ...base,
+        items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
+        savedDay: true,
+        todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status }],
+      });
+
+      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    },
+  );
+
+  it.each(["pending", "active"] as const)("keeps today's %s challenge in the session", (status) => {
+    const timings = getChallengeTimings({
+      ...base,
+      items: [boss],
+      savedDay: true,
+      todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status }],
+    });
+
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-09", when: "nextSession" });
+  });
+
+  it("holds reached challenges until after a planned review day", () => {
+    const timings = getChallengeTimings({
+      ...base,
+      items: [
+        { ...boss, scheduledFor: new Date("2026-11-08") },
+        { ...boss, id: "review", kind: "review", position: 2, scheduledFor: TODAY },
+      ],
+    });
+
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+  });
+
+  it("does not promise a challenge lost earlier today for the next session", () => {
+    const timings = getChallengeTimings({
+      ...base,
+      items: [{ ...boss, scheduledFor: new Date("2026-11-08") }],
+      results: new Map([
+        [
+          "a",
+          {
+            correct: 3,
+            localDate: TODAY,
+            passed: false,
+            studySessionBlockId: "b",
+            studySessionId: "s",
+            total: 10,
+          },
+        ],
+      ]),
+      savedDay: true,
+      todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "completed" }],
+    });
+
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+  });
+
   it("offers a reached challenge before its estimate and never queues a later one", () => {
     const timings = getChallengeTimings({
       ...base,
@@ -92,9 +154,12 @@ describe(getChallengeTimings, () => {
     });
 
     expect(
-      getChallengeTimings({ ...base, items, savedDay: true, todayItemIds: new Set(["a"]) }).get(
-        "a",
-      ),
+      getChallengeTimings({
+        ...base,
+        items,
+        savedDay: true,
+        todayBlocks: [{ payload: toBlockPayload({ planItemId: "a" }), status: "pending" }],
+      }).get("a"),
     ).toStrictEqual({ date: "2026-11-09", when: "nextSession" });
   });
 

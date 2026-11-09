@@ -138,7 +138,6 @@ export async function completeRunBlock(
 export async function withStudyBlock({
   completion,
   progress,
-  phaseChallengesRequired,
   runId,
   timeZone,
   userId,
@@ -146,7 +145,6 @@ export async function withStudyBlock({
   completion: RunCompletion;
   /** Supply only when this request closed the run. */
   progress?: LessonProgress;
-  phaseChallengesRequired?: boolean;
   runId: string;
   timeZone: string;
   userId: string;
@@ -155,13 +153,7 @@ export async function withStudyBlock({
   const blockId = getString(run.contentIds, "studySessionBlockId");
 
   const studyBlock = blockId
-    ? await settleFinishedLesson({
-        blockId,
-        energy: progress?.energy,
-        phaseChallengesRequired,
-        timeZone,
-        userId,
-      })
+    ? await settleFinishedLesson({ blockId, energy: progress?.energy, timeZone, userId })
     : null;
 
   if (studyBlock) {

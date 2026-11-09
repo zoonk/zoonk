@@ -2,7 +2,6 @@ import { getChallengeTimings } from "../../checkpoints/_utils/challenge-timing";
 import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-results";
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { type readTodayPlanSession } from "../../learner/facts/today-plan-session";
-import { readBlockPayload } from "../../sessions/block-payload";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
@@ -41,15 +40,14 @@ export function buildPlanPath({ context, todaySession, challengeResults, ...inpu
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
     targetDate: goal.targetDate,
     timings: getChallengeTimings({
+      challengesOpen: input.challengesOpen,
       goal,
       items,
       results: challengeResults,
       savedDay: todaySession !== null,
       settings: state.settings,
       today: context.today,
-      todayItemIds: new Set(
-        (todaySession?.blocks ?? []).flatMap((block) => readBlockPayload(block).planItemId ?? []),
-      ),
+      todayBlocks: todaySession?.blocks,
     }),
     today: context.today,
     todayItemKeys: new Set(

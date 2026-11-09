@@ -44,14 +44,10 @@ async function keepSessionEnd(
 /** Completes only when no work remains; concurrent block finishes may close the session only once. */
 async function completeIfFinished({
   answers,
-  phaseChallengesRequired,
   session,
   timeZone,
   userId,
-}: SessionDay & {
-  answers: readonly SessionAnswer[];
-  phaseChallengesRequired?: boolean;
-}): Promise<boolean> {
+}: SessionDay & { answers: readonly SessionAnswer[] }): Promise<boolean> {
   const finished = session.blocks.every(
     (block) => block.status === "completed" || block.status === "skipped",
   );
@@ -92,11 +88,7 @@ async function completeIfFinished({
         throw new SessionCompletionUnchangedError("open");
       }
 
-      const refit = await refitSessionLessons(tx, {
-        phaseChallengesRequired,
-        sessionId: session.id,
-        timeZone,
-      });
+      const refit = await refitSessionLessons(tx, { sessionId: session.id, timeZone });
 
       if (refit.reserved) {
         return null;
@@ -203,7 +195,6 @@ type SettledSessionDay = {
 export async function settleSessionDay({
   blockId,
   rewardMissions = true,
-  phaseChallengesRequired,
   sessionId,
   source,
   timeZone,
@@ -212,7 +203,6 @@ export async function settleSessionDay({
   blockId?: string;
   /** Ending an unasked challenge closes the session without paying a completion reward. */
   rewardMissions?: boolean;
-  phaseChallengesRequired?: boolean;
   sessionId: string;
   /** The activity that finished the block, when its screen says what it did to the missions. */
   source?: MissionCompletionSource;
@@ -240,7 +230,7 @@ export async function settleSessionDay({
   const { missions, fullMealPaid } = settled;
   const paidReward = settled.fullMealPaid ? settled.fullMealReward : null;
   const day = { session, timeZone, userId };
-  const sessionCompleted = await completeIfFinished({ ...day, answers, phaseChallengesRequired });
+  const sessionCompleted = await completeIfFinished({ ...day, answers });
 
   return {
     fullMealPaid,

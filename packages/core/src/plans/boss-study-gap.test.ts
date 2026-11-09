@@ -3,6 +3,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -11,7 +15,10 @@ import { startChallenge } from "../checkpoints/start-challenge";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { openTodayView } from "../sessions/_test-utils/open-today-view";
-import { readBlockPayload } from "../sessions/block-payload";
+import { followPlanChangeToday } from "../sessions/_utils/refresh-day-session";
+import { followSavedDay } from "../sessions/_utils/refresh-study-day-selection";
+import { STUDY_SESSION_INCLUDE } from "../sessions/_utils/study-session-access";
+import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -127,6 +134,70 @@ describe("a course boss follows its teaching in plan order", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it.each(["append", "planChange", "closedPlanChange"] as const)(
+    "keeps a reached challenge outside a started day's remaining five minutes (%s)",
+    async (path) => {
+      const { goal, plan, user } = await setup({ dailyMinutes: 30 });
+      const items = await readItems(plan.id);
+      const lesson = items.find((item) => item.kind === "lesson")!;
+      const boss = items.find((item) => item.kind === "boss")!;
+
+      await prisma.planItem.update({
+        data: { completedAt: new Date(), status: "done" },
+        where: { id: lesson.id },
+      });
+
+      const session = await studySessionFixture({
+        goalId: goal.id,
+        localDate: new Date(START),
+        plannedMinutes: 30,
+        startedAt: new Date(),
+        status: path === "closedPlanChange" ? "completed" : "active",
+        userId: user.id,
+      });
+
+      await studySessionBlockFixture({
+        completedAt: new Date(),
+        estimatedMinutes: 25,
+        lessonId: lesson.lessonId,
+        payload: toBlockPayload({ creditedMinutes: 25, planItemId: lesson.id }),
+        position: 0,
+        sessionId: session.id,
+        startedAt: new Date(),
+        status: "completed",
+      });
+
+      if (path === "append") {
+        await followSavedDay({
+          session: await prisma.studySession.findUniqueOrThrow({
+            include: STUDY_SESSION_INCLUDE,
+            where: { id: session.id },
+          }),
+          timeZone: "UTC",
+        });
+      } else {
+        await followPlanChangeToday({
+          goalId: goal.id,
+          localDate: new Date(START),
+          timeZone: "UTC",
+          userId: user.id,
+        });
+      }
+
+      const saved = await prisma.studySession.findUniqueOrThrow({
+        include: { blocks: true },
+        where: { id: session.id },
+      });
+
+      expect(saved.blocks.some((block) => readBlockPayload(block).planItemId === boss.id)).toBe(
+        false,
+      );
+
+      expect(saved.plannedMinutes).toBeLessThanOrEqual(30);
+      expect(saved.status).toBe(path === "closedPlanChange" ? "completed" : "active");
+    },
+  );
 
   it("offers and starts the boss after its lesson on the same day", async () => {
     const { goal, library, plan } = await setup();
