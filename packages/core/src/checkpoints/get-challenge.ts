@@ -147,16 +147,16 @@ function isOfferedBeforeOpen({
 
 /** The day Today plans while Start hasn't built today; only a phase challenge's offer reads it. */
 function previewChallengeDay(challenge: OwnedChallenge) {
-  const { goal, item, now, timeZone, userId } = challenge;
+  const { goal, item, timeZone, userId } = challenge;
 
   return item.kind === "boss" && item.status === "todo"
-    ? previewTodayBlocks({ blueprint: goal.examBlueprint, goal, now, timeZone, userId })
+    ? previewTodayBlocks(userId, goal.id, timeZone)
     : [];
 }
 
 async function loadChallengeDay(challenge: OwnedChallenge) {
-  const { goal, item, today, userId } = challenge;
-  const savedDayRead = readTodayPlanSession(userId, goal.id);
+  const { goal, item, timeZone, today, userId } = challenge;
+  const savedDayRead = readTodayPlanSession(userId, goal.id, timeZone);
 
   const [results, plusRequired, block, savedDay, previewBlocks] = await Promise.all([
     item.kind === "boss"

@@ -1,12 +1,15 @@
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { readBlockPayload } from "../../sessions/block-payload";
+import { getAnswerTimeZone } from "../_utils/owned-goal";
+import { readOwnedGoal } from "./owned-goal";
 import { readTodayPlanSession } from "./today-plan-session";
 
 export async function readTodayLearnBlocks(
   userId: string,
   goalId: string,
 ): Promise<TodayLearnBlock[]> {
-  const session = await readTodayPlanSession(userId, goalId);
+  const goal = await readOwnedGoal(userId, goalId);
+  const session = await readTodayPlanSession(userId, goalId, getAnswerTimeZone({ goal }));
   return listTodayLearnBlocks(session?.blocks ?? []);
 }
 

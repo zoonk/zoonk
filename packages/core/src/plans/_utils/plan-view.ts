@@ -218,7 +218,7 @@ export async function buildPlanView({
     }),
     Promise.resolve(selectedCatchUp),
     loadExamChoiceViews({ examBlueprintId: goal.examBlueprintId, picks: state.settings }),
-    readPlanToday({ context, now }),
+    readPlanToday({ context }),
     loadGraphPartAreas({ examBlueprintId: goal.examBlueprintId, graph: state.graph }),
     readTaughtStandInSkills(goal.userId, goal.id),
     readChallengeResults(

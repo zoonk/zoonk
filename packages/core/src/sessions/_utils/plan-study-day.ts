@@ -34,10 +34,11 @@ export async function planStudyDay(
     readMistakes?: () => Promise<PracticeMistake[]>;
     readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
     readUsage?: () => Promise<UsageTotals>;
+    plannedDay?: Omit<PlannedStudyDay, "missions">;
     selection: SelectedDayPlan;
   },
 ): Promise<PlannedStudyDay> {
-  const day = await planDayBlocks(context);
+  const day = context.plannedDay ?? (await planDayBlocks(context));
 
   const facts = await loadDayMissionFacts({
     ...context,
