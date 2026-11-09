@@ -45,7 +45,16 @@ export function getChallengeTimings({
   const last = Math.max(today.getTime(), ...dated.map((date) => date.getTime()));
 
   const days = Array.from(
-    { length: daysBetween(today, new Date(last)) + DAYS_PER_WEEK + 1 },
+    {
+      length:
+        daysBetween(today, new Date(last)) +
+        DAYS_PER_WEEK *
+          Math.max(
+            1,
+            items.filter((item) => item.kind === "boss" && item.status === "todo").length,
+          ) +
+        1,
+    },
     (_, index) => addDays(today, index),
   );
 
@@ -79,31 +88,52 @@ export function getChallengeTimings({
       (!savedDay || date > today) && getGoalDayMinutes({ date, goal, planSettings: settings }) > 0,
   );
 
-  const next = days.find((date) => (!savedDay || date > today) && capacity(date) > 0);
+  const inToday = (boss: TimingItem) =>
+    boss.status === "todo" &&
+    todayBlocks.some(
+      (block) =>
+        (block.status === "pending" || block.status === "active") &&
+        readBlockPayload(block).planItemId === (boss.id ?? boss.key ?? ""),
+    );
 
-  const reached = items.flatMap((boss) => {
-    const id = boss.id ?? boss.key ?? "";
-    const facts = readSelectedItemFacts(boss.facts)?.boss;
-    const result = results.get(id);
+  const reached = items
+    .toSorted((a, b) => a.position - b.position)
+    .flatMap((boss) => {
+      const id = boss.id ?? boss.key ?? "";
+      const facts = readSelectedItemFacts(boss.facts)?.boss;
+      const result = results.get(id);
 
-    if (
-      !isChallengeReached({ boss, items }) ||
-      !facts ||
-      facts.waiting ||
-      facts.testedSkillIds.length === 0 ||
-      (result && result.localDate.getTime() === today.getTime())
-    ) {
-      return [];
+      if (
+        !isChallengeReached({ boss, items }) ||
+        inToday(boss) ||
+        !facts ||
+        facts.waiting ||
+        facts.testedSkillIds.length === 0 ||
+        (result && result.localDate.getTime() === today.getTime())
+      ) {
+        return [];
+      }
+
+      return [{ id, minutes: facts.minutes, rematch: result !== undefined }];
+    });
+
+  const dates = new Map<string, Date>();
+
+  for (const date of days) {
+    const budget = capacity(date);
+
+    if ((!savedDay || date > today) && budget > 0) {
+      const checkpoints = reached.filter((entry) => !dates.has(entry.id));
+
+      for (const entry of fundLeadingChallenges({ budget, checkpoints })) {
+        dates.set(entry.id, date);
+      }
     }
 
-    return [{ id, minutes: facts.minutes, rematch: result !== undefined }];
-  });
-
-  const funded = new Set(
-    (next ? fundLeadingChallenges({ budget: capacity(next), checkpoints: reached }) : []).map(
-      (entry) => entry.id,
-    ),
-  );
+    if (dates.size === reached.length) {
+      break;
+    }
+  }
 
   const tomorrow = addDays(today, 1);
   const future = days.find((date) => date >= tomorrow && capacity(date) > 0);
@@ -113,32 +143,21 @@ export function getChallengeTimings({
       .filter((boss) => boss.kind === "boss")
       .map((boss) => {
         const id = boss.id ?? boss.key ?? "";
+        const offeredToday = inToday(boss);
 
-        const inToday =
-          boss.status === "todo" &&
-          todayBlocks.some(
-            (block) =>
-              (block.status === "pending" || block.status === "active") &&
-              readBlockPayload(block).planItemId === id,
-          );
+        const assigned = dates.get(id);
+        const nextSession = !savedDay && assigned && assigned.getTime() === nextStudy?.getTime();
 
-        const nextSession =
-          !savedDay && next && funded.has(id) && next.getTime() === nextStudy?.getTime();
+        const estimatedFor =
+          assigned ?? (isChallengeReached({ boss, items }) ? future : boss.scheduledFor);
 
-        const blockedNext =
-          next && nextStudy && next > nextStudy && isChallengeReached({ boss, items });
-
-        const estimatedFor = isChallengeReached({ boss, items }) ? future : boss.scheduledFor;
-
-        const estimate = blockedNext
-          ? next
-          : new Date(Math.max(tomorrow.getTime(), estimatedFor?.getTime() ?? 0));
+        const estimate = new Date(Math.max(tomorrow.getTime(), estimatedFor?.getTime() ?? 0));
 
         return [
           id,
           {
-            date: inToday ? toIsoDate(today) : toIsoDate(estimate),
-            when: inToday || nextSession ? "nextSession" : "date",
+            date: offeredToday ? toIsoDate(today) : toIsoDate(estimate),
+            when: offeredToday || nextSession ? "nextSession" : "date",
           },
         ];
       }),
