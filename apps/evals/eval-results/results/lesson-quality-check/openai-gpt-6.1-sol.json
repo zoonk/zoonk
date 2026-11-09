@@ -2,31 +2,26 @@
   "modelId": "openai/gpt-6.1-sol",
   "results": [
     {
-      "classification": {
-        "expected": "pass",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "pass", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "[screen 1, jargon] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4, incorrect] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5, incorrect] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
+          "conclusion": "[screen 1] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "[screen 1, jargon] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4, incorrect] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5, incorrect] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
+          "conclusion": "[screen 1] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "[screen 1, jargon] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4, incorrect] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5, incorrect] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
+          "conclusion": "[screen 1] The hook uses “file your federal tax return” before explaining what a tax return is; that explanation does not appear until screen 2. [screen 4] The feedback for “Whenever she files” says that paying when she files necessarily means paying late. An extension does not prevent Mia from filing and paying before April 15. [screen 5] The accepted answer says to pay “about $1,200,” and its feedback promises that this “avoids interest and penalties.” An approximate payment may leave some tax unpaid; the filing extension does not extend the deadline for that remaining amount.",
           "kind": "potentialImprovements",
           "score": 6
         }
       ],
       "testCase": {
-        "expected": {
-          "verdict": "pass"
-        },
+        "expected": { "verdict": "pass" },
         "id": "en-tax-deadlines-sourced-clean-1",
         "userInput": {
           "chapterTitle": "Income taxes",
@@ -41,47 +36,51 @@
             "screens": [
               {
                 "activityTemplate": null,
-                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
                 "kind": "hook",
                 "skills": [],
-                "visual": null
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
               },
               {
                 "activityTemplate": null,
                 "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
-                "visual": null
+                "skills": [1],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
-                "visual": null
+                "skills": [1],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
-                "visual": null
+                "skills": [0, 1],
+                "visual": null,
+                "visualKind": "none"
               }
             ],
             "skills": [
@@ -102,26 +101,17 @@
                 "useCase": "Avoiding penalties when a return isn't ready in time."
               }
             ],
-            "supportMode": "explanationFirst",
             "title": "Federal tax deadlines and extensions"
           },
           "lesson": {
             "screens": [
               {
-                "image": null,
-                "kind": "hookGuess",
-                "options": [
-                  {
-                    "isCorrect": false,
-                    "text": "Yes, 6 more months to pay"
-                  },
-                  {
-                    "isCorrect": true,
-                    "text": "No, the tax is still due in April"
-                  }
-                ],
-                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
-                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
                 "visual": null
               },
               {
@@ -131,6 +121,17 @@
                 "kind": "explanation",
                 "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
                 "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": false, "text": "Yes, 6 more months to pay" },
+                  { "isCorrect": true, "text": "No, the tax is still due in April" }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
                 "visual": null
               },
               {
@@ -163,7 +164,7 @@
                   {
                     "isCorrect": false,
                     "picture": null,
-                    "reason": "Paying when she files means paying late: interest and penalties run from April 15.",
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
                     "text": "Whenever she files"
                   }
                 ],
@@ -199,40 +200,32 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "Your federal tax return for 2025 is due April 15, 2026.",
-              "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
           }
         }
       }
     },
     {
-      "classification": {
-        "expected": "pass",
-        "predicted": "pass"
-      },
+      "classification": { "expected": "pass", "predicted": "pass" },
       "steps": [
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "verdict": "pass"
-        },
+        "expected": { "verdict": "pass" },
         "id": "pt-finalidades-oab-exam-prep-clean-1",
         "userInput": {
           "chapterTitle": "Estrutura e competências da OAB",
@@ -252,73 +245,75 @@
             "screens": [
               {
                 "activityTemplate": null,
-                "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: A) só a primeira; B) só a segunda; C) ambas; D) nenhuma. Resposta: C; mostre-a após a escolha e deixe a explicação para as próximas telas.",
+                "brief": "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados? Mostre a cena numa figura.",
                 "kind": "hook",
                 "skills": [],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
-                "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "visual": "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo",
+                "visualKind": "picture"
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: só a primeira; só a segunda; as duas; nenhuma. Resposta: as duas; mostre-a após a escolha e deixe o porquê para a próxima tela.",
+                "kind": "guess",
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               }
             ],
             "skills": [
@@ -331,34 +326,48 @@
                 "useCase": "Analisar se uma atuação atribuída à OAB corresponde às finalidades previstas no Estatuto."
               }
             ],
-            "supportMode": "questionFirst",
             "title": "Finalidades da OAB"
           },
           "lesson": {
             "screens": [
               {
+                "image": {
+                  "alt": "Lorena, advogada, ouve no fórum um senhor com uma pasta grossa de processo.",
+                  "prompt": "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo."
+                },
+                "kind": "hookText",
+                "text": "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A defesa de direitos humanos de moradores da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Quando a OAB defende direitos humanos de moradores, ela age por um interesse de todos, não só de advogados. Essa é uma **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
+                "title": "Atuação por todos",
+                "visual": null
+              },
+              {
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  {
-                    "isCorrect": false,
-                    "text": "Só cobrar providências contra a demora."
-                  },
-                  {
-                    "isCorrect": false,
-                    "text": "Só defender advogados em questões da profissão."
-                  },
-                  {
-                    "isCorrect": true,
-                    "text": "As duas propostas."
-                  },
-                  {
-                    "isCorrect": false,
-                    "text": "Nenhuma das duas propostas."
-                  }
+                  { "isCorrect": false, "text": "Só cobrar providências contra a demora." },
+                  { "isCorrect": false, "text": "Só defender advogados em questões da profissão." },
+                  { "isCorrect": true, "text": "As duas propostas." },
+                  { "isCorrect": false, "text": "Nenhuma das duas propostas." }
                 ],
                 "question": "Lorena leva duas propostas à OAB: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder a finalidades da OAB?",
                 "reveal": "As duas propostas podem corresponder a finalidades da OAB. Nas próximas telas, você vai ver por quê.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "Uma cobrança por providências diante de atrasos no fórum da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Diante de processos atrasados, a OAB pode cobrar providências, mas não decidir os casos. O art. 44, I, também manda a OAB pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas.",
+                "title": "Justiça sem demora",
                 "visual": null
               },
               {
@@ -396,24 +405,6 @@
                 "visual": null
               },
               {
-                "exampleLineIdea": "A defesa de direitos humanos de moradores da cidade do aluno.",
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Quando a OAB defende direitos humanos de moradores, ela age por um interesse de todos, não só de advogados. Essa é uma **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
-                "title": "Atuação por todos",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": "Uma cobrança por providências diante de atrasos no fórum da cidade do aluno.",
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Diante de processos atrasados, a OAB pode cobrar providências, mas não decidir os casos. O art. 44, I, também manda a OAB pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas.",
-                "title": "Justiça sem demora",
-                "visual": null
-              },
-              {
                 "basis": null,
                 "context": "Thaís vê processos parados e afirma que a OAB só pode cobrar rapidez da Justiça se também provar que alguma lei foi aplicada incorretamente.",
                 "image": null,
@@ -525,46 +516,48 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
-              "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
-              "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Finalidades sociais",
+                  "text": "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social."
+                },
+                {
+                  "label": "Limites dessas finalidades",
+                  "text": "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos."
+                },
+                {
+                  "label": "Finalidades corporativas",
+                  "text": "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade."
+                }
+              ],
+              "shape": "hub"
+            }
           }
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "pass", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "[screen 2, weakCheck] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2, incorrect] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
+          "conclusion": "[screen 2] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "[screen 2, weakCheck] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2, incorrect] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
+          "conclusion": "[screen 2] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "[screen 2, weakCheck] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2, incorrect] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
+          "conclusion": "[screen 2] The distractors propose closing the court or claim that everyone awaiting a judgment is a lawyer. Neither is plausible for OAB candidates, so learners can answer without understanding the limits of the OAB’s purposes. The check also has only three options rather than the specified four. [screen 2] The feedback asserts “Raimundo não é advogado,” although the case never states his profession. Moreover, whether he is a lawyer does not determine the OAB’s authority to judge an appeal.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
-        "expected": {
-          "kinds": [
-            "weakCheck",
-            "level"
-          ],
-          "screen": 2,
-          "verdict": "fail"
-        },
+        "expected": { "verdict": "pass" },
         "id": "pt-finalidades-oab-exam-prep-absurd-option-1",
         "userInput": {
           "chapterTitle": "Estrutura e competências da OAB",
@@ -584,73 +577,75 @@
             "screens": [
               {
                 "activityTemplate": null,
-                "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: A) só a primeira; B) só a segunda; C) ambas; D) nenhuma. Resposta: C; mostre-a após a escolha e deixe a explicação para as próximas telas.",
+                "brief": "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados? Mostre a cena numa figura.",
                 "kind": "hook",
                 "skills": [],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
-                "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "visual": "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo",
+                "visualKind": "picture"
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: só a primeira; só a segunda; as duas; nenhuma. Resposta: as duas; mostre-a após a escolha e deixe o porquê para a próxima tela.",
+                "kind": "guess",
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
                 "kind": "application",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               }
             ],
             "skills": [
@@ -663,34 +658,48 @@
                 "useCase": "Analisar se uma atuação atribuída à OAB corresponde às finalidades previstas no Estatuto."
               }
             ],
-            "supportMode": "questionFirst",
             "title": "Finalidades da OAB"
           },
           "lesson": {
             "screens": [
               {
+                "image": {
+                  "alt": "Lorena, advogada, ouve no fórum um senhor com uma pasta grossa de processo.",
+                  "prompt": "Lorena, advogada de terno, sentada na sala de espera de um fórum, ouvindo um senhor idoso que segura uma pasta grossa de processo."
+                },
+                "kind": "hookText",
+                "text": "Lorena, advogada, espera no fórum e ouve um senhor contar que o processo da aposentadoria dele está parado há dois anos. Ela pensa em levar a queixa à OAB. A OAB pode agir num caso desses, que nem envolve advogados?",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "A defesa de direitos humanos de moradores da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Quando a OAB defende direitos humanos de moradores, ela age por um interesse de todos, não só de advogados. Essa é uma **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
+                "title": "Atuação por todos",
+                "visual": null
+              },
+              {
                 "image": null,
                 "kind": "hookGuess",
                 "options": [
-                  {
-                    "isCorrect": false,
-                    "text": "Só cobrar providências contra a demora."
-                  },
-                  {
-                    "isCorrect": false,
-                    "text": "Só defender advogados em questões da profissão."
-                  },
-                  {
-                    "isCorrect": true,
-                    "text": "As duas propostas."
-                  },
-                  {
-                    "isCorrect": false,
-                    "text": "Nenhuma das duas propostas."
-                  }
+                  { "isCorrect": false, "text": "Só cobrar providências contra a demora." },
+                  { "isCorrect": false, "text": "Só defender advogados em questões da profissão." },
+                  { "isCorrect": true, "text": "As duas propostas." },
+                  { "isCorrect": false, "text": "Nenhuma das duas propostas." }
                 ],
                 "question": "Lorena leva duas propostas à OAB: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder a finalidades da OAB?",
                 "reveal": "As duas propostas podem corresponder a finalidades da OAB. Nas próximas telas, você vai ver por quê.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": "Uma cobrança por providências diante de atrasos no fórum da cidade do aluno.",
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Diante de processos atrasados, a OAB pode cobrar providências, mas não decidir os casos. O art. 44, I, também manda a OAB pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas.",
+                "title": "Justiça sem demora",
                 "visual": null
               },
               {
@@ -722,24 +731,6 @@
                 "visual": null
               },
               {
-                "exampleLineIdea": "A defesa de direitos humanos de moradores da cidade do aluno.",
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Quando a OAB defende direitos humanos de moradores, ela age por um interesse de todos, não só de advogados. Essa é uma **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
-                "title": "Atuação por todos",
-                "visual": null
-              },
-              {
-                "exampleLineIdea": "Uma cobrança por providências diante de atrasos no fórum da cidade do aluno.",
-                "explore": null,
-                "image": null,
-                "kind": "explanation",
-                "text": "Diante de processos atrasados, a OAB pode cobrar providências, mas não decidir os casos. O art. 44, I, também manda a OAB pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas.",
-                "title": "Justiça sem demora",
-                "visual": null
-              },
-              {
                 "basis": null,
                 "context": "Thaís vê processos parados e afirma que a OAB só pode cobrar rapidez da Justiça se também provar que alguma lei foi aplicada incorretamente.",
                 "image": null,
@@ -851,45 +842,48 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
-              "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
-              "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Finalidades sociais",
+                  "text": "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social."
+                },
+                {
+                  "label": "Limites dessas finalidades",
+                  "text": "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos."
+                },
+                {
+                  "label": "Finalidades corporativas",
+                  "text": "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade."
+                }
+              ],
+              "shape": "hub"
+            }
           }
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "[screen 1, jargon] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3, incorrect] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
+          "conclusion": "[screen 1] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 7
         },
         {
-          "conclusion": "[screen 1, jargon] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3, incorrect] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
+          "conclusion": "[screen 1] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 7
         },
         {
-          "conclusion": "[screen 1, jargon] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3, incorrect] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
+          "conclusion": "[screen 1] The hook uses “federal tax return” before screen 2 explains what a tax return is. [screen 3] “Both deadlines move 6 months” and “you can file and pay until October 15, 2026, at no extra cost” contradict the IRS source and the rest of the lesson. Form 4868 extends filing, not payment.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 7
         }
       ],
       "testCase": {
-        "expected": {
-          "kinds": [
-            "incorrect"
-          ],
-          "screen": 3,
-          "verdict": "fail"
-        },
+        "expected": { "screen": 4, "verdict": "fail" },
         "id": "en-tax-deadlines-contradicts-source-1",
         "userInput": {
           "chapterTitle": "Income taxes",
@@ -904,47 +898,51 @@
             "screens": [
               {
                 "activityTemplate": null,
-                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "brief": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes and plans to deal with all of it in October. End on the open question: what could go wrong?",
                 "kind": "hook",
                 "skills": [],
-                "visual": null
+                "visual": "Dana at a cluttered kitchen table in April, with tax forms and a laptop.",
+                "visualKind": "picture"
               },
               {
                 "activityTemplate": null,
                 "brief": "The federal return for a year's income is due the following April: the 2025 return is due April 15, 2026.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
-                "visual": null
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Guess that doesn't count: if you get an extension to file your federal return, do you also get more time to pay?",
+                "kind": "guess",
+                "skills": [0],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "An extension (Form 4868, filed by the due date) gives 6 more months to file, to October 15, 2026, but the tax owed is still due April 15.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
-                "visual": null
+                "skills": [1],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "Someone got an extension: by when must they pay? Tempting wrong answer: October 15, 2026.",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
-                "visual": null
+                "skills": [1],
+                "visual": null,
+                "visualKind": "none"
               },
               {
                 "activityTemplate": null,
                 "brief": "A freelancer in Denver needs more time to gather receipts in early April: what should they do, and by when?",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
-                "visual": null
+                "skills": [0, 1],
+                "visual": null,
+                "visualKind": "none"
               }
             ],
             "skills": [
@@ -965,26 +963,17 @@
                 "useCase": "Avoiding penalties when a return isn't ready in time."
               }
             ],
-            "supportMode": "explanationFirst",
             "title": "Federal tax deadlines and extensions"
           },
           "lesson": {
             "screens": [
               {
-                "image": null,
-                "kind": "hookGuess",
-                "options": [
-                  {
-                    "isCorrect": false,
-                    "text": "Yes, 6 more months to pay"
-                  },
-                  {
-                    "isCorrect": true,
-                    "text": "No, the tax is still due in April"
-                  }
-                ],
-                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
-                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
+                "image": {
+                  "alt": "Dana sits at a cluttered kitchen table with tax forms and a laptop.",
+                  "prompt": "Dana, an adult, at a cluttered kitchen table in April, with tax forms and a laptop."
+                },
+                "kind": "hookText",
+                "text": "In April, Dana is swamped at work, so she asks for more time to file her federal taxes. Relieved, she plans to deal with all of it in October. What could go wrong?",
                 "visual": null
               },
               {
@@ -994,6 +983,17 @@
                 "kind": "explanation",
                 "text": "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
                 "title": "Your return is due in April",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": false, "text": "Yes, 6 more months to pay" },
+                  { "isCorrect": true, "text": "No, the tax is still due in April" }
+                ],
+                "question": "You asked for more time to file your federal tax return. Do you also get more time to pay?",
+                "reveal": "No: the extra time is only for filing. The next screens show what that means for your money.",
                 "visual": null
               },
               {
@@ -1026,7 +1026,7 @@
                   {
                     "isCorrect": false,
                     "picture": null,
-                    "reason": "Paying when she files means paying late: interest and penalties run from April 15.",
+                    "reason": "Her payment deadline is April 15, even if she files earlier or uses the extension to file later.",
                     "text": "Whenever she files"
                   }
                 ],
@@ -1062,19 +1062,25 @@
                 "visual": null
               }
             ],
-            "summary": [
-              "Your federal tax return for 2025 is due April 15, 2026.",
-              "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
-            ]
+            "summary": {
+              "ideas": [
+                {
+                  "label": "Filing deadline",
+                  "text": "Your federal tax return for 2025 is due April 15, 2026."
+                },
+                {
+                  "label": "Form 4868 extension",
+                  "text": "Form 4868 gives you until October 15, 2026 to file, but the tax you owe is still due April 15."
+                }
+              ],
+              "shape": "hub"
+            }
           }
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
           "conclusion": "[screen -] The summary states, “Para defender uma resposta, a regra vem antes”, as a general requirement. An argument need not begin with a rule: it can present a fact before introducing the criterion used to assess it, and independent supporting reasons need not involve a rule at all.",
@@ -1093,9 +1099,10 @@
         }
       ],
       "testCase": {
+        "expected": { "screen": 8, "verdict": "fail" },
         "id": "real-1-1",
-        "origin": "production",
         "language": "pt",
+        "origin": "production",
         "userInput": {
           "recorded": {
             "lessonId": "01a1bbfe-184a-73ef-9926-0f0713dec409",
@@ -1180,9 +1187,7 @@
                     "activityTemplate": null,
                     "brief": "Otávio lê um parecer contrário ao atendimento só pela internet: há dados sobre falta de conexão, mas a conclusão parece solta. Como fazer esses dados sustentarem a resposta?",
                     "kind": "hook",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1190,9 +1195,7 @@
                     "activityTemplate": null,
                     "brief": "A linha de argumentação organiza os fundamentos conforme o raciocínio que o leitor precisa acompanhar: para demonstrar que uma despesa ultrapassa um limite, apresentar o limite antes ajuda a entender a comparação.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1200,9 +1203,7 @@
                     "activityTemplate": null,
                     "brief": "Um texto defende criar um parque porque suas árvores reduzem o calor e seu espaço oferece lazer; o que acontece se esses dois motivos trocarem de posição? Opções: “A defesa necessariamente enfraquece”; “A defesa mantém sua sustentação” (correta); “A defesa necessariamente se fortalece”.",
                     "kind": "guess",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1210,9 +1211,7 @@
                     "activityTemplate": null,
                     "brief": "Nem todo fundamento depende do anterior: no exemplo do parque, calor e lazer sustentam a proposta por caminhos próprios. Por isso, as duas ordens funcionam; não existe uma sequência única para toda resposta.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1220,9 +1219,7 @@
                     "activityTemplate": null,
                     "brief": "Mostrar o planejamento para defender “Não tornar o atendimento exclusivamente digital”, sob uma regra fictícia de acesso para todos. Revelar: 1) regra: todos devem conseguir acessar o serviço; 2) fato: há usuários sem internet; 3) ligação: a exclusividade digital impediria o acesso deles.",
                     "kind": "workedExample",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1230,9 +1227,7 @@
                     "activityTemplate": null,
                     "brief": "Para defender “A biblioteca deve abrir à noite”, ordenar: A) alunos do turno noturno precisam consultar o acervo; B) uma regra fictícia exige acesso para todos os turnos; C) fechar antes das aulas noturnas impede esse acesso. Resposta: B–A–C; incluir A–C–B como distração, deixando o critério só para o fim.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1240,9 +1235,7 @@
                     "activityTemplate": null,
                     "brief": "A ligação precisa dizer o que o fato demonstra: “Há usuários sem internet; portanto, manter uma alternativa” deixa implícito que o canal exclusivamente digital os excluiria. Acrescentar essa consequência sustenta a resposta; o conector sozinho não faz esse trabalho.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1250,9 +1243,7 @@
                     "activityTemplate": "processOrder",
                     "brief": "Para defender a adaptação de um prédio, ordenar os cartões: “Regra fictícia: todas as salas devem ser acessíveis”; “Só há escadas para o andar superior”; “Quem não consegue usar escadas fica sem acesso às salas desse andar”. Perguntar por que o último cartão é necessário: ele liga a barreira à violação da regra, não apenas repete a existência da escada.",
                     "kind": "activity",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "template"
                   },
@@ -1260,9 +1251,7 @@
                     "activityTemplate": null,
                     "brief": "Uma equipe defende manter um canal humano: seu plano traz “exigência fictícia de acesso para todos → usuários que não conseguem usar o aplicativo → o canal humano reduz a espera”. Pedir que você complete a ligação ausente e decida onde manter o motivo da espera: explicitar a exclusão pelo aplicativo e tratar a espera como fundamento independente, sem impor uma única posição.",
                     "kind": "application",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -1304,21 +1293,13 @@
                   "content": {
                     "reveal": "A defesa continua igualmente sustentada, mesmo com os dois motivos trocados de lugar.",
                     "options": [
-                      {
-                        "id": "a",
-                        "text": "A defesa fica mais fraca",
-                        "isCorrect": false
-                      },
+                      { "id": "a", "text": "A defesa fica mais fraca", "isCorrect": false },
                       {
                         "id": "b",
                         "text": "A defesa continua igualmente sustentada",
                         "isCorrect": true
                       },
-                      {
-                        "id": "c",
-                        "text": "A defesa fica mais forte",
-                        "isCorrect": false
-                      }
+                      { "id": "c", "text": "A defesa fica mais forte", "isCorrect": false }
                     ],
                     "variant": "guess",
                     "question": "Um texto defende criar um parque: as árvores reduzem o calor e o espaço oferece lazer. Se o texto falar do lazer antes do calor, o que acontece com a defesa?"
@@ -1335,15 +1316,9 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      {
-                        "text": "A regra exige acesso para todos."
-                      },
-                      {
-                        "text": "Há usuários sem internet."
-                      },
-                      {
-                        "text": "Só digital os deixaria sem acesso."
-                      }
+                      { "text": "A regra exige acesso para todos." },
+                      { "text": "Há usuários sem internet." },
+                      { "text": "Só digital os deixaria sem acesso." }
                     ],
                     "title": "Da regra à resposta",
                     "result": "Logo, mantenha outra opção.",
@@ -1466,11 +1441,7 @@
                     "iconNeed": {
                       "name": "stepping stone",
                       "description": "A single flat stone set on a simple path.",
-                      "searchWords": [
-                        "path",
-                        "stone",
-                        "walkway"
-                      ]
+                      "searchWords": ["path", "stone", "walkway"]
                     },
                     "iconPending": false
                   },
@@ -1482,11 +1453,7 @@
                     "iconNeed": {
                       "name": "sun",
                       "description": "A bright sun with short rays.",
-                      "searchWords": [
-                        "sunshine",
-                        "sunlight",
-                        "sunbeam"
-                      ]
+                      "searchWords": ["sunshine", "sunlight", "sunbeam"]
                     },
                     "iconPending": false
                   },
@@ -1498,11 +1465,7 @@
                     "iconNeed": {
                       "name": "bridge",
                       "description": "A small bridge spanning a gap.",
-                      "searchWords": [
-                        "crossing",
-                        "span",
-                        "overpass"
-                      ]
+                      "searchWords": ["crossing", "span", "overpass"]
                     },
                     "iconPending": false
                   },
@@ -1514,11 +1477,7 @@
                     "iconNeed": {
                       "name": "domino",
                       "description": "A single upright domino tile with two dots.",
-                      "searchWords": [
-                        "domino tile",
-                        "domino piece",
-                        "game tile"
-                      ]
+                      "searchWords": ["domino tile", "domino piece", "game tile"]
                     },
                     "iconPending": false
                   }
@@ -1538,18 +1497,11 @@
               "anthropic/claude-opus-5.5"
             ]
           }
-        },
-        "expected": {
-          "verdict": "fail",
-          "screen": 8
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
           "conclusion": "[screen 7] The statement “ainda não pode gastar sem permissão na LOA” incorrectly makes authorization in the LOA indispensable. Expenditure may also be authorized through additional credits, including special and extraordinary credits for expenditure not originally covered by the LOA. The same overstatement appears in screen 11: “Sem autorização na LOA, a despesa é proibida mesmo com caixa.”",
@@ -1568,9 +1520,10 @@
         }
       ],
       "testCase": {
+        "expected": { "screen": 7, "verdict": "fail" },
         "id": "real-2-1",
-        "origin": "production",
         "language": "pt",
+        "origin": "production",
         "userInput": {
           "recorded": {
             "lessonId": "01a1bbfe-512c-7a90-ae7a-41b007e9279e",
@@ -1643,9 +1596,7 @@
                     "activityTemplate": null,
                     "brief": "Sabrina recebe a informação de que a compra de equipamentos do hospital está no orçamento, mas o pagamento precisa esperar por dinheiro. Como uma despesa aprovada pode ficar sem pagamento?",
                     "kind": "hook",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1653,9 +1604,7 @@
                     "activityTemplate": null,
                     "brief": "Na lei orçamentária anual (LOA), a receita é uma previsão: estimar R$ 8 milhões em impostos não significa já ter arrecadado esse valor. Base: Constituição Federal, art. 165, § 8º.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1663,9 +1612,7 @@
                     "activityTemplate": null,
                     "brief": "A LOA foi aprovada com previsão de R$ 8 milhões em impostos: o que essa aprovação, sozinha, faz com o saldo bancário do governo? Opções: “Acrescenta R$ 8 milhões”; “Não altera o saldo”; correta: a segunda.",
                     "kind": "guess",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1673,9 +1620,7 @@
                     "activityTemplate": null,
                     "brief": "Aprovar uma previsão não deposita dinheiro: disponibilidade financeira é dinheiro efetivamente em caixa para atender pagamentos. Se o saldo era zero, a aprovação da LOA, sozinha, mantém esse saldo.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1683,9 +1628,7 @@
                     "activityTemplate": null,
                     "brief": "Na despesa, a LOA estabelece autorização orçamentária: prever R$ 600 mil para equipamentos permite gastar dentro desse limite, mas não garante caixa. Base: Constituição Federal, art. 165, § 8º.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1693,9 +1636,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma despesa de R$ 120 mil está autorizada no orçamento; logo, o órgão dispõe desse valor para pagá-la hoje”. Gabarito: Errado; incluir como tentação tratar autorização como prova de dinheiro em caixa.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1703,9 +1644,7 @@
                     "activityTemplate": null,
                     "brief": "Ter dinheiro também não substitui autorização: um saldo bancário de R$ 200 mil não permite fazer despesa sem crédito orçamentário que a comporte. Base: Constituição Federal, art. 167, II.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1713,9 +1652,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma arrecadação inesperada permite ultrapassar o crédito orçamentário disponível, pois há dinheiro para pagar”. Gabarito: Errado; a tentação é confundir entrada de receita com aumento automático da autorização.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1723,9 +1660,7 @@
                     "activityTemplate": null,
                     "brief": "Nem todo saldo pode pagar qualquer despesa: recursos vinculados têm destinação legal específica, como dinheiro reservado por lei à educação. Base: Lei de Responsabilidade Fiscal, art. 8º, parágrafo único.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1733,9 +1668,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma compra da saúde tem autorização; por isso, pode ser paga com dinheiro legalmente vinculado à educação”. Gabarito: Errado; a tentação é considerar todo saldo bancário livre para qualquer pagamento.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -1743,9 +1676,7 @@
                     "activityTemplate": null,
                     "brief": "Mostrar tabela: Pedido | Custo | Autorização | Caixa utilizável; Equipamentos | R$ 40 mil | R$ 40 mil | zero; Móveis | R$ 30 mil | zero | R$ 30 mil. Avaliar a proposta de pagar ambos hoje e justificar os dois impedimentos: falta caixa para equipamentos e autorização para móveis.",
                     "kind": "application",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "table"
                   }
@@ -1784,21 +1715,9 @@
                   "content": {
                     "reveal": "A conta continua com R$ 500.000.",
                     "options": [
-                      {
-                        "id": "a",
-                        "text": "R$ 8.000.000",
-                        "isCorrect": false
-                      },
-                      {
-                        "id": "b",
-                        "text": "R$ 500.000",
-                        "isCorrect": true
-                      },
-                      {
-                        "id": "c",
-                        "text": "R$ 8.500.000",
-                        "isCorrect": false
-                      }
+                      { "id": "a", "text": "R$ 8.000.000", "isCorrect": false },
+                      { "id": "b", "text": "R$ 500.000", "isCorrect": true },
+                      { "id": "c", "text": "R$ 8.500.000", "isCorrect": false }
                     ],
                     "variant": "guess",
                     "question": "A conta do governo tem R$ 500.000. Então a LOA é aprovada, prevendo R$ 8.000.000 em impostos. Logo depois da aprovação, quanto há na conta?"
@@ -1824,10 +1743,7 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": {
-                      "quote": "Ela não garante dinheiro em caixa.",
-                      "position": 4
-                    },
+                    "basis": { "quote": "Ela não garante dinheiro em caixa.", "position": 4 },
                     "context": "Julgue o item a seguir.",
                     "options": [
                       {
@@ -1955,11 +1871,7 @@
                     "iconNeed": {
                       "name": "calendar",
                       "description": "A simple calendar with a few blank date squares.",
-                      "searchWords": [
-                        "planner",
-                        "schedule",
-                        "date"
-                      ]
+                      "searchWords": ["planner", "schedule", "date"]
                     },
                     "iconPending": false
                   },
@@ -1971,11 +1883,7 @@
                     "iconNeed": {
                       "name": "coin",
                       "description": "A single round coin with a plain surface.",
-                      "searchWords": [
-                        "money",
-                        "cash",
-                        "currency"
-                      ]
+                      "searchWords": ["money", "cash", "currency"]
                     },
                     "iconPending": false
                   },
@@ -1987,11 +1895,7 @@
                     "iconNeed": {
                       "name": "key",
                       "description": "A simple metal key with a round bow.",
-                      "searchWords": [
-                        "permission",
-                        "access",
-                        "unlock"
-                      ]
+                      "searchWords": ["permission", "access", "unlock"]
                     },
                     "iconPending": false
                   },
@@ -2003,11 +1907,7 @@
                     "iconNeed": {
                       "name": "ruler",
                       "description": "A straight ruler with evenly spaced marks.",
-                      "searchWords": [
-                        "measuring stick",
-                        "measure",
-                        "length"
-                      ]
+                      "searchWords": ["measuring stick", "measure", "length"]
                     },
                     "iconPending": false
                   },
@@ -2019,11 +1919,7 @@
                     "iconNeed": {
                       "name": "schoolhouse",
                       "description": "A small school building with a peaked roof.",
-                      "searchWords": [
-                        "school",
-                        "education",
-                        "building"
-                      ]
+                      "searchWords": ["school", "education", "building"]
                     },
                     "iconPending": false
                   }
@@ -2045,39 +1941,21 @@
               "anthropic/claude-opus-5.5"
             ]
           }
-        },
-        "expected": {
-          "verdict": "fail",
-          "screen": 7
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "pass"
-      },
+      "classification": { "expected": "fail", "predicted": "pass" },
       "steps": [
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 6 }
       ],
       "testCase": {
+        "expected": { "screen": null, "verdict": "fail" },
         "id": "real-3-1",
-        "origin": "production",
         "language": "pt",
+        "origin": "production",
         "userInput": {
           "recorded": {
             "lessonId": "01a1bbfe-674b-7b90-b2c7-606cb9d6599e",
@@ -2168,9 +2046,7 @@
                     "activityTemplate": null,
                     "brief": "Renan lê no processo: “O pagamento foi autorizado”, mas descobre que nenhuma autorização foi dada. Uma afirmação falsa ainda pode fazer parte do raciocínio lógico?",
                     "kind": "hook",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2178,9 +2054,7 @@
                     "activityTemplate": null,
                     "brief": "Uma proposição é uma afirmação que admite exatamente um valor: verdadeiro ou falso. “O documento tem três páginas” é uma proposição.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2188,9 +2062,7 @@
                     "activityTemplate": null,
                     "brief": "O sistema fica inacessível, impedindo conferir “O backup foi concluído”; o que acontece com essa frase na análise lógica? Opções: “Continua sendo proposição” ou “Deixa de ser proposição”; correta: continua sendo proposição.",
                     "kind": "guess",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2198,9 +2070,7 @@
                     "activityTemplate": null,
                     "brief": "Ser proposição não depende de conhecermos seu valor nem de ela ser verdadeira. “O backup foi concluído” continua sendo proposição mesmo sem conferência ou se for falsa.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2208,9 +2078,7 @@
                     "activityTemplate": null,
                     "brief": "Perguntas e ordens não são proposições, pois não afirmam algo verdadeiro ou falso. “O processo chegou?” pergunta; “Encaminhe o processo” dá uma ordem.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2218,9 +2086,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Entre ‘11 é menor que 4’ e ‘Confira o total’, apenas a primeira frase é proposição”. Gabarito: Certo; incluir Errado como opção para quem exclui afirmações falsas.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2228,9 +2094,7 @@
                     "activityTemplate": null,
                     "brief": "Uma sentença aberta depende de algo ainda não definido: “x é maior que 10” não tem valor lógico determinado enquanto x estiver livre. Fixando x em 12, temos uma proposição.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2238,9 +2102,7 @@
                     "activityTemplate": null,
                     "brief": "Uma proposição simples apresenta uma afirmação sem ser formada pela combinação de outras proposições. “O relatório tem vinte páginas” é simples, apesar de ter várias palavras.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2248,9 +2110,7 @@
                     "activityTemplate": null,
                     "brief": "Uma proposição composta combina proposições em uma afirmação maior. “O relatório chegou e o prazo terminou” reúne “O relatório chegou” e “O prazo terminou”.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2258,10 +2118,7 @@
                     "activityTemplate": null,
                     "brief": "Resolver em passos: “O cadastro está ativo e a senha expirou” afirma algo; suas partes são “O cadastro está ativo” e “A senha expirou”; cada parte é uma proposição simples, e a combinação é composta.",
                     "kind": "workedExample",
-                    "skills": [
-                      0,
-                      1
-                    ],
+                    "skills": [0, 1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2269,9 +2126,7 @@
                     "activityTemplate": null,
                     "brief": "Selecionar a classificação e as partes de “O recurso foi recebido e a análise começou”: composta, formada por duas proposições simples. Incluir “simples, porque forma uma única frase” e a divisão incorreta em “O recurso” e “foi recebido e a análise começou”.",
                     "kind": "check",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2279,9 +2134,7 @@
                     "activityTemplate": null,
                     "brief": "A palavra “e” nem sempre liga proposições: em “A distância entre o depósito e o arquivo é de 40 metros”, ela liga os lugares comparados. A proposição é simples.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2289,9 +2142,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “‘O contrato está entre a capa e o anexo’ é composta porque contém ‘e’”. Gabarito: Errado; a frase é simples, pois “a capa” e “o anexo” não são proposições.",
                     "kind": "check",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2299,10 +2150,7 @@
                     "activityTemplate": null,
                     "brief": "Um registro contém “x documentos foram enviados”, sem definir x; “Envie o parecer”; e “O parecer foi assinado e o processo foi arquivado”. Selecionar o trecho que permite análise como proposição, classificá-lo e separar suas partes; resposta: o terceiro, composto pelas duas afirmações completas, não o primeiro por conter um verbo.",
                     "kind": "application",
-                    "skills": [
-                      0,
-                      1
-                    ],
+                    "skills": [0, 1],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -2354,16 +2202,8 @@
                         "text": "Só vira proposição após a conferência",
                         "isCorrect": false
                       },
-                      {
-                        "id": "b",
-                        "text": "Deixa de ser proposição",
-                        "isCorrect": false
-                      },
-                      {
-                        "id": "c",
-                        "text": "Continua sendo proposição",
-                        "isCorrect": true
-                      }
+                      { "id": "b", "text": "Deixa de ser proposição", "isCorrect": false },
+                      { "id": "c", "text": "Continua sendo proposição", "isCorrect": true }
                     ],
                     "variant": "guess",
                     "question": "O sistema caiu, e ninguém consegue conferir se _O backup foi concluído_ é verdade. Na análise lógica, o que acontece com essa frase?"
@@ -2436,9 +2276,7 @@
                       {
                         "text": "A frase afirma algo; suas partes são _O cadastro está ativo_ e _A senha expirou_."
                       },
-                      {
-                        "text": "Cada parte é simples; juntas, formam uma composta."
-                      }
+                      { "text": "Cada parte é simples; juntas, formam uma composta." }
                     ],
                     "title": "Separando as partes",
                     "result": "É uma proposição composta.",
@@ -2448,10 +2286,7 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": {
-                      "quote": "Cada uma poderia ser julgada sozinha.",
-                      "position": 8
-                    },
+                    "basis": { "quote": "Cada uma poderia ser julgada sozinha.", "position": 8 },
                     "context": "Considere a frase _O recurso foi recebido e a análise começou_.",
                     "options": [
                       {
@@ -2553,12 +2388,7 @@
                     "iconNeed": {
                       "name": "balance scale",
                       "description": "A small balance scale with two empty pans.",
-                      "searchWords": [
-                        "scales",
-                        "justice",
-                        "truth",
-                        "weighing"
-                      ]
+                      "searchWords": ["scales", "justice", "truth", "weighing"]
                     },
                     "iconPending": false
                   },
@@ -2570,12 +2400,7 @@
                     "iconNeed": {
                       "name": "puzzle piece",
                       "description": "A single colorful jigsaw puzzle piece.",
-                      "searchWords": [
-                        "jigsaw",
-                        "piece",
-                        "puzzle",
-                        "missing"
-                      ]
+                      "searchWords": ["jigsaw", "piece", "puzzle", "missing"]
                     },
                     "iconPending": false
                   },
@@ -2587,12 +2412,7 @@
                     "iconNeed": {
                       "name": "candle",
                       "description": "A small lit candle with a simple flame.",
-                      "searchWords": [
-                        "wax",
-                        "flame",
-                        "single",
-                        "light"
-                      ]
+                      "searchWords": ["wax", "flame", "single", "light"]
                     },
                     "iconPending": false
                   },
@@ -2604,12 +2424,7 @@
                     "iconNeed": {
                       "name": "chain link",
                       "description": "Two sturdy metal chain links joined together.",
-                      "searchWords": [
-                        "chain",
-                        "links",
-                        "connected",
-                        "metal"
-                      ]
+                      "searchWords": ["chain", "links", "connected", "metal"]
                     },
                     "iconPending": false
                   },
@@ -2621,12 +2436,7 @@
                     "iconNeed": {
                       "name": "bridge",
                       "description": "A small bridge spanning a narrow stream.",
-                      "searchWords": [
-                        "crossing",
-                        "span",
-                        "river",
-                        "connection"
-                      ]
+                      "searchWords": ["crossing", "span", "river", "connection"]
                     },
                     "iconPending": false
                   }
@@ -2651,18 +2461,11 @@
               "openai/gpt-6-luna"
             ]
           }
-        },
-        "expected": {
-          "verdict": "fail",
-          "screen": null
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
           "conclusion": "[screen 14] “O presidente só sai antes do prazo se cometer um ato grave contra a Constituição” incorrectly makes an impeachable offense the only possible cause of an early end to the presidency. The term can also end through resignation, death, electoral annulment, or removal following conviction for an ordinary crime. [screen 16] The feedback for option d says “só um ato grave contra a Constituição, julgado em impeachment, faz isso.” This falsely states that impeachment is the only way to remove a president before the term ends; electoral annulment and conviction for an ordinary crime can also lead to removal. [screen -] The summary states “só o impeachment, por ato grave contra a Constituição, tira o presidente antes do prazo.” Impeachment is not the only way a presidency can end early.",
@@ -2681,9 +2484,10 @@
         }
       ],
       "testCase": {
+        "expected": { "screen": 14, "verdict": "fail" },
         "id": "real-4-1",
-        "origin": "production",
         "language": "pt",
+        "origin": "production",
         "userInput": {
           "recorded": {
             "lessonId": "01a1bbfe-78f6-73a1-8b33-2c5e4807c157",
@@ -2775,9 +2579,7 @@
                     "activityTemplate": null,
                     "brief": "Forma de Estado é a maneira de distribuir o poder político pelo território: no Brasil, um município decide assuntos locais sem ser outro país.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2785,9 +2587,7 @@
                     "activityTemplate": null,
                     "brief": "Se toda a população de um estado votar pela separação do Brasil, o que acontecerá juridicamente? Opções: “A separação terá efeito”; “A votação não criará outro país”; correta: a segunda.",
                     "kind": "guess",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2795,9 +2595,7 @@
                     "activityTemplate": null,
                     "brief": "A federação brasileira reúne entes com poder político próprio numa união indissolúvel: nem uma votação unânime permite a um estado separar-se do país (CF, art. 1º, caput).",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2805,9 +2603,7 @@
                     "activityTemplate": null,
                     "brief": "Autonomia é governar-se dentro da Constituição: União, estados, Distrito Federal e municípios a possuem, sem serem países soberanos; um estado pode ter sua própria Constituição (CF, arts. 18 e 25).",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2815,9 +2611,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Ao aprovar sua própria Constituição, um estado passa a ter soberania, como o Brasil”. Gabarito: Errado; a armadilha é confundir autonomia estadual com soberania.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2825,9 +2619,7 @@
                     "activityTemplate": null,
                     "brief": "Forma de governo trata do acesso ao poder e da responsabilidade de quem o exerce: ocupar um cargo por mandato é diferente de herdá-lo por toda a vida.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2835,9 +2627,7 @@
                     "activityTemplate": null,
                     "brief": "Na república, o poder não pertence a uma família: os governantes têm mandatos temporários, são escolhidos por eleição e respondem por seus atos; o presidente brasileiro exemplifica isso (CF, arts. 1º, 77, 82 e 85).",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2845,9 +2635,7 @@
                     "activityTemplate": null,
                     "brief": "Na monarquia, a chefia do Estado é, em regra, hereditária e vitalícia: no Reino Unido, a Coroa passa pela linha de sucessão, não por eleição periódica.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2855,9 +2643,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Um país mantém a forma republicana se eleger um presidente para ocupar o cargo vitaliciamente”. Gabarito: Errado; a armadilha é considerar a eleição suficiente, ignorando a temporariedade.",
                     "kind": "check",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2865,9 +2651,7 @@
                     "activityTemplate": null,
                     "brief": "Sistema de governo descreve a relação entre Executivo e Legislativo: uma questão é saber se o governante precisa conservar o apoio do Parlamento para permanecer no cargo.",
                     "kind": "explanation",
-                    "skills": [
-                      2
-                    ],
+                    "skills": [2],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2875,9 +2659,7 @@
                     "activityTemplate": null,
                     "brief": "No presidencialismo, o presidente representa o Estado e dirige o governo com mandato próprio: no Brasil, perder uma votação no Congresso não encerra esse mandato (CF, arts. 76, 82 e 84).",
                     "kind": "explanation",
-                    "skills": [
-                      2
-                    ],
+                    "skills": [2],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2885,9 +2667,7 @@
                     "activityTemplate": null,
                     "brief": "No parlamentarismo, quem dirige o governo depende da confiança do Parlamento: no Reino Unido, a perda formal desse apoio pode levar à substituição do primeiro-ministro.",
                     "kind": "explanation",
-                    "skills": [
-                      2
-                    ],
+                    "skills": [2],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2895,9 +2675,7 @@
                     "activityTemplate": null,
                     "brief": "Impeachment é um processo de responsabilização por crime de responsabilidade: pode retirar o presidente antes do fim do mandato, mas não equivale a perder apoio político (CF, arts. 85 e 86).",
                     "kind": "explanation",
-                    "skills": [
-                      2
-                    ],
+                    "skills": [2],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -2905,11 +2683,7 @@
                     "activityTemplate": "categorize",
                     "brief": "Separar três casos entre forma de Estado, forma de governo e sistema de governo: município com poder próprio; cargo máximo hereditário e vitalício; governo substituído por perda de confiança parlamentar. Gabarito: Estado, governo, sistema; explorar a troca entre os dois últimos.",
                     "kind": "activity",
-                    "skills": [
-                      0,
-                      1,
-                      2
-                    ],
+                    "skills": [0, 1, 2],
                     "visual": null,
                     "visualKind": "template"
                   },
@@ -2917,11 +2691,7 @@
                     "activityTemplate": null,
                     "brief": "Uma nota diz: I — município autônomo é soberano; II — mandato temporário e responsabilização são republicanos; III — derrota parlamentar encerra o mandato presidencial. Selecionar as corretas e corrigir as demais: apenas II; a armadilha é aceitar III como impeachment.",
                     "kind": "application",
-                    "skills": [
-                      0,
-                      1,
-                      2
-                    ],
+                    "skills": [0, 1, 2],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -2986,11 +2756,7 @@
                         "text": "O estado vira um país independente",
                         "isCorrect": false
                       },
-                      {
-                        "id": "c",
-                        "text": "O estado continua parte do Brasil",
-                        "isCorrect": true
-                      }
+                      { "id": "c", "text": "O estado continua parte do Brasil", "isCorrect": true }
                     ],
                     "variant": "guess",
                     "question": "Numa votação, 100% dos moradores de um estado escolhem sair do Brasil. Pela Constituição, o que acontece?"
@@ -3243,11 +3009,7 @@
                     "iconNeed": {
                       "name": "puzzle piece",
                       "description": "A single interlocking puzzle piece with rounded tabs.",
-                      "searchWords": [
-                        "jigsaw",
-                        "piece",
-                        "puzzle"
-                      ]
+                      "searchWords": ["jigsaw", "piece", "puzzle"]
                     },
                     "iconPending": false
                   },
@@ -3259,11 +3021,7 @@
                     "iconNeed": {
                       "name": "house",
                       "description": "A simple small house with a pitched roof.",
-                      "searchWords": [
-                        "home",
-                        "residence",
-                        "building"
-                      ]
+                      "searchWords": ["home", "residence", "building"]
                     },
                     "iconPending": false
                   },
@@ -3275,11 +3033,7 @@
                     "iconNeed": {
                       "name": "ballot box",
                       "description": "A ballot box with a slot in its top.",
-                      "searchWords": [
-                        "election",
-                        "voting",
-                        "poll"
-                      ]
+                      "searchWords": ["election", "voting", "poll"]
                     },
                     "iconPending": false
                   },
@@ -3291,11 +3045,7 @@
                     "iconNeed": {
                       "name": "hourglass",
                       "description": "A classic hourglass with sand falling between its chambers.",
-                      "searchWords": [
-                        "timer",
-                        "sand clock",
-                        "time"
-                      ]
+                      "searchWords": ["timer", "sand clock", "time"]
                     },
                     "iconPending": false
                   },
@@ -3307,11 +3057,7 @@
                     "iconNeed": {
                       "name": "parliament building",
                       "description": "A neoclassical building with columns and a broad central facade.",
-                      "searchWords": [
-                        "assembly",
-                        "legislature",
-                        "capitol"
-                      ]
+                      "searchWords": ["assembly", "legislature", "capitol"]
                     },
                     "iconPending": false
                   }
@@ -3338,18 +3084,11 @@
               "openai/gpt-6-luna"
             ]
           }
-        },
-        "expected": {
-          "verdict": "fail",
-          "screen": 14
         }
       }
     },
     {
-      "classification": {
-        "expected": "fail",
-        "predicted": "fail"
-      },
+      "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
           "conclusion": "[screen 3] The question “Como mudou a vantagem da origem alta?” does not specify how to measure that advantage, so “Diminui” is also defensible. The ratio of probabilities falls from 50/10 = 5 to 75/25 = 3. Only the odds ratio remains at 9, and odds have not yet been introduced. [screen 8] “Abrir mais vagas no topo aumenta as subidas sem tirar o peso da origem” turns a possible outcome into a general rule. More positions at the top can coexist with a decrease, increase, or no change in the association between origin and destination. The same overgeneralization appears in screen 9’s quotation and the summary.",
@@ -3368,9 +3107,10 @@
         }
       ],
       "testCase": {
+        "expected": { "screen": 3, "verdict": "fail" },
         "id": "real-5-1",
-        "origin": "production",
         "language": "pt",
+        "origin": "production",
         "userInput": {
           "recorded": {
             "lessonId": "01a1bc04-a2aa-7f06-91c6-0d472e7f7d61",
@@ -3462,9 +3202,7 @@
                     "activityTemplate": null,
                     "brief": "Mobilidade absoluta é a proporção de pessoas que mudam de posição social: se 30 de 100 filhos ocupam uma posição diferente da dos pais, ela é de 30%. A mudança pode ser para cima ou para baixo.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3472,9 +3210,7 @@
                     "activityTemplate": null,
                     "brief": "Tabela fictícia, colunas período/origem/destino baixo/destino alto: A/baixa/90/10; A/alta/50/50; B/baixa/75/25; B/alta/25/75. Perguntar como muda a vantagem da origem alta para alcançar o topo: diminui, permanece igual ou aumenta; correta: permanece igual.",
                     "kind": "guess",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "table"
                   },
@@ -3482,9 +3218,7 @@
                     "activityTemplate": null,
                     "brief": "A vantagem de origem permaneceu igual, apesar de mais pessoas chegarem ao topo. A mobilidade relativa compara a facilidade de alcançar uma posição conforme a origem social: quanto menor essa dependência, maior a mobilidade relativa.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3492,9 +3226,7 @@
                     "activityTemplate": null,
                     "brief": "Para comparar essa facilidade, usamos a razão entre quem alcança a posição e quem não alcança, chamada odds. Na origem baixa do período A, são 10 para 90: 10/90 = 1/9.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3502,9 +3234,7 @@
                     "activityTemplate": null,
                     "brief": "Mostrar em etapas a vantagem de origem no período A: origem alta, 50/50 = 1; origem baixa, 10/90 = 1/9; comparação, 1 ÷ (1/9) = 9. A origem alta tem nove vezes as odds da origem baixa.",
                     "kind": "workedExample",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3512,9 +3242,7 @@
                     "activityTemplate": null,
                     "brief": "No período B, mostrar origem baixa: 75 no destino baixo e 25 no alto; origem alta: 25 no baixo e 75 no alto. Pedir a vantagem da origem alta: correta 9; incluir 3, erro de usar apenas 75/25 sem comparar as origens.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "table"
                   },
@@ -3522,9 +3250,7 @@
                     "activityTemplate": null,
                     "brief": "A abertura de mais posições superiores pode aumentar as subidas sem reduzir a vantagem de origem. Entre A e B, os filhos de origem baixa que chegaram ao topo passaram de 10 para 25, mas a vantagem continuou em nove vezes.",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3532,9 +3258,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma pesquisa registrou mais mudanças de posição; logo, comprovou menor desigualdade de oportunidades”. Gabarito: Errado; incluir Certo como resposta tentadora por confundir quantidade de mudanças com menor dependência da origem.",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3542,9 +3266,7 @@
                     "activityTemplate": null,
                     "brief": "Comparar a posição de filhos com a dos pais é analisar mobilidade intergeracional. Uma filha na direção de uma empresa e sua mãe em trabalho de baixa posição, ambas observadas aos 40 anos, exemplificam essa comparação.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3552,9 +3274,7 @@
                     "activityTemplate": null,
                     "brief": "Comparar posições da mesma pessoa ao longo da vida é analisar mobilidade intrageracional. Uma trabalhadora que passa de auxiliar a gerente apresenta essa trajetória, mesmo sem informação sobre seus pais.",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3562,9 +3282,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar: “Uma pesquisa que compara a ocupação de cada participante aos 25 e aos 50 anos mede mobilidade intergeracional”. Gabarito: Errado; a armadilha é confundir duas idades da mesma pessoa com duas gerações familiares.",
                     "kind": "check",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -3572,10 +3290,7 @@
                     "activityTemplate": null,
                     "brief": "Um relatório traz mobilidade absoluta de 20% para 35%, vantagem de origem fixa em nove vezes, Valéria promovida de auxiliar a gerente e Danilo gerente, filho de auxiliar. Pedir um parecer: não houve redução da vantagem de origem; Valéria exemplifica mobilidade intrageracional e Danilo, intergeracional; incluir a conclusão tentadora de oportunidades mais iguais.",
                     "kind": "application",
-                    "skills": [
-                      0,
-                      1
-                    ],
+                    "skills": [0, 1],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -3622,21 +3337,9 @@
                   "content": {
                     "reveal": "A vantagem da origem alta permanece igual nos dois períodos, mesmo com mais filhos de origem baixa chegando ao topo.",
                     "options": [
-                      {
-                        "id": "a",
-                        "text": "Diminui",
-                        "isCorrect": false
-                      },
-                      {
-                        "id": "b",
-                        "text": "Aumenta",
-                        "isCorrect": false
-                      },
-                      {
-                        "id": "c",
-                        "text": "Permanece igual",
-                        "isCorrect": true
-                      }
+                      { "id": "a", "text": "Diminui", "isCorrect": false },
+                      { "id": "b", "text": "Aumenta", "isCorrect": false },
+                      { "id": "c", "text": "Permanece igual", "isCorrect": true }
                     ],
                     "variant": "guess",
                     "question": "No estudo fictício, no período A, 10 de 100 filhos de origem baixa e 50 de 100 de origem alta chegaram ao topo. No B, foram 25 e 75. Como mudou a vantagem da origem alta?"
@@ -3660,10 +3363,7 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      {
-                        "math": "\\frac{50}{50}=1",
-                        "text": "Alta: 50 chegam e 50 não."
-                      },
+                      { "math": "\\frac{50}{50}=1", "text": "Alta: 50 chegam e 50 não." },
                       {
                         "math": "\\frac{10}{90}=\\frac{1}{9}",
                         "text": "Baixa: 10 chegam e 90 não."
@@ -3681,10 +3381,7 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": {
-                      "quote": "Divida as odds da alta pelas da baixa.",
-                      "position": 5
-                    },
+                    "basis": { "quote": "Divida as odds da alta pelas da baixa.", "position": 5 },
                     "context": "Num período C fictício, o estudo registrou:\n\n| Origem | Destino baixo | Destino alto |\n|---|---:|---:|\n| Baixa | 60 | 40 |\n| Alta | 20 | 80 |",
                     "options": [
                       {
@@ -3834,11 +3531,7 @@
                     "iconNeed": {
                       "name": "staircase",
                       "description": "A simple staircase with several steps.",
-                      "searchWords": [
-                        "stairs",
-                        "steps",
-                        "stairway"
-                      ]
+                      "searchWords": ["stairs", "steps", "stairway"]
                     },
                     "iconPending": false
                   },
@@ -3850,11 +3543,7 @@
                     "iconNeed": {
                       "name": "balance scale",
                       "description": "A traditional balance scale with two hanging pans.",
-                      "searchWords": [
-                        "scales",
-                        "weighing scale",
-                        "justice"
-                      ]
+                      "searchWords": ["scales", "weighing scale", "justice"]
                     },
                     "iconPending": false
                   },
@@ -3866,11 +3555,7 @@
                     "iconNeed": {
                       "name": "open door",
                       "description": "A simple door standing open.",
-                      "searchWords": [
-                        "doorway",
-                        "entrance",
-                        "door"
-                      ]
+                      "searchWords": ["doorway", "entrance", "door"]
                     },
                     "iconPending": false
                   },
@@ -3882,11 +3567,7 @@
                     "iconNeed": {
                       "name": "family tree",
                       "description": "A branching tree with small circular markers at its ends.",
-                      "searchWords": [
-                        "genealogy",
-                        "family diagram",
-                        "tree"
-                      ]
+                      "searchWords": ["genealogy", "family diagram", "tree"]
                     },
                     "iconPending": false
                   },
@@ -3898,11 +3579,7 @@
                     "iconNeed": {
                       "name": "hourglass",
                       "description": "A glass hourglass with sand in its lower chamber.",
-                      "searchWords": [
-                        "sand timer",
-                        "time",
-                        "timer"
-                      ]
+                      "searchWords": ["sand timer", "time", "timer"]
                     },
                     "iconPending": false
                   }
@@ -3926,39 +3603,21 @@
               "openai/gpt-6-luna"
             ]
           }
-        },
-        "expected": {
-          "verdict": "fail",
-          "screen": 3
         }
       }
     },
     {
-      "classification": {
-        "expected": "pass",
-        "predicted": "pass"
-      },
+      "classification": { "expected": "pass", "predicted": "pass" },
       "steps": [
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No blocking issues.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "No blocking issues.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "No blocking issues.", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
+        "expected": { "verdict": "pass" },
         "id": "real-6-1",
-        "origin": "production",
         "language": "pt",
+        "origin": "production",
         "userInput": {
           "recorded": {
             "lessonId": "01a1bc05-fd7d-72fe-ae95-16032f12ed52",
@@ -4036,10 +3695,7 @@
                     "activityTemplate": null,
                     "brief": "Raimundo recebe para análise um pedido de uma empresa da qual é sócio e pensa: “Vou seguir todos os critérios técnicos”. Isso basta para que ele possa conduzir a análise?",
                     "kind": "hook",
-                    "skills": [
-                      0,
-                      1
-                    ],
+                    "skills": [0, 1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4047,9 +3703,7 @@
                     "activityTemplate": null,
                     "brief": "Conflito de interesses é o confronto entre interesses públicos e privados capaz de comprometer o interesse coletivo ou influenciar impropriamente a função pública: analisar um pedido da própria empresa cria esse risco (Lei nº 12.813/2013, art. 3º, I).",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4057,9 +3711,7 @@
                     "activityTemplate": null,
                     "brief": "Um servidor presta consultoria a uma empresa interessada em decisão sua; se dispensar os honorários, o que acontece com o conflito? Opções: “Desaparece”; “Permanece”; “Depende de prejuízo ao erário”; resposta: “Permanece”, com justificativa imediata.",
                     "kind": "guess",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4067,9 +3719,7 @@
                     "activityTemplate": null,
                     "brief": "O conflito independe de lesão ao patrimônio público ou de vantagem recebida: dispensar os honorários não elimina, por si só, o conflito da consultoria (Lei nº 12.813/2013, art. 4º, § 1º).",
                     "kind": "explanation",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4077,9 +3727,7 @@
                     "activityTemplate": null,
                     "brief": "Resolver em etapas: Thaís presta consultoria à empresa interessada em decisão que ela tomará — identificar o serviço privado → ligar a empresa à decisão → reconhecer o conflito, mesmo sem favorecimento consumado (Lei nº 12.813/2013, art. 5º, II).",
                     "kind": "workedExample",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4087,9 +3735,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar Certo ou Errado: “Murilo presta consultoria gratuita a uma empresa interessada em decisão sua; sem remuneração nem prejuízo ao erário, inexiste conflito”. Gabarito: Errado; explorar a confusão entre conflito e dano efetivo (arts. 4º, § 1º, e 5º, II).",
                     "kind": "check",
-                    "skills": [
-                      0
-                    ],
+                    "skills": [0],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4097,9 +3743,7 @@
                     "activityTemplate": null,
                     "brief": "Ter interesse direto ou indireto na matéria impede a atuação no processo: Sabrina não pode analisar pedido que afeta o lucro da empresa de que é sócia, mesmo prometendo neutralidade (Lei nº 9.784/1999, art. 18, I).",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4107,9 +3751,7 @@
                     "activityTemplate": null,
                     "brief": "Cauê analisaria recurso que afeta sua própria empresa: reconhecer o interesse direto → comunicar o impedimento à autoridade competente → abster-se de atuar, sem aguardar autorização para parar (Lei nº 9.784/1999, arts. 18, I, e 19).",
                     "kind": "workedExample",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4117,9 +3759,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar Certo ou Errado: “Rosana tem interesse financeiro no resultado do processo e comunica o impedimento, mas pode continuar instruindo-o até receber substituto”. Gabarito: Errado; comunicar não dispensa a abstenção de atuar (Lei nº 9.784/1999, art. 19).",
                     "kind": "check",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4127,9 +3767,7 @@
                     "activityTemplate": null,
                     "brief": "Amizade íntima com um interessado permite arguir suspeição, fundamento distinto do impedimento: a relação próxima de Leandro com o requerente importa, mas ser mero conhecido não basta para esse enquadramento (Lei nº 9.784/1999, art. 20).",
                     "kind": "explanation",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4137,9 +3775,7 @@
                     "activityTemplate": null,
                     "brief": "Julgar Certo ou Errado: “Valéria encontra a requerente ocasionalmente em eventos profissionais; isso basta para caracterizar suspeição por amizade íntima”. Gabarito: Errado; o contato descrito não demonstra a proximidade exigida pelo art. 20 da Lei nº 9.784/1999.",
                     "kind": "check",
-                    "skills": [
-                      1
-                    ],
+                    "skills": [1],
                     "visual": null,
                     "visualKind": "none"
                   },
@@ -4147,10 +3783,7 @@
                     "activityTemplate": null,
                     "brief": "Uma servidora presta consultoria gratuita à empresa da qual é sócia e recebe processo sobre pedido dessa empresa: identificar o conflito e indicar como agir. Esperado: reconhecer o vínculo privado, comunicar o impedimento e abster-se; rejeitar apenas prometer uma análise técnica.",
                     "kind": "application",
-                    "skills": [
-                      0,
-                      1
-                    ],
+                    "skills": [0, 1],
                     "visual": null,
                     "visualKind": "none"
                   }
@@ -4197,16 +3830,8 @@
                   "content": {
                     "reveal": "O conflito permanece, mesmo sem honorários e sem prejuízo ao erário.",
                     "options": [
-                      {
-                        "id": "a",
-                        "text": "O conflito permanece",
-                        "isCorrect": true
-                      },
-                      {
-                        "id": "b",
-                        "text": "O conflito desaparece",
-                        "isCorrect": false
-                      },
+                      { "id": "a", "text": "O conflito permanece", "isCorrect": true },
+                      { "id": "b", "text": "O conflito desaparece", "isCorrect": false },
                       {
                         "id": "c",
                         "text": "Só existe se houver prejuízo ao erário",
@@ -4231,15 +3856,9 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      {
-                        "text": "Ela presta serviço privado à empresa."
-                      },
-                      {
-                        "text": "A empresa tem interesse na decisão."
-                      },
-                      {
-                        "text": "Não é preciso haver favorecimento."
-                      }
+                      { "text": "Ela presta serviço privado à empresa." },
+                      { "text": "A empresa tem interesse na decisão." },
+                      { "text": "Não é preciso haver favorecimento." }
                     ],
                     "title": "Consultoria e decisão",
                     "result": "Há conflito (Lei nº 12.813/2013, art. 5º, II).",
@@ -4282,15 +3901,9 @@
                   "kind": "workedExample",
                   "content": {
                     "steps": [
-                      {
-                        "text": "Ele tem interesse direto na matéria."
-                      },
-                      {
-                        "text": "Comunica o impedimento à autoridade competente."
-                      },
-                      {
-                        "text": "Abstém-se de atuar sem esperar autorização."
-                      }
+                      { "text": "Ele tem interesse direto na matéria." },
+                      { "text": "Comunica o impedimento à autoridade competente." },
+                      { "text": "Abstém-se de atuar sem esperar autorização." }
                     ],
                     "title": "Como agir no impedimento",
                     "result": "É o procedimento dos arts. 18, I, e 19 da Lei nº 9.784/1999.",
@@ -4329,10 +3942,7 @@
                 {
                   "kind": "check",
                   "content": {
-                    "basis": {
-                      "quote": "Ser só conhecido não basta.",
-                      "position": 9
-                    },
+                    "basis": { "quote": "Ser só conhecido não basta.", "position": 9 },
                     "context": "Valéria vai decidir o pedido de uma advogada que ela encontra de vez em quando em eventos profissionais.",
                     "options": [
                       {
@@ -4396,11 +4006,7 @@
                     "iconNeed": {
                       "name": "balance scale",
                       "description": "A traditional balance scale with two hanging pans.",
-                      "searchWords": [
-                        "scales",
-                        "justice",
-                        "law"
-                      ]
+                      "searchWords": ["scales", "justice", "law"]
                     },
                     "iconPending": false
                   },
@@ -4412,11 +4018,7 @@
                     "iconNeed": {
                       "name": "wallet",
                       "description": "A simple closed leather wallet.",
-                      "searchWords": [
-                        "purse",
-                        "money",
-                        "billfold"
-                      ]
+                      "searchWords": ["purse", "money", "billfold"]
                     },
                     "iconPending": false
                   },
@@ -4428,11 +4030,7 @@
                     "iconNeed": {
                       "name": "road barrier",
                       "description": "A striped barrier lowered across a road.",
-                      "searchWords": [
-                        "barricade",
-                        "gate",
-                        "obstacle"
-                      ]
+                      "searchWords": ["barricade", "gate", "obstacle"]
                     },
                     "iconPending": false
                   },
@@ -4444,11 +4042,7 @@
                     "iconNeed": {
                       "name": "friendship bracelet",
                       "description": "A colorful woven bracelet made from thin threads.",
-                      "searchWords": [
-                        "woven bracelet",
-                        "cord bracelet",
-                        "friendship band"
-                      ]
+                      "searchWords": ["woven bracelet", "cord bracelet", "friendship band"]
                     },
                     "iconPending": false
                   }
@@ -4471,9 +4065,6 @@
               "anthropic/claude-opus-5.5"
             ]
           }
-        },
-        "expected": {
-          "verdict": "pass"
         }
       }
     }
