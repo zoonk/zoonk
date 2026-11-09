@@ -14,7 +14,7 @@ export function getLessonLookahead(dayMinutes: number): number {
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &
   Partial<Pick<PlanItem, "facts" | "lessons">>;
 
-type AllocatedItem = Pick<PlanItem, "scheduledFor"> & { facts?: unknown };
+type AllocatedItem = Pick<PlanItem, "scheduledFor"> & Partial<Pick<PlanItem, "facts">>;
 
 function isDue({ item, today }: { item: AllocatedItem; today: Date }): boolean {
   return item.scheduledFor !== null && item.scheduledFor <= today;

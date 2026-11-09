@@ -47,12 +47,9 @@ describe(getChallengeTimings, () => {
     scheduledFor: TODAY,
   };
 
-  it.each([
-    [15, "date"],
-    [45, "nextSession"],
-  ] as const)(
-    "follows the lessons with a challenge put off yesterday on a %i-minute day not built yet",
-    (dailyMinutes, when) => {
+  it.each([15, 45])(
+    "does not promise a challenge put off yesterday to a %i-minute day not built yet, which starts with lessons",
+    (dailyMinutes) => {
       const timings = getChallengeTimings({
         ...base,
         goal: { ...base.goal, dailyMinutes },
@@ -60,11 +57,11 @@ describe(getChallengeTimings, () => {
         lastSessionChallenges: new Map([["a", false]]),
       });
 
-      expect(timings.get("a")?.when).toBe(when);
+      expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
     },
   );
 
-  it("follows the lessons with put-off challenges, then spends each later day's room", () => {
+  it("dates put-off challenges from the day after, then spends each later day's room", () => {
     const timings = getChallengeTimings({
       ...base,
       goal: { ...base.goal, dailyMinutes: 15 },
@@ -199,19 +196,6 @@ describe(getChallengeTimings, () => {
     expect(timings.get("b")).toStrictEqual({ date: "2026-11-10", when: "date" });
   });
 
-  it("offers a reached challenge before its estimate and never queues a later one", () => {
-    const timings = getChallengeTimings({
-      ...base,
-      goal: { ...base.goal, dailyMinutes: 30 },
-      items: [boss, { ...boss, id: "b", position: 2 }],
-    });
-
-    expect([...timings.values()].map((entry) => entry.when)).toStrictEqual([
-      "nextSession",
-      "nextSession",
-    ]);
-  });
-
   it("does not promise a legacy or empty challenge before a day build can establish its offer", () => {
     const items = [
       { ...boss, facts: null },
@@ -237,16 +221,19 @@ describe(getChallengeTimings, () => {
     expect(timings.get("a")?.when).toBe("date");
   });
 
-  it("does not promise an unfunded challenge in the next session", () => {
-    const timings = getChallengeTimings({
-      ...base,
-      items: [boss, { ...boss, id: "b", position: 2 }],
-    });
+  it.each([20, 30])(
+    "promises a %i-minute next session only to the challenge that leads it",
+    (dailyMinutes) => {
+      const timings = getChallengeTimings({
+        ...base,
+        goal: { ...base.goal, dailyMinutes },
+        items: [boss, { ...boss, id: "b", position: 2 }],
+      });
 
-    expect(timings.get("a")?.when).toBe("nextSession");
-    expect(timings.get("b")?.when).toBe("date");
-    expect(timings.get("b")?.date).toBe("2026-11-10");
-  });
+      expect(timings.get("a")?.when).toBe("nextSession");
+      expect(timings.get("b")).toStrictEqual({ date: "2026-11-10", when: "date" });
+    },
+  );
 
   it("dates the second reached challenge on a day that can hold it", () => {
     const items = [boss, { ...boss, id: "b", phase: 1, position: 2 }];
