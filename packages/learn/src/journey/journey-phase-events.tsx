@@ -12,7 +12,7 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
-import { useFormatPlanDate } from "../plan/plan-date-text";
+import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
 
 export const PATH_ROW_CLASS =
@@ -55,7 +55,6 @@ export function CheckpointRow({
   links: JourneyPathLinks;
 }) {
   const t = useExtracted();
-  const formatPlanDate = useFormatPlanDate();
   const { goal } = usePlanScreen();
   const isDone = checkpoint.state === "done";
   // A locked one is never in a session, so it keeps its planned day.
@@ -78,8 +77,7 @@ export function CheckpointRow({
         <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
           {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
           {!isDone && when === "nextSession" && t("In your next session")}
-          {!isDone && when === "queued" && t("After the challenge before it")}
-          {onDate && checkpoint.date && formatPlanDate(checkpoint.date)}
+          {onDate && checkpoint.date && <PlanDateText estimate isoDate={checkpoint.date} />}
         </span>
 
         {!brief && !isDone && (
