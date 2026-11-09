@@ -26,7 +26,7 @@
     {
       "caseId": "en-doorways-picture-options-clean",
       "expectation": "pass",
-      "change": "Attribute Gothic building structure to arches, vaults and buttresses together; identify style without treating it as a construction date.",
+      "change": "Attribute Gothic building structure to arches, vaults and buttresses together; identify style without treating it as a construction date. The hook ends without pointing at a door no screen shows.",
       "sources": [
         "https://www.metmuseum.org/essays/gothic-art",
         "https://www.riba.org/explore/riba-collections/architectural-styles/gothic-revival-movement/"
