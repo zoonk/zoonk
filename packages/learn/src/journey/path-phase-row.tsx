@@ -65,33 +65,58 @@ export function PhaseUntil({ isLast, phase }: { isLast: boolean; phase: PlanPhas
     return null;
   }
 
-  const estimate =
-    (phase.kind === "learn" || phase.kind === "afterExam") && phase.state === "upcoming";
+  const learns = phase.kind === "learn" || phase.kind === "afterExam";
 
-  const date = formatPlanDate(phase.endDate, { month: estimate });
+  if (learns && phase.state === "upcoming") {
+    const month = formatPlanDate(phase.endDate, { month: true });
 
-  if (!estimate) {
-    return <span className={TRAILING_CLASS}>{t("until {date}", { date })}</span>;
+    return (
+      <span className={TRAILING_CLASS}>
+        <span aria-hidden="true">
+          {t({
+            description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
+            message: "until ~{date}",
+            values: { date: month },
+          })}
+        </span>
+        <span className="sr-only">
+          {t({
+            description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
+            message: "until about {date}",
+            values: { date: month },
+          })}
+        </span>
+      </span>
+    );
   }
 
-  return (
-    <span className={TRAILING_CLASS}>
-      <span aria-hidden="true">
-        {t({
-          description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
-          message: "until ~{date}",
-          values: { date },
-        })}
+  const date = formatPlanDate(phase.endDate);
+
+  // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+  if (learns && phase.checkpoint?.state === "upcoming") {
+    return (
+      <span className={TRAILING_CLASS}>
+        <span aria-hidden="true">
+          {t({
+            description: '{date} is a day, like "Nov 10".',
+            id: "phaseUntilAboutDay",
+            message: "until ~{date}",
+            values: { date },
+          })}
+        </span>
+        <span className="sr-only">
+          {t({
+            description: '{date} is a day, like "Nov 10".',
+            id: "phaseUntilAboutDaySpoken",
+            message: "until about {date}",
+            values: { date },
+          })}
+        </span>
       </span>
-      <span className="sr-only">
-        {t({
-          description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
-          message: "until about {date}",
-          values: { date },
-        })}
-      </span>
-    </span>
-  );
+    );
+  }
+
+  return <span className={TRAILING_CLASS}>{t("until {date}", { date })}</span>;
 }
 
 export function PhaseMark({ phase }: { phase: PlanPhaseView }) {

@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { type FirstStep } from "../buddies/buddy-status-view";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useFormatPlanDate } from "../plan/plan-date-text";
-import { WaitLine, renderSentenceNumber } from "./mission-copy";
+import { renderSentenceNumber, useWaitLine } from "./mission-copy";
 
 export function useFirstStepName(buddy: LearnBuddy | null) {
   const t = useExtracted("missions");
@@ -71,9 +71,10 @@ function FirstStepWhen({ when }: { when: NonNullable<FirstStep["when"]> }) {
 
 export function FirstStepDetailLine({ step }: { step: FirstStep }) {
   const t = useExtracted();
+  const waitLine = useWaitLine();
 
   if (step.waitReason) {
-    return <WaitLine reason={step.waitReason} />;
+    return waitLine();
   }
 
   if (step.status === "today") {

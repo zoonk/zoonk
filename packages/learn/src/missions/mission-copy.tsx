@@ -127,12 +127,8 @@ export function useMissionStateLabel(buddy: LearnBuddy | null) {
       return t(", done");
     }
 
-    if (state.waitReason === "lessons") {
-      return t(", after today's lessons");
-    }
-
-    if (state.waitReason === "challenge") {
-      return t(", after the challenge before it");
+    if (state.waitReason) {
+      return t(", after this phase's lessons");
     }
 
     return state.opens ? opensLabel(state) : undefined;
@@ -144,17 +140,10 @@ export function renderSentenceNumber(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
-type WaitReason = NonNullable<Mission["waitReason"]>;
-
-function useWaitLine() {
+/** Only a phase challenge waits, for the lessons before it, which are its phase's. */
+export function useWaitLine() {
   const t = useExtracted();
-
-  return (reason: WaitReason): string =>
-    reason === "lessons" ? t("After today's lessons") : t("After the challenge before it");
-}
-
-export function WaitLine({ reason }: { reason: WaitReason }) {
-  return useWaitLine()(reason);
+  return (): string => t("After this phase's lessons");
 }
 
 const ESTIMATED_KINDS: ReadonlySet<MissionKind> = new Set([
@@ -239,7 +228,7 @@ function useMissionStep() {
     const { detail, kind, waitReason } = mission;
 
     if (waitReason) {
-      return waitLine(waitReason);
+      return waitLine();
     }
 
     if (ESTIMATED_KINDS.has(kind)) {

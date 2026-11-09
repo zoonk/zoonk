@@ -103,6 +103,7 @@ msgstr "Çalışıldı"
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/journey-phase-events.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -4902,11 +4903,6 @@ msgctxt "htY1di"
 msgid "Last week's recap"
 msgstr "Geçen haftanın özetine bak"
 
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "{date} tarihine kadar"
-
 #. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
@@ -4918,6 +4914,23 @@ msgstr "~{date} ayına kadar"
 msgctxt "JzTTux"
 msgid "until about {date}"
 msgstr "{date} civarına kadar"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDay"
+msgid "until ~{date}"
+msgstr "~{date} tarihine kadar"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDaySpoken"
+msgid "until about {date}"
+msgstr "yaklaşık {date} tarihine kadar"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "oPz0RK"
+msgid "until {date}"
+msgstr "{date} tarihine kadar"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -7529,26 +7542,14 @@ msgid ", choose a call"
 msgstr ", bir sohbet seç"
 
 #: src/missions/mission-copy.tsx
-msgctxt "J8WnXZ"
-msgid ", after today's lessons"
-msgstr ", bugünkü derslerden sonra"
+msgctxt "mQmNzY"
+msgid ", after this phase's lessons"
+msgstr ", bu aşamanın derslerinden sonra"
 
 #: src/missions/mission-copy.tsx
-msgctxt "EK1npa"
-msgid ", after the challenge before it"
-msgstr ", önceki meydan okumadan sonra"
-
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "L_nv1C"
-msgid "After today's lessons"
-msgstr "Bugünkü derslerden sonra"
-
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "lqBoRy"
-msgid "After the challenge before it"
-msgstr "Önceki meydan okumadan sonra"
+msgctxt "-d7MNH"
+msgid "After this phase's lessons"
+msgstr "Bu aşamanın derslerinden sonra"
 
 #: src/missions/mission-copy.tsx
 msgctxt "teh3kP"
@@ -13850,14 +13851,9 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "Sıradaki derslerini açamadık. Tekrar dene."
 
 #: src/today/today-block-row.tsx
-msgctxt "hTNiZs"
-msgid "{phase} · after today's lessons"
-msgstr "{phase} · bugünkü derslerden sonra"
-
-#: src/today/today-block-row.tsx
-msgctxt "swGOPE"
-msgid "{phase} · after the challenge before it"
-msgstr "{phase} · önceki meydan okumadan sonra"
+msgctxt "pPB2tF"
+msgid "{phase} · after this phase's lessons"
+msgstr "{phase} · bu aşamanın derslerinden sonra"
 
 #: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
