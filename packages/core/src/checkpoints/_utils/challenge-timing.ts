@@ -2,16 +2,13 @@ import { type Goal, type StudySessionBlock } from "@zoonk/db";
 import { hasOverduePlanWork } from "../../plans/_utils/left-work";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { addDays, daysBetween, toIsoDate } from "../../plans/planner/plan-calendar";
-import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { DAYS_PER_WEEK, type PlanSettings } from "../../plans/planner/plan-state";
-import { isAllocatedOn } from "../../sessions/_utils/day-lessons";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { isMockOnlyDay } from "../../sessions/_utils/day-mock";
 import { findPlannedReview } from "../../sessions/_utils/day-review";
 import {
   fundLeadingChallenges,
   getLeadingChallenges,
-  listDayStretch,
   placePutOffChallenges,
 } from "../../sessions/_utils/day-stretch";
 import { canHoldPhaseChallenges } from "../../sessions/_utils/phase-challenge-day";
@@ -22,7 +19,6 @@ import { type CheckpointResult } from "./checkpoint-results";
 
 type TimingItem = ChallengeReachItem & {
   facts?: unknown;
-  minutes?: number | null;
   phase: number;
   scheduledFor: Date | null;
 };
@@ -38,42 +34,25 @@ type ReachedChallenge = {
   rematch: boolean;
 };
 
-function listDayChallengeIds({
+/** The lessons a day will hold aren't known before it's built, so after a put-off only a challenge started in that session leads. */
+function fundDayChallenges({
   budget,
-  date,
   items,
-  lastSessionChallenges,
+  lastSession,
   reached,
 }: {
   budget: number;
-  date: Date;
   items: readonly TimingItem[];
-  lastSessionChallenges?: ReadonlyMap<string, boolean>;
+  lastSession?: ReadonlyMap<string, boolean>;
   reached: readonly ReachedChallenge[];
-}): string[] {
-  const lessons = items.flatMap((item) =>
-    LEARN_KINDS.has(item.kind) && item.status === "todo" && isAllocatedOn({ item, today: date })
-      ? [{ minutes: item.minutes ?? 0, planItemId: item.id, planItemKey: item.key }]
-      : [],
-  );
-
-  const checkpoints = placePutOffChallenges({
-    checkpoints: reached,
-    hasLessons: lessons.length > 0,
-    lastSession: lastSessionChallenges,
-  });
-
-  return listDayStretch({
+}): ReachedChallenge[] {
+  return fundLeadingChallenges({
     budget,
-    checkpoints,
-    items,
-    leading: fundLeadingChallenges({
-      budget,
-      checkpoints: getLeadingChallenges({ checkpoints, items }),
+    checkpoints: getLeadingChallenges({
+      checkpoints: placePutOffChallenges({ checkpoints: reached, hasLessons: true, lastSession }),
+      items,
     }),
-    lessons,
-    overflow: true,
-  }).flatMap((entry) => (entry.kind === "challenge" ? [entry.checkpoint.id] : []));
+  });
 }
 
 export function getChallengeTimings({
@@ -195,25 +174,23 @@ export function getChallengeTimings({
     ),
   );
 
-  const next = days.find((date) => (!savedDay || date > today) && capacity(date) > 0);
   const dates = new Map<string, Date>();
 
   for (const date of days) {
     const budget = capacity(date);
 
     if ((!savedDay || date > today) && budget > 0) {
-      const ids = listDayChallengeIds({
+      const funded = fundDayChallenges({
         budget,
-        date,
         items,
-        lastSessionChallenges: date === next ? lastSessionChallenges : undefined,
+        lastSession: date === nextStudy ? lastSessionChallenges : undefined,
         reached: reached.filter(
           (entry) => !dates.has(entry.id) && (date > today || !lostToday.has(entry.id)),
         ),
       });
 
-      for (const id of ids) {
-        dates.set(id, date);
+      for (const challenge of funded) {
+        dates.set(challenge.id, date);
       }
     }
 
@@ -225,6 +202,8 @@ export function getChallengeTimings({
   const tomorrow = addDays(today, 1);
   const future = days.find((date) => date >= tomorrow && capacity(date) > 0);
 
+  const leader = savedDay ? undefined : [...dates].find(([, date]) => date === nextStudy)?.[0];
+
   return new Map(
     items
       .filter((boss) => boss.kind === "boss")
@@ -233,7 +212,6 @@ export function getChallengeTimings({
         const offeredToday = inToday(boss);
 
         const assigned = dates.get(id);
-        const nextSession = !savedDay && assigned && assigned.getTime() === nextStudy?.getTime();
 
         const estimatedFor =
           assigned ?? (isChallengeReached({ boss, items }) ? future : boss.scheduledFor);
@@ -244,7 +222,7 @@ export function getChallengeTimings({
           id,
           {
             date: offeredToday ? toIsoDate(today) : toIsoDate(estimate),
-            when: offeredToday || nextSession ? "nextSession" : "date",
+            when: offeredToday || id === leader ? "nextSession" : "date",
           },
         ];
       }),

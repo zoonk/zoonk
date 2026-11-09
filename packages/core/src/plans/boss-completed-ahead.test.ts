@@ -328,7 +328,7 @@ async function expectTuesdayStable({
   expect
     .soft(tuesday.card)
     .toMatchObject({
-      challenge: { date: null, minutes: 15, questions: 10, status: "ready" },
+      challenge: { date: WEDNESDAY, minutes: 15, questions: 10, status: "upcoming" },
       status: "ready",
     });
 
@@ -337,10 +337,8 @@ async function expectTuesdayStable({
     .toMatchObject({
       plan: {
         phases: [
-          {
-            checkpoint: { date: WEDNESDAY, planItemId: fixture.bosses[0]?.id, when: "nextSession" },
-          },
-          { checkpoint: { date: WEDNESDAY, planItemId: secondBossId, when: "nextSession" } },
+          { checkpoint: { date: WEDNESDAY, planItemId: fixture.bosses[0]?.id, when: "date" } },
+          { checkpoint: { date: WEDNESDAY, planItemId: secondBossId, when: "date" } },
         ],
       },
       status: "ready",
