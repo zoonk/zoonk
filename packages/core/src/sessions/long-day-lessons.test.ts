@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -56,7 +57,7 @@ describe("a long study day", () => {
   it("fills a first half-hour with ten 3-minute lessons, not the eight a 4-minute guess holds", async () => {
     const user = await userFixture();
 
-    const { goal, lessons } = await sessionGoalFixture({
+    const { goal, lessons, plan } = await sessionGoalFixture({
       goal: { dailyMinutes: 30 },
       itemsPerSkill: 1,
       lessons: 20,
@@ -71,6 +72,7 @@ describe("a long study day", () => {
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ]);
 
+    await layOutPlanFixture(plan.id);
     mockSession(user.id);
 
     const result = await getTodayStudySession({});
