@@ -38,7 +38,7 @@ export async function TodayOnboardingLeft({
     return (
       <TodayAtRest
         actions={
-          <Link className={buttonVariants({ size: "lg" })} href={href}>
+          <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
             {t("See your plan")}
           </Link>
         }
@@ -55,7 +55,7 @@ export async function TodayOnboardingLeft({
   return (
     <TodayAtRest
       actions={
-        <Link className={buttonVariants({ size: "lg" })} href={href}>
+        <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
           {t("Continue setting up")}
         </Link>
       }
