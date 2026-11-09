@@ -2,6 +2,7 @@ import "server-only";
 import { type Attempt, type Mistake, type MistakeStatus, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { loadLearnerListeningSkillIds } from "../exams/listening/listening-skills";
 import {
   findSavedAttempt,
   getAnswerAttemptId,
@@ -98,6 +99,71 @@ async function findPracticeItem({
   return owners.includes(item.skillId) ? parseChoiceItem(item) : null;
 }
 
+async function loadFinerSkillIds({
+  skillId,
+  userId,
+}: {
+  skillId: string;
+  userId: string;
+}): Promise<string[]> {
+  const items = await prisma.planItem.findMany({
+    select: { lesson: { select: { skills: { select: { skillId: true } } } } },
+    where: { OR: [{ skillId }, { skill: { mergedIntoId: skillId } }], plan: { goal: { userId } } },
+  });
+
+  return items.flatMap(({ lesson }) => lesson?.skills.map((skill) => skill.skillId) ?? []);
+}
+
+/**
+ * A mistake with no question of its own can only be proven by a question on its skill, and a run asks
+ * each question once, so one right answer stands for them all. A listening skill's mistakes are drilled
+ * by their own recording and nothing else.
+ */
+async function findCoveredMistakeIds({
+  item,
+  practicedMistakeId,
+  userId,
+}: {
+  item: Pick<ChoiceItem, "skillId">;
+  practicedMistakeId: string;
+  userId: string;
+}): Promise<string[]> {
+  const [finerSkillIds, listeningSkillIds] = await Promise.all([
+    loadFinerSkillIds({ skillId: item.skillId, userId }),
+    loadLearnerListeningSkillIds(userId),
+  ]);
+
+  const open = await prisma.mistake.findMany({
+    select: {
+      id: true,
+      item: {
+        select: {
+          content: true,
+          format: true,
+          id: true,
+          language: true,
+          retiredAt: true,
+          skillId: true,
+        },
+      },
+    },
+    where: {
+      id: { not: practicedMistakeId },
+      skillId: {
+        in: [...new Set([item.skillId, ...finerSkillIds])].filter(
+          (skillId) => !listeningSkillIds.has(skillId),
+        ),
+      },
+      status: "open",
+      userId,
+    },
+  });
+
+  return open
+    .filter(({ item: own }) => !own || own.retiredAt !== null || !parseChoiceItem(own))
+    .map(({ id }) => id);
+}
+
 type SavedPracticeAnswer = {
   answerId: string;
   fixedMistakeIds: string[];
@@ -177,7 +243,7 @@ async function countRunSoFar({
   return data?.status === "ready" ? data.result.reached : NOTHING_REACHED;
 }
 
-/** Only later-local-day recall fixes a mistake; a timed answer using the full limit is wrong. Supplying run counts progress as it goes. */
+/** Only later-local-day recall fixes a mistake, along with those it stands for; a timed answer using the full limit is wrong. Supplying run counts progress as it goes. */
 export async function answerMistakePractice({
   input,
   mistakeId,
@@ -230,6 +296,9 @@ export async function answerMistakePractice({
         answer: {
           answer: input.answer,
           attemptId,
+          coveredMistakeIds: drilled.isCorrect
+            ? await findCoveredMistakeIds({ item, practicedMistakeId: mistake.id, userId })
+            : [],
           graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
           itemId: item.id,
           language: item.language,

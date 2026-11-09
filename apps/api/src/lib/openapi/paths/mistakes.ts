@@ -23,7 +23,7 @@ export const mistakePaths = {
   "/me/mistake-practice": {
     get: {
       description:
-        '"Practice mistakes": up to five open mistakes from earlier days, each with a drill chosen by its cause and the questions to answer, the original one first. With `skillId`, "Practice this skill": only that skill\'s mistakes.',
+        '"Practice mistakes": the open mistakes from earlier days, up to 50, oldest first, each with a drill chosen by its cause and one question: its own while it can still be asked, otherwise another on its skill. No question comes twice in a run, so a mistake with no question of its own and none left on its skill has no entry; a right answer on that skill fixes it too. With `skillId`, "Practice this skill": only that skill\'s mistakes.',
       operationId: "getCurrentUserMistakePractice",
       requestParams: { query: mistakePracticeInputSchema },
       responses: {
@@ -87,7 +87,7 @@ export const mistakePaths = {
   "/me/mistakes/{mistakeId}/answers": {
     post: {
       description:
-        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
+        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry and the learner's other entries with no question of their own that this question could practice. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
       operationId: "createMistakePracticeAnswer",
       requestBody: {
         content: { "application/json": { schema: mistakePracticeAnswerInputSchema } },

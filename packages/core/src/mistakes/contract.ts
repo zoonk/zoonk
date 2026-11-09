@@ -51,7 +51,8 @@ export const mistakePracticeInputSchema = z
 
 export type MistakePracticeInput = z.infer<typeof mistakePracticeInputSchema>;
 
-const MAX_PRACTICE_ANSWERS = 50;
+/** A run's questions and answers alike: each answer re-sends the run's earlier ones. */
+export const MAX_PRACTICE_ANSWERS = 50;
 
 export const mistakePracticeAnswerInputSchema = itemAnswerInputSchema
   .extend({

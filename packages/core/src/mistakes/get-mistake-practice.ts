@@ -23,19 +23,17 @@ import { type ItemSetView } from "../library/items/item-set-view";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
-import { type MistakePracticeInput } from "./contract";
+import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
 import { getMistakePracticeBefore } from "./mistake-availability";
 import {
   type DrillView,
   isMistakeSkill,
-  selectMistakeDrill,
   selectMistakesToPractice,
+  selectPracticeRun,
 } from "./mistake-drills";
 import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
-
-const PRACTICE_SIZE = 5;
 
 type MistakePracticeEntry = {
   cause: Mistake["cause"];
@@ -162,7 +160,7 @@ async function loadDrillMaterial({
   return { bankIds, choices, lessons, seen, sets };
 }
 
-/** At most five mistakes, oldest first with skill breadth; excludes today. Submit each answer to answerMistakePractice. */
+/** Every ready mistake a run holds, oldest first with skill breadth, one question each; excludes today. Submit each answer to answerMistakePractice. */
 export async function getMistakePractice(
   input: MistakePracticeInput,
 ): Promise<MistakePracticeResult> {
@@ -208,7 +206,7 @@ export async function getMistakePractice(
   });
 
   const selected = selectMistakesToPractice({
-    limit: PRACTICE_SIZE,
+    limit: MAX_PRACTICE_ANSWERS,
     mistakes: drillable.map((mistake) => ({
       ...mistake,
       createdLocalDate: getDateInTimeZone({ date: mistake.createdAt, timeZone }),
@@ -224,38 +222,40 @@ export async function getMistakePractice(
     userId,
   });
 
-  const drills = selected.map((mistake) => {
-    const skillItems = choices.filter(
-      (item) =>
-        (bankIds.has(item.id) || item.id === mistake.itemId) &&
-        isMistakeSkill({
-          itemSkillId: item.skillId,
-          mistakeSkillId: mistake.skillId,
-          ownerOf: scope.ownerOf,
-        }) &&
-        isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
-    );
+  const run = selectPracticeRun(
+    selected.map((mistake) => {
+      const skillItems = choices.filter(
+        (item) =>
+          (bankIds.has(item.id) || item.id === mistake.itemId) &&
+          isMistakeSkill({
+            itemSkillId: item.skillId,
+            mistakeSkillId: mistake.skillId,
+            ownerOf: scope.ownerOf,
+          }) &&
+          isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
+      );
 
-    const drill = selectMistakeDrill({
-      candidates: skillItems.map((item) => ({
-        hasMisconceptions: hasMisconceptions(item),
-        id: item.id,
-        seen: seen.has(item.id),
-      })),
-      cause: mistake.cause,
-      lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
-      originalItemId: mistake.itemId,
-    });
-
-    return { drill, mistake, skillItems };
-  });
+      return {
+        candidates: skillItems.map((item) => ({
+          hasMisconceptions: hasMisconceptions(item),
+          id: item.id,
+          seen: seen.has(item.id),
+        })),
+        cause: mistake.cause,
+        lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
+        mistake,
+        originalItemId: mistake.itemId,
+        skillItems,
+      };
+    }),
+  );
 
   const [drillLessons, structure] = await Promise.all([
-    loadDrillLessons(drills.map(({ drill }) => drill.lessonId)),
+    loadDrillLessons(run.map(({ drill }) => drill.lessonId)),
     scope.goal ? loadExamStructure(scope.goal) : null,
   ]);
 
-  const practice = drills.map(({ drill, mistake, skillItems }) => ({
+  const practice = run.map(({ drill, mistake, skillItems }) => ({
     cause: mistake.cause,
     drill: toDrillView({ drill, lessons: drillLessons }),
     mistakeId: mistake.id,

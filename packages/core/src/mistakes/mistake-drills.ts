@@ -115,6 +115,48 @@ export function selectMistakeDrill({
   };
 }
 
+/**
+ * One question per mistake, none twice. A mistake's own question is kept for it. One with no question
+ * of its own takes the next free one on its skill, or sits out when none is left, since a right answer
+ * on its skill fixes it too (`answerMistakePractice`). A lesson's idea shows before its first question
+ * only.
+ */
+export function selectPracticeRun<
+  TMistake extends Pick<
+    Parameters<typeof selectMistakeDrill>[0],
+    "candidates" | "cause" | "lessonId" | "originalItemId"
+  >,
+>(mistakes: readonly TMistake[]): (TMistake & { drill: MistakeDrill })[] {
+  const owned = new Set(mistakes.map((mistake) => mistake.originalItemId));
+  const asked = new Set<string>();
+  const taught = new Set<string>();
+
+  return mistakes.flatMap((mistake) => {
+    const drill = selectMistakeDrill({
+      ...mistake,
+      candidates: mistake.candidates.filter(
+        ({ id }) => !asked.has(id) && (id === mistake.originalItemId || !owned.has(id)),
+      ),
+    });
+
+    const [itemId] = drill.itemIds;
+
+    if (!itemId) {
+      return [];
+    }
+
+    const lessonId = drill.lessonId && taught.has(drill.lessonId) ? null : drill.lessonId;
+
+    asked.add(itemId);
+
+    if (lessonId) {
+      taught.add(lessonId);
+    }
+
+    return [{ ...mistake, drill: { ...drill, itemIds: [itemId], lessonId } }];
+  });
+}
+
 export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };
 
 export function isMistakeSkill({
