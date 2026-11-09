@@ -137,7 +137,8 @@ struct TodaySessionSection: View {
     if upcomingCount > shownUpcoming || (disclosures.showsMore && upcomingCount > upcomingRows) {
       FoldRow(
         isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedFrom,
-        minutes: upcoming.dropFirst(foldedFrom).reduce(0) { $0 + $1.estimatedMinutes })
+        minutes: session.foldedMinutes(
+          showing: before + [next].compactMap { $0 } + upcoming.prefix(foldedFrom)))
     }
   }
 
@@ -394,7 +395,7 @@ struct TodayDayLead: View {
 
   private var session: StudyDay { view.session }
 
-  var isEmpty: Bool { freshStart == nil && mockDay == nil && session.blocks.isEmpty }
+  var isEmpty: Bool { freshStart == nil && mockDay == nil && session.meterParts.isEmpty }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -406,7 +407,7 @@ struct TodayDayLead: View {
 
       mockFunding
 
-      if !session.blocks.isEmpty {
+      if !session.meterParts.isEmpty {
         DayProgressRow(session: session)
       }
     }
@@ -422,7 +423,7 @@ struct TodayDayLead: View {
       return nil
     }
 
-    let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
+    let time = studyDuration(minutes: session.minutes.left)
 
     switch session.freshStart {
     case .welcomeBack:
@@ -729,7 +730,7 @@ private struct FoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
   let count: Int
-  let minutes: Int?
+  let minutes: Double?
 
   var body: some View {
     Button {

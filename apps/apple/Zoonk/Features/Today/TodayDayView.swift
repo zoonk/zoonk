@@ -134,10 +134,6 @@ struct TodayDayView: View {
   private var dayTime: String? {
     let session = view.session
 
-    if session.state == .waiting {
-      return nil
-    }
-
     if session.state == .done {
       let studied = session.week.days.first(where: \.isToday)?.minutes ?? 0
 
@@ -150,9 +146,9 @@ struct TodayDayView: View {
         : nil
     }
 
-    return session.minutesLeft > 0
+    return session.minutes.left > 0
       ? String(
-        localized: "\(studyDuration(minutes: session.minutesLeft)) left", table: "Today",
+        localized: "\(studyDuration(minutes: session.minutes.left)) left", table: "Today",
         comment: "The time still to go in today's session")
       : nil
   }

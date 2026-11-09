@@ -50,6 +50,8 @@ final class LessonPlayerStore {
   private var workedHere: Set<String> = []
   private let onOpened: @MainActor (StudyBlockOpening) -> Void
   private var starting: Task<Void, Never>?
+  private var isVisible = true
+  private var clock: Components.Schemas.LessonClockInput?
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
   /// main's catalog answer, and a guest's lesson ends with "Build my plan". Opened anywhere else in
   /// the app, a guest's lesson ends as a learner's.
@@ -217,6 +219,7 @@ final class LessonPlayerStore {
     if identity != self.identity {
       held = []
       heldOnDevice = nil
+      clock = nil
     }
 
     starting?.cancel()
@@ -291,6 +294,37 @@ final class LessonPlayerStore {
 
   func cancelStart() { starting?.cancel() }
 
+  @discardableResult
+  func setVisible(_ visible: Bool) -> Task<Void, Never>? {
+    isVisible = visible
+    guard var clock, let identity, session.authenticatedSession == identity,
+      (clock.state == .running) != visible
+    else { return nil }
+
+    clock.sequence += 1
+    clock.state = visible ? .running : .paused
+    self.clock = clock
+    let input = clock
+    let api = api
+    let cache = cache
+    let lessonId = lessonId
+
+    // A pause must outlive the disappearing player; the request keeps only its original session.
+    return Task {
+      _ = await cache.mutate { current in
+        guard current == identity else { throw CancellationError() }
+        try await api.updateClock(id: lessonId, input: input, token: current.bearerToken)
+      }
+    }
+  }
+
+  private func startClock(_ run: LessonRunStart) {
+    clock = run.clockId.map {
+      .init(clockId: $0, runId: run.runId, sequence: 0, state: .running)
+    }
+    setVisible(isVisible)
+  }
+
   func activate() {
     // A restored lesson or deep link cannot owe preparation until a learner acts.
     activated = true
@@ -363,6 +397,7 @@ final class LessonPlayerStore {
 
     switch run {
     case .success(let run):
+      startClock(run)
       self.studySessionId = run.sessionId
       if opening != nil, let sessionId = run.sessionId { sessionStarted(sessionId) }
       self.state?.startRun(
@@ -904,6 +939,7 @@ final class LessonPlayerStore {
       guard isCurrent(identity) else { return }
 
       if case .done(.success(let run)) = restarted, run.runId == runId {
+        startClock(run)
         let steps: [LessonStep] =
           if case .ready(let lesson) = lessonResource.value { lesson.steps } else { [] }
         state?.resync(
