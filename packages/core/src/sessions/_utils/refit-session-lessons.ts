@@ -1,15 +1,20 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import {
+  type Plan,
+  type PlanItem,
+  type StudySessionBlock,
+  type TransactionClient,
+} from "@zoonk/db";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
-import { getStoredBlockWait } from "../block-wait";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { getLessonLookahead, getUnwrittenMinutesOn } from "./day-lessons";
 import { getExamPrepAccess } from "./exam-access";
+import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { loadPlanLessons } from "./load-plan-lessons";
 import {
   getSessionLessonCandidates,
@@ -19,12 +24,48 @@ import { takeLessons, toLessonBlock } from "./session-lessons";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudySessionRow } from "./study-session-access";
 
+type RefitPlan = Plan & { items: PlanItem[] };
+
+function shouldDeferCheckpoint({
+  block,
+  items,
+  lessons,
+  today,
+}: {
+  block: StudySessionBlock;
+  items: readonly PlanItem[];
+  lessons: readonly StudySessionBlock[];
+  today: Date;
+}): boolean {
+  const { checkpoint, extra, planItemId, planItemKey, reinforcement } = readBlockPayload(block);
+
+  if (
+    block.status !== "pending" ||
+    block.startedAt !== null ||
+    !checkpoint ||
+    checkpoint.mock ||
+    extra ||
+    reinforcement
+  ) {
+    return false;
+  }
+
+  return markLessonsAroundChallenges({
+    checkpoints: [{ ...checkpoint, planItemId, planItemKey }],
+    items,
+    lessons: lessons.map((lesson) => readBlockPayload(lesson)),
+    today,
+  }).some((lesson) => lesson.beforeChallenge);
+}
+
 async function trimSessionLessons({
   completedBlockId,
+  plan,
   session,
   tx,
 }: {
   completedBlockId?: string;
+  plan: RefitPlan | null;
   session: StudySessionRow;
   tx: TransactionClient;
 }) {
@@ -52,13 +93,8 @@ async function trimSessionLessons({
       session.plannedMinutes,
   );
 
-  const checkpoints = session.blocks.filter(
-    (block) =>
-      block.status === "pending" &&
-      block.startedAt === null &&
-      !readBlockPayload(block).extra &&
-      !readBlockPayload(block).reinforcement &&
-      getStoredBlockWait({ block, blocks: lessons }) === "lessons",
+  const checkpoints = session.blocks.filter((block) =>
+    shouldDeferCheckpoint({ block, items: plan?.items ?? [], lessons, today: session.localDate }),
   );
 
   const leaving = [...lessons, ...checkpoints];
@@ -76,10 +112,14 @@ async function trimSessionLessons({
 async function refillSessionLessons(
   tx: TransactionClient,
   {
+    plan,
     session,
+    subscription,
     timeZone,
   }: {
+    plan: RefitPlan | null;
     session: StudySessionRow & { goal: NonNullable<StudySessionRow["goal"]> };
+    subscription: Awaited<ReturnType<typeof findActiveSubscriptionForUser>>;
     timeZone: string;
   },
 ) {
@@ -90,16 +130,6 @@ async function refillSessionLessons(
   if (room < 1) {
     return { blocks, reserved: false };
   }
-
-  const [plan, subscription] = await Promise.all([
-    tx.plan.findUnique({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { goalId: session.goal.id },
-    }),
-    session.goal.kind === "exam" || session.goal.kind === "language"
-      ? findActiveSubscriptionForUser({ client: tx, now: new Date(), userId: session.userId })
-      : null,
-  ]);
 
   if (!plan) {
     return { blocks, reserved: false };
@@ -200,10 +230,29 @@ export async function refitSessionLessons(
     return false;
   }
 
-  const trimmed = await trimSessionLessons({ completedBlockId, session, tx });
+  const usedMinutes = getSessionUsedMinutes(session.blocks);
+  const needsTrim = Boolean(completedBlockId) && usedMinutes > session.plannedMinutes;
+
+  if (!needsTrim && session.plannedMinutes - usedMinutes < 1) {
+    return false;
+  }
+
+  const [plan, subscription] = await Promise.all([
+    tx.plan.findUnique({
+      include: { items: { orderBy: { position: "asc" } } },
+      where: { goalId: session.goal.id },
+    }),
+    session.goal.kind === "exam" || session.goal.kind === "language"
+      ? findActiveSubscriptionForUser({ client: tx, now: new Date(), userId: session.userId })
+      : null,
+  ]);
+
+  const trimmed = await trimSessionLessons({ completedBlockId, plan, session, tx });
 
   const { blocks, reserved } = await refillSessionLessons(tx, {
+    plan,
     session: { ...session, blocks: trimmed, goal: session.goal },
+    subscription,
     timeZone,
   });
 
