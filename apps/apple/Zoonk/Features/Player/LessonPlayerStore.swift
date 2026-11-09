@@ -318,7 +318,7 @@ final class LessonPlayerStore {
 
       guard input.state == .running, case .done(let result) = updated,
         result.status == .ignored, let self, self.isCurrent(identity),
-        self.clock?.clockId == input.clockId
+        self.clock == input
       else { return }
 
       let studySessionId = self.studySessionId
