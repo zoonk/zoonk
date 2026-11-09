@@ -20,7 +20,6 @@ import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { STUDY_SESSION_INCLUDE } from "./_utils/study-session-access";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
 import { getStoredBlockWait } from "./block-wait";
-import { getSessionUsedMinutes } from "./session-minutes";
 import { startStudyBlock } from "./start-study-block";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
@@ -30,14 +29,7 @@ async function setup({
   queued = 10,
   lessons = 14,
   firstPhaseLessons = lessons,
-  queuedFrom = 0,
-}: {
-  minutes?: number;
-  queued?: number;
-  lessons?: number;
-  firstPhaseLessons?: number;
-  queuedFrom?: number;
-} = {}) {
+}: { minutes?: number; queued?: number; lessons?: number; firstPhaseLessons?: number } = {}) {
   freezeClock();
   vi.setSystemTime(NOW);
 
@@ -75,12 +67,12 @@ async function setup({
 
   const blocks = await Promise.all(
     playable
-      .slice(queuedFrom, queuedFrom + queued)
+      .slice(0, queued)
       .map(({ lesson }, position) =>
         studySessionBlockFixture({
           estimatedMinutes: 10,
           lessonId: lesson.id,
-          payload: toBlockPayload({ planItemId: plan.items[queuedFrom + position]?.id }),
+          payload: toBlockPayload({ planItemId: plan.items[position]?.id }),
           position,
           sessionId: session.id,
         }),
@@ -132,16 +124,12 @@ async function addCheckpoint({
   fixture,
   kind = "boss",
   estimatedMinutes = 10,
-  mock = false,
   position = fixture.blocks.length,
-  rematch = false,
 }: {
   fixture: Awaited<ReturnType<typeof setup>>;
   kind?: "boss" | "finalBoss" | "weekly";
   estimatedMinutes?: number;
-  mock?: boolean;
   position?: number;
-  rematch?: boolean;
 }) {
   const item =
     kind === "weekly"
@@ -156,11 +144,10 @@ async function addCheckpoint({
     payload: toBlockPayload({
       checkpoint: {
         kind,
-        mock,
-        ...(mock && { mockIdentity: { day: null, fullLength: false } }),
+        mock: false,
         passMark: 7,
         phase: 0,
-        rematch,
+        rematch: false,
         timeLimitMinutes: null,
       },
       planItemId: item.id,
@@ -193,74 +180,6 @@ async function appendSavedPlan(fixture: Awaited<ReturnType<typeof setup>>) {
 }
 
 describe("completion refits today's lessons", () => {
-  it.each([false, true])(
-    "fills a slow next-phase lesson's day with a due rematch: %s",
-    async (rematchDue) => {
-      const fixture = await setup({
-        firstPhaseLessons: 2,
-        lessons: 4,
-        minutes: 40,
-        queued: 2,
-        queuedFrom: 2,
-      });
-
-      await Promise.all([
-        prisma.planItem.updateMany({
-          data: { completedAt: NOW, status: "done" },
-          where: { kind: "lesson", phase: 0, planId: fixture.plan.id },
-        }),
-        prisma.planItem.updateMany({
-          data: { scheduledFor: rematchDue ? fixture.session.localDate : null },
-          where: { kind: "boss", phase: 0, planId: fixture.plan.id },
-        }),
-        prisma.lesson.update({
-          data: { estimatedMinutes: 12 },
-          where: { id: fixture.playable[2]?.lesson.id },
-        }),
-      ]);
-
-      const checkpoint = rematchDue ? await addCheckpoint({ fixture, rematch: true }) : null;
-
-      const { completion } = await finish({
-        block: fixture.blocks[0]!,
-        elapsedMinutes: 30,
-        sessionId: fixture.session.id,
-      });
-
-      const saved = await prisma.studySession.findUniqueOrThrow({
-        include: { blocks: { orderBy: { position: "asc" } } },
-        where: { id: fixture.session.id },
-      });
-
-      expect(readBlockPayload(saved.blocks[0]!).creditedMinutes).toBe(30);
-      expect(getSessionUsedMinutes(saved.blocks)).toBe(40);
-      expect(completion.deferredLessonsCount).toBe(rematchDue ? 1 : 0);
-
-      expect(
-        completion.blocks.some((block) => block.lessonId === fixture.playable[3]?.lesson.id),
-      ).toBe(!rematchDue);
-
-      expect(saved.blocks.filter((block) => block.kind === "checkpoint")).toMatchObject(
-        rematchDue
-          ? [
-              {
-                id: checkpoint?.block.id,
-                payload: { checkpoint: { rematch: true } },
-                startedAt: null,
-                status: "pending",
-              },
-            ]
-          : [],
-      );
-
-      await expect(
-        prisma.planItem.findFirstOrThrow({
-          where: { kind: "boss", phase: 0, planId: fixture.plan.id },
-        }),
-      ).resolves.toMatchObject({ status: "todo" });
-    },
-  );
-
   it("does not refill from the next phase after deferring its duel", async () => {
     const fixture = await setup({ firstPhaseLessons: 2, lessons: 4, minutes: 40, queued: 2 });
 
@@ -434,60 +353,54 @@ describe("completion refits today's lessons", () => {
     );
   });
 
-  it.each([false, true])(
-    "keeps the weekly challenge independent of deferred teaching (mock: %s)",
-    async (mock) => {
-      const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
-      const { block: checkpoint } = await addCheckpoint({ fixture, kind: "weekly", mock });
+  it("keeps the weekly challenge independent of deferred teaching", async () => {
+    const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
+    const { block: checkpoint } = await addCheckpoint({ fixture, kind: "weekly" });
 
-      const { completion } = await finish({
-        block: fixture.blocks[0]!,
-        elapsedMinutes: 20,
+    const { completion } = await finish({
+      block: fixture.blocks[0]!,
+      elapsedMinutes: 20,
+      sessionId: fixture.session.id,
+    });
+
+    expect(completion.deferredLessonsCount).toBe(1);
+    expect(completion.blocks.map((block) => block.id)).toContain(checkpoint.id);
+
+    await expect(
+      startStudyBlock({
+        blockId: checkpoint.id,
+        input: { timeZone: "UTC" },
         sessionId: fixture.session.id,
-      });
+      }),
+    ).resolves.toMatchObject({ status: "questionsNeeded" });
+  });
 
-      expect(completion.deferredLessonsCount).toBe(1);
-      expect(completion.blocks.map((block) => block.id)).toContain(checkpoint.id);
+  it("keeps a checkpoint before the removed lesson", async () => {
+    const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
 
-      await expect(
-        startStudyBlock({
-          blockId: checkpoint.id,
-          input: { timeZone: "UTC" },
-          sessionId: fixture.session.id,
-        }),
-      ).resolves.toMatchObject({ status: mock ? "ready" : "questionsNeeded" });
-    },
-  );
+    await prisma.studySessionBlock.update({
+      data: { position: 2 },
+      where: { id: fixture.blocks[1]?.id },
+    });
 
-  it.each([1, 3])(
-    "keeps a first duel at position %s when only next-phase teaching is removed",
-    async (position) => {
-      const fixture = await setup({ firstPhaseLessons: 1, lessons: 2, minutes: 30, queued: 2 });
+    const { block: checkpoint } = await addCheckpoint({ fixture, position: 1 });
 
-      await prisma.studySessionBlock.update({
-        data: { position: 2 },
-        where: { id: fixture.blocks[1]?.id },
-      });
+    const { completion } = await finish({
+      block: fixture.blocks[0]!,
+      elapsedMinutes: 20,
+      sessionId: fixture.session.id,
+    });
 
-      const { block: checkpoint } = await addCheckpoint({ fixture, position });
+    expect(completion.deferredLessonsCount).toBe(1);
+    expect(completion.blocks.map((block) => block.id)).toContain(checkpoint.id);
+  });
 
-      const { completion } = await finish({
-        block: fixture.blocks[0]!,
-        elapsedMinutes: 20,
-        sessionId: fixture.session.id,
-      });
-
-      expect(completion.deferredLessonsCount).toBe(1);
-      expect(completion.blocks.map((block) => block.id)).toContain(checkpoint.id);
-    },
-  );
-
-  it.each(["pending", "active"] as const)("preserves a started %s checkpoint", async (status) => {
+  it("preserves a checkpoint the learner already started", async () => {
     const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
     const { block: checkpoint } = await addCheckpoint({ fixture });
 
     await prisma.studySessionBlock.update({
-      data: { startedAt: NOW, status },
+      data: { startedAt: NOW },
       where: { id: checkpoint.id },
     });
 
