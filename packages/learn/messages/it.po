@@ -12911,7 +12911,7 @@ msgstr "Punteggio netto {net}"
 #: src/session/study-moment.tsx
 msgctxt "SJ1ksk"
 msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, one {# lezione spostata} other {# lezioni spostate}} a un altro giorno per rientrare nei {time} di studio di oggi."
+msgstr "{count, plural, one {# lezione spostata} other {# lezioni spostate}} a un altro giorno per non superare {time} di studio oggi."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
