@@ -11,7 +11,7 @@ describe(getCategoryLabels, () => {
     });
   });
 
-  it("breaks long labels at the hyphen or space nearest their middle when that makes them fit", () => {
+  it("wraps long labels at a hyphen or space when that makes them fit", () => {
     expect(
       getCategoryLabels({ band: 64, categories: ["Segunda-feira", "Pedido pelo app"] }),
     ).toStrictEqual({
@@ -23,10 +23,25 @@ describe(getCategoryLabels, () => {
     });
   });
 
-  it("shows every second or third label when even two lines don't fit", () => {
+  it("keeps every name of any length under its bar, on as many lines as it takes", () => {
+    const { lines, step } = getCategoryLabels({
+      band: 90,
+      categories: ["Responses from the regional customer support team", "Junho", "Julho"],
+    });
+
+    expect(step).toBe(1);
+
+    expect(lines).toStrictEqual([
+      ["Responses", "from the", "regional", "customer", "support team"],
+      ["Junho"],
+      ["Julho"],
+    ]);
+  });
+
+  it("shows every few labels when a word is wider than its bar, wrapped to the room it gets", () => {
     expect(getCategoryLabels({ band: 40, categories: DAYS })).toStrictEqual({
-      lines: DAYS.map((day) => [day]),
-      step: 3,
+      lines: [["Segunda-", "feira"], ["Terça-feira"], ["Quarta-", "feira"], ["Quinta-", "feira"]],
+      step: 2,
     });
   });
 });

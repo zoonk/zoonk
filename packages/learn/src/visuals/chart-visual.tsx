@@ -74,7 +74,11 @@ function CategoryLabels({ layout, visual }: { layout: Layout; visual: ChartVisua
         y={HEIGHT - PADDING.bottom + LABEL_OFFSET}
       >
         {(lines[index] ?? [category]).map((line, lineIndex) => (
-          <tspan dy={lineIndex === 0 ? 0 : LABEL_LINE_HEIGHT} key={line} x={layout.center(index)}>
+          <tspan
+            dy={lineIndex === 0 ? 0 : LABEL_LINE_HEIGHT}
+            key={`${line}-${String(lineIndex)}`}
+            x={layout.center(index)}
+          >
             {line}
           </tspan>
         ))}
