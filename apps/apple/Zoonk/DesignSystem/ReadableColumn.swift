@@ -3,7 +3,8 @@ import SwiftUI
 extension View {
   /// Keeps a list's or a form's rows, and the bars inset into it, in a column at most `width` wide;
   /// its background still fills the screen. An app page's column starts at the title's edge
-  /// (`.leading`); a step-by-step flow's sits in the middle.
+  /// (`.leading`); a step-by-step flow's sits in the middle. Like a list, it takes all the room it's
+  /// offered.
   func readableColumn(_ width: CGFloat, alignment: HorizontalAlignment = .center) -> some View {
     modifier(ReadableColumn(width: width, alignment: alignment))
   }
@@ -13,18 +14,27 @@ private struct ReadableColumn: ViewModifier {
   let width: CGFloat
   let alignment: HorizontalAlignment
 
-  @State private var available: CGFloat = 0
+  @Environment(\.readableColumnWidth) private var outerWidth
 
   func body(content: Content) -> some View {
-    let room = max(0, available - width)
+    // Inside a column at most as wide, the outer column's padding already holds it.
+    if let outerWidth, outerWidth <= width {
+      content
+    } else {
+      // The room it's offered, read as it's laid out: a column that measured its own width and
+      // padded by it laid an iPad's lesson out again every frame.
+      GeometryReader { proxy in
+        let room = max(0, proxy.size.width - width)
 
-    content
-      .safeAreaPadding(.leading, alignment == .leading ? 0 : room / 2)
-      .safeAreaPadding(.trailing, alignment == .leading ? room : room / 2)
-      .onGeometryChange(for: CGFloat.self) {
-        $0.size.width
-      } action: {
-        available = $0
+        content
+          .environment(\.readableColumnWidth, width)
+          .safeAreaPadding(.leading, alignment == .leading ? 0 : room / 2)
+          .safeAreaPadding(.trailing, alignment == .leading ? room : room / 2)
       }
+    }
   }
+}
+
+extension EnvironmentValues {
+  @Entry fileprivate var readableColumnWidth: CGFloat?
 }

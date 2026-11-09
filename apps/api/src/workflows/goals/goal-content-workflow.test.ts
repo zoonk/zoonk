@@ -29,7 +29,7 @@ import { checkWarmUpCards } from "@zoonk/ai/tasks/warm-up/check-warm-up-cards";
 import { toWarmUpCards } from "@zoonk/ai/tasks/warm-up/warm-up-cards";
 import { generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
-import { claimWarmUp } from "@zoonk/core/library/warm-ups/claim";
+import { claimWarmUp, failWarmUp, readWarmUpState } from "@zoonk/core/library/warm-ups/claim";
 import { loadPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { getNoticeWaitState } from "@zoonk/core/plans/notice-wait";
@@ -60,6 +60,9 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getWritable, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
+import { loadPlacementPlan } from "../../../../../packages/core/src/learner/_utils/goal-skill-graph";
+import { loadPlacementState } from "../../../../../packages/core/src/learner/placement/_utils/load-placement-state";
+import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
@@ -75,6 +78,7 @@ import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import * as lookaheadSteps from "./steps/goal-lookahead-steps";
 import * as planSteps from "./steps/goal-plan-steps";
+import * as warmUpSteps from "./steps/goal-warm-up-steps";
 import * as noticeSteps from "./steps/notice-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateWholeSkillGraph>>["data"];
@@ -273,7 +277,7 @@ async function runPlacementInline(workflow: unknown, args: unknown[]) {
 async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promise<T> {
   const committed = new Set<string>();
   const createPlan = planSteps.createGoalPlanStep;
-  const preparePlacement = goalPlacement.prepareGraphPlacement;
+  const preparePlacement = goalPlacement.preparePlanPlacement;
 
   const creation = vi.spyOn(planSteps, "createGoalPlanStep").mockImplementation(async (input) => {
     const tasks = await createPlan(input);
@@ -282,7 +286,7 @@ async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promi
   });
 
   const placement = vi
-    .spyOn(goalPlacement, "prepareGraphPlacement")
+    .spyOn(goalPlacement, "preparePlanPlacement")
     .mockImplementation(async (input) => {
       expect(
         committed.has(input.goalId),
@@ -473,6 +477,100 @@ describe(goalContentWorkflow, () => {
     );
   });
 
+  it("prepares placement and first lessons on retry after the graph saved but its run crashed", async () => {
+    const { goal } = await newGoal({
+      details: { answered: ["purpose"], onboardingId: crypto.randomUUID(), purpose: "overview" },
+      planRevealedAt: null,
+    });
+
+    await saveAnswerInputs({ goal, input: { level: "basic", question: "level" } });
+
+    const owed = await prisma.followUp.findMany({
+      where: { kind: "preparePlacementItems", userId: goal.userId },
+    });
+
+    if (owed.length > 0) {
+      await placementItemsWorkflow({ goalId: goal.id });
+    }
+
+    const write = getWorkflowWriteMock();
+
+    write.mockImplementation(async (chunk) => {
+      if (
+        typeof chunk === "string" &&
+        chunk.includes('"step":"createPlan"') &&
+        chunk.includes('"status":"completed"')
+      ) {
+        throw new Error("The run crashed after saving its graph");
+      }
+    });
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).rejects.toThrow(
+      "The run crashed after saving its graph",
+    );
+
+    const plan = await loadPlacementPlan(goal.id);
+
+    await expect(
+      loadPlacementState({ goalId: goal.id, plan, userId: goal.userId }),
+    ).resolves.toMatchObject({ status: "waitingForQuestions" });
+
+    write.mockReset().mockResolvedValue(null);
+    getStartMock().mockClear();
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      status: "prepared",
+    });
+
+    expect(getStartMock()).toHaveBeenCalledWith(
+      placementItemsWorkflow,
+      [expect.objectContaining({ goalId: goal.id })],
+      expect.any(Object),
+    );
+
+    expect(getStreamedEvents()).toContainEqual(
+      expect.objectContaining({ status: "started", step: "prepareFirstLessons" }),
+    );
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
+  });
+
+  it.each([false, true])(
+    "prepares the rebuilt graph's placement only if it is still ahead (taken: %s)",
+    async (taken) => {
+      const { goal } = await newGoal({
+        details: {
+          answered: ["purpose", "level", ...(taken ? ["placement"] : [])],
+          level: "basic",
+          purpose: "overview",
+        },
+        planRevealedAt: null,
+      });
+
+      await goalContentWorkflow({ goalId: goal.id });
+      getStartMock().mockClear();
+      vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(isolatedGraph()));
+
+      await goalContentWorkflow({ goalId: goal.id, rebuild: true });
+
+      const placementRuns = getStartMock().mock.calls.filter(
+        ([workflow]) => workflow === placementItemsWorkflow,
+      );
+
+      expect(placementRuns).toHaveLength(taken ? 0 : 1);
+
+      expect(vi.mocked(generateWholeSkillGraph).mock.calls.at(-1)?.[0].serviceTier).toBe(
+        "priority",
+      );
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
+    },
+  );
+
   it.each(["ready", "failed"] as const)(
     "publishes goalReady while a warm-up is still pending, then drains its %s outcome before closing",
     async (outcome) => {
@@ -514,10 +612,16 @@ describe(goalContentWorkflow, () => {
       }
 
       const stored = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-      const events = getStreamedEvents().filter(({ step }) => step === "warmUpReady");
+
+      const events = getStreamedEvents().filter(
+        ({ step }) => step === "warmUpReady" || step === "warmUpFailed",
+      );
+
       expect(close).toHaveBeenCalledOnce();
 
-      expect(Boolean(stored.warmUpId)).toBe(outcome === "ready");
+      await expect(readWarmUpState(stored.warmUpId)).resolves.toStrictEqual(
+        outcome === "ready" ? { id: stored.warmUpId, status: "ready" } : null,
+      );
 
       expect(events).toStrictEqual(
         outcome === "ready"
@@ -529,7 +633,7 @@ describe(goalContentWorkflow, () => {
                 warmUpId: stored.warmUpId,
               },
             ]
-          : [],
+          : [{ entityId: goal.id, status: "completed", step: "warmUpFailed" }],
       );
 
       expect(
@@ -672,16 +776,64 @@ describe(goalContentWorkflow, () => {
     ).toHaveLength(29);
 
     expect(generateWarmUpCards).not.toHaveBeenCalled();
-    expect(getStreamedEvents().filter(({ step }) => step === "warmUpReady")).toStrictEqual([]);
 
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      warmUpId: null,
+    expect(
+      getStreamedEvents().filter(({ step }) => step === "warmUpReady" || step === "warmUpFailed"),
+    ).toStrictEqual([{ entityId: goal.id, status: "completed", step: "warmUpFailed" }]);
+
+    const followed = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    await expect(readWarmUpState(followed.warmUpId)).resolves.toStrictEqual({
+      id: claim.id,
+      status: "writing",
     });
 
     await expect(
       prisma.warmUp.findUniqueOrThrow({ where: { id: claim.id } }),
     ).resolves.toMatchObject({ runId: "other-writer", status: "writing" });
   });
+
+  it.each(["the writer failed before this run claimed", "reading its status kept failing"])(
+    "tells a goal's wait no deck is coming when %s",
+    async (end) => {
+      const [{ goal }, { goal: owner }] = await Promise.all([newGoal(), newGoal()]);
+      const generalGoal = `Arithmetic ${crypto.randomUUID()}`;
+      const scope = { generalGoal, language: "en", ownerId: null, targetLanguage: null };
+
+      vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+        taskResult({ ...recordedSpecificity, generalGoal }),
+      );
+
+      const claim = await claimWarmUp({ goalId: owner.id, scope, workflowRunId: "other-writer" });
+
+      if (claim.status !== "claimed") {
+        throw new Error("Expected another run to claim this deck");
+      }
+
+      // An earlier attempt of this goal's run linked the deck, so its wait shows the quiz coming.
+      await claimWarmUp({ goalId: goal.id, scope, workflowRunId: "earlier-attempt" });
+
+      if (end === "the writer failed before this run claimed") {
+        await failWarmUp({ id: claim.id, workflowRunId: "other-writer" });
+      }
+
+      const statusRead = vi
+        .spyOn(warmUpSteps, "readWarmUpStatusStep")
+        .mockRejectedValue(new Error("Status read failed after retries"));
+
+      try {
+        await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+          status: "built",
+        });
+      } finally {
+        statusRead.mockRestore();
+      }
+
+      expect(
+        getStreamedEvents().filter(({ step }) => step === "warmUpReady" || step === "warmUpFailed"),
+      ).toStrictEqual([{ entityId: goal.id, status: "completed", step: "warmUpFailed" }]);
+    },
+  );
 
   it("builds the skill graph, the plan and the main course, and starts the outlines and placement questions", async () => {
     const { goal } = await newGoal();
@@ -761,7 +913,16 @@ describe(goalContentWorkflow, () => {
       (event) => `${String(event.step)}:${String(event.status)}`,
     );
 
-    expect(events.filter((event) => !event.startsWith("preparePlacement"))).toStrictEqual([
+    // The deck step runs beside the plan, so its one event lands anywhere after the scope is decided.
+    expect(events.filter((event) => event.startsWith("warmUp"))).toStrictEqual([
+      "warmUpFailed:completed",
+    ]);
+
+    expect(
+      events.filter(
+        (event) => !event.startsWith("preparePlacement") && !event.startsWith("warmUp"),
+      ),
+    ).toStrictEqual([
       "understandGoal:started",
       "buildSkillGraph:started",
       "buildSkillGraph:completed",
@@ -776,9 +937,11 @@ describe(goalContentWorkflow, () => {
       events.indexOf("createPlan:completed"),
     );
 
-    expect(start).toHaveBeenCalledWith(placementItemsWorkflow, [
-      expect.objectContaining({ goalId: goal.id, skillIds: expect.any(Array) }),
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      placementItemsWorkflow,
+      [expect.objectContaining({ goalId: goal.id })],
+      { experimental_hook: { token: `placement-items:${goal.id}` } },
+    );
 
     expect(plan.placementPreparedAt).toBeInstanceOf(Date);
     expect(plan.buildFailedAt).toBeNull();
@@ -821,14 +984,22 @@ describe(goalContentWorkflow, () => {
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
 
-    expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        distinctId: goal.userId,
-        name: "Generation Failed",
-        properties: { content_kind: "curriculum", model: null, task: "goal-content" },
-        shared: expect.objectContaining({ platform: "ios" }),
-      }),
-    );
+    const curriculumFailures = vi
+      .mocked(trackServerEvent)
+      .mock.calls.filter(([event]) =>
+        Object.values(event.properties ?? {}).includes("goal-content"),
+      );
+
+    expect(curriculumFailures).toStrictEqual([
+      [
+        expect.objectContaining({
+          distinctId: goal.userId,
+          name: "Generation Failed",
+          properties: { content_kind: "curriculum", model: null, task: "goal-content" },
+          shared: expect.objectContaining({ platform: "ios" }),
+        }),
+      ],
+    ]);
   });
 
   it("reports a course plan's failed preparation for the learner who asked", async () => {
@@ -1860,7 +2031,7 @@ describe(goalContentWorkflow, () => {
       (event) => `${String(event.step)}:${String(event.status)}`,
     );
 
-    expect(events.slice(1, 4)).toStrictEqual([
+    expect(events.filter((event) => !event.startsWith("warmUp")).slice(1, 4)).toStrictEqual([
       "readExamNotice:started",
       "readExamNotice:completed",
       "buildSkillGraph:started",
@@ -3146,7 +3317,7 @@ describe(goalContentWorkflow, () => {
     );
   });
 
-  it("rebuilds the curriculum from the notice the learner uploaded, without writing ahead again", async () => {
+  it("rebuilds the uploaded notice and placement without writing lessons ahead again", async () => {
     const { goal } = await newGoal({ kind: "exam" });
 
     vi.mocked(classifyGoalSpecificity).mockResolvedValue(
@@ -3186,7 +3357,12 @@ describe(goalContentWorkflow, () => {
     );
 
     expect(generateItems).not.toHaveBeenCalled();
-    expect(generatePlacementItems).not.toHaveBeenCalled();
+
+    expect(generatePlacementItems).toHaveBeenCalledWith(
+      expect.objectContaining({
+        examFormat: expect.objectContaining({ blueprintId: blueprint.id }),
+      }),
+    );
 
     expect(getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow)).toBe(
       false,

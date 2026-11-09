@@ -17,7 +17,7 @@ const MS_PER_MINUTE = 60_000;
 
 export type RunCompletion = Omit<
   LibraryLessonCompletion,
-  "ceremony" | "certificates" | "reached" | "studyBlock"
+  "ceremony" | "certificates" | "planReveal" | "reached" | "studyBlock"
 >;
 
 export type LessonProgress = { brainPower: ProgressChange; energy: ProgressChange };
@@ -148,7 +148,7 @@ export async function withStudyBlock({
   runId: string;
   timeZone: string;
   userId: string;
-}): Promise<LibraryLessonCompletion> {
+}): Promise<Omit<LibraryLessonCompletion, "planReveal">> {
   const run = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
   const blockId = getString(run.contentIds, "studySessionBlockId");
 

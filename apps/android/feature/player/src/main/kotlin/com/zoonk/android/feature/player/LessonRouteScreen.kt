@@ -410,7 +410,6 @@ private fun WaitingLesson(
             LessonWritingViewModel(
                 lessonId = route.lessonId,
                 store = app.lessonPlayer,
-                writingApi = LiveLessonWritingApi(app.api),
                 generations = { LiveGenerationSource(app.api, it) },
                 cache = app.cache,
                 sessions = app.sessions,
@@ -418,7 +417,16 @@ private fun WaitingLesson(
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()
 
+    val summary by app.learnerSummary.summary.collectShown()
+
     LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
 
-    LessonWaitingScreen(outline, viewModel, app.warmUps, exits, readLesson = resource::refresh)
+    LessonWaitingScreen(
+        outline,
+        viewModel,
+        app.warmUps,
+        exits,
+        readLesson = resource::refresh,
+        goalId = summary.value?.activeGoalId?.toString(),
+    )
 }

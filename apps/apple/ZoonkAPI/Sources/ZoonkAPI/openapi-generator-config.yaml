@@ -161,6 +161,7 @@ filter:
     - getMock
     - getMockQuestionThread
     - getOnboarding
+    - getPlanRevealToday
     - getOnboardingResume
     - getPlanChangedSince
     - getPlanLink
@@ -196,6 +197,7 @@ filter:
     - listPronunciationReviews
     - listSourceChangeNotices
     - markCertificateShown
+    - markPlanRevealed
     - moveChallenge
     - moveWeeklyChallenge
     - openStudyBlock

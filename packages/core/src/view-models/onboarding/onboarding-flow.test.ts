@@ -4,8 +4,9 @@ import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/memory/reconcile";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -98,6 +99,68 @@ async function getSteps(goalId: string) {
 }
 
 describe("onboarding a new goal", () => {
+  it("does not owe placement from the first level answer while the graph is still empty", async () => {
+    const user = await useLearner();
+
+    const goal = await goalFixture({
+      details: { answered: ["purpose"], onboardingId: crypto.randomUUID(), purpose: "overview" },
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await planFixture({ goalId: goal.id });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { level: "basic", question: "level" },
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: null });
+  });
+
+  it("owes new placement items when the exam level changes after preparation", async () => {
+    const user = await useLearner();
+    const goal = await goalFixture({ kind: "exam", planRevealedAt: null, userId: user.id });
+
+    const skill = await skillFixture();
+
+    await planFixture({
+      goalId: goal.id,
+      graph: { phases: [{ milestone: null, name: "Foundations" }], skills: plannedSkills([skill]) },
+      placementPreparedAt: new Date(),
+    });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { knownSubjects: ["Math"], level: "basic", question: "level" },
+    });
+
+    await expect(listOwed(user.id)).resolves.toContainEqual({
+      input: { goalId: goal.id, waitsForNotice: true },
+      key: goal.id,
+      kind: "preparePlacementItems",
+    });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: null });
+
+    const owed = await prisma.followUp.findFirstOrThrow({ where: { userId: user.id } });
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { knownSubjects: ["Math"], level: "basic", question: "level" },
+    });
+
+    await expect(
+      prisma.followUp.findUniqueOrThrow({ where: { id: owed.id } }),
+    ).resolves.toMatchObject({ revision: owed.revision });
+  });
+
   it("owes learning who the learner is and their first lessons once the schedule is answered", async () => {
     const user = await useLearner();
     mockWorkFact("Works as a data analyst");
@@ -183,7 +246,7 @@ describe("onboarding a new goal", () => {
         generationId: null,
         goal: { id: goal?.id },
         goalIds: [goal?.id],
-        steps: ["purpose", "targetDate", "level", "buddy", "placement", "schedule", "plan"],
+        steps: ["purpose", "level", "targetDate", "buddy", "placement", "schedule", "plan"],
         timeChoices: expect.arrayContaining([{ minutes: 60, split: null }]),
       },
       status: "ready",
@@ -279,7 +342,7 @@ describe("onboarding a new goal", () => {
     });
   });
 
-  it("offers a Library course that teaches the goal once every question is answered", async () => {
+  it("offers a Library course that teaches the goal once every question about it is answered", async () => {
     await useLearner();
     const subject = `Tide pools ${randomUUID().slice(0, 8)}`;
     const organization = await aiOrganizationFixture();
@@ -305,7 +368,6 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { purpose: "overview", question: "purpose" } });
     await answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } });
     await answerOnboardingQuestion({ goalId, input: { level: "none", question: "level" } });
-    await answerOnboardingQuestion({ goalId, input: { dailyMinutes: 15, question: "schedule" } });
 
     await expect(getOnboarding({ goalId })).resolves.toMatchObject({
       onboarding: {
@@ -327,7 +389,7 @@ describe("onboarding a new goal", () => {
 
     await answerOnboardingQuestion({ goalId, input: { purpose: "work", question: "purpose" } });
     const afterPurpose = await getSteps(goalId);
-    expect(afterPurpose.slice(0, 2)).toStrictEqual(["role", "targetDate"]);
+    expect(afterPurpose.slice(0, 2)).toStrictEqual(["level", "role"]);
 
     await answerOnboardingQuestion({ goalId, input: { question: "role", role: null } });
     await answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } });

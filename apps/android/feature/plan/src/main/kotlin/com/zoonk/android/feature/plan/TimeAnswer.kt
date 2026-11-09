@@ -69,6 +69,7 @@ fun TimeAnswer(
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
     action: (@Composable () -> Unit)? = null,
+    aim: String? = null,
 ) {
     val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed || noteStatus == NoteStatus.Failed
     val offered = offer?.takeUnless { failed }
@@ -77,7 +78,7 @@ fun TimeAnswer(
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodyMedium
     val noteWords = noteWords(date, note, noteStatus, today)
-    val lineWords = lineWords(date, exam, line, minutes, today)
+    val lineWords = lineWords(date, exam, line, minutes, today, aim)
     val tooLong = stringResource(R.string.plan_time_too_long).takeIf { note == FullTimeNote.TooLong }
     val shared = split?.let { splitWords(it) }
 
@@ -244,6 +245,7 @@ private fun lineWords(
     line: TimeLine,
     minutes: Int?,
     today: LocalDate,
+    aim: String?,
 ): AnnotatedString {
     val locale = currentLocale()
     val time = formatMinutes(minutes ?: 0, locale)
@@ -286,8 +288,15 @@ private fun lineWords(
 
             is TimeLine.Finish -> {
                 val month = formatDate(line.endDate.toJavaLocalDate(), locale, DateStyle.Month)
-                return stringResource(R.string.plan_finish_around, month)
-                    .emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface))
+                return (
+                    if (aim ==
+                        null
+                    ) {
+                        stringResource(R.string.plan_finish_around, month)
+                    } else {
+                        stringResource(R.string.onboarding_aim_finish, time, aim, month)
+                    }
+                ).emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface))
             }
 
             TimeLine.NoFinish -> {

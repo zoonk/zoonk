@@ -861,7 +861,7 @@ async function holdBackCase(): Promise<WriterCase> {
 
   return {
     expectWritten: () =>
-      expect(readLesson(lesson.id)).resolves.toMatchObject({ contentStatus: "failed" }),
+      expect(readLesson(lesson.id)).resolves.toMatchObject({ contentStatus: "pending" }),
     plan,
     root: lessonRoot(lesson.id),
     write: () =>

@@ -13,6 +13,7 @@ import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
+import com.zoonk.api.models.LanguageAim
 import com.zoonk.api.models.OnboardingExamDate
 import com.zoonk.api.models.TargetCutoff
 import com.zoonk.api.models.UnderstoodGoal
@@ -95,7 +96,7 @@ class UnderstoodRows(
         return listOfNotNull(
             UnderstoodRow("title", text(R.string.onboarding_row_goal), draft.title, editable = EditableField.Title),
             dateRow(draft, goal.examDates),
-        ) + languageRows(draft.facts()) + detailRows(draft.facts(), goal.cutoff) +
+        ) + languageRows(draft.facts()) + detailRows(draft.facts(), goal.cutoff, goal.languageAim) +
             listOfNotNull(
                 levelNote?.let {
                     UnderstoodRow(
@@ -167,12 +168,14 @@ class UnderstoodRows(
     fun detailRows(
         draft: GoalFacts,
         cutoff: TargetCutoff?,
+        languageAim: LanguageAim? = null,
     ): List<UnderstoodRow> {
         fun unsaid(key: String) = draft.details.text(key)?.takeUnless { isSaidIn(draft.title, it) }
 
         val course = unsaid("targetCourse")
         val institution = unsaid("institution")
-        val target = unsaid("targetScore")
+        val aim = languageAim?.aim?.value
+        val target = if (languageAim == null) unsaid("targetScore") else aim
         val position = unsaid("targetPosition")
         val reason = unsaid("reason")
         val role = unsaid("role")
@@ -211,12 +214,33 @@ class UnderstoodRows(
                                 R.string.onboarding_row_target_score
                             },
                         ),
-                    value = it,
+                    value =
+                        if (aim ==
+                            null
+                        ) {
+                            it
+                        } else {
+                            listOfNotNull(
+                                aim,
+                                com.zoonk.android.feature.plan.languageAimNameResource(aim)?.let { name ->
+                                    text(name)
+                                },
+                            ).factsLine()
+                        },
                     editable = EditableField.TargetScore,
                 )
             },
             cutoff?.let(::cutoffRow),
-            reason?.let { UnderstoodRow("reason", text(R.string.onboarding_row_reason), it, editable = EditableField.Reason) },
+            reason?.let {
+                UnderstoodRow(
+                    "reason",
+                    text(R.string.onboarding_row_reason),
+                    com.zoonk.android.feature.plan
+                        .reasonTitleResource(it)
+                        ?.let { title -> text(title) } ?: it,
+                    editable = EditableField.Reason.takeUnless { draft.isLanguage },
+                )
+            },
             role?.let {
                 UnderstoodRow(
                     id = "role",

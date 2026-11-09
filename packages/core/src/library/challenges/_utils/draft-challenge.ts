@@ -5,7 +5,10 @@ import { type Lesson } from "@zoonk/db";
 import { checkWrittenChallenge } from "../challenge-case-content";
 import { type ChallengeLessonSpec } from "../challenge-lesson-spec";
 
-export type ChallengeCaseInputs = Omit<ChallengeCaseParams, "analytics" | "model" | "problems">;
+export type ChallengeCaseInputs = Omit<
+  ChallengeCaseParams,
+  "analytics" | "model" | "problems" | "speed"
+>;
 
 type ChallengeLesson = Pick<Lesson, "language" | "level" | "title"> & {
   homeChapter: {
@@ -47,11 +50,13 @@ export async function draftChallengeCase({
   inputs,
   model,
   serviceTier,
+  speed,
 }: {
   analytics: ChallengeCaseParams["analytics"];
   inputs: ChallengeCaseInputs;
   model?: string;
   serviceTier?: ChallengeCaseParams["serviceTier"];
+  speed?: ChallengeCaseParams["speed"];
 }): Promise<DraftedChallenge> {
   const draft = async (problems: string[]): Promise<DraftedChallenge> => {
     const written = await generateChallengeCase({
@@ -60,6 +65,7 @@ export async function draftChallengeCase({
       model,
       problems,
       serviceTier,
+      ...(problems.length === 0 && { speed }),
     });
 
     const checked = checkWrittenChallenge({ variant: inputs.variant, written: written.data });

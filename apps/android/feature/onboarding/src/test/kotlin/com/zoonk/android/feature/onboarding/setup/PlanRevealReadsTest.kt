@@ -70,7 +70,6 @@ class PlanRevealReadsTest {
                         PlanRevealStep(
                             goal,
                             false,
-                            null,
                             GenerationRun(status = GenerationRun.Status.Ready),
                             null,
                             plans,

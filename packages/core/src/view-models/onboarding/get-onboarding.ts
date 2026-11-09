@@ -13,10 +13,13 @@ import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
+import { readGoalOpening } from "../../goals/goal-opening";
+import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { readWarmUpState } from "../../library/warm-ups/claim-warm-up";
 import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
 import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
@@ -32,10 +35,12 @@ import {
   type OnboardingView,
 } from "./onboarding-contract";
 import {
+  getAnsweredQuestions,
   getFollowUpQuestions,
   getOnboardingSteps,
   isClassTest,
   isCourseDateSkipped,
+  isPlanRevealOwed,
 } from "./onboarding-steps";
 
 export type OnboardingResult =
@@ -157,7 +162,10 @@ function getDateProblem({
   return noSitting ? { kind: "noSitting", ...noSitting } : null;
 }
 
-const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
+/** Daily time doesn't change what the goal is about, so the plan's wait before it can offer one. */
+const SUBJECT_QUESTIONS = new Set<OnboardingStep>(
+  ONBOARDING_QUESTIONS.filter((question) => question !== "schedule"),
+);
 
 const COURSE_KINDS = new Set(["exam", "learn"]);
 
@@ -171,7 +179,7 @@ async function findLibraryCourse({
   steps: OnboardingStep[];
   subject: string;
 }): Promise<OnboardingLibraryCourse | null> {
-  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => QUESTIONS.has(step))) {
+  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => SUBJECT_QUESTIONS.has(step))) {
     return null;
   }
 
@@ -213,13 +221,16 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, planReadiness] = await Promise.all([
-    findLearningProfileView(userId),
-    findActiveGoalId(userId),
-    findOnboardingGoalIds(goal),
-    findExamNotice({ details, goal, goalDate, today }),
-    readPlanReadiness(goal.id),
-  ]);
+  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp] =
+    await Promise.all([
+      findLearningProfileView(userId),
+      findActiveGoalId(userId),
+      findOnboardingGoalIds(goal),
+      findExamNotice({ details, goal, goalDate, today }),
+      readPlanReadiness({ goalId: goal.id, userId }),
+      readGoalOpening({ lessonId: goal.openingLessonId, userId }),
+      readWarmUpState(goal.warmUpId),
+    ]);
 
   const [earlierGoals, [view]] = await Promise.all([
     prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
@@ -238,6 +249,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       details,
       hasUnpickedChoice: notice.hasUnpickedChoice,
       kind: goal.kind,
+      planRevealed: goal.planRevealedAt !== null,
       replacesGoalId: goal.replacesGoalId,
       targetDate: view.targetDate,
     },
@@ -282,12 +294,27 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       examChoices: notice.choices,
       examDays: notice.examDays,
       examSubjects: notice.subjects,
+      firstLesson,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
-      goal: view,
+      goal:
+        goal.kind !== "language" && getAnsweredQuestions(details).includes("reason")
+          ? {
+              ...view,
+              details: {
+                ...view.details,
+                answered: getAnsweredQuestions(details).filter((question) => question !== "reason"),
+              },
+            }
+          : view,
       goalIds,
+      languageAim:
+        goal.kind === "language"
+          ? { ...toLanguageAimView(details), reasons: LANGUAGE_REASON_VIEWS }
+          : null,
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
+      planRevealed: !isPlanRevealOwed(goal),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,
@@ -301,6 +328,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
             place: Math.max(0, goalIds.indexOf(goal.id)),
           }),
         })),
+      warmUp,
     },
     status: "ready",
   };

@@ -17,12 +17,14 @@ import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "../onboarding-steps";
 import { getExamChoiceOperations } from "./exam-choice-answer";
 import { findOnboardingGoalIds } from "./onboarding-goals";
+import { getReasonDetails } from "./reason-answer";
+import { saveAnswerGoal } from "./save-answer-goal";
 
 type Details = Record<string, unknown>;
 
 const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
+const REASON_ANSWER_KEYS = new Set(["reason", "targetScore"]);
 
-/** Replacing a level answer must clear old known subjects, including a return to None of them yet. */
 function withoutReplacedAnswer({
   details,
   input,
@@ -30,6 +32,12 @@ function withoutReplacedAnswer({
   details: Details;
   input: OnboardingAnswerInput;
 }): Details {
+  if (input.question === "reason") {
+    return Object.fromEntries(
+      Object.entries(details).filter(([key]) => !REASON_ANSWER_KEYS.has(key)),
+    );
+  }
+
   return input.question === "level"
     ? Object.fromEntries(Object.entries(details).filter(([key]) => !LEVEL_ANSWER_KEYS.has(key)))
     : details;
@@ -70,7 +78,7 @@ function getDetailChanges({
         tasks: input.tasks,
       });
     case "reason":
-      return input.reason ? { reason: input.reason } : {};
+      return getReasonDetails(input);
     case "target":
       return input.target ? { [getTargetField(details)]: input.target } : {};
     case "followUps":
@@ -237,6 +245,10 @@ export async function saveAnswerInputs({
       }
 
       for (const current of currentGoals) {
+        if (input.question === "reason" && current.kind !== "language") {
+          return unchanged("invalid");
+        }
+
         const own = current.id === goal.id;
         const details = isJsonObject(current.details) ? current.details : {};
 
@@ -313,14 +325,8 @@ export async function saveAnswerInputs({
             input.question === "schedule" ? (input.timeZone ?? current.timezone) : current.timezone,
         };
 
-        const goalChanged = Object.entries(data).some(
-          ([key, value]) => !isDeepStrictEqual(value, Reflect.get(current, key)),
-        );
-
-        if (goalChanged) {
-          // oxlint-disable-next-line no-await-in-loop -- Shared answers commit on one transaction client.
-          await tx.goal.update({ data, where: { id: current.id } });
-        }
+        // oxlint-disable-next-line no-await-in-loop -- Answers and their owed work share the transaction.
+        const goalChanged = await saveAnswerGoal({ current, data, input, own, tx });
 
         // oxlint-disable-next-line no-await-in-loop -- Shared answers commit on one transaction client.
         const settingsChanged = await saveAnswerSettings(tx, {

@@ -118,7 +118,9 @@ fun planOf(
            "shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":30,"weekend":null,"weekendDays":[]},
            "weekdayMinutes":[0,30,30,30,30,30,0]${targetDate?.let { ""","targetDate":"$it"""" } ?: ""}},
          "steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":[]},
-         "tools":[],"week":{"days":[],"startDate":"$weekStart","endDate":"${weekStart.plusDays(6)}"},
+         "languageAim":null,"tools":[],"week":{"days":[],"startDate":"$weekStart","endDate":"${weekStart.plusDays(
+            6,
+        )}"},
          "weekTime":{"studiedMinutes":0,"targetMinutes":150}}
         """.trimIndent(),
     )
@@ -222,3 +224,78 @@ fun specialtyChoice(subject: String? = null) =
       "options":[{"name":"Auditoria","shortName":null},{"name":"Tecnologia da Informação – Desenvolvimento de Sistemas","shortName":"Desenvolvimento de Sistemas"}],
       "subjects":[${subject?.let { "\"$it\"" }.orEmpty()}],"take":1}]
     """.trimIndent()
+
+fun revealDaysOf(): String {
+    val today = LocalDate.now()
+    val titles =
+        listOf(
+            "Songs and calls",
+            "Pitch, rhythm and tone",
+            "Who sings, and when",
+            "The dawn chorus",
+            "Calls that warn",
+            "Listening in layers",
+        )
+    return titles
+        .mapIndexed { index, title ->
+            """{"date":"${today.plusDays(
+                index.toLong() + 1,
+            )}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":"${"019a482c-6a00-7000-8000-00000000002$index"}",
+          "minutes":6,"requiresPlus":false,"scheduledFor":"${today.plusDays(
+                index.toLong() + 1,
+            )}","skillId":null,"status":"todo","title":"$title","writing":false}],
+          "minutes":6,"mockFunding":null,"state":"${if (index == 0) "today" else "upcoming"}"}"""
+        }.joinToString(",", "[", "]")
+}
+
+fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
+    val today = LocalDate.now().toString()
+    val blocks =
+        listOf(
+            com.zoonk.android.feature.session.fixture(
+                "unstarted-study-day-blocks-inner",
+                "kind" to "learn",
+                "position" to 0,
+                "title" to "How birds use sound",
+                "lessonId" to "019a482c-6a00-7000-8000-000000000011",
+                "subject" to "Birdsong basics",
+                "estimatedMinutes" to 6,
+                "screen" to "lesson",
+            ),
+            com.zoonk.android.feature.session.fixture(
+                "unstarted-study-day-blocks-inner",
+                "kind" to "practice",
+                "position" to 1,
+                "subject" to "Birdsong basics",
+                "estimatedMinutes" to 4,
+            ),
+            com.zoonk.android.feature.session.fixture(
+                "unstarted-study-day-blocks-inner",
+                "kind" to "review",
+                "position" to 2,
+                "estimatedMinutes" to 5,
+            ),
+        )
+    val todayDay =
+        com.zoonk.android.feature.session.decodeFixture<com.zoonk.api.models.StudyDay>(
+            "unstarted-study-day",
+            "localDate" to today,
+            "blocks" to kotlinx.serialization.json.JsonArray(blocks),
+            "nextPosition" to 0,
+            "state" to "underway",
+            "minutes" to
+                kotlinx.serialization.json.buildJsonObject {
+                    put("dailyGoal", kotlinx.serialization.json.JsonPrimitive(0))
+                    put("done", kotlinx.serialization.json.JsonPrimitive(0))
+                    put("planned", kotlinx.serialization.json.JsonPrimitive(15))
+                },
+        )
+    return com.zoonk.api.models.PlanRevealToday(
+        today = todayDay,
+        minutes = 15,
+        nextDays = ApiJson.decodeFromString(revealDaysOf()),
+        week =
+            com.zoonk.api.models
+                .PlanRevealTodayWeek(days = 7, minutes = 51),
+    )
+}

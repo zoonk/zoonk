@@ -3,6 +3,7 @@ import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/con
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
+import { type OnboardingAttempt, linkOnboardingAttempt } from "./attempt-clock";
 
 const EXPLANATION_MINUTES = 5;
 
@@ -56,6 +57,7 @@ export function takeSentGoal(draftId: string): number | null {
 
 /** A goal sent from another page, still on its way: `/start` shows it waiting until it takes the outcome. */
 export type HandedOffGoal = {
+  attemptId?: string;
   goal: string;
   outcome: Promise<StartUnderstandingOutcome>;
   sentAt: number;
@@ -102,11 +104,13 @@ export function getExplanationGoalInput({
 }
 
 export async function sendGoal({
+  attempt,
   goal,
   language,
   signal,
   understanding,
 }: {
+  attempt?: OnboardingAttempt;
   goal: string;
   language: string;
   signal?: AbortSignal;
@@ -117,9 +121,13 @@ export async function sendGoal({
     return { status: "failed" };
   }
 
-  const sentAt = Date.now();
+  const sentAt = attempt?.submittedAt ?? Date.now();
   const { data } = await safeAsync(() => understanding.start({ goal, language }));
   const outcome: StartUnderstandingOutcome = data ?? { status: "failed" };
+
+  if (attempt && (outcome.status === "started" || outcome.status === "startFailed")) {
+    linkOnboardingAttempt({ attempt, draftId: outcome.draft.id });
+  }
 
   if (outcome.status === "started" && !signal?.aborted) {
     sentGoals.set(outcome.draft.id, {

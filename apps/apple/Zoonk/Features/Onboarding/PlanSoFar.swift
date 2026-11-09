@@ -1,11 +1,14 @@
 import SwiftUI
 
-/// Main's `PlanReceipt`.
-struct PlanSoFar: View {
+/// Main's `PlanReceipt`, after `lead`, such as a wait's progress.
+struct PlanSoFar<Lead: View>: View {
   let facts: [PlanFact]
+  @ViewBuilder let lead: () -> Lead
 
   var body: some View {
     ZoonkList {
+      lead()
+
       Section {
         ForEach(facts) { fact in
           VStack(alignment: .leading, spacing: 2) {

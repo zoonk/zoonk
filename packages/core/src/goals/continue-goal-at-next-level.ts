@@ -126,6 +126,7 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
           studyTime: goal.studyTime ?? undefined,
           timeZone: goal.timezone ?? undefined,
         },
+        planShown: true,
         replacesGoalId: goal.id,
         testedLanguage: null,
         userId,

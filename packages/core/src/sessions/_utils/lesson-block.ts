@@ -7,7 +7,7 @@ import { z } from "zod";
 import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
-import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
+import { NOT_A_CAPSULE } from "../../lesson-player/_utils/lesson-runs";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay, getCapsuleOpening } from "../capsules";
 import { oweDaySettlement } from "../settle-owed-session-day";
@@ -77,8 +77,7 @@ export async function findLessonFinish({
             contentIds: { equals: lessonId, path: ["lessonId"] },
           })),
         },
-        // Capsule reviews name their lesson but do not complete a lesson run.
-        { OR: [{ lessonKind: null }, { lessonKind: { not: CAPSULE_LEDGER_KIND } }] },
+        NOT_A_CAPSULE,
       ],
       endedAt: { gte: since },
       kind: { in: ["lesson", "review"] },

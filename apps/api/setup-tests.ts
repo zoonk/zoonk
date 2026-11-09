@@ -16,10 +16,10 @@ vi.mock("next/cache", () => ({
 }));
 
 // Tests run outside a request, where Next.js' `after` throws.
-vi.mock("next/server", async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  after: vi.fn(),
-}));
+vi.mock("next/server", async (importOriginal) => {
+  const testBoundaries = await import("./mocks/boundaries");
+  return { ...(await importOriginal<object>()), ...testBoundaries.nextServer };
+});
 
 Object.entries(boundaries).forEach(([path, mocks]) => {
   vi.doMock(path, async (importOriginal) => ({ ...(await importOriginal<object>()), ...mocks }));

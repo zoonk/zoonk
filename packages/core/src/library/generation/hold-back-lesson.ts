@@ -214,7 +214,7 @@ export async function holdBackLessonDraft({
 
       const { count } = await tx.lesson.updateMany({
         data: {
-          contentStatus: "failed",
+          contentStatus: setAside ? "failed" : "pending",
           heldBackDrafts: drafts,
           setAsideAt: setAside ? now : null,
         },

@@ -1,4 +1,4 @@
-import { type Goal, type PlanItem } from "@zoonk/db";
+import { type PlanItem } from "@zoonk/db";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionPlanFixture } from "@zoonk/testing/fixtures/study-sessions";
@@ -20,7 +20,7 @@ export async function sessionGoalFixture({
   lessons = 3,
   userId,
 }: {
-  goal?: Partial<Omit<Goal, "details">> & { details?: object };
+  goal?: Omit<Parameters<typeof goalFixture>[0], "userId">;
   itemsPerSkill?: number;
   lessons?: number;
   userId: string;

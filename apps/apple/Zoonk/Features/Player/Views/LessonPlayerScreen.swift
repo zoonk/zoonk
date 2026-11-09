@@ -105,7 +105,8 @@ private struct LessonPlayerContent: View {
                   store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
               )
               // The lesson's column; on iPhone Duo, the page before the hinge.
-              .lonePage(readableWidth: 680)
+              .frame(maxWidth: 680)
+              .lonePage()
               .scenePadding(.horizontal)
               .padding(.bottom, 4)
             }
@@ -172,6 +173,21 @@ private struct LessonPlayerContent: View {
       _, isAnonymous in
       store.isGuest = isAnonymous == true
     }
+    .onChange(of: learnerSummary?.summary.value?.activeGoalID, initial: true) { _, goalID in
+      store.goalID = goalID
+
+      if scenePhase == .active {
+        store.reportFirstScene()
+      }
+    }
+    .onChange(
+      of: FirstScene(shown: store.state?.currentStep != nil, phase: scenePhase), initial: true
+    ) {
+      _, scene in
+      if scene.shown, scene.phase == .active {
+        store.reportFirstScene()
+      }
+    }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
     // From here rather than the stage, which is made anew as a lesson comes back from its end.
@@ -208,7 +224,7 @@ private struct LessonPlayerContent: View {
   @ViewBuilder
   private var content: some View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
-      WarmUpHold(
+      WaitHold(
         surface: .lessonWait, isReady: writing == .written,
         announcement: LessonWaitingView.lessonReady
       ) { stage in
@@ -216,7 +232,8 @@ private struct LessonPlayerContent: View {
         case .waiting(let holding):
           LessonWaitingView(
             outline: warmUp.outline, writing: writing, progress: store.writingProgress,
-            alternative: store.alternative, warmUpID: warmUp.deckID, holding: holding
+            alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
+            holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -257,7 +274,7 @@ private struct LessonPlayerContent: View {
     case .waiting(let outline, let writing):
       LessonWaitingView(
         outline: outline, writing: writing, progress: store.writingProgress,
-        alternative: store.alternative
+        alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
       }
@@ -492,4 +509,9 @@ private struct VerticalToolbarReader<Content: View>: View {
   var body: some View {
     content(isToolbarVertical)
   }
+}
+
+private struct FirstScene: Equatable {
+  let shown: Bool
+  let phase: ScenePhase
 }

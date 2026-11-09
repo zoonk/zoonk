@@ -1,6 +1,8 @@
 import { vi } from "vitest";
 import { solveLikeTheKeys } from "../src/workflows/_test-utils/solved-items";
 
+export const nextServer = { after: vi.fn() };
+
 /**
  * Test files share workers, so these are mocked once per worker and reset for each file. A new
  * model call a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
@@ -18,6 +20,7 @@ export const boundaries = {
     streamCourseOutline: vi.fn(),
   },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
+  "@zoonk/ai/tasks/curriculum/goal-opening": { generateGoalOpening: vi.fn() },
   "@zoonk/ai/tasks/curriculum/skill-graph-calls": {
     generateSkillGraphFrame: vi.fn(),
     generateSkillGraphSection: vi.fn(),
@@ -96,9 +99,10 @@ export const boundaries = {
 };
 
 export function resetBoundaries(): void {
-  Object.values(boundaries)
-    .flatMap((mocks) => Object.values(mocks))
-    .forEach((mock) => {
-      mock.mockReset();
-    });
+  [
+    ...Object.values(nextServer),
+    ...Object.values(boundaries).flatMap((mocks) => Object.values(mocks)),
+  ].forEach((mock) => {
+    mock.mockReset();
+  });
 }

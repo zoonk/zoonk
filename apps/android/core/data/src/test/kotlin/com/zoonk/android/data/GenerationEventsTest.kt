@@ -1,6 +1,9 @@
 package com.zoonk.android.data
 
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.Dispatcher
 import mockwebserver3.MockResponse
@@ -11,6 +14,9 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.CopyOnWriteArrayList
 
 class GenerationEventsTest {
@@ -97,6 +103,57 @@ class GenerationEventsTest {
             )
         }
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun aReplayedStageUsesTheResponseClockRatherThanTheNewestEventsAge() =
+        runTest {
+            val serverTime = System.currentTimeMillis() / 1_000 * 1_000 - 5_000
+            val started = serverTime - 220_000
+            streams =
+                mapOf(
+                    "0" to
+                        events(
+                            "data: {\"at\":${started - 8_000},\"status\":\"completed\",\"step\":\"understandGoal\"}\n\n",
+                            "data: {\"at\":$started,\"status\":\"started\",\"step\":\"buildSkillGraph\"}\n\n",
+                            "data: {\"at\":${started + 31_000},\"status\":\"completed\",\"step\":\"warmUpReady\"}\n\n",
+                            date = DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.ofEpochMilli(serverTime).atZone(ZoneOffset.UTC)),
+                        ),
+                )
+            val replay = api.generationEvents("gen-1", ana).toList()
+            val source =
+                object : GenerationSource {
+                    override fun events(id: String) =
+                        flow {
+                            replay.forEach { emit(it) }
+                            awaitCancellation()
+                        }
+
+                    override suspend fun status(id: String) = com.zoonk.api.models.Generation.Status.RUNNING
+                }
+            val follower = GenerationFollower(GenerationKind.Curriculum, backgroundScope, source)
+            follower.follow("gen-1")
+            runCurrent()
+            val activeSince = GenerationKind.Curriculum.progress(follower.run.value).activeSince!!
+            assertEquals(220_000.0, (System.currentTimeMillis() - activeSince).toDouble(), 2_000.0)
+            follower.stop()
+        }
+
+    @Test
+    fun aReconnectUsesItsOwnResponseClockForEveryEvent() =
+        runTest {
+            val now = System.currentTimeMillis() / 1_000 * 1_000
+
+            fun date(time: Long) = DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.ofEpochMilli(time).atZone(ZoneOffset.UTC))
+            streams =
+                mapOf(
+                    "0" to events(event("outline", "started"), event("outline", "completed"), drop = true, date = date(now - 5_000)),
+                    "2" to events(event("lessons", "started"), date = date(now - 35_000)),
+                )
+            val received = api.generationEvents("gen-1", ana).toList()
+            assertEquals(received[0].clockOffsetMillis, received[1].clockOffsetMillis)
+            assertEquals(30_000.0, (received[2].clockOffsetMillis!! - received[0].clockOffsetMillis!!).toDouble(), 2_000.0)
+        }
+
     @Test
     fun eventsGiveUpAfterThreeDropsWithoutAnEvent() =
         runTest {
@@ -122,6 +179,7 @@ class GenerationEventsTest {
     private fun events(
         vararg events: String,
         drop: Boolean = false,
+        date: String? = null,
     ): MockResponse {
         val body = events.joinToString("")
         val builder =
@@ -129,6 +187,7 @@ class GenerationEventsTest {
                 .Builder()
                 .addHeader("Content-Type", "text/event-stream")
                 .body(body)
+        date?.let { builder.setHeader("Date", it) }
         if (drop) builder.setHeader("Content-Length", body.length + 100).onResponseEnd(SocketEffect.CloseSocket())
         return builder.build()
     }

@@ -41,7 +41,9 @@ test.describe("Placement and the plan", () => {
     await stop.click();
 
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Start" })).toHaveAttribute("href", "/today");
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(page.getByRole("link", { name: "See your plan" })).toBeHidden();
 
     const [attempts, saved] = await Promise.all([
       prisma.attempt.count({ where: { itemId: { not: null }, userId: noProgressUser.id } }),
@@ -50,6 +52,7 @@ test.describe("Placement and the plan", () => {
 
     expect(attempts).toBeGreaterThanOrEqual(2);
     expect(saved.details).toMatchObject({ answered: expect.arrayContaining(["placement"]) });
+    expect(saved.planRevealedAt).not.toBeNull();
   });
 });
 
@@ -90,14 +93,14 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
     await route.continue();
   });
 
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
 
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();
   await expect(page.getByLabel("Time a day", { exact: true })).toHaveValue("45");
 
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
-  await expect(page.getByText("45 min a day", { exact: true })).toBeVisible();
+  await expect(page.getByText("45 min", { exact: true })).toBeVisible();
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeHidden();
 });
 
@@ -147,7 +150,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
   await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   const time = page.getByLabel("Time a day", { exact: true });
-  const next = page.getByRole("button", { exact: true, name: "Continue" });
+  const next = page.getByRole("button", { exact: true, name: "See your plan" });
 
   await expect(time).toHaveValue("30");
   await page.getByRole("button", { exact: true, name: "Friday" }).click();
@@ -195,7 +198,7 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
     page.getByRole("heading", { level: 1, name: "Reading the exam's official documents" }),
   ).toBeVisible();
 
-  await expect(page.getByRole("link", { name: "Start" })).toHaveCount(0);
+  await expect(page.getByRole("button", { exact: true, name: "Start" })).toHaveCount(0);
 
   const afterLongWait = page.waitForResponse(
     (response) =>

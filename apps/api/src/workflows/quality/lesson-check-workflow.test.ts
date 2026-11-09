@@ -86,7 +86,11 @@ function recordWhatLearnersGetWhileSettling({
 
   getStartMock().mockImplementation(async (workflow) => {
     await look();
-    return { runId: workflow === lessonMarksWorkflow ? "marks-run" : "pictures-run" } as never;
+
+    return {
+      returnValue: running() ? new Promise(() => {}) : Promise.resolve(null),
+      runId: workflow === lessonMarksWorkflow ? "marks-run" : "pictures-run",
+    } as never;
   });
 
   vi.mocked(getRun).mockImplementation(
@@ -97,9 +101,9 @@ function recordWhatLearnersGetWhileSettling({
       }) as never,
   );
 
-  vi.mocked(sleep).mockImplementation(async (ms) => {
+  vi.mocked(sleep).mockImplementation(async (until: unknown) => {
     await look();
-    onSleep(ms);
+    onSleep(until instanceof Date ? Math.max(0, until.getTime() - Date.now()) : Number(until));
   });
 
   return seen;
@@ -328,7 +332,7 @@ describe(lessonCheckWorkflow, () => {
 
     getStartMock().mockImplementation(async () => {
       citing.resolve(0);
-      return { runId: "started-run" } as never;
+      return { returnValue: Promise.resolve(null), runId: "started-run" } as never;
     });
 
     await expect(

@@ -1,6 +1,7 @@
 import { type BuddyKind } from "@zoonk/utils/buddy";
 import { type LessonScreenSuggestion } from "../lesson-questions/contract";
 import { type MissionKind } from "../sessions/missions/catalog";
+import { type OnboardingProgress } from "./onboarding-progress";
 import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
 
 /** Vercel Web Analytics rejects nested property values. */
@@ -46,8 +47,14 @@ type ArrivalEvents = {
 };
 
 type OnboardingEvents = {
-  "Goal Classified": { duration_ms: number; result: AnalyticsGoalKind | "declined" };
-  "Goal Typed": { has_attachment: boolean };
+  "Goal Classified": {
+    duration_ms: number;
+    result: AnalyticsGoalKind | "declined";
+    onboarding_id: string;
+    at: number;
+  };
+  "Goal Typed": { has_attachment: boolean; attempt_id?: string; submitted_at?: number };
+  "Onboarding Progressed": OnboardingProgress;
   "Buddy Chosen": { buddy: BuddyKind; renamed: boolean };
   "Placement Answered": {
     answer: "correct" | "dont_know" | "incorrect";
@@ -67,7 +74,13 @@ type OnboardingEvents = {
     position: number;
     surface: WarmUpSurface;
   };
-  "Warm-Up Shown": { card_count: number; surface: WarmUpSurface };
+  "Warm-Up Shown": {
+    card_count: number;
+    surface: WarmUpSurface;
+    goal_id?: string;
+    deck_id?: string;
+    at?: number;
+  };
 };
 
 type DailyEvents = {
@@ -198,7 +211,16 @@ type QualityEvents = {
   "Content Reported": { content_id: string; content_kind: string; reason: string };
   "Feedback Sent": { content_kind: string | null };
   "Generation Failed": { content_kind: string; model: string | null; task: string };
-  "Generation Waited": { content_kind: string; milliseconds: number };
+  "Generation Waited": {
+    content_kind: string;
+    milliseconds: number;
+    attempt_id?: string;
+    goal_id?: string | null;
+    onboarding_id?: string;
+    surface?: string;
+    started_at?: number;
+    ended_at?: number;
+  };
 };
 
 type OutcomeEvents = {

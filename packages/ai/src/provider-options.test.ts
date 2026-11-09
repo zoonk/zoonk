@@ -75,6 +75,25 @@ describe(buildProviderOptions, () => {
     });
   });
 
+  it("asks the gateway to serve the same model fast", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: [],
+        model: "openai/gpt-6.1-terra",
+        serviceTier: "priority",
+        speed: "fast",
+        useFallback: true,
+      }),
+    ).toStrictEqual({
+      gateway: {
+        models: [],
+        order: ["openai", "azure", "google", "anthropic", "vertex"],
+        serviceTier: "priority",
+        speed: "fast",
+      },
+    });
+  });
+
   it("doesn't fall back to the model a private scope already chose from the chain", () => {
     expect(
       buildProviderOptions({

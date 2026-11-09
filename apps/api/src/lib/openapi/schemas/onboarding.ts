@@ -1,4 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { languageAimViewSchema, languageReasonViewSchema } from "@zoonk/core/language/aims/schemas";
 import { daySplitSchema, planReadinessSchema } from "@zoonk/core/plans/time-advice-contract";
 import {
   ONBOARDING_QUESTIONS,
@@ -76,6 +77,22 @@ export const onboardingResponseSchema = z
         description:
           "An exam's subjects from its stored notice, with only the options of its choices the learner picked; empty for other goals",
       }),
+    firstLesson: z
+      .object({
+        id: uuidSchema().meta({ description: "Open it at GET /v1/library/lessons/{lessonId}" }),
+        status: z
+          .enum(["done", "ready", "stopped", "writing"])
+          .meta({
+            description:
+              "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again",
+          }),
+        title: z.string(),
+      })
+      .nullable()
+      .meta({
+        description:
+          "A learn goal's first lesson, picked and written while the plan is still being built, so the learner can start it before the plan is ready. The goal's run reports it live (`writeFirstLesson`, then `firstLessonReady`); this read is the truth after a reconnect. Null until it's picked, and for goals whose first lesson comes from the plan",
+      }),
     followUps: z
       .array(z.string())
       .meta({
@@ -92,6 +109,20 @@ export const onboardingResponseSchema = z
     goalIds: z
       .array(uuidSchema())
       .meta({ description: "Goals created in the same onboarding, which share the day's time" }),
+    languageAim: languageAimViewSchema
+      .extend({
+        reasons: z
+          .array(languageReasonViewSchema)
+          .meta({
+            description:
+              "The `reason` question's choices, in order, each with the level it aims for and its hours from scratch",
+          }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Language goals only: the `reason` question's choices, and the aim the `schedule` screen shows with the aims to change it to, which a plan change `setAim` applies. Null for other goals",
+      }),
     libraryCourse: z
       .object({
         brandSlug: z.string(),
@@ -109,6 +140,12 @@ export const onboardingResponseSchema = z
       description:
         "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes",
     }),
+    planRevealed: z
+      .boolean()
+      .meta({
+        description:
+          "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state",
+      }),
     quickTestMinutes: z
       .int()
       .positive()
@@ -134,6 +171,23 @@ export const onboardingResponseSchema = z
       .meta({
         description:
           "The daily times the time question offers, in order, `recommendedMinutes` among them, each with how it splits among the goals typed together",
+      }),
+    warmUp: z
+      .object({
+        id: uuidSchema().meta({
+          description: "Read its cards at GET /v1/warm-ups/{warmUpId} once `ready`",
+        }),
+        status: z
+          .enum(["ready", "writing"])
+          .meta({
+            description:
+              "`writing` once a run claimed the deck: open a wait on the quiz with a card skeleton and fill it when the run's `warmUpReady` names this deck. `ready` once its cards can be read",
+          }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "The goal's quiz deck for its waits. Null when none is coming (a private goal, or a deck that failed): open a wait on its progress. A deck that fails while a wait shows its skeleton turns the wait to its progress, the one switch it makes by itself",
       }),
   })
   .meta({ id: "Onboarding" }) satisfies z.ZodType<OnboardingView>;

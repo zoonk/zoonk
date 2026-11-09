@@ -14,6 +14,27 @@ class GenerationKindTest {
     ) = GenerationRun(status = status, failure = failure, steps = steps.toMap(), stepTimes = times)
 
     @Test
+    fun driftStartsAtTheEarliestStepOfTheRunningStageOnTheClientClock() {
+        val progress =
+            GenerationKind.Lesson.progress(
+                GenerationRun(
+                    status = GenerationRun.Status.Following,
+                    steps =
+                        mapOf(
+                            "planLesson" to StepState.Completed,
+                            "writeLesson" to StepState.Completed,
+                            "markLesson" to StepState.Started,
+                            "drawPictures" to StepState.Started,
+                        ),
+                    stepTimes = mapOf("markLesson" to StepTimes(started = 12_000), "drawPictures" to StepTimes(started = 10_000)),
+                    clockOffsetMillis = 2_000,
+                ),
+            )
+        assertEquals(12_000L, progress.activeSince)
+        assertNull(GenerationKind.Lesson.progress(run("planLesson" to StepState.Started)).activeSince)
+    }
+
+    @Test
     fun anOptionalPhaseShowsOnlyOnceTheRunReportsIt() {
         val reading = GenerationKind.Understanding.progress(run("readGoal" to StepState.Started))
         assertEquals(listOf("read"), reading.phases.map { it.phase.id })

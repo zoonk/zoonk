@@ -30,32 +30,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
-fun interface LessonWritingApi {
-    suspend fun recordWait(
-        session: AuthenticatedSession,
-        milliseconds: Long,
-    )
-}
-
-class LiveLessonWritingApi(
-    private val api: ApiClients,
-) : LessonWritingApi {
-    override suspend fun recordWait(
-        session: AuthenticatedSession,
-        milliseconds: Long,
-    ) {
-        perform {
-            api.clients(session).contentGeneration.createGenerationWait(
-                GenerationWaitInput(
-                    contentKind = GenerationWaitInput.ContentKind.LESSON,
-                    milliseconds = milliseconds,
-                    platform = GenerationWaitInput.Platform.ANDROID,
-                ),
-            )
-        }
-    }
-}
-
 /**
  * A lesson not written yet, for the learner who opened it: writing it runs AI, so it starts only
  * from their tap, then its run is followed until the lesson is ready. Another session reads it again.
@@ -63,19 +37,15 @@ class LiveLessonWritingApi(
 class LessonWritingViewModel(
     private val lessonId: String,
     private val store: LessonPlayerStore,
-    private val writingApi: LessonWritingApi,
     private val generations: (AuthenticatedSession?) -> GenerationSource,
     private val cache: AppCache,
     private val sessions: SessionSource,
-    private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableWriting = MutableStateFlow<LessonWriting?>(null)
     private val mutableAlternative = MutableStateFlow<ReadyAlternative?>(null)
     private val mutableWarmUpId = MutableStateFlow<String?>(null)
     private var owner: AuthenticatedSession? = null
     private var work = openScope()
-    private var startedAt: Long? = null
-    private var waitRecorded = false
 
     private val follower =
         GenerationFollower(
@@ -118,8 +88,6 @@ class LessonWritingViewModel(
         work = openScope()
         follower.stop()
         owner = session
-        startedAt = null
-        waitRecorded = false
         mutableWriting.value = null
         mutableAlternative.value = null
         mutableWarmUpId.value = null
@@ -169,19 +137,6 @@ class LessonWritingViewModel(
     /** "Try again" or "Reconnect" on a run that stopped. */
     fun retry() = follower.retry()
 
-    /** Once, when the lesson opens: how long the learner waited. */
-    fun recordWait() {
-        val began = startedAt ?: return
-
-        if (waitRecorded) return
-
-        waitRecorded = true
-        val session = owner
-        launchWork {
-            cache.mutate { current -> if (current == session) writingApi.recordWait(current, now() - began) }
-        }
-    }
-
     private fun writingStarted(generation: LessonGeneration) {
         val generationId = generation.generationId
         when {
@@ -192,7 +147,6 @@ class LessonWritingViewModel(
     }
 
     private fun follow(generationId: String) {
-        startedAt = startedAt ?: now()
         mutableWriting.value = LessonWriting.Writing
         follower.follow(generationId)
     }

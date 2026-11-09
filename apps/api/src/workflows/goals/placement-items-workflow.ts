@@ -1,15 +1,18 @@
-import { createHook, getWorkflowMetadata, sleep } from "workflow";
+import { getWorkflowMetadata, sleep } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { startOnce } from "../_shared/run-token";
+import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { preparePlacementItems } from "./placement-items";
 import {
   getShortPlanPracticeToken,
   shortPlanPracticeWorkflow,
 } from "./short-plan-practice-workflow";
 import { readPlacementExamWaitStep } from "./steps/exam-format-step";
-import { recordPlacementPreparedStep } from "./steps/goal-build-outcome-steps";
+import {
+  readPlacementPlanRunIdStep,
+  recordPlacementPreparedStep,
+} from "./steps/goal-build-outcome-steps";
 import { readShortPlanPracticeStep } from "./steps/short-plan-practice-step";
 
 export type PlacementItemsInput = {
@@ -24,11 +27,7 @@ const FORMAT_POLL = "3s";
 
 const BLUEPRINT_POLLS = 100;
 
-export type PlacementItemsResult = {
-  failed: number;
-  status: "joined" | "written";
-  written: number;
-};
+export type PlacementItemsResult = { failed: number; status: "written"; written: number };
 
 /**
  * A run of its own: the workflow runtime moves a run on only once the steps it runs together are
@@ -41,10 +40,9 @@ export async function placementItemsWorkflow(
 
   const { analytics, goalId, skillIds, waitsForNotice = false } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `placement-items:${goalId}` });
 
-  if (await hook.getConflict()) {
-    return { failed: 0, status: "joined", written: 0 };
+  if (!(await waitForRunToken(`placement-items:${goalId}`))) {
+    throw new Error(`Placement items are still being written for ${goalId}`);
   }
 
   // Questions in another format than the exam's would mislead placement, and a language
@@ -67,6 +65,8 @@ export async function placementItemsWorkflow(
     }
   }
 
+  const planRunId = await readPlacementPlanRunIdStep(goalId);
+
   const { failed, written } = await preparePlacementItems({
     analytics,
     forPlacement: true,
@@ -77,7 +77,7 @@ export async function placementItemsWorkflow(
 
   const [practice] = await Promise.all([
     readShortPlanPracticeStep(goalId),
-    recordPlacementPreparedStep({ failed, goalId, written }),
+    recordPlacementPreparedStep({ failed, goalId, planRunId, written }),
     failed > 0
       ? trackGenerationFailedStep({
           analytics,

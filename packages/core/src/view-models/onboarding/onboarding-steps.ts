@@ -1,6 +1,7 @@
 import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type CourseStart, readCourseStart } from "../../goals/course-start-details";
+import { readLanguageAim } from "../../language/aims/language-aims";
 import { isPlacementSkipped } from "../../learner/placement/placement-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import {
@@ -18,8 +19,20 @@ type StepGoal = {
   /** Omit unless the caller loaded notice/plan choices; omission never asks an exam-choice question. */
   hasUnpickedChoice?: boolean;
   kind: GoalKind;
+  /**
+   * A shown plan never asks why again: goals set up before a language goal's reason became its aim
+   * have a reason and no aim. Omit only where the reason question doesn't matter.
+   */
+  planRevealed?: boolean;
   targetDate: string | null;
 };
+
+const ONBOARDING_QUESTION_ORDER = {
+  exam: ONBOARDING_QUESTIONS,
+  explain: ONBOARDING_QUESTIONS,
+  language: ["reason", "level", "followUps", "targetDate", "schedule"],
+  learn: ["purpose", "level", "role", "followUps", "targetDate", "schedule"],
+} as const satisfies Record<StepGoal["kind"], readonly OnboardingQuestion[]>;
 
 type StepProfile = {
   /** Buddy is offered only in the first onboarding; later changes belong to Appearance. */
@@ -134,7 +147,7 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
     case "role":
       return kind === "learn" && isRolePurpose(details.purpose) && !hasRoleAnswer(details);
     case "reason":
-      return kind === "language" && !hasText(details.reason);
+      return kind === "language" && readLanguageAim(details) === null && !goal.planRevealed;
     case "target":
       return kind === "exam" && !hasExamTarget(details);
     case "targetDate":
@@ -173,7 +186,7 @@ function isDateGone(goal: StepGoal): boolean {
 export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   const answered = new Set(getAnsweredQuestions(goal.details));
 
-  return ONBOARDING_QUESTIONS.filter(
+  return ONBOARDING_QUESTION_ORDER[goal.kind].filter(
     (question) =>
       (question === "targetDate" && isDateGone(goal)) ||
       (!answered.has(question) && isQuestionMissing({ goal, question })),
@@ -214,14 +227,20 @@ export function hasOnboardingQuestions(steps: readonly OnboardingStep[]): boolea
   return steps.some((step) => step !== "plan");
 }
 
+/** Every plan is shown once: until the learner presses the reveal's action, setup isn't over. */
+export function isPlanRevealOwed(goal: Pick<Goal, "kind" | "planRevealedAt">): boolean {
+  return goal.kind !== "explain" && goal.planRevealedAt === null;
+}
+
 export function isGoalSetupLeft(
-  goal: Pick<Goal, "details" | "kind" | "replacesGoalId" | "targetDate">,
+  goal: Pick<Goal, "details" | "kind" | "planRevealedAt" | "replacesGoalId" | "targetDate">,
 ): boolean {
   return hasOnboardingQuestions(
     getOnboardingSteps({
       goal: {
         details: isJsonObject(goal.details) ? goal.details : {},
         kind: goal.kind,
+        planRevealed: goal.planRevealedAt !== null,
         replacesGoalId: goal.replacesGoalId,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
       },

@@ -70,6 +70,8 @@ final class LessonPlayerStore {
   private(set) var exampleLines: [String: String] = [:]
   private(set) var fit: LessonFit?
   var isGuest = false
+  /// The learner's active goal, whose clock this visit's first scene and first answer join.
+  var goalID: String?
   var endsAsGuest: Bool { isGuest && fromCatalog }
   /// From a send that failed until every held answer is saved, so a lesson that opens with answers
   /// held and sends them at once never shows it.
@@ -127,6 +129,8 @@ final class LessonPlayerStore {
   /// Each screen's held answers being sent now, so finishing waits for them.
   private var saving: [String: Task<Void, Never>] = [:]
   private var reportedAbandonment = false
+  private var reportedFirstScene = false
+  private var reportedFirstAnswer = false
   @ObservationIgnored let promptAudio = LessonPromptAudio()
   @ObservationIgnored private var works: [String: (round: Int, work: ActivityWork)] = [:]
 
@@ -684,6 +688,17 @@ final class LessonPlayerStore {
 
   /// Once, the first time the learner leaves a started lesson unfinished: closing it or leaving the
   /// app.
+  /// Once per visit, as the lesson's first scene shows.
+  func reportFirstScene() {
+    guard !reportedFirstScene, let goalID, state?.currentStep != nil else {
+      return
+    }
+
+    reportedFirstScene = true
+    UsageAnalytics.track(
+      .onboardingProgressed(.firstSceneVisible(goalID: goalID, lessonID: lessonId), at: .now))
+  }
+
   func reportAbandonment() {
     guard !reportedAbandonment, let state, let event = AnalyticsEvent.abandonment(of: state) else {
       return
@@ -710,6 +725,12 @@ final class LessonPlayerStore {
     activate()
     writeExampleLinesOnce()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
+
+    if !reportedFirstAnswer, let goalID {
+      reportedFirstAnswer = true
+      UsageAnalytics.track(
+        .onboardingProgressed(.firstAnswer(goalID: goalID, lessonID: lessonId), at: .now))
+    }
 
     if step.kind == .hook || (fromCatalog && state.position == 0) {
       UsageAnalytics.track(.hookAnswered(lessonID: state.lessonId))

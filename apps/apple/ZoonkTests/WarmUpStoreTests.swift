@@ -25,6 +25,20 @@ final class WarmUpStoreTests: XCTestCase {
     XCTAssertEqual(store.firstUnguessed(deckID: "deck"), 0)
   }
 
+  /// Warm-Up Shown counts a deck once, whichever wait shows it first: the plan's, then lesson 1's.
+  func testADeckIsShownOncePerSession() async throws {
+    let session = SessionStore.preview(account: .warmUpTestAccount)
+    let store = makeStore(session: session)
+
+    XCTAssertTrue(store.claimShown(deckID: "deck"))
+    XCTAssertFalse(store.claimShown(deckID: "deck"))
+    XCTAssertTrue(store.claimShown(deckID: "other"))
+
+    await session.expire(try XCTUnwrap(session.authenticatedSession))
+
+    XCTAssertTrue(store.claimShown(deckID: "deck"))
+  }
+
   private func makeStore(session: SessionStore) -> WarmUpStore {
     WarmUpStore(api: WarmUpAPIStub(), cache: AppCache(session: session))
   }

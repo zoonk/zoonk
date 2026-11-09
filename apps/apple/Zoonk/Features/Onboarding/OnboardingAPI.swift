@@ -3,6 +3,21 @@ import OpenAPIRuntime
 
 typealias OnboardingDraft = Components.Schemas.OnboardingDraft
 typealias GoalOnboarding = Components.Schemas.Onboarding
+
+extension GoalOnboarding {
+  /// The draft the goal came from, which joins the attempt's events to the goal's.
+  var onboardingID: String? {
+    struct Details: Decodable {
+      let onboardingId: String?
+    }
+
+    return (try? PracticeJSON.recode(goal.details, as: Details.self))?.onboardingId
+  }
+
+  var languageAimView: LanguageAimView? {
+    languageAim.flatMap { try? PracticeJSON.recode($0, as: LanguageAimView.self) }
+  }
+}
 typealias OnboardingAnswer = Components.Schemas.OnboardingAnswerInput
 typealias GoalPlacement = Components.Schemas.Placement
 
@@ -145,12 +160,15 @@ private struct ScheduleWeekInput: Encodable {
   let weekendMinutes: Int?
   let dailyMinutes: Int?
   let fullCourse: Bool?
+  /// A language goal's other aim, answered as picking it would lay the plan out.
+  let aim: String?
 
-  init(week: ScheduleWeek, dailyMinutes: Int?) {
+  init(week: ScheduleWeek, dailyMinutes: Int?, aim: String? = nil) {
     studyDays = week.studyDays
     weekendMinutes = week.weekendMinutes
     self.dailyMinutes = dailyMinutes
     fullCourse = week.fullCourse ? true : nil
+    self.aim = aim
   }
 }
 
@@ -506,6 +524,42 @@ struct OnboardingAPI: Sendable {
     }
   }
 
+  /// The goal's first day as Today will show it; nil while its plan isn't ready to show.
+  func revealToday(goalID: String, token: String) async throws -> PlanRevealRead? {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getPlanRevealToday(
+        path: .init(goalId: goalID), query: .init(timeZone: TimeZone.current.identifier))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try StudyJSON.recode(try response.body.json, as: PlanRevealRead.self)
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound, .conflict:
+      return nil
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  func markPlanRevealed(goalID: String, token: String) async throws {
+    let output = try await clients.perform(token: token) { client in
+      try await client.markPlanRevealed(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .noContent:
+      return
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
   func writeGoal(goalID: String, token: String) async throws -> String {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalGeneration(path: .init(goalId: goalID))
@@ -610,11 +664,11 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  func timeAdvice(goalID: String, week: ScheduleWeek, dailyMinutes: Int, token: String)
-    async throws -> TimeAdvice
-  {
+  func timeAdvice(
+    goalID: String, week: ScheduleWeek, dailyMinutes: Int, aim: String?, token: String
+  ) async throws -> TimeAdvice {
     let input = try PracticeJSON.recode(
-      ScheduleWeekInput(week: week, dailyMinutes: dailyMinutes),
+      ScheduleWeekInput(week: week, dailyMinutes: dailyMinutes, aim: aim),
       as: Components.Schemas.PlanTimeAdviceInput.self)
     let output = try await clients.perform(token: token) { client in
       try await client.getPlanTimeAdvice(path: .init(goalId: goalID), body: .json(input))

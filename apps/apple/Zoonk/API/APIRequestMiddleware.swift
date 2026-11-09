@@ -28,6 +28,28 @@ struct APIRequestMiddleware: ClientMiddleware {
   }
 }
 
+/// Hears a response's `Date`, the server's clock as it answered, as this device's clock minus it.
+struct ServerClockMiddleware: ClientMiddleware {
+  let heard: @Sendable (TimeInterval) -> Void
+
+  func intercept(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String,
+    next:
+      @concurrent @Sendable (HTTPRequest, HTTPBody?, URL) async throws -> (HTTPResponse, HTTPBody?)
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    let (response, responseBody) = try await next(request, body, baseURL)
+
+    if let value = response.headerFields[.date], let serverNow = try? Date(value, strategy: .http) {
+      heard(Date.now.timeIntervalSince(serverNow))
+    }
+
+    return (response, responseBody)
+  }
+}
+
 /// Generated clients omit a nil optional property (apple/swift-openapi-generator#419), so a PATCH
 /// couldn't clear a field. A dotted key (`shape.area`) reaches into a nested object.
 struct ExplicitNullMiddleware: ClientMiddleware {

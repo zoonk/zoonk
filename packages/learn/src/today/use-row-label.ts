@@ -6,11 +6,14 @@ import { type DayStep } from "../session/session-types";
 import { practisesTopics, useBlockDetail } from "../session/use-block-copy";
 import { useIsCatchingUp } from "./today-catch-up";
 
-/** A challenge says what it is, since a learner meets one before they've ever taken one. */
 export function useRowLabel() {
+  return useStepLabel(useIsCatchingUp());
+}
+
+/** A challenge says what it is, since a learner meets one before they've ever taken one. */
+export function useStepLabel(isCatchingUp: (step: DayStep) => boolean) {
   const t = useExtracted();
   const detail = useBlockDetail();
-  const isCatchingUp = useIsCatchingUp();
   const shortList = useShortList();
 
   const part = (block: DayStep): string | null => {

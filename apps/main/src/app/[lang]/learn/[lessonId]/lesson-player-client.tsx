@@ -100,6 +100,7 @@ type LessonPlayerClientProps = {
     "completion" | "completionActions"
   >;
   firstAnswer: string | null;
+  goalId?: string | null;
   learnerId: string | null;
   lesson: PlayableLibraryLesson;
   outline?: boolean;
@@ -114,6 +115,7 @@ type LessonPlayerClientProps = {
 };
 
 function LessonPlayerVisit({
+  goalId: lessonGoalId = null,
   challengeTeam = null,
   endingSlots,
   firstAnswer,
@@ -197,7 +199,12 @@ function LessonPlayerVisit({
   const signUp = useSignUpHref();
 
   const routes = useMemo(
-    () => ({ ...routing, signUp, upgrade: "/subscription" }),
+    () => ({
+      ...routing,
+      seePlan: (planGoalId: string) => `/start/${planGoalId}`,
+      signUp,
+      upgrade: "/subscription",
+    }),
     [routing, signUp],
   );
 
@@ -210,6 +217,7 @@ function LessonPlayerVisit({
       adapters={adapters}
       challengeTeam={challengeTeam}
       firstAnswer={firstAnswer}
+      goalId={lessonGoalId}
       lesson={lesson}
       linkComponent={LearningLink}
       onExit={() => router.push(routes.exit)}

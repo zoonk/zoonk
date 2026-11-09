@@ -114,6 +114,14 @@ class LessonEndScreenshots {
     @Config(qualifiers = TABLET)
     fun tabletGuest() = capture("lessonend-guest-tablet", SIGNED_IN, LessonEnding(guest = true, fit = FIT))
 
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phonePlanReveal() = capture("lessonend-plan-reveal-phone", PLAN_REVEAL, LessonEnding(inSession = true))
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun tabletPlanReveal() = capture("lessonend-plan-reveal-tablet", PLAN_REVEAL, LessonEnding(inSession = true))
+
     private val steps = listOf(checkStep("quiz"), summaryStep("end"))
 
     private fun completed(json: String): LessonPlayerState {
@@ -204,6 +212,12 @@ private val SIGNED_IN =
     COMPLETION.replace(
         """"reached":{"energy":null,"level":null}""",
         """"reached":{"energy":80,"level":{"color":"yellow","level":3}}""",
+    )
+
+private val PLAN_REVEAL =
+    SIGNED_IN.replace(
+        "\"studyBlock\":null",
+        "\"studyBlock\":null,\"planReveal\":{\"goalId\":\"00000000-0000-4000-8000-000000000031\",\"goalTitle\":\"Learn bird songs\",\"planReady\":true}",
     )
 
 private val IN_SESSION =

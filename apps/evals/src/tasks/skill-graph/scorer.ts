@@ -117,16 +117,44 @@ function checkCourses({
   ];
 }
 
+/** The learner's first lesson already teaches the first skill, so the graph starts with it as given. */
+function checkFirstSkill({
+  graph,
+  input,
+}: {
+  graph: SkillGraphOutput;
+  input: SkillGraphCase;
+}): ExpectedCheck[] {
+  const given = input.firstSkill;
+
+  if (!given) {
+    return [];
+  }
+
+  const [first] = graph.skills;
+
+  const kept =
+    first?.key === given.key &&
+    first.name === given.name &&
+    first.level === given.level &&
+    first.prerequisites.length === 0;
+
+  return [{ problem: kept ? null : `The graph doesn't start with FIRST_SKILL as given.` }];
+}
+
 function checkExpected({
   expected,
   graph,
+  input,
 }: {
   expected?: SkillGraphExpected;
   graph: SkillGraphOutput;
+  input: SkillGraphCase;
 }): { problems: string[]; total: number } {
-  const checks = expected
-    ? [...checkReuse({ expected, graph }), ...checkCourses({ expected, graph })]
-    : [];
+  const checks = [
+    ...(expected ? [...checkReuse({ expected, graph }), ...checkCourses({ expected, graph })] : []),
+    ...checkFirstSkill({ graph, input }),
+  ];
 
   return { problems: checks.flatMap((check) => check.problem ?? []), total: checks.length };
 }
@@ -162,7 +190,7 @@ function checkGraph({
     ...(uncovered.length > 0 ? ["uncoveredTopic" as const] : []),
   ]);
 
-  const cases = checkExpected({ expected, graph });
+  const cases = checkExpected({ expected, graph, input });
 
   return {
     judgedOutput: output,

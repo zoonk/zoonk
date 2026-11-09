@@ -110,6 +110,9 @@ export async function startGoalFromPlanLink({
 
   const [goal] = created.goals;
 
+  // The learner goes from the link straight to this plan's page, so no reveal is owed.
+  await prisma.goal.update({ data: { planRevealedAt: new Date() }, where: { id: goal.id } });
+
   await createGoalPlan({
     fromPlanLink: true,
     goalId: goal.id,

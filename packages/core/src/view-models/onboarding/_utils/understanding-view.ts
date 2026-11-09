@@ -4,6 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
 import { type GoalDraft } from "../../../goals/goal-contract";
+import { toLanguageAimView } from "../../../language/aims/language-aims";
 import { DEFAULT_DAILY_MINUTES } from "../../../plans/daily-minutes";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
@@ -17,6 +18,10 @@ export type UnderstandingContext = {
 };
 
 type DetailValue = NonNullable<GoalDraft["details"]>[string];
+
+export function getUnderstoodAim(draft: Pick<GoalDraft, "details" | "kind">) {
+  return draft.kind === "language" ? toLanguageAimView(draft.details ?? {}) : null;
+}
 
 /** The learner's own date, so "this year" and "in March" read from where they are. */
 export function getLearnerToday(timeZone: string): string {
@@ -114,6 +119,7 @@ async function toGoalView({
       title: goal.title,
     },
     examDates: exam?.dates ?? [],
+    languageAim: getUnderstoodAim({ details, kind: goal.kind }),
   };
 }
 

@@ -12,6 +12,13 @@ function examSteps(details: Record<string, unknown>) {
   });
 }
 
+function languageSteps(details: Record<string, unknown>) {
+  return getOnboardingSteps({
+    goal: { details, kind: "language", replacesGoalId: null, targetDate: null },
+    profile: SET_UP_PROFILE,
+  });
+}
+
 describe(getOnboardingSteps, () => {
   it("asks a learn goal what it's for, how much they know and their time", () => {
     const steps = getOnboardingSteps({
@@ -26,8 +33,8 @@ describe(getOnboardingSteps, () => {
 
     expect(steps).toStrictEqual([
       "purpose",
-      "targetDate",
       "level",
+      "targetDate",
       "buddy",
       "placement",
       "schedule",
@@ -69,7 +76,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps.slice(0, 2)).toStrictEqual(["role", "targetDate"]);
+    expect(steps.slice(0, 2)).toStrictEqual(["level", "role"]);
   });
 
   it("asks a career change for the role they want, even when the words gave their current one", () => {
@@ -93,7 +100,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(asks[0]).toBe("role");
+    expect(asks.slice(0, 2)).toStrictEqual(["level", "role"]);
     expect(knows).not.toContain("role");
   });
 
@@ -211,6 +218,18 @@ describe(getOnboardingSteps, () => {
     expect(steps).toStrictEqual(["reason", "targetDate", "placement", "schedule", "plan"]);
   });
 
+  it("asks a language goal why until its words give the level it aims for", () => {
+    expect(languageSteps({ level: "basic", reason: "talk with my partner's family" })).toContain(
+      "reason",
+    );
+
+    expect(languageSteps({ level: "basic", reason: "fluent", targetScore: "fluent" })).toContain(
+      "reason",
+    );
+
+    expect(languageSteps({ level: "basic", targetScore: "B1" })).not.toContain("reason");
+  });
+
   it("keeps skipped and answered questions behind the learner", () => {
     const steps = getOnboardingSteps({
       goal: {
@@ -238,7 +257,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toContain("followUps");
+    expect(steps.slice(0, 4)).toStrictEqual(["purpose", "level", "followUps", "targetDate"]);
   });
 
   it("skips placement for someone starting from nothing", () => {
@@ -301,7 +320,7 @@ describe(getOnboardingSteps, () => {
       profile: NEW_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["targetDate", "level", "buddy", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["level", "targetDate", "buddy", "placement", "schedule", "plan"]);
   });
 
   it("gives a language course its level test, without asking why they learn it", () => {
@@ -315,7 +334,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["targetDate", "level", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["level", "targetDate", "placement", "schedule", "plan"]);
   });
 
   it.each(["exam", "learn", "language"] as const)(
@@ -425,6 +444,7 @@ describe(isGoalSetupLeft, () => {
           purpose: "overview",
         },
         kind: "learn",
+        planRevealedAt: null,
         replacesGoalId: null,
         targetDate: null,
       }),
@@ -434,6 +454,7 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { answered: ["level"], courseStart, level: "basic" },
         kind: "learn",
+        planRevealedAt: null,
         replacesGoalId: null,
         targetDate: null,
       }),
@@ -445,10 +466,27 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { answered: ["level", "targetDate", "placement", "schedule"], courseStart },
         kind: "learn",
+        planRevealedAt: null,
         replacesGoalId: null,
         targetDate: null,
       }),
     ).toBe(false);
+  });
+
+  it("lets a language goal set up before aims go, though its words gave a reason and no level", () => {
+    const setUp = {
+      details: {
+        answered: ["targetDate", "level", "buddy", "placement", "schedule"],
+        level: "basic",
+        reason: "Talk with my partner's family",
+      },
+      kind: "language" as const,
+      replacesGoalId: null,
+      targetDate: null,
+    };
+
+    expect(isGoalSetupLeft({ ...setUp, planRevealedAt: new Date("2026-10-01") })).toBe(false);
+    expect(isGoalSetupLeft({ ...setUp, planRevealedAt: null })).toBe(true);
   });
 
   it("never holds back the next level of a finished course", () => {
@@ -456,6 +494,7 @@ describe(isGoalSetupLeft, () => {
       isGoalSetupLeft({
         details: { courseStart },
         kind: "learn",
+        planRevealedAt: new Date("2026-10-01"),
         replacesGoalId: "finished-goal",
         targetDate: null,
       }),

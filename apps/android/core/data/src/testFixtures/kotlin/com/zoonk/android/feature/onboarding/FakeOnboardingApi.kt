@@ -110,11 +110,15 @@ fun setupView(
     targetLanguage: String? = null,
     examChoices: String = "[]",
     planReady: Boolean = true,
+    firstLesson: String = "null",
+    warmUp: String = "null",
+    planRevealed: Boolean = false,
+    languageAim: String = if (kind == "language") languageAimOf() else "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
         {"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
-         "libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
+         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
@@ -257,6 +261,16 @@ class FakeOnboardingApi : OnboardingApi {
 
     var generationId: (String) -> String? = { null }
     val generationReads = mutableListOf<String>()
+
+    override suspend fun revealToday(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): com.zoonk.api.models.PlanRevealToday = throw ApiException(ApiError.NotFound)
+
+    override suspend fun markPlanRevealed(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {}
 
     override suspend fun goalGenerationRun(
         session: AuthenticatedSession,
@@ -515,3 +529,12 @@ fun adviceOf(
 val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..1440 step 30)
 
 private const val MOST_SUGGESTED = 240L
+
+fun languageAimOf(aim: String? = null): String =
+    """
+    {"aim":${aim?.let { "\"$it\"" } ?: "null"},
+     "choices":[{"aim":"A2","hours":190},{"aim":"B1","hours":375},{"aim":"B2","hours":550},{"aim":"C1","hours":750}],
+     "reasons":[{"reason":"travel","aim":"A2","hours":190},{"reason":"talk","aim":"B1","hours":375},
+       {"reason":"work","aim":"B2","hours":550},{"reason":"fluent","aim":"C1","hours":750},
+       {"reason":"certificate","aim":null,"hours":null},{"reason":"other","aim":"B1","hours":375}]}
+    """.trimIndent()

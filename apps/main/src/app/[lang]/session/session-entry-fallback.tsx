@@ -31,6 +31,7 @@ function HeldStep({ entry }: { entry: DayEntry }) {
 
   return (
     <NextStop
+      goalId={shown.goalId}
       actions={{
         refresh,
         start: () => (entry.next ? taps.next(entry.step) : taps.open(entry.step)),

@@ -40,34 +40,57 @@ function isFollowing(run: GenerationRun): boolean {
   return run.status === "waiting" || run.status === "following";
 }
 
-/** The bar re-renders on its own as it drifts, so the rows don't. */
-function WaitProgress({
-  label,
-  progress,
+/**
+ * The run's progress from 0 to 100, drifting through the running phase. Bars given the same `since`
+ * show the same value, wherever on the screen they are.
+ */
+/**
+ * The bar drifts from when the running stage started, as the run reported it, so a page loaded
+ * partway through goes on from there; `since` (when the screen opened) stands in until it's known.
+ */
+export function useGenerationProgress({
+  kind,
   run,
   since,
 }: {
-  label: string;
-  progress: PhaseProgress<string>;
+  kind: GenerationKind;
   run: GenerationRun;
   since?: number;
-}) {
-  const locale = useAppLocale();
+}): number {
+  const progress = getPhaseProgress({ definition: getGenerationKind(kind), run });
 
-  const value = useAnimatedProgress({
+  return useAnimatedProgress({
     active: isFollowing(run),
     estimatedMs: progress.activeMs,
     progress: progress.progress,
-    since,
+    since: progress.activeSince ?? since,
     target: progress.target,
   });
+}
+
+/** The bar re-renders on its own as it drifts, so the rows don't. */
+function WaitProgress({
+  kind,
+  label,
+  run,
+  since,
+  weights,
+}: {
+  kind: GenerationKind;
+  label: string;
+  run: GenerationRun;
+  since?: number;
+  weights: number[];
+}) {
+  const locale = useAppLocale();
+  const value = useGenerationProgress({ kind, run, since });
 
   return (
     <GenerationTimelineProgress
       aria-label={label}
       locale={locale}
       value={value}
-      weights={progress.phases.map((phase) => phase.seconds)}
+      weights={weights}
     />
   );
 }
@@ -272,7 +295,13 @@ export function GenerationWait({
         {failure ? (
           <GenerationFailureNotice failure={failure} retry={run.retry} />
         ) : (
-          <WaitProgress label={copy.name} progress={progress} run={run} since={since} />
+          <WaitProgress
+            kind={kind}
+            label={copy.name}
+            run={run}
+            since={since}
+            weights={progress.phases.map((phase) => phase.seconds)}
+          />
         )}
       </GenerationTimelineHeader>
 

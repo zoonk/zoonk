@@ -28,6 +28,7 @@ import {
   useLessonPlayer,
   useLessonPlayerConfig,
 } from "../lesson-player-context";
+import { LessonCompletionPlan, SeePlanAction } from "./lesson-completion-plan";
 
 function CompletionReadouts({
   answered,
@@ -119,13 +120,29 @@ function CompletionLinks({ pending }: { pending: boolean }) {
   );
 }
 
+function SavedReadouts({ completion, correctCount, incorrectCount }: LessonCompletionSlotProps) {
+  const { result } = completion;
+  const celebration = result ? getLessonCelebration(result) : null;
+
+  return (
+    <CompletionReadouts
+      answered={correctCount + incorrectCount}
+      brainPower={celebration?.brainPower ?? 0}
+      correct={correctCount}
+      reviewAt={result?.nextReviewAt ?? null}
+      seconds={result?.seconds ?? 0}
+    />
+  );
+}
+
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
-  const { completion, correctCount, incorrectCount, onRetry } = props;
+  const { completion, onRetry } = props;
   const t = useExtracted();
   const { buddy, slots } = useLessonPlayerConfig();
   const { result } = completion;
   const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
+  const planReveal = isSaved ? (result?.planReveal ?? null) : null;
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
 
   if (completion.status === "failed") {
@@ -136,15 +153,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
     <>
       <TaskBody data-slot="lesson-completion">
         <MomentHeader title={isSaved ? title : <MomentSavingTitle />}>
-          {isSaved && (
-            <CompletionReadouts
-              answered={correctCount + incorrectCount}
-              brainPower={celebration?.brainPower ?? 0}
-              correct={correctCount}
-              reviewAt={result?.nextReviewAt ?? null}
-              seconds={result?.seconds ?? 0}
-            />
-          )}
+          {isSaved && <SavedReadouts {...props} />}
         </MomentHeader>
 
         {isSaved && celebration && (
@@ -156,10 +165,15 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           />
         )}
 
+        {planReveal && <LessonCompletionPlan reveal={planReveal} />}
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
 
-      {!slots.completionActions && <CompletionLinks pending={!isSaved} />}
+      {planReveal ? (
+        <SeePlanAction reveal={planReveal} />
+      ) : (
+        !slots.completionActions && <CompletionLinks pending={!isSaved} />
+      )}
     </>
   );
 }

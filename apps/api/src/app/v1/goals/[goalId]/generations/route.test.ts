@@ -1,5 +1,8 @@
+import { goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
+import { rebuildGoalCurriculumWorkflow } from "@/workflows/goals/rebuild-goal-curriculum-workflow";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
 import { describe, expect, it, vi } from "vitest";
@@ -17,6 +20,52 @@ function startRequest(goalId: string) {
 }
 
 describe("POST /v1/goals/{goalId}/generations", () => {
+  it("resumes a healthy saved graph without buying a rebuild", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const skill = await skillFixture();
+
+    await planFixture({
+      goalId: goal.id,
+      graph: { phases: [{ milestone: null, name: "Saved" }], skills: plannedSkills([skill]) },
+    });
+
+    mockSession(user.id);
+
+    const response = await startRequest(goal.id);
+
+    expect(response.status).toBe(202);
+    expect(vi.mocked(start).mock.calls[0]?.[0]).toBe(goalContentWorkflow);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("retries a failed rebuild whose graph was never saved", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      generationRunId: "failed-rebuild",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await planFixture({ buildFailedAt: new Date(), goalId: goal.id });
+    mockSession(user.id);
+
+    await prisma.followUp.create({
+      data: {
+        failedAt: new Date(),
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "rebuildGoalCurriculum",
+        userId: user.id,
+      },
+    });
+
+    const response = await startRequest(goal.id);
+    expect(response.status).toBe(202);
+    expect(vi.mocked(start).mock.calls[0]?.[0]).toBe(rebuildGoalCurriculumWorkflow);
+  });
+
   it("does not replace a newer retry's run with a delayed HTTP receipt", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ generationRunId: "wrun_old", userId: user.id });

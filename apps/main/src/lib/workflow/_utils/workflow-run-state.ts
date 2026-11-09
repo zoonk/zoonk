@@ -7,6 +7,7 @@ import {
 } from "@zoonk/learn/generation/kinds";
 import {
   type GenerationFailure,
+  type GenerationFirstLesson,
   type GenerationRun,
   type GenerationStepState,
   type GenerationStepTimes,
@@ -22,11 +23,13 @@ const MAX_RECONNECT_DELAY_MS = 16_000;
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
 
 export type WorkflowRunState = {
+  ended: boolean;
   /** From the stream's `Date` header as it opened: a replayed event arrives long after its time. */
   clockOffsetMs: number | null;
   /** A new number changes the events URL, so a fresh connection opens. */
   connection: number;
   failure: GenerationFailure | null;
+  firstLesson: GenerationFirstLesson | null;
   joined: string | null;
   lostConnections: number;
   polled: string | null;
@@ -53,7 +56,9 @@ export type WorkflowRunAction =
 export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   clockOffsetMs: null,
   connection: 0,
+  ended: false,
   failure: null,
+  firstLesson: null,
   joined: null,
   lostConnections: 0,
   polled: null,
@@ -67,7 +72,7 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
 };
 
 function isSettled(state: WorkflowRunState): boolean {
-  return state.ready || state.failure !== null;
+  return (state.ready && state.firstLesson?.status !== "writing") || state.failure !== null;
 }
 
 /** A joining run's stream ends as it hands over, so its status says nothing about the wait. */
@@ -93,6 +98,30 @@ function recordStepTime(
   return { ...state.stepTimes, [message.step]: { ...times, [message.status]: message.at } };
 }
 
+function recordFirstLesson(
+  state: WorkflowRunState,
+  message: StepStreamMessage,
+): GenerationFirstLesson | null {
+  if (message.step === "writeFirstLesson" && message.lessonId && message.lessonTitle) {
+    const ready =
+      state.firstLesson?.id === message.lessonId && state.firstLesson.status === "ready";
+
+    return {
+      id: message.lessonId,
+      status: ready ? "ready" : "writing",
+      title: message.lessonTitle,
+    };
+  }
+
+  const known = state.firstLesson;
+
+  if (message.step === "firstLessonReady" && known && known.id === message.lessonId) {
+    return { ...known, status: "ready" };
+  }
+
+  return known;
+}
+
 /** A step keeps its furthest state: a replayed "started" never undoes a "completed". */
 function recordStep(
   state: WorkflowRunState,
@@ -102,6 +131,7 @@ function recordStep(
 
   return {
     ...state,
+    firstLesson: recordFirstLesson(state, message),
     skillName: message.skillName ?? state.skillName,
     stepTimes: recordStepTime(state, message),
     steps: { ...state.steps, [message.step]: status },
@@ -131,7 +161,7 @@ function applyEvent({
   }
 
   if (meaning === "error" || message.status === "error") {
-    return { ...connected, failure: "generation" };
+    return { ...connected, ended: true, failure: "generation" };
   }
 
   const recorded = recordStep(connected, { ...message, status: message.status });
@@ -142,16 +172,22 @@ function applyEvent({
 
 /** A run still running behind a closed stream had its connection cut (a function timeout). */
 function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRunState {
+  if (state.ready) {
+    return { ...state, ended: true, reconnectIn: null };
+  }
+
   if (isSettled(state)) {
-    return state;
+    return status === "completed" || status === "failed" || status === "cancelled"
+      ? { ...state, ended: true }
+      : state;
   }
 
   if (status === "completed") {
-    return { ...state, lostConnections: 0, ready: true };
+    return { ...state, ended: true, lostConnections: 0, ready: true };
   }
 
   if (status === "failed" || status === "cancelled") {
-    return { ...state, failure: "generation", lostConnections: 0 };
+    return { ...state, ended: true, failure: "generation", lostConnections: 0 };
   }
 
   return { ...state, lostConnections: 0, reconnectIn: REOPEN_DELAY_MS };
@@ -202,11 +238,12 @@ export function workflowRunReducer(
         reconnectIn: null,
       };
     case "restart":
-      // The deck is the goal's, so its card stays through Try again.
+      // The deck is the goal's, so its card, or the word it won't come, stays through Try again.
       return {
         ...INITIAL_WORKFLOW_RUN_STATE,
         connection: state.connection + 1,
         replaced: [...state.replaced, ...action.runIds],
+        steps: state.steps.warmUpFailed ? { warmUpFailed: state.steps.warmUpFailed } : {},
         warmUpId: state.warmUpId,
       };
     default:

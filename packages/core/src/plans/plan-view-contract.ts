@@ -3,6 +3,7 @@ import { type BossTiming } from "../checkpoints/_utils/boss-reached";
 import { type ExamChoiceView } from "../exams/choices/exam-choice-contract";
 import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";
+import { type LanguageAimView } from "../language/aims/language-aims";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
@@ -201,6 +202,8 @@ export type PlanView = {
   } | null;
   end: PlanEndView | null;
   goalId: string;
+  /** Language goals only: the level the course goes up to and the aims to change it to. */
+  languageAim: LanguageAimView | null;
   notice: "reading" | "usual" | null;
   ownLevel: OwnLevel | null;
   fitOffer: (PlanOffer & { canApply: boolean }) | null;

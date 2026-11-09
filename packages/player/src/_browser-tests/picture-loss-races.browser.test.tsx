@@ -315,6 +315,7 @@ describe("picture loss during a lesson", () => {
           incorrectCount: 0,
           isFirstCompletion: true,
           nextReviewAt: null,
+          planReveal: null,
           reached: NOTHING_REACHED,
           seconds: 60,
           studyBlock: null,

@@ -38,6 +38,18 @@ function paidByGateway(canonicalSlug: string) {
   });
 }
 
+function terra(routing: Record<string, unknown>) {
+  return {
+    ...createStep({
+      routing: {
+        ...routing,
+        modelAttempts: [{ canonicalSlug: "openai/gpt-6.1-terra", success: true }],
+      },
+    }),
+    model: { modelId: "openai/gpt-6.1-terra", provider: "gateway" },
+  };
+}
+
 function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
   return buildTaskProvenance({
     generatedAt: "2026-09-26T12:00:00.000Z",
@@ -49,6 +61,17 @@ function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
 }
 
 describe(buildTaskProvenance, () => {
+  it("records and prices a call the gateway served fast at the model's fast price", () => {
+    const fast = buildWithSteps([terra({ speed: "fast" })]);
+    const standard = buildWithSteps([terra({})]);
+
+    expect(fast.speed).toBe("fast");
+    expect(standard.speed).toBeUndefined();
+    // Terra: $0.000035 a call of this size; fast: twice that.
+    expect(fast.costUsd).toBeCloseTo(0.00007, 10);
+    expect(standard.costUsd).toBeCloseTo(0.000035, 10);
+  });
+
   it("prices each step at its served model and tier while keeping aggregate usage", () => {
     const stepUsage: LanguageModelUsage = {
       inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 0, noCacheTokens: 1000 },

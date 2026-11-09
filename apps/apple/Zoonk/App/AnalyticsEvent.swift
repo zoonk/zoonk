@@ -27,6 +27,31 @@ enum AnalyticsEvent: Equatable {
     case planWait, placementWait, lessonWait
   }
 
+  /// Main's `Onboarding Progressed` stages a client sees; the server sends the rest.
+  enum OnboardingStage: Equatable {
+    /// The goal's text was sent and the reply named its draft.
+    case attemptLinked(attemptID: String, onboardingID: String)
+    /// `question` is the core step, visible on screen.
+    case questionShown(goalID: String, onboardingID: String?, question: String)
+    /// The first time this visit heard the goal's run report its deck.
+    case deckReceived(goalID: String, onboardingID: String?, deckID: String)
+    case firstSceneVisible(goalID: String, lessonID: String)
+    case firstAnswer(goalID: String, lessonID: String)
+  }
+
+  /// Main's `Generation Waited`: one stretch of a wait while it was on screen.
+  struct WaitSegment: Equatable {
+    /// `curriculum` for onboarding's waits, `lesson` for a lesson's.
+    let contentKind: String
+    let surface: String
+    let startedAt: Date
+    let endedAt: Date
+    var goalID: String?
+    /// Before the goal exists, the typed goal's attempt or its draft.
+    var attemptID: String?
+    var onboardingID: String?
+  }
+
   /// A reply gap runs from the learner's microphone going quiet to the next character transcript
   /// arriving: a proxy for the wait the learner heard.
   struct CallEnded: Equatable {
@@ -46,11 +71,13 @@ enum AnalyticsEvent: Equatable {
   case activityUsed(lessonID: String, template: String)
   case callEnded(CallEnded)
   case ceremonyShown(Ceremony)
-  case goalTyped(hasAttachment: Bool)
+  case generationWaited(WaitSegment)
+  case goalTyped(hasAttachment: Bool, attemptID: String, submittedAt: Date)
   case homeViewed
   case hookAnswered(lessonID: String)
   case insightShown(Insight)
   case logbookViewed
+  case onboardingProgressed(OnboardingStage, at: Date)
   case planLinkOpened(planID: String)
   case publicPageViewed(contentID: String, page: PublicPage)
   case subscriptionCheckoutStarted(BillingPeriod)
@@ -58,7 +85,8 @@ enum AnalyticsEvent: Equatable {
   case todayViewed
   /// `position` counts from 1, the deck's first card.
   case warmUpAnswered(surface: WarmUpSurface, cardID: String, position: Int, correct: Bool)
-  case warmUpShown(surface: WarmUpSurface, cardCount: Int)
+  case warmUpShown(
+    surface: WarmUpSurface, cardCount: Int, deckID: String, goalID: String?, at: Date)
 
   var name: String {
     switch self {
@@ -66,11 +94,13 @@ enum AnalyticsEvent: Equatable {
     case .activityUsed: "Activity Used"
     case .callEnded: "Call Ended"
     case .ceremonyShown: "Ceremony Shown"
+    case .generationWaited: "Generation Waited"
     case .goalTyped: "Goal Typed"
     case .homeViewed: "Home Viewed"
     case .hookAnswered: "Hook Answered"
     case .insightShown: "Insight Shown"
     case .logbookViewed: "Logbook Viewed"
+    case .onboardingProgressed: "Onboarding Progressed"
     case .planLinkOpened: "Plan Link Opened"
     case .publicPageViewed: "Public Page Viewed"
     case .subscriptionCheckoutStarted: "Subscription Checkout Started"
@@ -100,8 +130,21 @@ enum AnalyticsEvent: Equatable {
       ]
     case .ceremonyShown(let ceremony):
       ["ceremony": ceremony.rawValue]
-    case .goalTyped(let hasAttachment):
-      ["has_attachment": hasAttachment]
+    case .generationWaited(let wait):
+      [
+        "attempt_id": orNull(wait.attemptID), "content_kind": wait.contentKind,
+        "ended_at": epochMilliseconds(wait.endedAt), "goal_id": orNull(wait.goalID),
+        "milliseconds": epochMilliseconds(wait.endedAt) - epochMilliseconds(wait.startedAt),
+        "onboarding_id": orNull(wait.onboardingID),
+        "started_at": epochMilliseconds(wait.startedAt), "surface": wait.surface,
+      ]
+    case .goalTyped(let hasAttachment, let attemptID, let submittedAt):
+      [
+        "attempt_id": attemptID, "has_attachment": hasAttachment,
+        "submitted_at": epochMilliseconds(submittedAt),
+      ]
+    case .onboardingProgressed(let stage, let at):
+      stage.properties.merging(["at": epochMilliseconds(at)]) { first, _ in first }
     case .hookAnswered(let lessonID):
       ["lesson_id": lessonID]
     case .insightShown(let insight):
@@ -114,8 +157,11 @@ enum AnalyticsEvent: Equatable {
       ["billingPeriod": billingPeriod.rawValue, "plan": "plus"]
     case .warmUpAnswered(let surface, let cardID, let position, let correct):
       ["card_id": cardID, "correct": correct, "position": position, "surface": surface.rawValue]
-    case .warmUpShown(let surface, let cardCount):
-      ["card_count": cardCount, "surface": surface.rawValue]
+    case .warmUpShown(let surface, let cardCount, let deckID, let goalID, let at):
+      [
+        "at": epochMilliseconds(at), "card_count": cardCount, "deck_id": deckID,
+        "goal_id": orNull(goalID), "surface": surface.rawValue,
+      ]
     case .homeViewed, .logbookViewed, .subscriptionGateShown, .todayViewed:
       [:]
     }
@@ -150,6 +196,37 @@ enum AnalyticsEvent: Equatable {
 
     return verdicts.firstIndex(of: true) ?? verdicts.count
   }
+}
+
+extension AnalyticsEvent.OnboardingStage {
+  fileprivate var properties: [String: Any] {
+    switch self {
+    case .attemptLinked(let attemptID, let onboardingID):
+      [
+        "attempt_id": attemptID, "goal_id": NSNull(), "onboarding_id": onboardingID,
+        "stage": "attempt_linked",
+      ]
+    case .questionShown(let goalID, let onboardingID, let question):
+      [
+        "goal_id": goalID, "onboarding_id": orNull(onboardingID), "question": question,
+        "stage": "question_shown",
+      ]
+    case .deckReceived(let goalID, let onboardingID, let deckID):
+      [
+        "deck_id": deckID, "goal_id": goalID, "onboarding_id": orNull(onboardingID),
+        "stage": "deck_received",
+      ]
+    case .firstSceneVisible(let goalID, let lessonID):
+      ["goal_id": goalID, "lesson_id": lessonID, "stage": "first_scene_visible"]
+    case .firstAnswer(let goalID, let lessonID):
+      ["goal_id": goalID, "lesson_id": lessonID, "stage": "first_answer"]
+    }
+  }
+}
+
+/// The epoch milliseconds main's events carry their times in.
+private func epochMilliseconds(_ date: Date) -> Int {
+  Int((date.timeIntervalSince1970 * 1000).rounded())
 }
 
 extension AnalyticsEvent.BillingPeriod {

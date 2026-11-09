@@ -168,6 +168,7 @@ model Lesson {
   steps             Step[]
   skills            LessonSkill[]
   planItems         PlanItem[]
+  openingGoals      Goal[]
   studyBlocks       StudySessionBlock[]
   words             LessonWord[]
   sentences         LessonSentence[]

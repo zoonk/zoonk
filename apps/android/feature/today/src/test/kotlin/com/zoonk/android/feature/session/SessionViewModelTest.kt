@@ -50,7 +50,6 @@ class SessionViewModelTest {
         return SessionViewModel(
             StudyOpener(api, api::writeLesson, cache, { "UTC" }),
             StudySessionStore(api, cache) { "UTC" },
-            { _, _ -> },
             cache,
             readiness = readiness,
             generations = { error("Not used") },

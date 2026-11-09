@@ -69,13 +69,24 @@ function describeWeekdays(operation: Extract<PlanOperation, { kind: "setWeekdayM
     : `${days}: ${operation.minutes} minutes`;
 }
 
-type ChoiceOperation = Extract<PlanOperation, { kind: "setBaseChoices" | "setFullCourse" }>;
+type ChoiceOperation = Extract<
+  PlanOperation,
+  { kind: "setAim" | "setBaseChoices" | "setFullCourse" }
+>;
 
 function isChoiceOperation(operation: PlanOperation): operation is ChoiceOperation {
-  return operation.kind === "setBaseChoices" || operation.kind === "setFullCourse";
+  return (
+    operation.kind === "setAim" ||
+    operation.kind === "setBaseChoices" ||
+    operation.kind === "setFullCourse"
+  );
 }
 
 function describeChoice(operation: ChoiceOperation): string {
+  if (operation.kind === "setAim") {
+    return `the course goes up to ${operation.aim}`;
+  }
+
   if (operation.kind === "setBaseChoices") {
     return "some prerequisites are studied another way";
   }

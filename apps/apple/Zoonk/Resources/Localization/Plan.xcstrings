@@ -18113,6 +18113,65 @@
         }
       }
     },
+    "How far your course goes, which sets how long your plan is." : {
+      "comment" : "Under the levels a language course can aim for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kursziel bestimmt, wie lange dein Plan dauert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta dónde llega tu curso, lo que define cuánto dura tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le niveau visé par ton cours détermine la durée de ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il livello a cui arriva il tuo corso determina la durata del piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コースで目指すレベルによって、学習計画の期間が決まります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코스에서 어디까지 배울지에 따라 계획 기간이 정해져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docelowy poziom kursu określa czas trwania planu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até onde seu curso vai, o que define a duração do seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursunun hedef seviyesi, planının süresini belirler."
+          }
+        }
+      }
+    },
     "How is it going?" : {
       "comment" : "Section of the lessons' steering",
       "localizations" : {
@@ -33449,6 +33508,65 @@
         }
       }
     },
+    "Your aim" : {
+      "comment" : "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein angestrebtes Level"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu meta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau visé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello a cui punti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目指すレベル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 레벨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój docelowy poziom"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nível que você quer alcançar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedeflediğin seviye"
+          }
+        }
+      }
+    },
     "Your answers choose for you" : {
       "comment" : "What the focus test does",
       "localizations" : {
@@ -33563,6 +33681,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbetin hazır olur olmaz açılır."
+          }
+        }
+      }
+    },
+    "Your course now goes up to %@." : {
+      "comment" : "Says a language course's aim changed; the argument is a level like B1",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kurs reicht jetzt bis %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu curso ahora llega hasta %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton cours va maintenant jusqu’au niveau %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ora il tuo corso arriva fino a %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コースで目指すレベルが%@になりました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이제 코스에서 %@까지 배워요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój kurs obejmuje teraz materiał do poziomu %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu curso agora vai até %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursunun hedef seviyesi artık %@."
           }
         }
       }
