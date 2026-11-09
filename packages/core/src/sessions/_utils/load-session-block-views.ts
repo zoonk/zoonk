@@ -37,7 +37,11 @@ export async function loadSessionBlockViews({
             ...new Set(session.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),
           ],
           goalId: session.goalId,
-          known: { source: plan === undefined ? readSavedPlan(userId, session.goalId) : plan },
+          known: {
+            blueprint,
+            goal: session.goal,
+            source: plan === undefined ? readSavedPlan(userId, session.goalId) : plan,
+          },
           now,
           timeZone,
           userId,

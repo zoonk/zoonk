@@ -58,7 +58,7 @@ export async function loadUnstartedDayView({
     loadBlockedTestOutChapters({
       chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],
       goalId: goal.id,
-      known: { source: readSavedPlan(userId, goal.id) },
+      known: { blueprint, goal, source: readSavedPlan(userId, goal.id) },
       now,
       timeZone,
       userId,
