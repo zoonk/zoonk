@@ -1,13 +1,17 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 
 /**
  * The app draws charts and timelines from data, so the numbers always match the text. The step
  * contract and stored items share this schema, so writers, checks and the player read one shape.
  */
-const MAX_LABEL_LENGTH = 40;
-const MAX_TITLE_LENGTH = 120;
-const MAX_DETAIL_LENGTH = 240;
-const MAX_UNIT_LENGTH = 12;
+const LABEL_TARGET = 40;
+const TITLE_TARGET = 120;
+const DETAIL_TARGET = 240;
+export const CHART_UNIT_TARGET = 12;
+
+const label = aimForCharacters(z.string(), LABEL_TARGET);
+const title = aimForCharacters(z.string(), TITLE_TARGET);
 const MIN_CATEGORIES = 2;
 const MAX_CATEGORIES = 12;
 const MAX_SERIES = 3;
@@ -19,36 +23,36 @@ const MAX_EVENTS = 8;
 const chartVisualSchema = z.object({
   kind: z.literal("chart"),
   chart: z.enum(["bar", "line"]),
-  title: z.string().max(MAX_TITLE_LENGTH),
-  categoryLabel: z.string().max(MAX_LABEL_LENGTH),
-  valueLabel: z.string().max(MAX_LABEL_LENGTH),
+  title,
+  categoryLabel: label,
+  valueLabel: label,
   /** Null for plain counts. */
-  unit: z.string().max(MAX_UNIT_LENGTH).nullable(),
+  unit: aimForCharacters(z.string(), CHART_UNIT_TARGET).nullable(),
   /** For a screen about a cropped axis; null lets the app choose (bars start at zero). */
   axisStart: z.number().nullable(),
-  categories: z.array(z.string().max(MAX_LABEL_LENGTH)).min(MIN_CATEGORIES).max(MAX_CATEGORIES),
+  categories: z.array(label).min(MIN_CATEGORIES).max(MAX_CATEGORIES),
   series: z
     .array(
       z.object({
-        name: z.string().max(MAX_LABEL_LENGTH),
+        name: label,
         values: z.array(z.number()).min(MIN_CATEGORIES).max(MAX_CATEGORIES),
       }),
     )
     .min(1)
     .max(MAX_SERIES),
   /** Null for a made-up example. */
-  source: z.string().max(MAX_TITLE_LENGTH).nullable(),
+  source: title.nullable(),
 });
 
 const timelineVisualSchema = z.object({
   kind: z.literal("timeline"),
-  title: z.string().max(MAX_TITLE_LENGTH),
+  title,
   events: z
     .array(
       z.object({
-        date: z.string().max(MAX_LABEL_LENGTH),
-        label: z.string().max(MAX_TITLE_LENGTH),
-        detail: z.string().max(MAX_DETAIL_LENGTH).nullable(),
+        date: label,
+        label: title,
+        detail: aimForCharacters(z.string(), DETAIL_TARGET).nullable(),
       }),
     )
     .min(MIN_EVENTS)

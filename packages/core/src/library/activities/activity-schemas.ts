@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import {
   choiceOptionSchema,
@@ -9,23 +10,23 @@ import {
   promptSchema,
 } from "../steps/contract/content-schemas";
 
-const EXPRESSION_MAX_LENGTH = 300;
-const CODE_MAX_LENGTH = 2000;
-const UNIT_MAX_LENGTH = 16;
-const SLUG_MAX_LENGTH = 60;
+const EXPRESSION_TARGET = 300;
+const CODE_TARGET = 2000;
+const UNIT_TARGET = 16;
+const SLUG_TARGET = 60;
 const MAX_CHECK_INPUTS = 6;
 
-export const expressionSchema = z.string().min(1).max(EXPRESSION_MAX_LENGTH);
+export const expressionSchema = aimForCharacters(z.string().min(1), EXPRESSION_TARGET);
 
-export const identifierSchema = z.string().regex(/^[A-Z_a-z]\w{0,31}$/u);
+export const identifierSchema = z.string().regex(/^[A-Z_a-z]\w*$/u);
 
-export const unitSchema = z.string().min(1).max(UNIT_MAX_LENGTH);
-export const codeSchema = z.string().min(1).max(CODE_MAX_LENGTH);
+export const unitSchema = aimForCharacters(z.string().min(1), UNIT_TARGET);
+export const codeSchema = aimForCharacters(z.string().min(1), CODE_TARGET);
 
-export const slugSchema = z
-  .string()
-  .max(SLUG_MAX_LENGTH)
-  .regex(/^[\da-z]+(?:-[\da-z]+)*$/u);
+export const slugSchema = aimForCharacters(
+  z.string().regex(/^[\da-z]+(?:-[\da-z]+)*$/u),
+  SLUG_TARGET,
+);
 
 export const variableSchema = z
   .object({

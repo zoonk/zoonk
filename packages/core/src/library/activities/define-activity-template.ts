@@ -15,7 +15,6 @@ export type ActivityIssueCode =
   | "formulaFails"
   | "inconsistentFields"
   | "invalidSchema"
-  | "labelTooLong"
   | "missingCheck"
   | "missingDataSource"
   | "missingInteraction"
