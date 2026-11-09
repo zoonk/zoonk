@@ -28,7 +28,11 @@ fun DayView.queue(nextPosition: Long): TodayQueue {
     )
 }
 
-fun DayView.minutesLeft(): Long = steps.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }
+internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
+    (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
+
+internal val DayView.heldMinutes: Double
+    get() = if (lessonsComing || lessonsToPrepare) minutesAfter(steps) else 0.0
 
 fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null && !studiedToday && !started
 

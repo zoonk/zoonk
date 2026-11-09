@@ -69,6 +69,13 @@ class FormattersTest {
         assertEquals("45 min", formatMinutes(45, en))
     }
 
+    @Test fun fractionalMinutesRoundOnlyForDisplay() {
+        assertEquals(formatMinutes(240, pt), formatMinutes(240.4, pt))
+        assertEquals(formatMinutes(241, pt), formatMinutes(240.5, pt))
+        assertEquals(formatMinutes(1, en), formatMinutes(0.5, en))
+        assertEquals(formatMinutes(0, en), formatMinutes(0.25, en))
+    }
+
     @Test
     fun spanishWritesNumbersTheMexicanWay() {
         assertEquals("1,234.5", formatNumber(1_234.5, formattingLocale("es")))

@@ -21,6 +21,7 @@ import java.time.LocalTime
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 /*
@@ -150,6 +151,11 @@ fun formatMinutes(
     minutes: Int,
     locale: Locale,
 ): String = formatDuration(minutes * SECONDS_PER_MINUTE, locale)
+
+fun formatMinutes(
+    minutes: Double,
+    locale: Locale,
+): String = formatMinutes(minutes.roundToInt(), locale)
 
 /** Pass the device's clock setting, `android.text.format.DateFormat.is24HourFormat`. */
 fun formatTimeOfDay(
