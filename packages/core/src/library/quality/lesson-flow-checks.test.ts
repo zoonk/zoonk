@@ -33,20 +33,11 @@ function flowCodes(
     "newTerms",
     "plannedVisual",
     "repeatedVisual",
-    "screenLength",
   ]);
 
   return checkWrittenLesson({ language: "en", lesson, level: "beginner", spec, ...options })
     .problems.filter((problem) => flow.has(problem.code))
     .map((problem) => [problem.screen, problem.code]);
-}
-
-function lengths(lesson: WrittenLesson) {
-  return flowCodes(lesson).filter(([, code]) => code === "screenLength");
-}
-
-function workedStep(length: number) {
-  return { math: null, text: "s".repeat(length) };
 }
 
 function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
@@ -168,141 +159,6 @@ describe("checkWrittenLesson's flow checks", () => {
     ]);
 
     expect(flowCodes(withScreens({ 1: reais, 4: euros }))).not.toContainEqual([4, "moneyFormat"]);
-  });
-
-  it("flags any screen past a tweet's 250 characters at every level, its title included, tables aside", () => {
-    const fits = explanation(`${"a".repeat(241)}.`);
-    const over = explanation(`${"a".repeat(242)}.`);
-    const withTable = explanation(`${"a".repeat(200)}.\n\n${TABLE}`);
-    const japanese = explanation(`${"水".repeat(125)}。`);
-
-    expect(flowCodes(withScreens({ 4: fits }))).toStrictEqual([]);
-    expect(flowCodes(withScreens({ 4: over }))).toStrictEqual([[4, "screenLength"]]);
-
-    expect(
-      flowCodes(withScreens({ 4: over }), temperatureSpec(), { level: "advanced" }),
-    ).toStrictEqual([[4, "screenLength"]]);
-
-    expect(flowCodes(withScreens({ 4: withTable }))).toStrictEqual([]);
-    expect(flowCodes(withScreens({ 4: japanese }))).toStrictEqual([[4, "screenLength"]]);
-  });
-
-  it("measures each option and template text against its own limit, a Japanese character counting twice", () => {
-    const { screens } = writtenTemperatureLesson();
-    const activity = screens[5];
-    const check = screens[6];
-
-    if (activity?.kind !== "activity" || check?.kind !== "check") {
-      throw new Error("Screens 6 and 7 are an activity and a check.");
-    }
-
-    const withOption = (text: string) => ({
-      ...check,
-      options: check.options.map((option, index) => (index === 1 ? { ...option, text } : option)),
-    });
-
-    const content = JSON.parse(activity.content) as { fields: object };
-
-    const withLabel = (label: string) =>
-      JSON.stringify({ ...content, fields: { ...content.fields, label } });
-
-    expect(
-      lengths(
-        withScreens({
-          5: { ...activity, content: withLabel("温度".repeat(10)) },
-          6: withOption("a".repeat(130)),
-        }),
-      ),
-    ).toStrictEqual([]);
-
-    expect(
-      lengths(
-        withScreens({
-          5: { ...activity, content: withLabel("温度".repeat(11)) },
-          6: withOption("水".repeat(81)),
-        }),
-      ),
-    ).toStrictEqual([
-      [5, "screenLength"],
-      [6, "screenLength"],
-    ]);
-  });
-
-  it("counts a worked example tap by tap: the problem with step 1, each later step, the last step with the result", () => {
-    const { screens } = writtenTemperatureLesson();
-    const worked = screens[2];
-
-    if (worked?.kind !== "workedExample") {
-      throw new Error("Screen 3 is a worked example.");
-    }
-
-    const fits = {
-      ...worked,
-      problem: "p",
-      result: "r",
-      steps: [workedStep(200), workedStep(240), workedStep(200)],
-    };
-
-    const over = {
-      ...worked,
-      problem: "p".repeat(150),
-      result: "r".repeat(120),
-      steps: [workedStep(120), workedStep(260), workedStep(150)],
-    };
-
-    expect(lengths(withScreens({ 2: fits }))).toStrictEqual([]);
-
-    expect(
-      checkWrittenLesson({
-        language: "en",
-        lesson: withScreens({ 2: over }),
-        level: "beginner",
-        spec: temperatureSpec(),
-      })
-        .problems.filter((problem) => problem.code === "screenLength")
-        .map((problem) => problem.problem.split(" reads as")[0]),
-    ).toStrictEqual(["Its problem with step 1", "Its step 2", "Its step 3 and result"]);
-  });
-
-  it("counts a check's context with its question", () => {
-    const { screens } = writtenTemperatureLesson();
-    const check = screens[3];
-
-    if (check?.kind !== "mathCheck") {
-      throw new Error("Screen 4 is a calculation.");
-    }
-
-    const longCheck = { ...check, context: "c".repeat(200), question: "d".repeat(60) };
-
-    expect(lengths(withScreens({ 3: longCheck }))).toStrictEqual([[3, "screenLength"]]);
-  });
-
-  it("measures each later moment too: a guess's reveal, each reason and an activity's prompt with its question", () => {
-    const { screens } = writtenTemperatureLesson();
-    const activity = screens[5];
-    const check = screens[6];
-
-    if (activity?.kind !== "activity" || check?.kind !== "check") {
-      throw new Error("Screens 6 and 7 are an activity and a check.");
-    }
-
-    const revealing = { ...guess("Where does the ice form first?", ["On top", "At the bottom"]) };
-    const longReveal = { ...revealing, reveal: "r".repeat(260) };
-    const content: unknown = JSON.parse(activity.content);
-    const japanesePrompt = JSON.stringify({ ...(content as object), prompt: "水".repeat(130) });
-
-    const longReason = {
-      ...check,
-      options: check.options.map((option, index) =>
-        index === 0 ? { ...option, reason: "w".repeat(260) } : option,
-      ),
-    };
-
-    const flagged = lengths(
-      withScreens({ 1: longReveal, 5: { ...activity, content: japanesePrompt }, 6: longReason }),
-    ).map(([screen]) => screen);
-
-    expect(new Set(flagged)).toStrictEqual(new Set([1, 5, 6]));
   });
 
   it("asks for the visual the plan names and never the same table twice in a row", () => {

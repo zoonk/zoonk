@@ -16,7 +16,7 @@ import {
 import fixPrompt from "./lesson-fix.prompt.md";
 import { normalizeLessonMap } from "./lesson-map";
 import { WRITER_MODELS } from "./lesson-writer";
-import { getScreenCharacterLimit } from "./screen-length";
+import { getScreenCharacterTarget } from "./screen-length";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import {
   type WrittenLesson,
@@ -104,7 +104,7 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
   const rules = selectPromptVariants({
     template: fixPrompt,
     variants: { novice, shortAnswers: Boolean(params.shortAnswers) },
-  }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterLimit(params.language)));
+  }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterTarget(params.language)));
 
   const systemPrompt = `${rules}\n\n${fixOutput.outputRules}`;
 

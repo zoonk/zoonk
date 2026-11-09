@@ -20,7 +20,7 @@ import {
 } from "./format-lesson-plan";
 import { normalizeLessonMap } from "./lesson-map";
 import rulesTemplate from "./lesson-writer.prompt.md";
-import { getScreenCharacterLimit } from "./screen-length";
+import { getScreenCharacterTarget } from "./screen-length";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
 
@@ -84,7 +84,7 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
 
   return rules.replaceAll(
     "{{SCREEN_CHARACTERS}}",
-    String(getScreenCharacterLimit(params.language)),
+    String(getScreenCharacterTarget(params.language)),
   );
 }
 

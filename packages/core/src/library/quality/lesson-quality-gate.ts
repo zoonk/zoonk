@@ -43,7 +43,6 @@ const ADVISORY_CODES = new Set<LessonCheckProblem["code"]>([
   "repeatedExample",
   "repeatedQuestion",
   "repeatedVisual",
-  "screenLength",
   "termOrder",
 ]);
 
