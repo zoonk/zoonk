@@ -10,6 +10,7 @@ import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
 import { previewTodayBlocks } from "../sessions/_utils/read-study-day";
+import { type StudySessionRow } from "../sessions/_utils/study-session-access";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
@@ -90,6 +91,17 @@ function getOpenBlockId({
   }
 
   return block?.status === "completed" ? block.id : null;
+}
+
+function getSavedChallengeBlock({
+  planItemId,
+  session,
+}: {
+  planItemId: string;
+  session: StudySessionRow | null;
+}): ChallengeBlock | null {
+  const block = session?.blocks.find((row) => readBlockPayload(row).planItemId === planItemId);
+  return block && session ? { ...block, session } : null;
 }
 
 function getChallengePassMark({
@@ -178,7 +190,7 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
         }).get(item.id)
       : null;
 
-  const todayBlock = block?.session.id === savedDay?.id ? block : null;
+  const todayBlock = getSavedChallengeBlock({ planItemId: item.id, session: savedDay });
 
   const offered =
     !savedDay &&
@@ -197,16 +209,14 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
       : await readTodayBlockStatus({ isMock: item.kind === "mock", todayBlock }),
   });
 
-  const heldBlock = savedDay
-    ? savedDay.blocks.find((row) => row.id === todayBlock?.id)
-    : previewBlocks.find((row) => row.payload.planItemId === item.id);
+  const heldBlock = todayBlock ?? previewBlocks.find((row) => row.payload.planItemId === item.id);
 
   return {
     ...getWaitingTiming({ challenge, due, status, timing }),
     lastResult: results.get(item.id) ?? null,
     plannedBlock: offered ? heldBlock : undefined,
     plusRequired,
-    previewBlock: offered ? null : block,
+    previewBlock: offered ? null : (todayBlock ?? block),
     todayBlock,
     waitReason: heldBlock ? getStoredBlockWait({ block: heldBlock, blocks: todayBlocks }) : null,
   };

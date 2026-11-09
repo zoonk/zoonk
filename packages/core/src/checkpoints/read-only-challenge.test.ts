@@ -257,9 +257,14 @@ describe("a challenge intro is a read", () => {
     await expect(readIntro(boss.id)).resolves.toMatchObject({ minutes: 8, questions: 5 });
   });
 
-  it.each([0, 45])(
-    "keeps Today's carried challenge after midnight with %i minutes today",
-    async (minutes) => {
+  it.each([
+    { minutes: 0, prepared: false },
+    { minutes: 45, prepared: false },
+    { minutes: 0, prepared: true },
+    { minutes: 45, prepared: true },
+  ])(
+    "keeps Today's carried challenge after midnight with $minutes minutes and today's day prepared: $prepared",
+    async ({ minutes, prepared }) => {
       const { boss, goal, plan, user } = await dueBossFixture((skillIds) => ({
         kind: "text",
         minutes: 15,
@@ -282,6 +287,24 @@ describe("a challenge intro is a read", () => {
       }
 
       vi.setSystemTime(new Date("2026-10-01T00:05:00Z"));
+
+      if (prepared) {
+        const session = await studySessionFixture({
+          goalId: goal.id,
+          localDate: new Date("2026-10-01"),
+          userId: user.id,
+        });
+
+        const original = await prisma.studySessionBlock.findUniqueOrThrow({
+          where: { id: opened.destination.blockId },
+        });
+
+        await studySessionBlockFixture({
+          kind: "checkpoint",
+          payload: readBlockPayload(original),
+          sessionId: session.id,
+        });
+      }
 
       const [today, view, screen] = await Promise.all([
         readStudyDay({ goal, now: new Date(), timeZone: "UTC", userId: user.id }),
