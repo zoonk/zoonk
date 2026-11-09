@@ -4,7 +4,7 @@ import { createMistakeLearner } from "./mistake-drill-days";
 import { openAs } from "./study-day";
 
 test.describe("Mistakes notebook", () => {
-  test("practice counts toward today, stopped early too, and the notebook shows it on the way back", async ({
+  test("practice counts toward today, stopped early too, the notebook shows it on the way back, and the next run takes the rest", async ({
     browser,
   }) => {
     const { user } = await createMistakeLearner({ causes: ["trap", "guess"] });
@@ -49,6 +49,9 @@ test.describe("Mistakes notebook", () => {
     });
 
     await expect(page.getByText("1 ready to practice")).toBeVisible();
+
+    await page.getByRole("link", { name: /^Practice mistakes/u }).click();
+    await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();
 
     await page.context().close();
   });
