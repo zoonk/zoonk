@@ -235,7 +235,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           problem:
             'The reason for "1" ("That\'s not right.") is too vague: say that 1 marks the starting −6 °C, before the rise.',
           screen: 8,
-          source: "check" as const,
+          source: "review" as const,
         },
       ],
     ),
@@ -261,7 +261,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           problem:
             'Uses "grandezas inversamente proporcionais", "constante de proporcionalidade" and notation before explaining them, right after the scene at the gráfica. Fix: say it in everyday words with the laundromat: for the same laundry, more dryers means less time (inverse); with the same dryers, more laundry means more time (direct). Introduce one term at a time and no notation.',
           screen: 1,
-          source: "check" as const,
+          source: "review" as const,
         },
       ],
     ),
