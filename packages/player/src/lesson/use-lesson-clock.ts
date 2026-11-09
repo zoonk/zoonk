@@ -42,7 +42,7 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
           if (
             outcome?.status !== "ignored" ||
             sent.state !== "running" ||
-            clockRef.current?.transition.clockId !== sent.clockId
+            clockRef.current?.transition !== sent
           ) {
             return;
           }

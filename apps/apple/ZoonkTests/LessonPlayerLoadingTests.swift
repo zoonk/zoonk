@@ -75,6 +75,32 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused"])
   }
 
+  func testIgnoredRunningDoesNotRestartAfterLeavingAgain() async throws {
+    let first = UUID().uuidString
+    let second = UUID().uuidString
+    let transport = OpeningStartTransport(
+      holds: false, clockIds: [first, second], clockStatus: "ignored", holdsRunningClock: true)
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    await store.setVisible(false)?.value
+    let running = store.setVisible(true)
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.clocks.count < 2, Date.now < deadline { await Task.yield() }
+    let sent = await transport.clocks.count
+    XCTAssertEqual(sent, 2)
+    await store.setVisible(false)?.value
+    await transport.releaseRunningClock()
+    await running?.value
+
+    let starts = await transport.count
+    XCTAssertEqual(starts, 1)
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.clockId), [first, first, first])
+    XCTAssertEqual(clocks.map(\.runId), ["run", "run", "run"])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 3])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused"])
+  }
+
   func testAStartThatArrivesWhileHiddenIsPaused() async throws {
     let transport = OpeningStartTransport(holds: true, clockIds: [UUID().uuidString])
     let store = try openingPlayer(markedLesson(), transport: transport)
@@ -1290,7 +1316,9 @@ private actor OpeningStartTransport: ClientTransport {
   let clockIds: [String?]
   let failsFirstClock: Bool
   let clockStatus: String
+  let holdsRunningClock: Bool
   private var gate: CheckedContinuation<Void, Never>?
+  private var runningClockGate: CheckedContinuation<Void, Never>?
   private(set) var count = 0
   private(set) var inputs: [String] = []
   private(set) var clocks: [ClockInput] = []
@@ -1300,7 +1328,7 @@ private actor OpeningStartTransport: ClientTransport {
   init(
     holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false,
     runAnswers: String = "[]", clockIds: [String?] = [nil], failsFirstClock: Bool = false,
-    clockStatus: String = "updated"
+    clockStatus: String = "updated", holdsRunningClock: Bool = false
   ) {
     self.holds = holds
     self.opensElsewhere = opensElsewhere
@@ -1309,11 +1337,17 @@ private actor OpeningStartTransport: ClientTransport {
     self.clockIds = clockIds
     self.failsFirstClock = failsFirstClock
     self.clockStatus = clockStatus
+    self.holdsRunningClock = holdsRunningClock
   }
 
   func release() {
     gate?.resume()
     gate = nil
+  }
+
+  func releaseRunningClock() {
+    runningClockGate?.resume()
+    runningClockGate = nil
   }
 
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
@@ -1328,6 +1362,9 @@ private actor OpeningStartTransport: ClientTransport {
         ClockInput.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
       clocks.append(input)
       if failsFirstClock, clocks.count == 1 { throw APIError.network }
+      if holdsRunningClock, input.state == "running" {
+        await withCheckedContinuation { runningClockGate = $0 }
+      }
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
         HTTPBody(#"{"status":"\#(clockStatus)"}"#)
