@@ -7,6 +7,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -175,6 +178,82 @@ class TodayFlowTest {
             }
         }
     }
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp")
+    fun aWaitingDayHasNoProgressBarBeforeAnyLessonIsListed() {
+        show("blocks" to JsonArray(emptyList()), "state" to "waiting", "lessonsComing" to true, "minutes" to timeLeft(240.0))
+
+        rule.onAllNodes(normalizedDescription("0 of 0 done")).assertCountEquals(0)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp")
+    fun oneLessonAndHeldTimeShowProgress() {
+        show("blocks" to sevenMinuteLessons(1), "lessonsComing" to true, "minutes" to timeLeft(30.0))
+
+        rule.onAllNodes(normalizedDescription("0 of 1 done")).assertCountEquals(1)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp")
+    fun oneLessonWithoutHeldTimeHasNoProgressBar() {
+        show("blocks" to sevenMinuteLessons(1), "minutes" to timeLeft(7.0))
+
+        rule.onAllNodes(normalizedDescription("0 of 1 done")).assertCountEquals(0)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp")
+    fun aFoldHidingOnlyPlusLessonsOmitsHeldTime() {
+        show("blocks" to sevenMinuteLessons(5), "lessonsComing" to true, "plusLessons" to plusLessons(), "minutes" to timeLeft(240.0))
+
+        rule.onAllNodes(normalizedText("+3 more")).assertCountEquals(1)
+        rule.onAllNodes(normalizedText("3 hr 25 min")).assertCountEquals(0)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp")
+    fun aFoldHidingOnlyPlusLessonsOmitsFractionalTime() {
+        show("blocks" to sevenMinuteLessons(5), "plusLessons" to plusLessons(), "minutes" to timeLeft(35.3))
+
+        rule.onAllNodes(normalizedText("+2 more")).assertCountEquals(1)
+        rule.onAllNodes(normalizedText("0 min") or normalizedText("18 sec")).assertCountEquals(0)
+    }
+
+    private fun plusLessons() = JsonArray(List(4) { index -> buildJsonObject { put("title", "Plus lesson ${index + 1}") } })
+
+    private fun normalizedDescription(text: String) =
+        SemanticsMatcher("description: $text") { node ->
+            node.config.getOrNull(SemanticsProperties.ContentDescription)?.any { it.replace('\u00a0', ' ') == text } == true
+        }
+
+    private fun normalizedText(text: String) =
+        SemanticsMatcher("text: $text") { node ->
+            node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.replace('\u00a0', ' ') == text } == true
+        }
+
+    private fun timeLeft(left: Double) =
+        buildJsonObject {
+            put("dailyGoal", 240)
+            put("left", left)
+            put("done", 0)
+            put("planned", 240)
+        }
+
+    private fun sevenMinuteLessons(count: Int) =
+        JsonArray(
+            (0 until count).map { index ->
+                fixture(
+                    "study-block",
+                    "position" to index,
+                    "estimatedMinutes" to 7,
+                    "kind" to "learn",
+                    "screen" to "lesson",
+                    "title" to "Lesson ${index + 1}",
+                )
+            },
+        )
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
