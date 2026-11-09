@@ -49,6 +49,32 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(clocks.map(\.sequence), [1, 2, 1])
   }
 
+  func testIgnoredRunningRestartsOnceWithTheRunAndUsesTheNewClock() async throws {
+    let first = UUID().uuidString
+    let second = UUID().uuidString
+    let transport = OpeningStartTransport(
+      holds: false, clockIds: [first, second], clockStatus: "ignored")
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    await store.setVisible(false)?.value
+    let beforeReturn = await transport.count
+    XCTAssertEqual(beforeReturn, 1)
+    await store.setVisible(true)?.value
+    XCTAssertNil(store.setVisible(true))
+    await store.setVisible(false)?.value
+
+    let inputs = await transport.inputs
+    XCTAssertEqual(inputs.count, 2)
+    let restart = try XCTUnwrap(inputs.last?.data(using: .utf8))
+    let input = try XCTUnwrap(JSONSerialization.jsonObject(with: restart) as? [String: Any])
+    XCTAssertEqual(input["runId"] as? String, "run")
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.clockId), [first, first, second])
+    XCTAssertEqual(clocks.map(\.runId), ["run", "run", "run"])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 1])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused"])
+  }
+
   func testAStartThatArrivesWhileHiddenIsPaused() async throws {
     let transport = OpeningStartTransport(holds: true, clockIds: [UUID().uuidString])
     let store = try openingPlayer(markedLesson(), transport: transport)
@@ -65,7 +91,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(clocks.first(where: { $0.sequence == 2 })?.state, "running")
   }
 
-  func testFailedAndIgnoredClockUpdatesStaySilentAndAreNotRetried() async throws {
+  func testFailedClockUpdatesStaySilentAndAreNotRetried() async throws {
     let transport = OpeningStartTransport(
       holds: false, clockIds: [UUID().uuidString], failsFirstClock: true)
     let store = try openingPlayer(markedLesson(), transport: transport)
@@ -1263,6 +1289,7 @@ private actor OpeningStartTransport: ClientTransport {
   let runAnswers: String
   let clockIds: [String?]
   let failsFirstClock: Bool
+  let clockStatus: String
   private var gate: CheckedContinuation<Void, Never>?
   private(set) var count = 0
   private(set) var inputs: [String] = []
@@ -1272,7 +1299,8 @@ private actor OpeningStartTransport: ClientTransport {
 
   init(
     holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false,
-    runAnswers: String = "[]", clockIds: [String?] = [nil], failsFirstClock: Bool = false
+    runAnswers: String = "[]", clockIds: [String?] = [nil], failsFirstClock: Bool = false,
+    clockStatus: String = "updated"
   ) {
     self.holds = holds
     self.opensElsewhere = opensElsewhere
@@ -1280,6 +1308,7 @@ private actor OpeningStartTransport: ClientTransport {
     self.runAnswers = runAnswers
     self.clockIds = clockIds
     self.failsFirstClock = failsFirstClock
+    self.clockStatus = clockStatus
   }
 
   func release() {
@@ -1301,7 +1330,7 @@ private actor OpeningStartTransport: ClientTransport {
       if failsFirstClock, clocks.count == 1 { throw APIError.network }
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
-        HTTPBody(#"{"status":"ignored"}"#)
+        HTTPBody(#"{"status":"\#(clockStatus)"}"#)
       )
     }
 

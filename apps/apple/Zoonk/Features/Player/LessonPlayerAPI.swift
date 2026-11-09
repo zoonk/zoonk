@@ -211,14 +211,14 @@ struct LessonPlayerAPI: Sendable {
   }
 
   func updateClock(id: String, input: Components.Schemas.LessonClockInput, token: String)
-    async throws
+    async throws -> Components.Schemas.LessonClockResult
   {
     let output = try await clients.perform(token: token) {
       try await $0.updateLibraryLessonClock(path: .init(lessonId: id), body: .json(input))
     }
 
     switch output {
-    case .ok: return
+    case .ok(let response): return try response.body.json
     case .unauthorized: throw APIError.unauthorized
     case .notFound: throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented: throw APIError.network

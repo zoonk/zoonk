@@ -310,11 +310,28 @@ final class LessonPlayerStore {
     let lessonId = lessonId
 
     // A pause must outlive the disappearing player; the request keeps only its original session.
-    return Task {
-      _ = await cache.mutate { current in
+    return Task { [weak self] in
+      let updated = await cache.mutate { current in
         guard current == identity else { throw CancellationError() }
-        try await api.updateClock(id: lessonId, input: input, token: current.bearerToken)
+        return try await api.updateClock(id: lessonId, input: input, token: current.bearerToken)
       }
+
+      guard input.state == .running, case .done(let result) = updated,
+        result.status == .ignored, let self, self.isCurrent(identity),
+        self.clock?.clockId == input.clockId
+      else { return }
+
+      let studySessionId = self.studySessionId
+      let restarted = await self.write { token in
+        try await api.startLesson(
+          id: lessonId, studySessionId: studySessionId, runId: input.runId, token: token)
+      }
+
+      guard self.isCurrent(identity), self.clock?.clockId == input.clockId,
+        case .done(.success(let run)) = restarted, run.runId == input.runId
+      else { return }
+
+      self.startClock(run)
     }
   }
 
