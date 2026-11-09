@@ -36,6 +36,44 @@ const base = {
 };
 
 describe(getChallengeTimings, () => {
+  const lesson = {
+    ...boss,
+    facts: undefined,
+    id: "lesson",
+    kind: "lesson" as const,
+    position: 2,
+    scheduledFor: TODAY,
+  };
+
+  it.each([
+    [15, "date"],
+    [45, "nextSession"],
+  ] as const)(
+    "follows the lessons with a challenge put off yesterday on a %i-minute day not built yet",
+    (dailyMinutes, when) => {
+      const timings = getChallengeTimings({
+        ...base,
+        goal: { ...base.goal, dailyMinutes },
+        items: [boss, lesson],
+        lastSessionChallenges: new Map([["a", false]]),
+      });
+
+      expect(timings.get("a")?.when).toBe(when);
+    },
+  );
+
+  it("dates a challenge left out of today's built lesson day for tomorrow", () => {
+    const timings = getChallengeTimings({
+      ...base,
+      goal: { ...base.goal, dailyMinutes: 15 },
+      items: [boss, lesson],
+      savedDay: true,
+      todayBlocks: [{ payload: toBlockPayload({ planItemId: "lesson" }), status: "pending" }],
+    });
+
+    expect(timings.get("a")).toStrictEqual({ date: "2026-11-10", when: "date" });
+  });
+
   it.each(["completed", "skipped"] as const)(
     "does not promise today's %s challenge again",
     (status) => {
