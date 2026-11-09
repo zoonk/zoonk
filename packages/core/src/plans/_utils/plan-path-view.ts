@@ -1,11 +1,27 @@
 import { getChallengeTimings } from "../../checkpoints/_utils/challenge-timing";
 import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-results";
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
-import { type readTodayPlanSession } from "../../learner/facts/today-plan-session";
+import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
+import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
 import { findUpNextItem, listTodayItems } from "./up-next-item";
+
+export async function readPlanToday({ context, now }: { context: PlanReadContext; now: Date }) {
+  const { goal, timeZone } = context;
+  const session = await readTodayPlanSession(goal.userId, goal.id);
+
+  if (session) {
+    return { blocks: session.blocks, session };
+  }
+
+  const blueprint = goal.examBlueprintId ? await readExamBlueprint(goal.examBlueprintId) : null;
+  const blocks = await previewTodayBlocks({ blueprint, goal, now, timeZone, userId: goal.userId });
+
+  return { blocks, session };
+}
 
 type PathInput = Pick<
   Parameters<typeof buildPhaseViews>[0],
@@ -19,15 +35,14 @@ type PathInput = Pick<
 > & {
   challengesOpen: boolean;
   context: PlanReadContext;
-  todayPlan: Awaited<ReturnType<typeof readTodayPlanSession>>;
+  today: Awaited<ReturnType<typeof readPlanToday>>;
   challengeResults: ReadonlyMap<string, CheckpointResult>;
 };
 
-export function buildPlanPath({ context, todayPlan, challengeResults, ...input }: PathInput) {
+export function buildPlanPath({ challengeResults, context, today, ...input }: PathInput) {
   const { goal, items, phases, state } = context;
-  const todaySession = todayPlan.session;
 
-  const todayBlocks = listTodayLearnBlocks(todaySession?.blocks ?? []);
+  const todayBlocks = listTodayLearnBlocks(today.session?.blocks ?? []);
 
   const next = findUpNextItem({ items, todayBlocks });
 
@@ -43,12 +58,10 @@ export function buildPlanPath({ context, todayPlan, challengeResults, ...input }
     timings: getChallengeTimings({
       goal,
       items,
-      lastSessionChallenges: new Map(todayPlan.lastSessionChallenges),
       results: challengeResults,
-      savedDay: todaySession !== null,
       settings: state.settings,
       today: context.today,
-      todayBlocks: todaySession?.blocks,
+      todayBlocks: today.blocks,
     }),
     today: context.today,
     todayItemKeys: new Set(

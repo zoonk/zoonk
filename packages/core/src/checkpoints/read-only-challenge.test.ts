@@ -255,7 +255,7 @@ describe("a challenge intro is a read", () => {
     ]);
   });
 
-  it("keeps a legacy offer waiting without writing, then establishes its queue on Start", async () => {
+  it("offers a legacy offer today's day holds without writing, then establishes its queue on Start", async () => {
     const { boss, goal, plan, user } = await dueBossFixture();
     const before = await readPlan(plan.id);
     const challenge = await readIntro(boss.id);
@@ -267,12 +267,12 @@ describe("a challenge intro is a read", () => {
       passMark: null,
       questions: null,
       recordings: 0,
-      status: "waiting",
+      status: "ready",
       title: "Test boss",
       topics: [],
+      waitReason: null,
     });
 
-    expect(vi.mocked(buildSessionBlocks)).not.toHaveBeenCalled();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
     await expect(prisma.learningEvent.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
@@ -292,13 +292,25 @@ describe("a challenge intro is a read", () => {
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(1);
   });
 
-  it("keeps an unknown-size checkpoint upcoming before its day, not waiting", async () => {
-    const { boss, skills } = await dueBossFixture();
+  it("keeps an unknown-size checkpoint today's day doesn't hold upcoming, not waiting", async () => {
+    const { boss, goal, skills } = await dueBossFixture();
 
-    await prisma.planItem.update({
-      data: { scheduledFor: new Date(SESSION_NOW.getTime() + 2 * DAY_MS) },
-      where: { id: boss.id },
-    });
+    await Promise.all([
+      prisma.planItem.update({
+        data: { scheduledFor: new Date(SESSION_NOW.getTime() + 2 * DAY_MS) },
+        where: { id: boss.id },
+      }),
+      prisma.plan.update({
+        data: {
+          settings: {
+            weekdayMinutes: Array.from({ length: 7 }, (_, weekday) =>
+              weekday === SESSION_NOW.getUTCDay() ? 0 : goal.dailyMinutes,
+            ),
+          },
+        },
+        where: { id: boss.planId },
+      }),
+    ]);
 
     await prisma.planItem.updateMany({
       data: { completedAt: null, status: "todo" },
@@ -328,7 +340,6 @@ describe("a challenge intro is a read", () => {
     });
 
     await expect(readIntro(boss.id)).resolves.toMatchObject({ status: "waiting" });
-    expect(buildSessionBlocks).not.toHaveBeenCalled();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
     await expect(
@@ -344,18 +355,6 @@ describe("a challenge intro is a read", () => {
     vi.mocked(buildSessionBlocks).mockClear();
     await expect(readIntro(boss.id)).resolves.toMatchObject({ status: "waiting" });
     expect(buildSessionBlocks).not.toHaveBeenCalled();
-  });
-
-  it("leaves a legacy offer waiting until the day is built", async () => {
-    const { boss, goal } = await dueBossFixture();
-
-    await expect(readIntro(boss.id)).resolves.toMatchObject({
-      status: "waiting",
-      waitReason: null,
-    });
-
-    expect(buildSessionBlocks).not.toHaveBeenCalled();
-    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
   it.each(["lessons", "challenge"] as const)(
@@ -434,8 +433,6 @@ describe("a challenge intro is a read", () => {
       skills[1]?.name,
       skills[0]?.name,
     ]);
-
-    expect(vi.mocked(buildSessionBlocks)).not.toHaveBeenCalled();
   });
 
   it("keeps a due checkpoint the bank can't ask yet waiting, with no time of its own", async () => {
@@ -451,7 +448,6 @@ describe("a challenge intro is a read", () => {
     const challenge = await readIntro(boss.id);
 
     expect(challenge).toMatchObject({ minutes: 0, questions: 0, status: "waiting", topics: [] });
-    expect(vi.mocked(buildSessionBlocks)).not.toHaveBeenCalled();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
@@ -472,8 +468,6 @@ describe("a challenge intro is a read", () => {
       recordings: null,
       status: "ready",
     });
-
-    expect(buildSessionBlocks).not.toHaveBeenCalled();
   });
 
   it("keeps recording-only skills out of the stored text offer's topics", async () => {
@@ -512,6 +506,5 @@ describe("a challenge intro is a read", () => {
 
     const challenge = await readIntro(boss.id);
     expect(challenge.topics.map((topic) => topic.name)).toStrictEqual([skills[1]?.name]);
-    expect(buildSessionBlocks).not.toHaveBeenCalled();
   });
 });

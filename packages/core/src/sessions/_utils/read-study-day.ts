@@ -12,11 +12,12 @@ import { toIdKey } from "../../library/_utils/shared-rows";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type DayView } from "../day-view";
 import { loadUnstartedDayView } from "./load-unstarted-day";
-import { planStudyDay } from "./plan-study-day";
+import { planDayBlocks, planStudyDay, toUnstartedBlocks } from "./plan-study-day";
 import { readSavedDayView } from "./read-saved-day-view";
 import { readSavedDayPlan } from "./saved-day-plan";
 import { findSavedDaySession } from "./saved-day-session";
 import { type SelectedDayPlan } from "./selected-day-plan";
+import { type SessionDayContext } from "./session-placement";
 
 export type ReadStudyDay = {
   /** The goal's exam blueprint, read once for the day and whatever else the request shows. */
@@ -25,6 +26,50 @@ export type ReadStudyDay = {
   session: DayView;
   timeZone: string;
 };
+
+type PreviewInput = {
+  blueprint: ExamBlueprint | null;
+  goal: Goal;
+  now: Date;
+  /** The goal's answer zone (`getAnswerTimeZone`). */
+  timeZone: string;
+  userId: string;
+};
+
+async function selectPreviewDay({ blueprint, goal, now, timeZone, userId }: PreviewInput) {
+  const savedPlan = await readSavedPlan(userId, goal.id);
+  const selection = await readSavedDayPlan({ goal, now, saved: savedPlan, timeZone });
+
+  if (!selection) {
+    return null;
+  }
+
+  const context: SessionDayContext = {
+    blueprint,
+    goal,
+    localDate: getDateInTimeZone({ date: now, timeZone }),
+    now,
+    readClaims: (skillIds: readonly string[]) =>
+      readClaimEvents(userId, goal.id, toIdKey(skillIds)),
+    readSubscription: readActiveSubscription,
+    timeZone,
+    userId,
+  };
+
+  return { context, selection };
+}
+
+/** The blocks Today shows before Start builds the day; the Plan and the challenge screen read today from them. */
+export async function previewTodayBlocks(input: PreviewInput) {
+  const preview = await selectPreviewDay(input);
+
+  if (!preview) {
+    return [];
+  }
+
+  const { blocks } = await planDayBlocks({ ...preview.context, selection: preview.selection });
+  return toUnstartedBlocks(blocks);
+}
 
 /** Reads never move a zone, settle a plan, stamp a queue or create the day's session. */
 export async function readStudyDay({
@@ -61,24 +106,13 @@ export async function readStudyDay({
     };
   }
 
-  const savedPlan = await readSavedPlan(userId, goal.id);
-  const selection = await readSavedDayPlan({ goal, now, saved: savedPlan, timeZone });
+  const preview = await selectPreviewDay({ blueprint, goal, now, timeZone, userId });
 
-  if (!selection) {
+  if (!preview) {
     return null;
   }
 
-  const context = {
-    blueprint,
-    goal,
-    localDate,
-    now,
-    readClaims: (skillIds: readonly string[]) =>
-      readClaimEvents(userId, goal.id, toIdKey(skillIds)),
-    readSubscription: readActiveSubscription,
-    timeZone,
-    userId,
-  };
+  const { context, selection } = preview;
 
   const day = await planStudyDay({
     ...context,

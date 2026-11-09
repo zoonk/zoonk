@@ -3,12 +3,11 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getUserProgressCacheTag } from "../../cache/tags";
-import { getSessionChallenges } from "../../sessions/_utils/day-stretch";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { readOwnedGoal } from "./owned-goal";
 import { getRequestInstant } from "./request-instant";
 
-/** GET-only fact after ownership authorization: today's session once the day exists, else the last session's challenges. */
+/** GET-only fact after ownership authorization: today's session once Start built the day, else null. */
 export async function readTodayPlanSession(userId: string, goalId: string) {
   "use cache: private";
 
@@ -17,29 +16,13 @@ export async function readTodayPlanSession(userId: string, goalId: string) {
   const [goal, instant] = await Promise.all([readOwnedGoal(userId, goalId), getRequestInstant()]);
   const localDate = getDateInTimeZone({ date: instant, timeZone: getAnswerTimeZone({ goal }) });
 
-  const latest = await prisma.studySession.findFirst({
-    orderBy: { localDate: "desc" },
+  return prisma.studySession.findUnique({
     select: {
       blocks: {
         orderBy: { position: "asc" },
-        select: {
-          id: true,
-          kind: true,
-          lessonId: true,
-          payload: true,
-          startedAt: true,
-          status: true,
-        },
+        select: { kind: true, lessonId: true, payload: true, status: true },
       },
-      localDate: true,
     },
-    where: { goalId, localDate: { lte: localDate }, userId },
+    where: { userGoalDate: { goalId, localDate, userId } },
   });
-
-  const isToday = latest?.localDate.getTime() === localDate.getTime();
-
-  return {
-    lastSessionChallenges: latest && !isToday ? [...getSessionChallenges(latest.blocks)] : [],
-    session: latest && isToday ? { blocks: latest.blocks } : null,
-  };
 }

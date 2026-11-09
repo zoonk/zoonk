@@ -1,18 +1,11 @@
 import { type Goal, type StudySessionBlock } from "@zoonk/db";
-import { hasOverduePlanWork } from "../../plans/_utils/left-work";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { addDays, daysBetween, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, type PlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { isMockOnlyDay } from "../../sessions/_utils/day-mock";
-import { findPlannedReview } from "../../sessions/_utils/day-review";
-import {
-  fundLeadingChallenges,
-  getLeadingChallenges,
-  placePutOffChallenges,
-} from "../../sessions/_utils/day-stretch";
+import { fundLeadingChallenges } from "../../sessions/_utils/day-stretch";
 import { canHoldPhaseChallenges } from "../../sessions/_utils/phase-challenge-day";
-import { dropSettledEvents } from "../../sessions/_utils/settled-events";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { type BossTiming, type ChallengeReachItem, isChallengeReached } from "./challenge-reach";
 import { type CheckpointResult } from "./checkpoint-results";
@@ -24,69 +17,38 @@ type TimingItem = ChallengeReachItem & {
 };
 export type ChallengeTiming = { date: string | null; when: BossTiming };
 
-type ReachedChallenge = {
-  id: string;
-  kind: "boss";
-  minutes: number;
-  mock: false;
-  planItemId: string | null;
-  planItemKey?: string;
-  rematch: boolean;
-};
-
-/** The lessons a day will hold aren't known before it's built, so after a put-off only a challenge started in that session leads. */
-function fundDayChallenges({
-  budget,
-  items,
-  lastSession,
-  reached,
-}: {
-  budget: number;
-  items: readonly TimingItem[];
-  lastSession?: ReadonlyMap<string, boolean>;
-  reached: readonly ReachedChallenge[];
-}): ReachedChallenge[] {
-  return fundLeadingChallenges({
-    budget,
-    checkpoints: getLeadingChallenges({
-      checkpoints: placePutOffChallenges({ checkpoints: reached, hasLessons: true, lastSession }),
-      items,
-    }),
-  });
-}
-
+/** Today is what Today shows; every later day is an estimate of the room it leaves challenges. */
 export function getChallengeTimings({
   goal,
   items,
+  results = new Map(),
   settings,
   today,
-  todayBlocks = [],
-  savedDay = false,
-  lastSessionChallenges,
-  results = new Map(),
+  todayBlocks,
 }: {
   goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
   items: readonly TimingItem[];
+  results?: ReadonlyMap<string, CheckpointResult>;
   settings: PlanSettings;
   today: Date;
-  todayBlocks?: readonly Pick<StudySessionBlock, "payload" | "status">[];
-  savedDay?: boolean;
-  /** Only for a day not built yet; a built day's blocks already decide it (`getSessionChallenges`). */
-  lastSessionChallenges?: ReadonlyMap<string, boolean>;
-  results?: ReadonlyMap<string, CheckpointResult>;
+  /** Today's saved blocks once Start built the day, else the day Today plans (`previewTodayBlocks`). */
+  todayBlocks: readonly Pick<StudySessionBlock, "payload" | "status">[];
 }): ReadonlyMap<string, ChallengeTiming> {
-  const dated = items.flatMap((item) =>
-    (item.kind === "mock" || item.kind === "review") && item.scheduledFor
-      ? [item.scheduledFor]
-      : [],
-  );
+  const tomorrow = addDays(today, 1);
 
-  const last = Math.max(today.getTime(), ...dated.map((date) => date.getTime()));
+  const last = Math.max(
+    tomorrow.getTime(),
+    ...items.flatMap((item) =>
+      (item.kind === "mock" || item.kind === "review") && item.scheduledFor
+        ? [item.scheduledFor.getTime()]
+        : [],
+    ),
+  );
 
   const days = Array.from(
     {
       length:
-        daysBetween(today, new Date(last)) +
+        daysBetween(tomorrow, new Date(last)) +
         DAYS_PER_WEEK *
           Math.max(
             1,
@@ -94,56 +56,40 @@ export function getChallengeTimings({
           ) +
         1,
     },
-    (_, index) => addDays(today, index),
+    (_, index) => addDays(tomorrow, index),
   );
 
-  const todayItems = hasOverduePlanWork({ items, today })
-    ? dropSettledEvents({ items, settings, today })
-    : items;
-
-  const capacity = (date: Date) => {
-    const isToday = date.getTime() === today.getTime();
-
-    const reviewDay = isToday
-      ? findPlannedReview({ items: todayItems, today }) !== null
-      : items.some(
-          (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
-        );
-
-    return canHoldPhaseChallenges({
+  const capacity = (date: Date) =>
+    canHoldPhaseChallenges({
       mockOnlyDay: isMockOnlyDay({
         goal,
         hasMock: true,
-        items: isToday ? todayItems : items,
+        items,
         planSettings: settings,
         today: date,
       }),
-      reviewDay,
+      reviewDay: items.some(
+        (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
+      ),
       trialEnded: false,
     })
       ? getGoalDayMinutes({ date, goal, planSettings: settings })
       : 0;
-  };
 
-  const nextStudy = days.find(
-    (date) =>
-      (!savedDay || date > today) && getGoalDayMinutes({ date, goal, planSettings: settings }) > 0,
-  );
+  const getId = (boss: TimingItem) => boss.id ?? boss.key ?? "";
 
   const inToday = (boss: TimingItem) =>
     boss.status === "todo" &&
     todayBlocks.some(
       (block) =>
         (block.status === "pending" || block.status === "active") &&
-        readBlockPayload(block).planItemId === (boss.id ?? boss.key ?? ""),
+        readBlockPayload(block).planItemId === getId(boss),
     );
 
   const reached = items
     .toSorted((a, b) => a.position - b.position)
-    .flatMap((boss): ReachedChallenge[] => {
-      const id = boss.id ?? boss.key ?? "";
+    .flatMap((boss) => {
       const facts = readSelectedItemFacts(boss.facts)?.boss;
-      const result = results.get(id);
 
       if (
         !isChallengeReached({ boss, items }) ||
@@ -155,41 +101,19 @@ export function getChallengeTimings({
         return [];
       }
 
-      return [
-        {
-          id,
-          kind: "boss",
-          minutes: facts.minutes,
-          mock: false,
-          planItemId: boss.id,
-          planItemKey: boss.key,
-          rematch: result !== undefined,
-        },
-      ];
+      return [{ id: getId(boss), minutes: facts.minutes, rematch: results.has(getId(boss)) }];
     });
-
-  const lostToday = new Set(
-    [...results].flatMap(([id, result]) =>
-      result.localDate.getTime() === today.getTime() ? [id] : [],
-    ),
-  );
 
   const dates = new Map<string, Date>();
 
   for (const date of days) {
     const budget = capacity(date);
 
-    if ((!savedDay || date > today) && budget > 0) {
-      const funded = fundDayChallenges({
+    if (budget > 0) {
+      for (const challenge of fundLeadingChallenges({
         budget,
-        items,
-        lastSession: date === nextStudy ? lastSessionChallenges : undefined,
-        reached: reached.filter(
-          (entry) => !dates.has(entry.id) && (date > today || !lostToday.has(entry.id)),
-        ),
-      });
-
-      for (const challenge of funded) {
+        checkpoints: reached.filter((entry) => !dates.has(entry.id)),
+      })) {
         dates.set(challenge.id, date);
       }
     }
@@ -199,32 +123,23 @@ export function getChallengeTimings({
     }
   }
 
-  const tomorrow = addDays(today, 1);
-  const future = days.find((date) => date >= tomorrow && capacity(date) > 0);
-
-  const leader = savedDay ? undefined : [...dates].find(([, date]) => date === nextStudy)?.[0];
+  const future = days.find((date) => capacity(date) > 0);
 
   return new Map(
     items
       .filter((boss) => boss.kind === "boss")
-      .map((boss) => {
-        const id = boss.id ?? boss.key ?? "";
-        const offeredToday = inToday(boss);
-
-        const assigned = dates.get(id);
+      .map((boss): [string, ChallengeTiming] => {
+        if (inToday(boss)) {
+          return [getId(boss), { date: toIsoDate(today), when: "nextSession" }];
+        }
 
         const estimatedFor =
-          assigned ?? (isChallengeReached({ boss, items }) ? future : boss.scheduledFor);
+          dates.get(getId(boss)) ??
+          (isChallengeReached({ boss, items }) ? future : boss.scheduledFor);
 
         const estimate = new Date(Math.max(tomorrow.getTime(), estimatedFor?.getTime() ?? 0));
 
-        return [
-          id,
-          {
-            date: offeredToday ? toIsoDate(today) : toIsoDate(estimate),
-            when: offeredToday || id === leader ? "nextSession" : "date",
-          },
-        ];
+        return [getId(boss), { date: toIsoDate(estimate), when: "date" }];
       }),
   );
 }
