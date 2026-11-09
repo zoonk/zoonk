@@ -909,8 +909,15 @@ describe(answerMistakePractice, () => {
       expect(fixedIds(answer)).toContain(practiced.id);
     });
 
-    it("keep a timed mistake's clock", async () => {
-      const { extra, practiced, skill, user } = await withoutOwnQuestion();
+    it("leave a timed mistake to its own question, under its clock", async () => {
+      const { extra, original, skill, user } = await setup();
+
+      const withOwn = await mistakeFixture({
+        createdAt: new Date(YESTERDAY.getTime() - 86_400_000),
+        itemId: original.id,
+        skillId: skill.id,
+        userId: user.id,
+      });
 
       const timed = await mistakeFixture({
         cause: "time",
@@ -919,19 +926,26 @@ describe(answerMistakePractice, () => {
         userId: user.id,
       });
 
-      const slow = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 120_000, itemId: extra.id },
-        mistakeId: practiced.id,
-      });
+      const result = await getMistakePractice({});
+      const practice = result.status === "ready" ? result.practice : [];
 
-      expect(fixedIds(slow)).not.toContain(timed.id);
+      expect(
+        practice.map(({ drill, mistakeId, questions }) => [
+          mistakeId,
+          questions.map(({ itemId }) => itemId),
+          drill.timeLimitSeconds,
+        ]),
+      ).toStrictEqual([
+        [withOwn.id, [original.id], null],
+        [timed.id, [extra.id], 45],
+      ]);
 
       const quick = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
-        mistakeId: practiced.id,
+        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
+        mistakeId: withOwn.id,
       });
 
-      expect(fixedIds(quick)).toContain(timed.id);
+      expect(fixedIds(quick)).toStrictEqual([withOwn.id]);
     });
   });
 

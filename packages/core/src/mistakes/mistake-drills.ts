@@ -59,6 +59,11 @@ export function getDrillTimeLimitSeconds(kind: MistakeDrillKind): number | null 
   return kind === "timed" ? TIMED_DRILL_SECONDS : null;
 }
 
+/** A timed mistake is proven only under its own clock, so no other question's answer fixes it. */
+export function isFixedByItsSkill(cause: MistakeCause | null): boolean {
+  return getDrillTimeLimitSeconds(getDrillKind(cause)) === null;
+}
+
 /** The exact deadline is already late, not only durations exceeding it. */
 export function isPastTimeLimit({
   durationMs,

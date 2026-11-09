@@ -24,6 +24,7 @@ import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-le
 import { getMistakePracticeBefore } from "./mistake-availability";
 import {
   type DrillView,
+  isFixedByItsSkill,
   isMistakeSkill,
   selectMistakesToPractice,
   selectPracticeRun,
@@ -213,7 +214,9 @@ export async function getMistakePractice(
         })),
         cause: mistake.cause,
         coveringSkillIds:
-          mistake.skillId && !listeningSkillIds.has(mistake.skillId)
+          mistake.skillId &&
+          !listeningSkillIds.has(mistake.skillId) &&
+          isFixedByItsSkill(mistake.cause)
             ? [mistake.skillId, scope.ownerOf.get(mistake.skillId) ?? mistake.skillId]
             : [],
         lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,

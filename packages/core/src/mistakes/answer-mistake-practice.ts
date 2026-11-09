@@ -30,8 +30,8 @@ import { finishMistakePractice } from "./finish-mistake-practice";
 import {
   getDrillKind,
   getDrillTimeLimitSeconds,
+  isFixedByItsSkill,
   isMistakeSkill,
-  isPastTimeLimit,
 } from "./mistake-drills";
 
 type MistakePracticeFeedback = {
@@ -106,17 +106,15 @@ async function findPracticeItem({
 
 /**
  * A mistake with no question of its own can only be proven by a question on its skill, and a run asks
- * each question once, so one right answer stands for them all, in time if the mistake is a timed one.
- * A listening skill's mistakes are drilled by their own recording and nothing else.
+ * each question once, so one right answer stands for them all. A listening skill's mistakes are drilled
+ * by their own recording and nothing else, and a timed one by its own clock (`isFixedByItsSkill`).
  */
 async function findCoveredMistakeIds({
-  durationMs,
   goalId,
   item,
   practicedMistakeId,
   userId,
 }: {
-  durationMs: number;
   goalId: string | undefined;
   item: Pick<ChoiceItem, "skillId">;
   practicedMistakeId: string;
@@ -157,11 +155,7 @@ async function findCoveredMistakeIds({
   return open
     .filter(
       ({ cause, item: own }) =>
-        (!own || own.retiredAt !== null || !parseChoiceItem(own)) &&
-        !isPastTimeLimit({
-          durationMs,
-          timeLimitSeconds: getDrillTimeLimitSeconds(getDrillKind(cause)),
-        }),
+        isFixedByItsSkill(cause) && (!own || own.retiredAt !== null || !parseChoiceItem(own)),
     )
     .map(({ id }) => id);
 }
@@ -300,7 +294,6 @@ export async function answerMistakePractice({
           attemptId,
           coveredMistakeIds: drilled.isCorrect
             ? await findCoveredMistakeIds({
-                durationMs: input.durationMs,
                 goalId: input.run?.goalId,
                 item,
                 practicedMistakeId: mistake.id,

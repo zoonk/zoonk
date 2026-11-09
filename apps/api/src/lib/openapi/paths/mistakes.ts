@@ -23,7 +23,7 @@ export const mistakePaths = {
   "/me/mistake-practice": {
     get: {
       description:
-        '"Practice mistakes": the open mistakes from earlier days, up to 50, oldest first, each with a drill chosen by its cause and one question: its own while it can still be asked, otherwise another on its skill. A mistake with no question of its own has no entry when the run already asks a question on its skill or none is left there, since a right answer on that skill fixes it too. No question comes twice in a run. With `skillId`, "Practice this skill": only that skill\'s mistakes.',
+        '"Practice mistakes": the open mistakes from earlier days, up to 50, oldest first, each with a drill chosen by its cause and one question: its own while it can still be asked, otherwise another on its skill. A mistake with no question of its own (other than a timed one) has no entry when the run already asks a question on its skill or none is left there, since a right answer on that skill fixes it too. No question comes twice in a run. With `skillId`, "Practice this skill": only that skill\'s mistakes.',
       operationId: "getCurrentUserMistakePractice",
       requestParams: { query: mistakePracticeInputSchema },
       responses: {
@@ -87,7 +87,7 @@ export const mistakePaths = {
   "/me/mistakes/{mistakeId}/answers": {
     post: {
       description:
-        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry and the learner's other entries with no question of their own that this question could practice on the run's goal (`run.goalId`; without it, on this question's skill only). An answer that takes a timed drill's whole time leaves timed entries open. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
+        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry and the learner's other entries with no question of their own that this question could practice on the run's goal (`run.goalId`; without it, on this question's skill only). A timed entry is fixed only by its own drill, under its clock. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
       operationId: "createMistakePracticeAnswer",
       requestBody: {
         content: { "application/json": { schema: mistakePracticeAnswerInputSchema } },
