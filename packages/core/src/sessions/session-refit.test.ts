@@ -12,6 +12,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
+import { refitSessionLessons } from "./_utils/refit-session-lessons";
 import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
 import { startStudyBlock } from "./start-study-block";
@@ -270,6 +271,113 @@ async function addSavedChallenge(
 }
 
 describe("completion adds a reached challenge from its saved facts", () => {
+  it.each(["pending", "active"] as const)(
+    "waits until an earlier extra lesson is finished before refilling its challenge (%s)",
+    async (status) => {
+      const fixture = await setup({ lessons: 3, minutes: 40, queued: 1 });
+      await prisma.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });
+
+      await prisma.planItem.update({
+        data: { phase: 1, position: 3 },
+        where: { id: fixture.plan.items[2]!.id },
+      });
+
+      const boss = await addSavedChallenge(fixture);
+
+      await studySessionBlockFixture({
+        estimatedMinutes: 10,
+        kind: "practice",
+        position: 1,
+        sessionId: fixture.session.id,
+      });
+
+      const extra = await studySessionBlockFixture({
+        estimatedMinutes: 10,
+        lessonId: fixture.playable[1]!.lesson.id,
+        payload: toBlockPayload({
+          areaId: "extra-area",
+          extra: true,
+          planItemId: fixture.plan.items[1]!.id,
+        }),
+        position: 2,
+        sessionId: fixture.session.id,
+        startedAt: status === "active" ? NOW : null,
+        status,
+      });
+
+      const { completion } = await finish({
+        block: fixture.blocks[0]!,
+        elapsedMinutes: 5,
+        sessionId: fixture.session.id,
+      });
+
+      expect(completion.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+
+      await finish({ block: extra, elapsedMinutes: 5, sessionId: fixture.session.id });
+
+      const nextLesson = await prisma.studySessionBlock.findFirstOrThrow({
+        where: { lessonId: fixture.playable[2]!.lesson.id, sessionId: fixture.session.id },
+      });
+
+      await finish({ block: nextLesson, elapsedMinutes: 5, sessionId: fixture.session.id });
+
+      const challenge = await prisma.studySessionBlock.findFirstOrThrow({
+        where: { kind: "checkpoint", sessionId: fixture.session.id },
+      });
+
+      expect(readBlockPayload(challenge).planItemId).toBe(boss.id);
+
+      await expect(
+        startStudyBlock({
+          blockId: challenge.id,
+          input: { timeZone: "UTC" },
+          sessionId: fixture.session.id,
+        }),
+      ).resolves.toMatchObject({ status: "questionsNeeded" });
+    },
+  );
+
+  it("keeps a full-review day free of phase challenges during the final refill", async () => {
+    const fixture = await setup({ lessons: 1, minutes: 30, queued: 0 });
+    await addSavedChallenge(fixture, { position: 1 });
+
+    await prisma.goal.update({
+      data: { kind: "exam", targetDate: new Date("2026-10-04") },
+      where: { id: fixture.goal.id },
+    });
+
+    await prisma.planItem.update({
+      data: { completedAt: NOW, status: "done" },
+      where: { id: fixture.plan.items[0]!.id },
+    });
+
+    await planItemFixture({
+      kind: "mock",
+      planId: fixture.plan.id,
+      position: 2,
+      scheduledFor: fixture.session.localDate,
+    });
+
+    const review = await studySessionBlockFixture({
+      completedAt: NOW,
+      estimatedMinutes: 30,
+      kind: "practice",
+      payload: toBlockPayload({ creditedMinutes: 15, fullReview: true }),
+      position: 0,
+      sessionId: fixture.session.id,
+      startedAt: NOW,
+      status: "completed",
+    });
+
+    await prisma.$transaction((tx) =>
+      refitSessionLessons(tx, { sessionId: fixture.session.id, timeZone: "UTC" }),
+    );
+
+    await expect(
+      prisma.studySessionBlock.findMany({ where: { sessionId: fixture.session.id } }),
+    ).resolves.toMatchObject([{ id: review.id, status: "completed" }]);
+  });
+
   it("keeps a planned review day free of phase challenges during refill", async () => {
     const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
     await addSavedChallenge(fixture);

@@ -176,7 +176,6 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
   const nextOffer =
     item.kind !== "boss" ||
     getChallengeTimings({
-      challengesOpen: !plusRequired,
       goal,
       items: challenge.items,
       results,

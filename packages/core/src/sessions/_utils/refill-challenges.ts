@@ -13,7 +13,7 @@ import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract
 import { readBlockPayload } from "../block-payload";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 import { isMockOnlyDay } from "./day-mock";
-import { findPlannedReview } from "./day-review";
+import { isSavedReviewDay } from "./day-review";
 import { fundLeadingChallenges, getLeadingChallenges, listDayStretch } from "./day-stretch";
 import { canHoldPhaseChallenges } from "./phase-challenge-day";
 import { type StudySessionRow } from "./study-session-access";
@@ -27,13 +27,14 @@ type ChallengeRefillInput = {
 };
 
 function getRefillCheckpoints({
+  blocks,
   held,
   mockOnlyDay,
   leaving,
   plan,
   session,
   trialEnded,
-}: Omit<ChallengeRefillInput, "blocks"> & {
+}: ChallengeRefillInput & {
   held: ReadonlySet<string>;
   mockOnlyDay: boolean;
 }): PlannedCheckpoint[] {
@@ -49,7 +50,7 @@ function getRefillCheckpoints({
 
   return canHoldPhaseChallenges({
     mockOnlyDay,
-    reviewDay: Boolean(findPlannedReview({ items: plan.items, today: session.localDate })),
+    reviewDay: isSavedReviewDay({ blocks, items: plan.items, today: session.localDate }),
     trialEnded,
   })
     ? plan.items.flatMap((item): PlannedCheckpoint[] => {
@@ -107,6 +108,7 @@ export async function fitRefillStretch({
   );
 
   const checkpoints = getRefillCheckpoints({
+    blocks,
     held,
     leaving,
     mockOnlyDay: isMockOnlyDay({
@@ -121,8 +123,18 @@ export async function fitRefillStretch({
     trialEnded,
   });
 
+  const ahead = new Set(
+    blocks.flatMap((block) => {
+      const payload = readBlockPayload(block);
+
+      return payload.extra
+        ? []
+        : [payload.planItemId, payload.planItemKey].filter((id): id is string => id !== null);
+    }),
+  );
+
   const potential = listDayStretch({
-    ahead: held,
+    ahead,
     budget,
     checkpoints,
     items: plan.items,
@@ -165,7 +177,7 @@ export async function fitRefillStretch({
     .map((checkpoint) => ({ ...checkpoint, rematch: results.has(checkpoint.planItemId ?? "") }));
 
   const stretch = listDayStretch({
-    ahead: held,
+    ahead,
     budget,
     checkpoints: available,
     items: plan.items,
