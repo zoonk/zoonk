@@ -15,6 +15,7 @@ import {
   placePutOffChallenges,
 } from "../../sessions/_utils/day-stretch";
 import { canHoldPhaseChallenges } from "../../sessions/_utils/phase-challenge-day";
+import { dropSettledEvents } from "../../sessions/_utils/settled-events";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { type BossTiming, type ChallengeReachItem, isChallengeReached } from "./challenge-reach";
 import { type CheckpointResult } from "./checkpoint-results";
@@ -117,25 +118,29 @@ export function getChallengeTimings({
     (_, index) => addDays(today, index),
   );
 
-  const retainedReview =
-    !hasOverduePlanWork({ items, today }) && findPlannedReview({ items, today }) !== null;
+  // Today's left work also counts lessons given ahead, which needs a carry snapshot these views don't read.
+  const todayItems = hasOverduePlanWork({ items, today })
+    ? dropSettledEvents({ items, settings, today })
+    : items;
 
   const capacity = (date: Date) => {
-    const blocked =
-      (date.getTime() === today.getTime() && retainedReview) ||
-      items.some(
-        (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
-      );
+    const isToday = date.getTime() === today.getTime();
+
+    const reviewDay = isToday
+      ? findPlannedReview({ items: todayItems, today }) !== null
+      : items.some(
+          (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
+        );
 
     return canHoldPhaseChallenges({
       mockOnlyDay: isMockOnlyDay({
         goal,
         hasMock: true,
-        items,
+        items: isToday ? todayItems : items,
         planSettings: settings,
         today: date,
       }),
-      reviewDay: blocked,
+      reviewDay,
       trialEnded: false,
     })
       ? getGoalDayMinutes({ date, goal, planSettings: settings })

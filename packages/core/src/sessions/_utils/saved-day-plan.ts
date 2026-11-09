@@ -1,6 +1,5 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
-import { isWeeklyChallengeItem } from "../../checkpoints/_utils/load-weekly-challenge";
 import { type GoalPlanSource } from "../../learner/_utils/goal-skill-graph";
 import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { type PlanCarrySnapshot } from "../../plans/_utils/carried-lessons";
@@ -10,10 +9,10 @@ import { addsLessonsAfterLessonsDone } from "../../plans/_utils/plan-refresh-adm
 import { readPlanSummary } from "../../plans/_utils/plan-summary";
 import { computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
-import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { type SelectedDayPlan } from "./selected-day-plan";
-import { type SessionPlanItem, getSessionItemIdentity } from "./session-plan-item";
+import { getSessionItemIdentity } from "./session-plan-item";
+import { dropSettledEvents } from "./settled-events";
 
 export function toSource({
   items,
@@ -57,32 +56,6 @@ export function savedSelection({
   };
 }
 
-/** Start's missed-days settle re-dates these, which changes their date-based keys: a past event, or today's mock that neither the learner moved there nor the plan funded. */
-function isRedatedBySettle({
-  item,
-  kept,
-  today,
-}: {
-  item: SessionPlanItem;
-  kept: ReadonlySet<string>;
-  today: Date;
-}): boolean {
-  if (item.status !== "todo" || !item.scheduledFor) {
-    return false;
-  }
-
-  if (item.kind !== "review" && !isWeeklyChallengeItem(item)) {
-    return false;
-  }
-
-  return (
-    item.scheduledFor < today ||
-    (item.kind === "mock" &&
-      item.scheduledFor.getTime() === today.getTime() &&
-      !kept.has(toIsoDate(today)))
-  );
-}
-
 /** After days away, Today and Start both offer the saved plan's day without the events Start's settle moves. */
 function selectSavedDay({
   context,
@@ -94,16 +67,12 @@ function selectSavedDay({
   summary: SelectedSummary | null;
 }): SelectedDayPlan {
   const selection = savedSelection({ context, summary });
-  const { mockFunding, movedEvents } = context.state.settings;
 
-  const kept = new Set([
-    ...movedEvents.map((move) => move.to),
-    ...mockFunding.map(({ date }) => date),
-  ]);
-
-  const items = selection.items.filter(
-    (item) => !isRedatedBySettle({ item, kept, today: context.today }),
-  );
+  const items = dropSettledEvents({
+    items: selection.items,
+    settings: context.state.settings,
+    today: context.today,
+  });
 
   return { ...selection, items, left, source: toSource({ ...selection, items }) };
 }
