@@ -422,6 +422,7 @@ internal fun AnswerActions(
     draft: Answer?,
     controls: RunControls,
     ask: @Composable () -> Unit,
+    onReportSaveFailure: () -> Unit,
     notSureOnEvery: Boolean = false,
 ) {
     val phase = run.phase
@@ -441,7 +442,11 @@ internal fun AnswerActions(
         var notSureSent by rememberSaveable { mutableStateOf(false) }
         LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
 
-        if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+        if (phase ==
+            RunPhase.AnswerFailed
+        ) {
+            SaveErrorText(run.saveFailures, onRetry = controls::retry.takeIf { controls.canRetry }, onReport = onReportSaveFailure)
+        }
         if (answeredElsewhere) AlreadyAnsweredText()
         TaskActions { width ->
             notSureOffer(question, every = notSureOnEvery)?.takeUnless { done || reading }?.let { offer ->

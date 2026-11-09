@@ -75,6 +75,16 @@ describe(buildProviderOptions, () => {
     });
   });
 
+  it("doesn't fall back to the model a private scope already chose from the chain", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"],
+        model: "openai/gpt-6-luna",
+        useFallback: true,
+      }).gateway.models,
+    ).toStrictEqual(["anthropic/claude-haiku-5.5"]);
+  });
+
   it("keeps provider order when fallback routing has no fallback models", () => {
     expect(
       buildProviderOptions({ fallbackModels: [], model: "openai/gpt-6-sol", useFallback: true }),

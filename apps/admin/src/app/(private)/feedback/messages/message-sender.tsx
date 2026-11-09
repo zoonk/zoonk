@@ -1,9 +1,15 @@
 import Link from "next/link";
-import { getLearnerLabel } from "@/lib/learner-label";
+import { getFeedbackLearnerLabel } from "../_utils/feedback-labels";
 
 type MessageSenderProps = {
   email: string | null;
-  user: { email: string; id: string; name: string; username: string | null } | null;
+  user: {
+    email: string;
+    id: string;
+    isAnonymous: boolean;
+    name: string;
+    username: string | null;
+  } | null;
 };
 
 export function MessageSender({ email, user }: MessageSenderProps) {
@@ -14,9 +20,9 @@ export function MessageSender({ email, user }: MessageSenderProps) {
   return (
     <span className="flex flex-col">
       <Link className="font-medium hover:underline" href={`/users/${user.id}`} prefetch>
-        <span className="block truncate">{getLearnerLabel(user)}</span>
+        <span className="block truncate">{getFeedbackLearnerLabel(user)}</span>
       </Link>
-      <span className="text-muted-foreground truncate text-xs">{email ?? user.email}</span>
+      <span className="text-muted-foreground truncate text-xs">{email ?? "No reply email"}</span>
     </span>
   );
 }

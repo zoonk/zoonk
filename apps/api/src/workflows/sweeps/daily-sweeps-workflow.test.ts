@@ -3,7 +3,12 @@ import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -30,6 +35,7 @@ import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
+import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -63,6 +69,10 @@ async function missedQuestionFixture() {
   ]);
 
   return item;
+}
+
+function languageSkillFixture(attrs: Parameters<typeof skillFixture>[0] = {}) {
+  return skillFixture({ level: "beginner", targetLanguage: "en", ...attrs });
 }
 
 describe(dailySweepsWorkflow, () => {
@@ -352,6 +362,54 @@ describe(dailySweepsWorkflow, () => {
 
     expect(started.filter((id) => id === first.lesson.id)).toStrictEqual([first.lesson.id]);
     expect(started).not.toContain(second.lesson.id);
+  });
+
+  it("starts one run tagging the skills without a level that a language plan's items or graph use", async () => {
+    const [user, inItem, inGraph, survivor, tagged, exhausted, learnOnly] = await Promise.all([
+      userFixture(),
+      languageSkillFixture(),
+      languageSkillFixture(),
+      languageSkillFixture(),
+      languageSkillFixture({ cefrLevel: "A1" }),
+      languageSkillFixture({ cefrAttempts: 8 }),
+      languageSkillFixture(),
+    ]);
+
+    const [merged, languageGoal, learnGoal] = await Promise.all([
+      languageSkillFixture({ mergedIntoId: survivor.id }),
+      goalFixture({ kind: "language", targetLanguage: "en", userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const [languagePlan] = await Promise.all([
+      planFixture({ goalId: languageGoal.id, graph: { skills: plannedSkills([inGraph, tagged]) } }),
+      planFixture({ goalId: learnGoal.id, graph: { skills: plannedSkills([learnOnly]) } }),
+    ]);
+
+    await Promise.all(
+      [inItem, merged, exhausted].map((skill, position) =>
+        planItemFixture({ planId: languagePlan.id, position, skillId: skill.id }),
+      ),
+    );
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const runs = getStartMock().mock.calls.filter(([workflow]) => workflow === skillLevelsWorkflow);
+    expect(runs).toHaveLength(1);
+
+    const [, args, options] = runs[0] ?? [];
+    const [{ skillIds, wait }] = args as [{ skillIds: string[]; wait: string }];
+
+    expect(skillIds).toStrictEqual(expect.arrayContaining([inItem.id, inGraph.id, survivor.id]));
+
+    for (const skill of [merged, tagged, exhausted, learnOnly]) {
+      expect(skillIds).not.toContain(skill.id);
+    }
+
+    expect(wait).toBe("later");
+    expect(options).toStrictEqual({ experimental_hook: { token: "skill-levels:sweep" } });
+    expect(result.skillLevels).toBe(skillIds.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

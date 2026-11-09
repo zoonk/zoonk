@@ -10,8 +10,12 @@ import { runSearchTask } from "./run-search-task";
 
 export type { ChoiceOptionsFinding } from "./choice-options-finding";
 
-/** `find-subject-questions`'s pair, at low reasoning: a learner's placement may wait on it. */
-const defaultModel = "google/gemini-3.8-flash";
+/**
+ * At low reasoning, since a learner's placement may wait on it: on 5 cases (8 Nov 2026), Luna and
+ * Haiku 5.5 got every option count right at $5.50/1k and $6.16/1k, inside the 20/35 s wait.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
@@ -56,6 +60,7 @@ export async function findChoiceOptions({
 
   const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     libraryInput: true,
     maxSteps: MAX_STEPS,
     model,

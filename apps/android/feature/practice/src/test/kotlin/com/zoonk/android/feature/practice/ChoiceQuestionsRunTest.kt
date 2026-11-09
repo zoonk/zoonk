@@ -43,7 +43,7 @@ class ChoiceQuestionsRunTest {
                     app = AppContainer.preview(rule.activity),
                     screen = "test-out",
                     pending = pending,
-                    failed = false,
+                    failures = 0,
                     onAnswer = { _, _ -> presses++ },
                     onSend = { presses++ },
                     onClose = {},

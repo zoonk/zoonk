@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -110,24 +111,24 @@ function useFocusNewQuestion({
 export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   aside,
   draftKey,
-  error,
   header,
   hint,
   onFinish,
   pending,
   questions,
   trueFalseLabels,
+  unsent,
   upcoming,
 }: {
   aside?: TaskFrameAside | null;
   draftKey?: string;
-  error?: React.ReactNode;
   header: QuestionsHeader;
   hint?: (question: Question) => string;
   onFinish: (answers: ChoiceQuestionAnswer[]) => void;
   pending: boolean;
   questions: readonly Question[];
   trueFalseLabels: TrueFalseLabels;
+  unsent: UnsentAnswers<ChoiceQuestionAnswer[]> | null;
   upcoming?: UpcomingQuestions | null;
 }) {
   const t = useExtracted();
@@ -186,7 +187,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   };
 
   const current = Math.min(index + 1, total);
-  const locked = pending || Boolean(error);
+  const locked = pending || unsent !== null;
 
   return (
     <TaskFrame
@@ -195,7 +196,12 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       footer={
         (question || upcoming?.ended) && (
           <>
-            {error}
+            {unsent && !pending && (
+              <AnswersSaveError
+                failures={unsent.failures}
+                onRetry={() => onFinish(unsent.answers)}
+              />
+            )}
             <QuestionsFooter
               canFinish={!question && Boolean(upcoming?.ended)}
               isLast={index + 1 >= total}

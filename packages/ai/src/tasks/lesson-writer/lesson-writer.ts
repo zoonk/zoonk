@@ -33,7 +33,7 @@ const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBou
 
 /**
  * `getLessonWriterModel` picks the first writer; each model falls back to the others, all from other
- * families, so an outage at one provider doesn't stop lessons.
+ * families, so an outage at one provider doesn't stop lessons. Argon hasn't run the current prompt.
  */
 const WRITER_MODELS = [
   "openai/gpt-6.1-terra",
@@ -44,17 +44,13 @@ const WRITER_MODELS = [
 const [defaultModel, sharedLessonModel] = WRITER_MODELS;
 
 /**
- * Opus 5.5 writes a lesson other learners will read. On 15 lessons across subjects, levels and 8
- * languages (4 Nov 2026), three blind judges scored it 8.74 and Sonnet 5.5 8.34, widest on clarity
- * and natural speech, at about $0.20 a lesson against $0.15, which a shared lesson spreads across its
- * readers. Terra tied Sol for a lesson one learner reads, at half its price.
+ * Shared: on 15 lessons (8 Nov 2026), blind cross-family judges scored Opus 8.36 (EN 8.32, PT 8.41)
+ * and Sonnet 8.06 (EN 7.93) at $179/1k against $125/1k, which a shared lesson spreads across its
+ * readers. Personal: Terra scored 8.25 (EN 8.29, PT 8.20) at $21/1k; a blind Argon judge rated
+ * Haiku 5.5 at high reasoning ($14/1k) about the same, but Terra led accuracy 9.20 to 8.27.
  */
 export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
   return reuse === "personal" ? defaultModel : sharedLessonModel;
-}
-
-function getFallbackModels(model: string): string[] {
-  return WRITER_MODELS.filter((candidate) => candidate !== model);
 }
 
 export type WriteLessonDraftParams = LessonWritingContext & {
@@ -125,7 +121,7 @@ export async function writeLessonDraft(params: WriteLessonDraftParams) {
   const userPrompt = formatWriterPrompt(params);
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: getFallbackModels(model),
+    fallbackModels: WRITER_MODELS,
     model,
     serviceTier,
     useFallback,

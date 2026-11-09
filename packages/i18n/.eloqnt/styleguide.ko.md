@@ -101,7 +101,6 @@
 - “Past date”: “날짜 지남”, not “만료” or “종료”
 - “Needs adjusting”: “조정 필요”
 - “Too tight”: “너무 빠듯함”
-- “Even across skills”: “스킬 간 균형”
 - “left out”: “제외”, not “건너뜀”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “건너뛰기” / “건너뜀”
 - “Daily time”: “하루 학습 시간”

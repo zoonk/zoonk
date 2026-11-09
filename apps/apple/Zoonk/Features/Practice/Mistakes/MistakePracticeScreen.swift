@@ -16,6 +16,7 @@ struct MistakePracticeScreen: View {
   @State private var labels = PracticeTrueFalseLabels.trueFalse
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
+  @State private var showsSaveReport = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
   @State private var pressedWithFocus: PracticeFocus?
@@ -58,6 +59,10 @@ struct MistakePracticeScreen: View {
     ) {
       await read()
     }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "mistake-practice", reportType: .saveFailure), isReport: true
+    )
   }
 
   @ViewBuilder
@@ -215,7 +220,9 @@ struct MistakePracticeScreen: View {
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed(let sent) = state.phase {
-        PracticeSaveError { Task { await send(sent) } }
+        PracticeSaveError(
+          failures: state.saveFailures, onReport: { showsSaveReport = true },
+          retry: { Task { await send(sent) } })
       }
 
       PracticeActionRow {

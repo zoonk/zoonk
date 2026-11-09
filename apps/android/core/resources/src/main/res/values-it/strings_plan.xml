@@ -245,7 +245,6 @@
   "plan_estimate_based_on_last": "350dceddbcfa44bf83d870c49efd0aef3fc569acd27cccc79909924479b35573",
   "plan_estimate_waits": "6db40859b3ba25f0744f5f081cfb1dbb44af20ee208abfba20db0e4120bfbf0c",
   "plan_estimated_score": "a5f3493f456525da369d4b4ade74873f15b5c397c33b9e8537c95c1ec18cff83",
-  "plan_even_across_skills": "379c2986fc95bddc1b42533f0bc164d2a70e2a27e963d190ebb6fe4b63962c26",
   "plan_every_day": "3d707b01ec095a3e9f24cb968bd9077bd2e99f66edee0206181c3a2a6f5d9680",
   "plan_everything": "231b36ac40f01865014ef5c14550408196b2b7cf1d3c17eda145046dffc22687",
   "plan_exam_choice_left_out": "0e8e2a4c0698fa1fec88419116dc7e27d3c787c8c9e50129a9787d83ead65e98",
@@ -454,7 +453,6 @@
   "plan_short_mock_and_practice": "688dba7d8efd80e3d0355367c22ff96276fc6392d22ed3defd997c703980e774",
   "plan_short_mock_and_review": "00e0604337f84945a24d191225a8d51515f002a42addb90bcb240653585ce6ab",
   "plan_show_fewer_chapters": "000ee1f3966dd00063709ed4f2a0f7c8a1eac968c62e2062b8ffeebd23b7781f",
-  "plan_skill_leads": "097ab26572fba50cb23b65f9be182ebaca7526620ea5320491606d040c27ec3f",
   "plan_skills_you_know": "e10d04cacf54da74bc9c506305d5f6cbe7ae00e23a60fa3b08e7f551e6b1ce72",
   "plan_skipped": "adba6fe18c51ea6cad91375ef062864777d020d437d5d39ace5234885b20e7cf",
   "plan_skipped_known": "5461011d5153652990dbd5e0b106d3bb7f386f58e31da795f5cf5649315cccfd",
@@ -915,10 +913,6 @@
     <!-- A language goal's standing: its level across skills, such as "B1". -->
     <string name="plan_level">Livello</string>
     <string name="plan_your_level">Il tuo livello</string>
-    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
-    <string name="plan_even_across_skills">Equilibrato tra le abilità</string>
-    <!-- Under a language goal's level: the skill where the learner's level is highest, such as "Reading leads". -->
-    <string name="plan_skill_leads">%1$s in testa</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->
     <string name="plan_no_lessons_studied_yet">Nessuna lezione ancora completata</string>
     <!-- A short line under the progress percent, in a small tile. Studied means learned: lessons completed and taken in, not merely worked on. -->

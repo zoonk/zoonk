@@ -56,11 +56,12 @@ describe(gradeEssay, () => {
     vi.clearAllMocks();
   });
 
-  it("sends only the ENEM rubric, and asks for the proposal elements and annulment", async () => {
+  it("sends only the ENEM rubric, and asks for the proposal's elements and limit and annulment", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
         criteria: criteriaOutput(["c1", "c2", "c3", "c4", "c5"]),
         interventionElements: null,
+        proposalLimit: null,
         zeroReason: null,
       }),
     );
@@ -78,6 +79,7 @@ describe(gradeEssay, () => {
     await expect(requestedSchemaFields()).resolves.toStrictEqual([
       "criteria",
       "interventionElements",
+      "proposalLimit",
       "zeroReason",
     ]);
   });

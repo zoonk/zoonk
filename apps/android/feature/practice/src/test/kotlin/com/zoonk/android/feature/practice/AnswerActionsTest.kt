@@ -66,7 +66,16 @@ class AnswerActionsTest {
 
         rule.setContent {
             ZoonkTheme {
-                AnswerActions(listOf(question), question, run, Answer.Choice(0), controls, ask = {}, notSureOnEvery = true)
+                AnswerActions(
+                    listOf(question),
+                    question,
+                    run,
+                    Answer.Choice(0),
+                    controls,
+                    ask = {},
+                    onReportSaveFailure = {},
+                    notSureOnEvery = true,
+                )
             }
         }
     }

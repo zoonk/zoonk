@@ -11118,7 +11118,7 @@
     },
     "/feedback": {
       "post": {
-        "description": "Stores the message with its context, plus the model and prompt version behind the content it's about when known, and emails it to the team. Anyone can send one; a signed-in learner's message is linked to their account.",
+        "description": "Stores the message with its context, plus the model and prompt version behind the content it's about when known, and emails it to the team. Anyone can send one without an email; a signed-in learner's message is linked to their account, including guests. Reports about answers that keep failing to save carry `context.reportType: saveFailure`.",
         "operationId": "createFeedback",
         "security": [
           {},
@@ -26781,6 +26781,12 @@
                   "web"
                 ]
               },
+              "reportType": {
+                "type": "string",
+                "enum": [
+                  "saveFailure"
+                ]
+              },
               "screen": {
                 "type": "string",
                 "maxLength": 100
@@ -26803,10 +26809,9 @@
           }
         },
         "required": [
-          "email",
           "message"
         ],
-        "description": "A feedback or contact message. `context` says where it was written: the screen, page, content, platform and app version."
+        "description": "A feedback or contact message with an optional reply email. `context` says where it was written: the screen, page, content, platform and app version. A report about answers that keep failing to save carries `context.reportType: saveFailure`."
       },
       "EmailSignInCodeRequest": {
         "type": "object",
@@ -32260,7 +32265,8 @@
               "A2",
               "B1",
               "B2",
-              "C1"
+              "C1",
+              "C2"
             ]
           },
           "minutes": {
@@ -32274,13 +32280,6 @@
             "nullable": true,
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
-          },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
           },
           "targetLanguage": {
             "nullable": true,
@@ -32327,7 +32326,6 @@
           "level",
           "minutes",
           "recipientName",
-          "skillLevels",
           "targetLanguage",
           "title",
           "topics",
@@ -32337,29 +32335,6 @@
         ],
         "additionalProperties": false,
         "description": "A certificate as anyone with its link sees it, with its page and pictures"
-      },
-      "CertificateSkillLevel": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string",
-            "description": "The skill's level, such as \"B1\" or \"B2+\""
-          },
-          "skill": {
-            "type": "string",
-            "enum": [
-              "reading",
-              "listening",
-              "speaking",
-              "writing"
-            ]
-          }
-        },
-        "required": [
-          "label",
-          "skill"
-        ],
-        "additionalProperties": false
       },
       "CertificateImageUrls": {
         "type": "object",
@@ -32505,7 +32480,8 @@
               "A2",
               "B1",
               "B2",
-              "C1"
+              "C1",
+              "C2"
             ]
           },
           "minutes": {
@@ -32519,13 +32495,6 @@
             "nullable": true,
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
-          },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
           },
           "targetLanguage": {
             "nullable": true,
@@ -32590,7 +32559,6 @@
           "level",
           "minutes",
           "recipientName",
-          "skillLevels",
           "targetLanguage",
           "title",
           "topics",
@@ -38249,8 +38217,12 @@
           },
           "level": {
             "nullable": true,
-            "description": "The level across skills (\"A2+\"): their average, rounded to the nearest half step, as the level test places the plan; null before any",
-            "type": "string"
+            "description": "The plan's level: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguagePlanLevel"
+              }
+            ]
           },
           "levels": {
             "type": "array",
@@ -38313,6 +38285,25 @@
         ],
         "additionalProperties": false
       },
+      "LanguagePlanLevel": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The plan's level, \"A2+\""
+          },
+          "target": {
+            "nullable": true,
+            "description": "The level the learner aims for while the plan's level is below it; null once it reaches it or when they gave none",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "target"
+        ],
+        "additionalProperties": false
+      },
       "LanguageSkillLevel": {
         "type": "object",
         "properties": {
@@ -38363,24 +38354,12 @@
         "properties": {
           "level": {
             "nullable": true,
-            "description": "The level across skills (their average, rounded to the nearest half step), shown instead of preparation",
-            "type": "object",
-            "properties": {
-              "label": {
-                "type": "string",
-                "description": "The level across skills, \"A2+\""
-              },
-              "target": {
-                "nullable": true,
-                "description": "The level the learner aims for, when they gave one",
-                "type": "string"
+            "description": "The plan's level: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LanguagePlanLevel"
               }
-            },
-            "required": [
-              "label",
-              "target"
-            ],
-            "additionalProperties": false
+            ]
           },
           "pronunciation": {
             "nullable": true,
@@ -39202,7 +39181,7 @@
               },
               "levelRange": {
                 "type": "string",
-                "description": "The CEFR bands it teaches, \"A1–A2\""
+                "description": "The CEFR level of its lessons in the plan (\"B1\"), the span when they differ (\"A2–B1\"), or its band until each has a level (\"A1–A2\")"
               },
               "objectives": {
                 "type": "array",
@@ -39719,7 +39698,8 @@
               "A2",
               "B1",
               "B2",
-              "C1"
+              "C1",
+              "C2"
             ]
           },
           "minutes": {
@@ -39733,13 +39713,6 @@
             "nullable": true,
             "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
             "type": "string"
-          },
-          "skillLevels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CertificateSkillLevel"
-            },
-            "description": "Language level: each skill the learner's answers raised, at its level when earned"
           },
           "targetLanguage": {
             "nullable": true,
@@ -39784,7 +39757,6 @@
           "level",
           "minutes",
           "recipientName",
-          "skillLevels",
           "targetLanguage",
           "title",
           "topics",

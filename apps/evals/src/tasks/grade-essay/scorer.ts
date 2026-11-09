@@ -12,6 +12,8 @@ const SCORE_RANGE = 4;
 
 const MIN_QUOTED_SHARE = 0.6;
 
+const ENEM_C5_POINTS_PER_ELEMENT = 40;
+
 type Check = { name: string; passed: boolean; detail: string };
 
 function getBandLabel({ band, total }: { band: GradeEssayExpected["totalBand"]; total: number }) {
@@ -38,6 +40,36 @@ function checkElements({
       passed: found === present,
     };
   });
+}
+
+/** Production derives C5 from the grade's own labels, so this catches a limit set or missed against the case. */
+function checkC5Level({
+  expected,
+  grade,
+}: {
+  expected: GradeEssayExpected;
+  grade: EssayGrade;
+}): Check[] {
+  const elements = grade.enemInterventionElements;
+  const c5 = grade.criteria.find((criterion) => criterion.id === "c5");
+
+  if (!elements || !c5 || grade.zeroReason) {
+    return [];
+  }
+
+  const count = Object.values(elements).filter(Boolean).length;
+  const level = expected.c5Score ?? ENEM_C5_POINTS_PER_ELEMENT * count;
+
+  return [
+    {
+      detail:
+        expected.c5Score === undefined
+          ? `C5 ${c5.score} with ${count} valid element(s), whose level is ${level}.`
+          : `C5 ${c5.score}, expected ${level} for a limited proposal.`,
+      name: "c5-level",
+      passed: c5.score === level,
+    },
+  ];
 }
 
 function checkNextStep({
@@ -86,6 +118,14 @@ function checkFeedback({
     (criterion) => criterion.quote && essay.includes(criterion.quote),
   );
 
+  const allFeedback = feedback.join(" ").toLowerCase();
+
+  const mentions = (expected.feedbackMentions ?? []).map((mention) => ({
+    detail: `Feedback mentions "${mention}".`,
+    name: `mentions-${mention}`,
+    passed: allFeedback.includes(mention.toLowerCase()),
+  }));
+
   return [
     {
       detail: `Feedback language: expected ${expected.feedbackLanguage}, detected ${language ?? "unknown"}.`,
@@ -102,6 +142,7 @@ function checkFeedback({
       name: "quotes",
       passed: quoted.length >= grade.criteria.length * MIN_QUOTED_SHARE,
     },
+    ...mentions,
   ];
 }
 
@@ -130,6 +171,7 @@ function getChecks({
     },
     checkNextStep({ expected, grade }),
     ...checkElements({ expected, grade }),
+    ...checkC5Level({ expected, grade }),
     ...checkFeedback({ essay, expected, grade }),
   ];
 }

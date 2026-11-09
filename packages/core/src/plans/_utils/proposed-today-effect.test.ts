@@ -60,7 +60,7 @@ describe("proposal effects on Today", () => {
     const savedProposal = await prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } });
 
     const before = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
+      include: { items: { orderBy: { position: "asc" } } },
       where: { id: plan.id },
     });
 
@@ -72,7 +72,10 @@ describe("proposal effects on Today", () => {
     expect(today?.effect?.endDateAfter).not.toBe(today?.effect?.endDateBefore);
 
     await expect(
-      prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: plan.id },
+      }),
     ).resolves.toStrictEqual(before);
 
     await expect(
@@ -133,7 +136,7 @@ describe("proposal effects on Today", () => {
     });
 
     const before = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
+      include: { items: { orderBy: { position: "asc" } } },
       where: { id: plan.id },
     });
 
@@ -142,7 +145,10 @@ describe("proposal effects on Today", () => {
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
     await expect(
-      prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: plan.id },
+      }),
     ).resolves.toStrictEqual(before);
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toStrictEqual(

@@ -8,8 +8,14 @@ import { type ResearchSearchTool } from "./research-search-tools";
 import { runSearchTask } from "./run-search-task";
 import { type ProductHints } from "./source-research-plan";
 
-/** As `find-official-sources`: Flash with Parallel, Terra as the fallback. */
+/**
+ * With Parallel on 12 cases (8 Nov 2026), Flash scored 10.00 at $17.43/1k and Haiku 5.5 9.87 at
+ * $11.22/1k. Read blind, Haiku gave iPhone's iOS update notes as its model list, TOTVS's generic
+ * systems page as Protheus's, and a release page when none was named: these pages feed a product
+ * many learners share, so the saving isn't worth it. Haiku is the fallback.
+ */
 const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 
 const MAX_STEPS = 8;
@@ -73,6 +79,7 @@ export async function findProductPages({
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     maxSteps: MAX_STEPS,
     model,
     reasoning,

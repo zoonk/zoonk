@@ -7,31 +7,38 @@ enum FeedbackContentKind: String, Equatable, Sendable {
   case plan
 }
 
+enum FeedbackReportType: String, Equatable, Sendable {
+  case saveFailure
+}
+
 /// What a report is about: a piece of content, or a screen without one (main's `screen`).
 struct FeedbackContext: Equatable, Sendable {
   let contentID: String?
   let contentKind: FeedbackContentKind?
   let screen: String
+  let reportType: FeedbackReportType?
 
   init(contentID: String, contentKind: FeedbackContentKind, screen: String? = nil) {
     self.contentID = contentID
     self.contentKind = contentKind
     self.screen = screen ?? contentKind.rawValue
+    reportType = nil
   }
 
-  init(screen: String) {
+  init(screen: String, reportType: FeedbackReportType? = nil) {
     contentID = nil
     contentKind = nil
     self.screen = screen
+    self.reportType = reportType
   }
 }
 
 struct FeedbackSubmission: Equatable, Sendable {
   let context: FeedbackContext?
-  let email: String
+  let email: String?
   let message: String
 
-  init(context: FeedbackContext? = nil, email: String, message: String) {
+  init(context: FeedbackContext? = nil, email: String?, message: String) {
     self.context = context
     self.email = email
     self.message = message
@@ -116,6 +123,7 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
       contentId: context?.contentID,
       contentKind: context?.contentKind.map(makeContentKindPayload),
       platform: .ios,
+      reportType: context?.reportType.map { _ in .saveFailure },
       screen: context?.screen)
   }
 

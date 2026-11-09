@@ -36,6 +36,7 @@ type Phase =
   | { kind: "intro" | "loading" | "unavailable" | "waiting" }
   | {
       answered: number;
+      failures: number;
       kind: "question";
       question: PlacementQuestion;
       /** 0 to 1. */
@@ -57,12 +58,30 @@ function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
   return outcome.next && !outcome.complete
     ? {
         answered,
+        failures: 0,
         kind: "question",
         question: outcome.next,
         spent: Math.max(outcome.dayBudgetSpent, shown.spent),
         trueFalseLabels: outcome.trueFalseLabels,
       }
     : { answered, forToday: outcome.dayBudgetUsed, kind: "done" };
+}
+
+/** Counts a save on the question it came from; a save from another screen leaves questions alone. */
+function countSave({
+  current,
+  from,
+  saved,
+}: {
+  current: Phase;
+  from: Phase;
+  saved: boolean;
+}): Phase {
+  return current.kind === "question" &&
+    from.kind === "question" &&
+    current.question.itemId === from.question.itemId
+    ? { ...current, failures: saved ? 0 : current.failures + 1 }
+    : current;
 }
 
 function toResumedPhase({
@@ -167,7 +186,8 @@ export function PlacementStep({
   areaCount: number;
   goalId: string;
   mockHrefs: { mock: (mockId: string) => string; start: string };
-  onDone: () => void;
+  /** Saves the step and resolves whether it went through; a failure is this step's to say. */
+  onDone: () => Promise<boolean>;
   /** Says a finish that didn't save, until the learner's next try. */
   onFinishFailed: (failed: boolean) => void;
   run: GenerationRun | null;
@@ -179,7 +199,6 @@ export function PlacementStep({
   });
 
   const [buildFailed, setBuildFailed] = useState(false);
-  const [answerFailed, setAnswerFailed] = useState(false);
   // Questions that arrived while the learner waited show once the wait moves on.
   const [questionsReady, setQuestionsReady] = useState<ReadyOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -189,15 +208,17 @@ export function PlacementStep({
     startTransition(async () => {
       onFinishFailed(false);
 
-      const { data: saved } = await safeAsync(() =>
+      const { data: finished } = await safeAsync(() =>
         saveFinish({ actions, fromScratch, goalId, stopMockId }),
       );
 
-      onFinishFailed(!saved);
+      // Finishing is one save to the learner: it goes through once the step's save does too.
+      const saved = Boolean(finished) && (await onDone().catch(() => false));
 
-      if (saved) {
-        onDone();
-      }
+      // `phase` is the screen the finish started on: a Stop on a question fails on that question's
+      // line, counted with its answers; another screen's finish says so in the top notice.
+      onFinishFailed(!saved && phase.kind !== "question");
+      setPhase((current) => countSave({ current, from: phase, saved }));
     });
 
   const show = (outcome: PlacementOutcome) => {
@@ -233,7 +254,9 @@ export function PlacementStep({
           .answerPlacement({ answer: choice, durationMs, goalId, itemId: question.itemId })
           .catch((): PlacementOutcome => ({ status: "failed" }));
 
-        setAnswerFailed(outcome.status === "failed");
+        setPhase((current) =>
+          countSave({ current, from: phase, saved: outcome.status !== "failed" }),
+        );
 
         if (outcome.status === "failed") {
           return;
@@ -290,7 +313,7 @@ export function PlacementStep({
     case "question":
       return (
         <PlacementQuestionScreen
-          failed={answerFailed}
+          failures={phase.failures}
           key={phase.question.itemId}
           number={phase.answered + 1}
           onAnswer={answer(phase.question, phase.answered)}

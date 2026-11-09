@@ -47,6 +47,7 @@ import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
@@ -263,6 +264,7 @@ fun LessonCompletionView(
     state: LessonPlayerState,
     ending: LessonEnding,
     buddy: LearnerSummaryBuddy? = null,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val completion = state.completion ?: return
 
@@ -309,7 +311,12 @@ fun LessonCompletionView(
                 )
 
                 if (completion.status == CompletionStatus.Failed) {
-                    Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
+                    SaveErrorText(
+                        failures = completion.saveFailures,
+                        firstFailureMessage = stringResource(R.string.player_save_failed),
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        onReport = onReportSaveFailure,
+                    )
                 }
                 if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }
@@ -341,11 +348,10 @@ private fun LessonEndMap(map: StepContent.Map) {
     LessonMapView(map)
 }
 
-/** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */
 @Composable
 internal fun LessonReadouts(
     state: LessonPlayerState,
-    withReview: Boolean = true,
+    withFacts: Boolean = true,
 ) {
     val result = state.completion?.result ?: return
     val segments = state.screen().segments
@@ -355,13 +361,18 @@ internal fun LessonReadouts(
     val brainPower = block?.ownBrainPower ?: result.brainPower
     val locale = currentLocale()
 
+    val studied =
+        result.seconds.takeIf { withFacts && it > 0 }?.let { seconds ->
+            stringResource(R.string.player_time_studied, formatDuration(seconds, locale))
+        }
+
     val review =
-        result.nextReviewAt?.takeIf { withReview }?.let { reviewAt ->
+        result.nextReviewAt?.takeIf { withFacts }?.let { reviewAt ->
             val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
             stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }
 
-    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(review))
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(studied, review))
 }
 
 /**

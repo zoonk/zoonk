@@ -357,7 +357,7 @@ internal fun TestOutQuestions(
         app = app,
         screen = "test-out",
         pending = ui.sending,
-        failed = ui.sendFailed,
+        failures = ui.sendFailures,
         onAnswer = { question, answer -> viewModel.answer(test.questions, question, answer) },
         onSend = viewModel::retrySend,
         onClose = onClose,

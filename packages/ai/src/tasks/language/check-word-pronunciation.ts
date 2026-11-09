@@ -9,9 +9,13 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { isCloserToNative } from "./_utils/ipa-similarity";
 import systemPrompt from "./check-word-pronunciation.prompt.md";
 
-/** MiMo V2.6 Flash costs less but called a native clip English. */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["xiaomi/mimo-v2.6-pro"] as const;
+/**
+ * On 16 generated clips (8 Nov 2026), Flash Lite and Gemini 3.8 Flash judged every one right (PT
+ * 4/4) at $0.148/1k and $0.586/1k; MiMo V2.6 Pro, the other provider, called two native clips
+ * unclear (14/16), so it's only an outage route.
+ */
+const defaultModel = "google/gemini-3.5-flash-lite";
+const fallbackModels = ["google/gemini-3.8-flash", "xiaomi/mimo-v2.6-pro"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model writes what it heard before choosing. */
 const schema = z.object({

@@ -8,6 +8,7 @@ import { EnterButton } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
+import { useStudyTimeFact } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";
@@ -20,10 +21,12 @@ import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
 type LessonMomentCompletion = {
+  failures: number;
   result:
     | (ProgressCelebration & {
         brainPower: number;
         nextReviewAt: string | null;
+        seconds: number;
         studyBlock: StudyMomentView | null;
       })
     | null;
@@ -35,6 +38,7 @@ type OutsideSessionResult = NonNullable<LessonMomentCompletion["result"]>;
 
 function SavedMoment({
   buddy,
+  lessonSeconds,
   moment,
   onContinue,
   onStartTestOut,
@@ -43,6 +47,7 @@ function SavedMoment({
   testedOut,
 }: {
   buddy?: LearnBuddy | null;
+  lessonSeconds: number;
   moment: StudyMomentView;
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
@@ -58,6 +63,7 @@ function SavedMoment({
       finishedChapterId={moment.finishedChapterId}
       inLessonPlayer
       kind="learn"
+      lessonSeconds={lessonSeconds}
       moment={moment}
       next={moment.next?.block ?? null}
       onContinue={onContinue}
@@ -81,6 +87,7 @@ function OutsideSession({
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const studied = useStudyTimeFact(result?.seconds ?? 0);
   const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
 
   return (
@@ -91,6 +98,7 @@ function OutsideSession({
             <MomentReadouts
               brainPower={result.brainPower}
               facts={[
+                studied,
                 result.nextReviewAt &&
                   t("Review on {date}", {
                     date: format.dateTime(new Date(result.nextReviewAt), {
@@ -168,30 +176,25 @@ export function LessonMoment({
 }) {
   const t = useExtracted();
   const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
-  const moment = completion.result?.studyBlock ?? null;
+  const result = completion.result;
+  const moment = result?.studyBlock ?? null;
 
   if (completion.status === "failed") {
-    return <FailedMoment onRetry={onRetry} />;
+    return <FailedMoment failures={completion.failures} onRetry={onRetry} />;
   }
 
   if (!moment && completion.status === "saved") {
-    return (
-      <OutsideSession
-        buddy={buddy}
-        onContinue={onContinue}
-        result={completion.result}
-        title={title}
-      />
-    );
+    return <OutsideSession buddy={buddy} onContinue={onContinue} result={result} title={title} />;
   }
 
-  if (!moment) {
+  if (!result || !moment) {
     return <PendingMoment action={t("Continue")} />;
   }
 
   return (
     <SavedMoment
       buddy={buddy}
+      lessonSeconds={result.seconds}
       moment={moment}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}

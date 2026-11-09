@@ -18,7 +18,9 @@ struct LevelTestStep: View {
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var isStarting = false
-  @State private var failed = false
+  @State private var saveFailures = 0
+  @State private var showsSaveReport = false
+  @State private var failedAnswer: SentAnswer?
 
   private enum Phase {
     case loading
@@ -38,7 +40,8 @@ struct LevelTestStep: View {
         LevelTestIntro(
           language: language, targetLanguage: targetLanguage, minutes: testMinutes,
           showAlphabetNote: showAlphabetNote,
-          isSaving: isSaving, isStarting: isStarting, failed: failed,
+          isSaving: isSaving, isStarting: isStarting,
+          failed: saveFailures > 0 && !isSaving && !isStarting,
           onStart: { Task { await begin() } }, onSkip: finish)
       case .preparing(let generationID):
         preparing(generationID)
@@ -52,10 +55,15 @@ struct LevelTestStep: View {
           goalID: goalID, sentence: sentence, progress: progress, onTest: show,
           onSkip: stop)
       case .done:
-        LevelTestDone(levels: levels, isSaving: isSaving, failed: failed, onContinue: finish)
+        LevelTestDone(
+          levels: levels, isSaving: isSaving, failed: saveFailures > 0 && !isSaving,
+          onContinue: finish)
       }
     }
     .task { await resume() }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "level-test", reportType: .saveFailure), isReport: true)
   }
 
   private func preparing(_ generationID: String) -> some View {
@@ -84,7 +92,7 @@ struct LevelTestStep: View {
   }
 
   @ViewBuilder private var skipSection: some View {
-    if failed {
+    if saveFailures > 0, !isSaving {
       Section {
         FailureLine(
           message: LocalizedStringResource(
@@ -141,7 +149,8 @@ struct LevelTestStep: View {
           : LocalizedStringResource(
             "I don't know yet", table: "Onboarding",
             comment: "Answers a placement question without guessing"),
-      isSaving: isSaving, failed: failed,
+      isSaving: isSaving, failures: saveFailures,
+      onReport: { showsSaveReport = true },
       onAnswer: { answer(question, with: $0, skips: skips) },
       onStop: stop,
       media: {
@@ -189,7 +198,6 @@ struct LevelTestStep: View {
     }
 
     isStarting = true
-    failed = false
     defer { isStarting = false }
 
     do {
@@ -198,9 +206,10 @@ struct LevelTestStep: View {
       } else {
         show(try await onboarding.levelTest(goalID: goalID))
       }
+      saveFailures = 0
     } catch is CancellationError {
     } catch {
-      failed = true
+      saveFailures += 1
     }
   }
 
@@ -210,7 +219,6 @@ struct LevelTestStep: View {
     }
 
     levels = test.levels ?? levels
-    failed = false
     let answered = test.answered ?? 0
     let progress = Double(answered) / Double(max(1, test.total ?? 1))
 
@@ -235,7 +243,9 @@ struct LevelTestStep: View {
     }
 
     isSaving = true
-    failed = false
+    let sent = SentAnswer(
+      answer: answer, sender: answer.isDontKnow ? .notSure : .check,
+      measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
 
     Task {
       defer { isSaving = false }
@@ -251,10 +261,13 @@ struct LevelTestStep: View {
         show(
           try await onboarding.answerLevelTest(
             goalID: goalID, questionID: question.id, answerIndex: index, skipped: skipped,
-            duration: shownAt.duration(to: .now)))
+            duration: .milliseconds(sent.durationMs)))
+        saveFailures = 0
+        failedAnswer = nil
       } catch is CancellationError {
       } catch {
-        failed = true
+        failedAnswer = sent
+        saveFailures += 1
       }
     }
   }
@@ -269,8 +282,10 @@ struct LevelTestStep: View {
       return
     }
 
-    phase = .done
-    saveFinish {}
+    if case .speaking = phase {
+      phase = .done
+    }
+    saveFinish { phase = .done }
   }
 
   private func saveFinish(then next: @escaping () async throws -> Void) {
@@ -279,17 +294,17 @@ struct LevelTestStep: View {
     }
 
     isSaving = true
-    failed = false
 
     Task {
       defer { isSaving = false }
 
       do {
         try await onboarding.finishLevelTest(goalID: goalID)
+        saveFailures = 0
         try await next()
       } catch is CancellationError {
       } catch {
-        failed = true
+        saveFailures += 1
       }
     }
   }

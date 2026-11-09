@@ -1,0 +1,274 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite:high",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All ten characters are genuine hiragana, their romanizations follow Hepburn, audioText contains the appropriate characters, and no forms are invented. However, the uncorrected English “coo” cue for く teaches the wrong vowel quality, triggering the maximum score of 4 for a wrong sound. The “keg” cue and the blanket claim that symbols always have the same reading introduce further inaccuracies.",
+          "score": 4,
+          "label": "Accurate letters and sounds",
+          "weight": 45
+        },
+        {
+          "categoryId": "pedagogy",
+          "reasoning": "The lesson selects exactly the five vowels followed by the K row in conventional order, explains the syllable idea, and includes a clear can-do and short summary. The intro is useful, so the unhelpful-intro cap does not apply. Nevertheless, it omits the explicitly required left-to-right instruction, and no actual word demonstrates the promised reading skill.",
+          "score": 7,
+          "label": "Right first letters, useful intro",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The learner-facing explanations are in US English, and every Japanese character appearing in the intro has its romanization in parentheses. The tone is approachable and concrete, with no wrong-language passages or meta commentary. There is no meaningful weakness in this category.",
+          "score": 9,
+          "label": "Learner's language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2096,
+          "outputTokens": 850,
+          "reasoningTokens": 276
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The cue for く compares it to English “coo” without correcting the rounded English vowel, contradicting the unrounded-lip guidance for う. The cue for け points to the vowel in “keg” without explaining the difference from Japanese e. Also, “Each symbol is always read the same way” is an inaccurate general rule for hiragana; particles such as は and へ have different readings.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The intro omits the required instruction to read left to right here. Short, pure vowel production is not established consistently: some entries explain brevity or avoiding a glide, but there is no general instruction applying both principles to all five vowels and the K row.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a brief reading example using only the taught characters, such as かお (kao, face), to make the stated can-do immediately usable. Make the summary reinforce the reading direction and short, pure vowels rather than only restating how syllables are formed.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The first hiragana for a US English speaker: the five vowels and the K row (か, き, く, け, こ), standard Hepburn romanization, vowels described as short and pure, no forms. The intro says hiragana stands for syllables, read left to right here. In US English.",
+        "id": "en-ja-hiragana-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All symbols are real Cyrillic letters, the reading aids are conventional, and no forms are invented. The consonant audio syllables are explicitly explained. However, the unconditional explanation that Е starts with y gives an incorrect general sound rule, triggering the wrong-sound cap of 4. Its /je/ value is valid in isolation but not generally after consonants. О correctly uses closed avô rather than open pó, but the required stressed-versus-unstressed distinction is missing.",
+          "score": 4,
+          "label": "Accurate letters and sounds",
+          "weight": 45
+        },
+        {
+          "categoryId": "pedagogy",
+          "reasoning": "The eight-letter set is manageable, the introduction offers practical sound comparisons, and there is a clear can-do and short summary. Nevertheless, the selection concentrates on familiar-looking letters with familiar sounds rather than the requested misleading look-alikes and a few new shapes. В and С are useful inclusions, but Н, Р and У are missing, and no genuinely new shapes are introduced. There is also no actual word-reading example to support the can-do.",
+          "score": 6,
+          "label": "Right first letters, useful intro",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Learner-facing prose is consistently natural Brazilian Portuguese, with concrete Portuguese pronunciation comparisons and a direct, approachable tone. Cyrillic letters in the introduction have romanizations in parentheses, and there are no meta lines or wrong-language passages.",
+          "score": 10,
+          "label": "Learner's language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2076,
+          "outputTokens": 905,
+          "reasoningTokens": 369
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson omits the required explanation that unstressed О sounds closer to a and does not identify its avô comparison as applying to stressed О. It also presents Е as always beginning with a y sound, which is incorrect after consonants, where it normally indicates consonant softening instead. The letter selection misses the requested focus: only В and С are contrasting look-alikes, while Н, Р, У and genuinely new shapes are absent.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Include a short decoding example using taught letters, such as мама or кот, so learners can practice the stated can-do rather than merely being told they can read real words.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The first Cyrillic for a Brazilian Portuguese speaker learning Russian: letters that look Latin but sound different (such as В, Н, Р, С, У) and a few new shapes, with sound cues compared to Portuguese sounds and false friends named. О is among them: stressed О is compared with the closed ô of \"avô\", never an open ó like \"pó\", and unstressed О is said to sound closer to a. No forms. In Brazilian Portuguese.",
+        "id": "pt-ru-cyrillic-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "ru"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The letters are genuine, the IPA values are appropriate, and the consonant joining forms are correct. However, equating ج with the g in “gente” supplies a wrong sound cue, triggering the maximum score of 4. Alif's treatment is also misleading: ـا is its right-connected shape, not a distinct medial form that joins on both sides, and its joining restriction is never explained.",
+          "score": 4,
+          "label": "Accurate letters and sounds",
+          "weight": 45
+        },
+        {
+          "categoryId": "pedagogy",
+          "reasoning": "Six letters are a manageable amount, and the introduction usefully states right-to-left reading and contextual joining, so neither explicit cap is triggered. However, the alphabetical selection introduces several difficult sounds before providing a useful reading payoff. The can-do emphasizes letter names, there is no worked joining example or readable word, and the summary does not clarify alif's exception.",
+          "score": 7,
+          "label": "Right first letters, useful intro",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Most prose is warm, accessible Brazilian Portuguese, and the positional labels are in Portuguese. However, “think” and the explicitly English “jeans” pronunciation reference introduce learner-facing English vocabulary outside the script-and-romanization exception. Under the requirement that all other learner-facing text be in the learner's language, this triggers the maximum score of 5.",
+          "score": 5,
+          "label": "Learner's language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2355,
+          "outputTokens": 881,
+          "reasoningTokens": 271
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The sound cue for ج is wrong: the g in Brazilian Portuguese “gente” is /ʒ/, not /dʒ/. The lesson also presents ا as having a medial joining form and introduces “four forms of each letter” without explaining that ا cannot connect to the following letter. This violates the specific requirement to teach alif without invented medial forms.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The can-do focuses on reciting letter names rather than reading, and no joined example supports the promise of reading first words. Letter names and sounds are not explicitly distinguished; bare letters in audioText leave the intended spoken output unclear. English pronunciation examples also make parts of the lesson less accessible to a Portuguese-only learner.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a more immediately productive starter set, such as ب, ت, ن, ي, ا, and demonstrate a short readable combination. Prefer a straightforward Portuguese cue such as the t in “tatu” over “tia” with a correction. Give ح a more precise articulation explanation rather than relying mainly on a strong-h or mirror-breath analogy.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The first Arabic letters for a Brazilian Portuguese speaker: a few common letters (such as ب, ت, ن, ي, ا) with their real joining forms labeled in Portuguese, the intro explaining right-to-left reading and joining, the sound separate from the letter's name, and ا without invented medial forms. In Brazilian Portuguese.",
+        "id": "pt-ar-letters-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "ar"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All eight symbols are real Hangul letters, the reading aids follow Revised Romanization, and no positional forms are invented. However, the ㄱ sound cue incorrectly anchors the beginner to English voiced g and omits the required unaspirated-stop explanation. Its /ɡ/ transcription also fails to represent the initial sound in the supplied example adequately. The wrong-sound cap therefore applies, limiting this category to 4.",
+          "score": 4,
+          "label": "Accurate letters and sounds",
+          "weight": 45
+        },
+        {
+          "categoryId": "pedagogy",
+          "reasoning": "The compact vowel-first set can build real blocks, and the opening provides the useful idea that Hangul groups letters into syllables. There is a clear can-do and a short summary, so neither letter-dumping nor a wholly unhelpful intro triggers the stated cap. Nevertheless, the standalone-vowel claim contradicts the block explanation, the summary overgeneralizes consonant behavior, and no visible worked block or real-word example supports the reading goal.",
+          "score": 7,
+          "label": "Right first letters, useful intro",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The learner-facing prose is plain US English with familiar pronunciation references and no meta commentary; the wrong-language cap does not apply. However, the intro reverses the required character-and-parenthesized-romanization format, and repeated labels such as “ga (ga)” are awkward and less concrete than showing the Hangul block.",
+          "score": 8,
+          "label": "Learner's language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "7 of 8 parts passed. A card plays a syllable its sound cue never shows.",
+          "score": 8.875,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1955,
+          "outputTokens": 832,
+          "reasoningTokens": 217
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "ㄱ is presented as /ɡ/ and “softer than the g in game,” rather than as a plain, unaspirated stop. This misleading English-g cue violates the explicit sound expectation. The intro also says vowels can stand alone without explaining the silent initial ㅇ required in vowel-initial syllable blocks. The summary's claim that consonants always sound with an attached vowel is false for syllable-final consonants.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The intro uses “a (ㅏ)” instead of the required script-followed-by-romanization format, “ㅏ (a).” Pronunciation text such as “ma (ma)” redundantly repeats romanization rather than showing the corresponding block.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a visible worked combination such as ㅁ + ㅜ → 무 (mu), meaning “radish,” and demonstrate how vertical and horizontal vowels determine block placement. This would make the promised ability to read blocks and simple words concrete rather than leaving combinations mainly in audioText.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The first Hangul for a US English speaker: a few basic vowels and simple consonants that build real blocks, the intro explaining syllable blocks, plain stops described as unaspirated rather than as English b or d, Revised Romanization, no forms. In US English.",
+        "id": "en-ko-hangul-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "ko"
+        }
+      }
+    }
+  ],
+  "taskId": "alphabet-lesson"
+}

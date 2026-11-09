@@ -2,6 +2,7 @@ import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { classify } from "../../evaluate/classify";
+import { JEV_MODEL_ID } from "../../evaluate/evaluation-models";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
@@ -10,6 +11,12 @@ import systemPrompt from "./changing-facts.prompt.md";
 
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+
+/**
+ * On 35 cases (8 Nov 2026), Decider V1.2 matched Jev on every label (EN 23/23, PT 9/9) at $0.0176
+ * against $0.0469 per 1k decisions; Decider Flash called a Jira-versus-Linear comparison a product.
+ */
+const DECISION_MODEL = "perplexity/pplx-decider-v1.2";
 
 const CHANGING_FACTS_TOPICS = ["exam", "regulation", "product", "none"] as const;
 
@@ -73,10 +80,6 @@ export async function classifyChangingFacts({
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/**
- * Jev matched Luna on the `changing-facts` eval (20 of 20) in a third of the time and half the
- * cost; Luna is the fallback.
- */
 export async function detectChangingFacts({
   analytics,
   goal,
@@ -86,12 +89,13 @@ export async function detectChangingFacts({
 }): Promise<ChangingFactsTopic> {
   const result = await classify({
     analytics,
-    fallbackModel: defaultModel,
+    fallbackModel: JEV_MODEL_ID,
     input: toInput({ goal }),
     instructions: systemPrompt,
     // The goal's own text is stored with the goal and goes away with it.
     keepInput: true,
     labels: changingFactsClassifier.labels,
+    model: DECISION_MODEL,
     task: "changing-facts",
   });
 

@@ -60,7 +60,7 @@
   "certificates_linkedin_title": "c151ecbdb72973075f02d1edafa9a078b04979c4fada21f07168911301205d0c",
   "certificates_locked": "9000021ab686cdf931b21e9982f7c2d491b7c60d97236dd33cde7b3da9cf43dd",
   "certificates_meaning_cefr": "ac48947f020c687b4b087e61e6cfad108e0c1e9eca8c08a9e739a5c756e37037",
-  "certificates_meaning_language": "2620d39792f09187893f1121433d31f539c5e3e4f2911cae999da93a92b7bfd6",
+  "certificates_meaning_language": "faead7db46639a0ed30f243b1172fdb8a2a24ee1425398b126c3976c3c50a1ea",
   "certificates_meaning_level": "60641d25c148f16e14ab7db86f43cb4b4b712f8802a012ea96a3d0011bb89c0e",
   "certificates_meaning_name": "bbde9a1085dfe2f901b557b3103541d164414a99773d3f75f42e381150178a98",
   "certificates_meaning_plan": "b56cda80d85fabc95aa07a3371dea7ecbf179dd4e8c1a708bf6bc9d0cde19a0a",
@@ -89,7 +89,7 @@
   "certificates_topics_covered": "0b4accb1eebf55dc3ff30935bb057a535fcc8b50e22d346172a2e3aab55c999f",
   "certificates_up_next": "0dfb34b367f38d98e6438440531f2ca2ac9a4f973ce8b903724abbf05f9c01d8",
   "certificates_up_next_course": "b90c6948ccf42a5f570434f3e7992def8f7f35d1833f7194e9c4e972741c5b63",
-  "certificates_up_next_language": "36853c5708a9690e40e3743489fc6c629cb77e4290597fc7992003aaf195d78e",
+  "certificates_up_next_language": "b6672b9daadbe040f3c85ebbec4529cdb6312da8aedfa397ffedf93223294484",
   "certificates_verified": "6b2c2671b4baab1b5a9cb13eaf08ef21aac89a6729e5753a9e2d848a09393c10",
   "certificates_view": "b87fa67ace2226d0aaffe0d0be896252de9ff1ab57cda8c1f742803944ceb003",
   "certificates_view_several": "61f8df18fe7dcae29c34e337258b9308bf536eae4e9aaecd0a0663a269433808"
@@ -119,8 +119,8 @@
     <string name="certificates_get">인증서 받기</string>
     <string name="certificates_up_next">다음</string>
     <string name="certificates_up_next_course">계획을 마치면 인증서를 받을 수 있어요</string>
-    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요</string>
+    <!-- Under a language goal: its next certificate comes when the learner finishes a CEFR level of their plan, having studied at least half of that level's lessons. -->
+    <string name="certificates_up_next_language">레벨의 레슨을 절반 이상 학습하고 해당 레벨을 완료하면 받을 수 있어요</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">코스 완료!</string>
     <string name="certificates_level_complete">%1$s 완료!</string>
@@ -204,7 +204,7 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">약 %1$s</string>
     <string name="certificates_meaning_title">이 인증서의 의미</string>
-    <string name="certificates_meaning_language">Zoonk는 학습자가 레슨과 연습에서 한 답변을 바탕으로 각 스킬(읽기, 듣기, 말하기, 쓰기)을 측정해요. 답변을 통해 레벨이 오른 스킬이 모두 다음 레벨에 도달하면 현재 레벨을 완료한 것으로 봐요. 이 인증서는 해당 스킬이 모두 %1$s에 도달했을 때 발급됐어요.</string>
+    <string name="certificates_meaning_language">Zoonk는 학습자가 한 레벨의 레슨을 절반 이상 공부하고 그 레벨을 완료하면 이 인증서를 발급해요.</string>
     <string name="certificates_meaning_level">코스의 한 레벨에서 각 레슨을 공부하거나 해당 레슨의 테스트를 통과해 모든 챕터를 마치고, 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요.</string>
     <string name="certificates_meaning_plan">코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요.</string>
     <string name="certificates_meaning_record">Zoonk에서 학습을 완료했다는 기록이에요. 학점으로 인정되지는 않아요.</string>
