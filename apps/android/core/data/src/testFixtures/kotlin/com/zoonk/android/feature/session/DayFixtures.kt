@@ -74,7 +74,7 @@ fun day(
         missions = emptyList(),
         fullMeal = StudySessionFullMeal(bonus = 0, earned = false, ready = false),
         emptyDay = null,
-        minutes = StudySessionMinutes(dailyGoal = dailyGoal, done = 0, planned = dailyGoal.toLong()),
+        minutes = StudySessionMinutes(dailyGoal = dailyGoal, left = dailyGoal, done = 0, planned = dailyGoal.toLong()),
         freshStart = null,
         examAccess = StudySessionExamAccess(includesMockExams = true, trialEnded = false),
         examTomorrow = false,

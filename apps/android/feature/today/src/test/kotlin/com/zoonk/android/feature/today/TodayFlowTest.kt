@@ -2,6 +2,7 @@ package com.zoonk.android.feature.today
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -94,6 +95,7 @@ class TodayFlowTest {
         vararg sessionFields: Pair<String, Any?>,
         todayFields: List<Pair<String, Any?>> = emptyList(),
         plans: FakePlanApi = FakePlanApi(),
+        moreContrast: Boolean = false,
     ) {
         val blocks =
             JsonArray(
@@ -149,25 +151,27 @@ class TodayFlowTest {
         val onboarding = OnboardingStore(FakeOnboardingApi(), cache, FakeSession(ana)) { SignInResult.SignedIn }
 
         rule.setContent {
-            ZoonkTheme {
-                navigator = rememberAppNavigator()
-                LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
-                TodayDay(
-                    read,
-                    store.today,
-                    false,
-                    viewModel,
-                    navigator,
-                    PaddingValues(),
-                    buddy =
-                        com.zoonk.android.ui.characters
-                            .BuddyLook(),
-                    buddyName = "Zu",
-                    language = null,
-                    onboarding = onboarding,
-                    plans = PlanStore(plans, cache),
-                    refreshIfChanged = store::refreshIfChanged,
-                )
+            ZoonkTheme(moreContrast = moreContrast) {
+                Surface {
+                    navigator = rememberAppNavigator()
+                    LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
+                    TodayDay(
+                        read,
+                        store.today,
+                        false,
+                        viewModel,
+                        navigator,
+                        PaddingValues(),
+                        buddy =
+                            com.zoonk.android.ui.characters
+                                .BuddyLook(),
+                        buddyName = "Zu",
+                        language = null,
+                        onboarding = onboarding,
+                        plans = PlanStore(plans, cache),
+                        refreshIfChanged = store::refreshIfChanged,
+                    )
+                }
             }
         }
     }
@@ -200,6 +204,64 @@ class TodayFlowTest {
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun renderComingLessonsOnAPhone() =
         render("today-coming-not-written-phone") { show("blocks" to practiceOnly(), "lessonsToPrepare" to true) }
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1000dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderHeldTimeOnAPhone() = renderHeldTime("today-held-time-phone-pt")
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1000dp-night-xxhdpi", fontScale = 2f)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderHeldTimeWithLargeTextInDark() = renderHeldTime("today-held-time-phone-pt-dark-contrast-font200", moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w1280dp-h900dp-land-xhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderHeldTimeOnATablet() = renderHeldTime("today-held-time-tablet-pt")
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w700dp-h1000dp-xhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderHeldTimeOnAMediumWindow() = renderHeldTime("today-held-time-medium-pt")
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun renderWaitingTimeOnAPhone() = renderHeldTime("today-waiting-time-phone-pt", waiting = true)
+
+    private fun renderHeldTime(
+        name: String,
+        waiting: Boolean = false,
+        moreContrast: Boolean = false,
+    ) = render(name) {
+        val blocks =
+            JsonArray(
+                listOf(7, 7, 7, 7, 7, 7, 7, 6, 6).mapIndexed { index, minutes ->
+                    fixture(
+                        "study-block",
+                        "position" to index,
+                        "estimatedMinutes" to minutes,
+                        "kind" to "learn",
+                        "screen" to "lesson",
+                        "title" to "Aula ${index + 1}",
+                    )
+                },
+            )
+        show(
+            "blocks" to if (waiting) JsonArray(emptyList()) else blocks,
+            "state" to if (waiting) "waiting" else "underway",
+            "lessonsComing" to true,
+            "minutes" to
+                buildJsonObject {
+                    put("dailyGoal", 240)
+                    put("left", 240)
+                    put("done", 0)
+                    put("planned", 240)
+                },
+            moreContrast = moreContrast,
+        )
+    }
 
     /** Review renders, written only with `-Pzoonk.shots=<folder>`. No goldens. */
     private fun render(

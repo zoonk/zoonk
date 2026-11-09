@@ -39,6 +39,7 @@ import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
+import com.zoonk.android.feature.player.engine.LessonCompletion
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.lessonMap
@@ -70,6 +71,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -78,6 +80,7 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
+import com.zoonk.api.models.StudyBlockCompletion
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 import kotlin.math.roundToLong
@@ -372,8 +375,21 @@ internal fun LessonReadouts(
             stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }
 
-    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(review))
+    val deferred =
+        state.completion?.deferredBlock?.let {
+            pluralStringResource(
+                R.plurals.player_lessons_deferred,
+                it.deferredLessonsCount.toInt(),
+                formatNumber(it.deferredLessonsCount.toDouble(), locale),
+                formatMinutes(it.minutes.dailyGoal, locale),
+            )
+        }
+
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(review, deferred))
 }
+
+internal val LessonCompletion.deferredBlock: StudyBlockCompletion?
+    get() = result?.studyBlock?.takeIf { status == CompletionStatus.Saved && it.deferredLessonsCount > 0 }
 
 /**
  * What the lesson's end does on its main button and on Enter: finish or try again, then the next

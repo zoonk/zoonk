@@ -16,6 +16,7 @@ import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.GoalChapter
+import com.zoonk.api.models.LessonClockInput
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonMap
@@ -102,6 +103,9 @@ class FakeLessonPlayerApi(
     val completions = mutableListOf<String>()
     var optionalStepIds = "[]"
     var runAnswers = "[]"
+    var clockId: UUID? = null
+    val clockUpdates = mutableListOf<Pair<AuthenticatedSession, LessonClockInput>>()
+    var clockResponse: suspend (LessonClockInput) -> Unit = {}
 
     /** The lesson opening an older server sent with the run, which the player ignores. */
     var support = "null"
@@ -155,7 +159,9 @@ class FakeLessonPlayerApi(
         return LessonStart.Started(
             ApiJson.decodeFromString(
                 """
-                {"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
+                {"clockId":${clockId?.let {
+                    "\"$it\""
+                } ?: "null"},"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
                  "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
                 """.trimIndent(),
             ),
@@ -174,6 +180,16 @@ class FakeLessonPlayerApi(
             throw ApiException(ApiError.Network)
         }
         return grade(stepId, input)
+    }
+
+    override suspend fun clock(
+        session: AuthenticatedSession,
+        lessonId: String,
+        input: LessonClockInput,
+    ) {
+        check(lessonId == LESSON_ID)
+        clockUpdates += session to input
+        clockResponse(input)
     }
 
     override suspend fun explainAnswer(

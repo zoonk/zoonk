@@ -59,6 +59,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterLesson
+import com.zoonk.api.models.LessonClockInput
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.LessonStepCheckInput
@@ -71,6 +72,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -85,6 +87,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -258,6 +261,8 @@ class LessonPlayerViewModel(
     private var starting: Job? = null
     private val checksAwaitingRun = mutableListOf<Job>()
     private var admittedRunId: UUID? = null
+    private var clock: LessonClockInput? = null
+    private var visible = true
     private val heldDeviceVerdicts = mutableListOf<HeldDeviceVerdict>()
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
@@ -296,6 +301,7 @@ class LessonPlayerViewModel(
         this.lesson = lesson
         owner = session
         admittedRunId = null
+        clock = null
         acted = false
         workedHere.clear()
         heldDeviceVerdicts.clear()
@@ -314,12 +320,35 @@ class LessonPlayerViewModel(
         if (activated) startRun()
     }
 
+    fun resume() {
+        visible = true
+        updateClock(LessonClockInput.State.RUNNING)
+    }
+
     /** The app went to the background or the player closed: an unfinished run counts as abandoned, once. */
     fun leave() {
+        visible = false
+        updateClock(LessonClockInput.State.PAUSED)
         if (abandonSent) return
         val event = mutableState.value?.abandonEvent() ?: return
         abandonSent = true
         analytics.track(event)
+    }
+
+    private fun updateClock(state: LessonClockInput.State) {
+        val session = owner ?: return
+        val previous = clock ?: return
+        if (sessions.current != session || previous.state == state) return
+        val input = previous.copy(sequence = previous.sequence + 1, state = state)
+        clock = input
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            // The exit pause must outlive the navigation entry that clears this ViewModel.
+            withContext(NonCancellable) {
+                cache.mutate { current ->
+                    if (current == session) store.api.clock(current, lessonId, input)
+                }
+            }
+        }
     }
 
     fun continueSession() {
@@ -734,9 +763,23 @@ class LessonPlayerViewModel(
             }
 
         return when (result) {
-            is MutationResult.Done -> result.value
-            is MutationResult.Failed -> StartOutcome.Refused(LessonRefusal.Failed)
-            MutationResult.Obsolete -> null
+            is MutationResult.Done -> {
+                val outcome = result.value
+                if (outcome is StartOutcome.Started) {
+                    val run = outcome.run
+                    clock = run.clockId?.let { LessonClockInput(it, run.runId, 0, LessonClockInput.State.RUNNING) }
+                    if (!visible) updateClock(LessonClockInput.State.PAUSED)
+                }
+                outcome
+            }
+
+            is MutationResult.Failed -> {
+                StartOutcome.Refused(LessonRefusal.Failed)
+            }
+
+            MutationResult.Obsolete -> {
+                null
+            }
         }
     }
 

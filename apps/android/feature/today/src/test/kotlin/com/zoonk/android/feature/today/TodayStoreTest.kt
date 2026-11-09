@@ -7,11 +7,16 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
+import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.MistakeListAvailability
+import com.zoonk.api.models.StudyDay
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
+import com.zoonk.api.models.UnstartedStudyDay
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -27,6 +32,36 @@ import kotlin.time.Instant
 class TodayStoreTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val goal = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d11")
+
+    @Test fun bothSavedAndUnopenedDaysPreserveAuthoritativeFractionalMinutes() {
+        val minutes =
+            buildJsonObject {
+                put("dailyGoal", 240.5)
+                put("left", 240.5)
+                put("done", 0)
+                put("planned", 240)
+            }
+        val saved =
+            decodeFixture<StudySession>(
+                "study-session",
+                "minutes" to minutes,
+                "blocks" to JsonArray(listOf(fixture("study-block", "estimatedMinutes" to 61))),
+            ).toDayView()
+        val unopened =
+            StudyDay
+                .UnstartedWrapper(
+                    decodeFixture<UnstartedStudyDay>(
+                        "unstarted-study-day",
+                        "minutes" to minutes,
+                        "blocks" to JsonArray(listOf(fixture("unstarted-study-day-blocks-inner", "estimatedMinutes" to 61))),
+                    ),
+                ).toDayView()
+        listOf(saved, unopened).forEach { day ->
+            assertEquals(240.5, day.minutes.left, 0.0)
+            assertEquals(240.5, day.minutes.dailyGoal, 0.0)
+            assertEquals(61L, day.steps.sumOf { it.estimatedMinutes })
+        }
+    }
 
     private fun api(answer: suspend () -> Today) =
         object : TodayApi {

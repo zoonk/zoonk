@@ -113,11 +113,11 @@ internal fun LazyListScope.todaySession(
 
     freshStartItem(model)
 
-    if (day.steps.size >= 2) {
+    if (day.steps.size >= 2 || day.heldMinutes > 0) {
         item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
-    if (wide && day.steps.isNotEmpty()) {
+    if (wide && (day.steps.isNotEmpty() || model.state == StudySession.State.WAITING)) {
         item(
             key = "meta",
             contentType = "meta",
@@ -163,7 +163,7 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     }
 
     item(key = "fresh-start", contentType = "note") {
-        val time = formatMinutes(day.steps.sumOf { it.estimatedMinutes }.toInt(), currentLocale())
+        val time = formatMinutes(day.minutes.left, currentLocale())
         val text =
             when (freshStart) {
                 FreshStart.WelcomeBack -> {
@@ -274,7 +274,7 @@ private fun LazyListScope.sessionQueue(
                 label = pluralStringResource(R.plurals.today_more_count, more, more),
                 done = false,
                 open = folds.moreOpen,
-                minutes = queue.after.drop(rows).sumOf { it.estimatedMinutes },
+                minutes = model.day.minutesAfter(queue.before + next + queue.after.take(rows)),
                 onToggle = folds.toggleMore,
                 modifier = Modifier.pageItem(),
             )
@@ -642,8 +642,13 @@ private fun QueueRow(
 
 @Composable
 private fun Minutes(minutes: Long) {
+    Minutes(minutes.toDouble())
+}
+
+@Composable
+private fun Minutes(minutes: Double) {
     Text(
-        text = formatMinutes(minutes.toInt(), currentLocale()),
+        text = formatMinutes(minutes, currentLocale()),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.zoonkType.data,
     )
@@ -655,7 +660,7 @@ private fun FoldRow(
     label: String,
     done: Boolean,
     open: Boolean,
-    minutes: Long?,
+    minutes: Double?,
     onToggle: () -> Unit,
     modifier: Modifier,
 ) {
@@ -710,7 +715,7 @@ private fun DayProgress(
                     else -> MeterPart.Fill.Solid(step.learnKind.color.copy(alpha = AHEAD_ALPHA))
                 }
             MeterPart(fill, weight = step.estimatedMinutes.coerceAtLeast(1).toFloat())
-        }
+        } + listOfNotNull(day.heldMinutes.takeIf { it > 0 }?.let { MeterPart(MeterPart.Fill.Track, weight = it.toFloat()) })
 
     MeterParts(parts, modifier, contentDescription = stepsDone(done, day.steps.size))
 }
@@ -740,12 +745,16 @@ private fun DayMeta(
         if (status.tap == TodayTap.Continue && status.speaking) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
         } else {
-            Text(
-                text = stepsDone(done, model.day.steps.size),
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.data,
-            )
+            if (model.day.steps.isNotEmpty()) {
+                Text(
+                    text = stepsDone(done, model.day.steps.size),
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.zoonkType.data,
+                )
+            } else {
+                Box(Modifier.weight(1f))
+            }
             DayTime(model, MaterialTheme.typography.titleLarge)
         }
     }

@@ -98,6 +98,7 @@
   "player_lesson_map_nested": "dfea8e881cd56d240f27a1fb336e8e9dcd03fcf8f1e5906d75a6caa1431bec48",
   "player_lesson_not_saved": "a00ab959e150512e36511cfe0341bfcea51abbf7a332eae7fec12c5f852242f1",
   "player_lesson_of": "675dea7a5f48105d339971bd08ece4401450102b1fac625036230ac3b7772716",
+  "player_lessons_deferred": "4e909800fc3a54d2f19899abfba58213c34d006efc0ccaf0e47b8738bcc5d4ed",
   "player_listen": "2bfe217970c7e15766874c21b06d7011f8c4d85e65f9d934e11cf2056455a0fc",
   "player_microphone_blocked": "a77ce5515d31089725fd4cfdf2209fefca4a48fa4c52e96017a6f95ed8312ba5",
   "player_next_lesson": "7dbea98773de00436b9f0efc53e36ff1366a4bf5112a52e8c90d8afd5cde27aa",
@@ -422,6 +423,13 @@
     <string name="player_lesson_not_saved">Lekcja nie została jeszcze zapisana</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Powtórka: %1$s</string>
+    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="player_lessons_deferred">
+        <item quantity="one">Przeniesiono %1$s lekcję na inny dzień, by nie przekroczyć %2$s nauki zaplanowanej na dziś.</item>
+        <item quantity="few">Przeniesiono %1$s lekcje na inny dzień, by nie przekroczyć %2$s nauki zaplanowanej na dziś.</item>
+        <item quantity="many">Przeniesiono %1$s lekcji na inny dzień, by nie przekroczyć %2$s nauki zaplanowanej na dziś.</item>
+        <item quantity="other">Przeniesiono %1$s lekcji na inny dzień, by nie przekroczyć %2$s nauki zaplanowanej na dziś.</item>
+    </plurals>
     <string name="player_next_lesson">Przejdź do kolejnej lekcji</string>
     <string name="player_stop_for_today">Zakończ na dziś</string>
     <string name="player_see_todays_summary">Zobacz dzisiejsze podsumowanie</string>
