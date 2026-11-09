@@ -571,6 +571,8 @@
   "plan_unit_lessons_being_written": "8bb48ca3ab24a17d0de7d8b5e2e3a52af58e7e9253f9c40f8cff0b7375ea37a1",
   "plan_until": "194a9964eef0b71e2d7493b058d4a6d3035481219c13319d04f11e840dee567e",
   "plan_until_estimate": "cd6cb55b616fc25fc2b6b6a724a6229a1d4331b19205e459f1635a1211fe33f6",
+  "plan_until_estimate_month": "1805556a04c43a8142b8f98bde1241ee11e464668e1fbdea3069e42a87111be8",
+  "plan_until_estimate_month_spoken": "28d8f359cfd99f64198633c8aaaa9a1ed0eb44b690987d479238e38c79928f50",
   "plan_until_estimate_spoken": "2fb7a78692b8cb1e14648e65a575b48df39161842a1e991b01ef58c3d3b008a4",
   "plan_up_next": "6f52d11e44c0dc2912a95702659458f11c6472bb945ef962d756295042241e81",
   "plan_up_next_suffix": "c9ff1b7dac18408c2d193e2e29a3909678bec54dd3bae854d6367c6313b28736",
@@ -694,6 +696,8 @@
     <string name="plan_until">hasta el %1$s</string>
     <string name="plan_until_estimate">hasta el ~%1$s</string>
     <string name="plan_until_estimate_spoken">hasta aproximadamente el %1$s</string>
+    <string name="plan_until_estimate_month">hasta ~%1$s</string>
+    <string name="plan_until_estimate_month_spoken">hasta aproximadamente %1$s</string>
     <string name="plan_not_in_your_plan">No está en tu plan</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">Se omitió %d lección</item>

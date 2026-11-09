@@ -571,6 +571,8 @@
   "plan_unit_lessons_being_written": "15c28806141cc2fc7c427682301e2e66e31d82ac237764d1bce7cc7f77942574",
   "plan_until": "cdc046143433221dfa0922933d0752364ea60adcd92c71324cf67ae2b2175d9b",
   "plan_until_estimate": "0c347982c3745983786bbbca43c5e945fc3045dcaae90a02b03f120256fc15d8",
+  "plan_until_estimate_month": "c6797950941b56463c7aa765ed751a589ec7fbb7002fef5ca5c2073f4a9013b4",
+  "plan_until_estimate_month_spoken": "2189b3e426df57e544f3361899f40a0a5b00f22714eb3f76a1b143db61843d5e",
   "plan_until_estimate_spoken": "98623573bf2636ef3a3f6c1daa4452eb2993bdf8022ffdcd4e96c9975873ac67",
   "plan_up_next": "8ee5de734bc5f2f2925ff62625c71f61704bd846a1574edd7b6d251fec7f1211",
   "plan_up_next_suffix": "f53b4e8acc74b9378c2a44cf5a90eca53ba095165b17a602bad60246ce3daa63",
@@ -684,6 +686,8 @@
     <string name="plan_until">%1$sまで</string>
     <string name="plan_until_estimate">%1$sごろまで</string>
     <string name="plan_until_estimate_spoken">%1$sごろまで</string>
+    <string name="plan_until_estimate_month">%1$sごろまで</string>
+    <string name="plan_until_estimate_month_spoken">%1$sごろまで</string>
     <string name="plan_not_in_your_plan">学習計画に含まれていません</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="other">%dレッスンが計画に入りきりませんでした</item>

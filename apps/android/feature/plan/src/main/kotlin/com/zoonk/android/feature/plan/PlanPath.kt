@@ -232,13 +232,23 @@ private fun phaseUntil(
     if (isLast && phase.kind != PlanPhase.Kind.AFTER_EXAM && page.finish != null) return null
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
     val month = learns && phase.state == PlanPhase.State.UPCOMING
-    // The phase ends with its challenge, which has no booked day, only the plan's estimate.
-    val estimate = month || (learns && phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
     val date = formatPlanDate(end, page.today, currentLocale(), month = month)
-    return if (estimate) {
-        PlanDateWords(stringResource(R.string.plan_until_estimate, date), stringResource(R.string.plan_until_estimate_spoken, date))
-    } else {
-        stringResource(R.string.plan_until, date).let { PlanDateWords(it, it) }
+    return when {
+        month -> {
+            PlanDateWords(
+                stringResource(R.string.plan_until_estimate_month, date),
+                stringResource(R.string.plan_until_estimate_month_spoken, date),
+            )
+        }
+
+        // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+        learns && phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING -> {
+            PlanDateWords(stringResource(R.string.plan_until_estimate, date), stringResource(R.string.plan_until_estimate_spoken, date))
+        }
+
+        else -> {
+            stringResource(R.string.plan_until, date).let { PlanDateWords(it, it) }
+        }
     }
 }
 

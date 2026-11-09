@@ -348,25 +348,41 @@ private struct PlanPhaseRow: View {
     let today = context.plan.today
 
     if learns && phase.state == .upcoming {
-      return about(PlanDate.monthText(endDate, today: today))
+      let month = PlanDate.monthText(endDate, today: today)
+
+      return Text(
+        LocalizedStringResource(
+          "untilAboutMonth", defaultValue: "until ~\(month)", table: "Plan",
+          comment:
+            "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day"
+        )
+      )
+      .accessibilityLabel(
+        Text(
+          LocalizedStringResource(
+            "untilAboutMonthSpoken", defaultValue: "until about \(month)", table: "Plan",
+            comment:
+              "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day"
+          )))
     }
+
+    let day = PlanDate.text(endDate, today: today)
 
     // The phase ends with its challenge, which has no booked day, only the plan's estimate.
     if learns && phase.checkpoint?.state == .upcoming {
-      return about(PlanDate.text(endDate, today: today))
+      return Text(
+        "until ~\(day)", tableName: "Plan",
+        comment: "When a phase ends, about; the argument is a day like 'Nov 10'"
+      )
+      .accessibilityLabel(
+        Text(
+          "until about \(day)", tableName: "Plan",
+          comment: "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'"))
     }
 
     return Text(
-      "until \(PlanDate.text(endDate, today: today))", tableName: "Plan",
+      "until \(day)", tableName: "Plan",
       comment: "When a phase ends; the argument is a date like 'May 5'")
-  }
-
-  private func about(_ date: String) -> Text {
-    Text("until ~\(date)", tableName: "Plan", comment: "When a phase ends, about")
-      .accessibilityLabel(
-        Text(
-          "until about \(date)", tableName: "Plan",
-          comment: "When a phase ends, about, read aloud; the argument is a day or a month"))
   }
 }
 

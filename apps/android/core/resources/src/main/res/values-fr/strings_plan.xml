@@ -571,6 +571,8 @@
   "plan_unit_lessons_being_written": "ff7980947dd64ddc1ab4fa747893433a54c471eb262d6cf608088dc36ee474f7",
   "plan_until": "4bb72a2b3c8a8e3e1e6662c10c51e0444d7a05b9be67f35d5827a97923068aa4",
   "plan_until_estimate": "b335f1ede3e7452d0fb7b45749ef7e0ebc83ab362e3ea8224b15f4479a72884f",
+  "plan_until_estimate_month": "7e52fc6288780bcb1ae88fb8a5d65c52c74384d3fa1a04392204fe3d0081fff2",
+  "plan_until_estimate_month_spoken": "e3bfeb52eda29fe81ace6fd88fa5c7f26fdfdce6caba1f5236e774f97245a023",
   "plan_until_estimate_spoken": "99e97867d1bf2c623936fc4c7de09136446e81d96b0a9cb90a1baf1ed831bca4",
   "plan_up_next": "b3e6a4e5a454321c8eddeaee13adc91ec19c205f352296cbc51242d38a23ea0f",
   "plan_up_next_suffix": "023d45ac578fd3cda0905a98823b490f31e867d39d6720bade49f4836348195f",
@@ -694,6 +696,8 @@
     <string name="plan_until">jusqu’au %1$s</string>
     <string name="plan_until_estimate">jusqu’au ~%1$s</string>
     <string name="plan_until_estimate_spoken">jusqu’aux environs du %1$s</string>
+    <string name="plan_until_estimate_month">jusque vers %1$s</string>
+    <string name="plan_until_estimate_month_spoken">jusque vers %1$s</string>
     <string name="plan_not_in_your_plan">Pas dans ton plan</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">%d leçon laissée de côté</item>

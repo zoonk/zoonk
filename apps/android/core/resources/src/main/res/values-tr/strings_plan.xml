@@ -571,6 +571,8 @@
   "plan_unit_lessons_being_written": "5026383efc4c863f529ba8004a654bcd32352b37a7bdc1c7e36293ff385738db",
   "plan_until": "3ff1508a8e7d4c9fb0ff57da29633d0c851834ec0fb7b1f9c7a7c40a829df744",
   "plan_until_estimate": "9941d8a76ddd633fd29fd46fb067aabb99f05dcc09212fcac4a334e01fd56b6c",
+  "plan_until_estimate_month": "a47ee958eb68b534969a284313d80acda12a71e1c1adbcf16b5f09b1b4b0d20d",
+  "plan_until_estimate_month_spoken": "6f6a5736fc69d82192a9e7ee7059bdd1cc3430e735630f1973644bd1739500bc",
   "plan_until_estimate_spoken": "4240f729ada2b5d4276f083733022a89904e6399cebf9d05c4254e1392d95791",
   "plan_up_next": "d707df702fdead2672554a8b69359991d52fe6df69da6fc0884aff7e6f4b832b",
   "plan_up_next_suffix": "49c671195af2f65be9b0a66b1338a7b71b1386ec4f82d43ecacbb9a7605d75a9",
@@ -689,6 +691,8 @@
     <string name="plan_until">%1$s tarihine kadar</string>
     <string name="plan_until_estimate">~%1$s tarihine kadar</string>
     <string name="plan_until_estimate_spoken">yaklaşık %1$s tarihine kadar</string>
+    <string name="plan_until_estimate_month">~%1$s ayına kadar</string>
+    <string name="plan_until_estimate_month_spoken">%1$s civarına kadar</string>
     <string name="plan_not_in_your_plan">Planında yok</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">%d ders dışarıda kaldı</item>
