@@ -1,3 +1,4 @@
+import { type LessonClockOutcome } from "@zoonk/core/lesson-player/clock";
 import { type LessonClockInput } from "@zoonk/core/lesson-player/clock-contract";
 import {
   type LessonStepAnswer,
@@ -128,10 +129,10 @@ export type LessonPlayerAdapters = {
   }) => Promise<SpokenAnswerOutcome>;
   startLesson: (input?: { runId: string }) => Promise<LessonStartOutcome>;
   /**
-   * Must outlive the page, since a pause goes out as it hides. Resolves `false` when the
+   * Must outlive the page, since a pause goes out as it hides. Resolves `null` when the
    * transition didn't get through, so it's sent again under the same sequence.
    */
-  updateLessonClock?: (input: LessonClockInput) => Promise<boolean>;
+  updateLessonClock?: (input: LessonClockInput) => Promise<LessonClockOutcome | null>;
 };
 
 export type LessonPlayerRoutes = {

@@ -17,6 +17,7 @@ import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LessonClockInput
+import com.zoonk.api.models.LessonClockResult
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonMap
@@ -105,7 +106,7 @@ class FakeLessonPlayerApi(
     var runAnswers = "[]"
     var clockId: UUID? = null
     val clockUpdates = mutableListOf<Pair<AuthenticatedSession, LessonClockInput>>()
-    var clockResponse: suspend (LessonClockInput) -> Unit = {}
+    var clockResponse: suspend (LessonClockInput) -> LessonClockResult = { LessonClockResult(LessonClockResult.Status.UPDATED) }
 
     /** The lesson opening an older server sent with the run, which the player ignores. */
     var support = "null"
@@ -134,6 +135,7 @@ class FakeLessonPlayerApi(
     ) = emptyList<String>()
 
     var retryableStarts = 0
+    val startRunIds = mutableListOf<String?>()
     val startOpenings = mutableListOf<com.zoonk.api.models.LibraryLessonStartInputOpening?>()
     var startGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
     var opened: com.zoonk.api.models.StudyBlockOpening? = null
@@ -145,6 +147,7 @@ class FakeLessonPlayerApi(
         runId: String?,
         opening: com.zoonk.api.models.LibraryLessonStartInputOpening?,
     ): LessonStart {
+        startRunIds += runId
         startOpenings += opening
         if (retryableStarts > 0) {
             retryableStarts--
@@ -186,10 +189,10 @@ class FakeLessonPlayerApi(
         session: AuthenticatedSession,
         lessonId: String,
         input: LessonClockInput,
-    ) {
+    ): LessonClockResult {
         check(lessonId == LESSON_ID)
         clockUpdates += session to input
-        clockResponse(input)
+        return clockResponse(input)
     }
 
     override suspend fun explainAnswer(

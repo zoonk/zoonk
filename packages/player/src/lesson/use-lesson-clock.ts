@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { type LessonClock, moveClock, settleClock, startClock } from "./_utils/lesson-clock";
 import { type LessonPlayerAdapters } from "./lesson-player-types";
 import { usePageLifecycle } from "./use-page-lifecycle";
@@ -10,8 +10,16 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
   const clockRef = useRef<LessonClock | null>(null);
   const openRef = useRef(false);
 
-  const move = useCallback(
-    (state: LessonClock["transition"]["state"]) => {
+  const actions = useMemo(() => {
+    function runClock(run: { clockId: string | null; runId: string }) {
+      clockRef.current = startClock(run);
+
+      if (!openRef.current || document.visibilityState === "hidden") {
+        move("paused");
+      }
+    }
+
+    function move(state: LessonClock["transition"]["state"]) {
       const next = moveClock(clockRef.current, state);
       const send = adapters.updateLessonClock;
 
@@ -23,40 +31,50 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       const sent = next.transition;
 
       void send(sent)
-        .catch(() => false)
-        .then((delivered) => {
-          clockRef.current = settleClock({ clock: clockRef.current, delivered, sent });
+        .catch(() => null)
+        .then(async (outcome) => {
+          clockRef.current = settleClock({
+            clock: clockRef.current,
+            delivered: outcome !== null,
+            sent,
+          });
+
+          if (
+            outcome?.status !== "ignored" ||
+            sent.state !== "running" ||
+            clockRef.current?.transition.clockId !== sent.clockId
+          ) {
+            return;
+          }
+
+          const run = await adapters.startLesson({ runId: sent.runId }).catch(() => null);
+
+          if (run?.reason === "started" && clockRef.current?.transition.clockId === sent.clockId) {
+            runClock(run);
+          }
         });
-    },
-    [adapters],
-  );
+    }
+
+    return { move, runClock };
+  }, [adapters]);
 
   useEffect(() => {
     openRef.current = true;
 
     if (document.visibilityState === "visible") {
-      move("running");
+      actions.move("running");
     }
 
     return () => {
       openRef.current = false;
     };
-  }, [move]);
+  }, [actions]);
 
   usePageLifecycle({
-    onAway: () => move("paused"),
-    onBack: () => move("running"),
-    onLeave: () => move("paused"),
+    onAway: () => actions.move("paused"),
+    onBack: () => actions.move("running"),
+    onLeave: () => actions.move("paused"),
   });
 
-  return useCallback(
-    (run: { clockId: string | null; runId: string }) => {
-      clockRef.current = startClock(run);
-
-      if (!openRef.current || document.visibilityState === "hidden") {
-        move("paused");
-      }
-    },
-    [move],
-  );
+  return actions.runClock;
 }
