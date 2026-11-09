@@ -15,6 +15,7 @@ import { getCarryOverEnd, isCurrentSession } from "./current-session";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
+import { type LessonStatesReader } from "./lesson-screens";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
@@ -88,6 +89,7 @@ export async function loadStudySessionView({
   blueprint,
   initialDay,
   readCatchUp,
+  readLessonStates,
   session: storedSession,
   timeZone,
   userId,
@@ -96,6 +98,7 @@ export async function loadStudySessionView({
   blueprint?: ExamBlueprint | null;
   /** A GET's request-wide catch-up items; without it, they're read fresh. */
   readCatchUp?: () => Promise<readonly SessionPlanItem[]>;
+  readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
   timeZone: string;
   userId: string;
@@ -108,6 +111,7 @@ export async function loadStudySessionView({
     loadStudyWeek({ localDate: weekDate, userId }),
     loadSessionBlockViews({
       blueprint,
+      readLessonStates,
       session: storedSession,
       timeZone,
       userId,

@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { readLessonStates } from "../../learner/facts/lesson-states";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
@@ -36,7 +37,15 @@ export async function readSavedDayView({
   const readCatchUp = goalId ? () => readCatchUpItems(userId, goalId) : undefined;
 
   const [view, refill] = await Promise.all([
-    loadStudySessionView({ blueprint, readCatchUp, session, timeZone, userId, weekDate }),
+    loadStudySessionView({
+      blueprint,
+      readCatchUp,
+      readLessonStates,
+      session,
+      timeZone,
+      userId,
+      weekDate,
+    }),
     session.goal
       ? planEntitlementLapseRefill({
           goal: session.goal,
