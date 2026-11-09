@@ -117,24 +117,28 @@ export function selectMistakeDrill({
 
 /**
  * One question per mistake, none twice. A mistake's own question is kept for it. One with no question
- * of its own takes a free one on its skill, unless the run already asks one there: a right answer on
- * its skill fixes it too (`answerMistakePractice`). A lesson's idea shows before its first question
- * only.
+ * of its own takes a free one on its skill, unless the run already asks a question on a skill whose
+ * right answer fixes it too (`coveringSkillIds`, as `answerMistakePractice` decides). A lesson's idea
+ * shows before its first question only.
  */
 export function selectPracticeRun<
   TMistake extends Pick<
     Parameters<typeof selectMistakeDrill>[0],
-    "candidates" | "cause" | "lessonId" | "originalItemId"
-  >,
+    "cause" | "lessonId" | "originalItemId"
+  > & {
+    candidates: readonly (DrillItemCandidate & { skillId: string })[];
+    coveringSkillIds: readonly string[];
+  },
 >(mistakes: readonly TMistake[]): (TMistake & { drill: MistakeDrill })[] {
   const owned = new Set(mistakes.map((mistake) => mistake.originalItemId));
   const asked = new Set<string>();
+  const askedSkillIds = new Set<string>();
   const taught = new Set<string>();
 
   return mistakes.flatMap((mistake) => {
-    const hasOwn = mistake.candidates.some(({ id }) => id === mistake.originalItemId);
+    const own = mistake.candidates.find(({ id }) => id === mistake.originalItemId);
 
-    if (!hasOwn && mistake.candidates.some(({ id }) => asked.has(id))) {
+    if (!own && mistake.coveringSkillIds.some((skillId) => askedSkillIds.has(skillId))) {
       return [];
     }
 
@@ -146,14 +150,16 @@ export function selectPracticeRun<
     });
 
     const [itemId] = drill.itemIds;
+    const question = mistake.candidates.find(({ id }) => id === itemId);
 
-    if (!itemId) {
+    if (!itemId || !question) {
       return [];
     }
 
     const lessonId = drill.lessonId && taught.has(drill.lessonId) ? null : drill.lessonId;
 
     asked.add(itemId);
+    askedSkillIds.add(question.skillId);
 
     if (lessonId) {
       taught.add(lessonId);

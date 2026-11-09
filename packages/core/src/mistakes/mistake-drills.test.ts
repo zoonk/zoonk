@@ -98,27 +98,33 @@ describe(selectMistakesToPractice, () => {
   });
 });
 
-function candidate(id: string) {
-  return { hasMisconceptions: false, id, seen: false };
+function candidate(id: string, skillId: string) {
+  return { hasMisconceptions: false, id, seen: false, skillId };
 }
 
+/** Candidates are on skill "k" unless `skillOf` says otherwise, and so is the mistake. */
 function runMistake(
   mistakeId: string,
   {
     candidates,
     cause = "gap",
+    coveringSkillIds = ["k"],
     lessonId = null,
     own = null,
+    skillOf = {},
   }: {
     candidates: string[];
     cause?: "gap" | "misread";
+    coveringSkillIds?: string[];
     lessonId?: string | null;
     own?: string | null;
+    skillOf?: Record<string, string>;
   },
 ) {
   return {
-    candidates: candidates.map((id) => candidate(id)),
+    candidates: candidates.map((id) => candidate(id, skillOf[id] ?? "k")),
     cause,
+    coveringSkillIds,
     lessonId,
     mistakeId,
     originalItemId: own,
@@ -163,16 +169,29 @@ describe(selectPracticeRun, () => {
     expect(asked(run)).toStrictEqual([["m1", ["a"]]]);
   });
 
+  it("leaves out a mistake with no question of its own once another's own question is on its skill", () => {
+    const run = selectPracticeRun([
+      runMistake("own", { candidates: ["outside"], own: "outside", skillOf: { outside: "k" } }),
+      runMistake("no-own", { candidates: ["a", "b"], coveringSkillIds: ["k"] }),
+    ]);
+
+    expect(asked(run)).toStrictEqual([["own", ["outside"]]]);
+  });
+
   it("leaves out a mistake with no question of its own once its skill has one in the run", () => {
     const run = selectPracticeRun([
       runMistake("own", { candidates: ["a", "b"], own: "a" }),
       runMistake("no-own", { candidates: ["a", "b"] }),
-      runMistake("elsewhere", { candidates: ["c"] }),
+      runMistake("elsewhere", {
+        candidates: ["other"],
+        coveringSkillIds: ["elsewhere"],
+        skillOf: { other: "elsewhere" },
+      }),
     ]);
 
     expect(asked(run)).toStrictEqual([
       ["own", ["a"]],
-      ["elsewhere", ["c"]],
+      ["elsewhere", ["other"]],
     ]);
   });
 

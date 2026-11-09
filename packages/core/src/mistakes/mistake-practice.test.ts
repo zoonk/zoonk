@@ -880,6 +880,35 @@ describe(answerMistakePractice, () => {
       ).resolves.toMatchObject({ status: "open" });
     });
 
+    it("sit out a run that asks a mistake's own question on their skill from outside the bank", async () => {
+      const { practiced, skill, user } = await withoutOwnQuestion();
+
+      const outside = await itemFixture({
+        content: choiceItemContent(),
+        field: "healthcare",
+        skillId: skill.id,
+      });
+
+      const withOwn = await mistakeFixture({
+        createdAt: new Date(YESTERDAY.getTime() - 86_400_000),
+        itemId: outside.id,
+        skillId: skill.id,
+        userId: user.id,
+      });
+
+      const result = await getMistakePractice({});
+      const practice = result.status === "ready" ? result.practice : [];
+
+      expect(practice.map(({ mistakeId }) => mistakeId)).toStrictEqual([withOwn.id]);
+
+      const answer = await answerMistakePractice({
+        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: outside.id },
+        mistakeId: withOwn.id,
+      });
+
+      expect(fixedIds(answer)).toContain(practiced.id);
+    });
+
     it("keep a timed mistake's clock", async () => {
       const { extra, practiced, skill, user } = await withoutOwnQuestion();
 

@@ -209,8 +209,13 @@ export async function getMistakePractice(
           hasMisconceptions: hasMisconceptions(item),
           id: item.id,
           seen: seen.has(item.id),
+          skillId: item.skillId,
         })),
         cause: mistake.cause,
+        coveringSkillIds:
+          mistake.skillId && !listeningSkillIds.has(mistake.skillId)
+            ? [mistake.skillId, scope.ownerOf.get(mistake.skillId) ?? mistake.skillId]
+            : [],
         lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
         mistake,
         originalItemId: mistake.itemId,
