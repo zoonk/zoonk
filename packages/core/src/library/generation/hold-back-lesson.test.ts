@@ -58,6 +58,22 @@ async function dayWithPrivateLesson({ startedAt }: { startedAt: Date | null }) {
 describe(holdBackLessonDraft, () => {
   afterEach(() => vi.restoreAllMocks());
 
+  it("replays a held-back draft while it is pending its next attempt", async () => {
+    const workflowRunId = randomUUID();
+
+    const lesson = await libraryLessonFixture({
+      contentRunId: workflowRunId,
+      contentStatus: "running",
+    });
+
+    const input = { lessonId: lesson.id, model: "test/fixture", problems: [], workflowRunId };
+    await expect(holdBackLessonDraft(input)).resolves.toStrictEqual({ setAside: false });
+    await expect(holdBackLessonDraft(input)).resolves.toStrictEqual({ setAside: false });
+    const saved = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+    expect(saved.contentStatus).toBe("pending");
+    expect(saved.heldBackDrafts).toHaveLength(1);
+  });
+
   it("refreshes only changed plans with at most four concurrent refreshes", async () => {
     const user = await userFixture();
     const workflowRunId = randomUUID();
