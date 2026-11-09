@@ -23,7 +23,7 @@ Resolve the latest Claude Opus and GPT Sol, Terra and Astra from the live catalo
 
 Two models from different families find gaps one model misses, and each drops weak ideas once the other shows evidence from the code. They don't know how the user and learners actually work, though, and can agree on assumptions that contradict it. So the brief carries that context, and the user decides before any code is written.
 
-1. **Brief:** Both get the same brief: the question, the user's constraints and real usage, the current behavior with `file:line` references, what the answer must cover, fixed headings for it, and a read-only rule (no edits, commits or posts).
+1. **Brief:** Both get the same brief: the question, the user's constraints and real usage, the current behavior with `file:line` references as the starting point rather than the limit ([think big](../../AGENTS.md#principles)), what the answer must cover, fixed headings for it, and a read-only rule (no edits, commits or posts).
 2. **First proposals:** Each writes its first proposal without seeing the other's, so neither anchors on the other.
 3. **Rounds:** Relay each one's latest proposal to the other verbatim. Each reply says what it accepts, gives each objection with its evidence, revises its proposal under the same headings, and ends with `AGREEMENT: yes` or `AGREEMENT: no` and what's still open. Rounds cross: each reply answers the other's previous round.
 4. **Sign-off:** Once they're close, merge their proposals into one list and send it to both to sign. A point still open after a few rounds goes to the user with both sides instead of another round.
