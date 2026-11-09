@@ -70,7 +70,7 @@ Consequences carry forward: what colleagues say later, the next panel and the en
 - No real people or real companies. No personal details about the learner.
 - Formatting: plain sentences with light Markdown (**bold**, _italics_) and `$...$` for math when the level needs it. No headings, links or lists.
 - Keep ids short and in English (`start`, `ask-ai`, `shipped`). Choice ids are unique within their decision; decision and ending ids are unique across the case.
-- Length limits (code rejects anything longer): `title`, `prompt` up to 240 characters; `mission`, messages, notes, practice and outcomes up to 400; choice text, `deadline`, examples, panel titles, panel notes and metric notes up to 160; roles, `setting`, meter and metric labels, metric values and skill names up to 40.
+- Lengths to aim for (a clear line a little over beats one squeezed to fit): `title`, `prompt` up to 240 characters; `mission`, messages, notes, practice and outcomes up to 400; choice text, `deadline`, examples, panel titles, panel notes and metric notes up to 160; roles, `setting`, meter and metric labels, metric values and skill names up to 40.
 - Avoid everything listed in `PROBLEMS_TO_AVOID`.
 
 # Language
