@@ -122,17 +122,9 @@ export async function completeLibraryLesson({
   const settle = async (
     completion: RunCompletion,
     progress?: LessonProgress,
-    phaseChallengesRequired?: boolean,
   ): Promise<LibraryLessonCompletion> => {
     const [settled, planReveal] = await Promise.all([
-      withStudyBlock({
-        completion,
-        phaseChallengesRequired,
-        progress,
-        runId: run.id,
-        timeZone,
-        userId,
-      }),
+      withStudyBlock({ completion, progress, runId: run.id, timeZone, userId }),
       findOwedPlanReveal({ lessonId, userId }),
     ]);
 
@@ -195,12 +187,5 @@ export async function completeLibraryLesson({
     };
   }
 
-  return {
-    completion: await settle(
-      finished.completion,
-      finished.progress,
-      finished.phaseChallengesRequired,
-    ),
-    status: "completed",
-  };
+  return { completion: await settle(finished.completion, finished.progress), status: "completed" };
 }

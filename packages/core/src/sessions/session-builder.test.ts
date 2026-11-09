@@ -89,6 +89,41 @@ function getFullReview(input: SessionBuildInput) {
 }
 
 describe(buildSessionBlocks, () => {
+  it("keeps a reached challenge within the time left on a started day", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      checkpoints: [boss],
+      dailyMinutes: 30,
+      drills: [],
+      lessons: [lesson("l1", 4)],
+      planItems: [
+        { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
+        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+        { id: "plan-l1", kind: "lesson", position: 2, status: "todo" },
+      ],
+      practice: [],
+      usedMinutes: 25,
+    });
+
+    expect(built.blocks.map((block) => block.lessonId)).toStrictEqual(["l1"]);
+    expect(built.plannedMinutes).toBeLessThanOrEqual(5);
+  });
+
+  it("offers no phase challenge on a planned review day", () => {
+    const built = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [boss],
+      planItems: [
+        { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
+        { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
+      ],
+      reviewPlanItemId: "review-1",
+    });
+
+    expect(built.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+  });
+
   it("funds only one of two reached 15-minute challenges on a 20-minute day", () => {
     const built = buildSessionBlocks({
       ...baseInput,

@@ -39,15 +39,17 @@ export function getLeadingChallenges({
 export function fundLeadingChallenges<Challenge extends { minutes: number; rematch: boolean }>({
   checkpoints,
   budget,
+  overflow = true,
 }: {
   checkpoints: readonly Challenge[];
   budget: number;
+  overflow?: boolean;
 }): Challenge[] {
   const funded: Challenge[] = [];
   let minutes = 0;
 
   for (const checkpoint of checkpoints.toSorted((a, b) => Number(a.rematch) - Number(b.rematch))) {
-    if (funded.length === 0 || minutes + checkpoint.minutes <= budget) {
+    if ((overflow && funded.length === 0) || minutes + checkpoint.minutes <= budget) {
       funded.push(checkpoint);
       minutes += checkpoint.minutes;
     }

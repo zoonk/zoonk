@@ -270,6 +270,123 @@ async function addSavedChallenge(
 }
 
 describe("completion adds a reached challenge from its saved facts", () => {
+  it("keeps a planned review day free of phase challenges during refill", async () => {
+    const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
+    await addSavedChallenge(fixture);
+
+    await planItemFixture({
+      kind: "review",
+      planId: fixture.plan.id,
+      position: 3,
+      scheduledFor: fixture.session.localDate,
+    });
+
+    const { completion } = await finish({
+      block: fixture.blocks[0]!,
+      elapsedMinutes: 5,
+      sessionId: fixture.session.id,
+    });
+
+    expect(completion.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
+  });
+
+  it("places a new challenge after its started lesson when both need new positions", async () => {
+    const fixture = await setup({ lessons: 4, minutes: 45, queued: 3 });
+    await prisma.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });
+
+    await prisma.planItem.update({
+      data: { phase: 1, position: 4 },
+      where: { id: fixture.plan.items[3]!.id },
+    });
+
+    const boss = await addSavedChallenge(fixture, { position: 3 });
+
+    await prisma.studySessionBlock.update({
+      data: { position: 3, startedAt: NOW, status: "active" },
+      where: { id: fixture.blocks[2]!.id },
+    });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 10,
+      kind: "practice",
+      position: 2,
+      sessionId: fixture.session.id,
+    });
+
+    await finish({ block: fixture.blocks[0]!, elapsedMinutes: 5, sessionId: fixture.session.id });
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      where: { sessionId: fixture.session.id },
+    });
+
+    const challenge = blocks.find((block) => readBlockPayload(block).planItemId === boss.id)!;
+    const started = blocks.find((block) => block.id === fixture.blocks[2]!.id)!;
+    expect(started).toMatchObject({ startedAt: NOW, status: "active" });
+    expect(started.position).toBeLessThan(challenge.position);
+
+    await expect(
+      startStudyBlock({
+        blockId: challenge.id,
+        input: { timeZone: "UTC" },
+        sessionId: fixture.session.id,
+      }),
+    ).resolves.toMatchObject({ reason: "lessons", status: "earlierFirst" });
+  });
+
+  it("holds a refilled challenge for its own lesson the learner already opened", async () => {
+    const fixture = await setup({ lessons: 4, minutes: 45, queued: 2 });
+
+    await prisma.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });
+
+    await prisma.planItem.update({
+      data: { phase: 1, position: 4 },
+      where: { id: fixture.plan.items[3]!.id },
+    });
+
+    const boss = await addSavedChallenge(fixture, { position: 3 });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 10,
+      kind: "practice",
+      position: 2,
+      sessionId: fixture.session.id,
+    });
+
+    await finish({ block: fixture.blocks[0]!, elapsedMinutes: 10, sessionId: fixture.session.id });
+
+    const appended = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { lessonId: fixture.playable[2]!.lesson.id, sessionId: fixture.session.id },
+    });
+
+    const practice = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "practice", sessionId: fixture.session.id },
+    });
+
+    expect(appended.position).toBeLessThan(practice.position);
+
+    await startStudyBlock({
+      blockId: appended.id,
+      input: { timeZone: "UTC" },
+      sessionId: fixture.session.id,
+    });
+
+    await finish({ block: fixture.blocks[1]!, elapsedMinutes: 5, sessionId: fixture.session.id });
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      where: { sessionId: fixture.session.id },
+    });
+
+    const challenge = blocks.find((block) => readBlockPayload(block).planItemId === boss.id)!;
+
+    await expect(
+      startStudyBlock({
+        blockId: challenge.id,
+        input: { timeZone: "UTC" },
+        sessionId: fixture.session.id,
+      }),
+    ).resolves.toMatchObject({ reason: "lessons", status: "earlierFirst" });
+  });
+
   it.each([false, true])("refills a language call only with Plus (Plus: %s)", async (plus) => {
     const fixture = await setup({ lessons: 2, minutes: 30, queued: 2 });
 

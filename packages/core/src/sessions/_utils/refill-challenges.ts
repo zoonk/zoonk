@@ -15,6 +15,7 @@ import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 import { isMockOnlyDay } from "./day-mock";
 import { findPlannedReview } from "./day-review";
 import { fundLeadingChallenges, getLeadingChallenges, listDayStretch } from "./day-stretch";
+import { canHoldPhaseChallenges } from "./phase-challenge-day";
 import { type StudySessionRow } from "./study-session-access";
 
 type ChallengeRefillInput = {
@@ -26,19 +27,16 @@ type ChallengeRefillInput = {
 };
 
 function getRefillCheckpoints({
-  blocks,
+  held,
+  mockOnlyDay,
   leaving,
   plan,
   session,
   trialEnded,
-}: ChallengeRefillInput): PlannedCheckpoint[] {
-  const held = new Set(
-    blocks.flatMap((block) => {
-      const payload = readBlockPayload(block);
-      return [payload.planItemId, payload.planItemKey].filter((id): id is string => id !== null);
-    }),
-  );
-
+}: Omit<ChallengeRefillInput, "blocks"> & {
+  held: ReadonlySet<string>;
+  mockOnlyDay: boolean;
+}): PlannedCheckpoint[] {
   const trimmed = new Set(
     leaving.flatMap((block) => {
       const payload = readBlockPayload(block);
@@ -49,18 +47,12 @@ function getRefillCheckpoints({
     }),
   );
 
-  const blockedDay =
-    isMockOnlyDay({
-      goal: session.goal,
-      hasMock: blocks.some((block) => readBlockPayload(block).checkpoint?.mock),
-      items: plan.items,
-      planSettings: plan.settings,
-      today: session.localDate,
-    }) || Boolean(findPlannedReview({ items: plan.items, today: session.localDate }));
-
-  return trialEnded || blockedDay
-    ? []
-    : plan.items.flatMap((item): PlannedCheckpoint[] => {
+  return canHoldPhaseChallenges({
+    mockOnlyDay,
+    reviewDay: Boolean(findPlannedReview({ items: plan.items, today: session.localDate })),
+    trialEnded,
+  })
+    ? plan.items.flatMap((item): PlannedCheckpoint[] => {
         const facts = readSelectedItemFacts(item.facts)?.boss;
 
         if (
@@ -93,7 +85,8 @@ function getRefillCheckpoints({
             title: item.titleSnapshot,
           },
         ];
-      });
+      })
+    : [];
 }
 
 export async function fitRefillStretch({
@@ -104,22 +97,29 @@ export async function fitRefillStretch({
   trialEnded,
   lessons,
   budget,
-  phaseChallengesRequired,
   tx,
-}: ChallengeRefillInput & {
-  lessons: PlannedLesson[];
-  budget: number;
-  phaseChallengesRequired?: boolean;
-  tx: TransactionClient;
-}) {
-  const checkpoints = getRefillCheckpoints({ blocks, leaving, plan, session, trialEnded });
-
+}: ChallengeRefillInput & { lessons: PlannedLesson[]; budget: number; tx: TransactionClient }) {
   const held = new Set(
     blocks.flatMap((block) => {
       const payload = readBlockPayload(block);
       return [payload.planItemId, payload.planItemKey].filter((id): id is string => id !== null);
     }),
   );
+
+  const checkpoints = getRefillCheckpoints({
+    held,
+    leaving,
+    mockOnlyDay: isMockOnlyDay({
+      goal: session.goal,
+      hasMock: blocks.some((block) => readBlockPayload(block).checkpoint?.mock),
+      items: plan.items,
+      planSettings: plan.settings,
+      today: session.localDate,
+    }),
+    plan,
+    session,
+    trialEnded,
+  });
 
   const potential = listDayStretch({
     ahead: held,
@@ -128,19 +128,18 @@ export async function fitRefillStretch({
     items: plan.items,
     leading: fundLeadingChallenges({
       budget,
-      checkpoints: getLeadingChallenges({ checkpoints, items: plan.items }).filter(
-        (checkpoint) => checkpoint.minutes <= budget,
-      ),
+      checkpoints: getLeadingChallenges({ checkpoints, items: plan.items }),
+      overflow: false,
     }),
     lessons,
   });
 
-  const hasCall =
-    potential.some((entry) => entry.kind === "challenge") && session.goal.kind === "language";
+  if (!potential.some((entry) => entry.kind === "challenge")) {
+    return { checkpoints, stretch: potential };
+  }
 
   const required =
-    phaseChallengesRequired ??
-    (hasCall
+    session.goal.kind === "language"
       ? Boolean(
           await findActiveSubscriptionForUser({
             client: tx,
@@ -148,12 +147,9 @@ export async function fitRefillStretch({
             userId: session.userId,
           }),
         )
-      : undefined);
+      : true;
 
-  const ids =
-    required !== false && potential.some((entry) => entry.kind === "challenge")
-      ? checkpoints.flatMap((checkpoint) => checkpoint.planItemId ?? [])
-      : [];
+  const ids = required ? checkpoints.flatMap((checkpoint) => checkpoint.planItemId ?? []) : [];
 
   const results = await findLastCheckpointResults({
     client: tx,
@@ -161,7 +157,7 @@ export async function fitRefillStretch({
     userId: session.userId,
   });
 
-  const available = (required === false ? [] : checkpoints)
+  const available = (required ? checkpoints : [])
     .filter((checkpoint) => {
       const result = results.get(checkpoint.planItemId ?? "");
       return !result || result.localDate.getTime() !== session.localDate.getTime();
@@ -175,12 +171,11 @@ export async function fitRefillStretch({
     items: plan.items,
     leading: fundLeadingChallenges({
       budget,
-      checkpoints: getLeadingChallenges({ checkpoints: available, items: plan.items }).filter(
-        (checkpoint) => checkpoint.minutes <= budget,
-      ),
+      checkpoints: getLeadingChallenges({ checkpoints: available, items: plan.items }),
+      overflow: false,
     }),
     lessons,
   });
 
-  return { checkpoints, phaseChallengesRequired: required, stretch };
+  return { checkpoints, stretch };
 }

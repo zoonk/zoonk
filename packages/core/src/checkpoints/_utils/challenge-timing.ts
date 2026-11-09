@@ -1,10 +1,12 @@
-import { type Goal } from "@zoonk/db";
+import { type Goal, type StudySessionBlock } from "@zoonk/db";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { addDays, daysBetween, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, type PlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { isMockOnlyDay } from "../../sessions/_utils/day-mock";
 import { fundLeadingChallenges } from "../../sessions/_utils/day-stretch";
+import { canHoldPhaseChallenges } from "../../sessions/_utils/phase-challenge-day";
+import { readBlockPayload } from "../../sessions/block-payload";
 import { type BossTiming, type ChallengeReachItem, isChallengeReached } from "./challenge-reach";
 import { type CheckpointResult } from "./checkpoint-results";
 
@@ -20,7 +22,8 @@ export function getChallengeTimings({
   items,
   settings,
   today,
-  todayItemIds = new Set(),
+  todayBlocks = [],
+  challengesOpen = true,
   savedDay = false,
   results = new Map(),
 }: {
@@ -28,7 +31,8 @@ export function getChallengeTimings({
   items: readonly TimingItem[];
   settings: PlanSettings;
   today: Date;
-  todayItemIds?: ReadonlySet<string>;
+  todayBlocks?: readonly Pick<StudySessionBlock, "payload" | "status">[];
+  challengesOpen?: boolean;
   savedDay?: boolean;
   results?: ReadonlyMap<string, CheckpointResult>;
 }): ReadonlyMap<string, ChallengeTiming> {
@@ -50,10 +54,19 @@ export function getChallengeTimings({
       (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
     );
 
-    return blocked ||
-      isMockOnlyDay({ goal, hasMock: true, items, planSettings: settings, today: date })
-      ? 0
-      : getGoalDayMinutes({ date, goal, planSettings: settings });
+    return canHoldPhaseChallenges({
+      mockOnlyDay: isMockOnlyDay({
+        goal,
+        hasMock: true,
+        items,
+        planSettings: settings,
+        today: date,
+      }),
+      reviewDay: blocked,
+      trialEnded: !challengesOpen,
+    })
+      ? getGoalDayMinutes({ date, goal, planSettings: settings })
+      : 0;
   };
 
   const nextStudy = days.find(
@@ -95,7 +108,14 @@ export function getChallengeTimings({
       .filter((boss) => boss.kind === "boss")
       .map((boss) => {
         const id = boss.id ?? boss.key ?? "";
-        const inToday = boss.status === "todo" && todayItemIds.has(id);
+
+        const inToday =
+          boss.status === "todo" &&
+          todayBlocks.some(
+            (block) =>
+              (block.status === "pending" || block.status === "active") &&
+              readBlockPayload(block).planItemId === id,
+          );
 
         const nextSession =
           !savedDay && next && funded.has(id) && next.getTime() === nextStudy?.getTime();
