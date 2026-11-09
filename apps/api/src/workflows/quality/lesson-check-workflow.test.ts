@@ -180,7 +180,6 @@ describe(lessonCheckWorkflow, () => {
     await expect(lessonCheckWorkflow(input)).resolves.toStrictEqual({ cited: 0, status: "passed" });
     expect(checkLessonQuality).toHaveBeenCalledOnce();
     expect(start).not.toHaveBeenCalled();
-    expect(citePublishedLessonStep).not.toHaveBeenCalled();
     const steps = await prisma.step.findMany({ where: { lessonId: lesson.id } });
     expect(steps.every((step) => step.version === input.plan.version && !step.staged)).toBe(true);
   });

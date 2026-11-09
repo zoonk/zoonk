@@ -195,7 +195,7 @@ describe(checkPublishedLesson, () => {
       lesson: withScreen(written, 1, explanation("A thermometer measures temperature.")),
     });
 
-    mockReview([{ ...wrongRise, screen: null }]);
+    mockReview();
 
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
@@ -204,6 +204,34 @@ describe(checkPublishedLesson, () => {
     expect(checkLessonQuality).toHaveBeenCalledTimes(2);
     const steps = await listSteps(lesson.id);
     expect(steps.some((step) => step.staged)).toBe(true);
+  });
+
+  it("holds back a new unchanged screen finding the first review never flagged", async () => {
+    const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+    mockReview([wrongRise]);
+    mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview([{ ...wrongRise, screen: 1 }]);
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+    ).resolves.toMatchObject({
+      draft: { problems: [expect.objectContaining({ screen: 1 })] },
+      status: "heldBack",
+    });
+  });
+
+  it("holds back a lesson-wide recheck finding when screens changed", async () => {
+    const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+    mockReview([wrongRise]);
+    mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview([{ ...wrongRise, screen: null }]);
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+    ).resolves.toMatchObject({
+      draft: { problems: [expect.objectContaining({ screen: null })] },
+      status: "heldBack",
+    });
   });
 
   it("stages a partial decline when the recheck repeats an unchanged screen's finding", async () => {
@@ -264,7 +292,7 @@ describe(checkPublishedLesson, () => {
     });
   });
 
-  it("declines a lesson-wide finding only when the screens and summary are unchanged", async () => {
+  it("keeps a wholly unchanged live lesson after a lesson-wide finding", async () => {
     const written = writtenRight();
     const { lesson, plan } = await publishLesson({ lesson: written });
     mockReview([{ ...wrongRise, screen: null }]);
@@ -339,7 +367,11 @@ describe(checkPublishedLesson, () => {
     }
 
     await expect(
-      recheckPublishedDraft({ before: fixed.before, state: fixed.state }),
+      recheckPublishedDraft({
+        before: fixed.before,
+        flaggedScreens: fixed.flaggedScreens,
+        state: fixed.state,
+      }),
     ).resolves.toMatchObject({ status: "heldBack" });
 
     expect(checkLessonQuality).toHaveBeenCalledTimes(2);
@@ -565,6 +597,34 @@ describe(checkPublishedLesson, () => {
 });
 
 describe(redraftPublishedLesson, () => {
+  it("holds back an untouched code problem when a redraft fix changes another screen", async () => {
+    const { lesson, plan } = await publishLesson();
+    const unfinished = withScreen(writtenWrong(), 1, explanation("[Insert example]"));
+    mockDraft(unfinished);
+    mockReview([{ ...wrongRise, problem: "The screen contains a placeholder.", screen: 1 }]);
+
+    mockFix({
+      changedScreens: [4],
+      lesson: withScreen(writtenRight(), 1, explanation("[Insert example]")),
+    });
+
+    mockReview();
+
+    await expect(
+      redraftPublishedLesson({
+        heldBackDrafts: [],
+        lessonId: lesson.id,
+        version: plan.version,
+        workflowRunId: randomUUID(),
+      }),
+    ).resolves.toMatchObject({
+      draft: { problems: [expect.objectContaining({ screen: 1 })] },
+      status: "heldBack",
+    });
+
+    expect(checkLessonQuality).toHaveBeenCalledTimes(2);
+  });
+
   it("skips the review of an unchanged fix of a redraft", async () => {
     const { lesson, plan } = await publishLesson();
     mockDraft(writtenWrong());

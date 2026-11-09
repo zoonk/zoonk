@@ -29,6 +29,7 @@ import {
   BACKGROUND_TIER,
   type CheckContext,
   type PublishedDraftState,
+  type PublishedFix,
   keepPictures,
   loadCheck,
   loadVersionSteps,
@@ -156,16 +157,18 @@ export async function fixPublishedDraft({
 }: {
   first: GateResult;
   state: PublishedDraftState;
-}): Promise<
-  { status: "passed" } | { before: WrittenLesson; status: "fixed"; state: PublishedDraftState }
-> {
+}): Promise<PublishedFix> {
   const version = await fixVersionDraft({ draft: state.version, first, gate: state.gate });
   const before = state.version.lesson;
   const after = version.lesson;
 
+  const flaggedScreens = first.blocking
+    .filter((problem) => problem.source === "review")
+    .map((problem) => problem.screen);
+
   return state.live && isDeepStrictEqual(before, after)
     ? { status: "passed" }
-    : { before, state: { ...state, version }, status: "fixed" };
+    : { before, flaggedScreens, state: { ...state, version }, status: "fixed" };
 }
 
 export async function checkPublishedDraft({
@@ -196,9 +199,11 @@ export async function checkPublishedDraft({
 
 export async function recheckPublishedDraft({
   before,
+  flaggedScreens,
   state,
 }: {
   before: WrittenLesson;
+  flaggedScreens: (number | null)[];
   state: PublishedDraftState;
 }): Promise<
   Extract<PublishedDraftOutcome, { status: "checked" | "heldBack" }> | { status: "replaced" }
@@ -213,15 +218,15 @@ export async function recheckPublishedDraft({
     review: !isDeepStrictEqual(before, state.version.lesson),
   });
 
-  // The writer's response to a finding is final; the second review checks the fix.
+  // The writer's response to a finding it saw is final; every other recheck finding blocks.
   const blocking = checked.blocking.filter(
     (problem) =>
       problem.source === "code" ||
+      problem.screen === null ||
+      !flaggedScreens.includes(problem.screen) ||
       !isDeepStrictEqual(
-        problem.screen === null ? before.summary : before.screens[problem.screen],
-        problem.screen === null
-          ? state.version.lesson.summary
-          : state.version.lesson.screens[problem.screen],
+        before.screens[problem.screen],
+        state.version.lesson.screens[problem.screen],
       ),
   );
 

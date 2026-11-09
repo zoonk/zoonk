@@ -38,6 +38,15 @@ export type PublishedDraftState = {
   replaces: number;
 };
 
+export type PublishedFix =
+  | { status: "passed" }
+  | {
+      before: WrittenVersion["lesson"];
+      flaggedScreens: (number | null)[];
+      state: PublishedDraftState;
+      status: "fixed";
+    };
+
 export async function toTaskAnalytics({
   analytics,
   lessonId,
