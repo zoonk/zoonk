@@ -51,7 +51,6 @@
   "plan_cadence_weekly_effect": "acd809c5dcdad1a6f43b8b724e94f91d0b1f2e2a141b26be1b41175b548e61b2",
   "plan_cancel": "a536b26bc303dc48560bdeae1df9b6360c6cc2914ab85b40b57afc2744866b7d",
   "plan_catch_up": "29c64c3b635fea51fd034e5b935625282f9f40975bcba1ac2bff42ce34a7c116",
-  "plan_challenge_after_previous": "da3b92e0fb464674f6e7e8545d182d5ccaa792108154f2d4179fa1667fc31f7c",
   "plan_challenge_left_out": "63df2c7fb55daa348b3f9b3d34f9ca2345cd273b0080e744b670eeb59f12839c",
   "plan_challenge_live_call": "ebb386320c58684873ed554ba9537dca1a1961bc5ee3e825a9f7f5eb6f9a0397",
   "plan_challenge_next_session": "3cbffcbfcf55abd1dd75eb3dd2a6651fd342113ae8d9d62af4936a2e63399d06",
@@ -308,7 +307,7 @@
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_being_written_from": "f4fb6b89de82d3e33aff7dcbcd82a9f956672355dd310a3b2b7dd01f6a8fb4f3",
   "plan_lessons_count": "35b0c7b3210d3bb16128f031a3dcb53f69e7e5302c24c46a7a4160522145cfe6",
-  "plan_lessons_done_challenge_on": "d872709ca8d46b753e679d3c41edb2ddb34dfe4a5a4a2f485a4adb341a4d14d6",
+  "plan_lessons_done_challenge_on": "d6d02c2e5a624018d45cc2001ef9221811da3fb229f1b466250a359ea448764d",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
   "plan_lessons_left": "4df3969bdd163b0ddda3930cd6e9d1e54870bced633dd784f911ef1332b0bb91",
   "plan_lessons_left_out": "fd4997e8393ce43673f3e2b620a2a2bffe1c2e7edd9a5e2be64786b1f933c316",
@@ -340,7 +339,7 @@
   "plan_more_chapters": "c29a8a3105219660046e237ddcfd5f3d9b00c52a8482db3e51f00805bfd42c2f",
   "plan_more_explanation": "6dc30b7c7805424b6e2151bf96d2be3b1a6157f5f70b53dcaa3bc7070e9ee2dd",
   "plan_more_lessons": "165daca0cb6e79a3c360f2f0f54cea384076c726ec1735164c959fef920cc15d",
-  "plan_more_lessons_challenge_on": "b7e9392d18273079aac8f65e9c0f959cd6ddef117383998f3ee7f55c8fdc8db6",
+  "plan_more_lessons_challenge_on": "93a015020e8ad89965f2448790c5f207ec3245c310cfba3c629fb22fb19decc2",
   "plan_more_lessons_fit": "7ebc19a6103ef54ce9462d5067956aeb32fe59405785cfefddc793d87e4dc745",
   "plan_more_lessons_on_the_way": "192b78c93fd76c0bc1f98fabfa90813de80c9a8a2662c33e6e22038ee800571e",
   "plan_more_practice": "64b34ff56b2fd42a5fdc5e9f170f26bdd5876bc0de50f78406a9da897fef8f6b",
@@ -701,9 +700,9 @@
     <string name="plan_continues_today">Bugün devam edecek</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">%1$s tarihinde devam edecek</string>
-    <string name="plan_more_lessons_challenge_on">Yeni dersler yolda · meydan okuma %1$s tarihinde</string>
+    <string name="plan_more_lessons_challenge_on">Yeni dersler yolda · meydan okuma: %1$s</string>
     <string name="plan_more_lessons_on_the_way">Yeni dersler hazırlıyoruz</string>
-    <string name="plan_lessons_done_challenge_on">Dersler tamamlandı · meydan okuma %1$s tarihinde</string>
+    <string name="plan_lessons_done_challenge_on">Dersler tamamlandı · meydan okuma: %1$s</string>
     <string name="plan_up_next">Sıradaki</string>
     <string name="plan_skipped">Atlandı</string>
     <string name="plan_done">Tamamlandı</string>
@@ -751,7 +750,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Kazanıldı</string>
     <string name="plan_challenge_next_session">Bir sonraki çalışmanda</string>
-    <string name="plan_challenge_after_previous">Önceki meydan okumadan sonra</string>
     <string name="plan_challenge_opens_after_lessons">Bu aşamanın dersleri bitince açılır</string>
     <string name="plan_challenge_questions">Bu aşamayla ilgili ipucusuz sorular</string>
     <string name="plan_challenge_live_call">Kendini ifade ettiğin canlı bir sohbet</string>

@@ -51,7 +51,6 @@
   "plan_cadence_weekly_effect": "202ff7d732378c56f6dcbb2c579fb527a0c1860747ba12721ca5eabc1c111931",
   "plan_cancel": "1e3288ecb7786b06c058d3d51352510ffeec5c9195ec665ac06d72d99503d3ed",
   "plan_catch_up": "4c5b510310b1f46d89e42c4d978f2943befe82d82d54f0878ed1685eecaf8808",
-  "plan_challenge_after_previous": "e9041baba8b00360ef8f0eed5ba671ff0bfe81296ce153090f4584ad6644f26c",
   "plan_challenge_left_out": "a7bffbdd3354a02c0a1ec251a2cd5f16a0eb06b21654b283b8e1b04d1854573e",
   "plan_challenge_live_call": "5a1cf8c90f99334aff9f8b48b41c628b11f0f0e8404183c792e5739a29838967",
   "plan_challenge_next_session": "9eb8a19775e39073646a279fc7b5f54feb786c0dafb2f399f10a63fd60a06feb",
@@ -771,7 +770,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Wygrane</string>
     <string name="plan_challenge_next_session">Podczas następnej nauki</string>
-    <string name="plan_challenge_after_previous">Po poprzednim wyzwaniu</string>
     <string name="plan_challenge_opens_after_lessons">Dostępne po ukończeniu lekcji z tego etapu</string>
     <string name="plan_challenge_questions">Pytania z tego etapu, bez podpowiedzi</string>
     <string name="plan_challenge_live_call">Rozmowa na żywo, w której jasno wyrażasz swoje myśli</string>

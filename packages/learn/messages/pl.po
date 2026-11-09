@@ -4728,13 +4728,6 @@ msgid "Won"
 msgstr "Zwycięstwo"
 
 #: src/journey/journey-phase-events.tsx
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "lqBoRy"
-msgid "After the challenge before it"
-msgstr "Po poprzednim wyzwaniu"
-
-#: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
 msgid "A live call where you get your point across"
 msgstr "Rozmowa na żywo, w której jasno wyrażasz swoje myśli"
@@ -4954,19 +4947,19 @@ msgid "Challenge left out"
 msgstr "Wyzwanie się nie zmieściło"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "nzBtDK"
-msgid "More lessons on the way · challenge {date}"
-msgstr "Przygotowujemy kolejne lekcje · wyzwanie {date}"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "FSd2Qh"
 msgid "More lessons on the way"
 msgstr "Przygotowujemy kolejne lekcje"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "EUjjJB"
-msgid "Lessons done · challenge {date}"
-msgstr "Lekcje ukończone · wyzwanie {date}"
+msgctxt "Kw3CDV"
+msgid "More lessons on the way · challenge <date></date>"
+msgstr "Przygotowujemy kolejne lekcje · wyzwanie <date></date>"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "QYw146"
+msgid "Lessons done · challenge <date></date>"
+msgstr "Lekcje ukończone · wyzwanie <date></date>"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
@@ -7550,6 +7543,12 @@ msgstr ", po poprzednim wyzwaniu"
 msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr "Po dzisiejszych lekcjach"
+
+#: src/missions/mission-copy.tsx
+#: src/today/today-block-row.tsx
+msgctxt "lqBoRy"
+msgid "After the challenge before it"
+msgstr "Po poprzednim wyzwaniu"
 
 #: src/missions/mission-copy.tsx
 msgctxt "teh3kP"

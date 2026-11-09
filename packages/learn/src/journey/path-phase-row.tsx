@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
 import { toLocalIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
-import { useFormatPlanDate } from "../plan/plan-date-text";
+import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { useShortDays } from "../plan/use-short-plan";
 import { CurrentPhaseMark } from "./current-phase-mark";
@@ -174,7 +174,6 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
 
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   const t = useExtracted();
-  const formatPlanDate = useFormatPlanDate();
 
   const challengeDate =
     phase.checkpoint?.state === "upcoming" && phase.checkpoint.when === "date"
@@ -197,17 +196,19 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
     return <PhaseResume phase={phase} />;
   }
 
-  const date = challengeDate && formatPlanDate(challengeDate);
-
-  if (!writing && !date) {
-    return null;
+  if (!challengeDate) {
+    return writing ? (
+      <span className="text-muted-foreground text-xs">{t("More lessons on the way")}</span>
+    ) : null;
   }
+
+  const date = () => <PlanDateText className="font-sans" estimate isoDate={challengeDate} />;
 
   return (
     <span className="text-muted-foreground text-xs">
-      {writing && date && t("More lessons on the way · challenge {date}", { date })}
-      {writing && !date && t("More lessons on the way")}
-      {!writing && date && t("Lessons done · challenge {date}", { date })}
+      {writing
+        ? t.rich("More lessons on the way · challenge <date></date>", { date })
+        : t.rich("Lessons done · challenge <date></date>", { date })}
     </span>
   );
 }
