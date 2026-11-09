@@ -13,14 +13,14 @@ import { readBlockPayload } from "../block-payload";
 import { type DayBlockInput } from "./day-block-view";
 import { withSessionAppendLock } from "./extra-blocks";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
-import { hasSameBlocks, type planRestOfDay, planRestOfDayWithPlan } from "./refresh-day-session";
+import { hasSameBlocks, planRestOfDayWithPlan } from "./refresh-day-session";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 type EntitlementRefill = {
   plannedMinutes: number;
   basis: { id: string; inputVersion: number; version: number };
   blocks: DayBlockInput[];
-  lessons: Awaited<ReturnType<typeof planRestOfDay>>;
+  lessons: Awaited<ReturnType<typeof planRestOfDayWithPlan>>["blocks"];
 };
 
 class RefillInputsChangedError extends Error {

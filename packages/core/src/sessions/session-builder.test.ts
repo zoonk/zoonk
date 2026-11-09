@@ -661,6 +661,37 @@ describe("filling ordinary study days", () => {
     expect(result.plannedMinutes).toBe(100);
   });
 
+  it("leaves a day-replacing mock as the day's work", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      checkpoints: [{ ...boss, kind: "weekly", mock: true }],
+      fillLessons: [lesson("later", 10)],
+      mockReplacesDay: true,
+    });
+
+    expect(result.blocks.map((block) => block.kind)).toStrictEqual(["checkpoint"]);
+    expect(result.plannedMinutes).toBe(15);
+  });
+
+  it("puts fill lessons before practice and a shared mock checkpoint", () => {
+    const result = buildSessionBlocks({
+      ...empty,
+      checkpoints: [{ ...boss, kind: "weekly", mock: true }],
+      fillLessons: [lesson("later", 10)],
+      lessons: [lesson("first", 10)],
+      mockReplacesDay: false,
+      practice,
+    });
+
+    expect(result.blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
+      ["learn", "first"],
+      ["learn", "later"],
+      ["practice", null],
+      ["practice", null],
+      ["checkpoint", null],
+    ]);
+  });
+
   it("keeps a healthy question bank's actual practice before filling", () => {
     const result = buildSessionBlocks({
       ...empty,

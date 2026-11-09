@@ -100,7 +100,7 @@ export async function loadLessonsForSkills({
 }
 
 /** Look ahead after keptLessonIds so retained work cannot consume the window for newly landed lessons. */
-export function loadUpcomingLessons({
+function loadUpcomingLessons({
   dayMinutes,
   items,
   keptLessonIds,

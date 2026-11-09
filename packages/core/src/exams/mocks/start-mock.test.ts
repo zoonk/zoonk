@@ -44,6 +44,7 @@ describe("scheduled mock focus", () => {
 
     expect(readBlockPayload(paused).timing).toStrictEqual({
       activeAt: null,
+      clock: null,
       elapsedMs: 2 * MINUTE_MS,
     });
 
@@ -59,11 +60,13 @@ describe("scheduled mock focus", () => {
 
     expect(readBlockPayload(resumed).timing).toStrictEqual({
       activeAt: resumedAt.toISOString(),
+      clock: null,
       elapsedMs: 2 * MINUTE_MS,
     });
 
     expect(readBlockPayload(left).timing).toStrictEqual({
       activeAt: null,
+      clock: null,
       elapsedMs: 4 * MINUTE_MS,
     });
 
@@ -109,6 +112,6 @@ describe("scheduled mock focus", () => {
       getAskedItemIds(found.owned.mock.conditions).map((entry) => entry.itemId),
     );
 
-    expect(kept.timing).toStrictEqual({ activeAt: null, elapsedMs: 2 * MINUTE_MS });
+    expect(kept.timing).toStrictEqual({ activeAt: null, clock: null, elapsedMs: 2 * MINUTE_MS });
   });
 });

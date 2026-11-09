@@ -5,7 +5,7 @@ import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
-import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
@@ -134,14 +134,6 @@ export async function planRestOfDayWithPlan({
     plan: await dayPlan,
     plannedMinutes: getSessionUsedMinutes(kept) + plannedMinutes,
   };
-}
-
-/** Excludes a second block of any kind already kept by the day. */
-export async function planRestOfDay(
-  input: Parameters<typeof planRestOfDayWithPlan>[0],
-): Promise<PlannedBlock[]> {
-  const { blocks } = await planRestOfDayWithPlan(input);
-  return blocks;
 }
 
 export function hasSameBlocks({

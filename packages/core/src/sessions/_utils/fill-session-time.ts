@@ -1,5 +1,6 @@
 import { isFullReviewDay } from "../full-review";
 import { type PlannedBlock, type PlannedLesson, type SessionBuildInput } from "../session-builder";
+import { splitAtDuel } from "./lessons-before-challenges";
 import {
   canAddSessionLessons,
   getLessonMinutes,
@@ -51,7 +52,7 @@ export function fillRemainingLessonTime({
 
   const candidates = getNewLessons({
     ...input,
-    lessons: [...input.lessons, ...(input.fillLessons ?? [])],
+    lessons: input.mockReplacesDay ? [] : [...input.lessons, ...(input.fillLessons ?? [])],
   }).filter((lesson) => !taken.has(lesson.lessonId));
 
   const fill = takeLessons({
@@ -60,7 +61,21 @@ export function fillRemainingLessonTime({
     overflow: false,
   });
 
-  const filled = [...blocks, ...fill.map((lesson) => toLessonBlock(lesson, false))];
+  const { after, before } = splitAtDuel(fill);
+
+  const boundary = blocks.findIndex(
+    (block) => block.kind === "practice" || block.kind === "produce" || block.kind === "checkpoint",
+  );
+
+  const at = boundary === -1 ? blocks.length : boundary;
+
+  const filled = [
+    ...blocks.slice(0, at),
+    ...before.map((lesson) => toLessonBlock(lesson, false)),
+    ...blocks.slice(at),
+    ...after.map((lesson) => toLessonBlock(lesson, false)),
+  ];
+
   const sum = filled.reduce((total, block) => total + block.estimatedMinutes, 0);
 
   const newLessonsAllowed = canAddSessionLessons({
@@ -69,7 +84,9 @@ export function fillRemainingLessonTime({
   });
 
   const holdsMore =
-    newLessonsAllowed && ((input.writingMinutes ?? 0) > 0 || candidates.length > fill.length);
+    !input.mockReplacesDay &&
+    newLessonsAllowed &&
+    ((input.writingMinutes ?? 0) > 0 || candidates.length > fill.length);
 
   const deliberateOverflow =
     isFullReviewDay(input) ||
