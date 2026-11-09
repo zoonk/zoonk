@@ -31083,30 +31083,30 @@
       }
     },
     "until ~%@" : {
-      "comment" : "When a phase ends, about",
+      "comment" : "When a phase ends, about; the argument is a day like 'Nov 10'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bis ca. %@"
+            "value" : "bis ~%@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hasta aproximadamente el %@"
+            "value" : "hasta el ~%@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "jusqu’au %@ environ"
+            "value" : "jusqu’au ~%@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fino al %@ circa"
+            "value" : "fino al ~%@"
           }
         },
         "ja" : {
@@ -31118,7 +31118,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@쯤까지"
+            "value" : "~%@까지"
           }
         },
         "pl" : {
@@ -31136,13 +31136,13 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "yaklaşık %@ tarihine kadar"
+            "value" : "~%@ tarihine kadar"
           }
         }
       }
     },
     "until about %@" : {
-      "comment" : "When a phase ends, about, read aloud; the argument is a day or a month",
+      "comment" : "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -31558,6 +31558,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seçim yapana kadar %@ planının ve deneme sınavlarının dışında kalır."
+          }
+        }
+      }
+    },
+    "untilAboutMonth" : {
+      "comment" : "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis ~%@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "until ~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta ~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusque vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino a ~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até ~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@ ayına kadar"
+          }
+        }
+      }
+    },
+    "untilAboutMonthSpoken" : {
+      "comment" : "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis etwa %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "until about %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta aproximadamente %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusque vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino a %@ circa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do około %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarına kadar"
           }
         }
       }
