@@ -48,6 +48,7 @@ export const todayResponseSchema = z
           description:
             "Whole days until the goal's date, 0 on the day itself; null for a goal without one and once its date passed",
         }),
+      displayName: z.string(),
       id: uuidSchema(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),

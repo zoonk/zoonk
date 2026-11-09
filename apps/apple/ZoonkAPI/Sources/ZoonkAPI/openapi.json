@@ -27419,6 +27419,10 @@
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
           },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
           "examBlueprintId": {
             "type": "string",
             "format": "uuid",
@@ -27491,6 +27495,11 @@
               "$ref": "#/components/schemas/__schema0"
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
           },
           "status": {
             "description": "Pause, resume, archive or complete the goal",
@@ -28855,7 +28864,8 @@
               "field": {
                 "type": "string",
                 "enum": [
-                  "title"
+                  "title",
+                  "displayName"
                 ]
               },
               "goal": {
@@ -35821,6 +35831,9 @@
             "additionalProperties": {},
             "description": "What onboarding understood"
           },
+          "displayName": {
+            "type": "string"
+          },
           "examBlueprintId": {
             "nullable": true,
             "type": "string",
@@ -35955,6 +35968,7 @@
           "createdAt",
           "dailyMinutes",
           "details",
+          "displayName",
           "examBlueprintId",
           "id",
           "isActive",
@@ -38416,6 +38430,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -38435,6 +38452,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "targetDate",
               "targetLanguage",
@@ -42581,6 +42599,9 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "displayName": {
+            "type": "string"
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -42636,6 +42657,7 @@
           "courseId",
           "courseLevel",
           "dailyMinutes",
+          "displayName",
           "id",
           "isActive",
           "isSettingUp",
@@ -42651,6 +42673,9 @@
       "LearnerSummaryWaitingGoal": {
         "type": "object",
         "properties": {
+          "displayName": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -42668,6 +42693,7 @@
           }
         },
         "required": [
+          "displayName",
           "id",
           "input",
           "locked"
@@ -72377,7 +72403,8 @@
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
               "goalTitle": {
-                "type": "string"
+                "type": "string",
+                "description": "The goal's name, as the learner sees it"
               },
               "planReady": {
                 "type": "boolean",
@@ -77251,6 +77278,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -77270,6 +77300,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -77391,6 +77422,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -77417,6 +77451,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "targetDate",
@@ -78625,6 +78660,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -78644,6 +78682,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -78899,6 +78938,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -78918,6 +78960,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -79408,6 +79451,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -79427,6 +79473,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -83764,6 +83811,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -83774,6 +83824,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "title"
             ],
@@ -92991,6 +93042,9 @@
                 "minimum": 0,
                 "maximum": 9007199254740991
               },
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -93019,6 +93073,7 @@
             "required": [
               "dateEstimated",
               "daysLeft",
+              "displayName",
               "id",
               "kind",
               "targetDate",
@@ -94176,6 +94231,10 @@
               "$ref": "#/components/schemas/__schema1"
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
           },
           "examBlueprintId": {
             "type": "string",

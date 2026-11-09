@@ -19,6 +19,7 @@ export type LearnerIdentity = {
 export type LearnerTier = "free" | "guest" | "plus";
 
 export type LearnerSummaryGoal = {
+  displayName: string;
   /** Set only while the goal follows its course, so that course's page offers to continue it. */
   courseId: string | null;
   /** The chapter of the goal's next lesson in that course, so its page marks it; null until it's written. */
@@ -42,6 +43,7 @@ export type LearnerSummaryGoal = {
 
 /** A goal typed with others that the learner's plan didn't start, kept so it starts without typing it again. */
 export type LearnerSummaryWaitingGoal = {
+  displayName: string;
   id: string;
   /** The POST /goals body that starts it. */
   input: GoalCreateInput;

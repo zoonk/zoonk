@@ -420,7 +420,7 @@ private struct StepScreen: View {
 
     let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject
     return subject?.trimmingCharacters(in: .whitespaces).isEmpty == false
-      ? subject ?? view.goal.title : view.goal.title
+      ? subject ?? view.goal.displayName : view.goal.displayName
   }
 }
 

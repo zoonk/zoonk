@@ -13,7 +13,7 @@ function JourneyEyebrow() {
   const { targetDate, targetDateEstimated } = plan.schedule;
 
   if (!targetDate || targetDate < today) {
-    return <PageEyebrow>{goal.title}</PageEyebrow>;
+    return <PageEyebrow>{goal.displayName}</PageEyebrow>;
   }
 
   const days = daysBetween(today, targetDate);
@@ -21,7 +21,7 @@ function JourneyEyebrow() {
   if (!targetDateEstimated) {
     return (
       <PageEyebrow>
-        {`${goal.title} · `}
+        {`${goal.displayName} · `}
         {t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days })}
       </PageEyebrow>
     );
@@ -29,7 +29,7 @@ function JourneyEyebrow() {
 
   return (
     <PageEyebrow>
-      {`${goal.title} · `}
+      {`${goal.displayName} · `}
       <span aria-hidden="true">
         {t("{days, plural, one {~# day left} other {~# days left}}", { days })}
       </span>

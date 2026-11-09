@@ -127,7 +127,8 @@ class TodayStoreTest {
                         "goal",
                         buildJsonObject {
                             put("id", goal.toString())
-                            put("title", "Biology")
+                            put("title", "Learn biology")
+                            put("displayName", "Biology")
                         },
                     )
                 }

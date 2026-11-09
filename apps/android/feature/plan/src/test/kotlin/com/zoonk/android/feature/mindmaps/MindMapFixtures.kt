@@ -52,7 +52,9 @@ internal fun goalMindMaps(
     next: String? = null,
 ): GoalMindMaps =
     ApiJson.decodeFromString(
-        """{"chapters":[${chapters.joinToString(",")}],"goal":{"id":"$GOAL","title":"Pass ENEM"},"nextChapter":${next ?: "null"}}""",
+        """{"chapters":[${chapters.joinToString(
+            ",",
+        )}],"goal":{"id":"$GOAL","title":"Pass ENEM","displayName":"Pass ENEM"},"nextChapter":${next ?: "null"}}""",
     )
 
 internal fun chapterMindMap(

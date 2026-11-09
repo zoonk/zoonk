@@ -9,7 +9,8 @@ final class UnderstoodRowsTests: XCTestCase {
     let goal = try understoodGoal(
       draft: [
         "kind": "exam", "language": "en", "prompt": "pass the bar in March 2027",
-        "title": "Pass the bar", "details": ["examMonth": 3, "examYear": 2027],
+        "title": "Pass the bar", "displayName": "Bar exam",
+        "details": ["examMonth": 3, "examYear": 2027],
       ],
       examDates: [examDay("2027-04-10")])
 
@@ -25,6 +26,7 @@ final class UnderstoodRowsTests: XCTestCase {
     let goal = try understoodGoal(
       draft: [
         "kind": "exam", "language": "en", "prompt": "pass the ENEM", "title": "Pass the ENEM",
+        "displayName": "ENEM",
         "targetDate": "2026-11-20",
       ],
       examDates: [examDay("2026-11-08"), examDay("2026-11-15")])

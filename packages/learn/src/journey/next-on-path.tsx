@@ -105,7 +105,7 @@ function FinishRow({ examHref }: { examHref: string | null }) {
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{goal.title}</span>
+        <span className="truncate font-medium">{goal.displayName}</span>
         {finish && (
           <PlanDateText
             className="text-muted-foreground text-xs"

@@ -13,7 +13,7 @@
   "plan_archive": "4fb4d503b14cff59a3b97bdfd8c75a3cdf4e62fd491ae3cffc278425d2c28349",
   "plan_archive_description": "d809c009fbb9f10c47d70fd3844398f5e0e5ebe3971d382b6b1dfb69ac496116",
   "plan_archive_goal": "4f0d90e24759b3ee84b03cd282c4df7608df69182b5734a8825fd8df7fe81fe4",
-  "plan_archive_title": "ab277de2e4492476551f19e4669622afae950454ce42e6c3b5914121f94353b8",
+  "plan_archive_title": "e095fcfa43fc484503e2ebd01fb007b29f699429f3d8270408a70bb91d079b35",
   "plan_base_deep": "a14f0e2a5652e27de30dcf25b9bd8165d36eb314fb9a18b438bdcd879145f26b",
   "plan_base_deep_description": "275878b1061f157fd3a64b592bf963c05590f65975698ecfb8ba4f9a7d3069e2",
   "plan_base_essential": "44e1165353c36de6d8fcfc8c417daf1e1d77fb5f6fcc11ee86a4d74c6cb1411d",
@@ -301,7 +301,7 @@
   "plan_go_to_today": "e57c1665706b339788018cd54e6e00fc73a3ab471b55650173ddefde8c0d1b8b",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
   "plan_goal_limit_reached": "089e05c1b28bfde98e334705c079ea7b0cd0de2081ed6eaac4d4eb6797e58e30",
-  "plan_goal_paused": "17ede2c793d4f2376fa682aadd981c59ef8bfb3c22ae44a9a700314b8f754610",
+  "plan_goal_paused": "170f451390b2f0159f25e06340dbbfd710768540178bfd4a34b308d96e7e0704",
   "plan_going_deeper": "a6afa0aafb3bc199d83214cc05dfa4e9fcf805c238d7ea97bce06df3c4132411",
   "plan_how_is_it_going": "2c83e5104466a15b46152c4959d1b62141f1d85c21ed4f7738cc65ee2646bbda",
   "plan_last_week_recap": "01838d93d151d0a0399ce283281c3b883c79434595ab950d7f3d2ebba846c4c8",
@@ -418,10 +418,13 @@
   "plan_recommendation_failed": "9d9dafce44e5fe66a93ca380ab0b1a0c27ab6c5f5142815a85f6375ad78c7712",
   "plan_recommendation_followed": "ba1a1486cbf187b09c4884b29369335c7a268e843fb4e51d06dabbb43373356f",
   "plan_recommended": "2b16065cca2a5a8fdca9cd7dbe0fed02a3ae6bf9d36573f6d501a07f778e6499",
+  "plan_rename_description": "92934eabf919a00fcd1da4d63980ba50bae15c94e655a761e14835e81c0de89d",
+  "plan_rename_goal": "eaef4aebe4f8736583b33b4b903b0a1a68ce99120f43cb5651641af1a59b1ed5",
+  "plan_rename_label": "344108653883c8990376d82a5e1d82b0355d228f7c61e3b453c443b74f5b28ea",
   "plan_resume": "44b23d88add2900e07285fff2cb365801354565f06123d3e78b2eb4ae11b0183",
   "plan_resume_effect": "2c6054064cd192028711eaab7cbd95b567015d15690ae0d36e0734fb8a32dce4",
   "plan_resume_goal": "01520c46c97525f77549106b283edc7748af69a15c63ee0c729478eb1bfbc65c",
-  "plan_resume_title": "2031ebfec225321a2ad03d92bdf84de327df2e2ebd75e540142befde83eca214",
+  "plan_resume_title": "120163eecbf707aa7b1b814f530a174a794dee9fb9295c0be34fc7120c88c958",
   "plan_retention_caption": "962ea0a5816d61e075b7e30ee8ed558ca639db03fbce5ceca4bf733ee7dc1cba",
   "plan_roadmap_day_of": "98ccb9c8eea37d86f44d1e0ffc070917006126a9da4dd58fc0cb9f43383353f7",
   "plan_roadmap_from": "9843c4b4a0d02a5b743a719ed28450d748c37ec4e9025f00726f18f6d3e7c8d9",
@@ -627,6 +630,10 @@
     <string name="plan_full_course">전체 코스 보기</string>
     <string name="plan_share">계획 공유하기</string>
     <string name="plan_talk_to">%1$s에게 말 걸기</string>
+    <string name="plan_rename_goal">목표 이름 바꾸기</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">이름</string>
+    <string name="plan_rename_description">알아보기 쉬운 이름을 정하세요. 학습 계획은 그대로 유지돼요.</string>
     <string name="plan_pause_goal">이 목표 일시 중지하기</string>
     <string name="plan_resume_goal">이 목표 이어가기</string>
     <string name="plan_archive_goal">이 목표 보관하기</string>

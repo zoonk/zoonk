@@ -574,7 +574,7 @@ private fun FinishItem(page: PlanPageState) {
     val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
 
     ListRow(
-        headline = { Text(page.goal.title) },
+        headline = { Text(page.goal.displayName) },
         leading = { FlagMark() },
         meta = finish?.let { { TrailingText(it) } },
     )

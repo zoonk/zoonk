@@ -65,7 +65,7 @@ struct PlanFact: Identifiable, Equatable {
         id: "title",
         label: LocalizedStringResource(
           "Goal", table: "Onboarding", comment: "Row naming an understood goal"),
-        value: goal.title),
+        value: goal.displayName),
       date(of: goal, answered: details?.answered ?? [], today: today),
     ].compactMap { $0 }
       + (understood ?? []).map {

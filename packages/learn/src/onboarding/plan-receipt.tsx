@@ -77,7 +77,7 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   const level = levelText(goal.details);
 
   const facts: (ReceiptFact | null | false)[] = [
-    { id: "title", label: t("Goal"), value: goal.title },
+    { id: "title", label: t("Goal"), value: goal.displayName },
     dateFact(goal),
     ...languageRows(goal),
     ...detailRows(goal, null, goal.kind === "language" ? toLanguageAimView(goal.details) : null),

@@ -218,7 +218,7 @@
   "onboarding_plan_look_over": "1dc9a16654ad08028e7ab226321715911727c26f3b8cf1297a1baf8588feb04d",
   "onboarding_plan_not_started": "1ece6cce4ab56ca956fd9480675d9d58bfc5b6925ce147a93ea9950cbe093eb5",
   "onboarding_plan_ready": "01b4e1f1f6779a419f18808167d339803b188ee9d6afb8e4cc8abb21fceec83c",
-  "onboarding_plan_ready_goal": "511e0d15fe26ca41fd57936f96f0010e69664902ec69285ee0821b3f5c0d6728",
+  "onboarding_plan_ready_goal": "7447e9739ff7efa0642250c791de81b0941d7b8f874df8410b665185b68215c4",
   "onboarding_plan_so_far": "45ef9bfb4b69424b1a695cc97ab4d71689b411a403bec09de54fe89660b1f239",
   "onboarding_plan_stopped": "0790ffb8371772a6d06414589fc6f69760ef95aade5964a1b69b197236c920e6",
   "onboarding_plus_more_goals": "25e832ad56a6f09ee5fa39787e36c74b3e2de3bf3b1c97af8662e43964fbfdb8",
@@ -1029,7 +1029,7 @@
     <string name="onboarding_reveal_reading_line_fit">계획에 반영하고 있어요…</string>
     <string name="onboarding_see_plan">내 계획 보기</string>
     <string name="onboarding_plan_ready">계획 준비 완료</string>
-    <string name="onboarding_plan_ready_goal">%1$s 목표를 위한 계획이 준비됐어요.</string>
+    <string name="onboarding_plan_ready_goal">%1$s 계획이 준비됐어요.</string>
     <string name="onboarding_plan_look_over">시작하기 전에 계획을 살펴보세요.</string>
     <string name="onboarding_reveal_start_here">여기서 시작</string>
     <string name="onboarding_reveal_up_next">다음 레슨</string>

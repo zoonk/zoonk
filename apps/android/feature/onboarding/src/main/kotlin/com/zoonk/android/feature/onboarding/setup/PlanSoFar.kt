@@ -71,7 +71,7 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
     val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
     val facts = goal.facts()
 
-    return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.title, chip = true), date) +
+    return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.displayName, chip = true), date) +
         (rows.languageRows(facts) + rows.detailRows(facts, cutoff = null)).map { row ->
             PlanFact(row.label, row.value, note = row.note, chip = row.id in CHIP_ROWS)
         } +

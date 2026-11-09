@@ -185,7 +185,7 @@ export function RevealBody({
           <div className="flex items-start justify-between gap-4">
             <div className="flex min-w-0 flex-col gap-1">
               <PlanCreated />
-              <OnboardingTitle className="text-balance">{goal.title}</OnboardingTitle>
+              <OnboardingTitle className="text-balance">{goal.displayName}</OnboardingTitle>
             </div>
             <RevealBuddy buddy={buddy} />
           </div>

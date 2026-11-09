@@ -1,6 +1,7 @@
-import { CourseLevel, GoalKind } from "@zoonk/db";
+import { CourseLevel } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { goalReferenceSchema } from "../../goals/goal-reference-schema";
 import { skillStateCountsSchema } from "../../learner/contract";
 import { mapSkillSchema } from "../map/map-contract";
 
@@ -56,7 +57,7 @@ export const chapterViewSchema = z
       title: z.string(),
     }),
     counts: skillStateCountsSchema,
-    goal: z.object({ id: uuidSchema(), kind: z.enum(GoalKind), title: z.string() }),
+    goal: goalReferenceSchema,
     lessons: z
       .array(chapterLessonSchema)
       .meta({ description: "The plan's lessons in this chapter" }),

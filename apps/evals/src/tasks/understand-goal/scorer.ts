@@ -7,6 +7,7 @@ const MIN_SCORE = 1;
 const MISS_PENALTY = 2;
 
 type ExpectedGoal = {
+  displayName?: RegExp;
   examDay?: "booked" | "official" | null;
   examMonth?: number;
   examName?: RegExp;
@@ -170,6 +171,10 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
     [!expected.purpose || goal.purpose === expected.purpose, `purpose ${show(goal.purpose)}`],
     [matchesText({ pattern: expected.role, value: goal.role }), `role ${show(goal.role)}`],
     [!expected.hasTarget || hasTarget, "target missing"],
+    [
+      matchesText({ pattern: expected.displayName, value: goal.displayName }),
+      `displayName ${show(goal.displayName)}`,
+    ],
     [matchesText({ pattern: expected.title, value: goal.title }), `title ${show(goal.title)}`],
   ];
 

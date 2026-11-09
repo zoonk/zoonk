@@ -54,8 +54,9 @@ function reviseGoal({
   goal: UnderstoodGoalView;
 }): UnderstoodGoalView | null {
   switch (edit.field) {
+    case "displayName":
     case "title":
-      return { ...goal, draft: { ...goal.draft, title: edit.value } };
+      return { ...goal, draft: { ...goal.draft, [edit.field]: edit.value } };
     case "targetDate":
       return reviseTargetDate({ goal, value: edit.value });
     case "targetScore":

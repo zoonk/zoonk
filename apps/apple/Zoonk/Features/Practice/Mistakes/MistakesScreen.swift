@@ -8,9 +8,9 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
-  private var goalTitle: String? {
+  private var goalName: String? {
     summary.summary.value.flatMap { learner in
-      learner.goals.first { $0.id == learner.activeGoalID }?.title
+      learner.goals.first { $0.id == learner.activeGoalID }?.displayName
     }
   }
 
@@ -44,7 +44,7 @@ struct MistakesScreen: View {
         }
 
         Section {
-          PageHeader(title, eyebrow: goalTitle.map { Text(verbatim: $0) })
+          PageHeader(title, eyebrow: goalName.map { Text(verbatim: $0) })
           header(shown.value)
         }
 

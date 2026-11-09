@@ -86,7 +86,11 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
-    await expect(page.getByText(STATISTICS.title, { exact: true })).toBeVisible();
+
+    await expect(
+      page.getByRole("main").getByText(STATISTICS.subject, { exact: true }),
+    ).toBeVisible();
+
     await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
     await expect(page.getByText(/These goals share your daily time/u)).toHaveCount(0);
 
@@ -114,7 +118,7 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
     await switcher.click();
 
     await expect(
-      page.getByRole("menuitem", { name: `${STATISTICS.title} Starts with Plus` }),
+      page.getByRole("menuitem", { name: `${STATISTICS.subject} Starts with Plus` }),
     ).toHaveAttribute("href", /\/subscription$/u);
 
     await prisma.subscription.create({
@@ -124,7 +128,7 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
     await page.reload();
     await expectHydrated(switcher);
     await switcher.click();
-    await page.getByRole("menuitem", { name: `${STATISTICS.title} Ready to start` }).click();
+    await page.getByRole("menuitem", { name: `${STATISTICS.subject} Ready to start` }).click();
 
     await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
 

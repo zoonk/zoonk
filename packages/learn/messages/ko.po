@@ -198,6 +198,7 @@ msgstr "{percent}% 완료"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -1012,6 +1013,7 @@ msgstr "안경"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1025,6 +1027,7 @@ msgstr "취소"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -4508,8 +4511,8 @@ msgid "Archive this goal"
 msgstr "이 목표 보관하기"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
 msgstr "{goal} 목표를 이어갈까요?"
 
 #: src/journey/goal-actions.tsx
@@ -4518,8 +4521,8 @@ msgid "Resume"
 msgstr "이어가기"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
 msgstr "{goal} 목표를 보관할까요?"
 
 #: src/journey/goal-actions.tsx
@@ -4533,9 +4536,9 @@ msgid "Archive"
 msgstr "보관하기"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "{goal} 일시 중지됨"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "{goal} 목표가 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -4686,6 +4689,12 @@ msgstr "전체 코스 보기"
 msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "계획 공유하기"
+
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "목표 이름 바꾸기"
 
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
@@ -5196,6 +5205,17 @@ msgstr "첫 모의고사 보기"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "첫 주간 챌린지에 도전하기"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "알아보기 쉬운 이름을 정하세요. 학습 계획은 그대로 유지돼요."
+
+#. A learning goal's name, not a person's name
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "goalDisplayName"
+msgid "Name"
+msgstr "목표 이름"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"
@@ -14159,9 +14179,9 @@ msgid "Practice anytime"
 msgstr "언제든 연습하기"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
-msgstr "{goal} 목표에 맞춰 계획을 만들고 있어요"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
+msgstr "{goal} 계획을 만들고 있어요"
 
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"

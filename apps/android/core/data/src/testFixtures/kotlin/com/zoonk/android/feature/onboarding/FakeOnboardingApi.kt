@@ -75,7 +75,7 @@ fun goalsUnderstanding(
 ) = """
     {"status":"goals","schedule":{"dailyMinutes":15,"studyDays":null,"studyTime":null,"studyTimeNote":null},
      "goals":[{"cutoff":null,"examDates":$examDates,
-       "draft":{"kind":"exam","language":"en","prompt":"pass the bar exam","title":"$title","details":$details${targetDate?.let {
+       "draft":{"kind":"exam","language":"en","prompt":"pass the bar exam","title":"$title","displayName":"$title","details":$details${targetDate?.let {
     ""","targetDate":"$it""""
 } ?: ""}}}]}
     """.trimIndent()
@@ -86,7 +86,7 @@ internal fun goalCreated(): GoalCreateResponse =
         {"generations":[],"refused":[],"research":[],"goals":[{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":15,"details":{},
          "examBlueprintId":null,"id":"$GOAL_ID","isActive":true,"kind":"exam","language":"en","plan":null,"primaryCourseId":null,
          "prompt":"pass the bar exam","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,
-         "timezone":null,"title":"Pass the bar exam"}]}
+         "timezone":null,"title":"Pass the bar exam","displayName":"Bar exam"}]}
         """.trimIndent(),
     )
 
@@ -126,7 +126,9 @@ fun setupView(
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
             "\"$it\""
-        } ?: "null"},"targetLanguage":${targetLanguage?.let { "\"$it\"" } ?: "null"},"timezone":null,"title":"Learn statistics"}}
+        } ?: "null"},"targetLanguage":${targetLanguage?.let {
+            "\"$it\""
+        } ?: "null"},"timezone":null,"title":"Learn statistics","displayName":"Statistics"}}
         """.trimIndent(),
     )
 

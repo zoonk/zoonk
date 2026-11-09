@@ -19,27 +19,20 @@ import { switchGoal } from "./switch-goal";
 type Placement = "bar" | "sidebar";
 
 function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
-  return goals.flatMap(({ dailyMinutes, id, kind, status, targetDate, targetLanguage, title }) =>
-    status === "archived" || (kind === "explain" && status === "completed")
-      ? []
-      : [{ dailyMinutes, id, kind, status, targetDate, targetLanguage, title }],
+  return goals.flatMap(
+    ({ dailyMinutes, id, kind, status, targetDate, targetLanguage, displayName }) =>
+      status === "archived" || (kind === "explain" && status === "completed")
+        ? []
+        : [{ dailyMinutes, displayName, id, kind, status, targetDate, targetLanguage }],
   );
 }
 
 function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
-  return goals.flatMap(({ id, input, locked }) => {
+  return goals.flatMap(({ id, input, locked, displayName }) => {
     const [goal] = input.goals;
 
     return goal
-      ? [
-          {
-            id,
-            kind: goal.kind,
-            locked,
-            targetLanguage: goal.targetLanguage ?? null,
-            title: goal.title,
-          },
-        ]
+      ? [{ displayName, id, kind: goal.kind, locked, targetLanguage: goal.targetLanguage ?? null }]
       : [];
   });
 }

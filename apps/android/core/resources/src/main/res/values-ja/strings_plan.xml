@@ -13,7 +13,7 @@
   "plan_archive": "814b207b557e2d56eebfa5fa9a0d1d563b441dfdc017bd21ed6dfbc8577a7e60",
   "plan_archive_description": "ff3e797ad6c9c8b35ebb8f4a9574015d234e80523298e847d13e0d2e23c4f3a3",
   "plan_archive_goal": "4df48b54e7ea991edd2f836d6b01e7f2db99ddd0c100b2b2386647d78137cbb2",
-  "plan_archive_title": "b253ae2666d5818778a9b3d528d9929937fafc5f2b40a773d54a02f899260de5",
+  "plan_archive_title": "3828fac534dd40cf568f7986005f80447dd9c78b56b6bc69ddb93a7bcc3018b2",
   "plan_base_deep": "10ead853a443ef68c089076edfc72bf6cc07677660ccf9359e28c9b5e000d679",
   "plan_base_deep_description": "a965462e1c5b052ff77e8a6693ffcb3800fe86e29091f5f0baa551b7a7a70302",
   "plan_base_essential": "8529b05d540fbc4c44f3f871c0b29931110be3d97f893899e48709daa9978f93",
@@ -301,7 +301,7 @@
   "plan_go_to_today": "36a158089e1823ea76dd08fbfa52cb9f8b722bd54bcb9ac4e36f86fbe50d0d50",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
   "plan_goal_limit_reached": "39b446b3d2d7f591064cec52c2372c195e64d3101c2e19ab1525694768efad4e",
-  "plan_goal_paused": "5622e79cc0dc9f12835ddd59c4aabd120a0947e3641ede39d0389fbf2816f2ea",
+  "plan_goal_paused": "1045372d879d08c975679cc0279b44a73830d65339e66049f0126f6049bea082",
   "plan_going_deeper": "3a9cddd2ad991c18a9de81c142f2d15dcb79feb2ef26e6e9e370b48517b1776c",
   "plan_how_is_it_going": "f81934a885b353446ce04d1aaff98f4e453f1dea919bf89201bbc63845e0d55d",
   "plan_last_week_recap": "739052e376668b83ec63f20584b8781c82877a28240847433d8a0aa72744364b",
@@ -418,10 +418,13 @@
   "plan_recommendation_failed": "1d036b92a3e87b12e2b660bacb7b43461568f15b38b599de950e725fe919250d",
   "plan_recommendation_followed": "cc94c4cd70fde37a8e60ef4eef68d1778d3d7fec0653ab4eeca99fed425c334d",
   "plan_recommended": "22950871e020e78c8570ba714e26857e35ec984a23c47a95a6d38f503a155b4a",
+  "plan_rename_description": "fc0090f393a58b8387b93486fd9d33f239f5bd65db010416e0e2f3916e89f91b",
+  "plan_rename_goal": "017a4209a028dc5e955ea51d5229eb192bd89cd49c296e222e76ea7962d46bc1",
+  "plan_rename_label": "605ea1c07a3d5aecab6d3cdbcaef10d428ec5766fb4c0fbba4ef6f22fb347d16",
   "plan_resume": "1cfe2610404eb61022af10ed1fab9bbc472f7a8673352d995800145b565e2957",
   "plan_resume_effect": "0a99513d0c0739ed3ba42fd93b4f02dc1c71f169020dfca9258c69938df4818d",
   "plan_resume_goal": "fd8cf87cc3d0267e1ddad3f32e6c351490092fe312eb051b4e9756fe8ac3e605",
-  "plan_resume_title": "19f12bb4ac08d53bb00a2da90fecd2ea46c04545950ef2350bdd2b470c705ae3",
+  "plan_resume_title": "f62af664d26bc700ff243c00b81d48d969df9b6bfc570ed3614ae63301a86ad4",
   "plan_retention_caption": "7afdf0da220d7af6173b17e3f51a7ffb5609fc1414e5f0b7d7aef3dc37be2634",
   "plan_roadmap_day_of": "b6d2bc2810094512487d8b38a1d90513b535e3ff4f1eea33fdc1c34d9a53b4ce",
   "plan_roadmap_from": "6b2bc61bafc3e18ab8b76c962221aaaf18c739f97be720993343149d174d42f6",
@@ -627,13 +630,17 @@
     <string name="plan_full_course">コース全体を見る</string>
     <string name="plan_share">学習計画を共有する</string>
     <string name="plan_talk_to">%1$sと話す</string>
+    <string name="plan_rename_goal">目標の名前を変更</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">名前</string>
+    <string name="plan_rename_description">わかりやすい名前を付けてください。学習計画は変わりません。</string>
     <string name="plan_pause_goal">この目標を一時停止する</string>
     <string name="plan_resume_goal">この目標を再開する</string>
     <string name="plan_archive_goal">この目標をアーカイブする</string>
-    <string name="plan_archive_title">「%1$s」をアーカイブしますか？</string>
+    <string name="plan_archive_title">目標「%1$s」をアーカイブしますか？</string>
     <string name="plan_archive_description">目標の一覧から外れ、学習計画が停止します。学んだ内容は進捗に残ります。</string>
     <string name="plan_archive">アーカイブする</string>
-    <string name="plan_resume_title">「%1$s」を再開しますか？</string>
+    <string name="plan_resume_title">目標「%1$s」を再開しますか？</string>
     <string name="plan_resume_effect">今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。</string>
     <string name="plan_resume">再開する</string>
     <string name="plan_cancel">キャンセル</string>
@@ -1429,7 +1436,7 @@
     <string name="plan_suggestion_previous">前へ</string>
     <string name="plan_suggestion_next">次へ</string>
     <string name="plan_suggestion_position">%1$s / %2$s</string>
-    <string name="plan_goal_paused">「%1$s」は一時停止中です</string>
+    <string name="plan_goal_paused">目標「%1$s」は一時停止中です</string>
     <string name="plan_no_longer_fits">今の計画では時間が足りません</string>
     <string name="plan_catch_up">あと少しで追いつけます</string>
     <string name="plan_adjust">調整する</string>

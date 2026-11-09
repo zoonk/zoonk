@@ -48,8 +48,8 @@ struct TodayScreen: View {
       } else {
         TodayStartGoal()
       }
-    case .loaded(.preparing(let goalID, let title)):
-      TodayPreparing(goalID: goalID, title: title)
+    case .loaded(.preparing(let goalID, let displayName)):
+      TodayPreparing(goalID: goalID, displayName: displayName)
         .lonePage()
     case .loaded(.goalNotActive):
       TodayGoalPaused()
@@ -111,7 +111,7 @@ private struct TodayStartGoal: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 2) {
-            Text(explanation.title)
+            Text(explanation.displayName)
             Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
@@ -180,7 +180,7 @@ private struct TodayPreparing: View {
   @State private var stoppedFollowing = false
 
   let goalID: String
-  let title: String
+  let displayName: String
 
   var body: some View {
     let setup = onboarding.onboarding(goalID: goalID)
@@ -193,7 +193,7 @@ private struct TodayPreparing: View {
         ContentUnavailableView {
           Label {
             Text(
-              "Your plan for \(title) is ready.", tableName: "Today",
+              "Your \(displayName) plan is ready.", tableName: "Today",
               comment: "A goal whose plan the learner hasn't looked at yet")
           } icon: {
             Image(systemName: "map")
@@ -217,7 +217,7 @@ private struct TodayPreparing: View {
         ContentUnavailableView {
           Label {
             Text(
-              "Your plan for \(title) needs a few more answers.", tableName: "Today",
+              "Your \(displayName) plan needs a few more answers.", tableName: "Today",
               comment: "A goal left halfway through its questions")
           } icon: {
             Image(systemName: "list.bullet.clipboard")
@@ -244,7 +244,7 @@ private struct TodayPreparing: View {
           }
         } description: {
           Text(
-            "Building your plan for \(title)", tableName: "Today",
+            "Building your \(displayName) plan", tableName: "Today",
             comment: "A plan is being built for the goal")
         } actions: {
           if stoppedFollowing {
@@ -325,7 +325,8 @@ private struct TodayGoalPaused: View {
       ContentUnavailableView {
         Label {
           Text(
-            "You finished \(goal.title).", tableName: "Today", comment: "Today for a finished goal")
+            "You finished your \(goal.displayName) goal.", tableName: "Today",
+            comment: "Today for a finished goal")
         } icon: {
           Image(systemName: "flag.checkered")
         }
@@ -345,7 +346,10 @@ private struct TodayGoalPaused: View {
     ContentUnavailableView {
       Label {
         if let goal {
-          Text("\(goal.title) is paused.", tableName: "Today", comment: "Today for a paused goal")
+          Text(
+            "Your \(goal.displayName) goal is paused.", tableName: "Today",
+            comment: "Today for a paused goal"
+          )
         } else {
           Text("This goal is paused.", tableName: "Today", comment: "Today for a paused goal")
         }
@@ -381,7 +385,7 @@ private struct TodayGoalPaused: View {
         Button {
           resume(goal)
         } label: {
-          Text("Resume \(goal.title)", tableName: "Today", comment: "Resumes the paused goal")
+          Text("Resume \(goal.displayName)", tableName: "Today", comment: "Resumes the paused goal")
             .lineLimit(1)
         }
         .buttonStyle(.mainAction)

@@ -50,6 +50,7 @@ export const languageProgressViewSchema = z
       .array(z.object({ done: z.boolean(), text: z.string(), unitTitle: z.string() }))
       .meta({ description: '"I can" checks: finished units checked, the current unit\'s ahead' }),
     goal: z.object({
+      displayName: z.string(),
       id: uuidSchema(),
       targetDate: logicalDateSchema.nullable(),
       targetLanguage: z.string(),

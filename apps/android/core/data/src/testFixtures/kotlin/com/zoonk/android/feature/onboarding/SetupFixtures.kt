@@ -160,7 +160,7 @@ fun syllabusOf(
 ): Syllabus =
     ApiJson.decodeFromString(
         """
-        {"examDocument":"notice","fromMaterial":false,"goal":{"id":"$GOAL_ID","kind":"exam","title":"Pass the bar exam"},
+        {"examDocument":"notice","fromMaterial":false,"goal":{"id":"$GOAL_ID","kind":"exam","title":"Pass the bar exam","displayName":"Pass the bar exam"},
          "kind":"$kind","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":40},
          "sharedExams":[],"subjects":[${subjects.joinToString(",")}],"topicCount":0,"topicsMapped":true}
         """.trimIndent(),
