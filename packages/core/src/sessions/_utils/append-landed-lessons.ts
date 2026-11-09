@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { withSessionAppendLock } from "./extra-blocks";
-import { hasSameBlocks, planRestOfDay } from "./refresh-day-session";
+import { hasSameBlocks, planRestOfDayWithPlan } from "./refresh-day-session";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
@@ -15,14 +15,14 @@ export async function appendLandedLessons({
   session,
   timeZone,
   selection,
-}: Parameters<typeof planRestOfDay>[0]["day"] & {
+}: Parameters<typeof planRestOfDayWithPlan>[0]["day"] & {
   selection: SelectedDayPlan;
 }): Promise<StudySessionRow> {
   if (session.status === "completed") {
     return session;
   }
 
-  const lessons = await planRestOfDay({
+  const { blocks: lessons, plannedMinutes } = await planRestOfDayWithPlan({
     day: { goal, session, timeZone },
     kept: session.blocks,
     selection,
@@ -77,7 +77,10 @@ export async function appendLandedLessons({
       });
 
       await transaction.studySession.update({
-        data: { planVersion: savedVersion },
+        data: {
+          planVersion: savedVersion,
+          plannedMinutes: Math.max(locked.plannedMinutes, plannedMinutes),
+        },
         where: { id: session.id },
       });
     },

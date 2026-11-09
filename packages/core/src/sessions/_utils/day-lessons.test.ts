@@ -236,25 +236,43 @@ describe(getLessonLookahead, () => {
 });
 
 describe("writing reservations", () => {
-  it.each([false, true])("holds only personal lesson time, with day facts %s", (spanning) => {
-    const writing = {
-      ...item("writing", "reading", TODAY),
-      facts: {
-        minutes: 20,
-        parts: { checkpoint: 0, practice: 8, unwritten: 12, written: 0 },
-        schemaVersion: 1,
-        skillIds: ["reading"],
-        ...(spanning && {
-          days: [
-            ["2026-10-06", 20, 12],
-            ["2026-10-07", 20, 12],
-          ],
-        }),
-      },
-      lessonId: null,
-      minutes: 20,
-    };
+  it.each([null, undefined])("holds legacy stand-ins' minutes without facts: %s", (facts) => {
+    const writing = { ...item("legacy", "reading", TODAY), facts, lessonId: null, minutes: 20 };
 
-    expect(getUnwrittenMinutesOn({ items: [writing], today: TODAY })).toBe(12);
+    expect(getUnwrittenMinutesOn({ items: [writing], today: TODAY })).toBe(20);
+
+    expect(
+      getUnwrittenMinutesOn({ items: [{ ...writing, scheduledFor: TOMORROW }], today: TODAY }),
+    ).toBe(0);
   });
+
+  it.each([
+    { spanning: false, unwritten: 0 },
+    { spanning: false, unwritten: 12 },
+    { spanning: true, unwritten: 0 },
+    { spanning: true, unwritten: 12 },
+  ])(
+    "holds $unwritten personal lesson minutes, with day facts $spanning",
+    ({ spanning, unwritten }) => {
+      const writing = {
+        ...item("writing", "reading", TODAY),
+        facts: {
+          minutes: 20,
+          parts: { checkpoint: 0, practice: 8, unwritten, written: 0 },
+          schemaVersion: 1,
+          skillIds: ["reading"],
+          ...(spanning && {
+            days: [
+              ["2026-10-06", 20, unwritten],
+              ["2026-10-07", 20, unwritten],
+            ],
+          }),
+        },
+        lessonId: null,
+        minutes: 20,
+      };
+
+      expect(getUnwrittenMinutesOn({ items: [writing], today: TODAY })).toBe(unwritten);
+    },
+  );
 });

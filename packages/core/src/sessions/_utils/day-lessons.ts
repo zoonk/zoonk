@@ -51,7 +51,7 @@ export function getUnwrittenMinutesOn({
         return sum + (days.find(([day]) => day === date)?.[2] ?? 0);
       }
 
-      return isDue({ item, today }) ? sum + (facts?.parts.unwritten ?? 0) : sum;
+      return isDue({ item, today }) ? sum + (facts?.parts.unwritten ?? item.minutes ?? 0) : sum;
     }, 0);
 }
 
