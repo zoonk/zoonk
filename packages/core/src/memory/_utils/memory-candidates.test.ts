@@ -70,14 +70,13 @@ describe(toMemoryCandidates, () => {
     );
   });
 
-  it("keeps the first copy of a repeated statement, a handful at most, and drops empty or long ones", () => {
+  it("keeps the first copy of a repeated statement, a handful at most, and drops empty ones", () => {
     const candidates = toMemoryCandidates({
       facts: [
         fact({ statement: "Wants Law" }),
         fact({ statement: "wants  law" }),
         fact({ intent: "forget", statement: "Wants Law" }),
         fact({ statement: "  " }),
-        fact({ statement: "x".repeat(161) }),
         ...["A", "B", "C", "D", "E"].map((letter) => fact({ statement: `Fact ${letter}` })),
       ],
       today: TODAY,
@@ -92,6 +91,13 @@ describe(toMemoryCandidates, () => {
       "remember:Fact B",
       "remember:Fact C",
     ]);
+  });
+
+  it("keeps a statement past its target whole", () => {
+    const statement = "x".repeat(161);
+    const candidates = toMemoryCandidates({ facts: [fact({ statement })], today: TODAY });
+
+    expect(candidates.map((candidate) => candidate.statement)).toStrictEqual([statement]);
   });
 });
 

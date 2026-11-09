@@ -161,21 +161,31 @@ describe(toWarmUpCards, () => {
     ],
     ["a placeholder", { question: "[Insert question about bees here]" }],
     ["an empty reveal", { reveal: "  " }],
-    ["a question too long for the card", { question: `${"Why ".repeat(41)}?` }],
-    [
-      "an option too long for the card",
-      {
-        options: [
-          { correct: true, text: "a".repeat(61) },
-          { correct: false, text: "b" },
-        ],
-      },
-    ],
-    ["a reveal too long for the card", { reveal: "b".repeat(281) }],
   ])("drops a card with %s and keeps the others' ids", (_case, overrides) => {
     const cards = toWarmUpCards([rawCard(overrides), rawCard()]);
 
     expect(cards.map((card) => card.id)).toStrictEqual(["2"]);
+  });
+
+  it("keeps a card whose text runs past its targets whole", () => {
+    const question = `${"Why ".repeat(41)}?`;
+    const reveal = "b".repeat(281);
+    const right = "a".repeat(61);
+
+    const [card] = toWarmUpCards([
+      rawCard({
+        options: [
+          { correct: true, text: right },
+          { correct: false, text: "b" },
+        ],
+        question,
+        reveal,
+      }),
+    ]);
+
+    expect(card?.question).toBe(question.trim());
+    expect(card?.reveal).toBe(reveal);
+    expect(card?.options.map((option) => option.text)).toContain(right);
   });
 
   it("shuffles the same card the same way every time", () => {

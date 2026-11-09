@@ -387,6 +387,26 @@ describe(normalizePlanEdit, () => {
     expect(result).toStrictEqual({ leftOut: [], operations: [], summary: "", understood: false });
   });
 
+  it("keeps a topic's name and description whole past their targets", () => {
+    const description = "d".repeat(201);
+
+    const name =
+      "Understanding the difference between association and causation in scientific research";
+
+    const result = normalizePlanEdit({
+      input: { ...input, areas: ["Ciências"], goalKind: "language" },
+      raw: {
+        changes: [change({ kind: "addTopics", topics: [{ area: null, description, name }] })],
+        summary: "Entra no plano.",
+        understood: true,
+      },
+    });
+
+    expect(result.operations).toStrictEqual([
+      { kind: "addTopics", startDate: null, topics: [{ area: null, description, name }] },
+    ]);
+  });
+
   it("adds the topics the learner asked for, each under an area the plan has or none", () => {
     const result = normalizePlanEdit({
       input: { ...input, areas: ["Inglês"], goalKind: "language" },

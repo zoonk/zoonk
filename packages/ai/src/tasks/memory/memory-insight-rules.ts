@@ -4,9 +4,6 @@ const MEMORY_INSIGHT_KINDS = ["tip", "planChange", "scheduleIdea"] as const;
 
 export type MemoryInsightKindName = (typeof MEMORY_INSIGHT_KINDS)[number];
 
-/** Two short sentences fit on the Today card without truncation in every supported language. */
-const MAX_INSIGHT_LENGTH = 240;
-
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
 export const memoryInsightOutputSchema = z.object({
@@ -77,7 +74,7 @@ export function toMemoryInsight({
     return null;
   }
 
-  if (message.length === 0 || message.length > MAX_INSIGHT_LENGTH) {
+  if (message.length === 0) {
     return null;
   }
 

@@ -36,7 +36,15 @@ describe(toMemoryInsight, () => {
     ).toBeNull();
 
     expect(toMemoryInsight({ context, output: output({ message: "   " }) })).toBeNull();
-    expect(toMemoryInsight({ context, output: output({ message: "a".repeat(241) }) })).toBeNull();
+  });
+
+  it("keeps a message past its target whole", () => {
+    const message = "a".repeat(241);
+
+    expect(toMemoryInsight({ context, output: output({ kind: "tip", message }) })).toStrictEqual({
+      kind: "tip",
+      message,
+    });
   });
 
   it("points a plan change at a listed skill, 0-based", () => {
