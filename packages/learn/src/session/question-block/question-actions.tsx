@@ -2,7 +2,7 @@
 
 import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ignoreHeldEnter, useEnterKey } from "@zoonk/ui/hooks/keyboard";
-import { CheckIcon, EyeIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
@@ -14,13 +14,12 @@ const QUESTION_MAIN_ID = "question-main-action";
 const ICONS = {
   check: { icon: <CheckIcon aria-hidden="true" /> },
   continue: FORWARD_ICON,
-  reveal: { icon: <EyeIcon aria-hidden="true" /> },
 } as const;
 
 /**
- * One button turns from "Show the answers" into Check and then Continue, so keyboard focus stays on
- * it through a question. Enter pressed elsewhere moves focus to it, since an answer option locks
- * while it's checked. A held Enter acts once, so it can't check and then skip the verdict.
+ * One button turns from Check into Continue, so keyboard focus stays on it through a question.
+ * Enter pressed elsewhere moves focus to it, since an answer option locks while it's checked. A held
+ * Enter acts once, so it can't check and then skip the verdict.
  */
 export function QuestionMainButton({
   action,
@@ -28,7 +27,7 @@ export function QuestionMainButton({
   disabled = false,
   onPress,
 }: {
-  action: "check" | "continue" | "reveal";
+  action: "check" | "continue";
   busy?: boolean;
   disabled?: boolean;
   onPress: () => void;
@@ -45,11 +44,7 @@ export function QuestionMainButton({
     { enabled: ready },
   );
 
-  const labels = {
-    check: t("Check"),
-    continue: t("Continue"),
-    reveal: t("I've read it. Show the answers"),
-  };
+  const labels = { check: t("Check"), continue: t("Continue") };
 
   return (
     <EnterButton

@@ -148,6 +148,21 @@ class MistakePracticeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMisread() {
+        show("phone-misread", drill = drill("readCarefully"))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMisreadSecondQuestion() {
+        show("phone-misread-second", drill = drill("readCarefully"), play = {
+            check()
+            rule.onNodeWithText("Continue").performClick()
+        })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneChecked() {
         show("phone-checked", play = ::check)
     }

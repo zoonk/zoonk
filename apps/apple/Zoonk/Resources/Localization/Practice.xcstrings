@@ -3456,65 +3456,6 @@
         }
       }
     },
-    "A few questions on an idea you missed." : {
-      "comment" : "How a content-gap drill goes, without ideas to show.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein paar Fragen zu einem Thema, bei dem du eine Frage falsch beantwortet hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algunas preguntas sobre una idea que no te quedó clara."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quelques questions sur une notion que tu n’as pas encore bien comprise."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qualche domanda su un concetto che non ti era chiaro."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "つまずいた内容について、いくつか問題を解きます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "놓친 개념에 관한 문제를 몇 개 풀어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kilka pytań o zagadnienie, które sprawiło ci trudność."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algumas perguntas sobre uma ideia que você errou."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eksik kaldığın bir konuyla ilgili birkaç soru."
-          }
-        }
-      }
-    },
     "A few questions on each subject. The ones you need most come first and get more depth." : {
       "comment" : "What a focus test does.",
       "localizations" : {
@@ -4160,6 +4101,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri dön"
+          }
+        }
+      }
+    },
+    "Back to an idea you missed." : {
+      "comment" : "How a content-gap drill goes, without ideas to show.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zu einem Konzept, das du noch nicht verstanden hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volvamos a una idea que no te quedó clara."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revenons sur une notion qui t’a échappé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torniamo a un concetto che ti è sfuggito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つまずいたポイントに戻ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "놓쳤던 개념을 다시 살펴보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wróćmy do zagadnienia, które ci umknęło."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vamos rever uma ideia que não ficou clara."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gözden kaçırdığın bir kavrama geri dönelim."
           }
         }
       }
@@ -6880,65 +6880,6 @@
         }
       }
     },
-    "I've read it. Show the answers" : {
-      "comment" : "Shows a misread drill's answers once the question was read.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ich habe die Frage gelesen. Antworten anzeigen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya la leí. Mostrar las respuestas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "J’ai lu la question. Afficher les réponses"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ho letto la domanda. Mostra le risposte"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読みました。選択肢を表示する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "읽었어요. 선택지 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pytanie przeczytane. Pokaż odpowiedzi"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Já li. Mostrar as respostas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Okudum. Cevapları göster"
-          }
-        }
-      }
-    },
     "It came up %lld times in your recent answers." : {
       "comment" : "How often a mistake pattern came up.",
       "localizations" : {
@@ -8465,124 +8406,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ tarihine taşındı"
-          }
-        }
-      }
-    },
-    "Still not going through. You can come back later." : {
-      "comment" : "Second or later save failure in a row; the learner can retry or return later",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das klappt immer noch nicht. Du kannst später wiederkommen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no se pudo guardar. Puedes volver más tarde."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ça ne marche toujours pas. Tu peux revenir plus tard."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’invio non è riuscito neanche questa volta. Puoi tornare più tardi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今回も送信できませんでした。時間をおいて、また戻ってきてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번에도 전송하지 못했어요. 나중에 다시 와도 돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Znowu nie udało się przesłać odpowiedzi. Możesz wrócić później."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não deu certo. Você pode voltar mais tarde."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yine gönderilemedi. Daha sonra geri dönebilirsin."
-          }
-        }
-      }
-    },
-    "That didn't go through. Your answers are kept." : {
-      "comment" : "An answer or finish didn't reach the server; the learner's answers stay on screen",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das hat nicht geklappt. Deine Antworten bleiben erhalten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se pudo guardar. Conservamos tus respuestas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ça n’a pas marché. Tes réponses sont conservées."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’invio non è riuscito. Le tue risposte sono al sicuro."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "送信できませんでした。回答はそのまま残っています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "전송하지 못했어요. 답은 그대로 남아 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się przesłać odpowiedzi. Nic nie przepadło."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não deu certo. Suas respostas foram mantidas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gönderilemedi. Cevapların saklanıyor."
           }
         }
       }
@@ -13136,6 +12959,65 @@
         }
       }
     },
+    "Still not going through. You can come back later." : {
+      "comment" : "Second or later save failure in a row; the learner can retry or return later",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das klappt immer noch nicht. Du kannst später wiederkommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no se pudo guardar. Puedes volver más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça ne marche toujours pas. Tu peux revenir plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’invio non è riuscito neanche questa volta. Puoi tornare più tardi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今回も送信できませんでした。時間をおいて、また戻ってきてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번에도 전송하지 못했어요. 나중에 다시 와도 돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znowu nie udało się przesłać odpowiedzi. Możesz wrócić później."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não deu certo. Você pode voltar mais tarde."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yine gönderilemedi. Daha sonra geri dönebilirsin."
+          }
+        }
+      }
+    },
     "Still starting. This is taking longer than usual." : {
       "comment" : "Starting a challenge is taking longer than usual.",
       "localizations" : {
@@ -13490,6 +13372,65 @@
         }
       }
     },
+    "That didn't go through. Your answers are kept." : {
+      "comment" : "An answer or finish didn't reach the server; the learner's answers stay on screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das hat nicht geklappt. Deine Antworten bleiben erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo guardar. Conservamos tus respuestas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça n’a pas marché. Tes réponses sont conservées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’invio non è riuscito. Le tue risposte sono al sicuro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送信できませんでした。回答はそのまま残っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전송하지 못했어요. 답은 그대로 남아 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się przesłać odpowiedzi. Nic nie przepadło."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu certo. Suas respostas foram mantidas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gönderilemedi. Cevapların saklanıyor."
+          }
+        }
+      }
+    },
     "The chapter stays in your plan, and your answers help it start at the right level." : {
       "comment" : "A failed test-out keeps the chapter.",
       "localizations" : {
@@ -13549,61 +13490,61 @@
         }
       }
     },
-    "The idea first, then a few questions on it." : {
+    "The idea first, then put it to use." : {
       "comment" : "How a content-gap drill goes, when it shows the lesson's ideas first.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erst das Konzept, dann ein paar Fragen dazu."
+            "value" : "Erst verstehen, dann anwenden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primero la idea, luego algunas preguntas sobre ella."
+            "value" : "Primero la idea, luego ponla en práctica."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "D’abord l’idée, puis quelques questions pour t’entraîner."
+            "value" : "D’abord la notion, puis la mise en pratique."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prima il concetto, poi qualche domanda sull’argomento."
+            "value" : "Prima il concetto, poi mettilo in pratica."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まず考え方を学んでから、それについての問題をいくつか解きます。"
+            "value" : "まずポイントを学んでから、実際に使ってみます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "먼저 개념을 살펴보고 관련 문제를 몇 개 풀어요."
+            "value" : "먼저 개념을 익힌 뒤 활용해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Najpierw wyjaśnienie, potem kilka pytań na ten temat."
+            "value" : "Najpierw poznaj zagadnienie, potem je przećwicz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primeiro a ideia, depois algumas perguntas sobre ela."
+            "value" : "Primeiro a ideia, depois a prática."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Önce konu anlatımı, sonra konuyla ilgili birkaç soru."
+            "value" : "Önce kavramı öğren, sonra uygula."
           }
         }
       }

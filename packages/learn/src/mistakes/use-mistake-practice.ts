@@ -118,8 +118,6 @@ export function useMistakePractice({
         void send(state.phase);
       }
     },
-    // Reading the question counts toward the answer's time, so the reveal keeps the clock going.
-    reveal: () => dispatch({ type: "reveal" }),
     select: (answer: ChoiceAnswer | null) => dispatch({ answer, type: "select" }),
     start: () => {
       shownAt.current = Date.now();

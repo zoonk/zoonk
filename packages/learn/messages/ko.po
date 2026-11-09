@@ -4065,6 +4065,7 @@ msgid "Connection lost"
 msgstr "연결이 끊겼어요"
 
 #: src/generation/generation-wait.tsx
+#: src/wait/first-lesson-row.tsx
 msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
 msgstr "저희 쪽에 문제가 생겼어요."
@@ -7711,14 +7712,14 @@ msgid "Last time you answered: {answer}"
 msgstr "지난번 답: {answer}"
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "T-LPPU"
-msgid "The idea first, then a few questions on it."
-msgstr "먼저 개념을 살펴보고 관련 문제를 몇 개 풀어요."
+msgctxt "49QdsH"
+msgid "The idea first, then put it to use."
+msgstr "먼저 개념을 익힌 뒤 활용해 보세요."
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "BagRap"
-msgid "A few questions on an idea you missed."
-msgstr "놓쳤던 개념에 관한 문제를 몇 개 풀어요."
+msgctxt "OYk1Dn"
+msgid "Back to an idea you missed."
+msgstr "놓쳤던 개념을 다시 살펴보세요."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "I2TE37"
@@ -12957,11 +12958,6 @@ msgstr "몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요."
-
-#: src/session/question-block/question-actions.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "읽기 완료. 정답 보기"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

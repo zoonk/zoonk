@@ -4065,6 +4065,7 @@ msgid "Connection lost"
 msgstr "Connessione persa"
 
 #: src/generation/generation-wait.tsx
+#: src/wait/first-lesson-row.tsx
 msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
 msgstr "Abbiamo avuto un problema."
@@ -7711,14 +7712,14 @@ msgid "Last time you answered: {answer}"
 msgstr "L’ultima volta hai risposto: {answer}"
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "T-LPPU"
-msgid "The idea first, then a few questions on it."
-msgstr "Prima il concetto, poi qualche domanda."
+msgctxt "49QdsH"
+msgid "The idea first, then put it to use."
+msgstr "Prima il concetto, poi mettilo in pratica."
 
 #: src/mistakes/drill/use-drill-line.ts
-msgctxt "BagRap"
-msgid "A few questions on an idea you missed."
-msgstr "Qualche domanda su un concetto che ti è sfuggito."
+msgctxt "OYk1Dn"
+msgid "Back to an idea you missed."
+msgstr "Torniamo a un concetto che ti è sfuggito."
 
 #: src/mistakes/drill/use-drill-line.ts
 msgctxt "I2TE37"
@@ -12957,11 +12958,6 @@ msgstr "Qualche errore di fila. Una breve pausa spesso aiuta e tutto quello che 
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Stiamo mettendo a punto il tuo piano. Qui le risposte sbagliate non vengono mai salvate come errori."
-
-#: src/session/question-block/question-actions.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Ho letto. Mostra le risposte"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

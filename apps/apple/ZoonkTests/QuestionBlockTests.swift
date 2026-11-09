@@ -70,9 +70,9 @@ final class QuestionBlockStateTests: XCTestCase {
 
     XCTAssertEqual(DrillStage.opening(drill: ideas, isFirstOfDrill: true), .idea)
     XCTAssertEqual(DrillStage.opening(drill: ideas, isFirstOfDrill: false), .open)
-    XCTAssertEqual(DrillStage.opening(drill: misread, isFirstOfDrill: false), .reading)
+    XCTAssertEqual(DrillStage.opening(drill: misread, isFirstOfDrill: true), .open)
+    XCTAssertEqual(DrillStage.opening(drill: misread, isFirstOfDrill: false), .open)
     XCTAssertEqual(DrillStage.opening(drill: gapWithoutIdeas, isFirstOfDrill: true), .open)
-    XCTAssertEqual(DrillStage.afterIdea(drill: misread), .reading)
   }
 }
 

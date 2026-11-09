@@ -22,17 +22,18 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .answering, "the idea opens only before the drill's first question")
   }
 
-  func testMisreadDrillReadsEveryQuestionFirst() {
+  func testMisreadDrillOpensEveryQuestionWithItsAnswers() {
     let misread = PracticeDrill(kind: .readCarefully, lesson: nil, timeLimitSeconds: nil)
     var state = MistakePracticeState(entries: [
       makeEntry("m", drill: misread, questions: ["a", "b"])
     ])
 
-    XCTAssertEqual(state.phase, .reading)
-    state.reveal()
+    XCTAssertEqual(state.phase, .answering)
+    XCTAssertTrue(state.acceptsAnswer)
     answer(&state, grade: makeGrade(isCorrect: false))
     state.next()
-    XCTAssertEqual(state.phase, .reading)
+    XCTAssertEqual(state.phase, .answering)
+    XCTAssertTrue(state.acceptsAnswer)
   }
 
   func testVerdictsCountNotSureAsNeutralButTimeoutsAsMisses() {
