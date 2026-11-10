@@ -4,22 +4,20 @@ import { loadMistakeReplays } from "./mistake-replay";
 
 export type PracticeMistake = { createdAt: Date; id: string; skillId: string | null };
 
-type MaterialMistake = {
-  id: string;
+type MaterialMistake = PracticeMistake & {
   attemptId?: string | null;
   itemId: string | null;
-  skillId: string | null;
   stepId: string | null;
   snapshot: unknown;
   userId: string;
 };
 
 /** Eligibility and playback use the same exact original, never another question on its skill. */
-export async function filterMistakesWithPracticeMaterial<TMistake extends MaterialMistake>({
+export async function filterMistakesWithPracticeMaterial({
   mistakes,
 }: {
-  mistakes: readonly TMistake[];
-}): Promise<TMistake[]> {
+  mistakes: readonly MaterialMistake[];
+}): Promise<PracticeMistake[]> {
   const userId = mistakes[0]?.userId;
 
   if (!userId) {
@@ -27,7 +25,10 @@ export async function filterMistakesWithPracticeMaterial<TMistake extends Materi
   }
 
   const material = await loadMistakeReplays({ mistakes, userId });
-  return mistakes.filter((mistake) => material.get(mistake.id));
+
+  return mistakes
+    .filter((mistake) => material.get(mistake.id))
+    .map(({ createdAt, id, skillId }) => ({ createdAt, id, skillId }));
 }
 
 export async function loadPracticeMistakes({
