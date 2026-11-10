@@ -156,6 +156,44 @@ describe("lesson clock", () => {
     },
   );
 
+  it("sends an ignored running change again when its restart didn't get through", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const runId = crypto.randomUUID();
+    const [firstClock, secondClock] = [crypto.randomUUID(), crypto.randomUUID()];
+
+    const updateLessonClock = clockServer().mockImplementation((input) =>
+      Promise.resolve({ status: input.state === "running" ? "ignored" : "updated" }),
+    );
+
+    const startLesson = vi
+      .fn<LessonPlayerAdapters["startLesson"]>()
+      .mockResolvedValueOnce(startedRun({ clockId: firstClock, runId }))
+      .mockResolvedValueOnce({ reason: "failed" })
+      .mockResolvedValue(startedRun({ clockId: secondClock, runId }));
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
+      lesson,
+    });
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+    setVisibility("hidden");
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(1);
+    setVisibility("visible");
+    await expect.poll(() => startLesson.mock.calls).toHaveLength(2);
+    globalThis.dispatchEvent(new Event("online"));
+    await expect.poll(() => startLesson.mock.calls).toHaveLength(3);
+    setVisibility("hidden");
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(4);
+
+    expect(transitions(updateLessonClock)).toStrictEqual([
+      { clockId: firstClock, runId, sequence: 1, state: "paused" },
+      { clockId: firstClock, runId, sequence: 2, state: "running" },
+      { clockId: firstClock, runId, sequence: 2, state: "running" },
+      { clockId: secondClock, runId, sequence: 1, state: "paused" },
+    ]);
+  });
+
   it.each(["Activity", "visibility"])(
     "does not restart an ignored running clock after leaving through %s again",
     async (through) => {
