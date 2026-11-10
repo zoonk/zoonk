@@ -92,6 +92,7 @@ struct LessonStepContext {
 
 private struct HookStepView: View {
   @Environment(\.isPaneSplit) private var isPaneSplit
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let step: LessonStep
   let content: HookContent
@@ -142,7 +143,9 @@ private struct HookStepView: View {
         .typeStyle(.lessonText)
 
       if showsOpeningMap, let openingMap {
+        // A large screen centers it in the room under the scene; a phone keeps it under the text.
         LessonOpeningMap(summary: openingMap)
+          .frame(maxHeight: horizontalSizeClass == .regular ? .infinity : nil)
       }
     }
   }
