@@ -4789,10 +4789,16 @@
         "it" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+%lld altro"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld in più"
+                  "value" : "+%lld altri"
                 }
               }
             }
