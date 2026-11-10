@@ -134,6 +134,7 @@
   "today_setting_up": "6ebf5cdfd41efebca4c2ed4a2ed9273e661d962b928b774f93c02f596004aa5e",
   "today_setting_up_detail": "193a19c0dcac36cb5414eb253837b3bdc3a5bf2d75039e67562dbadfc2a97780",
   "today_setting_up_goal": "47216a8768cd14d2622e0befec2d4d1d32aa726f31cf357aa853f4d76ce7a8d4",
+  "today_show_less": "b7e7f158a3d6a8be6b53331e3c7947d3fbd0d066afa545fcc0ea83e62057132f",
   "today_start_new_goal": "44f063b5c39f7ae0c19d3bf4992ae226ecb083e75d30c9992c87129a5f7483da",
   "today_start_session": "15736c8dd3868806531c9fa8b9b2ede8731f1d23f41811531fe971a18951f8dd",
   "today_step_after_lessons": "c0250b82cb775626a523946a774aa247f846ff72028e2d86f8d597fd25217c47",
@@ -248,6 +249,8 @@
         <item quantity="one">+%d daha</item>
         <item quantity="other">+%d daha</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Daha az göster</string>
     <string name="today_step_done">Tamamlandı</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Sıradaki adım</string>

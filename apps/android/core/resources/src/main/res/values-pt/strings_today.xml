@@ -67,7 +67,7 @@
   "today_mistakes_tomorrow": "383b5a04cb61e35207df6fbca1ea498bb3c4e99b0037846f0a998d6d109ddc57",
   "today_mock_funding": "9a0464f37105db8e2723148ff222f40d0dca8457db39c75509f9ba1422079705",
   "today_mock_funding_welcome_back": "c47f60f06aa6a88f85cb2203aea30b6cc4e923b13a18be203a2f166cfbca662c",
-  "today_more_count": "6fb0c0b27a8677daa2ac6bc72d220ccfd0df6f646e7750407c02e5857022efec",
+  "today_more_count": "97b69d2bdddd3659f05d0b6be894a709185daacf4ea5503d5cd57ef08993c2b5",
   "today_more_time_a_day": "5b599cda26f87049fdcaa4a45ae1c2c572f0f41dc74e31a5c45d2e96968b75a4",
   "today_more_time_or_later_date": "ab1f01503c7b86278039160138484dd8cc313549f39aa2abcecba69af1bbb3e6",
   "today_new_goal": "4965fe251758dac568a3456803d9d01b283767be982c1e3ac1aacb2c24ccc272",
@@ -134,6 +134,7 @@
   "today_setting_up": "35f5ea1f60af403249fcb5c3814ffca50b2fe2791dddf867109f13da163a91a0",
   "today_setting_up_detail": "a0cb329724d2a6289ac2f5ca18b1eafdcf41b7a57aadb2473070bc0632effa86",
   "today_setting_up_goal": "24eae57d71b2586fd5db0331450e8b9b04966c0ce71e7ae067edda28b417ca9b",
+  "today_show_less": "c83f5a993e8642bb3b205386cf4cb6d8543efd495418a2417db9192ec3966986",
   "today_start_new_goal": "94bb8a9aa04a7d37654b51e94871a567a9b5d04995342bac5c9211bf315097ad",
   "today_start_session": "df2a998e984800b9437ed943106ba08287b3db1e41ce154d8bd1c096f707df80",
   "today_step_after_lessons": "93dfb4ebf07e8dd95f3f18c76ca1292111ba6777b177bf4f3c811d0e085061a8",
@@ -252,10 +253,12 @@
         <item quantity="other">%d concluídos</item>
     </plurals>
     <plurals name="today_more_count">
-        <item quantity="one">+%d</item>
-        <item quantity="many">+%d</item>
-        <item quantity="other">+%d</item>
+        <item quantity="one">+%d a mais</item>
+        <item quantity="many">+%d a mais</item>
+        <item quantity="other">+%d a mais</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Mostrar menos</string>
     <string name="today_step_done">Concluído</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Próximo passo</string>
