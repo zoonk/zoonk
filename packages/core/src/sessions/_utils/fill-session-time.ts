@@ -35,6 +35,7 @@ function getPlannedSessionTotal({
 }
 
 export function fillRemainingLessonTime({
+  available,
   blocks,
   budget,
   checkpointMinutes,
@@ -44,6 +45,7 @@ export function fillRemainingLessonTime({
   leading,
   produceMinutes,
 }: {
+  available: PlannedCheckpoint[];
   blocks: PlannedBlock[];
   budget: number;
   checkpointMinutes: number;
@@ -73,7 +75,7 @@ export function fillRemainingLessonTime({
       budget -
       fixed.reduce((sum, block) => sum + block.estimatedMinutes, 0) -
       (input.writingMinutes ?? 0),
-    checkpoints: input.examTrialEnded || input.mockReplacesDay ? [] : input.checkpoints,
+    checkpoints: available,
     items: input.planItems ?? [],
     leading,
     lessons: unique,

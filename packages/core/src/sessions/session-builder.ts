@@ -355,6 +355,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
   ].filter((block) => block !== null);
 
   return fillRemainingLessonTime({
+    available,
     blocks: fillReview({ blocks: built, budget, input: reviewInput }),
     budget,
     checkpointMinutes,
