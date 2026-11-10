@@ -235,7 +235,7 @@ export async function generateLessonQuestionAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: { contentScope: "personal", ...analytics },
     generate: () => generateText(generationOptions),
-    systemPrompt: generationOptions.instructions,
+    systemPrompt: `${getSystemPrompt(contextSnapshot)}\n${learnerNeedsPrompt}`,
     task: LESSON_QUESTION_TASK,
   });
 
@@ -282,7 +282,7 @@ export function streamLessonQuestionAnswer({
         }),
         onError: suppressLessonQuestionProviderError,
       }),
-    systemPrompt: getSystemPrompt(contextSnapshot, learnerNeeds),
+    systemPrompt: `${getSystemPrompt(contextSnapshot)}\n${learnerNeedsPrompt}`,
     task: LESSON_QUESTION_TASK,
   });
 
