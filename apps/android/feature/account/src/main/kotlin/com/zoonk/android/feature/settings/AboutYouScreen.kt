@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
@@ -176,8 +177,19 @@ fun ProfileQuestionScreen(
     navigator: AppNavigator,
 ) {
     val state by app.profileQuestions.questions.collectShown()
+    val fresh =
+        app.profileQuestions.questions.freshState
+            .collectAsStateWithLifecycle()
+            .value
+    val editorState =
+        when {
+            state !is LoadState.Loaded -> state
+            fresh is LoadState.Failed -> LoadState.Failed(fresh.error)
+            fresh !is LoadState.Loaded -> LoadState.Loading
+            else -> state
+        }
     ProfilePage(navigator, stringResource(R.string.profile_questions_title)) {
-        when (val shown = state) {
+        when (val shown = editorState) {
             is LoadState.Loaded -> {
                 val question = shown.value.questions.find { it.id.value == id }
                 if (question != null) {

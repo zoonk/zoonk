@@ -36,11 +36,7 @@ class ProfileQuestionsStore(
     private val cache: AppCache,
 ) {
     val questions =
-        cache.resource(
-            Audience.SignedIn,
-            setOf(DataDomain.Memory, DataDomain.LearningProfile, DataDomain.LearnerModel),
-            keepStale = false,
-        ) { session ->
+        cache.resource(Audience.SignedIn, setOf(DataDomain.Memory, DataDomain.LearningProfile, DataDomain.LearnerModel)) { session ->
             session?.let { api.questions(it) }
         }
 

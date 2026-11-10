@@ -33,11 +33,11 @@ class Resource<T : Any> internal constructor(
     private val scope: CoroutineScope,
     private val timeSource: TimeSource,
     private val isEmpty: (T) -> Boolean,
-    private val keepStale: Boolean,
     private val fetch: suspend (AuthenticatedSession?) -> T?,
 ) {
     private val stored = MutableStateFlow<LoadState<T>>(LoadState.Idle)
     private val refreshing = MutableStateFlow(false)
+    private val fresh = MutableStateFlow<LoadState<Unit>>(LoadState.Idle)
     private var owner: AuthenticatedSession? = if (audience == Audience.Everyone) null else session.current
     private var loadedAt: TimeMark? = null
     private var isInvalidated = false
@@ -46,6 +46,7 @@ class Resource<T : Any> internal constructor(
 
     val state: StateFlow<LoadState<T>> = stored.asStateFlow()
     val isRefreshing: StateFlow<Boolean> = refreshing.asStateFlow()
+    val freshState: StateFlow<LoadState<Unit>> = fresh.asStateFlow()
 
     /** Each collection loads it when it's empty or stale; collectors other than this one don't count as viewing. */
     val shown: Flow<LoadState<T>> =
@@ -89,9 +90,10 @@ class Resource<T : Any> internal constructor(
      */
     fun invalidate() {
         isInvalidated = true
+        fresh.value = LoadState.Idle
         if (request == null && stored.value == LoadState.Idle) return
         cancelRequest()
-        if (!keepStale || stored.value == LoadState.Failed(ApiError.NotFound)) {
+        if (stored.value == LoadState.Failed(ApiError.NotFound)) {
             stored.value = LoadState.Idle
             revision++
         }
@@ -112,6 +114,7 @@ class Resource<T : Any> internal constructor(
         stored.value = shownState(value)
         loadedAt = timeSource.markNow()
         isInvalidated = false
+        fresh.value = LoadState.Loaded(Unit)
         revision++
     }
 
@@ -124,6 +127,7 @@ class Resource<T : Any> internal constructor(
         stored.value = LoadState.Idle
         loadedAt = null
         isInvalidated = false
+        fresh.value = LoadState.Idle
         revision++
         if (isShown && canRequest) scope.launch { run() }
     }
@@ -146,7 +150,8 @@ class Resource<T : Any> internal constructor(
 
     private fun start(): Deferred<Unit> {
         val owner = owner
-        if (keepStale && stored.value.hasContent) refreshing.value = true else stored.value = LoadState.Loading
+        fresh.value = LoadState.Loading
+        if (stored.value.hasContent) refreshing.value = true else stored.value = LoadState.Loading
         lateinit var deferred: Deferred<Unit>
         // Lazy, so a fetch that answers without suspending finds itself as the request.
         deferred =
@@ -183,6 +188,7 @@ class Resource<T : Any> internal constructor(
                 stored.value = shownState(value)
                 loadedAt = timeSource.markNow()
                 isInvalidated = false
+                fresh.value = LoadState.Loaded(Unit)
                 revision++
             },
             onFailure = { fail(it.toApiError(), owner) },
@@ -193,6 +199,7 @@ class Resource<T : Any> internal constructor(
         error: ApiError,
         owner: AuthenticatedSession?,
     ) {
+        fresh.value = LoadState.Failed(error)
         when (error) {
             ApiError.Unauthorized -> {
                 stored.value = LoadState.Idle

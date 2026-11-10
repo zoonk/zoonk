@@ -27,25 +27,42 @@ class ResourceTest {
         AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), clock)
 
     @Test
-    fun aReadThatCannotKeepStaleContentDropsInvalidatedDataAndDoesNotRestoreItAfterFailure() =
+    fun cachedContentStaysVisibleButAnEditorWaitsForAFreshReadIncludingAfterFailure() =
         runTest {
             var fail = false
             val cache = cache(FakeSession(ana))
             val resource =
-                cache.resource<String>(Audience.SignedIn, setOf(DataDomain.Memory), keepStale = false) {
+                cache.resource<String>(Audience.SignedIn, setOf(DataDomain.Memory)) {
                     if (fail) throw java.io.IOException("offline")
                     "old answer"
                 }
             resource.load()
-            assertEquals(LoadState.Loaded("old answer"), resource.state.value)
+            assertEquals(LoadState.Loaded(Unit), resource.freshState.value)
             fail = true
             cache.invalidate(setOf(DataDomain.Memory))
-            assertEquals(LoadState.Idle, resource.state.value)
+            assertEquals(LoadState.Loaded("old answer"), resource.state.value)
+            assertEquals(LoadState.Idle, resource.freshState.value)
             resource.load()
-            assertEquals(LoadState.Failed(ApiError.Network), resource.state.value)
+            assertEquals(LoadState.Loaded("old answer"), resource.state.value)
+            assertEquals(LoadState.Failed(ApiError.Network), resource.freshState.value)
             resource.replace("fresh answer")
+            assertEquals(LoadState.Loaded(Unit), resource.freshState.value)
             resource.refresh()
-            assertEquals(LoadState.Failed(ApiError.Network), resource.state.value)
+            assertEquals(LoadState.Loaded("fresh answer"), resource.state.value)
+            assertEquals(LoadState.Failed(ApiError.Network), resource.freshState.value)
+        }
+
+    @Test
+    fun anUnchangedReadStillBecomesFreshAfterInvalidation() =
+        runTest {
+            val cache = cache(FakeSession(ana))
+            val resource = cache.resource<String>(Audience.SignedIn, setOf(DataDomain.Memory)) { "same answer" }
+            resource.load()
+            cache.invalidate(setOf(DataDomain.Memory))
+            assertEquals(LoadState.Idle, resource.freshState.value)
+            resource.load()
+            assertEquals(LoadState.Loaded("same answer"), resource.state.value)
+            assertEquals(LoadState.Loaded(Unit), resource.freshState.value)
         }
 
     @Test
