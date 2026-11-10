@@ -9,7 +9,7 @@ import { usePageLifecycle } from "./use-page-lifecycle";
 export function useLessonClock(adapters: LessonPlayerAdapters) {
   const clockRef = useRef<LessonClock | null>(null);
   const openRef = useRef(false);
-  const sendingRef = useRef<Promise<void>>(Promise.resolve());
+  const sendingRef = useRef(new Set<Promise<void>>());
 
   const actions = useMemo(() => {
     function runClock(run: { clockId: string | null; runId: string }) {
@@ -31,7 +31,7 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       clockRef.current = next;
       const sent = next.transition;
 
-      sendingRef.current = send(sent)
+      const sending = send(sent)
         .catch(() => null)
         .then(async (outcome) => {
           // The server dropped this clock, so running counts only once Start gives a new one.
@@ -55,6 +55,9 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
             sent,
           });
         });
+
+      sendingRef.current.add(sending);
+      void sending.finally(() => sendingRef.current.delete(sending));
     }
 
     /** Sends the latest change again under its sequence when it didn't get through. */
@@ -66,12 +69,22 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       }
     }
 
-    /** Settles once the latest change sent got through or failed. */
-    function settled() {
-      return sendingRef.current;
+    /** Sends again a change that didn't get through, then settles once none is on its way, a restart's included. */
+    async function flush() {
+      resend();
+
+      while (sendingRef.current.size > 0) {
+        // oxlint-disable-next-line no-await-in-loop -- A change can start while the earlier ones land.
+        await Promise.allSettled(sendingRef.current);
+      }
     }
 
-    return { move, resend, runClock, settled };
+    /** The run ended, so its clock sends nothing more. */
+    function close() {
+      clockRef.current = null;
+    }
+
+    return { close, flush, move, resend, runClock };
   }, [adapters]);
 
   useEffect(() => {
@@ -92,5 +105,10 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
     onLeave: () => actions.move("paused"),
   });
 
-  return { clockSettled: actions.settled, resendClock: actions.resend, runClock: actions.runClock };
+  return {
+    closeClock: actions.close,
+    flushClock: actions.flush,
+    resendClock: actions.resend,
+    runClock: actions.runClock,
+  };
 }

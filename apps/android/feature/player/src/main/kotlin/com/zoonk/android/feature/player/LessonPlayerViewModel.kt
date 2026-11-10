@@ -85,6 +85,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -269,7 +270,10 @@ class LessonPlayerViewModel(
     private var starting: Job? = null
     private val checksAwaitingRun = mutableListOf<Job>()
     private var admittedRunId: UUID? = null
-    private val clock = MutableStateFlow<LessonClock?>(null)
+    private var clock: LessonClock? = null
+
+    /** Every clock change on its way, with the Start an ignored one waits for. */
+    private val clockSends = openScope()
     private var visible = true
     private val heldDeviceVerdicts = mutableListOf<HeldDeviceVerdict>()
     private var completing: Job? = null
@@ -326,7 +330,7 @@ class LessonPlayerViewModel(
         this.lesson = lesson
         owner = session
         admittedRunId = null
-        clock.value = null
+        clock = null
         acted = false
         workedHere.clear()
         heldDeviceVerdicts.clear()
@@ -362,7 +366,7 @@ class LessonPlayerViewModel(
 
     private fun sendClock() {
         val session = owner ?: return
-        val latest = clock.value ?: return
+        val latest = clock ?: return
         if (sessions.current != session) return
         val state = if (visible) LessonClockInput.State.RUNNING else LessonClockInput.State.PAUSED
         val input =
@@ -371,8 +375,8 @@ class LessonPlayerViewModel(
                 latest.send == ClockSend.Failed -> latest.input
                 else -> return
             }
-        clock.value = LessonClock(input, ClockSend.Sending)
-        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+        clock = LessonClock(input, ClockSend.Sending)
+        clockSends.launch(start = CoroutineStart.UNDISPATCHED) {
             // The exit pause must outlive the navigation entry that clears this ViewModel.
             val result =
                 withContext(NonCancellable) {
@@ -380,15 +384,41 @@ class LessonPlayerViewModel(
                         if (current == session) store.api.clock(current, lessonId, input) else null
                     }
                 }
-            if (clock.value?.input != input) return@launch
+            if (clock?.input != input) return@launch
             // The server dropped this clock, so running counts only once Start gives a new one.
             val restarts =
                 input.state == LessonClockInput.State.RUNNING &&
                     result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
                     sessions.current == session
-            val delivered = if (restarts) start(input.runId.toString()) is StartOutcome.Started else result !is MutationResult.Failed
-            clock.update { if (it?.input == input) LessonClock(input, if (delivered) ClockSend.Sent else ClockSend.Failed) else it }
+            val restarted = if (restarts) start(input.runId.toString()) as? StartOutcome.Started else null
+            when {
+                restarted != null && clock?.input?.clockId == input.clockId -> {
+                    runClock(restarted.run)
+                }
+
+                clock?.input == input -> {
+                    clock =
+                        LessonClock(input, if (restarts || result is MutationResult.Failed) ClockSend.Failed else ClockSend.Sent)
+                }
+            }
         }
+    }
+
+    /** A Start runs a fresh clock on the server at sequence 0; a lesson outside a study block has none. */
+    private fun runClock(run: LibraryLessonRun) {
+        clock = run.clockId?.let { LessonClock(LessonClockInput(it, run.runId, 0, LessonClockInput.State.RUNNING)) }
+        sendClock()
+    }
+
+    /** Sends again a change that didn't get through, then waits until none is on its way, the one a restart sends on its new clock included. */
+    private suspend fun flushClock() {
+        sendClock()
+        do {
+            val sending =
+                clockSends.coroutineContext.job.children
+                    .toList()
+            sending.joinAll()
+        } while (sending.isNotEmpty())
     }
 
     fun continueSession() {
@@ -747,6 +777,7 @@ class LessonPlayerViewModel(
                 if (outcome == null) return@launch
                 when (outcome) {
                     is StartOutcome.Started -> {
+                        runClock(outcome.run)
                         val runId = outcome.run.runId
                         admittedRunId = runId
                         val hasHeld = heldDeviceVerdicts.isNotEmpty()
@@ -806,13 +837,7 @@ class LessonPlayerViewModel(
 
         return when (result) {
             is MutationResult.Done -> {
-                val outcome = result.value
-                if (outcome is StartOutcome.Started) {
-                    val run = outcome.run
-                    clock.value = run.clockId?.let { LessonClock(LessonClockInput(it, run.runId, 0, LessonClockInput.State.RUNNING)) }
-                    sendClock()
-                }
-                outcome
+                result.value
             }
 
             is MutationResult.Failed -> {
@@ -1052,10 +1077,9 @@ class LessonPlayerViewModel(
             return
         }
         checksAwaitingRun.toList().forEach { it.join() }
-        sendClock()
         val allSaved = sendUnsent()
         // The run's study time counts up to its clock's latest transition, so that lands first.
-        clock.first { it?.send != ClockSend.Sending }
+        flushClock()
         val state = mutableState.value ?: return
         val runId = (state.run as? LessonRun.Started)?.runId
 
@@ -1078,6 +1102,8 @@ class LessonPlayerViewModel(
 
         when (val outcome = (result as? MutationResult.Done)?.value) {
             is CompletionOutcome.Completed -> {
+                // The run ended, so its clock sends nothing more.
+                clock = null
                 readEnding()
                 dispatch(LessonAction.CompletionSaved(outcome.completion))
             }
@@ -1100,6 +1126,8 @@ class LessonPlayerViewModel(
             dispatch(LessonAction.CompletionFailed)
             return
         }
+
+        runClock(restarted.run)
 
         val read = store.lesson(lessonId)
         read.refresh()

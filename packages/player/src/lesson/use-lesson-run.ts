@@ -26,7 +26,7 @@ export function useLessonRun({
   const pendingRef = useRef(new Set<Promise<unknown>>());
   const screensRef = useRef(new Map<string, ScreenQueue>());
   const heldRef = useRef(new Map<string, HeldAnswer>());
-  const { clockSettled, resendClock, runClock } = useLessonClock(adapters);
+  const { closeClock, flushClock, resendClock, runClock } = useLessonClock(adapters);
 
   const startRun = useCallback(
     async (input?: { runId: string }) => {
@@ -118,9 +118,9 @@ export function useLessonRun({
     await Promise.allSettled(pendingRef.current);
     const saved = await resendKept();
     // The run's study time counts up to its clock's latest change, so that lands first.
-    await clockSettled();
+    await flushClock();
     return saved;
-  }, [clockSettled, resendKept]);
+  }, [flushClock, resendKept]);
 
-  return { ensureRun, flushUnsaved, hold, keepGrade, reopen, resendUnsaved, startRun };
+  return { closeClock, ensureRun, flushUnsaved, hold, keepGrade, reopen, resendUnsaved, startRun };
 }
