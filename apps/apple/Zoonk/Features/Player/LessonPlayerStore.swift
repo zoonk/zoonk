@@ -32,8 +32,8 @@ final class LessonPlayerStore {
     case refused(LessonRunRefusal)
   }
 
-  private enum ClockSend: Equatable {
-    case sending(Task<Void, Never>)
+  private enum ClockSend {
+    case sending
     case sent
     case failed
   }
@@ -58,6 +58,8 @@ final class LessonPlayerStore {
   private var starting: Task<Void, Never>?
   private var isVisible = true
   private var clock: (input: Components.Schemas.LessonClockInput, send: ClockSend)?
+  /// Every clock change on its way, with the restart an ignored one waits for.
+  private var clockSends: [UUID: Task<Void, Never>] = [:]
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
   /// main's catalog answer, and a guest's lesson ends with "Build my plan". Opened anywhere else in
   /// the app, a guest's lesson ends as a learner's.
@@ -329,7 +331,9 @@ final class LessonPlayerStore {
     let lessonId = lessonId
 
     // A pause must outlive the disappearing player; the request keeps only its original session.
+    let key = UUID()
     let send = Task { [weak self] in
+      defer { self?.clockSends[key] = nil }
       let updated = await cache.mutate { current in
         guard current == identity else { throw CancellationError() }
         return try await api.updateClock(id: lessonId, input: input, token: current.bearerToken)
@@ -365,8 +369,18 @@ final class LessonPlayerStore {
       self.startClock(run)
     }
 
-    clock = (input, .sending(send))
+    clock = (input, .sending)
+    clockSends[key] = send
     return send
+  }
+
+  /// Sends again a clock change that didn't get through, then waits until none is on its way, the
+  /// one a restart sends on its new clock included.
+  private func flushClock() async {
+    sendClock()
+    while let sending = clockSends.values.first {
+      await sending.value
+    }
   }
 
   private func startClock(_ run: LessonRunStart) {
@@ -969,7 +983,7 @@ final class LessonPlayerStore {
     sendUnsaved()
     await heldAnswersSent()
     // The run's study time counts up to its clock's latest transition, so that lands first.
-    if case .sending(let send) = clock?.send { await send.value }
+    await flushClock()
     guard isCurrent(identity) else { return }
 
     guard held.isEmpty else {
@@ -989,6 +1003,8 @@ final class LessonPlayerStore {
 
     switch completed {
     case .done(.completed(let summary)):
+      // The run ended, so its clock sends nothing more.
+      clock = nil
       state?.completionSaved(summary)
 
       if let studySessionId, let block = summary.block {

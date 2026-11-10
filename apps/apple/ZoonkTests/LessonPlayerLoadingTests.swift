@@ -99,7 +99,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let first = UUID().uuidString
     let second = UUID().uuidString
     let transport = OpeningStartTransport(
-      holds: false, clockIds: [first, second], clockStatus: "ignored", holdsRunningClock: true)
+      holds: false, clockIds: [first, second], clockStatus: "ignored", heldClocks: [2])
     let store = try openingPlayer(markedLesson(), transport: transport)
     await store.load()
     await store.setVisible(false)?.value
@@ -109,7 +109,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let sent = await transport.clocks.count
     XCTAssertEqual(sent, 2)
     await store.setVisible(false)?.value
-    await transport.releaseRunningClock()
+    await transport.releaseClock(2)
     await running?.value
 
     let starts = await transport.count
@@ -158,7 +158,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
 
   func testFinishingWaitsForTheClockToGetThrough() async throws {
     let transport = OpeningStartTransport(
-      holds: false, clockIds: [UUID().uuidString], failingClocks: [2], holdsRunningClock: true)
+      holds: false, clockIds: [UUID().uuidString], failingClocks: [2], heldClocks: [3])
     let store = try openingPlayer(markedLesson(), transport: transport)
     await store.load()
     store.continueLesson()
@@ -170,13 +170,89 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let beforeClock = await transport.operations
     XCTAssertFalse(beforeClock.contains("createLibraryLessonCompletion"))
 
-    await transport.releaseRunningClock()
+    await transport.releaseClock(3)
     await waitUntil { store.state?.completion?.status != .saving }
 
     let operations = await transport.operations
     XCTAssertEqual(
       operations.filter { $0 != "createLibraryLessonStart" }.suffix(2),
       ["updateLibraryLessonClock", "createLibraryLessonCompletion"])
+  }
+
+  func testFinishingWaitsForAClockChangeSentWhileItWaits() async throws {
+    let transport = OpeningStartTransport(
+      holds: false, clockIds: [UUID().uuidString], heldClocks: [2, 4])
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    store.continueLesson()
+    await store.setVisible(false)?.value
+    store.setVisible(true)
+    await clocksSent(2, transport)
+    store.continueLesson()
+    for _ in 0..<1_000 { await Task.yield() }
+    await store.setVisible(false)?.value
+    store.setVisible(true)
+    await clocksSent(4, transport)
+    await transport.releaseClock(2)
+    for _ in 0..<1_000 { await Task.yield() }
+    let beforeLatest = await transport.operations
+    XCTAssertFalse(beforeLatest.contains("createLibraryLessonCompletion"))
+
+    await transport.releaseClock(4)
+    await waitUntil { store.state?.completion?.status == .saved }
+
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 3, 4])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused", "running"])
+  }
+
+  func testFinishingWaitsForTheClockARestartGives() async throws {
+    let first = UUID().uuidString
+    let second = UUID().uuidString
+    let transport = OpeningStartTransport(
+      holds: false, heldStarts: [2], clockIds: [first, second], clockStatus: "ignored",
+      heldClocks: [4])
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    store.continueLesson()
+    await store.setVisible(false)?.value
+    store.setVisible(true)
+    await startRequested(transport, count: 2)
+    store.continueLesson()
+    for _ in 0..<1_000 { await Task.yield() }
+    await store.setVisible(false)?.value
+    await transport.release()
+    await clocksSent(4, transport)
+    for _ in 0..<1_000 { await Task.yield() }
+    let beforeFreshClock = await transport.operations
+    XCTAssertFalse(beforeFreshClock.contains("createLibraryLessonCompletion"))
+
+    await transport.releaseClock(4)
+    await waitUntil { store.state?.completion?.status == .saved }
+
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.clockId), [first, first, first, second])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 3, 1])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused", "paused"])
+  }
+
+  func testAFinishedLessonSendsNothingMoreOnItsClock() async throws {
+    let transport = OpeningStartTransport(
+      holds: false, clockIds: [UUID().uuidString], clockStatus: "ignored")
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    store.continueLesson()
+    store.continueLesson()
+    await waitUntil { store.state?.completion?.status == .saved }
+
+    XCTAssertNil(store.setVisible(false))
+    XCTAssertNil(store.setVisible(true))
+    store.sendUnsaved()
+
+    let clocks = await transport.clocks
+    XCTAssertTrue(clocks.isEmpty)
+    let starts = await transport.count
+    XCTAssertEqual(starts, 1)
   }
 
   func testALateRunPreservesCanvasWorkWithNoAnswerAfterGoingBack() async throws {
@@ -1034,9 +1110,9 @@ final class LessonPlayerLoadingTests: XCTestCase {
       }.joined(separator: ",") + "]"
   }
 
-  private func startRequested(_ transport: OpeningStartTransport) async {
+  private func startRequested(_ transport: OpeningStartTransport, count: Int = 1) async {
     let deadline = Date.now.addingTimeInterval(5)
-    while await transport.count == 0, Date.now < deadline { await Task.yield() }
+    while await transport.count < count, Date.now < deadline { await Task.yield() }
   }
 
   private func clocksSent(_ count: Int, _ transport: OpeningStartTransport) async {
@@ -1361,6 +1437,9 @@ private actor OpeningStartTransport: ClientTransport {
   }
 
   let holds: Bool
+  /// By their place among the start requests, from 1: the ones answered only on `release()`, as
+  /// every one is with `holds`.
+  let heldStarts: Set<Int>
   let opensElsewhere: Bool
   /// By their place among the start requests, from 1: the ones that don't get through.
   let failingStarts: Set<Int>
@@ -1369,9 +1448,10 @@ private actor OpeningStartTransport: ClientTransport {
   /// By their place among the clock requests, from 1: the ones that don't get through.
   let failingClocks: Set<Int>
   let clockStatus: String
-  let holdsRunningClock: Bool
+  /// By their place among the clock requests, from 1: the ones answered only on `releaseClock(_:)`.
+  let heldClocks: Set<Int>
   private var gate: CheckedContinuation<Void, Never>?
-  private var runningClockGate: CheckedContinuation<Void, Never>?
+  private var clockGates: [Int: CheckedContinuation<Void, Never>] = [:]
   private(set) var count = 0
   private(set) var inputs: [String] = []
   private(set) var clocks: [ClockInput] = []
@@ -1380,18 +1460,19 @@ private actor OpeningStartTransport: ClientTransport {
   private(set) var checks: [String] = []
 
   init(
-    holds: Bool, opensElsewhere: Bool = false, failingStarts: Set<Int> = [],
-    runAnswers: String = "[]", clockIds: [String?] = [nil], failingClocks: Set<Int> = [],
-    clockStatus: String = "updated", holdsRunningClock: Bool = false
+    holds: Bool, heldStarts: Set<Int> = [], opensElsewhere: Bool = false,
+    failingStarts: Set<Int> = [], runAnswers: String = "[]", clockIds: [String?] = [nil],
+    failingClocks: Set<Int> = [], clockStatus: String = "updated", heldClocks: Set<Int> = []
   ) {
     self.holds = holds
+    self.heldStarts = heldStarts
     self.opensElsewhere = opensElsewhere
     self.failingStarts = failingStarts
     self.runAnswers = runAnswers
     self.clockIds = clockIds
     self.failingClocks = failingClocks
     self.clockStatus = clockStatus
-    self.holdsRunningClock = holdsRunningClock
+    self.heldClocks = heldClocks
   }
 
   func release() {
@@ -1399,9 +1480,8 @@ private actor OpeningStartTransport: ClientTransport {
     gate = nil
   }
 
-  func releaseRunningClock() {
-    runningClockGate?.resume()
-    runningClockGate = nil
+  func releaseClock(_ place: Int) {
+    clockGates.removeValue(forKey: place)?.resume()
   }
 
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
@@ -1417,13 +1497,21 @@ private actor OpeningStartTransport: ClientTransport {
       let input = try JSONDecoder().decode(
         ClockInput.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
       clocks.append(input)
-      if failingClocks.contains(clocks.count) { throw APIError.network }
-      if holdsRunningClock, input.state == "running" {
-        await withCheckedContinuation { runningClockGate = $0 }
+      let place = clocks.count
+      if failingClocks.contains(place) { throw APIError.network }
+      if heldClocks.contains(place) {
+        await withCheckedContinuation { clockGates[place] = $0 }
       }
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
         HTTPBody(#"{"status":"\#(clockStatus)"}"#)
+      )
+    }
+
+    if operationID == "createLibraryLessonCompletion" {
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(sessionLessonCompletion)
       )
     }
 
@@ -1432,7 +1520,7 @@ private actor OpeningStartTransport: ClientTransport {
       String(
         decoding: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20), as: UTF8.self))
     count += 1
-    if holds { await withCheckedContinuation { gate = $0 } }
+    if holds || heldStarts.contains(count) { await withCheckedContinuation { gate = $0 } }
     var headers = HTTPFields()
     headers[.contentType] = "application/json"
     if failingStarts.contains(count) {
