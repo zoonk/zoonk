@@ -74,17 +74,7 @@ fun <T> ChoiceList(
             modifier
                 .bleed(LIST_ITEM_INSET)
                 .selectableGroup()
-                .semantics { contentDescription = label }
-                .onPreviewKeyEvent { event ->
-                    val index = event.nativeKeyEvent.keyCode - KeyEvent.KEYCODE_1
-                    val choice = choices.getOrNull(index)
-                    if (event.type == KeyEventType.KeyUp && index in 0 until NUMBER_KEYS && choice != null) {
-                        choose(choice)
-                        true
-                    } else {
-                        false
-                    }
-                },
+                .semantics { contentDescription = label },
     ) {
         choices.forEachIndexed { index, choice ->
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
@@ -96,7 +86,16 @@ fun <T> ChoiceList(
                 modifier =
                     Modifier
                         .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
-                        .selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
+                        .onPreviewKeyEvent { event ->
+                            val number = event.nativeKeyEvent.keyCode - KeyEvent.KEYCODE_1
+                            val numbered = choices.getOrNull(number)
+                            if (event.type == KeyEventType.KeyUp && number in 0 until NUMBER_KEYS && numbered != null) {
+                                choose(numbered)
+                                true
+                            } else {
+                                false
+                            }
+                        }.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
                 supporting = choice.description?.let { { Text(it) } },
                 trailing = { RadioButton(selected = selected, onClick = null) },
             )
@@ -115,6 +114,7 @@ fun <T> CheckList(
     modifier: Modifier = Modifier,
     max: Int? = null,
     readOnly: Boolean = false,
+    afterChoice: @Composable (T) -> Unit = {},
 ) {
     val full = max != null && value.size >= max
 
@@ -133,6 +133,7 @@ fun <T> CheckList(
                 supporting = choice.description?.let { { Text(it) } },
                 trailing = { Checkbox(checked = checked, onCheckedChange = null) },
             )
+            afterChoice(choice.value)
         }
     }
 }

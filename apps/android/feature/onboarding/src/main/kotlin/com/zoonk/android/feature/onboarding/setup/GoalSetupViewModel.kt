@@ -13,9 +13,15 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.profile.ProfileDraft
+import com.zoonk.android.feature.profile.profileQuestion
+import com.zoonk.android.feature.profile.profileSkipAll
+import com.zoonk.android.feature.profile.suggestedSupports
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingStep
+import com.zoonk.api.models.ProfileQuestion
+import com.zoonk.api.models.ProfileQuestionView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -57,11 +63,12 @@ internal fun setupProgress(
     val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
     val ahead = steps.filter(::countsAsQuestion)
     val behind = flow.history.filter { countsAsQuestion(it) && (it == current || it !in ahead) }
-    val order = (behind + current + ahead).distinct()
-    return SetupProgress(order.indexOf(current), order.size)
+    val order = (behind + current + ahead).map { if (it.profileQuestion != null) OnboardingStep.WORK else it }.distinct()
+    return SetupProgress(order.indexOf(if (current.profileQuestion != null) OnboardingStep.WORK else current), order.size)
 }
 
-private fun countsAsQuestion(step: OnboardingStep) = step in QUESTION_SCREENS && step != OnboardingStep.PLACEMENT
+private fun countsAsQuestion(step: OnboardingStep) =
+    (step in QUESTION_SCREENS || step.profileQuestion != null) && step != OnboardingStep.PLACEMENT
 
 @Serializable
 data class SetupFlow(
@@ -97,6 +104,23 @@ internal class GoalSetupViewModel(
     revealMoment: Boolean = false,
 ) : ViewModel() {
     private var saved by handle.saved { SetupFlow(goalId) }
+    private var savedProfiles by handle.saved { emptyMap<ProfileQuestion, ProfileDraft>() }
+    private var profileDrafts by mutableStateOf(savedProfiles)
+    var supportsSuggested by mutableStateOf(false)
+        private set
+
+    fun profileDraft(
+        question: ProfileQuestionView,
+        role: String?,
+    ): ProfileDraft = profileDrafts[question.id] ?: ProfileDraft.from(question, role)
+
+    fun changeProfile(
+        question: ProfileQuestion,
+        draft: ProfileDraft,
+    ) {
+        profileDrafts = profileDrafts + (question to draft)
+        savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
+    }
 
     init {
         if (!handle.contains("revealMoment")) handle["revealMoment"] = revealMoment
@@ -209,6 +233,7 @@ internal class GoalSetupViewModel(
         input: OnboardingAnswerInput,
         from: OnboardingStep? = flow.current,
         showFailure: Boolean = true,
+        profileAnswer: ProfileDraft? = null,
     ): Deferred<WriteOutcome<Onboarding>>? {
         val step = from ?: return null
         if (isSaving) return null
@@ -220,6 +245,27 @@ internal class GoalSetupViewModel(
             when (outcome) {
                 is WriteOutcome.Done -> {
                     drafts?.words(answeredGoal, step.value)?.remove()
+                    step.profileQuestion?.takeIf { profileAnswer == null }?.let {
+                        profileDrafts = profileDrafts - it
+                        savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
+                    }
+                    if (step == OnboardingStep.CONDITIONS && profileAnswer != null && flow.current == step &&
+                        outcome.value.steps.firstOrNull() == OnboardingStep.LEARNING_SUPPORT
+                    ) {
+                        val picks = profileAnswer.picks
+                        val suggestions = suggestedSupports(picks)
+                        val support =
+                            outcome.value.profile.questions
+                                .first { it.id == ProfileQuestion.LEARNING_SUPPORT }
+                        val previous = profileDrafts[ProfileQuestion.LEARNING_SUPPORT] ?: ProfileDraft.from(support)
+                        if (suggestions.isNotEmpty() && ProfileQuestion.LEARNING_SUPPORT !in profileDrafts) {
+                            changeProfile(
+                                ProfileQuestion.LEARNING_SUPPORT,
+                                previous.copy(picks = (previous.picks + suggestions).distinct(), declined = false),
+                            )
+                            supportsSuggested = true
+                        }
+                    }
                     applyAnswer(step, outcome.value)
                 }
 
@@ -242,6 +288,17 @@ internal class GoalSetupViewModel(
         val previous = flow.history.lastOrNull() ?: return
         clearFailure()
         update(flow.copy(current = previous, history = flow.history.dropLast(1)))
+    }
+
+    fun skipProfiles(forever: Boolean) {
+        val saving = answer(profileSkipAll(forever)) ?: return
+        viewModelScope.launch {
+            if (saving.await() is WriteOutcome.Done) {
+                profileDrafts = emptyMap()
+                savedProfiles = emptyMap()
+                supportsSuggested = false
+            }
+        }
     }
 
     /** The time question's link to the date question: its Back returns to the time unchanged. */
@@ -304,4 +361,4 @@ internal fun answeredScreens(view: Onboarding): List<OnboardingStep> =
     (view.goal.details["answered"] as? JsonArray)
         .orEmpty()
         .mapNotNull { answer -> OnboardingStep.entries.find { it.value == (answer as? JsonPrimitive)?.contentOrNull } }
-        .filter { it in QUESTION_SCREENS }
+        .filter { it in QUESTION_SCREENS || it.profileQuestion != null }

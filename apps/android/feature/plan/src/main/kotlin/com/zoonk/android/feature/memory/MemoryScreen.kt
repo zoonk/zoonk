@@ -44,6 +44,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -102,7 +103,7 @@ fun MemoryScreen(
 
                 when (val state = memory) {
                     is LoadState.Loaded -> {
-                        Loaded(state.value, screen)
+                        Loaded(state.value, screen, navigator)
                     }
 
                     is LoadState.Failed -> {
@@ -125,6 +126,7 @@ fun MemoryScreen(
 private fun Loaded(
     memory: Memory,
     screen: MemoryViewModel,
+    navigator: AppNavigator,
 ) {
     val context = LocalContext.current
     val export =
@@ -170,7 +172,15 @@ private fun Loaded(
                 SectionHeader(categoryName(category), Modifier.padding(horizontal = LIST_ITEM_INSET))
                 facts.forEachIndexed { index, fact ->
                     if (index > 0) ListDivider()
-                    FactRow(fact, onEdit = { screen.updateFact(fact.id, it) }, onDelete = { screen.deleteFact(fact.id) })
+                    FactRow(
+                        fact,
+                        onEdit = { screen.updateFact(fact.id, it) },
+                        onDelete = { screen.deleteFact(fact.id) },
+                        onEditProfile =
+                            fact.source?.takeIf { it.kind == MemorySource.Kind.PROFILE }?.id?.let { id ->
+                                { navigator.open(AppRoute.ProfileQuestionEdit(id)) }
+                            },
+                    )
                 }
             }
         }
@@ -212,6 +222,7 @@ private fun FactRow(
     fact: MemoryFact,
     onEdit: (String) -> Unit,
     onDelete: () -> Unit,
+    onEditProfile: (() -> Unit)? = null,
 ) {
     var isMenuOpen by rememberSaveable { mutableStateOf(false) }
     var isEditing by rememberSaveable { mutableStateOf(false) }
@@ -236,7 +247,7 @@ private fun FactRow(
                         leadingIcon = { Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
                         onClick = {
                             isMenuOpen = false
-                            isEditing = true
+                            if (onEditProfile != null) onEditProfile() else isEditing = true
                         },
                     )
                     DropdownMenuItem(
@@ -322,6 +333,7 @@ private fun sourceName(fact: MemoryFact): String =
             fact.source?.kind == MemorySource.Kind.CALL -> R.string.memory_source_call
             fact.source?.kind == MemorySource.Kind.CHAT -> R.string.memory_source_chat
             fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_onboarding
+            fact.source?.kind == MemorySource.Kind.PROFILE -> R.string.profile_questions_you_told_us
             else -> R.string.memory_source_session
         },
     )

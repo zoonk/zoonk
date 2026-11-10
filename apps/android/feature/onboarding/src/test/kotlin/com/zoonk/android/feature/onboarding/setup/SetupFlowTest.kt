@@ -71,6 +71,25 @@ class SetupFlowTest {
         assertEquals(SetupFlow("exam", LEVEL), language.arriving("exam", com.zoonk.api.models.OnboardingStep.REASON, LEVEL))
     }
 
+    @Test
+    fun allProfileQuestionsShareOneProgressDotIncludingWhenGoingBack() {
+        val profile =
+            com.zoonk.api.models.OnboardingStep.entries.filter {
+                it.value in
+                    com.zoonk.api.models.ProfileQuestion.entries
+                        .map { question -> question.value }
+            }
+        val current = SetupFlow(GOAL, com.zoonk.api.models.OnboardingStep.WATCH, listOf(PURPOSE) + profile.take(3))
+        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(current, profile.drop(3) + SCHEDULE + PLAN))
+        assertEquals(
+            SetupProgress(answered = 1, total = 3),
+            setupProgress(
+                current.opening(com.zoonk.api.models.OnboardingStep.WORK),
+                profile.drop(3) + SCHEDULE + PLAN,
+            ),
+        )
+    }
+
     private companion object {
         const val GOAL = "goal-1"
     }

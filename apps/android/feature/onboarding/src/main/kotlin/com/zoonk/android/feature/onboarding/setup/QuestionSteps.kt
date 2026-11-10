@@ -107,6 +107,7 @@ internal fun ColumnScope.StepForm(
     continueLabel: String? = null,
     onSkip: (() -> Unit)? = null,
     skipLabel: String? = null,
+    notice: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.(continueStep: () -> Unit) -> Unit = {},
 ) {
     SetupContent {
@@ -123,6 +124,7 @@ internal fun ColumnScope.StepForm(
         content(continueStep)
         OnboardingActions {
             PlanStartNotice()
+            notice?.invoke()
             Button(
                 busy = pending && sender == StepSender.Continue,
                 onClick = continueStep,

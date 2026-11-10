@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.warmup.WaitQuizState
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberWaitQuiz
@@ -213,8 +215,26 @@ fun GoalSetupScreen(
         },
         actions = {
             if (view != null && inQuestions && testing == null) {
+                if (step.profileQuestion != null) {
+                    val skipLabel = stringResource(R.string.profile_questions_skip_all_label)
+                    TextButton(
+                        onClick = { vm.skipProfiles(false) },
+                        enabled = !vm.isSaving && !vm.isStartingOver,
+                        modifier =
+                            Modifier.semantics {
+                                contentDescription =
+                                    skipLabel
+                            },
+                    ) {
+                        Text(stringResource(R.string.profile_questions_skip_all))
+                    }
+                }
                 MoreMenu(
                     disabled = vm.isSaving || vm.isStartingOver,
+                    onNeverAsk =
+                        {
+                            vm.skipProfiles(true)
+                        }.takeIf { step.profileQuestion != null },
                     onFinishLater = { navigator.showRoot(AppTab.Today) },
                     onStartOver = {
                         vm.startOver(view.goalIds.map { it.toString() }) {
@@ -397,7 +417,9 @@ private fun ColumnScope.QuestionStep(
         OnboardingStep.ACTIVITIES,
         OnboardingStep.CONDITIONS,
         OnboardingStep.LEARNING_SUPPORT,
-        -> {}
+        -> {
+            ProfileStep(step, view, vm)
+        }
 
         OnboardingStep.PURPOSE -> {
             PurposeStep(subject, pending, vm::answer)
@@ -469,6 +491,7 @@ private fun ColumnScope.QuestionStep(
                 vm,
                 pending,
                 factsBeside = LocalWaitBeside.current,
+                startsOnRecommended = view.startsOnRecommended,
             )
         }
 
@@ -559,6 +582,7 @@ private fun StepDots(progress: SetupProgress) {
 @Composable
 private fun MoreMenu(
     disabled: Boolean,
+    onNeverAsk: (() -> Unit)? = null,
     onFinishLater: () -> Unit,
     onStartOver: () -> Unit,
 ) {
@@ -570,6 +594,17 @@ private fun MoreMenu(
             Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.onboarding_more))
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            if (onNeverAsk != null) {
+                DropdownMenuItem(text = {
+                    MenuText(
+                        R.string.profile_questions_never_ask,
+                        R.string.profile_questions_never_ask_help,
+                    )
+                }, onClick = {
+                    open = false
+                    onNeverAsk()
+                })
+            }
             DropdownMenuItem(
                 text = { MenuText(R.string.onboarding_finish_later, R.string.onboarding_finish_later_description) },
                 onClick = {

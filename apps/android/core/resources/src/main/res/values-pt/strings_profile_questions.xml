@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "profile_questions_activities_favorites": "302f62562e830b7835a0b55a641c84feb5ee3edc9cce4ff6ea5c4bdbb049d3e5",
+  "profile_questions_activities_placeholder": "3801687916e095e656c19d64633a4cfec93ac64ac3638c98302c31e2075b7186",
+  "profile_questions_activities_title": "476e9670979bb098f4706c3837fe42947f57703706c66fe5f1811bcc9980120c",
+  "profile_questions_add": "ae2c0b9b21af3e9609b5f63ae611574edf0b81603c06fb0fa19f715f6704c66e",
+  "profile_questions_cap": "da7e186d98419ace31df1961b1dfa7a46efda65b136aa1db35126908ef2897e8",
+  "profile_questions_condition_note": "76522f184770230755d7be3f40717040041a18d1cae99186f43c8b4e1c7bc537",
+  "profile_questions_conditions_description": "c9f1ba13052856e1020449bbfd2fd97ee69f8d29996be5e06a77c58f71da81d7",
+  "profile_questions_conditions_next": "e2770d61df4a6b08ad358ef83296d0e800371843e6ab385e65df9c8173c37292",
+  "profile_questions_conditions_saved": "400e40d4888a672ae7c1e95a4c34bbd9ba42e608c3c376470484b2d70355c8e2",
+  "profile_questions_conditions_title": "a2b418c6612ea166df3b50804cee5532aa7f1908f6bf2f82b2dc90ed20a8dd76",
+  "profile_questions_consent": "0d5fd319ba270437c29294f71a2c13c173da38394fab42f97fb667086050aa3a",
+  "profile_questions_consent_help": "6abee20b8617710fd2ac703ed2bc4a2fcc191644cdfac3d0d4ea2ba70eeafbfa",
+  "profile_questions_description": "d5e4962a793317e8a5cf78afff0e17e1ca30daef5790d0787c4cc8523f112a3e",
+  "profile_questions_earlier_answer": "db03489c94dcc62d96cbceebcb1284bf4038f88319bc14e7c1eb6714ed8e2535",
+  "profile_questions_for_fun": "7610c12486196101942815f86379413f320c213a5a2da2b61dc588b06c41b145",
+  "profile_questions_how_learn": "df88b54eccdd3bab95ce98be35cff23866e90e2e776f3ae7004f732b1754070b",
+  "profile_questions_interest_description": "66ee61ebe06e98fb7ea218b3ea025db56c123e6f549ea69e0651c2408cd3fd52",
+  "profile_questions_job": "b0c7b049ce0517580296e8aec0538f7b8e631967b9c530dd48da65d712e6c0e0",
+  "profile_questions_job_placeholder": "2e1fcca03f2d210682fd261da02b7961f42d69a2a086d253ebcaceba3c690ab8",
+  "profile_questions_lesson_ready": "e789fb8861f2e977ed77e03cd31c526e44927db84ac1f87ceae2775811727469",
+  "profile_questions_listen_favorites": "a51d652412d93d09f238434d42c6f7c9e10ab4243b49e83e3d3b04fe6ed8fe10",
+  "profile_questions_listen_placeholder": "43a06835e993daf264e3116f9caed006de5b44ff49907afb2cc636d6c8463c75",
+  "profile_questions_listen_title": "49bac9c2e67819913be5e222cf559a2d208b2444b6d3fade30328e0a56afdcd0",
+  "profile_questions_memory_off": "e5d1d0ec46787d3c72d308e4801d34930684896e080202e1ba53af2978fa7b50",
+  "profile_questions_never_ask": "8ad9dbe4eedfd39d9524afc42215a0637d0716cf4520f3b8c8873229e3c5dbf5",
+  "profile_questions_never_ask_help": "4ba8996a0fabd5d89e66410b5d5c4542a7165db7108cb98399456ef6675d4933",
+  "profile_questions_none": "0934f62a5d3488250b86519b07667e37578c3e363ce5a9f226c52ee0b86bdb75",
+  "profile_questions_not_answered": "e206ead9c60e5b6e2b8609c293f1c6922b594452ffd12356dc29c2555688b26d",
+  "profile_questions_not_shared": "0b99c35d157c3f038a750e1c3bd9fcae424e816107834540c05895e29f5dbbf7",
+  "profile_questions_nothing_particular": "b531602116663f4a98c0fa056ca216ab2d34afcf67433ef499f709697fc96bca",
+  "profile_questions_nothing_to_add": "f70917e706cbbeede93a45004e85ce66b64ac12337f4b60c5078302fd69cdef9",
+  "profile_questions_play_favorites": "491c47ac752e51df3dda6b64f3da8f1a908dc7573a3e6a8ee42976a617778746",
+  "profile_questions_play_placeholder": "758c4fda50bd429a8b2c10e226401f1552d7342d704a89820fc97aaa1f465fd9",
+  "profile_questions_play_title": "7e852ff47f9fde3f9f14d1c2cabc96e4b4a0d8350af0116a98351901ad3dfcc1",
+  "profile_questions_prefer_not": "af9b043a2653f607141d6c7f2963025f40ba921823d8a97ad8b4aaf9bec07935",
+  "profile_questions_progress": "50faf7c42e66455dafadd581e817113471d44fe9ca7037f3c30a0c463c3badab",
+  "profile_questions_read_favorites": "9219c2f5ad40e8d7bd17073b303d4b8ac636bce2d3f0d74f593e1206b3eac480",
+  "profile_questions_read_placeholder": "be347631712ab28402540922b4cb2c29b2ec4341549a2c272a36828661703a5a",
+  "profile_questions_read_title": "77932b0b3d35f6a3bd41e7cfe61a8b0c1837311341ad43f49f0fac30bae14850",
+  "profile_questions_row_activities": "8794ee4c4fb92c2318704af82127fff0b9efef07d1106e69f47fb070311a0a5e",
+  "profile_questions_row_conditions": "a1e17b7483a4aac5f2f5aa58db0dbd34794f1ea1f417c74a836dc67059ba73c4",
+  "profile_questions_row_listen": "8b610f7ba0e66521a009570b2324b3b75e4d798a03e161a875592a451d5f974f",
+  "profile_questions_row_play": "64f1a5a813889c17f3875a92b358523bded36fee63dee2e52594d773d51d6525",
+  "profile_questions_row_read": "6f01884100938cef021e2a4df7f47cc7cd755b53ac44a87abd6e0408fdf34f7e",
+  "profile_questions_row_studies": "498b4c2d1e72f6532e7e84fa935f8be6ba5cd555cfcee931c5bc617e8fdfcc4c",
+  "profile_questions_row_support": "8d5755614c8bb2ac11fe9135a00cb0ac7f96357220a6312845e5903296f46166",
+  "profile_questions_row_tools": "8b5b4d904972e926d93db4c52d179a25c3603cc3c930ee1be7aff3545ed85627",
+  "profile_questions_row_watch": "a2cb4568ff21b783ff6bfc3e08a3c62b368733554d0434a097693cd1699b0ded",
+  "profile_questions_row_work": "e28c63c9d1cced48d134dff469166e72f2adae028557d3ffd0935efef21d019a",
+  "profile_questions_save_start_lesson": "4f4520b6119b0b866c2b7a9f6f546347df009afc0464105a0523b02d2a5dcce2",
+  "profile_questions_skip_all": "7790b6ca37f44c055a801d03550de33fefd55122bc1ccf1b0ce14042afe70428",
+  "profile_questions_skip_all_label": "c89b18f798a838766ca99ddd2fe1491f545c6bd1f5f8033f50b3eb185d64e6cd",
+  "profile_questions_something_else": "c44c7f602d8cae2b1d86e899dad3bb0c53241b2bbb4929418ab93670662d0668",
+  "profile_questions_start_lesson": "250c5effefdfec461de9444f51c913fd61e9d93e447ac9aff92cb753a0ffd6dd",
+  "profile_questions_studies_description": "6e2e76c8c0e6cf252e932c0117ae5653c299f4fdc6dc60f44f8bd310a36f4e3a",
+  "profile_questions_studies_title": "1a6ffe128fb61ce920d0d0a1ce165c25a3e121fa4599fd392642b0370f99abf8",
+  "profile_questions_subject": "d0d8491b519b6b784564b2866dddb2369f41d541340083a57a73c6f8b5688a17",
+  "profile_questions_subject_placeholder": "347e6b05e5ff8125c6319481a3afe2e25e0697d00d406ab420d25205152b5489",
+  "profile_questions_suggested": "ea5470fa1a601e19c5bb284aef60bc5e0bee9903af331f8c083758d812e506c8",
+  "profile_questions_support_description": "07603b43daaa933d415b2bb11fa0ace28692b5f76ef8c452f0a62f53028b853c",
+  "profile_questions_support_note": "344e923dfaf3a03f14b224096d0bd0ffb3e71369e90489ff9bca5b300307aee2",
+  "profile_questions_support_note_help": "b2d48b5d04599719144bca471f006fba78493de02c05d1e61cd55277d5b11c8b",
+  "profile_questions_support_placeholder": "4c3d3290f3442eab382a10866cf5c2d36152fa0e2c553c84f0d617d11253a323",
+  "profile_questions_support_title": "ba489165b8c8fa53a89ce1c253c57ae55d4e630de6b7d337a91c191a221546d3",
+  "profile_questions_title": "ed64658e0cb0c9079569a27a6a96335b8bd1a3d522aa9a6cf752f633fef18cda",
+  "profile_questions_tools_description": "e322312182601b80df76386c6932c2a1bb2fb55e43f46176070bfecfe90e20a6",
+  "profile_questions_tools_other": "2869af2e128638debb51787d95450d06baaf2dee15c2edc4fc435f6d2e705702",
+  "profile_questions_tools_placeholder": "bcfeb8dd5029df3bfcadfed9ecf1e781358f353628256a51c2d7e756a1d444de",
+  "profile_questions_tools_title": "175cc9a816e4515842a6efb1fbf775047a97465d3e74e464aa261d3299c93394",
+  "profile_questions_watch_favorites": "a17729ad32e449a806930543f9f7cf313d5e24c9d30fafa2e38aeb800773307f",
+  "profile_questions_watch_placeholder": "b80dfd21b34ac0a08e49f9ae9f6f05465a2ee6b7f1860aced59fb136aa7fbbbd",
+  "profile_questions_watch_title": "f9f22f2dadd110eb14e1a813b8de039e9e2de39467308d6ed6c1ae01f8ca265f",
+  "profile_questions_which_field": "9f63c7668489e37bb71f6960f7b1c02d087d73dab23e77a38a3efe57d0afeeb9",
+  "profile_questions_work_description": "1c503b9f57c58eb5cdece58f67248fcb1caeebaeee6af20e9064adfe4e1ee643",
+  "profile_questions_work_title": "3d9165f3aa4d28c0b93fde3e7acbd474abf2b1692bc7ab771d7cf9b3998439b0",
+  "profile_questions_you_told_us": "5b0592fe1f69d31f49cafc1f048fee7e835224a1b84af85afe1db74e9974542b",
+  "profile_questions_your_day": "5774d4ed6d0c0987e99e8140c560f6584b8ba6dc8d50e8857b6c645358ae059d"
+}
+-->
+<resources>
+    <string name="profile_questions_title">Sobre você</string>
+    <string name="profile_questions_description">O que você conta aqui ajuda a personalizar seus exemplos e seu parceiro. Tudo é opcional.</string>
+    <string name="profile_questions_progress">Sobre você · %1$d de %2$d</string>
+    <string name="profile_questions_skip_all">Pular tudo</string>
+    <string name="profile_questions_skip_all_label">Pular o resto das perguntas sobre você</string>
+    <string name="profile_questions_never_ask">Não me faça essas perguntas de novo</string>
+    <string name="profile_questions_never_ask_help">Você ainda pode responder quando quiser em Configurações › Sobre você.</string>
+    <string name="profile_questions_cap">Escolha até 3.</string>
+    <string name="profile_questions_work_title">O que você faz atualmente?</string>
+    <string name="profile_questions_work_description">A gente vai usar situações do seu dia a dia nos seus exemplos.</string>
+    <string name="profile_questions_job">Sua profissão (opcional)</string>
+    <string name="profile_questions_job_placeholder">Ex.: engenharia de software, enfermagem</string>
+    <string name="profile_questions_earlier_answer">Da sua resposta anterior</string>
+    <string name="profile_questions_prefer_not">Prefiro não dizer</string>
+    <string name="profile_questions_tools_title">Quais aplicativos e ferramentas você mais usa?</string>
+    <string name="profile_questions_tools_description">Escolha até 3. A gente vai usar nos seus exemplos.</string>
+    <string name="profile_questions_tools_other">Outros (opcional)</string>
+    <string name="profile_questions_tools_placeholder">Ex.: Photoshop, Python, SAP</string>
+    <string name="profile_questions_none">Nenhuma dessas opções</string>
+    <string name="profile_questions_studies_title">O que você já estudou?</string>
+    <string name="profile_questions_studies_description">Vale o que você estuda ou já estudou, mesmo sem terminar. Pode ser diferente do seu trabalho.</string>
+    <string name="profile_questions_nothing_to_add">Nada a acrescentar</string>
+    <string name="profile_questions_subject">%1$s: curso ou matéria (opcional)</string>
+    <string name="profile_questions_which_field">Qual área?</string>
+    <string name="profile_questions_subject_placeholder">Ex.: jornalismo</string>
+    <string name="profile_questions_interest_description">Escolha até 3. A gente vai usar nos exemplos das suas aulas.</string>
+    <string name="profile_questions_watch_title">O que você gosta de assistir?</string>
+    <string name="profile_questions_watch_favorites">Séries, filmes, times ou canais favoritos (opcional)</string>
+    <string name="profile_questions_watch_placeholder">Ex.: Star Trek, Flamengo</string>
+    <string name="profile_questions_listen_title">O que você gosta de ouvir?</string>
+    <string name="profile_questions_listen_favorites">Artistas ou podcasts favoritos (opcional)</string>
+    <string name="profile_questions_listen_placeholder">Ex.: Coldplay, Radiolab</string>
+    <string name="profile_questions_play_title">O que você gosta de jogar?</string>
+    <string name="profile_questions_play_favorites">Jogos favoritos (opcional)</string>
+    <string name="profile_questions_play_placeholder">Ex.: Catan, Valorant</string>
+    <string name="profile_questions_read_title">O que você gosta de ler?</string>
+    <string name="profile_questions_read_favorites">Livros, autores ou sites favoritos (opcional)</string>
+    <string name="profile_questions_read_placeholder">Ex.: Dune, The Economist</string>
+    <string name="profile_questions_activities_title">O que você gosta de fazer?</string>
+    <string name="profile_questions_activities_favorites">O que mais você curte? (opcional)</string>
+    <string name="profile_questions_activities_placeholder">Ex.: fazer pão, carros, astronomia</string>
+    <string name="profile_questions_conditions_title">Alguma dessas opções se aplica a você?</string>
+    <string name="profile_questions_conditions_description">Opcional. Nada aqui é salvo sem sua autorização.</string>
+    <string name="profile_questions_conditions_next">Opcional. Na próxima tela, a gente vai sugerir o que costuma ajudar. Nada aqui é salvo sem sua autorização.</string>
+    <string name="profile_questions_condition_note">O que a gente deve saber?</string>
+    <string name="profile_questions_consent">Salvar isso no meu perfil</string>
+    <string name="profile_questions_consent_help">O Zoonk usa essas informações para se adaptar a você, agora e com o tempo. Elas nunca são compartilhadas nem usadas nos exemplos das aulas. Você pode apagar essas informações quando quiser em Configurações.</string>
+    <string name="profile_questions_support_title">O que te ajuda a aprender?</string>
+    <string name="profile_questions_support_description">Escolha tudo o que te ajuda. Não precisa de rótulo nem diagnóstico.</string>
+    <string name="profile_questions_suggested">A gente pesquisou o que costuma ajudar com as opções que você escolheu. Mude o que quiser.</string>
+    <string name="profile_questions_nothing_particular">Nada em especial</string>
+    <string name="profile_questions_something_else">+ Algo mais que ajuda</string>
+    <string name="profile_questions_support_note">O que te ajuda, nas suas palavras (opcional)</string>
+    <string name="profile_questions_support_placeholder">Ex.: entendo diagramas melhor do que textos</string>
+    <string name="profile_questions_support_note_help">A gente vai guardar isso para seu parceiro. Você pode apagar essa informação em Memória.</string>
+    <string name="profile_questions_lesson_ready">A aula 1 está pronta.</string>
+    <string name="profile_questions_start_lesson">Começar a aula 1</string>
+    <string name="profile_questions_save_start_lesson">Salvar e começar a aula 1</string>
+    <string name="profile_questions_your_day">Seu dia</string>
+    <string name="profile_questions_for_fun">Por diversão</string>
+    <string name="profile_questions_how_learn">Como você aprende</string>
+    <string name="profile_questions_row_work">O que você faz hoje</string>
+    <string name="profile_questions_row_tools">Aplicativos e ferramentas</string>
+    <string name="profile_questions_row_studies">O que você estudou</string>
+    <string name="profile_questions_row_watch">Assistir</string>
+    <string name="profile_questions_row_listen">Ouvir</string>
+    <string name="profile_questions_row_play">Reproduzir</string>
+    <string name="profile_questions_row_read">Ler</string>
+    <string name="profile_questions_row_activities">Fazer</string>
+    <string name="profile_questions_row_conditions">Condições</string>
+    <string name="profile_questions_row_support">O que te ajuda a aprender</string>
+    <string name="profile_questions_not_answered">Sem resposta</string>
+    <string name="profile_questions_not_shared">Não informado</string>
+    <string name="profile_questions_add">Adicionar</string>
+    <plurals name="profile_questions_conditions_saved">
+        <item quantity="one">%1$d salva</item>
+        <item quantity="many">%1$d salvas</item>
+        <item quantity="other">%1$d salvas</item>
+    </plurals>
+    <string name="profile_questions_memory_off">A Memória está desativada, então o Zoonk não usa informações sobre seu dia ou o que você faz por diversão. Ative esse recurso em Memória para mudar essas informações.</string>
+    <string name="profile_questions_you_told_us">Você contou para a gente</string>
+</resources>

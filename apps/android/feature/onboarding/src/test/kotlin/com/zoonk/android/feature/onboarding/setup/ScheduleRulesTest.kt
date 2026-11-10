@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.feature.onboarding.suggestion
 import com.zoonk.android.feature.onboarding.suggestionFor
 import com.zoonk.android.feature.plan.TimeLine
@@ -14,6 +15,28 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ScheduleRulesTest {
+    @Test
+    fun shorterDaysStartOnCoreRecommendationUntilTheLearnerPicks() {
+        val view = setupView(listOf("schedule", "plan"), startsOnRecommended = true).copy(recommendedMinutes = 10)
+        val recommendation = view.recommendedMinutes.toInt()
+        val plan = found(recommended = 60)
+        assertEquals(10, shownMinutes(recommendation, null, null, null, settled = false, startsOnRecommended = view.startsOnRecommended))
+        assertEquals(10, shownMinutes(recommendation, plan, plan, null, settled = false, startsOnRecommended = view.startsOnRecommended))
+        assertEquals(25, shownMinutes(10, plan, plan, 25, settled = false, startsOnRecommended = true))
+        assertEquals(60, pickedMinutes(plan, plan, 60, startsOnRecommended = true))
+        assertEquals(
+            60,
+            shownMinutes(
+                10,
+                plan,
+                plan,
+                pickedMinutes(plan, plan, 60, startsOnRecommended = true),
+                settled = false,
+                startsOnRecommended = true,
+            ),
+        )
+    }
+
     /** As the API answers: a passed date has no times, and the suggestion follows from the two times. */
     private fun found(
         recommended: Long? = 35,
