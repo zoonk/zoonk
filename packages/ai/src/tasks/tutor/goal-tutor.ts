@@ -268,7 +268,7 @@ export async function generateGoalTutorAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: context,
     generate: () => generateText(options),
-    systemPrompt: options.instructions,
+    systemPrompt: `${getSystemPrompt({ ...input, learnerNeeds: undefined })}\n${learnerNeedsPrompt}`,
     task: GOAL_TUTOR_TASK,
   });
 
@@ -316,7 +316,7 @@ export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
         }),
         onError: suppressProviderError,
       }),
-    systemPrompt: getSystemPrompt(input),
+    systemPrompt: `${getSystemPrompt({ ...input, learnerNeeds: undefined })}\n${learnerNeedsPrompt}`,
     task: GOAL_TUTOR_TASK,
   });
 

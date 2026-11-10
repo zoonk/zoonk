@@ -97,7 +97,7 @@ export async function generateExampleLines(params: GenerateExampleLinesParams) {
         providerOptions,
         reasoning,
       }),
-    systemPrompt,
+    systemPrompt: promptTemplate,
     task: "example-lines",
   });
 

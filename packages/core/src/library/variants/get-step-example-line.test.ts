@@ -165,6 +165,10 @@ describe(getStepExampleLine, () => {
 
     await requestStepExampleLine({ stepId: step.id });
 
+    expect(generateMemorySearchTerms).toHaveBeenCalledWith(
+      expect.objectContaining({ analytics: { contentScope: "personal", distinctId: learner.id } }),
+    );
+
     const candidates = vi.mocked(selectRelevantMemoryFacts).mock.calls[0]?.[0].facts;
 
     expect(candidates).toStrictEqual(
