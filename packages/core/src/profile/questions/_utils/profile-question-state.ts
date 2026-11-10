@@ -8,6 +8,7 @@ import {
 import { isJsonObject } from "@zoonk/utils/json";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { normalizeProfileAnswer } from "../profile-answer-normalization";
+import { normalizeProfileFavorites } from "../profile-favorites";
 import { PROFILE_OPTION_IDS } from "../profile-option-ids";
 import { PROFILE_CONTENT } from "../profile-options";
 import {
@@ -129,7 +130,9 @@ function questionAnswer({
     case "watch":
       return {
         declined,
-        favorites: Array.isArray(first.favorites) ? first.favorites.join(",") : "",
+        favorites: Array.isArray(first.favorites)
+          ? normalizeProfileFavorites(first.favorites.join(","))
+          : "",
         picks: first.picks ?? [],
       };
     default:

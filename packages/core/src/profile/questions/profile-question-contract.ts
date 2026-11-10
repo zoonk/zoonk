@@ -3,6 +3,7 @@ import { LearnerConditionKind, LearningNeed, type ProfileQuestion } from "@zoonk
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "../../memory/memory-limits";
+import { normalizeProfileFavorites } from "./profile-favorites";
 import { PROFILE_OPTION_IDS } from "./profile-option-ids";
 
 export const PROFILE_QUESTIONS = [
@@ -64,7 +65,7 @@ const picksAnswer = <const T extends readonly [string, ...string[]]>(ids: T) =>
       declined,
       favorites: z
         .string()
-        .trim()
+        .overwrite(normalizeProfileFavorites)
         .max(MAX_PROFILE_FAVORITES_LENGTH)
         .default("")
         .meta({

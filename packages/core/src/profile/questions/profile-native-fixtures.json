@@ -304,7 +304,7 @@
       "answer": {
         "answer": {
           "declined": false,
-          "favorites": "Star Trek,Fringe",
+          "favorites": "Star Trek, Fringe",
           "picks": [
             "anime",
             "sciFi"
@@ -362,7 +362,7 @@
             "sciFi"
           ],
           "studies": [],
-          "text": "Star Trek,Fringe"
+          "text": "Star Trek, Fringe"
         },
         "status": "answered",
         "version": 1
