@@ -16,6 +16,7 @@ import {
   type OnboardingRoutes,
   type RevealedPlan,
 } from "./onboarding-actions";
+import { OnboardingScreenTop } from "./onboarding-frame";
 import { BuddyStep } from "./steps/buddy-step";
 import { DateStep } from "./steps/date-step";
 import { ExamChoiceStep } from "./steps/exam-choice-step";
@@ -151,6 +152,7 @@ function QuestionStepScreen({
 export function OnboardingStepScreen(props: Parameters<typeof StepScreen>[0]) {
   return (
     <ClaimedDeckProvider warmUp={props.view.warmUp}>
+      <OnboardingScreenTop key={props.step} />
       <StepScreen {...props} />
     </ClaimedDeckProvider>
   );
