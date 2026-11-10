@@ -46,7 +46,7 @@ test.describe("Personal example lines", () => {
       readBody({ response: await api.get(path), schema: stepExampleLineSchema });
 
     const contextKey = createHash("sha256")
-      .update(JSON.stringify({ goal: null, statements: [fact.statement] }))
+      .update(JSON.stringify({ goal: null, plainWords: false, statements: [fact.statement] }))
       .digest("hex");
 
     await prisma.stepExampleLine.create({
