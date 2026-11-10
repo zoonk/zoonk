@@ -1,6 +1,5 @@
 "use client";
 
-import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { ListChecksIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -18,9 +17,6 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components
 import { SectionLabel } from "../_components/section-label";
 import { SkillList } from "../_components/skill-list";
 import { TestOutStartRow } from "../_components/test-out-start-link";
-import { useServedState } from "../_utils/use-served-state";
-import { type MindMapActions } from "../mind-maps/mind-map-actions";
-import { MindMapRow } from "../mind-maps/mind-map-row";
 import {
   type ChapterActions,
   type ChapterHrefs,
@@ -28,35 +24,23 @@ import {
   useChapterScreen,
 } from "./chapter-context";
 import { ChapterBar, ChapterHeader } from "./chapter-header";
+import {
+  ChapterMapAside,
+  ChapterMapProvider,
+  ChapterMapRow,
+  type ChapterMindMap,
+  WIDE_ONLY_CLASS,
+  useHasAsideMap,
+} from "./chapter-mind-map";
 import { ChapterMistakes } from "./chapter-mistakes";
 
 export type { AreaPracticeOutcome } from "../_utils/use-practice-run";
 export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
-type ChapterMindMap = { actions: MindMapActions; plus: boolean; view: ChapterMindMapView };
-
 const PRACTICE_TITLE_ID = "chapter-practice-title";
 const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
-
-function ChapterMapRow({ mindMap }: { mindMap: ChapterMindMap }) {
-  const [view, setView] = useServedState(mindMap.view);
-
-  if (view.status === "unavailable") {
-    return null;
-  }
-
-  return (
-    <MindMapRow
-      actions={mindMap.actions}
-      onViewChange={setView}
-      place="chapter"
-      plus={mindMap.plus}
-      view={view}
-    />
-  );
-}
 
 function ChapterSummary({
   renderLessonText,
@@ -65,35 +49,45 @@ function ChapterSummary({
 }) {
   const t = useExtracted();
   const { chapter } = useChapterScreen();
+  const hasMap = useHasAsideMap();
+  const hasSummary = chapter.skills.length > 0 || chapter.summaries.length > 0;
 
-  if (chapter.skills.length === 0 && chapter.summaries.length === 0) {
+  if (!hasMap && !hasSummary) {
     return null;
   }
 
   return (
-    <PageSection aria-labelledby={REFERENCE_TITLE_ID}>
+    <PageSection
+      aria-labelledby={REFERENCE_TITLE_ID}
+      // With only the map, the section is empty where the map sits under the header instead.
+      className={hasSummary ? undefined : WIDE_ONLY_CLASS}
+    >
       <PageSectionHeader>
         <PageSectionTitle id={REFERENCE_TITLE_ID}>{t("For reference")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ListGroup>
-        <Disclosure
-          icon={
-            <ListRowIcon>
-              <ListChecksIcon />
-            </ListRowIcon>
-          }
-          title={t("Chapter summary")}
-        >
-          {chapter.skills.length > 0 && (
-            <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
-              <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
-              <SkillList skills={chapter.skills} />
-            </section>
-          )}
-          <LessonSummaries renderText={renderLessonText} summaries={chapter.summaries} />
-        </Disclosure>
-      </ListGroup>
+      <ChapterMapAside />
+
+      {hasSummary && (
+        <ListGroup>
+          <Disclosure
+            icon={
+              <ListRowIcon>
+                <ListChecksIcon />
+              </ListRowIcon>
+            }
+            title={t("Chapter summary")}
+          >
+            {chapter.skills.length > 0 && (
+              <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
+                <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
+                <SkillList skills={chapter.skills} />
+              </section>
+            )}
+            <LessonSummaries renderText={renderLessonText} summaries={chapter.summaries} />
+          </Disclosure>
+        </ListGroup>
+      )}
     </PageSection>
   );
 }
@@ -150,10 +144,8 @@ function ChapterProgress() {
 }
 
 function ChapterBody({
-  mindMap,
   renderLessonText,
 }: {
-  mindMap: ChapterMindMap | null;
   renderLessonText: (text: string) => React.ReactNode;
 }) {
   const t = useExtracted();
@@ -174,7 +166,7 @@ function ChapterBody({
     >
       <DetailAside>
         <ChapterHeader />
-        {mindMap && <ChapterMapRow mindMap={mindMap} />}
+        <ChapterMapRow />
       </DetailAside>
 
       <DetailContent>
@@ -207,7 +199,9 @@ export function ChapterScreen({
 }) {
   return (
     <ChapterScreenProvider value={{ actions, ask, chapter, hrefs }}>
-      <ChapterBody mindMap={mindMap} renderLessonText={renderLessonText} />
+      <ChapterMapProvider mindMap={mindMap}>
+        <ChapterBody renderLessonText={renderLessonText} />
+      </ChapterMapProvider>
     </ChapterScreenProvider>
   );
 }

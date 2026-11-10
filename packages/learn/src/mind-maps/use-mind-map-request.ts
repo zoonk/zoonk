@@ -11,6 +11,8 @@ const WRITING_POLL_MS = 15_000;
 
 export type MindMapShown = MindMapStatus | "refused" | "unreachable";
 
+export type MindMapRequest = ReturnType<typeof useMindMapRequest>;
+
 /** What only this device knows: the server keeps no refusal, and can't say it wasn't reached. */
 type Local = { limit?: MindMapLimit; shown: "refused" | "unreachable" };
 

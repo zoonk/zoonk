@@ -14944,3 +14944,8 @@ msgstr "다음 주"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "이번 주 이 스킬의 요일별 정답 기록"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "전체 화면"

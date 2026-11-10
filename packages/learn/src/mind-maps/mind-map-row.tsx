@@ -25,14 +25,9 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { toMindMapSrc } from "./_utils/mind-map-urls";
 import { type MindMapActions } from "./mind-map-actions";
+import { type MindMapCopyInput, type MindMapRowPlace, useStateLines } from "./mind-map-copy";
 import { MindMapViewer } from "./mind-map-viewer";
-import { type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
-
-/**
- * Where the row sits changes only its words: the chapter page names it "Mind map", the moment a
- * chapter ends and the Mind maps page name the chapter.
- */
-type MindMapRowPlace = "chapter" | "finish" | "library";
+import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
 
 const SLOT_CLASS = "flex size-12 shrink-0 items-center justify-center rounded-lg";
 
@@ -76,91 +71,7 @@ function MapSlot({ shown, view }: { shown: MindMapShown; view: ChapterMindMapVie
   );
 }
 
-/** A list says once, above its rows, what writing the lessons costs and what Plus opens (`MindMapsScreen`). */
-function useAvailableLine({ place, plus, shown, view }: RowCopyInput): string | null {
-  const t = useExtracted();
-
-  if (shown === "plusRequired" && place === "library") {
-    return t("Plus");
-  }
-
-  const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
-
-  const count = view.lessonsToWrite;
-
-  if (writesLessons && place === "library") {
-    return t("{count, plural, one {# lesson to write} other {# lessons to write}}", { count });
-  }
-
-  if (writesLessons) {
-    return plus
-      ? t(
-          "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}",
-          { count },
-        )
-      : t(
-          "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
-          { count },
-        );
-  }
-
-  return place === "library" ? null : t("Its main ideas in one picture");
-}
-
-type RowCopyInput = {
-  place: MindMapRowPlace;
-  plus: boolean;
-  shown: MindMapShown;
-  view: ChapterMindMapView;
-};
-
-function useReadyLine({ place, view }: RowCopyInput): string | null {
-  const t = useExtracted();
-
-  if (!view.image) {
-    return place === "library"
-      ? t("As text")
-      : t("Its picture had mistakes, so here's the mind map as text.");
-  }
-
-  if (place === "finish") {
-    return t("Mind map ready");
-  }
-
-  return place === "chapter" ? t("Its main ideas in one picture") : null;
-}
-
-function useStateLines(input: RowCopyInput): { hint: string | null; line: string | null } {
-  const t = useExtracted();
-  const available = useAvailableLine(input);
-  const ready = useReadyLine(input);
-
-  if (input.shown === "writingLessons") {
-    return {
-      hint: t("This takes a few minutes. You can leave; it'll be here."),
-      line: t("Writing the lessons, then the mind map…"),
-    };
-  }
-
-  if (input.shown === "drawing") {
-    return {
-      hint: t("About half a minute. You can leave; it'll be here."),
-      line: t("Drawing the mind map…"),
-    };
-  }
-
-  if (input.shown === "failed") {
-    return { hint: null, line: t("It couldn't be made this time.") };
-  }
-
-  if (input.shown === "unreachable") {
-    return { hint: null, line: t("We couldn't reach the server. Check your connection.") };
-  }
-
-  return { hint: null, line: input.shown === "ready" ? ready : available };
-}
-
-function RowText({ input, titleId }: { input: RowCopyInput; titleId: string }) {
+function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string }) {
   const t = useExtracted();
   const { hint, line } = useStateLines(input);
   const { place, view } = input;
@@ -231,27 +142,26 @@ function RowAction({
   return null;
 }
 
-/** The same row on the chapter page, at a chapter's end and on the Mind maps page. */
-export function MindMapRow({
-  actions,
-  onViewChange,
+/** The row for a map whose request someone else follows, like a page that shows it twice. */
+export function MindMapRowView({
+  className,
   place,
   plus,
+  request,
   view,
 }: {
-  actions: MindMapActions;
-  onViewChange: (view: ChapterMindMapView) => void;
+  className?: string;
   place: MindMapRowPlace;
   plus: boolean;
+  request: MindMapRequest;
   view: ChapterMindMapView;
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const titleId = useId();
   const [open, setOpen] = useState(false);
-  const request = useMindMapRequest({ actions, onViewChange, view });
   const { create, isPending, limit, retry, shown } = request;
-  const input: RowCopyInput = { place, plus, shown, view };
+  const input: MindMapCopyInput = { place, plus, shown, view };
   const ready = shown === "ready" && view.outline !== null;
 
   if (shown === "unavailable") {
@@ -270,7 +180,7 @@ export function MindMapRow({
   );
 
   return (
-    <div className="flex flex-col gap-1" data-slot="mind-map-row">
+    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
       {ready && (
         <button className={LIST_ROW_INTERACTIVE_CLASS} onClick={() => setOpen(true)} type="button">
           {body}
@@ -322,4 +232,23 @@ export function MindMapRow({
       )}
     </div>
   );
+}
+
+/** The same row on the chapter page, at a chapter's end and on the Mind maps page. */
+export function MindMapRow({
+  actions,
+  onViewChange,
+  place,
+  plus,
+  view,
+}: {
+  actions: MindMapActions;
+  onViewChange: (view: ChapterMindMapView) => void;
+  place: MindMapRowPlace;
+  plus: boolean;
+  view: ChapterMindMapView;
+}) {
+  const request = useMindMapRequest({ actions, onViewChange, view });
+
+  return <MindMapRowView place={place} plus={plus} request={request} view={view} />;
 }

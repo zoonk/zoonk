@@ -21,13 +21,16 @@ import { usePanZoom } from "./use-pan-zoom";
 
 const PERCENT = 100;
 
-function MindMapDownloadLink({
+export function MindMapDownloadLink({
   className,
   image,
+  label,
   title,
 }: {
   className: string;
   image: MindMapImage;
+  /** Shown beside the icon; without it the icon stands alone. */
+  label?: string;
   title: string;
 }) {
   const t = useExtracted();
@@ -39,7 +42,7 @@ function MindMapDownloadLink({
       href={toMindMapDownloadHref(image.url)}
     >
       <DownloadIcon aria-hidden="true" />
-      <span className="sr-only">{t("Download")}</span>
+      {label ?? <span className="sr-only">{t("Download")}</span>}
     </a>
   );
 }

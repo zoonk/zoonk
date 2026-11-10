@@ -14944,3 +14944,8 @@ msgstr "Gelecek hafta"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Haftanın günlerine göre bu beceride verilen doğru cevaplar"
+
+#: src/mind-maps/mind-map-aside.tsx
+msgctxt "FZBGji"
+msgid "Full screen"
+msgstr "Tam ekranda aç"
