@@ -89,6 +89,7 @@ async function playLesson(page: Page) {
 }
 
 async function replayFromToday(page: Page, lesson: { id: string; title: string }) {
+  await page.getByRole("button", { name: /^\d+ done/u }).click();
   await page.getByRole("link", { name: `${lesson.title}, done` }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?from=%2Ftoday$`, "u"));
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
