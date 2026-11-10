@@ -1,5 +1,6 @@
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
@@ -15,6 +16,25 @@ async function readFirstLesson(goalId: string) {
 }
 
 describe(getOnboarding, () => {
+  it.each([null, 45])(
+    "suggests shorter days while preserving a course's chosen time: %s",
+    async (dailyMinutes) => {
+      const user = await userFixture();
+      await learningProfileFixture({ learningNeeds: ["shorterDays"], userId: user.id });
+
+      const goal = await goalFixture({
+        details: dailyMinutes === null ? {} : { courseStart: { dailyMinutes } },
+        userId: user.id,
+      });
+
+      mockSession(user.id);
+
+      await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+        onboarding: { recommendedMinutes: dailyMinutes ?? 10 },
+      });
+    },
+  );
+
   it("reads onboarding display without writing", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ details: { answered: [] }, userId: user.id });

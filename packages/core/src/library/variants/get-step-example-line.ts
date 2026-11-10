@@ -1,11 +1,12 @@
 import "server-only";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
-import { type StepExampleLine, prisma } from "@zoonk/db";
+import { MemoryCategory, type StepExampleLine, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { markMemoryFactsUsed } from "../../memory/_utils/mark-facts-used";
+import { selectMemoryFacts, startMemorySearch } from "../../memory/get-memory-for-task";
 import { getSession } from "../../users/get-session";
 import { toProvenanceData } from "../_utils/library-rows";
 import { canViewLibraryRow } from "../_utils/library-visibility";
@@ -21,12 +22,13 @@ type StepExampleLineResult =
 type LessonLines =
   | { status: "unauthorized" }
   | RefusedUsage
-  | { lines: StepExampleLine[]; status: "ready" };
+  | { canRequest: boolean; lines: StepExampleLine[]; status: "ready" };
 
 type LessonLinesInput = {
   context: ExampleLineContext;
   language: string;
   lessonId: string;
+  lessonTitle: string;
   userId: string;
   version: number;
 };
@@ -45,7 +47,9 @@ function getSlot(content: unknown) {
 
 async function findExplanation(stepId: string) {
   const step = await prisma.step.findUnique({
-    include: { lesson: { select: { language: true, ownerId: true, visibility: true } } },
+    include: {
+      lesson: { select: { language: true, ownerId: true, title: true, visibility: true } },
+    },
     where: { id: stepId },
   });
 
@@ -57,6 +61,7 @@ async function findExplanation(stepId: string) {
     hasSlot: Boolean(getSlot(step.content)),
     language: step.lesson.language,
     lessonId: step.lessonId,
+    lessonTitle: step.lesson.title,
     version: step.version,
   };
 }
@@ -109,6 +114,7 @@ async function writeLessonLines({
   context,
   language,
   lessonId,
+  lessonTitle,
   userId,
   version,
 }: LessonLinesInput): Promise<LessonLines> {
@@ -118,7 +124,7 @@ async function writeLessonLines({
   const missing = screens.filter((screen) => !current.some((row) => row.stepId === screen.id));
 
   if (missing.length === 0) {
-    return { lines: current, status: "ready" };
+    return { canRequest: false, lines: current, status: "ready" };
   }
 
   const usage = await claimAssist();
@@ -127,7 +133,19 @@ async function writeLessonLines({
     return usage;
   }
 
-  await markMemoryFactsUsed({ ids: context.facts.map((fact) => fact.id), now: new Date(), userId });
+  const request = {
+    candidateIds: context.facts.map((fact) => fact.id),
+    categories: Object.values(MemoryCategory),
+    language,
+    markUsed: false,
+    need: `Example lines for the lesson "${lessonTitle}": ${missing.map((screen) => screen.idea).join("; ")}`,
+    userId,
+  };
+
+  const search = await startMemorySearch(request);
+
+  const picked =
+    "facts" in search ? search.facts : await selectMemoryFacts({ ...request, terms: search.terms });
 
   const { data, provenance } = await generateExampleLines({
     analytics: { contentScope: "personal", distinctId: userId },
@@ -135,15 +153,22 @@ async function writeLessonLines({
       ...current.flatMap((row) => row.text ?? []),
       ...(await loadEarlierLines({ lessonId, userId })),
     ],
-    facts: context.facts.map((fact) => fact.statement),
+    facts: picked.map((fact) => fact.statement),
     goal: context.goal,
     language,
+    plainWords: context.plainWords,
     screens: missing.map(({ idea, text }) => ({ idea, text })),
   });
 
   const missingIds = missing.map((screen) => screen.id);
 
-  await writeLearnerChange({ userId }, async (tx) => {
+  return writeLearnerChange<LessonLines>({ userId }, async (tx) => {
+    const fresh = await loadExampleLineContext({ client: tx, userId });
+
+    if (fresh?.key !== context.key) {
+      return unchanged({ canRequest: fresh !== null, lines: [], status: "ready" });
+    }
+
     const removed = await tx.stepExampleLine.deleteMany({
       where: { contextKey: { not: context.key }, stepId: { in: missingIds }, userId },
     });
@@ -159,15 +184,25 @@ async function writeLessonLines({
       skipDuplicates: true,
     });
 
-    if (removed.count === 0 && created.count === 0) {
-      return unchanged(null);
-    }
-  });
+    const lines = await tx.stepExampleLine.findMany({
+      where: { contextKey: context.key, stepId: { in: stepIds }, userId },
+    });
 
-  return {
-    lines: await loadCurrentLines({ contextKey: context.key, stepIds, userId }),
-    status: "ready",
-  };
+    const result = { canRequest: false, lines, status: "ready" as const };
+
+    if (removed.count === 0 && created.count === 0) {
+      return unchanged(result);
+    }
+
+    await markMemoryFactsUsed({
+      client: tx,
+      ids: picked.map((fact) => fact.id),
+      now: new Date(),
+      userId,
+    });
+
+    return result;
+  });
 }
 
 function writeLessonLinesOnce(input: LessonLinesInput): Promise<LessonLines> {
@@ -217,9 +252,7 @@ async function resolveStepExampleLine({
     return { status: "notFound" };
   }
 
-  const context = screen.hasSlot
-    ? await loadExampleLineContext({ language: screen.language, userId })
-    : null;
+  const context = screen.hasSlot ? await loadExampleLineContext({ userId }) : null;
 
   if (!context) {
     return { canRequest: false, line: null, status: "ready" };
@@ -241,6 +274,7 @@ async function resolveStepExampleLine({
     context,
     language: screen.language,
     lessonId: screen.lessonId,
+    lessonTitle: screen.lessonTitle,
     userId,
     version: screen.version,
   });
@@ -250,7 +284,7 @@ async function resolveStepExampleLine({
   }
 
   return {
-    canRequest: false,
+    canRequest: written.canRequest,
     line: written.lines.find((row) => row.stepId === stepId)?.text ?? null,
     status: "ready",
   };

@@ -68,7 +68,7 @@ export function getGoalSize({
 }
 
 /** Returns a selectable onboarding default, not a coverage guarantee; only the built plan establishes coverage. */
-export function getRecommendedMinutes({
+function getScheduledMinutes({
   size,
   targetDate,
   today,
@@ -92,4 +92,11 @@ export function getRecommendedMinutes({
   return (
     BY_DAYS_LEFT[size].find((step) => daysLeft <= step.maxDays)?.minutes ?? WITHOUT_DEADLINE[size]
   );
+}
+
+export function getRecommendedMinutes(
+  input: Parameters<typeof getScheduledMinutes>[0] & { shorterDays?: boolean },
+): number {
+  const recommended = getScheduledMinutes(input);
+  return input.shorterDays ? Math.min(recommended, 10) : recommended;
 }

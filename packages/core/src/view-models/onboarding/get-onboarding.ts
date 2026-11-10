@@ -240,7 +240,7 @@ export async function getOnboarding({
       readPlanReadiness({ goalId: goal.id, userId }),
       readGoalOpening({ lessonId: goal.openingLessonId, userId }),
       readWarmUpState(goal.warmUpId),
-      readProfileQuestionState(userId).then((state) => toProfileQuestionsView({ locale, state })),
+      readProfileQuestionState(userId),
     ]);
 
   const [earlierGoals, [view]] = await Promise.all([
@@ -286,6 +286,7 @@ export async function getOnboarding({
   const recommendedMinutes =
     courseStart?.dailyMinutes ??
     getRecommendedMinutes({
+      shorterDays: profileState.profile?.learningNeeds.includes("shorterDays"),
       size: getGoalSize({
         hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
         isClassTest: isClassTest(details) || notice.fromMaterial,
@@ -317,7 +318,7 @@ export async function getOnboarding({
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       planRevealed: !isPlanRevealOwed(goal),
-      profile: profileState,
+      profile: toProfileQuestionsView({ locale, state: profileState }),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,
