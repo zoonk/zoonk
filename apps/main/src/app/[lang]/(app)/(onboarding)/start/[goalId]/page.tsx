@@ -25,6 +25,7 @@ import {
 } from "@zoonk/learn/onboarding/frame";
 import { StepsSkeleton } from "@zoonk/learn/onboarding/skeletons";
 import { safeAsync } from "@zoonk/utils/error";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -74,7 +75,9 @@ async function StepsContent({ params }: Props) {
     );
   }
 
-  const [result, session] = await Promise.all([getOnboarding({ goalId }), getSession()]);
+  const [result, session] = await Promise.all([getOnboarding({ goalId, locale: getSupportedLocaleFromLanguage(lang) }),
+    getSession(),
+  ]);
 
   if (result.status === "unauthorized") {
     return <StepsGate goalId={goalId} />;

@@ -30,4 +30,18 @@ describe(postAsLearner, () => {
       status: 403,
     });
   });
+
+  it("asks the API in the learner's language", async () => {
+    const fetcher = vi.fn().mockResolvedValueOnce(Response.json({}));
+    vi.stubGlobal("fetch", fetcher);
+
+    await postAsLearner({ locale: "pt", path: "/v1/example" });
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({ "Accept-Language": "pt" }),
+      }),
+    );
+  });
 });
