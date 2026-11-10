@@ -67,7 +67,7 @@
   "today_mistakes_tomorrow": "96ea1877746e4d4fb7014702bd54c9fe9c0eec7f760e8f9c29f6e6b3bcbd40d9",
   "today_mock_funding": "2cb1731f3c393b7d4fc507c8732fe06a0fadf013d1b882bcfc0ee1d08fb97609",
   "today_mock_funding_welcome_back": "4d3b154132a135e3731e78e053811feac83763fed9628c96ddaf1e5d8c0842e0",
-  "today_more_count": "f7afb95f83e97759540a977ff3f04552826ecfd11a5ed4482042ffa39d5d1316",
+  "today_more_count": "0825d23bc85181d2af0b71f5e9256b75b49e875e795de47f2df0dc31bcc1e6f6",
   "today_more_time_a_day": "88e5a197ec3526208acca8599c2d46d53f1d4834f2740e992a38d0222369042c",
   "today_more_time_or_later_date": "d34ce7b8c4037b44e49e2551ee66eabf137e29876eb0bd45332fcdf45bc49d12",
   "today_new_goal": "7369b1598b5f466cdc4714e90ef099eed0b915dd84bb2e1c26a2c31816f2a532",
@@ -253,9 +253,9 @@
         <item quantity="other">%d completati</item>
     </plurals>
     <plurals name="today_more_count">
-        <item quantity="one">+%d in più</item>
-        <item quantity="many">+%d in più</item>
-        <item quantity="other">+%d in più</item>
+        <item quantity="one">+%d altro</item>
+        <item quantity="many">+%d altri</item>
+        <item quantity="other">+%d altri</item>
     </plurals>
     <!-- Folds the session's later steps back under today_more_count. -->
     <string name="today_show_less">Mostra meno</string>
