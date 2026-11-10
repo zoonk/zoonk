@@ -96,7 +96,6 @@ internal fun LazyListScope.todaySession(
     buddyName: String,
 ) {
     val day = model.day
-    val next = day.nextStep
 
     if (model.today.earlierWork.isNotEmpty()) {
         item(key = "earlier-work", contentType = "earlier-work") { EarlierWork(model, Modifier.pageItem().padding(top = 16.dp)) }
@@ -115,24 +114,7 @@ internal fun LazyListScope.todaySession(
         ) { DayMeta(model, rememberActionStatus(model, viewModel), Modifier.pageItem().padding(top = 8.dp)) }
     }
 
-    if (next != null) {
-        sessionQueue(model, next, viewModel, actions, list)
-    } else {
-        itemsIndexed(day.steps, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
-            val replay = step.lessonToReplay
-            StepRow(
-                model,
-                step,
-                isNext = false,
-                opens = replay != null,
-                busy = false,
-                onOpen = { replay?.let { actions.navigate(AppRoute.Lesson(it.toString())) } },
-                Modifier.pageRow(),
-                divider = index != day.steps.lastIndex || day.plusLessons.isNotEmpty(),
-            )
-        }
-        plusLessons(day.plusLessons, actions, visible = day.plusLessons.size, endsList = true)
-    }
+    sessionQueue(model, day.nextStep, viewModel, actions, list)
 
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
 
@@ -189,15 +171,17 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
 
 private fun LazyListScope.sessionQueue(
     model: TodayDayModel,
-    next: DayStep,
+    next: DayStep?,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
     list: LazyListState,
 ) {
-    val queue = model.day.queue(next.position)
+    if (model.day.steps.isEmpty() && model.day.plusLessons.isEmpty()) return
+
+    val queue = model.day.queue
     val foldsDone = queue.done.size > DONE_ROWS
     val moreOpen = viewModel.moreOpen
-    val coming = if (model.day.lessonsComing || model.day.lessonsToPrepare) 1 else 0
+    val coming = if (next != null && (model.day.lessonsComing || model.day.lessonsToPrepare)) 1 else 0
     val upcoming = queue.after.size + coming + model.day.plusLessons.size
     val more = (upcoming - UPCOMING_ROWS).coerceAtLeast(0)
     val shownAfter = if (moreOpen) queue.after else queue.after.take(UPCOMING_ROWS)
@@ -223,19 +207,19 @@ private fun LazyListScope.sessionQueue(
         }
     }
 
-    val rowsShown = (if (!foldsDone || viewModel.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
+    val rowsShown = (if (!foldsDone || viewModel.doneOpen) queue.done else emptyList()) + queue.before + listOfNotNull(next) + shownAfter
 
-    val beforeNext = rowsShown.indexOf(next) - 1
+    val beforeNext = next?.let { rowsShown.indexOf(it) - 1 }
     val stepsEnd = endsList && !showsComing && plusShown == 0
 
     itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
-        val isNext = step.position == next.position
+        val isNext = step.position == next?.position
         val replay = step.lessonToReplay
         StepRow(
             model = model,
             step = step,
             isNext = isNext,
-            opens = replay != null || (!step.isFinished && step.waitReason == null),
+            opens = replay != null || (next != null && !step.isFinished && step.waitReason == null),
             busy = viewModel.pending == TodayTap.Step(step.position) || (isNext && viewModel.pending == TodayTap.Continue),
             openFailed = viewModel.failed == TodayTap.Step(step.position),
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
@@ -268,7 +252,7 @@ private fun LazyListScope.sessionQueue(
                 open = moreOpen,
                 minutes =
                     model.day
-                        .minutesAfter(queue.before + next + queue.after.take(UPCOMING_ROWS))
+                        .minutesAfter(queue.before + listOfNotNull(next) + queue.after.take(UPCOMING_ROWS))
                         .takeIf { !moreOpen && queue.after.size + coming > UPCOMING_ROWS },
                 onToggle = {
                     if (moreOpen) list.keepFoldInView(hidden = more)
