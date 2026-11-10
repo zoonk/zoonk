@@ -22,7 +22,8 @@ import { isWelcomeBackDay, useDayState } from "./use-today-copy";
  * Drawn in the gap before a part: a part that wraps starts a new line, whose clipped edge hides its
  * dot.
  */
-const SEPARATOR_CLASS = "relative before:absolute before:-left-3.5 before:content-['·']";
+const SEPARATOR_CLASS =
+  "relative before:absolute before:-left-3.5 before:content-['·'] first:before:content-none";
 
 export function TodayEyebrowPart({
   children,
