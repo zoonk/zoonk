@@ -30,7 +30,34 @@ describe(getOnboarding, () => {
       mockSession(user.id);
 
       await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
-        onboarding: { recommendedMinutes: dailyMinutes ?? 10 },
+        onboarding: {
+          recommendedMinutes: dailyMinutes ?? 10,
+          startsOnRecommended: dailyMinutes === null,
+        },
+      });
+    },
+  );
+
+  it.each([true, false])(
+    "decides the opening time for a dated exam with shorter days: %s",
+    async (shorterDays) => {
+      const user = await userFixture();
+
+      await learningProfileFixture({
+        learningNeeds: shorterDays ? ["shorterDays"] : [],
+        userId: user.id,
+      });
+
+      const goal = await goalFixture({
+        kind: "exam",
+        targetDate: new Date("2060-01-01T00:00:00Z"),
+        userId: user.id,
+      });
+
+      mockSession(user.id);
+
+      await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+        onboarding: { recommendedMinutes: shorterDays ? 10 : 60, startsOnRecommended: shorterDays },
       });
     },
   );
