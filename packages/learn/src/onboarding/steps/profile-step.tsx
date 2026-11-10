@@ -18,6 +18,7 @@ import {
   getPrecheckedSupports,
   toProfileAnswer,
   toProfileDraft,
+  withPrecheckedSupports,
 } from "../../profile-questions/profile-draft";
 import { ProfileQuestionBody } from "../../profile-questions/profile-question-body";
 import {
@@ -48,7 +49,7 @@ function initialDraft({
   }
 
   if (question.id === "learningSupport" && precheck.length > 0) {
-    return { ...draft, picks: getPrecheckedSupports(precheck) };
+    return withPrecheckedSupports({ conditions: precheck, draft });
   }
 
   return draft;

@@ -94,6 +94,16 @@ export function getPrecheckedSupports(conditions: readonly string[]): string[] {
   return [...new Set(conditions.flatMap((condition) => PRECHECKS[condition] ?? []))];
 }
 
+export function withPrecheckedSupports({
+  conditions,
+  draft,
+}: {
+  conditions: readonly string[];
+  draft: ProfileDraft;
+}): ProfileDraft {
+  return { ...draft, picks: [...new Set([...draft.picks, ...getPrecheckedSupports(conditions)])] };
+}
+
 /** `capped` is true when the pick was refused because the screen already holds three. */
 export function toggleProfilePick({
   draft,

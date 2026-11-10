@@ -8,6 +8,7 @@ import {
   toProfileDraft,
   toggleProfileExclusive,
   toggleProfilePick,
+  withPrecheckedSupports,
 } from "./profile-draft";
 
 function draft(overrides: Partial<ProfileDraft> = {}): ProfileDraft {
@@ -271,5 +272,14 @@ describe(getPrecheckedSupports, () => {
       "plainWords",
       "noSoundEffects",
     ]);
+  });
+});
+
+describe(withPrecheckedSupports, () => {
+  it("adds the suggestions to what the learner already turned on", () => {
+    expect(
+      withPrecheckedSupports({ conditions: ["adhd"], draft: draft({ picks: ["noSoundEffects"] }) })
+        .picks,
+    ).toStrictEqual(["noSoundEffects", "stepByStep", "shortAnswers", "shorterDays"]);
   });
 });
