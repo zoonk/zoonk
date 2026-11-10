@@ -107,10 +107,12 @@ struct AboutYouQuestionView: View {
   @State private var failed = false
 
   var body: some View {
-    let profile = settings.profileQuestions.value
+    let state = settings.profileQuestions.freshState
 
     Group {
-      if let profile, let view = profile.questions.first(where: { $0.id == question }) {
+      if case .loaded(let profile) = state,
+        let view = profile.questions.first(where: { $0.id == question })
+      {
         let draft = Binding {
           self.draft ?? ProfileDraft(view, memoryEnabled: profile.memoryEnabled)
         } set: {
@@ -133,7 +135,7 @@ struct AboutYouQuestionView: View {
           }
         }
       } else {
-        SettingsLoadingState(state: settings.profileQuestions.state) {
+        SettingsLoadingState(state: state) {
           Task {
             await settings.profileQuestions.refresh()
           }

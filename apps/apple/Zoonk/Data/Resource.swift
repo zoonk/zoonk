@@ -23,6 +23,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   /// Only for content that's already shown; a first load is `.loading`.
   private(set) var isRefreshing = false
   private var storedState = LoadState<Value>.idle
+  private var refreshError: APIError?
 
   let audience: ResourceAudience
   let domains: Set<DataDomain>
@@ -36,10 +37,10 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   @ObservationIgnored private let maxAge: Duration
   @ObservationIgnored private let now: () -> ContinuousClock.Instant
   @ObservationIgnored private let session: SessionStore
-  @ObservationIgnored private var isInvalidated = false
+  private var isInvalidated = false
   /// Keeps a persistent failure (a 5xx, an undecodable response) from refetching on every redraw.
   @ObservationIgnored private var hasSettledOnFailure = false
-  @ObservationIgnored private var loadedAt: ContinuousClock.Instant?
+  private var loadedAt: ContinuousClock.Instant?
   @ObservationIgnored private var owner: AuthenticatedSession?
   @ObservationIgnored private var request: (id: Int, task: Task<Void, Never>)?
   @ObservationIgnored private var requestCount = 0
@@ -85,6 +86,20 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     }
 
     return value
+  }
+
+  /// Editors must revalidate stale content before deriving an answer from it.
+  var freshState: LoadState<Value> {
+    let state = state
+    guard state.hasContent, isStale else {
+      return state
+    }
+
+    if let refreshError {
+      return .failed(refreshError)
+    }
+
+    return .loading
   }
 
   /// A call while a request runs waits for that request instead of starting another.
@@ -137,6 +152,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   /// waiting for it waits for a new read instead.
   func invalidate() {
     isInvalidated = true
+    refreshError = nil
     hasSettledOnFailure = false
 
     guard request != nil || storedState != .idle else {
@@ -181,6 +197,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     storedState = .idle
     loadedAt = nil
     isInvalidated = false
+    refreshError = nil
     hasSettledOnFailure = false
     revision += 1
   }
@@ -225,6 +242,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     let id = requestCount
     let owner = owner
     hasSettledOnFailure = false
+    refreshError = nil
 
     if storedState.hasContent {
       isRefreshing = true
@@ -284,6 +302,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     }
 
     hasSettledOnFailure = true
+    refreshError = error as? APIError ?? .unavailable
 
     switch error as? APIError ?? .unavailable {
     case .unauthorized:

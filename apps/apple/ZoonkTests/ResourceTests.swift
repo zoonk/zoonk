@@ -51,12 +51,14 @@ final class ResourceTests: XCTestCase {
 
     XCTAssertEqual(resource.state, .loaded(1))
     XCTAssertTrue(resource.isRefreshing)
+    XCTAssertEqual(resource.freshState, .loading)
 
     requests.resolve(1, with: .success(2))
     await revalidation.value
 
     XCTAssertEqual(resource.state, .loaded(2))
     XCTAssertFalse(resource.isRefreshing)
+    XCTAssertEqual(resource.freshState, .loaded(2))
   }
 
   func testAScreenShowingAnotherSessionsResourceSeesItChange() async throws {
@@ -119,6 +121,61 @@ final class ResourceTests: XCTestCase {
 
     XCTAssertEqual(resource.state, .loaded(1))
     XCTAssertEqual(requests.count, 3)
+  }
+
+  func testAnEditorWaitsForInvalidatedContentAndCanRetryARefreshFailure() async {
+    let requests = Requests(results: [.success(1)])
+    let resource = makeResource(requests: requests)
+    await resource.load()
+    XCTAssertEqual(resource.freshState, .loaded(1))
+
+    let redraw = ObservationFlag()
+    withObservationTracking {
+      _ = resource.freshState
+    } onChange: {
+      redraw.isSet = true
+    }
+    resource.invalidate()
+    XCTAssertTrue(redraw.isSet)
+    XCTAssertEqual(resource.freshState, .loading)
+
+    requests.suspends = true
+    let revalidation = Task { await resource.load() }
+    await requests.waitForCount(2)
+    XCTAssertEqual(resource.freshState, .loading)
+    XCTAssertEqual(resource.state, .loaded(1))
+
+    requests.resolve(1, with: .failure(APIError.network))
+    await revalidation.value
+    XCTAssertEqual(resource.freshState, .failed(.network))
+    XCTAssertEqual(resource.state, .loaded(1))
+
+    let retry = Task { await resource.refresh() }
+    await requests.waitForCount(3)
+    XCTAssertEqual(resource.freshState, .loading)
+    requests.resolve(2, with: .success(2))
+    await retry.value
+    XCTAssertEqual(resource.freshState, .loaded(2))
+  }
+
+  func testAnUnchangedRevalidationMakesTheEditorReady() async {
+    let clock = TestClock()
+    let resource = makeResource(
+      requests: Requests(results: [.success(1), .success(1)]), clock: clock)
+    await resource.load()
+    clock.advance(by: AppCache.defaultMaxAge + .seconds(1))
+    XCTAssertEqual(resource.freshState, .loading)
+
+    let redraw = ObservationFlag()
+    withObservationTracking {
+      _ = resource.freshState
+    } onChange: {
+      redraw.isSet = true
+    }
+    await resource.load()
+
+    XCTAssertTrue(redraw.isSet)
+    XCTAssertEqual(resource.freshState, .loaded(1))
   }
 
   func testAFailureStaysUntilSomethingAsksAgain() async {
