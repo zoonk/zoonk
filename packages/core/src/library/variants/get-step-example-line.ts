@@ -134,6 +134,7 @@ async function writeLessonLines({
   }
 
   const request = {
+    analytics: { contentScope: "personal" as const, distinctId: userId },
     candidateIds: context.facts.map((fact) => fact.id),
     categories: Object.values(MemoryCategory),
     language,
@@ -169,6 +170,13 @@ async function writeLessonLines({
       return unchanged({ canRequest: fresh !== null, lines: [], status: "ready" });
     }
 
+    await markMemoryFactsUsed({
+      client: tx,
+      ids: picked.map((fact) => fact.id),
+      now: new Date(),
+      userId,
+    });
+
     const removed = await tx.stepExampleLine.deleteMany({
       where: { contextKey: { not: context.key }, stepId: { in: missingIds }, userId },
     });
@@ -193,13 +201,6 @@ async function writeLessonLines({
     if (removed.count === 0 && created.count === 0) {
       return unchanged(result);
     }
-
-    await markMemoryFactsUsed({
-      client: tx,
-      ids: picked.map((fact) => fact.id),
-      now: new Date(),
-      userId,
-    });
 
     return result;
   });
