@@ -38,6 +38,7 @@ async function answerRight() {
 
 describe("lesson clock", () => {
   afterEach(() => {
+    vi.useRealTimers();
     Reflect.deleteProperty(document, "visibilityState");
     localStorage.clear();
   });
@@ -354,6 +355,53 @@ describe("lesson clock", () => {
         ]);
     },
   );
+
+  it("finishes only once the clock change Continue sends again gets through", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    const lesson = buildLesson([teachingStep("check")]);
+    const clockId = crypto.randomUUID();
+    const runId = crypto.randomUUID();
+    const delivered = [true, false, false];
+    const resent = Promise.withResolvers<{ status: "updated" }>();
+
+    const updateLessonClock = clockServer().mockImplementation(() =>
+      delivered.length > 0
+        ? Promise.resolve(delivered.shift() ? { status: "updated" } : null)
+        : resent.promise,
+    );
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ clockId, runId })),
+      updateLessonClock,
+    });
+
+    renderLessonPlayer({ adapters, lesson });
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+    setVisibility("hidden");
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(1);
+    setVisibility("visible");
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(2);
+    await answerRight();
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(3);
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(4);
+
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+
+    resent.resolve({ status: "updated" });
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    expect(adapters.completeLesson).toHaveBeenCalledOnce();
+
+    expect(transitions(updateLessonClock)).toStrictEqual([
+      { clockId, runId, sequence: 1, state: "paused" },
+      { clockId, runId, sequence: 2, state: "running" },
+      { clockId, runId, sequence: 2, state: "running" },
+      { clockId, runId, sequence: 2, state: "running" },
+    ]);
+  });
 
   it("counts again from the first change on the clock a new start gives", async () => {
     const lesson = buildLesson([teachingStep("check"), teachingStep("explanation")]);

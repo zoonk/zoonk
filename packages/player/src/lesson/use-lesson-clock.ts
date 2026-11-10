@@ -9,6 +9,7 @@ import { usePageLifecycle } from "./use-page-lifecycle";
 export function useLessonClock(adapters: LessonPlayerAdapters) {
   const clockRef = useRef<LessonClock | null>(null);
   const openRef = useRef(false);
+  const sendingRef = useRef<Promise<void>>(Promise.resolve());
 
   const actions = useMemo(() => {
     function runClock(run: { clockId: string | null; runId: string }) {
@@ -30,7 +31,7 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       clockRef.current = next;
       const sent = next.transition;
 
-      void send(sent)
+      sendingRef.current = send(sent)
         .catch(() => null)
         .then(async (outcome) => {
           // The server dropped this clock, so running counts only once Start gives a new one.
@@ -65,7 +66,12 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       }
     }
 
-    return { move, resend, runClock };
+    /** Settles once the latest change sent got through or failed. */
+    function settled() {
+      return sendingRef.current;
+    }
+
+    return { move, resend, runClock, settled };
   }, [adapters]);
 
   useEffect(() => {
@@ -86,5 +92,5 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
     onLeave: () => actions.move("paused"),
   });
 
-  return { resendClock: actions.resend, runClock: actions.runClock };
+  return { clockSettled: actions.settled, resendClock: actions.resend, runClock: actions.runClock };
 }

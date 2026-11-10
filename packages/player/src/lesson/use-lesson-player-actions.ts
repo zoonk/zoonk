@@ -64,13 +64,13 @@ function useCompletionSave({
   adapters,
   dispatch,
   ensureRun,
-  flushChecks,
+  flushUnsaved,
   startRun,
   state,
 }: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
-  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushChecks" | "startRun">) {
+  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushUnsaved" | "startRun">) {
   const saveCompletion = useEffectEvent(async () => {
-    const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
+    const [allSaved, run] = await Promise.all([flushUnsaved(), ensureRun()]);
 
     const outcome =
       allSaved && run
