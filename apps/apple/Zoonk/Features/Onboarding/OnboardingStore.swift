@@ -238,8 +238,11 @@ final class OnboardingStore {
     return resource
   }
 
+  /// About you answers also change memory and what the learner model reads.
   func answer(_ answer: OnboardingAnswer, goalID: String) async throws -> GoalOnboarding {
-    let updated = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+    let updated = try await cache.onboardingWrite(
+      invalidating: [.goals, .learningProfile, .memory, .learnerModel]
+    ) {
       [api] identity in
       try await api.answer(answer, goalID: goalID, token: identity.bearerToken)
     }
