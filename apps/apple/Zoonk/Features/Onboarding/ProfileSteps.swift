@@ -121,8 +121,10 @@ struct ProfileQuestionSections: View {
                 "\(option.label): course or subject (optional)", tableName: "AboutYou",
                 comment:
                   "Box for the course or subject studied in a field, like journalism in Media"),
-            prompt: Text(
-              "E.g., journalism", tableName: "AboutYou", comment: "Example subject studied"),
+            prompt: option.id == ProfileDraft.otherOption
+              ? nil
+              : Text(
+                "E.g., journalism", tableName: "AboutYou", comment: "Example subject studied"),
             text: limited(subject(option.id), to: 80))
         }
       }
@@ -345,6 +347,7 @@ private struct ProfileRow: View {
           Image(systemName: "checkmark")
             .fontWeight(.semibold)
             .foregroundStyle(.tint)
+            .accessibilityHidden(true)
         }
       }
       .contentShape(.rect)
