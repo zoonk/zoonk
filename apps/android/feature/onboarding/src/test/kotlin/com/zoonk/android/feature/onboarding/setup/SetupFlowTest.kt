@@ -85,16 +85,16 @@ class SetupFlowTest {
     }
 
     @Test
-    fun backSkipsProfileAnswersWhileTheyStillCountAsOneProgressDot() {
+    fun backReturnsToThePreviousProfileAnswer() {
         val work = com.zoonk.api.models.OnboardingStep.WORK
         val watch = com.zoonk.api.models.OnboardingStep.WATCH
         val support = com.zoonk.api.models.OnboardingStep.LEARNING_SUPPORT
         assertEquals(
-            SetupFlow(GOAL, LEVEL, listOf(PURPOSE)),
+            SetupFlow(GOAL, support, listOf(PURPOSE, LEVEL, work, watch)),
             SetupFlow(GOAL, SCHEDULE, listOf(PURPOSE, LEVEL, work, watch, support)).goingBack(),
         )
-        assertEquals(SetupFlow(GOAL, LEVEL, listOf(PURPOSE)), SetupFlow(GOAL, watch, listOf(PURPOSE, LEVEL, work)).goingBack())
-        assertNull(SetupFlow(GOAL, watch, listOf(work)).goingBack())
+        assertEquals(SetupFlow(GOAL, work, listOf(PURPOSE, LEVEL)), SetupFlow(GOAL, watch, listOf(PURPOSE, LEVEL, work)).goingBack())
+        assertEquals(SetupFlow(GOAL, work), SetupFlow(GOAL, watch, listOf(work)).goingBack())
         assertNull(SetupFlow(GOAL, work).goingBack())
     }
 

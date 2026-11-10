@@ -78,7 +78,7 @@ data class SetupFlow(
 )
 
 internal fun SetupFlow.goingBack(): SetupFlow? {
-    val index = history.indexOfLast { it.profileQuestion == null }
+    val index = history.lastIndex
     return if (index < 0) null else copy(current = history[index], history = history.take(index))
 }
 
