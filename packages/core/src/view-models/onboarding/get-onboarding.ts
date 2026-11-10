@@ -28,7 +28,10 @@ import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
-import { toProfileQuestionsView } from "../../profile/questions/_utils/profile-question-state";
+import {
+  getStateProfileSteps,
+  toProfileQuestionsView,
+} from "../../profile/questions/_utils/profile-question-state";
 import { toOnboardingGoalView } from "./_utils/onboarding-goal-view";
 import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
 import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
@@ -240,7 +243,7 @@ export async function getOnboarding({
       readPlanReadiness({ goalId: goal.id, userId }),
       readGoalOpening({ lessonId: goal.openingLessonId, userId }),
       readWarmUpState(goal.warmUpId),
-      readProfileQuestionState(userId).then((state) => toProfileQuestionsView({ locale, state })),
+      readProfileQuestionState(userId),
     ]);
 
   const [earlierGoals, [view]] = await Promise.all([
@@ -265,6 +268,7 @@ export async function getOnboarding({
       targetDate: view.targetDate,
     },
     profile: { hasBuddy: profile.buddy.picked, hasEarlierGoals: earlierGoals > 0 },
+    profileSteps: getStateProfileSteps({ goal, state: profileState }),
   });
 
   const courseStart = readCourseStart(details);
@@ -317,7 +321,7 @@ export async function getOnboarding({
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       planRevealed: !isPlanRevealOwed(goal),
-      profile: profileState,
+      profile: toProfileQuestionsView({ locale, state: profileState }),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
       steps,

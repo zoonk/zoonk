@@ -22,6 +22,7 @@ import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/memory-follow-ups";
+import { PROFILE_QUESTIONS } from "../../profile/questions/profile-question-contract";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
@@ -246,7 +247,16 @@ describe("onboarding a new goal", () => {
         generationId: null,
         goal: { id: goal?.id },
         goalIds: [goal?.id],
-        steps: ["purpose", "level", "targetDate", "buddy", "placement", "schedule", "plan"],
+        steps: [
+          "purpose",
+          "level",
+          "targetDate",
+          ...PROFILE_QUESTIONS,
+          "buddy",
+          "placement",
+          "schedule",
+          "plan",
+        ],
         timeChoices: expect.arrayContaining([{ minutes: 60, split: null }]),
       },
       status: "ready",
@@ -396,6 +406,7 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { level: "basic", question: "level" } });
 
     await expect(getSteps(goalId)).resolves.toStrictEqual([
+      ...PROFILE_QUESTIONS,
       "buddy",
       "placement",
       "schedule",
@@ -777,6 +788,7 @@ describe("onboarding a new goal", () => {
     await expect(getSteps(goal?.id ?? "")).resolves.toStrictEqual([
       "target",
       "level",
+      ...PROFILE_QUESTIONS,
       "placement",
       "schedule",
       "plan",

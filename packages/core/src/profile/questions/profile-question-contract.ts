@@ -45,10 +45,10 @@ export const profileQuestionSchema = z
   .enum(PROFILE_QUESTIONS)
   .meta({ description: "The optional question about the learner", id: "ProfileQuestion" });
 
-const MAX_PROFILE_FAVORITES_LENGTH = 120;
-const MAX_PROFILE_JOB_LENGTH = 80;
-const MAX_PROFILE_SUBJECT_LENGTH = 80;
-const MAX_CONDITION_NOTE_LENGTH = 120;
+export const MAX_PROFILE_FAVORITES_LENGTH = 120;
+export const MAX_PROFILE_JOB_LENGTH = 80;
+export const MAX_PROFILE_SUBJECT_LENGTH = 80;
+export const MAX_CONDITION_NOTE_LENGTH = 120;
 
 const declined = z
   .boolean()
@@ -223,7 +223,6 @@ export function isBiographyQuestion(question: ProfileQuestion): boolean {
   return BIOGRAPHY_QUESTIONS.some((id) => id === question);
 }
 
-/** @public */
 export function getProfileSteps({
   goal,
   answered,
