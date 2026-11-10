@@ -129,6 +129,14 @@ struct StudyDay: Decodable, Equatable, Sendable {
     )
   }
 
+  /// Rows the queue shows after its next block before "+N more".
+  static let upcomingRows = 4
+
+  /// Mirrors main's `getFoldedBlocks`: the blocks "+N more" holds while the queue is folded.
+  var foldedBlocks: [StudyBlock] {
+    nextBlock.map { Array(queue(next: $0).after.dropFirst(Self.upcomingRows)) } ?? []
+  }
+
   func foldedMinutes(showing blocks: [StudyBlock]) -> Double {
     max(
       0,
