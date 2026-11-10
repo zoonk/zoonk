@@ -18,6 +18,7 @@ import { getTodayView } from "../view-models/today/get-today-view";
 import { getGoalPlan } from "./get-goal-plan";
 import { findMockFundingOn } from "./planner/mock-funding";
 import { parsePlanSettings } from "./planner/plan-state";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
 const MOCK_DATE = "2026-10-11";
 
@@ -49,6 +50,7 @@ async function setup() {
   const user = await userFixture();
 
   const fixture = await sessionGoalFixture({
+    challengesDone: true,
     goal: { createdAt: new Date("2026-09-28"), kind: "exam", targetDate: new Date("2026-11-01") },
     userId: user.id,
   });
@@ -56,7 +58,7 @@ async function setup() {
   const mock = await planItemFixture({
     kind: "mock",
     planId: fixture.plan.id,
-    position: fixture.planItems.length,
+    position: fixture.planItems.length + 1,
     scheduledFor: new Date(MOCK_DATE),
     titleSnapshot: "Full mock",
   });
@@ -245,20 +247,20 @@ describe("public mock funding views", () => {
       planItemFixture({
         kind: "mock",
         planId: plan.id,
-        position: 4,
+        position: 5,
         scheduledFor: new Date(later.date),
       }),
       planItemFixture({
         kind: "mock",
         planId: plan.id,
-        position: 5,
+        position: 6,
         scheduledFor: new Date("2026-10-18"),
         status: "done",
       }),
       planItemFixture({
         kind: "boss",
         planId: plan.id,
-        position: 6,
+        position: 7,
         scheduledFor: new Date(MOCK_DATE),
       }),
     ]);
@@ -311,6 +313,8 @@ describe("public mock funding views", () => {
         where: { id: plan.id },
       }),
     ]);
+
+    await refreshGoalPlan({ goalId: goal.id, pace: "saved" });
 
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const result = await getTodayView({ goalId: goal.id });

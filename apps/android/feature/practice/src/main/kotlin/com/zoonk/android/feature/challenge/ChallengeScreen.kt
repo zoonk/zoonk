@@ -739,7 +739,7 @@ private fun ChallengeFooter(
             val wait = challenge.waitReason
             when {
                 wait != null -> {
-                    StatusLine(R.drawable.ic_calendar_clock, waitText(wait))
+                    StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.challenge_opens_after_lessons))
                 }
 
                 challenge.status == Challenge.Status.READY -> {
@@ -787,11 +787,7 @@ private fun ChallengeFooter(
             }
         }
 
-        Challenge.Status.QUEUED -> {
-            StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.missions_after_challenge))
-        }
-
-        Challenge.Status.UPCOMING -> {
+        Challenge.Status.QUEUED, Challenge.Status.UPCOMING -> {
             OpensLine(challenge)
         }
 
@@ -900,10 +896,6 @@ private fun PlusRequiredNotice(
         }
     }
 }
-
-@Composable
-private fun waitText(wait: Challenge.WaitReason): String =
-    stringResource(if (wait == Challenge.WaitReason.LESSONS) R.string.missions_after_lessons else R.string.missions_after_challenge)
 
 @Composable
 private fun OpensLine(challenge: Challenge) {

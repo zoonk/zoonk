@@ -103,6 +103,7 @@ msgstr "Gelernt"
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/journey-phase-events.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -4737,13 +4738,6 @@ msgid "Won"
 msgstr "Gewonnen"
 
 #: src/journey/journey-phase-events.tsx
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "lqBoRy"
-msgid "After the challenge before it"
-msgstr "Nach der vorherigen Herausforderung"
-
-#: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
 msgid "A live call where you get your point across"
 msgstr "Ein Live-Gespräch, in dem du dich verständlich machst"
@@ -4918,11 +4912,6 @@ msgctxt "htY1di"
 msgid "Last week's recap"
 msgstr "Rückblick auf letzte Woche"
 
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "bis {date}"
-
 #. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
@@ -4934,6 +4923,23 @@ msgstr "bis ~{date}"
 msgctxt "JzTTux"
 msgid "until about {date}"
 msgstr "bis etwa {date}"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDay"
+msgid "until ~{date}"
+msgstr "bis ~{date}"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDaySpoken"
+msgid "until about {date}"
+msgstr "bis etwa {date}"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "oPz0RK"
+msgid "until {date}"
+msgstr "bis {date}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4963,19 +4969,19 @@ msgid "Challenge left out"
 msgstr "Herausforderung ausgelassen"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "nzBtDK"
-msgid "More lessons on the way · challenge {date}"
-msgstr "Weitere Lektionen sind unterwegs · Herausforderung am {date}"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "FSd2Qh"
 msgid "More lessons on the way"
 msgstr "Weitere Lektionen sind unterwegs"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "EUjjJB"
-msgid "Lessons done · challenge {date}"
-msgstr "Lektionen abgeschlossen · Herausforderung am {date}"
+msgctxt "Kw3CDV"
+msgid "More lessons on the way · challenge <date></date>"
+msgstr "Weitere Lektionen sind unterwegs · Herausforderung <date></date>"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "QYw146"
+msgid "Lessons done · challenge <date></date>"
+msgstr "Lektionen abgeschlossen · Herausforderung <date></date>"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
@@ -7556,20 +7562,14 @@ msgid ", choose a call"
 msgstr ", ein Gespräch auswählen"
 
 #: src/missions/mission-copy.tsx
-msgctxt "J8WnXZ"
-msgid ", after today's lessons"
-msgstr ", nach den heutigen Lektionen"
+msgctxt "mQmNzY"
+msgid ", after this phase's lessons"
+msgstr ", nach den Lektionen dieser Phase"
 
 #: src/missions/mission-copy.tsx
-msgctxt "EK1npa"
-msgid ", after the challenge before it"
-msgstr ", nach der vorherigen Herausforderung"
-
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "L_nv1C"
-msgid "After today's lessons"
-msgstr "Nach den heutigen Lektionen"
+msgctxt "-d7MNH"
+msgid "After this phase's lessons"
+msgstr "Nach den Lektionen dieser Phase"
 
 #: src/missions/mission-copy.tsx
 msgctxt "teh3kP"
@@ -12579,6 +12579,7 @@ msgid "Shared text"
 msgstr "Gemeinsamer Text"
 
 #: src/questions/item-set-stimulus.tsx
+#: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
 msgid "Show less"
 msgstr "Weniger anzeigen"
@@ -13151,6 +13152,11 @@ msgstr "Heutige Lerneinheit"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "Netto-Score {net}"
+
+#: src/session/study-moment.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, one {# Lektion wurde} other {# Lektionen wurden}} auf einen anderen Tag verschoben, damit du heute nicht länger als {time} lernst."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -13861,14 +13867,9 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "Wir konnten deine nächsten Lektionen nicht öffnen. Versuch es noch einmal."
 
 #: src/today/today-block-row.tsx
-msgctxt "hTNiZs"
-msgid "{phase} · after today's lessons"
-msgstr "{phase} · nach den heutigen Lektionen"
-
-#: src/today/today-block-row.tsx
-msgctxt "swGOPE"
-msgid "{phase} · after the challenge before it"
-msgstr "{phase} · nach der vorherigen Herausforderung"
+msgctxt "pPB2tF"
+msgid "{phase} · after this phase's lessons"
+msgstr "{phase} · nach den Lektionen dieser Phase"
 
 #: src/today/today-block-row.tsx
 msgctxt "bUQLj8"

@@ -5,7 +5,7 @@ import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { useSessionQueueAside } from "./session-queue";
 
-const NO_QUEUE = { minutesLeft: 0, rows: [] };
+const NO_QUEUE = { left: 0, rows: [] };
 
 export function SessionShell({ exitHref }: { exitHref: string }) {
   const aside = useSessionQueueAside(NO_QUEUE);

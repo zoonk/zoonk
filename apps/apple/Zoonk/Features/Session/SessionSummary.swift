@@ -80,6 +80,8 @@ struct BlockMoment: Decodable, Hashable, Sendable {
     let opensInPlayer: Bool
   }
   let blocks: [StudyBlock]
+  let deferredLessonsCount: Int
+  let minutes: StudyDay.Minutes
   let sessionId: String
   let goalId: String?
   let finishedChapterId: String?

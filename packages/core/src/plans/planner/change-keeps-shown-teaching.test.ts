@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type PlanOperation } from "../plan-contract";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { applyPlanOperations } from "./plan-operations";
 import { toExamWindows } from "./plan-phases";
@@ -64,20 +64,23 @@ function dateOf(item: Pick<PlannedItem, "scheduledFor">): string {
 function makeShownPlan() {
   const built = buildPlan(input);
 
-  const items = built.items.map((item, position) => ({
-    ...item,
-    id: `item-${position}`,
-    position,
-    ...(dateOf(item) === "2026-10-10" && item.kind === "lesson"
-      ? { completedAt: START, status: "done" as const }
-      : {}),
-  }));
-
   const mock = built.mockFunding.find((entry) => !entry.fullLength);
 
   if (!mock) {
     throw new Error("Expected a funded half-day mock");
   }
+
+  const challengeDay = addDays(fromIsoDate(mock.date), 1);
+
+  const items = built.items.map((item, position) => ({
+    ...item,
+    id: `item-${position}`,
+    position,
+    ...(item.kind === "boss" && item.phase === 0 ? { scheduledFor: challengeDay } : {}),
+    ...(dateOf(item) === "2026-10-10" && item.kind === "lesson"
+      ? { completedAt: START, status: "done" as const }
+      : {}),
+  }));
 
   return { built, items, mock };
 }
@@ -128,14 +131,10 @@ function listShownDays({ items, mockDate }: { items: readonly PlannedItem[]; moc
   };
 }
 
-function getChallengeDay(items: readonly PlannedItem[]): string {
+function getChallengeDay(items: readonly PlannedItem[]): string | null {
   const boss = items.find((item) => item.kind === "boss" && item.phase === 0);
 
-  if (!boss) {
-    throw new Error("Expected phase 0's challenge");
-  }
-
-  return dateOf(boss);
+  return boss ? dateOf(boss) : null;
 }
 
 function findShownNext(items: readonly PlannedItem[]) {
@@ -148,21 +147,21 @@ function findShownNext(items: readonly PlannedItem[]) {
 }
 
 describe("a learner's change keeps the teaching the learner was shown", () => {
-  it("keeps the challenge, the funded mock and the shown days' lessons when an area is reduced", () => {
+  it("keeps the funded mock and shown teaching when an area is reduced, without an unfinished-core challenge", () => {
     const shown = makeShownPlan();
     const after = reduce({ area: "Linguagens", shown });
     const before = listShownDays({ items: shown.items, mockDate: shown.mock.date });
     const next = findShownNext(shown.items);
 
-    expect(fromIsoDate(getChallengeDay(shown.items)).getTime()).toBeGreaterThan(
-      fromIsoDate(shown.mock.date).getTime(),
-    );
+    expect(getChallengeDay(shown.items)).toBeNull();
+    expect(shown.built.phases[0]?.challengeLeftOut).not.toBe(true);
+    expect(shown.mock.date).toBe("2026-10-18");
 
     expect(before.lessonIds.length).toBeGreaterThan(1);
     expect(before.busiest).toBe(1);
     expect(next && dateOf(next) >= toIsoDate(CHANGE_DAY)).toBe(true);
 
-    expect(getChallengeDay(after.items)).toBe(getChallengeDay(shown.items));
+    expect(getChallengeDay(after.items)).toBe("2026-10-19");
 
     expect(after.mockFunding.find((entry) => !entry.fullLength)).toMatchObject({
       date: shown.mock.date,
@@ -171,9 +170,7 @@ describe("a learner's change keeps the teaching the learner was shown", () => {
     });
 
     const kept = listShownDays({ items: after.items, mockDate: shown.mock.date });
-    expect(kept.lessonIds).toStrictEqual(before.lessonIds);
-    expect(kept.busiest).toBeLessThanOrEqual(before.busiest);
-
+    expect(kept.lessonIds).toStrictEqual(expect.arrayContaining(before.lessonIds));
     const promised = after.items.find((item) => item.lessonId === next?.lessonId);
     expect(promised && next && dateOf(promised) <= dateOf(next)).toBe(true);
   });

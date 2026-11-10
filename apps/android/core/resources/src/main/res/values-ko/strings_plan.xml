@@ -51,7 +51,6 @@
   "plan_cadence_weekly_effect": "0a9d057f575bdf5fa1708c205fe6b28fe558ce2a0508a844bb6625cee40bfe2d",
   "plan_cancel": "4f8e8234a33f8e6a966fd36361c1ca533fc6ac2c7065e630b52bb546c7c7fba3",
   "plan_catch_up": "6d50f3d5a75f8a68182f58aa75c1189a970f6ab5ed8eeae59a7ebab741fd0b3f",
-  "plan_challenge_after_previous": "3f86f7d20286d80ccd10a0422f6b4aff0d581fe63cbb60c723a82af0c64f2bc3",
   "plan_challenge_left_out": "71c55c9450d5ea4956ec48be5b5501cf7375d697b0b7aeb56caf6f91b1869b82",
   "plan_challenge_live_call": "f7a6e77ab091ca4de038d0afe2c60b27853be1fb6d073985bb5e5416bf5ec149",
   "plan_challenge_next_session": "01874489d209cdd75ecafbec5d880e9c02c0c2193d5374e316ea434b71919074",
@@ -221,8 +220,8 @@
   "plan_coverage": "5f30170cd334b49c690613157f1a3335d0342abe732fe6b3bd5d59178b0f6e8f",
   "plan_coverage_caption": "4e922e184966360016996829f4d9842dfd517a805c9b5800f5abecfc5bed14c0",
   "plan_covered_not_enough": "7500ff8492cc87c6cfed1064265ef8d84a75ac8fafaaee1a1f14dc0c97684b2d",
-  "plan_date_estimate": "883a2001fb417f13578b3a659f077730aa206a091fba048f3e0ca5b7a784322e",
-  "plan_date_estimate_spoken": "d217f3c8b2ad94c0d38ee7936efe868ae74a779d975354782b7317e4a5328b02",
+  "plan_date_estimate": "461a95866e0833f79cfe17676c81c516c94c32362fe681793491062027a53d04",
+  "plan_date_estimate_spoken": "8252c831fba8ca789fdde2b4bfbfa29879b3ebf7f61d2079c70cab5b4fa2a4bd",
   "plan_date_range": "99a667755dd19b16dd930d9547ad636dc413d52fc1c9fac0d0bcae5cdd300ead",
   "plan_date_to_be_confirmed": "e624bd4835b6f0581a2c29f28e535a2ef19ba5071ede45c4c01c25a6e46aaae9",
   "plan_day_done": "9996384ecb836599758ca77f5f2f1a14b5b848e4286878c9fbc64ca4de4679ec",
@@ -575,6 +574,8 @@
   "plan_unit_lessons_being_written": "f36c97401b7c2c884b269794aeabd842f2909ee02331a261c59dfcce02957860",
   "plan_until": "83b56ea42238fdb02f4ca161513f779f8147d8fe8e76bcd8ea5d8a30ad20e491",
   "plan_until_estimate": "7243fcc7851b3637681ed897a00376a41ea2845783f063f3e94d33816e3d6d4e",
+  "plan_until_estimate_month": "1ff2b322da02ccf86e40379c4bb94aaf0c6e70f7b67da22af40b3d62bcf81f82",
+  "plan_until_estimate_month_spoken": "baf0c750fc89e6eaeb9f773a92808cf119be3a192fce04f95b623f56bbd15935",
   "plan_until_estimate_spoken": "dcf79e4a86ba28788d47fc949764ca2bf21513186062c12728fc0246e1de1031",
   "plan_up_next": "b46f0f341dd32e592248bb5d4bc439dae6540bce024e1e0e6c2bb25841efa4f4",
   "plan_up_next_suffix": "153f254d75d72737733eb076f22aa5905462ea7b7b98d7293cfa8909845093c1",
@@ -615,8 +616,8 @@
     <plurals name="plan_days_left_estimate_spoken">
         <item quantity="other">약 %d일 남음</item>
     </plurals>
-    <string name="plan_date_estimate">약 %1$s</string>
-    <string name="plan_date_estimate_spoken">약 %1$s</string>
+    <string name="plan_date_estimate">%1$s쯤</string>
+    <string name="plan_date_estimate_spoken">%1$s쯤</string>
     <string name="plan_date_range">%1$s ~ %2$s</string>
     <string name="plan_no_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
     <string name="plan_setup_left_title">몇 가지 질문에 답하면 계획이 준비돼요</string>
@@ -690,8 +691,14 @@
         <item quantity="other">레슨 %1$d개 완료(총 %2$d개)</item>
     </plurals>
     <string name="plan_until">%1$s까지</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate">~%1$s까지</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate_spoken">%1$s쯤까지</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month">%1$s쯤까지</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month_spoken">%1$s쯤까지</string>
     <string name="plan_not_in_your_plan">계획에 없어요</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="other">레슨 %d개가 제외됐어요</item>
@@ -748,7 +755,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">승리</string>
     <string name="plan_challenge_next_session">다음 학습 때</string>
-    <string name="plan_challenge_after_previous">앞선 챌린지를 마친 후</string>
     <string name="plan_challenge_opens_after_lessons">이 단계의 레슨을 마치면 열려요</string>
     <string name="plan_challenge_questions">힌트 없이 푸는 이번 단계의 문제</string>
     <string name="plan_challenge_live_call">하고 싶은 말을 전하는 실시간 대화</string>

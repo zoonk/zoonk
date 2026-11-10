@@ -134,12 +134,11 @@
   "today_setting_up": "93f3364c3d897c8480fb917f021a57cb8ffd254bdf45f5faeff391cca7be4ef5",
   "today_setting_up_detail": "d7149b1707015b8da63ebe21b4d56672980114c2cca81b7a4c9bdabbad428d81",
   "today_setting_up_goal": "11855c6c7f2d584b100ffe30d9e75d0e78ed1082f052075d6493851fb0b56e45",
+  "today_show_less": "693c87326519897256f195075bde81a1f483e1915b6b3f28be0be139e4172239",
   "today_start_new_goal": "7683ec312f44392f14e25b75baf9c39382a10f2e6f9e11ea12f651e13f71617f",
   "today_start_session": "5f0f29e764849e3b612ea04bb45dcb92263a8e77feae929af8f13c3743fcd048",
-  "today_step_after_challenge": "d8f1bb700970b4f9f357c9103d71c2e9625025a0087eb2c2089b20de71a86b32",
-  "today_step_after_challenge_phase": "47e2a0f986283aaae98113eebe18109d131962acb9582835bf592f745954be54",
-  "today_step_after_lessons": "83875251315d95b7fd5463f690358964824e90ab68b0ac1dcc04834d47c14324",
-  "today_step_after_lessons_phase": "f4c62f42c56e113870c122ecb19d95e804473ddc7d4235fde9ed1c1c7b17d6b3",
+  "today_step_after_lessons": "27f151889616502a4da891768c910a656a865a46f350d0d21ee5bd9d08a125d8",
+  "today_step_after_lessons_phase": "9bbf7700a65bc90c1af199d66dd1eb8b047fdf444e4c7adbbf6e88f50bd407c9",
   "today_step_being_written": "bd2a608368e8b37f2605ea1b0420fca213bf95d83673d782dee483c57ffd0376",
   "today_step_catching_up": "dd0e877f5c77af75c5d95ed8c8e17d88a8faf8b40f442e8c7b8e8375ab33454a",
   "today_step_catching_up_subject": "432101ba1f3a54b1de9b0fec199f72b43ca3ac022fc5de9bfeab118a445ae086",
@@ -242,6 +241,8 @@
     <plurals name="today_more_count">
         <item quantity="other">+%d개 더</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">접기</string>
     <string name="today_step_done">완료</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">다음 단계</string>
@@ -254,11 +255,9 @@
     <string name="today_step_catching_up_subject">따라잡기 · %1$s</string>
     <string name="today_step_often_tested">자주 출제됨</string>
     <string name="today_step_often_tested_label">%1$s · 자주 출제</string>
-    <string name="today_step_after_lessons">오늘의 레슨을 마친 후</string>
+    <string name="today_step_after_lessons">이 단계의 레슨을 마친 후</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · 오늘 레슨 후</string>
-    <string name="today_step_after_challenge">앞선 챌린지를 마친 후</string>
-    <string name="today_step_after_challenge_phase">%1$s · 이전 챌린지 후</string>
+    <string name="today_step_after_lessons_phase">%1$s · 이 단계의 레슨을 마친 후</string>
     <string name="today_done">오늘의 학습을 마쳤어요.</string>
     <string name="today_done_day_off">쉬는 날에도 공부했어요.</string>
     <string name="today_see_summary">오늘의 요약 보기</string>

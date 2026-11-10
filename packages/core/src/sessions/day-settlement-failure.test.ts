@@ -93,7 +93,14 @@ async function failPlanPageLesson({ brainPower }: { brainPower?: bigint } = {}) 
   }
 
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });
-  await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] });
+
+  await planFixture({
+    goalId: goal.id,
+    items: [
+      { lessonId: lesson.id, skillId: skill.id },
+      { kind: "boss", position: 100, status: "done" },
+    ],
+  });
 
   const started = await startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
 

@@ -16,7 +16,9 @@ export function sizeBosses({
   input,
   items,
   skillLessons,
+  phases,
 }: {
+  phases?: readonly { kind?: string; endDate?: string | null }[];
   facts: BossPlanFacts;
   input: BuildPlanInput;
   items: readonly PlannedItem[];
@@ -25,6 +27,7 @@ export function sizeBosses({
   const plan = toBossPlan({
     input,
     items,
+    phases,
     rows: facts.rows,
     skillLessons,
     survivors: facts.survivors,
@@ -58,7 +61,11 @@ export function readBossSizes({
   input,
   minutes,
 }: {
-  built: { items: readonly PlannedItem[]; skillLessons: ReadonlyMap<string, number> };
+  built: {
+    items: readonly PlannedItem[];
+    skillLessons: ReadonlyMap<string, number>;
+    phases: readonly { kind?: string; endDate?: string | null }[];
+  };
   facts: BossPlanFacts | undefined;
   input: BuildPlanInput;
   minutes: BossMinutes;

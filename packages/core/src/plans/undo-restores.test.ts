@@ -10,6 +10,7 @@ import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { readBlockPayload } from "../sessions/block-payload";
+import { finishChallengesFixture } from "./_test-utils/finish-challenges";
 import { keptEndPlanFixture, readPlan } from "./_test-utils/kept-end-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
@@ -54,7 +55,7 @@ async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
     skills: [{ area: "Math", lessons: 8 }],
   });
 
-  const { goal } = await unplannedGoalFixture({
+  const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes,
     settings: { startDate: "2020-09-28" },
     userId: user.id,
@@ -68,6 +69,8 @@ async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
     ),
     createGoalPlan({ goalId: goal.id, graph: library.graph }),
   ]);
+
+  await finishChallengesFixture(plan.id);
 
   await mistakeFixture({
     createdAt: new Date(NOW.getTime() - DAY),
@@ -149,13 +152,14 @@ describe("undoing a change in the app", () => {
       ],
     });
 
-    const { goal } = await unplannedGoalFixture({
+    const { goal, plan } = await unplannedGoalFixture({
       dailyMinutes: 12,
       settings: { startDate: "2020-09-28" },
       userId: user.id,
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await finishChallengesFixture(plan.id);
     mockSession(user.id);
 
     const readDay = async () => {
@@ -302,6 +306,7 @@ describe("undoing a change in the app", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await finishChallengesFixture(plan.id);
     mockSession(user.id);
     const shown = await readPlan(plan.id);
 
@@ -341,6 +346,7 @@ describe("undoing a change in the app", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await finishChallengesFixture(plan.id);
     mockSession(user.id);
 
     const [shown, saved] = await Promise.all([
@@ -393,6 +399,7 @@ describe("undoing a change in the app", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await finishChallengesFixture(plan.id);
     mockSession(user.id);
     const { version } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
@@ -423,13 +430,14 @@ describe("undoing a change in the app", () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ area: "Math", lessons: 4 }] });
 
-    const { goal } = await unplannedGoalFixture({
+    const { goal, plan } = await unplannedGoalFixture({
       dailyMinutes: 12,
       settings: { startDate: "2020-09-28" },
       userId: user.id,
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await finishChallengesFixture(plan.id);
     mockSession(user.id);
 
     const result = await changeGoalPlan({

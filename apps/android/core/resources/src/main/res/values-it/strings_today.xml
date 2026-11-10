@@ -67,7 +67,7 @@
   "today_mistakes_tomorrow": "96ea1877746e4d4fb7014702bd54c9fe9c0eec7f760e8f9c29f6e6b3bcbd40d9",
   "today_mock_funding": "2cb1731f3c393b7d4fc507c8732fe06a0fadf013d1b882bcfc0ee1d08fb97609",
   "today_mock_funding_welcome_back": "4d3b154132a135e3731e78e053811feac83763fed9628c96ddaf1e5d8c0842e0",
-  "today_more_count": "f7afb95f83e97759540a977ff3f04552826ecfd11a5ed4482042ffa39d5d1316",
+  "today_more_count": "0825d23bc85181d2af0b71f5e9256b75b49e875e795de47f2df0dc31bcc1e6f6",
   "today_more_time_a_day": "88e5a197ec3526208acca8599c2d46d53f1d4834f2740e992a38d0222369042c",
   "today_more_time_or_later_date": "d34ce7b8c4037b44e49e2551ee66eabf137e29876eb0bd45332fcdf45bc49d12",
   "today_new_goal": "7369b1598b5f466cdc4714e90ef099eed0b915dd84bb2e1c26a2c31816f2a532",
@@ -134,12 +134,11 @@
   "today_setting_up": "b61d2101f1bf6d7b51360a9a56adaa164d32af158989ca31373e8a315516f205",
   "today_setting_up_detail": "8c2ac0ba2133dbde33b0d9959a4729cfcb522f27f0e3cd6e4ede264fb2c53701",
   "today_setting_up_goal": "39edda515fa10da33c1caf51805eedad6deb5c204687351c2640dbe0d7422995",
+  "today_show_less": "eb97100655f17fb39abe2dc931af67d3c7fd8454bd157a8721134e7d379e8e60",
   "today_start_new_goal": "330f2275dd5b024daad251b25fb75dc495a1b89c95268ad1d989cc891df98dbd",
   "today_start_session": "46d0a183b5625f69683f6902a3be4489a896cf0953ad503a2acb8c2a70ac19e6",
-  "today_step_after_challenge": "50aac6b1db1b6eadbd4e1e009111b9dc1df33ffb308ff95b850607c1cc7ae2d3",
-  "today_step_after_challenge_phase": "747a5b2947065a01d5c45a79099eaa545bd11c06c7c6ba1f2d42daa70a2ab07e",
-  "today_step_after_lessons": "37a7b2548b3f0be6ee378381396cc884d2c214519af01aa9d4d0d640d4997c0a",
-  "today_step_after_lessons_phase": "c9fb6fb739bb3ce0949177bd5bbbdf0e96bbe0181229336720c054c4949cc445",
+  "today_step_after_lessons": "b4722553ec703686048bd955fe953c5439354d6941127e79badb502da873e684",
+  "today_step_after_lessons_phase": "9fa0d6838b8eb955441995c8d61bdbd91065ae48444fc7893bbed68ee8a157fa",
   "today_step_being_written": "4e07233980fd225879b61493c92668afa0d0f120273748bde42af39bfdd24dc4",
   "today_step_catching_up": "0557578fd68d9e86efecc802b68ce0ebe96708320654cd4c1185fb12551c2ffb",
   "today_step_catching_up_subject": "b54d2ce10d8e969d3438adb7de97b4d6d1cb64b51a0c0c7f5da169f6505e2033",
@@ -254,10 +253,12 @@
         <item quantity="other">%d completati</item>
     </plurals>
     <plurals name="today_more_count">
-        <item quantity="one">+%d in più</item>
-        <item quantity="many">+%d in più</item>
-        <item quantity="other">+%d in più</item>
+        <item quantity="one">+%d altro</item>
+        <item quantity="many">+%d altri</item>
+        <item quantity="other">+%d altri</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Mostra meno</string>
     <string name="today_step_done">Fatto</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Prossimo passo</string>
@@ -270,11 +271,9 @@
     <string name="today_step_catching_up_subject">Recupero · %1$s</string>
     <string name="today_step_often_tested">Frequente agli esami</string>
     <string name="today_step_often_tested_label">%1$s · spesso nelle prove</string>
-    <string name="today_step_after_lessons">Dopo le lezioni di oggi</string>
+    <string name="today_step_after_lessons">Dopo le lezioni di questa fase</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · dopo le lezioni di oggi</string>
-    <string name="today_step_after_challenge">Dopo la sfida precedente</string>
-    <string name="today_step_after_challenge_phase">%1$s · dopo la sfida precedente</string>
+    <string name="today_step_after_lessons_phase">%1$s · dopo le lezioni di questa fase</string>
     <string name="today_done">Hai completato la sessione di oggi.</string>
     <string name="today_done_day_off">Hai studiato nel tuo giorno di riposo.</string>
     <string name="today_see_summary">Vedi il riepilogo di oggi</string>

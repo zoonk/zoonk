@@ -57,7 +57,6 @@ function SavedMoment({
 }) {
   return (
     <StudyMoment
-      blocks={moment.blocks}
       continueHref={continueHref}
       buddy={buddy}
       finishedChapterId={moment.finishedChapterId}

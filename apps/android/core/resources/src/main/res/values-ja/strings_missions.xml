@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "2f1d1dd90db8b536fa317564b03355749e93fda8ea1394d3de8274b49c748216",
-  "missions_after_lessons": "07c1d3152fddfb741fddd5bd51e0df1f03e9a6582d537faccae172dec9821f21",
+  "missions_after_lessons": "c661e6307f3670d1b4710fbd6c130802ab52fe7bffd65b8dfe04a12de15b2688",
   "missions_already_earned": "31dab12857109886e158dbaf87d6ba6dc67d014c5c809779fb8f0e010c0e0fb1",
   "missions_ask_anything": "1328d084c3678faf267bb87981007aab406974cbf4a0358a98fe7ce904af9c30",
   "missions_ask_buddy": "b54129eb42dbf7e755f6d38189046ef71ef0357ef77707643a404924421b7044",
@@ -115,8 +114,7 @@
     <string name="missions_ask_buddy">%1$sに質問する</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$sを練習する</string>
-    <string name="missions_after_lessons">今日のレッスンを終えたら</string>
-    <string name="missions_after_challenge">前のチャレンジが終わった後</string>
+    <string name="missions_after_lessons">このフェーズのレッスン終了後</string>
     <string name="missions_from_notebook">間違いノートから</string>
     <string name="missions_due_today">今日が復習日</string>
     <!-- %1$s is a language unit's title. -->

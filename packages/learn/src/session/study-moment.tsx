@@ -43,6 +43,7 @@ function MomentEarned({
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
   const studied = useStudyTimeFact(lessonSeconds);
   const brainPower = getOwnBrainPower(moment);
 
@@ -57,6 +58,11 @@ function MomentEarned({
         }),
       }),
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
+    moment.deferredLessonsCount > 0 &&
+      t(
+        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
+        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
+      ),
   ];
 
   return <MomentReadouts brainPower={brainPower} facts={facts} />;
@@ -152,7 +158,6 @@ function MomentActions({
 
 export function StudyMoment({
   continueHref,
-  blocks,
   buddy,
   exitHref,
   inLessonPlayer = false,
@@ -168,7 +173,6 @@ export function StudyMoment({
   testedOut = false,
 }: {
   continueHref?: string | null;
-  blocks: readonly StudyBlock[];
   buddy?: LearnBuddy | null;
   exitHref?: string;
   finishedChapterId?: string | null;
@@ -188,11 +192,14 @@ export function StudyMoment({
   const offer = onStartTestOut ? moment.testOutOffer : null;
   const hasHeader = !inLessonPlayer && exitHref !== undefined;
 
-  const queue = getSessionQueue({
-    blocks,
-    finishedId: moment.blockId,
-    nextId: nextBlock?.id ?? null,
-  });
+  const queue = {
+    left: moment.minutes.left,
+    rows: getSessionQueue({
+      blocks: moment.blocks,
+      finishedId: moment.blockId,
+      nextId: nextBlock?.id ?? null,
+    }),
+  };
 
   const aside = useSessionQueueAside(queue);
 

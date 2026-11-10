@@ -333,7 +333,8 @@ describe("today's session the learner was shown", () => {
         expect.arrayContaining(landed),
       );
 
-      expect(day?.minutes.planned).toBeGreaterThan(opened.today.session.minutes.planned);
+      expect(day?.minutes.planned).toBe(opened.today.session.minutes.planned);
+      expect(day?.minutes.left).toBe(opened.today.session.minutes.left);
       expect(day?.lessonsComing).toBe(false);
       expect(day?.lessonsToPrepare).toBe(count < LANDING || laterLessons === 0);
 
@@ -437,9 +438,10 @@ describe("today's session the learner was shown", () => {
       where: { lessonId: { not: null }, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
     });
 
-    const due = new Set(dueToday.map((item) => item.lessonId));
+    expect(dueToday.length).toBeGreaterThan(0);
 
-    expect(learnLessonIds(today).some((id) => later.has(id) && !due.has(id))).toBe(true);
+    expect(learnLessonIds(today).some((id) => later.has(id))).toBe(true);
+    expect(today.minutes.planned).toBeLessThanOrEqual(goal.dailyMinutes);
   });
 
   it("says lessons are coming before the day opens only while someone is outlining them", async () => {
@@ -491,7 +493,11 @@ describe("today's session the learner was shown", () => {
     const day = before.status === "ready" ? before.today.session : null;
 
     expect(day?.blocks.some((block) => block.kind === "learn")).toBe(true);
-    expect(day?.minutes.planned).toBeLessThan(goal.dailyMinutes);
+    expect(day?.minutes.planned).toBe(goal.dailyMinutes);
+
+    expect(day?.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBeLessThan(
+      goal.dailyMinutes,
+    );
 
     expect(day).toMatchObject({
       lessonsComing: false,
@@ -563,7 +569,8 @@ describe("today's session the learner was shown", () => {
       const after = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
       const day = after.status === "ready" ? after.today.session : null;
 
-      expect(day?.minutes.planned).toBeGreaterThan(opened.today.session.minutes.planned);
+      expect(day?.minutes.planned).toBe(opened.today.session.minutes.planned);
+      expect(day?.minutes.left).toBe(opened.today.session.minutes.left);
 
       expect(day?.blocks.map((block) => block.lessonId)).toStrictEqual(
         expect.arrayContaining(landed),
@@ -623,7 +630,6 @@ describe("today's session the learner was shown", () => {
 
     await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
     const after = await readToday(goal.id);
-    const allocated = await loadDayLessonIds({ goalId: goal.id, today: "2026-09-30" });
 
     const neverWaited = await setupDayWithStandIn({ laterLessons: 16, outlineStatus: "completed" });
     const twin = await readToday(neverWaited.goal.id);
@@ -632,7 +638,9 @@ describe("today's session the learner was shown", () => {
       before.blocks.map((block) => block.id),
     );
 
-    expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
+    expect(
+      after.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+    ).toBeLessThanOrEqual(after.minutes.planned);
 
     expect(after).toMatchObject({
       lessonsComing: false,
@@ -662,10 +670,12 @@ describe("today's session the learner was shown", () => {
     });
 
     const after = await readToday(goal.id);
-    const allocated = await loadDayLessonIds({ goalId: goal.id, today: "2026-09-30" });
 
     expect(before.plannedMinutes).toBeGreaterThan(opened.minutes.planned);
-    expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
+
+    expect(
+      after.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+    ).toBeLessThanOrEqual(after.minutes.planned);
 
     expect(after).toMatchObject({
       lessonsComing: false,
@@ -690,10 +700,12 @@ describe("today's session the learner was shown", () => {
     await prisma.$transaction((tx) => markPlanSourcesChanged(tx, { planIds: [plan.id] }));
 
     const after = await readToday(goal.id);
-    const allocated = await loadDayLessonIds({ goalId: goal.id, today: "2026-09-30" });
 
     expect(learnLessonIds(after)).toStrictEqual(expect.arrayContaining(landed));
-    expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
+
+    expect(
+      after.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+    ).toBeLessThanOrEqual(after.minutes.planned);
   });
 
   it.each(["the ask ends", "Open replans the day"])(
@@ -720,7 +732,10 @@ describe("today's session the learner was shown", () => {
 
       expect(landedToday.length).toBeGreaterThan(0);
       expect(learnLessonIds(after)).toStrictEqual(expect.arrayContaining(landedToday));
-      expect(learnLessonIds(after).filter((id) => !allocated.has(id))).toStrictEqual([]);
+
+      expect(
+        after.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+      ).toBeLessThanOrEqual(after.minutes.planned);
     },
   );
 

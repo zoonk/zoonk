@@ -1,6 +1,12 @@
 import "server-only";
 import { toIsoDate } from "../planner/plan-calendar";
-import { type Pace, choosePace } from "../planner/plan-pace";
+import {
+  type CalibratedPace,
+  type PaceFamily,
+  choosePace,
+  getPaceFamily,
+  keepSlowerPace,
+} from "../planner/plan-pace";
 import { type PlanState } from "../planner/plan-state";
 import { PACE_LESSON_LIMIT, loadPaceSamples } from "./pace-samples";
 import { type PlanContext } from "./plan-context";
@@ -10,23 +16,26 @@ import { type PlanContext } from "./plan-context";
  * studied faster.
  */
 async function choosePlanPace({
+  family,
   lessons,
   now,
   pace,
   saved,
   userId,
 }: {
+  family: PaceFamily;
   lessons: readonly { lessonId: string }[];
   now: Date;
   pace: "sampled" | "saved";
-  saved: Pace | null;
+  saved: CalibratedPace | null;
   userId: string;
-}): Promise<Pace> {
+}): Promise<CalibratedPace> {
   if (pace === "saved" && saved) {
     return saved;
   }
 
   const samples = await loadPaceSamples({
+    family,
     lessonIds: lessons.slice(0, PACE_LESSON_LIMIT).map((lesson) => lesson.lessonId),
     now,
     userId,
@@ -34,7 +43,7 @@ async function choosePlanPace({
 
   const sampled = choosePace(samples);
 
-  return saved && sampled.factor < saved.factor ? saved : sampled;
+  return keepSlowerPace({ family, sampled, saved });
 }
 
 export async function choosePlanSettings({
@@ -51,6 +60,7 @@ export async function choosePlanSettings({
   state: PlanState;
 }) {
   const pace = await choosePlanPace({
+    family: getPaceFamily(context.goal.targetLanguage),
     lessons: inputs.lessons,
     now,
     pace: paceSource,

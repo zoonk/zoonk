@@ -251,7 +251,8 @@ fun LessonPlayer(
     language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
-        viewModel.resendAnswers()
+        viewModel.resume()
+        viewModel.resendUnsaved()
         viewModel.retryFailedFinish()
         onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() }
     }

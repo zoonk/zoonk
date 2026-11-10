@@ -9012,6 +9012,65 @@
         }
       }
     },
+    "~%@" : {
+      "comment" : "An estimated day or month, like '~Nov 20'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        }
+      }
+    },
     "~%lld days left" : {
       "comment" : "Plan subtitle: about how many days are left until the goal's estimated date",
       "localizations" : {
@@ -9492,6 +9551,65 @@
         }
       }
     },
+    "About %@" : {
+      "comment" : "An estimated day, read aloud; the argument is a day like 'Nov 20'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa am %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente el %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers le %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intorno al %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Około %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarı"
+          }
+        }
+      }
+    },
     "About the exam" : {
       "comment" : "Opens the exam's page",
       "localizations" : {
@@ -9547,6 +9665,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınav hakkında"
+          }
+        }
+      }
+    },
+    "aboutMonth" : {
+      "comment" : "An estimated month, read aloud; the argument is a month like 'May 2027'",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa im %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verso %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orientacyjnie: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarı"
           }
         }
       }
@@ -12053,65 +12237,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İleri seviye"
-          }
-        }
-      }
-    },
-    "After the challenge before it" : {
-      "comment" : "When the phase's challenge comes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach der vorherigen Herausforderung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después del desafío anterior"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Après le défi précédent"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopo la sfida precedente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前のチャレンジの後"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이전 챌린지 이후"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po poprzednim wyzwaniu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois do desafio anterior"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önceki meydan okumadan sonra"
           }
         }
       }
@@ -20722,13 +20847,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektionen abgeschlossen · Herausforderung am %@"
+            "value" : "Lektionen abgeschlossen · Herausforderung %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lecciones completadas · desafío el %@"
+            "value" : "Lecciones completadas · desafío %@"
           }
         },
         "fr" : {
@@ -20740,7 +20865,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lezioni completate · sfida il %@"
+            "value" : "Lezioni completate · sfida %@"
           }
         },
         "ja" : {
@@ -20764,7 +20889,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aulas concluídas · desafio em %@"
+            "value" : "Aulas concluídas · desafio %@"
           }
         },
         "tr" : {
@@ -22321,13 +22446,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen weitere Lektionen · Herausforderung am %@"
+            "value" : "Wir erstellen weitere Lektionen · Herausforderung %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más lecciones en camino · desafío el %@"
+            "value" : "Más lecciones en camino · desafío %@"
           }
         },
         "fr" : {
@@ -22339,7 +22464,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando altre lezioni · sfida il %@"
+            "value" : "Stiamo preparando altre lezioni · sfida %@"
           }
         },
         "ja" : {
@@ -22363,7 +22488,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais aulas a caminho · desafio em %@"
+            "value" : "Mais aulas a caminho · desafio %@"
           }
         },
         "tr" : {
@@ -31076,12 +31201,71 @@
       }
     },
     "until ~%@" : {
-      "comment" : "When a phase ends, about",
+      "comment" : "When a phase ends, about; the argument is a day like 'Nov 10'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bis ca. %@"
+            "value" : "bis ~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta el ~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusqu’au ~%@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino al ~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até ~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@ tarihine kadar"
+          }
+        }
+      }
+    },
+    "until about %@" : {
+      "comment" : "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis etwa %@"
           }
         },
         "es" : {
@@ -31093,13 +31277,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "jusqu’au %@ environ"
+            "value" : "jusqu’aux environs du %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fino al %@ circa"
+            "value" : "fino a circa il %@"
           }
         },
         "ja" : {
@@ -31117,13 +31301,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "do ~%@"
+            "value" : "mniej więcej do %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "até ~%@"
+            "value" : "até aproximadamente %@"
           }
         },
         "tr" : {
@@ -31492,6 +31676,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seçim yapana kadar %@ planının ve deneme sınavlarının dışında kalır."
+          }
+        }
+      }
+    },
+    "untilAboutMonth" : {
+      "comment" : "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis ~%@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "until ~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta ~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusque vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino a ~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até ~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@ ayına kadar"
+          }
+        }
+      }
+    },
+    "untilAboutMonthSpoken" : {
+      "comment" : "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis etwa %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "until about %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta aproximadamente %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusque vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino a %@ circa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do około %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarına kadar"
           }
         }
       }

@@ -20,7 +20,7 @@ import { type readOwnedGoal } from "../../learner/facts/owned-goal";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readActiveSubscription } from "../../learner/facts/subscription";
 import { type readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
-import { type readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
+import { type readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { listGoalMindMaps } from "../../mind-maps/list-goal-mind-maps";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getProgressView } from "../progress/get-progress-view";
@@ -81,13 +81,13 @@ vi.mock("../../learner/facts/taught-stand-in-skills", async (importOriginal) => 
   return { ...actual, readTaughtStandInSkills: keepRequestReads(actual.readTaughtStandInSkills) };
 });
 
-vi.mock("../../learner/facts/today-learn-blocks", async (importOriginal) => {
+vi.mock("../../learner/facts/today-plan-session", async (importOriginal) => {
   const [actual, { keepRequestReads }] = await Promise.all([
-    importOriginal<{ readTodayLearnBlocks: typeof readTodayLearnBlocks }>(),
+    importOriginal<{ readTodayPlanSession: typeof readTodayPlanSession }>(),
     import("../../_test-utils/keep-request-reads"),
   ]);
 
-  return { ...actual, readTodayLearnBlocks: keepRequestReads(actual.readTodayLearnBlocks) };
+  return { ...actual, readTodayPlanSession: keepRequestReads(actual.readTodayPlanSession) };
 });
 
 describe("the Plan's render reads", () => {
@@ -240,7 +240,7 @@ describe("the Plan's render reads", () => {
           () => Promise.all([getPlanTabView(), getSyllabusView(), listGoalMindMaps()]),
           '"public"."courses"."user_id", "public"."courses"."visibility"',
         ),
-      'SELECT "public"."study_sessions"."id" FROM',
+      'SELECT "public"."study_sessions"."id", "public"."study_sessions"."user_id"',
     );
 
     const standIns = sessions.result;

@@ -198,7 +198,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/starts": {
     post: {
       description:
-        "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
+        "Starts or resumes a block. A phase challenge waits for earlier lessons in the same session to be completed or skipped, as its `waitReason` says. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
       operationId: "createStudyBlockStart",
       requestBody: {
         content: { "application/json": { schema: studyBlockStartInputSchema } },

@@ -39,34 +39,21 @@ type DayProgressRow = {
   usage: number;
 };
 
-async function loadDayProgress({
-  client,
-  picks,
-  session,
-  timeZone,
-  through,
-}: {
-  client: TransactionClient;
-  picks: readonly MissionPick[];
-  session: MissionDay;
-  timeZone: string;
-  through?: Date;
-}): Promise<DayProgress> {
-  const from = getStartOfLocalDay({ localDate: session.localDate, timeZone });
+export type DayProgressQuery = {
+  from: Date;
+  kinds: readonly MissionPick["kind"][];
+  to: Date;
+  userId: string;
+};
 
-  const nextDay = getStartOfLocalDay({
-    localDate: new Date(session.localDate.getTime() + MS_PER_DAY),
-    timeZone,
-  });
-  // A running session keeps its day across midnight; its completion still feeds that day's picks.
-  const to = through && through >= nextDay ? new Date(through.getTime() + 1) : nextDay;
-  const kinds = new Set(picks.map((pick) => pick.kind));
-  const userId = session.userId;
+/** A GET's request-wide day progress; without it, it's read fresh. */
+export type DayProgressReader = (query: DayProgressQuery) => Promise<DayProgressRow | undefined>;
 
-  if (!DAY_PROGRESS_KINDS.some((kind) => kinds.has(kind))) {
-    return { calls: 0, fixed: 0, patterns: new Set(), pronunciation: 0, questions: 0 };
-  }
-
+export async function queryDayProgress(
+  client: TransactionClient,
+  { from, kinds: queried, to, userId }: DayProgressQuery,
+): Promise<DayProgressRow | undefined> {
+  const kinds = new Set(queried);
   const counted = (kind: MissionPick["kind"], query: Sql) => (kinds.has(kind) ? query : sql`0`);
 
   const [row] = await client.$queryRaw<DayProgressRow[]>`
@@ -102,6 +89,42 @@ async function loadDayProgress({
         sql`(SELECT count(*) FROM usage_records WHERE user_id = ${userId}::uuid
           AND kind = 'tutor_message' AND created_at >= ${from} AND created_at < ${to})`,
       )}::int AS usage`;
+
+  return row;
+}
+
+async function loadDayProgress({
+  client,
+  picks,
+  readProgress,
+  session,
+  timeZone,
+  through,
+}: {
+  client: TransactionClient;
+  picks: readonly MissionPick[];
+  readProgress?: DayProgressReader;
+  session: MissionDay;
+  timeZone: string;
+  through?: Date;
+}): Promise<DayProgress> {
+  const from = getStartOfLocalDay({ localDate: session.localDate, timeZone });
+
+  const nextDay = getStartOfLocalDay({
+    localDate: new Date(session.localDate.getTime() + MS_PER_DAY),
+    timeZone,
+  });
+  // A running session keeps its day across midnight; its completion still feeds that day's picks.
+  const to = through && through >= nextDay ? new Date(through.getTime() + 1) : nextDay;
+  const kinds = new Set(picks.map((pick) => pick.kind));
+  const userId = session.userId;
+
+  if (!DAY_PROGRESS_KINDS.some((kind) => kinds.has(kind))) {
+    return { calls: 0, fixed: 0, patterns: new Set(), pronunciation: 0, questions: 0 };
+  }
+
+  const query = { from, kinds: [...kinds].toSorted(), to, userId };
+  const row = await (readProgress ? readProgress(query) : queryDayProgress(client, query));
 
   return {
     calls: row?.calls ?? 0,
@@ -220,17 +243,26 @@ function toMission({
 export async function loadMissionDayViews({
   client = prisma,
   picks,
+  readProgress,
   session,
   through,
   timeZone,
 }: {
   client?: TransactionClient;
   picks: readonly MissionPick[];
+  readProgress?: DayProgressReader;
   session: MissionDay;
   through?: Date;
   timeZone: string;
 }): Promise<MissionView[]> {
-  const progress = await loadDayProgress({ client, picks, session, through, timeZone });
+  const progress = await loadDayProgress({
+    client,
+    picks,
+    readProgress,
+    session,
+    through,
+    timeZone,
+  });
 
   return picks
     .map((pick) => toMission({ pick, progress, session }))

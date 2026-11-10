@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "3a2639dab3c88fa15445027044f51a53b7060c7c8da829e7e6321537b875dbaa",
-  "missions_after_lessons": "a3f8a6ed596b3c80457dca9508f81bb7de1e962867d04592094f8a25dd2af7e6",
+  "missions_after_lessons": "bbbd734d7b1cdf96505265b2db72a0520280ee253385e7abce040200b7c621c5",
   "missions_already_earned": "2d4b2c704103cec8379005879b2bd7999bc65b757e89d06b4cfb98424fb12576",
   "missions_ask_anything": "9ad80ca55e7cb80730ee2683771a00ef7525a49104df35e01e096b35e45f034b",
   "missions_ask_buddy": "827971315c28fdc04393182ca8f39f9cbee71b24a1a76c8014e4ced3f2fd8a15",
@@ -130,8 +129,7 @@
     <string name="missions_ask_buddy">Zapytaj o coś: %1$s</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">Poćwicz: %1$s</string>
-    <string name="missions_after_lessons">Po dzisiejszych lekcjach</string>
-    <string name="missions_after_challenge">Po poprzednim wyzwaniu</string>
+    <string name="missions_after_lessons">Po lekcjach tego etapu</string>
     <string name="missions_from_notebook">Z twojego zeszytu błędów</string>
     <string name="missions_due_today">Do zrobienia dziś</string>
     <!-- %1$s is a language unit's title. -->

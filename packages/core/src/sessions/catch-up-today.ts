@@ -4,10 +4,10 @@ import { loadLaterCatchUp } from "./_utils/catch-up";
 import { withSessionAppendLock } from "./_utils/extra-blocks";
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { loadStudySessionView } from "./_utils/load-session-view";
+import { toLessonBlock } from "./_utils/session-lessons";
 import { type StudySessionView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
-import { toLessonBlock } from "./session-builder";
 
 export type CatchUpTodayResult =
   | { session: StudySessionView; status: "ready" }

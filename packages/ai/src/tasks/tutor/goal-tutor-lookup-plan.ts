@@ -67,7 +67,7 @@ export type PlanLookUpFound =
         locked: boolean;
         /** The phase it belongs to; `name` is null for an exam's phases, which `kind` names. */
         phase: { index: number; kind: string; name: string | null } | null;
-        /** On its `date`, in the learner's next session (`nextSession`), or after the challenge before it (`queued`). */
+        /** A phase challenge's `date` is approximate; `nextSession` means the session offers it. `queued` is retained for older clients and is never returned. */
         when: "date" | "nextSession" | "queued";
       }[];
       done: { challenges: number; mocks: number; weekly: number };
@@ -99,7 +99,7 @@ export const PLAN_LOOKUP_USES: Record<PlanLookUp, string> = {
   catchUp:
     "every lesson earlier days left that they haven't done, in the plan's order, past the first few the context lists: each one's title, whether today's session already holds it (`inToday`) and where it opens, how many in all, and whether Today offers catching up today (`offeredToday`). Which day each one came from isn't kept. Takes no `area` or `query`. For which lessons they're behind on.",
   challenges:
-    "every phase challenge still ahead (in phase order), then the next weekly challenges (`weekly`, the week's mixed challenge) and planned mock exams by day, with `more` for the rest: when each comes (on its `date`, in their next session, or after the challenge before it), its phase, whether starting it needs Plus (`locked`) and its link, and how many of each they already did. Takes no `area` or `query`. For when their next challenges and mocks are.",
+    "every phase challenge still ahead (in phase order), then the next weekly challenges (`weekly`, the week's mixed challenge) and planned mock exams by day, with `more` for the rest: when each comes (a phase challenge's approximate `date`, or in their next session when offered; weekly challenges and mocks keep real dates), its phase, whether starting it needs Plus (`locked`) and its link, and how many of each they already did. Takes no `area` or `query`. For when their next challenges and mocks are.",
   schedule:
     "the plan's study days ahead, up to 14 days from the day in `query` (YYYY-MM-DD; null for the day after the context's `today`, which the context already has): each day's lessons, reviews, challenges and mocks with their status, minutes for this week's days, and the challenges' and mocks' links. Ask again from the day after `to` for later days. For what comes on a day or in the next weeks.",
   timeToCover:

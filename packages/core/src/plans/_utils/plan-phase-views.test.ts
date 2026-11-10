@@ -277,22 +277,6 @@ describe(buildPhaseViews, () => {
 
 const done = (item: ExistingPlanItem): ExistingPlanItem => ({ ...item, status: "done" });
 
-function challengeTimings({ days, today }: { days: string[]; today: Date }) {
-  return buildPhaseViews({
-    chapterTitles: new Map(),
-    currentPhase: 0,
-    goalKind: "learn",
-    items: days.flatMap((day, index) => [
-      done(lesson(index * 2, index)),
-      boss(index * 2 + 1, index, "todo", day),
-    ]),
-    phases: days.map(() => phase()),
-    skillAreas: new Map(),
-    today,
-    upNextItemId: null,
-  }).map((phaseView) => phaseView.checkpoint?.when);
-}
-
 describe("phases of a finished plan", () => {
   const TODAY = new Date("2026-10-13T00:00:00.000Z");
 
@@ -350,89 +334,6 @@ describe("phases of a finished plan", () => {
       "done",
       "current",
     ]);
-  });
-
-  it("says the next challenge opens in the next session only where sessions offer it", () => {
-    const items = [
-      done(lesson(0, 0)),
-      boss(1, 0, "todo", "2026-10-13"),
-      lesson(2, 1),
-      boss(3, 1, "todo"),
-    ];
-
-    const when = (challengesOpen: boolean) =>
-      buildPhaseViews({
-        challengesOpen,
-        chapterTitles: new Map(),
-        currentPhase: 0,
-        goalKind: "learn",
-        items,
-        phases: [phase(), phase()],
-        skillAreas: new Map(),
-        today: TODAY,
-        upNextItemId: null,
-      }).map((phaseView) => phaseView.checkpoint?.when);
-
-    expect(when(true)).toStrictEqual(["nextSession", "date"]);
-    expect(when(false)).toStrictEqual(["date", "date"]);
-  });
-
-  it("says when each challenge comes, as sessions offer them", () => {
-    const days = ["2026-10-16", "2026-10-18", "2026-10-21"];
-
-    expect(challengeTimings({ days, today: TODAY })).toStrictEqual(["date", "date", "date"]);
-
-    expect(challengeTimings({ days, today: new Date("2026-10-16T00:00:00.000Z") })).toStrictEqual([
-      "nextSession",
-      "date",
-      "date",
-    ]);
-
-    expect(challengeTimings({ days, today: new Date("2026-10-18T00:00:00.000Z") })).toStrictEqual([
-      "nextSession",
-      "nextSession",
-      "date",
-    ]);
-
-    expect(challengeTimings({ days, today: new Date("2026-10-25T00:00:00.000Z") })).toStrictEqual([
-      "nextSession",
-      "nextSession",
-      "nextSession",
-    ]);
-  });
-
-  it("names the challenge sessions reach, after lessons the Library couldn't write", () => {
-    const unwritten: ExistingPlanItem = { ...lesson(0, 0), status: "skipped" };
-
-    const items = [
-      unwritten,
-      boss(1, 0, "todo", "2026-10-13"),
-      done(lesson(2, 1)),
-      boss(3, 1, "todo"),
-    ];
-
-    const views = buildPhaseViews({
-      chapterTitles: new Map(),
-      currentPhase: 0,
-      goalKind: "learn",
-      items,
-      phases: [phase(), phase()],
-      skillAreas: new Map(),
-      today: TODAY,
-      upNextItemId: null,
-    });
-
-    expect(views.map((phaseView) => phaseView.checkpoint?.when)).toStrictEqual([
-      "nextSession",
-      "date",
-    ]);
-
-    expect(views.map((view) => [view.checkpoint?.planItemId, view.checkpoint?.date])).toStrictEqual(
-      [
-        ["item-1", "2026-10-13"],
-        ["item-3", "2026-10-16"],
-      ],
-    );
   });
 });
 

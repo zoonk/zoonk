@@ -140,17 +140,13 @@ describe("the plan the buddy looks up", () => {
       const blocks = await readTodayBlocks(learner.goal.id);
 
       expect(found).toStrictEqual({
-        lessons: learner.carried.map((item, index) =>
-          index < 2
-            ? {
-                inToday: true,
-                link: { blockId: blocks.get(item.lessonId), kind: "block" },
-                title: item.titleSnapshot,
-              }
-            : { inToday: false, link: TODAY_LINK, title: item.titleSnapshot },
-        ),
+        lessons: learner.carried.map((item) => ({
+          inToday: true,
+          link: { blockId: blocks.get(item.lessonId), kind: "block" },
+          title: item.titleSnapshot,
+        })),
         more: 0,
-        offeredToday: true,
+        offeredToday: false,
         status: "found",
         total: 3,
         what: "catchUp",
@@ -211,7 +207,7 @@ describe("the plan the buddy looks up", () => {
         carried
           .slice(0, 30)
           .map((item, index) =>
-            index < 2
+            index < 4
               ? {
                   inToday: true,
                   link: { blockId: blocks.get(item.lessonId), kind: "block" },

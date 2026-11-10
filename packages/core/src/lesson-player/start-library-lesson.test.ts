@@ -13,6 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseRows, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
@@ -104,6 +105,30 @@ describe(startLibraryLesson, () => {
     await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toStrictEqual(
       firstUser,
     );
+  });
+
+  it("resumes a standalone run without a learner lock or writes", async () => {
+    const { lesson } = await setupPlayableLesson();
+    const first = await start(lesson.id);
+
+    if (first.status !== "started") {
+      throw new Error(first.status);
+    }
+
+    const measured = await countDatabaseRows(
+      () =>
+        countDatabaseStatements(() =>
+          startLibraryLesson({
+            input: { runId: first.run.runId, timeZone: TIME_ZONE },
+            lessonId: lesson.id,
+          }),
+        ),
+      "FOR NO KEY UPDATE",
+    );
+
+    expect(measured.result.result).toStrictEqual(first);
+    expect(measured.rows).toBe(0);
+    expect(measured.result.writes).toBe(0);
   });
 
   it("resumes the open run with its answers in order, and Hyperdrive as it stood when it started", async () => {
@@ -481,13 +506,15 @@ describe(startLibraryLesson, () => {
   });
 
   it("marks screens already answered right, since answering them again is a repeat", async () => {
+    freezeClock();
     const { lesson, steps, user } = await setupPlayableLesson();
     const check = stepOfKind(steps, "check");
     const typed = stepOfKind(steps, "typedAnswer");
+    const answeredAt = new Date(Date.now() - 1000);
 
     await Promise.all([
-      attemptFixture({ stepId: check.id, userId: user.id }),
-      attemptFixture({ isCorrect: false, stepId: typed.id, userId: user.id }),
+      attemptFixture({ answeredAt, stepId: check.id, userId: user.id }),
+      attemptFixture({ answeredAt, isCorrect: false, stepId: typed.id, userId: user.id }),
     ]);
 
     const outcome = await start(lesson.id);

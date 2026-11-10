@@ -133,6 +133,7 @@ export function projectBossPlan({
     items: readonly PlannedItem[];
     keptKeys: ReadonlySet<string>;
     skillLessons: ReadonlyMap<string, number>;
+    phases: readonly { kind?: string; endDate?: string | null }[];
   };
   candidates: readonly (BossCandidate & { laid?: { beside: boolean; date: string } })[];
   input: Pick<BuildPlanInput, "goal" | "graph" | "settings">;
@@ -144,6 +145,7 @@ export function projectBossPlan({
   const plan = toBossPlan({
     input,
     items: ranked.map(({ item }) => item),
+    phases: built.phases,
     rows,
     skillLessons: built.skillLessons,
     survivors,

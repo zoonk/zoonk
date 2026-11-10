@@ -22,11 +22,11 @@ export function getSessionQueue({
   finishedId?: string | null;
   nextId?: string | null;
   nextPosition?: number | null;
-}): { minutesLeft: number; rows: SessionQueueRow[] } {
+}): SessionQueueRow[] {
   const isNext = (block: DayStep) =>
     nextPosition === null ? hasId(block, nextId) : block.position === nextPosition;
 
-  const rows = blocks
+  return blocks
     .filter((block) => block.status !== "skipped")
     .map((block): SessionQueueRow => {
       if (block.status === "completed" || hasId(block, finishedId)) {
@@ -35,10 +35,4 @@ export function getSessionQueue({
 
       return { block, state: isNext(block) ? "next" : "ahead" };
     });
-
-  const minutesLeft = rows
-    .filter((row) => row.state !== "done")
-    .reduce((total, row) => total + row.block.estimatedMinutes, 0);
-
-  return { minutesLeft, rows };
 }

@@ -192,7 +192,7 @@ private fun PhaseRow(
         highlighted = highlighted,
         expanded = expanded,
         leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
-        supporting = line?.let { { Text(it) } },
+        supporting = line?.let { { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) } },
         meta =
             if (phase.lessonsTotal > 0 || until != null) {
                 {
@@ -230,13 +230,25 @@ private fun phaseUntil(
         return null
     }
     if (isLast && phase.kind != PlanPhase.Kind.AFTER_EXAM && page.finish != null) return null
-    val estimate =
-        (phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM) && phase.state == PlanPhase.State.UPCOMING
-    val date = formatPlanDate(end, page.today, currentLocale(), month = estimate)
-    return if (estimate) {
-        PlanDateWords(stringResource(R.string.plan_until_estimate, date), stringResource(R.string.plan_until_estimate_spoken, date))
-    } else {
-        stringResource(R.string.plan_until, date).let { PlanDateWords(it, it) }
+    val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
+    val month = learns && phase.state == PlanPhase.State.UPCOMING
+    val date = formatPlanDate(end, page.today, currentLocale(), month = month)
+    return when {
+        month -> {
+            PlanDateWords(
+                stringResource(R.string.plan_until_estimate_month, date),
+                stringResource(R.string.plan_until_estimate_month_spoken, date),
+            )
+        }
+
+        // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+        learns && phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING -> {
+            PlanDateWords(stringResource(R.string.plan_until_estimate, date), stringResource(R.string.plan_until_estimate_spoken, date))
+        }
+
+        else -> {
+            stringResource(R.string.plan_until, date).let { PlanDateWords(it, it) }
+        }
     }
 }
 
@@ -245,17 +257,19 @@ private fun phaseMeta(
     page: PlanPageState,
     phase: PlanPhase,
     open: Boolean,
-): String? {
-    if (phase.state == PlanPhase.State.LEFT_OUT) return stringResource(R.string.plan_not_in_your_plan)
+): PlanDateWords? {
+    if (phase.state == PlanPhase.State.LEFT_OUT) return sameWords(stringResource(R.string.plan_not_in_your_plan))
     if (phase.state == PlanPhase.State.UNFINISHED) {
         val leftOut = (phase.lessonsTotal - phase.lessonsDone).toInt()
-        return if (leftOut > 0) {
-            pluralStringResource(R.plurals.plan_lessons_left_out, leftOut, leftOut)
-        } else {
-            stringResource(R.string.plan_challenge_left_out)
-        }
+        return sameWords(
+            if (leftOut > 0) {
+                pluralStringResource(R.plurals.plan_lessons_left_out, leftOut, leftOut)
+            } else {
+                stringResource(R.string.plan_challenge_left_out)
+            },
+        )
     }
-    if (phase.challengeLeftOut) return stringResource(R.string.plan_challenge_no_time)
+    if (phase.challengeLeftOut) return sameWords(stringResource(R.string.plan_challenge_no_time))
     if (phase.state != PlanPhase.State.CURRENT || open) return null
 
     val writing = phase.chapters.any { it.writing }
@@ -266,25 +280,26 @@ private fun phaseMeta(
                 .filter { it.state != PlanPhaseChaptersInner.State.DONE }
                 .mapNotNull { it.nextDate?.toJavaLocalDate() }
                 .minOrNull() ?: return null
-        return if (resumes == LocalDate.now()) {
-            stringResource(R.string.plan_continues_today)
-        } else {
-            stringResource(R.string.plan_continues_on, formatPlanDate(resumes, page.today, currentLocale()))
-        }
+        return sameWords(
+            if (resumes == LocalDate.now()) {
+                stringResource(R.string.plan_continues_today)
+            } else {
+                stringResource(R.string.plan_continues_on, formatPlanDate(resumes, page.today, currentLocale()))
+            },
+        )
     }
     val checkpoint = phase.checkpoint
     val challengeDate =
         checkpoint
             ?.takeIf { it.state == PlanPhaseCheckpoint.State.UPCOMING && it.`when` == PlanPhaseCheckpoint.`When`.DATE }
             ?.date
-            ?.let { formatPlanDate(it.toJavaLocalDate(), page.today, currentLocale()) }
-    return when {
-        writing && challengeDate != null -> stringResource(R.string.plan_more_lessons_challenge_on, challengeDate)
-        writing -> stringResource(R.string.plan_more_lessons_on_the_way)
-        challengeDate != null -> stringResource(R.string.plan_lessons_done_challenge_on, challengeDate)
-        else -> null
-    }
+            ?.let { planDate(it.toJavaLocalDate(), page.today, estimate = true) }
+    if (challengeDate == null) return if (writing) sameWords(stringResource(R.string.plan_more_lessons_on_the_way)) else null
+    val sentence = if (writing) R.string.plan_more_lessons_challenge_on else R.string.plan_lessons_done_challenge_on
+    return PlanDateWords(stringResource(sentence, challengeDate.text), stringResource(sentence, challengeDate.spoken))
 }
+
+private fun sameWords(text: String) = PlanDateWords(text, text)
 
 @Composable
 private fun PhaseMark(phase: PlanPhase) {
@@ -483,10 +498,15 @@ internal fun CheckpointRow(
     val date = checkpoint.date?.toJavaLocalDate()
     val trailing =
         when {
-            done -> stringResource(R.string.plan_challenge_won)
-            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> stringResource(R.string.plan_challenge_next_session)
-            whenPlanned == PlanPhaseCheckpoint.`When`.QUEUED -> stringResource(R.string.plan_challenge_after_previous)
-            date != null -> formatPlanDate(date, page.today, currentLocale())
+            done -> sameWords(stringResource(R.string.plan_challenge_won))
+
+            // Dated today, the next session is today's, which may already be under way.
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> sameWords(stringResource(R.string.plan_today))
+
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> sameWords(stringResource(R.string.plan_challenge_next_session))
+
+            date != null -> planDate(date, page.today, estimate = true)
+
             else -> null
         }
     val planItemId = checkpoint.planItemId?.toString()
@@ -523,7 +543,7 @@ internal fun CheckpointRow(
             if (checkpoint.locked || trailing != null) {
                 {
                     if (checkpoint.locked) PlusMark()
-                    trailing?.let { TrailingText(PlanDateWords(it, it)) }
+                    trailing?.let { TrailingText(it) }
                 }
             } else {
                 null

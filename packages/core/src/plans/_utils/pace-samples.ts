@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { lessonPacesSql } from "@zoonk/db/anonymous-records";
 import { addDays } from "../planner/plan-calendar";
-import { type PaceSample } from "../planner/plan-pace";
+import { type PaceFamily, type PaceSample } from "../planner/plan-pace";
 
 const RECENT_DAYS = 30;
 export const PACE_LESSON_LIMIT = 500;
@@ -22,7 +22,13 @@ function toSample(row: SampleRow | undefined): PaceSample | null {
   return row && row.ratio !== null ? { count: row.count, ratio: row.ratio } : null;
 }
 
-async function loadOwnSample(userId: string): Promise<PaceSample | null> {
+async function loadOwnSample({
+  family,
+  userId,
+}: {
+  family: PaceFamily;
+  userId: string;
+}): Promise<PaceSample | null> {
   const rows = await prisma.$queryRaw<SampleRow[]>`
     SELECT count(*)::int AS count, sum(e.seconds)::float / nullif(sum(l.estimated_minutes * 60), 0) AS ratio
     FROM (
@@ -34,17 +40,20 @@ async function loadOwnSample(userId: string): Promise<PaceSample | null> {
       LIMIT ${OWN_LIMIT}
     ) e
     JOIN library_lessons l ON l.id = e.lesson_id::uuid
-    WHERE e.seconds BETWEEN l.estimated_minutes * ${MIN_SECONDS_PER_MINUTE}
+    WHERE (l.target_language IS NOT NULL) = ${family === "language"}
+      AND e.seconds BETWEEN l.estimated_minutes * ${MIN_SECONDS_PER_MINUTE}
       AND l.estimated_minutes * ${MAX_SECONDS_PER_MINUTE}`;
 
   return toSample(rows[0]);
 }
 
 async function loadSharedSamples({
+  family,
   lessonIds,
   now,
   userId,
 }: {
+  family: PaceFamily;
   lessonIds: readonly string[];
   now: Date;
   userId: string | null;
@@ -73,7 +82,8 @@ async function loadSharedSamples({
           AND l.id::text = ANY(${[...lessonIds]}::text[])) AS in_plan
       FROM ${lessonPacesSql({ since, until: now })} e
       JOIN library_lessons l ON l.id = e.lesson_id
-      WHERE e.seconds BETWEEN l.estimated_minutes * ${MIN_SECONDS_PER_MINUTE}
+      WHERE (l.target_language IS NOT NULL) = ${family === "language"}
+      AND e.seconds BETWEEN l.estimated_minutes * ${MIN_SECONDS_PER_MINUTE}
         AND l.estimated_minutes * ${MAX_SECONDS_PER_MINUTE}
       LIMIT ${SAMPLE_LIMIT}
     ) s`;
@@ -87,17 +97,19 @@ async function loadSharedSamples({
 }
 
 export async function loadPaceSamples({
+  family,
   lessonIds,
   now,
   userId,
 }: {
+  family: PaceFamily;
   lessonIds: readonly string[];
   now: Date;
   userId: string | null;
 }) {
   const [own, shared] = await Promise.all([
-    userId ? loadOwnSample(userId) : null,
-    loadSharedSamples({ lessonIds, now, userId }),
+    userId ? loadOwnSample({ family, userId }) : null,
+    loadSharedSamples({ family, lessonIds, now, userId }),
   ]);
 
   return { own, ...shared };

@@ -12,11 +12,18 @@ export type PlanRevealDays = {
   week: { days: number; minutes: number };
 };
 
-type Block = Pick<DayView["blocks"][number], "chapterId" | "estimatedMinutes" | "lessonId">;
+type Block = Pick<
+  DayView["blocks"][number],
+  "chapterId" | "estimatedMinutes" | "lessonId" | "planItemId"
+>;
 
 type ComposedDays = Omit<PlanRevealDays, "today">;
 
 function listsItem({ blocks, item }: { blocks: readonly Block[]; item: PlanItemView }): boolean {
+  if (item.id && blocks.some((block) => block.planItemId === item.id)) {
+    return true;
+  }
+
   if (item.lessonId) {
     return blocks.some((block) => block.lessonId === item.lessonId);
   }

@@ -51,7 +51,6 @@
   "plan_cadence_weekly_effect": "661fc3c8d8ff38f8b30f09adea486a91dd6779fd9ec6f8157e9d215c1ac4b7df",
   "plan_cancel": "4a6066629d56c6438adde1b5b43ee6d3524e9b7ac82b536bd5970ab3eb09a70a",
   "plan_catch_up": "18a0ba7b9dfb32db437ff59f5c30176df6b541aeeb93aba7f434d380e5062910",
-  "plan_challenge_after_previous": "1c13aff758dfe773e6c369ed58770ca680aae37f87fb05760827a50e54d2748d",
   "plan_challenge_left_out": "4a5553ade8265200ec104539b9bd28773e62deba0df32490597cc8b2bfa495d2",
   "plan_challenge_live_call": "d66056f428354919892c724e4975a4e86d83b4d489face5ca69b7a7237ea755e",
   "plan_challenge_next_session": "f6d750f467203daafe273267ce6b4f39aa1f607fba79dc5591feb8ed42031574",
@@ -308,7 +307,7 @@
   "plan_lessons": "99948753edd71a789e3be2c03926c6c38f227595fc5cf4d5185c4e955bd97c4f",
   "plan_lessons_being_written_from": "bed195cbed3ad9f4276f1079d8f9ca9a7b9690db4840bdb53e78c0891f67cd77",
   "plan_lessons_count": "3ec65a1f9dad270be6745d3675650393a63c41265d7ad61ffb0ddff45411e9bf",
-  "plan_lessons_done_challenge_on": "ce3c260ca10b874a3a59ab65867c426287387e9ea6a857c22cb9ccd712acd7ef",
+  "plan_lessons_done_challenge_on": "d0b91d8de2c689a676eab9cc09c2a5cb54384eaf084174ee234dae2f0b5a358c",
   "plan_lessons_done_of": "a9bce00871f113a2e5afe30edfbccf9510a09cba8c6431db29620f512130a5f9",
   "plan_lessons_left": "6706051b5a8d345d55723b56befc82276738a297198efbd4aae409d0ce01c17b",
   "plan_lessons_left_out": "45bd41040d7213ce2b79fb655064138fe282f9c011794304cf98f1558c5af1ef",
@@ -340,7 +339,7 @@
   "plan_more_chapters": "9db098536baa8382cabc60e60e3d8705775219f53de84807a61264422de1dc4c",
   "plan_more_explanation": "42c5a12710bbaea8a18f9f38c0654fd6e34febee591eefa0fa5ac76a3413efc3",
   "plan_more_lessons": "8bcf0b9d368244fe25241f347139d6634ac9c25b13ad6ede56c320aa0bb1c9cc",
-  "plan_more_lessons_challenge_on": "749a829a90aacfc749594e7335062352a816e11f824ba0f3e3ce506ecb534f06",
+  "plan_more_lessons_challenge_on": "8aca3b997a80f6b38fe192a5fa683544115023ed251cacc65abe4ef51b818dcd",
   "plan_more_lessons_fit": "d778f05a8df235290f21f36bfd31a1957969d5f2bd03feb19d12754b3e429608",
   "plan_more_lessons_on_the_way": "948553f27fa6d9cf74edb00df2f27cd21ece2eebb4aa699ef9afae6c78808501",
   "plan_more_practice": "74134b65134cfd3d3b050e7c3b6b5c0f528d82b3dc11673918fb74941b745fa4",
@@ -575,6 +574,8 @@
   "plan_unit_lessons_being_written": "20ef4bcc1429a5c22d8942234eda9f3af85bfc848d877350831902e9a7f6be49",
   "plan_until": "09fef8ad3ce07cff3098905a25218765098dd91ba8bc7c79e58d08b2af88bd28",
   "plan_until_estimate": "d6a7a56b628d80645a1f3e37226ab9b0ec48b8656e077d35a5ebba061366ef73",
+  "plan_until_estimate_month": "802e5896c261c098deb3cbc682c415c943c02d5993a0073ae38e3ccdedcf8d00",
+  "plan_until_estimate_month_spoken": "b1e9acc71dab1739dcb49865c77158ebec4452fdea390c29dc66de4196879ea2",
   "plan_until_estimate_spoken": "581dc5f36b5f49fcda894b583d282138bcdd7333663ac6c82df0f66cf501bba4",
   "plan_up_next": "4035049bbd9630a764c1dcc08376c42316860adad6a175846f225dbc5cd47148",
   "plan_up_next_suffix": "e2831cc86ab189d607c04e8a9770ca2d14ea8a78e868480fb6199e5b9272f642",
@@ -695,8 +696,14 @@
         <item quantity="other">%1$d von %2$d Lektionen abgeschlossen</item>
     </plurals>
     <string name="plan_until">bis %1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate">bis ~%1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate_spoken">bis etwa %1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month">bis ~%1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
+    <string name="plan_until_estimate_month_spoken">bis etwa %1$s</string>
     <string name="plan_not_in_your_plan">Nicht in deinem Plan</string>
     <plurals name="plan_lessons_left_out">
         <item quantity="one">%d Lektion wurde ausgelassen</item>
@@ -708,9 +715,9 @@
     <string name="plan_continues_today">Geht heute weiter</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Weiter am %1$s</string>
-    <string name="plan_more_lessons_challenge_on">Weitere Lektionen folgen · Herausforderung am %1$s</string>
+    <string name="plan_more_lessons_challenge_on">Weitere Lektionen folgen · Herausforderung %1$s</string>
     <string name="plan_more_lessons_on_the_way">Weitere Lektionen folgen</string>
-    <string name="plan_lessons_done_challenge_on">Lektionen abgeschlossen · Herausforderung am %1$s</string>
+    <string name="plan_lessons_done_challenge_on">Lektionen abgeschlossen · Herausforderung %1$s</string>
     <string name="plan_up_next">Als Nächstes</string>
     <string name="plan_skipped">Übersprungen</string>
     <string name="plan_done">Abgeschlossen</string>
@@ -758,7 +765,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Gewonnen</string>
     <string name="plan_challenge_next_session">In deiner nächsten Lerneinheit</string>
-    <string name="plan_challenge_after_previous">Nach der vorherigen Herausforderung</string>
     <string name="plan_challenge_opens_after_lessons">Nach den Lektionen dieser Phase verfügbar</string>
     <string name="plan_challenge_questions">Fragen zu dieser Phase ohne Hinweise</string>
     <string name="plan_challenge_live_call">Ein Live-Gespräch, in dem du dich verständlich machst</string>

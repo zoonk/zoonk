@@ -64,6 +64,7 @@ export async function completeBlockMoment({
   userId: string;
 }): Promise<StudyBlockCompletion> {
   const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
+
   const { missionResult } = settled;
   const bonus = getMissionBonus(settled.missions);
   const fullMeal = missionResult.fullMealPaid ? bonus : 0;

@@ -55,11 +55,12 @@ function setGraphAreas({
 
 const LISTENING_GOAL = { kind: "exam", targetLanguage: "en" } as const;
 
-async function listeningLearnerFixture() {
+async function listeningLearnerFixture(challengesDone = true) {
   const user = await userFixture();
   const { blueprint } = await listeningExamFixture();
 
   const fixture = await sessionGoalFixture({
+    challengesDone,
     goal: { ...LISTENING_GOAL, dailyMinutes: 10, examBlueprintId: blueprint.id },
     itemsPerSkill: 6,
     lessons: 4,
@@ -137,7 +138,7 @@ async function recordingFixture(
 }
 
 async function listeningPhaseFixture() {
-  const fixture = await listeningLearnerFixture();
+  const fixture = await listeningLearnerFixture(false);
   const { plan, planItems, skills } = fixture;
 
   await Promise.all([
@@ -298,7 +299,7 @@ describe("an exam's listening skills outside practice", () => {
 
   it("stays out of its phase's challenge", async () => {
     const { goal, heardId, heardItemIds, plan, planItems, readIds, skills, user } =
-      await listeningLearnerFixture();
+      await listeningLearnerFixture(false);
 
     await Promise.all([
       ...planItems
@@ -481,6 +482,7 @@ describe("an exam's listening skills in text tests", () => {
     const { blueprint } = await listeningExamFixture();
 
     const { chapters, goal, plan, skills } = await learnerGoalFixture({
+      challengesDone: true,
       itemsPerSkill: 4,
       phases: [2, 2],
       userId: user.id,

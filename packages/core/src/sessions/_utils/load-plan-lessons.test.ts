@@ -4,7 +4,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { loadLessonsForSkills, loadUpcomingLessons } from "./load-plan-lessons";
+import { loadDayPlanLessons, loadLessonsForSkills, loadPlanLessons } from "./load-plan-lessons";
 
 async function skillWithLessons(name: string) {
   const [lower = "", higher = ""] = [randomUUID(), randomUUID()].toSorted((a, b) =>
@@ -45,10 +45,10 @@ describe(loadLessonsForSkills, () => {
   });
 });
 
-describe(loadUpcomingLessons, () => {
-  it("looks ahead past the lessons the day keeps", async () => {
+describe(loadDayPlanLessons, () => {
+  it("looks ahead past retained lessons and separates allocation from fill", async () => {
     const lessons = await Promise.all(
-      Array.from({ length: 10 }, (_, index) =>
+      Array.from({ length: 32 }, (_, index) =>
         libraryLessonFixture({ title: `Short lesson ${index + 1}` }),
       ),
     );
@@ -64,14 +64,19 @@ describe(loadUpcomingLessons, () => {
       titleSnapshot: lesson.title,
     }));
 
-    const upcoming = await loadUpcomingLessons({
+    const upcoming = await loadDayPlanLessons({
       dayMinutes: 30,
-      items,
-      keptLessonIds: new Set(lessons.slice(0, 8).map((lesson) => lesson.id)),
+      fillItems: items.slice(31),
+      keptLessonIds: new Set(lessons.slice(0, 30).map((lesson) => lesson.id)),
+      learnItems: items.slice(0, 31),
     });
 
-    expect(upcoming.map((lesson) => lesson.lessonId)).toStrictEqual(
-      lessons.slice(8).map((lesson) => lesson.id),
+    expect(upcoming.lessons.map((lesson) => lesson.lessonId)).toStrictEqual(
+      lessons.slice(30, 31).map((lesson) => lesson.id),
+    );
+
+    expect(upcoming.fillLessons.map((lesson) => lesson.lessonId)).toStrictEqual(
+      lessons.slice(31).map((lesson) => lesson.id),
     );
   });
 
@@ -89,9 +94,45 @@ describe(loadUpcomingLessons, () => {
     };
 
     const upcoming = await countDatabaseStatements(() =>
-      loadUpcomingLessons({ dayMinutes: 30, items: [item], keptLessonIds: new Set([lessonId]) }),
+      loadDayPlanLessons({
+        dayMinutes: 30,
+        fillItems: [],
+        keptLessonIds: new Set([lessonId]),
+        learnItems: [item],
+      }),
     );
 
-    expect(upcoming).toStrictEqual({ result: [], statements: 0, writes: 0 });
+    expect(upcoming).toStrictEqual({
+      result: { fillLessons: [], lessons: [] },
+      statements: 0,
+      writes: 0,
+    });
+  });
+});
+
+describe("personal lesson minutes", () => {
+  it.each([
+    { factor: 0.5, minutes: 2 },
+    { factor: 1, minutes: 3 },
+    { factor: 2, minutes: 6 },
+  ])("prices a raw three-minute lesson once at pace $factor", async ({ factor, minutes }) => {
+    const lesson = await libraryLessonFixture({ estimatedMinutes: 3 });
+
+    const [planned] = await loadPlanLessons({
+      items: [
+        {
+          chapterId: null,
+          id: null,
+          kind: "lesson",
+          lessonId: lesson.id,
+          phase: 0,
+          scheduledFor: null,
+          skillId: null,
+        },
+      ],
+      paceFactor: factor,
+    });
+
+    expect(planned?.minutes).toBe(minutes);
   });
 });

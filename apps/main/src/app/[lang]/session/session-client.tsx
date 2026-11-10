@@ -80,7 +80,12 @@ export function SessionBlockClient({
       exitHref={EXIT_HREF}
       key={`${detail.block.id}:${firstUnanswered ?? "answered"}`}
       lessonHref={lessonHref}
-      session={{ blocks: session.blocks, examTomorrow: session.examTomorrow, id: session.id }}
+      session={{
+        blocks: session.blocks,
+        examTomorrow: session.examTomorrow,
+        id: session.id,
+        minutes: session.minutes,
+      }}
       tutor={questionTutor}
     />
   );
@@ -199,6 +204,7 @@ export function SessionNextStopClient({
       generationId={tapped ? null : generationId}
       lesson={tapped ? "ready" : lesson}
       lessonsComing={day.lessonsComing}
+      minutesLeft={day.minutes.left}
       notWritten={tapped ? null : notWritten}
       sessionBar={day.sessionBar}
       tap={tap}

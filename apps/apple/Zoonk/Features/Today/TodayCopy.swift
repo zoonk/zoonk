@@ -174,27 +174,16 @@ extension StudyBlock {
   }
 
   func label(isCatchingUp: Bool) -> String? {
-    if let waitReason {
-      let phase = challengePhase
-
-      switch (waitReason, phase) {
-      case (.lessons, let phase?):
+    if waitReason != nil {
+      guard let phase = challengePhase else {
         return String(
-          localized: "\(phase)\u{00A0}· after today's lessons", table: "Today",
-          comment: "A phase challenge waiting for the day's lessons")
-      case (.lessons, nil):
-        return String(
-          localized: "After today's lessons", table: "Today",
-          comment: "A challenge waiting for the day's lessons")
-      case (.challenge, let phase?):
-        return String(
-          localized: "\(phase)\u{00A0}· after the challenge before it", table: "Today",
-          comment: "A phase challenge waiting for the one before it")
-      case (.challenge, nil):
-        return String(
-          localized: "After the challenge before it", table: "Today",
-          comment: "A challenge waiting for the one before it")
+          localized: "After this phase's lessons", table: "Today",
+          comment: "A phase challenge waiting for its phase's lessons")
       }
+
+      return String(
+        localized: "\(phase)\u{00A0}· after this phase's lessons", table: "Today",
+        comment: "A phase challenge waiting for its phase's lessons, after the phase's name")
     }
 
     let part: String?
@@ -257,6 +246,10 @@ extension TodayView.PlanStatus {
 
 func studyDuration(minutes: Int) -> String {
   progressLearningTime(minutes * 60)
+}
+
+func studyDuration(minutes: Double) -> String {
+  progressLearningTime(Int((minutes * 60).rounded()))
 }
 
 /// Midnight in UTC, to format with a UTC calendar so it never shifts a day.

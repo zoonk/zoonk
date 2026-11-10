@@ -37,14 +37,14 @@ describe(getBlockWait, () => {
     expect(getBlockWait({ block: boss, blocks: [review, skipped, boss] })).toBeNull();
   });
 
-  it("holds a later phase's challenge until the one before it is finished", () => {
+  it("lets a later challenge open while another is put off", () => {
     const final = block({
       checkpoint: { kind: "finalBoss", mock: false },
       kind: "checkpoint",
       position: 3,
     });
 
-    expect(getBlockWait({ block: final, blocks: [boss, final] })).toBe("challenge");
+    expect(getBlockWait({ block: final, blocks: [boss, final] })).toBeNull();
 
     const won = { ...boss, status: "completed" as const };
     expect(getBlockWait({ block: final, blocks: [won, final] })).toBeNull();

@@ -522,7 +522,7 @@ class LessonPlayerFlowTest {
         firstOffline = false
         secondOffline = true
         api.gate = CompletableDeferred()
-        rule.runOnIdle { viewModel.resendAnswers() }
+        rule.runOnIdle { viewModel.resendUnsaved() }
 
         tap("Right")
         tap("Check")
@@ -697,7 +697,7 @@ class LessonPlayerFlowTest {
         api.gate = CompletableDeferred()
         api.grade = { _, _ -> checkResult(isCorrect = true) }
 
-        rule.runOnIdle { repeat(3) { viewModel.resendAnswers() } }
+        rule.runOnIdle { repeat(3) { viewModel.resendUnsaved() } }
         rule.waitUntil { api.checks.size == sent + 2 }
         assertEquals(
             setOf("first", "second"),
@@ -734,7 +734,7 @@ class LessonPlayerFlowTest {
 
         assertEquals(listOf(miss.attemptId), api.checks.map { it.second.attemptId }.distinct())
         offline = false
-        rule.runOnIdle { viewModel.resendAnswers() }
+        rule.runOnIdle { viewModel.resendUnsaved() }
         rule.waitUntil { !viewModel.hasUnsent }
 
         assertEquals(miss, api.checks[api.checks.lastIndex - 1].second)

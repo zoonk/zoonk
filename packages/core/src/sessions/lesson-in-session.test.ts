@@ -30,7 +30,10 @@ async function playLessonBlock({ energy }: { energy?: number } = {}) {
     items: [planItem],
   } = await planFixture({
     goalId: goal.id,
-    items: [{ lessonId: lesson.id, skillId: skill.id, titleSnapshot: lesson.title }],
+    items: [
+      { lessonId: lesson.id, skillId: skill.id, titleSnapshot: lesson.title },
+      { kind: "boss", position: 100, status: "done" },
+    ],
   });
 
   const today = await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });

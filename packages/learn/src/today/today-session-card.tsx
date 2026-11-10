@@ -2,9 +2,9 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { type DayStep } from "../session/session-types";
-import { BlockRow, PlusLessonRow, type RowFold, useCountsTowardMission } from "./today-block-row";
+import { BlockRow, PlusLessonRow } from "./today-block-row";
 import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
 import { DayMeta, DayProgress } from "./today-day-progress";
@@ -12,64 +12,80 @@ import { TodayDayStatus } from "./today-day-status";
 import { FoldRow } from "./today-fold-row";
 import { TodayFreshStart } from "./today-fresh-start";
 import { SESSION_LIST_ID } from "./today-ids";
-import { splitTodayQueue } from "./today-queue";
+import { UPCOMING_ROWS, splitTodayQueue } from "./today-queue";
+import { getFoldMinutes } from "./today-time";
 import { TodayUpNext } from "./today-up-next";
 
-const PHONE_DONE_ROWS = 2;
+const DONE_ROWS = 1;
 
-const PHONE_UPCOMING_ROWS = 6;
+/** Opened rows land above "Show less", so focus moves to the first of them. */
+function focusRow(row: Element | null | undefined) {
+  if (!(row instanceof HTMLElement)) {
+    return;
+  }
 
-const WIDE_UPCOMING_ROWS = 12;
+  const target = row.querySelector<HTMLElement>("a[href], button:not(:disabled)");
 
-function sumMinutes(blocks: readonly DayStep[]): number {
-  return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
+  if (target) {
+    target.focus();
+    return;
+  }
+
+  row.tabIndex = -1;
+  row.focus();
 }
 
-type UpcomingRows = { phone: number; wide: number };
-
-function getUpcomingFold({
-  index,
-  open,
-  rows,
-}: {
-  index: number;
-  open: boolean;
-  rows: UpcomingRows;
-}): RowFold {
-  return { hidden: !open, phone: index >= rows.phone, wide: index >= rows.wide };
-}
-
-/**
- * The fold never hides a block a mission opens: where the missions card leaves its rows to the
- * queue, that block is the mission's one place.
- */
-function SessionQueue({ next }: { next: DayStep }) {
+function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, lessonsComing, lessonsToPrepare, plusLessons } = today.session;
+  const { blocks, lessonsComing, lessonsToPrepare, minutes, plusLessons } = today.session;
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const countsTowardMission = useCountsTowardMission();
-  const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next.position });
-  const foldsDone = done.length > PHONE_DONE_ROWS;
-  const marked = after.findLastIndex((block) => countsTowardMission(block)) + 1;
+  const listRef = useRef<HTMLOListElement>(null);
+  const revealFrom = useRef<number | null>(null);
+  const opens = next !== null;
+  const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next?.position ?? null });
+  const foldsDone = done.length > DONE_ROWS;
 
-  const rows = {
-    phone: Math.max(PHONE_UPCOMING_ROWS, marked),
-    wide: Math.max(WIDE_UPCOMING_ROWS, marked),
+  // Activity keeps state while Today hides, so every visit starts folded.
+  useLayoutEffect(
+    () => () => {
+      setDoneOpen(false);
+      setMoreOpen(false);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const from = revealFrom.current;
+    revealFrom.current = null;
+
+    if (moreOpen && from !== null) {
+      focusRow(listRef.current?.children.item(from));
+    }
+  }, [moreOpen]);
+
+  const lessonsAhead = opens && (lessonsComing || lessonsToPrepare);
+  const coming = Number(lessonsAhead);
+  const more = after.length + coming + plusLessons.length - UPCOMING_ROWS;
+
+  const plusRows = moreOpen
+    ? plusLessons.length
+    : Math.max(0, UPCOMING_ROWS - after.length - coming);
+
+  const toggleMore = () => {
+    revealFrom.current = moreOpen ? null : (listRef.current?.children.length ?? null);
+    setMoreOpen(!moreOpen);
   };
 
-  const lessonsAhead = lessonsComing || lessonsToPrepare;
-  const coming = lessonsAhead ? 1 : 0;
-  const upcoming = after.length + coming + plusLessons.length;
-  const phoneMore = Math.max(0, upcoming - rows.phone);
-  const wideMore = Math.max(0, upcoming - rows.wide);
+  if (blocks.length === 0 && plusLessons.length === 0) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col" data-slot="today-session-list">
       {foldsDone && (
         <FoldRow
-          className="sm:hidden"
           done
           label={t("{count, plural, one {# done} other {# done}}", { count: done.length })}
           onToggle={() => setDoneOpen((open) => !open)}
@@ -77,89 +93,50 @@ function SessionQueue({ next }: { next: DayStep }) {
         />
       )}
 
-      <ol className="flex flex-col" id={SESSION_LIST_ID}>
-        {done.map((block) => (
-          <BlockRow
-            block={block}
-            fold={{ hidden: foldsDone && !doneOpen, phone: true, wide: false }}
-            isNext={false}
-            key={block.position}
-          />
-        ))}
+      <ol className="flex flex-col" id={SESSION_LIST_ID} ref={listRef}>
+        {(!foldsDone || doneOpen) &&
+          done.map((block) => <BlockRow block={block} isNext={false} key={block.position} />)}
 
         {before.map((block) => (
           <BlockRow block={block} isNext={false} key={block.position} />
         ))}
 
-        <BlockRow block={next} isNext />
+        {next && <BlockRow block={next} isNext />}
 
-        {after.map((block, index) => (
-          <BlockRow
-            block={block}
-            fold={getUpcomingFold({ index, open: moreOpen, rows })}
-            isNext={false}
-            key={block.position}
-          />
+        {(moreOpen ? after : after.slice(0, UPCOMING_ROWS)).map((block) => (
+          <BlockRow block={block} isNext={false} key={block.position} opens={opens} />
         ))}
 
-        {lessonsAhead && (
-          <ComingLessonsRow fold={getUpcomingFold({ index: after.length, open: moreOpen, rows })} />
-        )}
+        {lessonsAhead && (moreOpen || after.length < UPCOMING_ROWS) && <ComingLessonsRow />}
 
-        {plusLessons.map((lesson, index) => (
-          <PlusLessonRow
-            fold={getUpcomingFold({ index: after.length + coming + index, open: moreOpen, rows })}
-            // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
-            key={index}
-            title={lesson.title}
-          />
+        {plusLessons.slice(0, plusRows).map((lesson, index) => (
+          // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
+          <PlusLessonRow key={index} title={lesson.title} />
         ))}
       </ol>
 
-      {phoneMore > 0 && (
+      {more > 0 && (
         <FoldRow
-          className="sm:hidden"
           done={false}
-          label={t("{count, plural, one {+# more} other {+# more}}", { count: phoneMore })}
-          minutes={sumMinutes(after.slice(rows.phone))}
-          onToggle={() => setMoreOpen((open) => !open)}
-          open={moreOpen}
-        />
-      )}
-
-      {wideMore > 0 && (
-        <FoldRow
-          className="max-sm:hidden"
-          done={false}
-          label={t("{count, plural, one {+# more} other {+# more}}", { count: wideMore })}
-          minutes={sumMinutes(after.slice(rows.wide))}
-          onToggle={() => setMoreOpen((open) => !open)}
+          label={
+            moreOpen
+              ? t("Show less")
+              : t("{count, plural, one {+# more} other {+# more}}", { count: more })
+          }
+          minutes={
+            moreOpen
+              ? undefined
+              : getFoldMinutes({
+                  hasHiddenRows: after.length + coming > UPCOMING_ROWS,
+                  left: minutes.left,
+                  shown: [...before, ...(next ? [next] : []), ...after.slice(0, UPCOMING_ROWS)],
+                })
+          }
+          onToggle={toggleMore}
           open={moreOpen}
         />
       )}
     </div>
-  );
-}
-
-function DayQueue() {
-  const { today } = useTodayScreen();
-  const { blocks, plusLessons } = today.session;
-
-  if (blocks.length === 0 && plusLessons.length === 0) {
-    return null;
-  }
-
-  return (
-    <ol className="flex flex-col" data-slot="today-session-list">
-      {blocks.map((block) => (
-        <BlockRow block={block} isNext={false} key={block.position} opens={false} />
-      ))}
-
-      {plusLessons.map((lesson, index) => (
-        // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
-        <PlusLessonRow key={index} title={lesson.title} />
-      ))}
-    </ol>
   );
 }
 
@@ -180,7 +157,7 @@ export function TodaySession({ className }: { className?: string }) {
       <DayMeta className="mt-2" />
 
       <div className="mt-3 flex flex-col first:mt-0 empty:hidden">
-        {next ? <SessionQueue next={next} /> : <DayQueue />}
+        <SessionQueue next={next} />
       </div>
 
       <TodayDayStatus className="mt-3 first:mt-0" />

@@ -134,12 +134,11 @@
   "today_setting_up": "14cc0bce5b5ac4db1d77986310335b133aadfe580cf074d24d10196bf200d1d9",
   "today_setting_up_detail": "9d6a3622a5bfead2c527c6cfaef5406643b4840f28d01c8a49b240a552545cbb",
   "today_setting_up_goal": "075f01d49c8dae331b486d28c1a98f7200fae8dc691576939aa3a0943c964c4b",
+  "today_show_less": "9c1ce46ec3e0a0c9a93b4007ea04f3d102673031f5883140f4dfe118f3c4cecb",
   "today_start_new_goal": "2556d4773c37d5d45514148016a9b5e825a71aa7efe7fdd900200e2d49c57bc7",
   "today_start_session": "34317da559ffc46559517b4460ed4fdf35869314a63a9e708b7cd6825243c584",
-  "today_step_after_challenge": "42ca9491dc9bea4ac9cc56c2fdd281187027723367e12fcee7df826ff3c69530",
-  "today_step_after_challenge_phase": "433995dc65f3aef63e775cd6d3076c417fca4318ae9c8f8ca24c5dc9735a9344",
-  "today_step_after_lessons": "0e8880997e3f6a315907af767900849eac89686273abdd9ed1c1132f27015a2a",
-  "today_step_after_lessons_phase": "b12960b5369cabd6f3cd472f3694377737c1846abaad9ac4cef70010d6af1106",
+  "today_step_after_lessons": "28e587849bf31e3d97e05c8fcb3c0c3eb65d7ddcda24604b6ceaac91910a877a",
+  "today_step_after_lessons_phase": "769110eee23c35aa536b4833c992ed2d83b9ccfde12648a232ca9d687a5cb73f",
   "today_step_being_written": "665bd86252ebab4242f6040cc01a99f2599025841ecbd65863b43a60451f8210",
   "today_step_catching_up": "9a752bc30daf472c02ebace8a6e5deaa27f3b868a4e3074766f56f50d0c62153",
   "today_step_catching_up_subject": "dc875f34df06d9257b6417e7342e2a07bf8b6c7b55c880794636dac5fee7d669",
@@ -258,6 +257,8 @@
         <item quantity="many">+%d autres</item>
         <item quantity="other">+%d autres</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Afficher moins</string>
     <string name="today_step_done">Terminé</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Prochaine étape</string>
@@ -270,11 +271,9 @@
     <string name="today_step_catching_up_subject">Rattrapage · %1$s</string>
     <string name="today_step_often_tested">Souvent évalué</string>
     <string name="today_step_often_tested_label">%1$s · souvent à l’examen</string>
-    <string name="today_step_after_lessons">Après les leçons d’aujourd’hui</string>
+    <string name="today_step_after_lessons">Après les leçons de cette phase</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · après les leçons d’aujourd’hui</string>
-    <string name="today_step_after_challenge">Après le défi précédent</string>
-    <string name="today_step_after_challenge_phase">%1$s · après le défi précédent</string>
+    <string name="today_step_after_lessons_phase">%1$s · après les leçons de cette phase</string>
     <string name="today_done">Ta séance du jour est terminée.</string>
     <string name="today_done_day_off">Tu as étudié pendant ton jour de repos.</string>
     <string name="today_see_summary">Voir le résumé du jour</string>

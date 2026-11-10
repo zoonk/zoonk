@@ -59,7 +59,13 @@ describe("POST /v1/goals/{goalId}/lesson-preparations", () => {
     });
 
     await Promise.all([
-      planItemFixture({ planId: plan.id, position: 0, scheduledFor: NOW, skillId: skill.id }),
+      planItemFixture({
+        minutes: goal.dailyMinutes,
+        planId: plan.id,
+        position: 0,
+        scheduledFor: NOW,
+        skillId: skill.id,
+      }),
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ]);
 

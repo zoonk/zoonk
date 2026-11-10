@@ -248,6 +248,7 @@ export function NextStop({
   generationId,
   lesson,
   lessonsComing = false,
+  minutesLeft,
   notWritten,
   sessionBar,
   tap = null,
@@ -262,6 +263,7 @@ export function NextStop({
   generationId: string | null;
   lesson: NextStopLesson;
   lessonsComing?: boolean;
+  minutesLeft: number;
   notWritten: LessonNotWritten | null;
   sessionBar: { completed: number; total: number };
   tap?: NextStopTap | null;
@@ -273,8 +275,8 @@ export function NextStop({
   const detail = useBlockDetail();
   const isReady = lesson === "ready";
   const line = detail(block);
-  const queue = getSessionQueue({ blocks, nextPosition: block.position });
-  const aside = useSessionQueueAside(queue);
+  const rows = getSessionQueue({ blocks, nextPosition: block.position });
+  const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
   const written = useWrittenWhileWaiting({ block, lesson });
   const deck = useKeptDeck(warmUp);
@@ -297,7 +299,7 @@ export function NextStop({
         <SessionHeader
           exitHref={exitHref}
           lessonsComing={lessonsComing}
-          queue={queue.rows}
+          queue={rows}
           sessionBar={sessionBar}
         />
 

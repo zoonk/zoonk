@@ -134,12 +134,11 @@
   "today_setting_up": "25d7da831242f7d24011cda9ff2b82f3fa14c84ef31d7f0c8ac0663821c14a46",
   "today_setting_up_detail": "8cc36d3d9728537302367156f72c1dd15b64b64b151d7c346c3eb550370dca95",
   "today_setting_up_goal": "1127d43c56bfea713bc9ac317c49576158097837aaf4e2ef29934d08c43bfa1f",
+  "today_show_less": "a5804450d77e3ed4030c8a3527e9edaffff04e8bfa756b050665d163f41eeb29",
   "today_start_new_goal": "b26f64ff48475547ae6d93df71e71b4b32706ab8d3686a12fa3eb80a65f24a2c",
   "today_start_session": "bb9d44deecb041ffe82ab51c4a3a77826c7a637ece601b4830c6fd77e2f0327e",
-  "today_step_after_challenge": "ad538f80e9693cd68761fe486b5e2a5bba0e695b32305345b91423312daa20e4",
-  "today_step_after_challenge_phase": "edd31869ccc2de249b8464f5d1d98942666bb24f7bde873f99cf97c43d7a8cce",
-  "today_step_after_lessons": "a2e4fe721a0c30b35a13f121c8860e76a25962a61438bcb4915a3d5e25960709",
-  "today_step_after_lessons_phase": "a835145f3a173245c83eed414bfacd865c1ad95366aa3324715cd937e9a68cb4",
+  "today_step_after_lessons": "074f43f999a882de5c0048156ecd53d3a966a67c2f0732a42b68a37e4649f750",
+  "today_step_after_lessons_phase": "866b0c29adaf0a733b89e6cadbcbc63cc701d140e07f31aa177e03a53c888e0a",
   "today_step_being_written": "387c0dcf245865f83ea08fc1358c68f98ac3e99bfc819d1a156d67b3b782a769",
   "today_step_catching_up": "cac5ad7ac6174387f0dc476459ae343a2c4fd55f6f5b7ca022788dbfd7f9ddb7",
   "today_step_catching_up_subject": "6a185636e5e8da6e843c228a4863a36fbd13d1b60ba3297016231c9d3d301ff1",
@@ -242,6 +241,8 @@
     <plurals name="today_more_count">
         <item quantity="other">+%d件</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">折りたたむ</string>
     <string name="today_step_done">完了</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">次のステップ</string>
@@ -254,11 +255,9 @@
     <string name="today_step_catching_up_subject">遅れを取り戻す · %1$s</string>
     <string name="today_step_often_tested">よく出題される</string>
     <string name="today_step_often_tested_label">%1$s · 試験によく出る内容</string>
-    <string name="today_step_after_lessons">今日のレッスンを終えたら</string>
+    <string name="today_step_after_lessons">このフェーズのレッスン終了後</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · 今日のレッスンの後</string>
-    <string name="today_step_after_challenge">前のチャレンジが終わった後</string>
-    <string name="today_step_after_challenge_phase">%1$s · 直前のチャレンジの後</string>
+    <string name="today_step_after_lessons_phase">%1$s・このフェーズのレッスン終了後</string>
     <string name="today_done">今日の学習が終わりました。</string>
     <string name="today_done_day_off">休みの日に学習しました。</string>
     <string name="today_see_summary">今日のまとめを見る</string>

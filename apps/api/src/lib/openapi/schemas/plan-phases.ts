@@ -20,7 +20,7 @@ export const planPhaseSchema = z
       .default(false)
       .meta({
         description:
-          "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study (placement found it known, or the plan holds none of its lessons) has no challenge and is never marked",
+          "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
       }),
     chapterCount: z.int().min(0),
     chapters: z
@@ -86,7 +86,12 @@ export const planPhaseSchema = z
       }),
     checkpoint: z
       .object({
-        date: isoDateSchema.nullable(),
+        date: isoDateSchema
+          .nullable()
+          .meta({
+            description:
+              "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
+          }),
         locked: z
           .boolean()
           .meta({
@@ -104,7 +109,7 @@ export const planPhaseSchema = z
           .enum(["date", "nextSession", "queued"])
           .meta({
             description:
-              "When it comes, as sessions offer challenges and its intro says: `date`, on its `date`; `nextSession`, the learner's next session has it (the first one reached, and any whose day came): say that instead of `date`; `queued`, its phase's lessons are done but a challenge before it comes first, one a session: say it comes after that one, not `date`. Always `date` once won, and past a free exam plan's first week (its sessions hold no challenges)",
+              "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week.",
           }),
       })
       .nullable()

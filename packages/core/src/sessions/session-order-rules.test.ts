@@ -116,7 +116,7 @@ describe("session phase challenge ordering", () => {
     await expect(start(boss.id)).resolves.toMatchObject({ status: "ready" });
   });
 
-  it("holds a final or rematch for the earlier challenge, allowing done and skipped predecessors", async () => {
+  it("lets a final or rematch start while an earlier challenge is put off", async () => {
     const { boss, final, lesson, start } = await setup();
 
     await prisma.studySessionBlock.update({
@@ -124,17 +124,11 @@ describe("session phase challenge ordering", () => {
       where: { id: lesson.id },
     });
 
-    await expect(start(final.id)).resolves.toStrictEqual({
-      reason: "challenge",
-      status: "earlierFirst",
-    });
+    await expect(start(final.id)).resolves.toMatchObject({ status: "ready" });
 
     await expect(start(boss.id)).resolves.toMatchObject({ status: "ready" });
 
-    await expect(start(final.id)).resolves.toStrictEqual({
-      reason: "challenge",
-      status: "earlierFirst",
-    });
+    await expect(start(final.id)).resolves.toMatchObject({ status: "ready" });
 
     await prisma.studySessionBlock.update({
       data: { status: "completed" },

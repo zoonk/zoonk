@@ -52,6 +52,7 @@ export function RowOpen({
         data-slot="today-row-open"
         href={href}
         lessonWritten
+        prefetch={isNext}
       >
         {children}
       </LearnLink>
@@ -96,6 +97,7 @@ export function LessonAgainLink({
       className={cn(ROW_OPEN_CLASS, "after:-inset-x-2.5")}
       href={actions.lessonAgainHref(lessonId)}
       lessonWritten
+      prefetch={false}
     >
       {children}
     </LearnLink>
