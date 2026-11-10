@@ -32,13 +32,9 @@
   "settings_preferences_buddy_line": "1eaf4beb31840b2b3d133fb919df4f330547405112486f7cd7dbdb2f18c38487",
   "settings_preferences_change": "9e1bfc759cde76c1eb03c03837c1a8858869d43b608567bbbebb4512285eac50",
   "settings_preferences_choose_buddy": "b042865c4bcf7d6c9c1c03953bc50b11020db4345fff0e800cb7208ba05b6883",
-  "settings_preferences_daily_limit": "21cd02a6f6089da9bb46faeef351ac0a45e9f66ecef9638005df44900ce2e06b",
-  "settings_preferences_daily_limit_description": "fadef368a03f9285d712cfc62fd5d686f8e4549db8c2a4ead550e287e72667ae",
   "settings_preferences_description": "8481af56ade678f2521708f0bfd3095bcc08d4bd1e677c6ed29ecdc68aed28bc",
   "settings_preferences_language": "fbfa6550010721e6d6720bfff30832d71b2c13cbfbeca3aae9e39c19ca5b60f2",
   "settings_preferences_lessons": "dbe0f1c22cd41c898819f95879589cdc53a8d1293688b7a7ce76b5a39a6c233a",
-  "settings_preferences_limit_a_day": "a46c0f97e811d38579077dcd73019c55e13313b4266e07b0a30eabaef33a023b",
-  "settings_preferences_no_limit": "c7306c8fa8f127dc46d89ead6e0c1d736bc3af8200c3e12b2bf85bcf797bb0fd",
   "settings_preferences_on_this_device": "496cefd1433525b25b958ccb0b3a34942a9a6cac91465b63badded2a808eeda1",
   "settings_preferences_save_failed": "c024dc9c3bde1dbe764789ed8f46d361c10b8ee502e0fd04837717998a16ffcb",
   "settings_preferences_share_usage_data": "143dd9210deb0e71f9062c0e42ca7f67bf22fc95fee36b21308dcbb251458b15",
@@ -94,11 +90,6 @@
     <string name="settings_preferences_lessons">Dersler</string>
     <string name="settings_preferences_sounds">Sesler</string>
     <string name="settings_preferences_sounds_description">Doğru cevap verdiğinde veya bitirdiğinde</string>
-    <string name="settings_preferences_daily_limit">Günlük süre sınırı</string>
-    <string name="settings_preferences_daily_limit_description">Bu süre dolunca günlük çalışmanı bitir.</string>
-    <string name="settings_preferences_no_limit">Sınır yok</string>
-    <!-- %1$s is a duration, like "45 min". -->
-    <string name="settings_preferences_limit_a_day">Günde %1$s</string>
     <string name="settings_preferences_language">Dil</string>
     <string name="settings_preferences_app_language">Uygulama dili</string>
     <string name="settings_preferences_on_this_device">Bu cihazda</string>

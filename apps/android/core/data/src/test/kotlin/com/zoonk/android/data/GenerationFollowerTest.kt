@@ -47,8 +47,106 @@ class GenerationFollowerTest {
         restart: (suspend () -> String?)? = null,
     ): GenerationFollower {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return GenerationFollower(kind, scope, source, readGenerationId, restart, now = { 10_000 })
+        return GenerationFollower(kind, scope, source, readGenerationId, restart)
     }
+
+    @Test
+    fun aClosedReadyPlanHandsItsUnreadyLessonToTheReadWithoutReconnecting() =
+        runTest {
+            listOf(false, true).forEach { ready ->
+                val source = FakeSource()
+                source.statuses["a"] = Generation.Status.RUNNING
+                source.streams["a"] =
+                    mutableListOf(
+                        flow {
+                            emit(GenerationEvent(lessonId = "lesson", lessonTitle = "Dawn", status = "started", step = "writeFirstLesson"))
+                            emit(event("goalReady"))
+                            if (ready) emit(GenerationEvent(lessonId = "lesson", status = "completed", step = "firstLessonReady"))
+                        },
+                    )
+                val follower = follower(source, kind = GenerationKind.Curriculum)
+                follower.follow("a")
+                runCurrent()
+                advanceTimeBy(300_000)
+                runCurrent()
+                assertEquals(listOf("a"), source.opened)
+                assertEquals(true, follower.run.value.ended)
+                assertEquals(GenerationRun.Status.Ready, follower.run.value.status)
+                follower.stop()
+            }
+        }
+
+    @Test
+    fun aReadyPlanStillFollowsItsFirstLessonUntilItCanStart() =
+        runTest {
+            val source = FakeSource()
+            val finish = kotlinx.coroutines.CompletableDeferred<Unit>()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(
+                            GenerationEvent(
+                                status = "started",
+                                step = "writeFirstLesson",
+                                lessonId = "lesson-1",
+                                lessonTitle = "Dawn songs",
+                            ),
+                        )
+                        emit(event("goalReady"))
+                        finish.await()
+                        emit(GenerationEvent(status = "completed", step = "firstLessonReady", lessonId = "lesson-1"))
+                        MutableSharedFlow<Unit>().collect {}
+                    },
+                )
+            val follower = follower(source, kind = GenerationKind.Placement)
+            follower.follow("a")
+            runCurrent()
+            assertEquals(GenerationRun.Status.Ready, follower.run.value.status)
+            assertEquals(
+                false,
+                follower.run.value.firstLesson
+                    ?.ready,
+            )
+            finish.complete(Unit)
+            runCurrent()
+            assertEquals(GenerationFirstLesson("lesson-1", "Dawn songs", ready = true), follower.run.value.firstLesson)
+            follower.stop()
+        }
+
+    @Test
+    fun firstLessonReadinessSurvivesReplayedWritingEventsWithoutEndingThePlan() =
+        runTest {
+            val source = FakeSource()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(
+                            GenerationEvent(
+                                status = "started",
+                                step = "writeFirstLesson",
+                                lessonId = "lesson-1",
+                                lessonTitle = "Dawn songs",
+                            ),
+                        )
+                        emit(GenerationEvent(status = "completed", step = "firstLessonReady", lessonId = "lesson-1"))
+                        emit(
+                            GenerationEvent(
+                                status = "started",
+                                step = "writeFirstLesson",
+                                lessonId = "lesson-1",
+                                lessonTitle = "Dawn songs",
+                            ),
+                        )
+                        MutableSharedFlow<Unit>().collect {}
+                    },
+                )
+            val follower = follower(source, kind = GenerationKind.Placement)
+            follower.follow("a")
+            runCurrent()
+            assertEquals(GenerationFirstLesson("lesson-1", "Dawn songs", ready = true), follower.run.value.firstLesson)
+            assertEquals(GenerationRun.Status.Following, follower.run.value.status)
+            follower.stop()
+        }
 
     @Test
     fun aRunKeepsTheNewestSkillItsGraphWrote() =
@@ -98,7 +196,7 @@ class GenerationFollowerTest {
             assertEquals(GenerationRun.Status.Ready, run.status)
             assertEquals(StepState.Completed, run.steps["readGoal"])
             assertEquals(StepTimes(started = 1_000, completed = 4_000), run.stepTimes["readGoal"])
-            assertEquals(6_000L, run.clockOffsetMillis)
+            assertNull(run.clockOffsetMillis)
         }
 
     @Test
@@ -187,6 +285,29 @@ class GenerationFollowerTest {
             follower.stop()
 
             assertEquals("deck-1", follower.run.value.warmUpId)
+        }
+
+    @Test
+    fun aRestartKeepsTheGoalsFailedDeckSoNoSkeletonComesBack() =
+        runTest {
+            val source = FakeSource()
+            source.streams["a"] =
+                mutableListOf(
+                    flow {
+                        emit(event("warmUpFailed"))
+                        emit(event("createPlan", "error"))
+                    },
+                )
+            source.streams["b"] = mutableListOf(flow { MutableSharedFlow<Unit>().collect {} })
+            val follower = follower(source, kind = GenerationKind.Curriculum) { "b" }
+
+            follower.follow("a")
+            runCurrent()
+            follower.retry()
+            runCurrent()
+            follower.stop()
+
+            assertEquals(StepState.Completed, follower.run.value.steps["warmUpFailed"])
         }
 
     @Test

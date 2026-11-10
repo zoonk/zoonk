@@ -2,7 +2,8 @@
 
 ## Principles
 
-- **KISS:** Choose the simplest complete solution that satisfies the product requirements. Avoid over-engineering, speculative infrastructure, and workarounds when an equivalent direct approach works.
+- **Think big about the product:** Start from the best product we could build: the best experience and interface for learners, including ideas that were once impossible and that current models and platforms now make possible. Today's code, data and prompts are where the build starts, not a limit on what learners get: "nothing reads this yet" is a reason to build the reader, not to drop the idea. Use the current system to cost the vision and split it into phases, never to rule an idea out. Propose the ambitious version; when it goes beyond the request, the user decides what ships.
+- **KISS:** Build each piece in the simplest complete way that meets the product requirements; simplicity governs the implementation, never how far the product reaches. Avoid over-engineering, speculative infrastructure, and workarounds when an equivalent direct approach works.
 - **Simplify instead of patching:** A bug, failing test, review finding, or roadblock invites a patch: a guard, retry, setting, fallback, second code path, or test harness. Each one feels necessary in the moment, and they pile up. Before adding one, find the root cause, check what the code and its dependencies already do, and ask what the simplest version of this part would be if you built it today; often the fix is to delete or reshape code, not to add to it. Add compatibility code only for data and clients that exist in production. When an approach changes, remove what the earlier attempt added. Before finishing, reread your diff and cut whatever you can't justify by a concrete failure it prevents.
 - **DRY:** Keep a single source of truth for behavior that must stay consistent, including repeated UI patterns and runtime schemas used by documentation. Extract for real shared rules or known extensions; a small number of callers is not a reason to leave competing implementations.
 - **SOLID:** Keep functions and modules focused, composable, and responsible for one concern. Use clear boundaries and dependencies; apply these principles without adding unnecessary class hierarchies, interfaces, or abstraction layers. Prefer functional composition and immutable transformations.
@@ -18,6 +19,7 @@
 ## Scope and completion
 
 - Own the user’s intended outcome through implementation and verification. Before declaring completion, reconcile the intended outcome, the resulting implementation, and the evidence collected. Close material gaps that can be investigated within the authorized task. Passing selected checks establishes only what those checks exercise. Carry earlier evidence forward only while subsequent changes leave it applicable.
+- Passing checks don't make a PR done: it's done when it solves its issue well. When you find more of the same problem, fix it in that PR; don't suggest merging the green part first and following up later.
 - Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
 - When you find a bug, weak UX or anything else worth improving outside your task, start a new thread for it (not a subagent) in its own worktree instead of asking the user, unless an open issue, PR or thread already covers it. A find that shares your task's cause or fix is part of your task. Finds that share a cause or fix with each other go to one thread, so send a new one to the thread already on that cause instead of starting another. The thread investigates and ends with a GitHub issue, not a PR: it confirms the find (reproduces a bug, checks a suspected one, works out what the improvement is and why it matters) and files one issue with what it found and how to reproduce it, following [zoonk-github-issues](.agents/skills/zoonk-github-issues/SKILL.md), which adds the find to an open issue that shares its fix instead, links the related ones and checks again just before filing, since other agents file at the same time. What it posts opens with the [disclosure](.agents/skills/zoonk-post-on-behalf/SKILL.md#the-disclosure). This rule is its go-ahead to post. A find that doesn't hold up gets no issue, and the thread says why. Brief it with what you found and how to reproduce it, name it in your handoff, and carry on with your task. An agent that can't start threads names the find in its handoff instead.
 - Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
@@ -28,7 +30,7 @@
 
 ## Agent orchestration
 
-Before writing code for a task with more than one reasonable approach, where the choice changes what learners see, a public contract, the data model or the architecture, have two models from different families debate it until they agree, then align with the user on the result ([design debate](.agents/guides/orchestration.md#design-debate)). Skip it for a bug with a known cause, copy edits, mechanical changes and dependency updates. The agent that owns the task runs it and says in its handoff whether it did.
+Before building a big new feature or making a structural change, where the choice decides its UX or UI, a new architecture or the data model, have two models from different families debate it until they agree, then align with the user on the result ([design debate](.agents/guides/orchestration.md#design-debate)). Skip it for smaller changes, even ones with more than one reasonable approach: a small feature, a fix, a change to an existing rule (such as turning a length limit into a target), copy edits, mechanical changes and dependency updates. The agent that owns the task runs it and says in its handoff whether it did.
 
 Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. Before you hand back, commit and stop the servers you started. If you own the task's PR, push and keep your worktree: review fixes and follow-ups happen there, and the harness removes it once the PR merges. A subagent or lane removes the worktree made for its slice ([details](.agents/guides/orchestration.md#sharing-one-machine)).
 
@@ -63,7 +65,7 @@ Delegate a big task, or one that spans several areas (code, design, UX, accessib
 Before opening a PR with any code change beyond a typo or a small, obvious fix:
 
 1. Ask yourself: "Am I over-engineering this? Is there a simpler way to do it?"
-2. Have a subagent from the other model family review the branch adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request, the diff and the checkout to run it in, with the running app's URL when there is one, but not your reasoning. It tries to break the change and reports only what it can show ([evidence before findings](.agents/skills/zoonk-code-review/SKILL.md#evidence-before-findings)). Fix what holds up.
+2. Have a subagent from the other model family review the branch adversarially, with the model and effort the [orchestration guide](.agents/guides/orchestration.md#pick-the-model) sets for code review. Give it the request, the diff and the checkout to run it in, with the running app's URL when there is one, but not your reasoning. It tries to break the change and reports only what it can show ([evidence before findings](.agents/skills/zoonk-code-review/SKILL.md#evidence-before-findings)). Fix what holds up.
 3. A further round reviews only the fixes, and the rounds stop once one finds nothing new it can show. After the PR opens, a fix gets its own review only when it changes behavior.
 
 Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. A reviewer that only reads the code drifts into style notes and guards for paths nobody reaches; one that has to show each failure reports what's real. The agent that opens the PR runs this review, so a subagent that hands its work to a lead leaves it to the lead. When only one model family is available, use a fresh agent of that family, given only the request and the diff, and say so in the handoff.
@@ -77,9 +79,9 @@ CI is the full gate. Every push to a PR runs the PR pipelines in [.github/workfl
 
 ### Finishing a task
 
-A task ends with a pull request the user can review, following [zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md). The agent that owns the task does this; a subagent hands its work back to its lead instead.
+A task ends with one pull request the user can review, following [zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md), however many areas it spans (core, API, web, iOS, Android, prompts). The user and the reviewers check the change end to end, so never split a task into several PRs or a stack, and never ship one part first and the rest later. Build big work in slices on the task's one branch ([orchestration guide](.agents/guides/orchestration.md)). Only the user can ask for more than one PR. The agent that owns the task opens it; a subagent hands its work back to its lead instead.
 
-The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, and a video of each side for a flow, transition or wait ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
+The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, a video of each side for a flow, transition or wait, and a link to its Vercel preview for a blog post ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
 
 1. Pass the [PR verification gate](#pr-verification-gate)'s local checks on the final tree.
 2. Open the PR ready for review and watch it while CI and the reviewers run.
@@ -115,6 +117,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
 | Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
 | Creating a release (production deploy and release notes)        | [Release](.agents/skills/zoonk-release/SKILL.md)                                   |
+| Writing a blog post, such as a release post                     | [Blog post](.agents/skills/zoonk-blog-post/SKILL.md)                               |
 
 ## Maintaining these instructions
 

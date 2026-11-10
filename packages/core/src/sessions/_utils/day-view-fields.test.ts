@@ -9,7 +9,6 @@ function examDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
   return {
     answers: [],
     current: true,
-    dailyLimit: null,
     dayMinutes: 40,
     examAccess: { includesMockExams: !trialEnded, trialEnded },
     lessonRoom: true,

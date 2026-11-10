@@ -4,6 +4,7 @@ import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -68,16 +69,18 @@ export function MockSummaryRow({
       <ListRowLeading>
         <StatusMark status="done" />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle>{t("Mock exam {number}", { number: String(mock.number) })}</ListRowTitle>
-        <ListRowDescription>{label ? `${date} · ${label}` : date}</ListRowDescription>
-        {stacked && (
-          <ListRowDescription className="font-mono tabular-nums">
-            {measure(mock)}
-          </ListRowDescription>
-        )}
-      </ListRowContent>
-      {!stacked && <ListRowTrailing>{measure(mock)}</ListRowTrailing>}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{t("Mock exam {number}", { number: String(mock.number) })}</ListRowTitle>
+          <ListRowDescription>{label ? `${date} · ${label}` : date}</ListRowDescription>
+          {stacked && (
+            <ListRowDescription className="font-mono tabular-nums">
+              {measure(mock)}
+            </ListRowDescription>
+          )}
+        </ListRowContent>
+        {!stacked && <ListRowTrailing>{measure(mock)}</ListRowTrailing>}
+      </ListRowBody>
     </>
   );
 

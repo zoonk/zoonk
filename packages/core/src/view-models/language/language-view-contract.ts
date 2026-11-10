@@ -26,24 +26,37 @@ const levelTargetSchema = z
   .nullable()
   .meta({ description: "The level the learner aims for, when they gave one" });
 
+const planLevelSchema = z
+  .object({
+    label: z.string().meta({ description: 'The plan\'s level, "A2+"' }),
+    target: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "The level the learner aims for while the plan's level is below it; null once it reaches it or when they gave none",
+      }),
+  })
+  .meta({ id: "LanguagePlanLevel" })
+  .nullable()
+  .meta({
+    description:
+      "The plan's level: the lowest CEFR level with lessons still to do, or the highest it holds once none are left, with \"+\" once half of that level's lessons are finished; null while the plan has no lessons",
+  });
+
 export const languageProgressViewSchema = z
   .object({
     canDo: z
       .array(z.object({ done: z.boolean(), text: z.string(), unitTitle: z.string() }))
       .meta({ description: '"I can" checks: finished units checked, the current unit\'s ahead' }),
     goal: z.object({
+      displayName: z.string(),
       id: uuidSchema(),
       targetDate: logicalDateSchema.nullable(),
       targetLanguage: z.string(),
       title: z.string(),
     }),
-    level: z
-      .string()
-      .nullable()
-      .meta({
-        description:
-          'The level across skills ("A2+"): their average, rounded to the nearest half step, as the level test places the plan; null before any',
-      }),
+    level: planLevelSchema,
     levels: z.array(languageSkillLevelSchema),
     speaking: speakingPaperViewSchema
       .nullable()
@@ -176,7 +189,12 @@ export const languageUnitViewSchema = z
     unit: z.object({
       chapterId: uuidSchema(),
       description: z.string(),
-      levelRange: z.string().meta({ description: 'The CEFR bands it teaches, "A1–A2"' }),
+      levelRange: z
+        .string()
+        .meta({
+          description:
+            'The CEFR level of its lessons in the plan ("B1"), the span when they differ ("A2–B1"), or its band until each has a level ("A1–A2")',
+        }),
       objectives: z.array(z.string()),
       position: z.int().min(1).nullable(),
       title: z.string(),
@@ -189,19 +207,7 @@ export type LanguageUnitView = z.infer<typeof languageUnitViewSchema>;
 
 export const languageTodayViewSchema = z
   .object({
-    level: z
-      .object({
-        label: z.string().meta({ description: 'The level across skills, "A2+"' }),
-        target: z
-          .string()
-          .nullable()
-          .meta({ description: "The level the learner aims for, when they gave one" }),
-      })
-      .nullable()
-      .meta({
-        description:
-          "The level across skills (their average, rounded to the nearest half step), shown instead of preparation",
-      }),
+    level: planLevelSchema,
     pronunciation: duePronunciationSchema
       .nullable()
       .meta({ description: "Mispronounced words due to be said again today" }),

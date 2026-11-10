@@ -75,7 +75,6 @@ class MistakePracticeViewModel(
     private var shownAt = now()
     private var sent: Submission? = null
 
-    /** By step: one item asked under two mistakes is two answers. */
     private val attempts = mutableMapOf<Int, UUID>()
 
     override val canRetry: Boolean get() = sent != null
@@ -87,13 +86,10 @@ class MistakePracticeViewModel(
         shownAt = now()
     }
 
-    override fun startDrill(questions: List<Question>) {
+    override fun startDrill() {
         shownAt = now()
-        updateRun { it.start(questions) }
+        updateRun(QuestionRun::start)
     }
-
-    // Reading the question counts toward the answer's time, so the reveal keeps the clock going.
-    override fun reveal() = updateRun(QuestionRun::reveal)
 
     override fun submit(
         question: Question,

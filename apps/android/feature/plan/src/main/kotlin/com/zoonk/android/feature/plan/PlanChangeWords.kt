@@ -275,6 +275,10 @@ private fun followsNotice(document: ExamDocument): String =
 @Composable
 private fun proposedOperationSentence(op: PlanOp): String? =
     when (op) {
+        is PlanOp.Aim -> {
+            stringResource(R.string.onboarding_aim_changed, op.aim)
+        }
+
         is PlanOp.DailyMinutes -> {
             stringResource(R.string.plan_change_daily_time, formatMinutes(op.minutes, currentLocale()))
         }
@@ -344,6 +348,10 @@ private fun operationSentence(
     document: ExamDocument,
 ): String =
     when (op) {
+        is PlanOp.Aim -> {
+            stringResource(R.string.onboarding_aim_changed, op.aim)
+        }
+
         is PlanOp.DailyMinutes -> {
             stringResource(R.string.plan_change_daily_time_changed, formatMinutes(op.minutes, currentLocale()))
         }

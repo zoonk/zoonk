@@ -11,6 +11,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import * as refresh from "../../plans/refresh-goal-plan";
 import { runOwedSettlements } from "../../sessions/_test-utils/owed-settlements";
 import { holdBackLessonDraft } from "./hold-back-lesson";
+import { canRedraftLesson, getLessonGenerationState } from "./lesson-generation-state";
 
 /** A day whose only block is a private lesson, which its first held-back draft sets aside. */
 async function dayWithPrivateLesson({ startedAt }: { startedAt: Date | null }) {
@@ -57,6 +58,23 @@ async function dayWithPrivateLesson({ startedAt }: { startedAt: Date | null }) {
 
 describe(holdBackLessonDraft, () => {
   afterEach(() => vi.restoreAllMocks());
+
+  it("replays a held-back draft while it is pending its next attempt", async () => {
+    const workflowRunId = randomUUID();
+
+    const lesson = await libraryLessonFixture({
+      contentRunId: workflowRunId,
+      contentStatus: "running",
+    });
+
+    const input = { lessonId: lesson.id, model: "test/fixture", problems: [], workflowRunId };
+    await holdBackLessonDraft(input);
+    await holdBackLessonDraft(input);
+    const saved = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+    expect(saved.contentStatus).toBe("pending");
+    expect(saved.heldBackDrafts).toHaveLength(1);
+    expect(canRedraftLesson(await getLessonGenerationState(lesson.id))).toBe(true);
+  });
 
   it("refreshes only changed plans with at most four concurrent refreshes", async () => {
     const user = await userFixture();

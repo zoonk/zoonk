@@ -48,10 +48,12 @@ final class CodeProgramRunner {
   private static let dataStore = WKWebsiteDataStore.nonPersistent()
 
   private let language: CodeLanguage
+  private let timeLimit: TimeInterval
   private var page: Task<WebPage, any Error>?
 
-  init(language: CodeLanguage) {
+  init(language: CodeLanguage, timeLimit: TimeInterval? = nil) {
     self.language = language
+    self.timeLimit = timeLimit ?? TimeInterval(language.timeLimitSeconds)
   }
 
   /// False when the runtime didn't load, like when offline.
@@ -95,7 +97,7 @@ final class CodeProgramRunner {
       return try await page.value
     }
 
-    let html = CodeWorkerSources.page(language)
+    let html = CodeWorkerSources.page(language, timeLimit: timeLimit)
     let loading = Task {
       var configuration = WebPage.Configuration()
       configuration.websiteDataStore = Self.dataStore

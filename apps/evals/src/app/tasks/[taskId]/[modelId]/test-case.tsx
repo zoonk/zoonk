@@ -5,6 +5,8 @@ import { calculateScore } from "@/lib/score-calculation";
 import {
   type CategoryScore,
   type EvalResult,
+  type FailedRun,
+  type KeyFlaw,
   type ScoreStep,
   type TestCaseOutput,
 } from "@/lib/types";
@@ -164,7 +166,7 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
   const scoreDisplay = score.toFixed(2);
 
   return (
-    <AccordionItem value={`test-case-${index}`}>
+    <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
       <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
         <span className="text-base font-medium">
           {testCaseTitle}: <span className={getScoreClassName(score)}>{scoreDisplay}</span>
@@ -182,6 +184,8 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
 
         <CategoryScoresSection categoryScores={result.categoryScores ?? []} />
 
+        <KeyFlawsSection flaws={result.keyFlaws} />
+
         <EvaluationStepsSection steps={result.steps} />
       </AccordionContent>
     </AccordionItem>
@@ -192,9 +196,9 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
   const testCaseTitle = output.testCase.id || `Test Case ${index + 1}`;
 
   return (
-    <AccordionItem value={`output-test-case-${index}`}>
+    <AccordionItem id={`case-${output.testCaseId}`} value={`output-test-case-${index}`}>
       <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="text-base font-medium">{testCaseTitle}</span>
+        <span className="text-base font-medium">{testCaseTitle}: Unscored</span>
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-4 pt-4">
@@ -205,5 +209,53 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
         <OutputSection output={output.output} />
       </AccordionContent>
     </AccordionItem>
+  );
+}
+
+function KeyFlawsSection({ flaws }: { flaws?: KeyFlaw[] }) {
+  return (
+    <div>
+      <p className="text-muted-foreground mb-2 text-sm">
+        Judge-flagged key flaws: {flaws === undefined ? "not recorded" : flaws.length}
+      </p>
+      {flaws?.map((flaw) => (
+        <div className="mb-2 rounded-lg border p-3 text-sm" key={flaw.itemLocator}>
+          <p className="font-medium">
+            {flaw.itemLocator}: {flaw.kind}
+          </p>
+          <p>Keyed answer: {flaw.keyedAnswer}</p>
+          <p>Judge&apos;s worked answer: {flaw.workedAnswer}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function FailedTestCase({
+  anchored,
+  caseId,
+  runs,
+}: {
+  anchored: boolean;
+  caseId: string;
+  runs: FailedRun[];
+}) {
+  return (
+    <section
+      className="rounded-lg border p-4 wrap-anywhere"
+      id={anchored ? `case-${caseId}` : undefined}
+    >
+      <h3 className="font-medium">
+        {caseId}: Generation failed ({runs.length} {runs.length === 1 ? "attempt" : "attempts"})
+      </h3>
+      <ul className="mt-2 space-y-2 text-sm">
+        {runs.map((run, index) => (
+          // oxlint-disable-next-line react/no-array-index-key -- Repeated failures have no distinct saved ID.
+          <li key={index}>
+            {run.reason ?? "unknown"}: {run.message ?? "Message not recorded"}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

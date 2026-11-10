@@ -11,6 +11,7 @@ import { DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -43,7 +44,7 @@ export type ListedCertificate = { facts: OwnedCertificateFacts; links: Certifica
 
 /** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
 export type CertificateUpNext = {
-  goal: { kind: string; targetLanguage: string | null; title: string };
+  goal: { kind: string; targetLanguage: string | null; displayName: string };
   id: string;
   /** The plan's share of lessons done, 0 to 1; null for a language. */
   progress: number | null;
@@ -150,22 +151,24 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
       <ListRowLeading>
         <GoalMark goal={item.goal} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle>{item.goal.title}</ListRowTitle>
-        <ListRowDescription>
-          {item.progress === null
-            ? t("Comes when every skill you practice reaches the next level")
-            : t("Your certificate comes when you finish the plan")}
-        </ListRowDescription>
-      </ListRowContent>
-      {item.progress !== null && (
-        <ListRowTrailing>
-          <Meter as="span" className="w-16 sm:w-30">
-            <MeterFill as="span" className="bg-success" share={item.progress} />
-          </Meter>
-          <span className="text-foreground">{formatShare(item.progress)}</span>
-        </ListRowTrailing>
-      )}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{item.goal.displayName}</ListRowTitle>
+          <ListRowDescription>
+            {item.progress === null
+              ? t("Comes when you finish a level, studying at least half of it")
+              : t("Your certificate comes when you finish the plan")}
+          </ListRowDescription>
+        </ListRowContent>
+        {item.progress !== null && (
+          <ListRowTrailing>
+            <Meter as="span" className="w-16 sm:w-30">
+              <MeterFill as="span" className="bg-success" share={item.progress} />
+            </Meter>
+            <span className="text-foreground">{formatShare(item.progress)}</span>
+          </ListRowTrailing>
+        )}
+      </ListRowBody>
     </ListRow>
   );
 }

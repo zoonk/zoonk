@@ -59,8 +59,7 @@
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">Practice %1$s</string>
 
-    <string name="missions_after_lessons">After today\'s lessons</string>
-    <string name="missions_after_challenge">After the challenge before it</string>
+    <string name="missions_after_lessons">After this phase\'s lessons</string>
     <string name="missions_from_notebook">From your mistakes notebook</string>
     <string name="missions_due_today">Due today</string>
     <!-- %1$s is a language unit's title. -->

@@ -1,15 +1,18 @@
 import "server-only";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { type GoalDraft } from "../../../goals/goal-contract";
+import { isLanguageAim } from "../../../language/aims/language-aims";
 import {
   type GoalUnderstandingView,
   type OnboardingDraftEdit,
   type UnderstoodGoalView,
 } from "../onboarding-contract";
+import { getUnderstoodAim } from "./understanding-view";
 
 type GoalsUnderstanding = Extract<GoalUnderstandingView, { status: "goals" }>;
 type GoalEdit = Exclude<OnboardingDraftEdit, { field: "studyTime" }>;
 type Details = NonNullable<GoalDraft["details"]>;
+type TextEdit = Extract<GoalEdit, { value: string | null; field: string }>;
 
 function withoutKey<Value extends object, Key extends keyof Value>(
   value: Value,
@@ -51,27 +54,40 @@ function reviseGoal({
   goal: UnderstoodGoalView;
 }): UnderstoodGoalView | null {
   switch (edit.field) {
+    case "displayName":
     case "title":
-      return { ...goal, draft: { ...goal.draft, title: edit.value } };
+      return { ...goal, draft: { ...goal.draft, [edit.field]: edit.value } };
     case "targetDate":
       return reviseTargetDate({ goal, value: edit.value });
+    case "targetScore":
+      return goal.draft.kind === "language" && !isLanguageAim(edit.value)
+        ? null
+        : setTextDetail({ edit, goal });
     case "institution":
     case "reason":
     case "role":
     case "targetCourse":
     case "targetPosition":
-    case "targetScore": {
-      const details = setDetail({
-        details: goal.draft.details ?? {},
-        key: edit.field,
-        value: edit.value,
-      });
-
-      return { ...goal, draft: { ...goal.draft, details } };
-    }
+      return setTextDetail({ edit, goal });
     default:
       return null;
   }
+}
+
+function setTextDetail({
+  edit,
+  goal,
+}: {
+  edit: Exclude<TextEdit, { field: "targetDate" }>;
+  goal: UnderstoodGoalView;
+}): UnderstoodGoalView {
+  const details = setDetail({
+    details: goal.draft.details ?? {},
+    key: edit.field,
+    value: edit.value,
+  });
+
+  return { ...goal, draft: { ...goal.draft, details } };
 }
 
 function reviseStudyTime({
@@ -115,5 +131,12 @@ export async function reviseUnderstanding({
     examBlueprintId: revised.draft.examBlueprintId,
   });
 
-  return { ...understanding, goals: understanding.goals.with(edit.goal, { ...revised, cutoff }) };
+  return {
+    ...understanding,
+    goals: understanding.goals.with(edit.goal, {
+      ...revised,
+      cutoff,
+      languageAim: getUnderstoodAim(revised.draft),
+    }),
+  };
 }

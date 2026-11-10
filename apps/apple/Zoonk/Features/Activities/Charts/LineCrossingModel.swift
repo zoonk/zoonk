@@ -60,6 +60,22 @@ enum LineCrossingModel {
     direction == .left || direction == .right ? .horizontal : .vertical
   }
 
+  static func offset(_ amount: Double, toward direction: LineCrossingFields.Direction) -> Double {
+    direction == .right || direction == .up ? amount : -amount
+  }
+
+  /// A saved answer keeps only which line moved and which way, so its line goes back as far as the
+  /// real move.
+  static func restoredOffsets(
+    _ fields: LineCrossingFields, answer: ActivityAnswer?
+  ) -> [String: Double] {
+    guard let shift = try? answer?.decode(as: LineShiftAnswer.self) else {
+      return [:]
+    }
+
+    return [shift.curve: offset(fields.shift.amount, toward: shift.direction)]
+  }
+
   static func direction(of offset: Double, axis: Axis) -> LineCrossingFields.Direction {
     switch axis {
     case .horizontal: offset > 0 ? .right : .left

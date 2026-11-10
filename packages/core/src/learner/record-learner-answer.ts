@@ -30,6 +30,8 @@ export type LearnerAnswer = {
   answeredAt?: Date;
   /** Reuse the client attempt id across retries to prevent recording the same answer twice. */
   attemptId?: string;
+  /** Other notebook entries a practice answer stands for; a right answer on a later day fixes them too. */
+  coveredMistakeIds?: readonly string[];
   graded: GradedAnswer;
   /** Placement remains diagnostic evidence even when asked inside a session. */
   isPlacement?: boolean;
@@ -132,6 +134,7 @@ function fixAnsweredMistakes({ answeredAt, input, itemId, stepId, transaction }:
   return fixMistakesAnsweredRight(
     {
       answeredAt,
+      coveredMistakeIds: input.coveredMistakeIds,
       itemId,
       practicedMistakeId: input.practicedMistakeId,
       stepId,

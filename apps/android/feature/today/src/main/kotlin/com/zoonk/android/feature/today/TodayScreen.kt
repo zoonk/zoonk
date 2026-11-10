@@ -291,7 +291,7 @@ private fun ExplanationContinue(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ListRow(
-            headline = { Text(explanation.title) },
+            headline = { Text(explanation.displayName) },
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             highlighted = true,
             leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null) },
@@ -321,7 +321,7 @@ private fun GoalAtRest(
             date = date,
             state = stringResource(R.string.today_finished),
             icon = R.drawable.ic_flag,
-            sentence = stringResource(R.string.today_finished_goal, goal.title),
+            sentence = stringResource(R.string.today_finished_goal, goal.displayName),
             clause = stringResource(R.string.today_finished_detail),
         ) {
             Button(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_start_new_goal)) }
@@ -334,7 +334,8 @@ private fun GoalAtRest(
         date = date,
         state = stringResource(R.string.today_paused),
         icon = R.drawable.ic_pause,
-        sentence = goal?.let { stringResource(R.string.today_paused_goal, it.title) } ?: stringResource(R.string.today_paused_this_goal),
+        sentence =
+            goal?.let { stringResource(R.string.today_paused_goal, it.displayName) } ?: stringResource(R.string.today_paused_this_goal),
         clause = stringResource(R.string.today_paused_detail),
         detail = { if (goal?.status == LearnerSummaryGoal.Status.PAUSED) ResumeEffect(app, goal) },
         failure =
@@ -346,7 +347,7 @@ private fun GoalAtRest(
     ) {
         if (goal != null) {
             Button(enabled = viewModel.resuming == null, onClick = { viewModel.resume(goal.id) }) {
-                Text(stringResource(R.string.today_resume_goal, goal.title), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(stringResource(R.string.today_resume_goal, goal.displayName), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_new_goal)) }
         } else {
@@ -380,6 +381,22 @@ private fun Preparing(
 ) {
     val setup by app.onboarding.onboardings[read.goalId.toString()].collectShown()
 
+    if (setup.value?.planRevealed == false && setup.value?.planReadiness?.ready == true) {
+        TodayAtRest(
+            padding = padding,
+            date = null,
+            state = stringResource(R.string.onboarding_plan_ready),
+            icon = R.drawable.ic_check,
+            sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
+            clause = stringResource(R.string.onboarding_plan_look_over),
+        ) {
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString(), revealMoment = true)) }) {
+                Text(stringResource(R.string.onboarding_see_plan))
+            }
+        }
+        return
+    }
+
     // A goal left halfway through its questions has no plan coming until they're answered.
     if (setup.value?.questionsLeft == true) {
         TodayAtRest(
@@ -387,7 +404,7 @@ private fun Preparing(
             date = null,
             state = stringResource(R.string.today_setting_up),
             icon = R.drawable.ic_checklist,
-            sentence = stringResource(R.string.today_setting_up_goal, read.title),
+            sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
             clause = stringResource(R.string.today_setting_up_detail),
         ) {
             Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }) {
@@ -411,7 +428,7 @@ private fun Preparing(
 
     TodayPage(padding) {
         TodayPageHeader(date = stringResource(R.string.today_building_plan), state = null, title = stringResource(R.string.today_title))
-        if (poll.stalled) PlanWaitStalled(poll.restart) else TodayPlanWait(read.title)
+        if (poll.stalled) PlanWaitStalled(poll.restart) else TodayPlanWait(read.displayName)
     }
 }
 

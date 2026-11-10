@@ -14,7 +14,7 @@ export const WARM_UP_CARDS_SCORE_CATEGORIES = defineScoreCategories([
     weight: 25,
   },
   {
-    expectations: `The question is one sentence of about 50 to 110 characters (it may end in "…" to be completed). Options are 1 to 6 words, 2 for "which is bigger, older, longer" and 3 otherwise, and none is "both", "all of the above" or "none of these". The reveal is 1 or 2 sentences of at most about 220 characters, starts with the answer, then gives the why, never repeats the question, and never says whether the learner guessed right. Score at most 7 when several cards break these limits.`,
+    expectations: `The question is one sentence of about 50 to 110 characters (it may end in "…" to be completed). Options are 1 to 6 words, 2 for "which is bigger, older, longer" and 3 otherwise, and none is "both", "all of the above" or "none of these". The reveal is 1 or 2 sentences aiming for 220 characters or fewer, starts with the answer, then gives the why, never repeats the question, and never says whether the learner guessed right. Score at most 7 when several cards break these limits.`,
     id: "format",
     label: "Card format",
     weight: 15,

@@ -3,6 +3,19 @@ import XCTest
 @testable import Zoonk
 
 final class LessonPlayerStateTests: XCTestCase {
+  func testALateRunsFirstMissSurvivesCheckingAPreservedCorrectDraft() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    state.select(.check(optionId: "right"), for: "check")
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)], keepsScreen: true)
+    XCTAssertEqual(state.answers["check"], .check(optionId: "right"))
+    XCTAssertNil(state.results["check"])
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.firstVerdicts["check"], false)
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+  }
+
   func testReadsAnswersAndEndsInOrder() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
@@ -76,6 +89,40 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .right])
   }
 
+  func testSegmentsShowWhatARefusedFinishAlreadyHasAheadOfTheMissingScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+
+    state.resync(answers: [runAnswer("second", isCorrect: true)])
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.segments, [.read, .read, .current, .read, .right, .read])
+    XCTAssertEqual(state.progress, 5 / 6)
+
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.segments, [.read, .read, .right, .read, .right, .read])
+    XCTAssertEqual(state.progress, 1)
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed, "it ends where the bar does")
+  }
+
+  func testSegmentsShowAnAnswerAheadOfWhereAReopenedLessonOpens() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+
+    state.startRun(runId: "run", answers: [runAnswer("second", isCorrect: false)])
+
+    XCTAssertEqual(state.currentStep?.id, "hook")
+    XCTAssertEqual(state.segments, [.current, .ahead, .ahead, .ahead, .wrong, .ahead, .ahead])
+    XCTAssertEqual(state.progress, 1 / 7)
+  }
+
   func testWorkedExampleRevealsOnePartPerContinue() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(workedExample)])
 
@@ -84,6 +131,18 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.revealed["worked"], 2)
     state.continueLesson()
     XCTAssertEqual(state.phase, .completed)
+  }
+
+  func testPendingWordOrdersWaitForTheServerOnlyOnALocalMiss() throws {
+    let pending = try step(
+      reading.replacingOccurrences(of: "\"ordersPending\": false", with: "\"ordersPending\": true"))
+    let ready = try step(reading)
+    let wrong = LessonAnswer.reading(arrangedWords: ["suis", "Je", "Marie"])
+    let right = LessonAnswer.reading(arrangedWords: ["Je", "suis", "Marie"])
+
+    XCTAssertNil(LessonGrading.grade(wrong, step: pending))
+    XCTAssertEqual(LessonGrading.grade(right, step: pending)?.isCorrect, true)
+    XCTAssertEqual(LessonGrading.grade(wrong, step: ready)?.isCorrect, false)
   }
 
   func testBuiltLanguageAnswerGetsOneChanceToSelfCorrect() throws {
@@ -187,6 +246,7 @@ final class LessonPlayerStateTests: XCTestCase {
 
     state.goBack()
     XCTAssertNil(state.notice)
+    XCTAssertEqual(state.segments, [.current, .wrong])
     state.continueLesson()
 
     XCTAssertEqual(state.notice, .selfCorrect)
@@ -214,7 +274,7 @@ final class LessonPlayerStateTests: XCTestCase {
 
     state.startRun(
       runId: "run",
-      answers: [LessonRunAnswer(stepId: "check", isCorrect: false, answeredAt: .now)])
+      answers: [runAnswer("check", isCorrect: false)])
 
     XCTAssertEqual(state.runId, "run")
     XCTAssertEqual(state.currentStep?.id, "explanation-2", "the reading before the open question")
@@ -227,8 +287,8 @@ final class LessonPlayerStateTests: XCTestCase {
 
     state.startRun(
       runId: "run",
-      answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)],
-      held: [LessonRunAnswer(stepId: "second", isCorrect: false, answeredAt: .now)])
+      answers: [runAnswer("check", isCorrect: true)],
+      held: [runAnswer("second", isCorrect: false)])
 
     XCTAssertEqual(state.firstVerdicts, ["check": true, "second": false])
     XCTAssertEqual(state.queue.last, "second", "a held miss comes back at the end")
@@ -239,7 +299,7 @@ final class LessonPlayerStateTests: XCTestCase {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
 
     state.startRun(
-      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+      runId: "run", answers: [runAnswer("check", isCorrect: true)])
 
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .ready)
@@ -252,10 +312,32 @@ final class LessonPlayerStateTests: XCTestCase {
     try answerCheck(&state, optionId: "right")
 
     state.startRun(
-      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: false, answeredAt: .now)])
+      runId: "run", answers: [runAnswer("check", isCorrect: false)], keepsScreen: true)
 
     XCTAssertEqual(state.currentStep?.id, "check")
     XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.firstVerdicts["check"], false)
+  }
+
+  func testRunStartedAfterTheLearnerActedShowsItsAnswersOnScreensTheyHaveNotTouched() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    let lessonQueue = state.queue
+
+    state.startRun(
+      runId: "run",
+      answers: [runAnswer("check", isCorrect: false), runAnswer("second", isCorrect: false)],
+      keepsScreen: true)
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+    XCTAssertEqual(state.answers["second"], .check(optionId: "wrong"))
+    XCTAssertEqual(state.results["second"]?.isCorrect, false)
+    XCTAssertEqual(state.firstVerdicts, ["check": false, "second": false])
+    XCTAssertEqual(
+      state.queue, lessonQueue + ["second"], "a check missed once comes back at the end")
   }
 
   func testOptionalScreensAreLeftOut() throws {
@@ -278,9 +360,13 @@ final class LessonPlayerStateTests: XCTestCase {
 
     state.resync(answers: [])
 
-    XCTAssertEqual(state.currentStep?.id, "hook", "nothing reached the server: from the top")
+    XCTAssertEqual(state.currentStep?.id, "check", "nothing reached the server: its one question")
     XCTAssertEqual(state.notice, .answerNotSaved)
     XCTAssertEqual(state.phase, .playing)
+    XCTAssertEqual(state.queue, ["hook", "explanation", "check", "summary"])
+
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "explanation", "its reading is still there")
   }
 
   func testResyncWithEveryAnswerSavedMarksTheCompletionFailed() throws {
@@ -291,7 +377,7 @@ final class LessonPlayerStateTests: XCTestCase {
     state.continueLesson()
     state.continueLesson()
 
-    state.resync(answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+    state.resync(answers: [runAnswer("check", isCorrect: true)])
 
     XCTAssertEqual(state.phase, .completed)
     XCTAssertEqual(state.completion?.status, .failed)
@@ -335,7 +421,7 @@ final class LessonPlayerStateTests: XCTestCase {
     state.continueLesson()
     XCTAssertEqual(state.phase, .completed)
 
-    let saved = [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)]
+    let saved = [runAnswer("check", isCorrect: true)]
     var optional = state
     optional.resync(answers: saved, optionalStepIds: ["numbered"], lesson: [drawn])
     XCTAssertEqual(optional.completion?.status, .failed, "the run no longer needs it")
@@ -368,7 +454,7 @@ final class LessonPlayerStateTests: XCTestCase {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
 
     state.select(.typedAnswer(text: "Because"), for: "typed")
-    state.startChecking()
+    XCTAssertNotNil(state.startChecking())
     XCTAssertEqual(state.phase, .checking)
     state.failChecking()
     XCTAssertEqual(state.phase, .playing)
@@ -382,6 +468,365 @@ final class LessonPlayerStateTests: XCTestCase {
     state.refuseRun(.limitReached(tier: .guest, period: .total))
 
     XCTAssertFalse(state.canGoBack)
+  }
+
+  /// #2293: the question answered before the lesson closed comes back answered.
+  func testAResumedRunGoesBackToTheQuestionAnsweredBeforeWithItsAnswer() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: true)])
+    XCTAssertEqual(state.currentStep?.id, "explanation-2")
+
+    XCTAssertTrue(state.canGoBack)
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing)
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
+    XCTAssertEqual(state.currentResult?.isCorrect, true)
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "explanation-2")
+    XCTAssertEqual(state.firstVerdicts, ["check": true])
+  }
+
+  /// #2074: a screen answered after the one the lesson reopens before shows its answer too.
+  func testContinueOntoAScreenAnsweredInAnEarlierSittingShowsItAnswered() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.startRun(runId: "run", answers: [runAnswer("second", isCorrect: true)])
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, "second")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing, "an answer from before plays no sound")
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "summary")
+  }
+
+  func testAMissedCheckComingBackAfterAResumeStartsOver() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)])
+    XCTAssertEqual(state.queue, ["hook", "explanation", "check", "summary", "check"])
+
+    state.goBack()
+    XCTAssertEqual(state.currentResult?.isCorrect, false, "its first copy shows the miss")
+    state.continueLesson()
+    state.continueLesson()
+
+    XCTAssertEqual(state.position, 4)
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertNil(state.currentAnswer)
+    XCTAssertNil(state.currentResult)
+  }
+
+  func testAResumeOpeningOnAMissedCheckComingBackStartsItOver() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(check(id: "check"))])
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)])
+
+    XCTAssertEqual(state.position, 1)
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertNil(state.currentAnswer)
+    XCTAssertNil(state.currentResult)
+    XCTAssertEqual(state.firstVerdicts, ["check": false])
+  }
+
+  func testIKnowThisAfterAResumeAsksAMissedCheckAgain() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.startRun(runId: "run", answers: [runAnswer("check", isCorrect: false)])
+    XCTAssertEqual(state.currentStep?.id, "explanation-2")
+
+    state.knowThis()
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertNil(state.currentAnswer)
+  }
+
+  func testAChallengeAnsweredBeforeOpensOnItsEnding() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try step(explanation), try step(challenge), try step(check(id: "check"))])
+    let ending = LessonStepResult(
+      isCorrect: true, answerText: "Ask", correctAnswer: nil, feedback: "Shipped.")
+    state.startRun(
+      runId: "run",
+      answers: [
+        LessonRunAnswer(
+          stepId: "challenge", answeredAt: .now, answer: .challenge(choiceIds: ["good"]),
+          result: ending)
+      ])
+
+    state.goBack()
+
+    XCTAssertEqual(state.currentStep?.id, "challenge")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.revealed["challenge"], 2, "its one decision and the ending")
+  }
+
+  func testAHeldAnswerComesBackWithItsDeviceGradeUntilTheServerTakesIt() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    let grade = try XCTUnwrap(
+      LessonGrading.grade(.check(optionId: "wrong"), step: try XCTUnwrap(state.steps["check"])))
+    let held = HeldAnswer(
+      stepId: "check", answer: .check(optionId: "wrong"), attemptId: "held", runId: "run",
+      durationMs: 1000, usedHelp: false, grade: grade, answeredAt: .now)
+
+    state.startRun(runId: "run", answers: [], held: [held.runAnswer])
+    state.goBack()
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "wrong"))
+    XCTAssertEqual(state.currentResult?.correctAnswer, "Paris")
+    XCTAssertEqual(state.currentResult?.feedback, "That's Lyon.")
+
+    var saved = LessonStepResult(
+      isCorrect: false, answerText: nil, correctAnswer: "Paris", feedback: nil)
+    saved.savedMistake = true
+    state.confirm("check", attemptId: "held", answer: .check(optionId: "wrong"), verdict: saved)
+    XCTAssertEqual(state.currentResult?.savedMistake, true)
+  }
+
+  func testATypedAnswerSentAgainKeepsItsAttemptWhileItHasNoVerdict() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
+    state.select(.typedAnswer(text: "Because"), for: "typed")
+
+    XCTAssertEqual(state.startChecking(newAttemptId: "first"), "first")
+    state.failChecking()
+    XCTAssertEqual(
+      state.startChecking(newAttemptId: "second"), "first",
+      "the reply was lost: the server replays its saved verdict")
+    state.failChecking()
+
+    state.select(.typedAnswer(text: "Because it is"), for: "typed")
+    XCTAssertEqual(state.startChecking(newAttemptId: "third"), "third", "a new answer")
+  }
+
+  /// #2074: a finish the server refused goes through each screen it's missing, each with why,
+  /// then through the questions that came back, then finishes.
+  func testARefusedFinishGoesFromOneMissingScreenToTheNext() throws {
+    let lost = check(id: "numbered").replacingOccurrences(
+      of: "\"imagePending\": false",
+      with: #""imagePending": true, "picture": {"alt": "A flower", "required": true}"#)
+    let drawn = try step(
+      check(id: "numbered").replacingOccurrences(
+        of: "\"image\": null",
+        with:
+          #""image": {"id": "img", "url": "https://example.com/a.png", "alt": "A flower", "width": 4, "height": 3}"#
+      ))
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(check(id: "check")), try step(lost), try step(explanation),
+        try step(typedAnswer), try step(summary),
+      ])
+    state.startRun(runId: "run", answers: [])
+    state.leaveOutLostPictures(openedAt: Date.now.addingTimeInterval(-10 * 60))
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    state.select(.typedAnswer(text: "Because"), for: "typed")
+    _ = state.startChecking()
+    state.resolve(
+      "typed",
+      result: LessonStepResult(
+        isCorrect: true, answerText: "Because", correctAnswer: nil, feedback: nil))
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    state.resync(answers: [runAnswer("check", isCorrect: true)], lesson: [drawn])
+
+    XCTAssertEqual(state.currentStep?.id, "numbered")
+    XCTAssertEqual(state.notice, .pictureReady)
+    XCTAssertEqual(state.queue, ["check", "numbered", "explanation", "typed", "summary"])
+    state.goBack()
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"), "the saved answer shows")
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "numbered")
+    XCTAssertEqual(state.notice, .pictureReady)
+
+    try answerCheck(&state, optionId: "wrong")
+    XCTAssertNil(state.notice)
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "typed", "the reading between is already saved")
+    XCTAssertEqual(state.notice, .answerNotSaved)
+
+    state.select(.typedAnswer(text: "Because"), for: "typed")
+    _ = state.startChecking()
+    state.failChecking()
+    XCTAssertEqual(state.notice, .answerNotSaved, "a failed check keeps why")
+    _ = state.startChecking()
+    state.resolve(
+      "typed",
+      result: LessonStepResult(
+        isCorrect: true, answerText: "Because", correctAnswer: nil, feedback: nil))
+    XCTAssertNil(state.notice)
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "numbered", "the question missed again comes back")
+    XCTAssertNil(state.currentResult)
+    XCTAssertNil(state.notice, "its answer reached the server")
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .saving)
+  }
+
+  func testARefusedFinishKeepsTheOpeningGuessMadeHere() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try step(guessHook), try step(explanation), try step(check(id: "check"))])
+    state.startRun(runId: "run", answers: [])
+    let guess = try XCTUnwrap(
+      LessonGrading.grade(.hookGuess(optionId: "wrong"), step: try XCTUnwrap(state.currentStep)))
+    state.select(.hookGuess(optionId: "wrong"), for: "guess")
+    state.resolve("guess", result: LessonStepResult(guess), counts: false)
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    state.resync(answers: [])
+    state.goBack()
+    state.goBack()
+
+    XCTAssertEqual(state.currentStep?.id, "guess")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.currentAnswer, .hookGuess(optionId: "wrong"))
+  }
+
+  func testIKnowThisDuringARefusedFinishAsksEveryCheckNotYetRight() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    state.resync(answers: [runAnswer("second", isCorrect: false)])
+    XCTAssertEqual(state.currentStep?.id, "check")
+    state.goBack()
+    state.knowThis()
+    XCTAssertEqual(state.segments, [.current, .ahead], "the saved miss is still to answer")
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, "second", "the saved miss is asked again")
+    XCTAssertNil(state.currentResult)
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.testedOut, true)
+  }
+
+  func testIKnowThisDuringARefusedFinishBringsBackOnlyTheChecksItMissed() throws {
+    var finished = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    finished.continueLesson()
+    finished.continueLesson()
+    try answerCheck(&finished, optionId: "right")
+    finished.continueLesson()
+    finished.continueLesson()
+    try answerCheck(&finished, optionId: "right")
+    finished.continueLesson()
+    finished.continueLesson()
+
+    var quick = finished
+    quick.resync(answers: [runAnswer("second", isCorrect: false)])
+    quick.goBack()
+    quick.knowThis()
+
+    var missedSecond = quick
+    try answerCheck(&missedSecond, optionId: "right")
+    missedSecond.continueLesson()
+    try answerCheck(&missedSecond, optionId: "wrong")
+    missedSecond.continueLesson()
+    missedSecond.continueLesson()
+
+    XCTAssertEqual(missedSecond.currentStep?.id, "second", "a check the quick check missed")
+    XCTAssertEqual(missedSecond.phase, .playing)
+
+    var missedFirst = quick
+    try answerCheck(&missedFirst, optionId: "wrong")
+    missedFirst.continueLesson()
+    missedFirst.continueLesson()
+
+    XCTAssertEqual(missedFirst.currentStep?.id, "second", "the saved miss's retry, never asked")
+    try answerCheck(&missedFirst, optionId: "right")
+    missedFirst.continueLesson()
+    XCTAssertEqual(missedFirst.currentStep?.id, "check")
+    XCTAssertEqual(missedFirst.phase, .playing)
+    XCTAssertNil(missedFirst.notice)
+  }
+
+  func testASelfCorrectionLeftDuringARefusedFinishComesBackWithItsNotice() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try step(explanation), try step(fillBlank), try step(check(id: "check"))])
+    state.continueLesson()
+    let blank = try XCTUnwrap(state.currentStep)
+    let right = LessonAnswer.fillBlank(userAnswers: ["suis"])
+    state.resolve(
+      blank.id, result: LessonStepResult(try XCTUnwrap(LessonGrading.grade(right, step: blank))))
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    state.resync(answers: [runAnswer("check", isCorrect: true)])
+    let built = LessonAnswer.fillBlank(userAnswers: ["es"])
+    state.select(built, for: blank.id)
+    state.resolve(
+      blank.id, result: LessonStepResult(try XCTUnwrap(LessonGrading.grade(built, step: blank))))
+    state.goBack()
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, blank.id)
+    XCTAssertEqual(state.notice, .selfCorrect)
+    XCTAssertEqual(state.currentAnswer, built)
+  }
+
+  func testAHeldAnswerBehindTheRunsRightAnswerIsLeftOut() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    let miss = runAnswer("check", isCorrect: false)
+
+    state.startRun(
+      runId: "run", answers: [miss, runAnswer("check", isCorrect: true)], held: [miss])
+
+    XCTAssertEqual(state.currentStep?.id, "explanation-2")
+    XCTAssertEqual(state.queue, state.lessonOrder)
+    XCTAssertEqual(state.results["check"]?.isCorrect, true)
+    XCTAssertEqual(state.answers["check"], .check(optionId: "right"))
+  }
+
+  func testARefusedFinishStartsOverOnlyTheScreensItIsMissing() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    let rounds = state.rounds
+
+    state.resync(answers: [runAnswer("check", isCorrect: true)])
+
+    XCTAssertEqual(state.currentStep?.id, "second")
+    XCTAssertEqual(state.rounds["check"], rounds["check"], "its saved answer keeps its work")
+    XCTAssertEqual(state.rounds["explanation"], rounds["explanation"])
+    XCTAssertNotEqual(state.rounds["second"], rounds["second"], "the missing screen starts over")
   }
 
   private func answerCheck(
@@ -413,11 +858,24 @@ final class LessonGradingTests: XCTestCase {
     let step = try step(reading)
 
     let right = LessonGrading.grade(.reading(arrangedWords: ["je", "suis", "Marie"]), step: step)
-    let wrong = LessonGrading.grade(.reading(arrangedWords: ["Marie", "suis", "je"]), step: step)
+    let wrong = LessonGrading.grade(.reading(arrangedWords: ["suis", "je", "Marie"]), step: step)
 
     XCTAssertEqual(right?.isCorrect, true)
-    XCTAssertEqual(right?.correctAnswer, "Je suis Marie.")
+    XCTAssertNil(right?.correctAnswer, "the lesson's own order needs no other version")
     XCTAssertEqual(wrong?.isCorrect, false)
+    XCTAssertEqual(wrong?.correctAnswer, "Je suis Marie.")
+  }
+
+  func testArrangedWordsInAnotherStoredOrderAreRightAndShowTheLessonsOrder() throws {
+    let step = try step(reading)
+
+    let other = LessonGrading.grade(.reading(arrangedWords: ["Marie", "je", "suis"]), step: step)
+    let unlisted = LessonGrading.grade(
+      .reading(arrangedWords: ["Marie", "suis", "je"]), step: step)
+
+    XCTAssertEqual(other?.isCorrect, true)
+    XCTAssertEqual(other?.correctAnswer, "Je suis Marie.")
+    XCTAssertEqual(unlisted?.isCorrect, false, "only the orders the lesson lists are right")
   }
 
   func testArrangedWordsCompareWordByWordAsCoreDoes() throws {
@@ -719,7 +1177,8 @@ private let reading = language(
   "reading", kind: "reading", content: "{}",
   sentence: #"""
     {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
-     "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": []}
+     "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": [],
+     "ordersPending": false, "otherSentenceOrders": [["Marie,", "je", "suis."]], "otherTranslationOrders": []}
     """#, sentenceWords: ["Je", "suis", "Marie."])
 
 private let japaneseReading = language(
@@ -727,7 +1186,7 @@ private let japaneseReading = language(
   sentence: #"""
     {"id": "s", "sentence": "私は学生です。", "translation": "I am a student.", "explanation": null,
      "audioUrl": null, "romanization": null, "distractors": ["学", "生"],
-     "translationDistractors": []}
+     "translationDistractors": [], "ordersPending": false, "otherSentenceOrders": [], "otherTranslationOrders": []}
     """#, sentenceWords: ["私", "は", "学生", "です。"])
 
 private let numericActivity = teaching(
@@ -810,6 +1269,13 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertNil(state.quickCheck)
     XCTAssertEqual(state.currentStep?.id, "explanation", "back where the learner was")
     XCTAssertEqual(state.queue, ["hook", "explanation", "explanation-2", "summary", "second"])
+
+    state.continueLesson()
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "second")
+    XCTAssertEqual(state.phase, .playing, "to answer again")
+    XCTAssertNil(state.currentAnswer)
   }
 
   func testExplainFirstBringsTheExplanationsBeforeTheQuestion() throws {
@@ -1308,24 +1774,17 @@ final class LessonMapTests: XCTestCase {
       hasMap: true)
 
     state.startRun(
-      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+      runId: "run", answers: [runAnswer("check", isCorrect: true)])
     XCTAssertEqual(state.phase, .map)
-    XCTAssertFalse(state.canGoBack, "its last question would ask for an answer again")
-
-    state.continueLesson()
-    XCTAssertEqual(state.completion?.status, .saving)
-  }
-
-  func testPreviousNeverReturnsToAQuestionAnsweredInAnEarlierSitting() throws {
-    var state = LessonPlayerState(
-      lessonId: "lesson", steps: [try step(check(id: "check")), try step(explanation)],
-      hasMap: true)
-    state.startRun(
-      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
 
     state.goBack()
-    XCTAssertEqual(state.currentStep?.id, "explanation", "reading is safe to show again")
-    XCTAssertFalse(state.canGoBack, "the question would ask for its answer again")
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback, "answered in the earlier sitting")
+    XCTAssertEqual(state.currentAnswer, .check(optionId: "right"))
+
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.completion?.status, .saving)
   }
 
   private func answer(_ state: inout LessonPlayerState, optionId: String) throws {
@@ -1338,4 +1797,11 @@ final class LessonMapTests: XCTestCase {
   private func summary(_ json: String) throws -> LessonSummary {
     try JSONDecoder().decode(LessonSummary.self, from: Data(json.utf8))
   }
+}
+
+private func runAnswer(_ stepId: String, isCorrect: Bool) -> LessonRunAnswer {
+  LessonRunAnswer(
+    stepId: stepId, answeredAt: .now, answer: .check(optionId: isCorrect ? "right" : "wrong"),
+    result: LessonStepResult(
+      isCorrect: isCorrect, answerText: nil, correctAnswer: nil, feedback: nil))
 }

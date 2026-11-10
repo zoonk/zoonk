@@ -164,6 +164,7 @@ internal fun PlanPage(
             null
         }
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    val renameDialog by viewModel.rename.collectAsStateWithLifecycle()
     val pending by viewModel.pending.collectAsStateWithLifecycle()
     val asked by viewModel.asked.collectAsStateWithLifecycle()
     val failed by viewModel.failed.collectAsStateWithLifecycle()
@@ -243,6 +244,7 @@ internal fun PlanPage(
             },
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
+        rename = GoalRename(renameDialog, viewModel::openRename, viewModel::closeRename, viewModel::rename),
         report = report,
         onAdjust = { section ->
             viewModel.forgetLatest()
@@ -354,6 +356,7 @@ internal fun PlanContent(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
     edits: PlanEdits = PlanEdits(),
@@ -401,6 +404,7 @@ internal fun PlanContent(
                         resume = resume,
                         isSaving = isSaving,
                         onSetStatus = onSetStatus,
+                        rename = rename,
                         report = report,
                         onAdjust = adjust,
                     )

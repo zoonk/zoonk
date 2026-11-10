@@ -1,4 +1,6 @@
 import { generateItems } from "@zoonk/ai/tasks/items/generate";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { type KeyCheckedItem } from "@zoonk/core/library/items/check-keys";
 import { createItems } from "@zoonk/core/library/items/create";
 import {
   FIELD_ITEMS_PER_SKILL,
@@ -9,6 +11,15 @@ import {
 import { resolveGoalField } from "@zoonk/core/library/items/goal-field";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { startPictureChecks } from "../../images/start-picture-checks";
+import { checkItemKeysStep } from "./item-keys-step";
+
+type FieldItemsWrite = {
+  analytics?: ContentAnalytics;
+  target: FieldItemTarget;
+  workflowRunId: string;
+};
+
+type WrittenItems = Awaited<ReturnType<typeof generateItems>>;
 
 async function resolveGoalFieldStep({
   analytics,
@@ -52,15 +63,11 @@ export async function listLessonFieldItemTargetsStep(input: {
   return listLessonFieldItemTargets(input);
 }
 
-export async function prepareFieldItemsStep({
+async function writeFieldItemsStep({
   analytics,
   target,
   workflowRunId,
-}: {
-  analytics?: ContentAnalytics;
-  target: FieldItemTarget;
-  workflowRunId: string;
-}): Promise<number> {
+}: FieldItemsWrite): Promise<{ items: GeneratedItem[]; provenance: WrittenItems["provenance"] }> {
   "use step";
 
   const { field, skill } = target;
@@ -75,13 +82,29 @@ export async function prepareFieldItemsStep({
     skill: { description: skill.description, example: skill.example, name: skill.name },
   });
 
+  return { items: data.items, provenance };
+}
+
+async function storeFieldItemsStep({
+  analytics,
+  items,
+  provenance,
+  target,
+  workflowRunId,
+}: FieldItemsWrite & {
+  items: KeyCheckedItem[];
+  provenance: WrittenItems["provenance"];
+}): Promise<number> {
+  "use step";
+
+  const { field, skill } = target;
   const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
 
   const { created, unchecked } = await createItems({
     analytics: context,
     field,
     format: "multipleChoice",
-    items: data.items,
+    items,
     language: skill.language,
     provenance,
     skillId: skill.id,
@@ -90,4 +113,22 @@ export async function prepareFieldItemsStep({
   await startPictureChecks({ analytics: context, assetIds: unchecked });
 
   return created.length;
+}
+
+export async function prepareSkillFieldItems(input: FieldItemsWrite): Promise<number> {
+  const { analytics, target, workflowRunId } = input;
+  const written = await writeFieldItemsStep(input);
+
+  const { kept } = await checkItemKeysStep({
+    analytics: toContentAnalytics({ analytics, scope: target.skill, workflowRunId }),
+    items: written.items,
+    language: target.skill.language,
+    wait: "soon",
+  });
+
+  return storeFieldItemsStep({
+    ...input,
+    items: kept.map(({ item }) => item),
+    provenance: written.provenance,
+  });
 }

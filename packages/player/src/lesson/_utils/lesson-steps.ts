@@ -1,3 +1,4 @@
+import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import {
   type LessonPlayerAnswer,
   type PlayableLanguageStep,
@@ -34,6 +35,18 @@ export function isLanguageStep(step: PlayableLibraryStep): step is PlayableLangu
   return "exercise" in step;
 }
 
+export function getAnsweredStep({
+  answer,
+  step,
+}: {
+  answer: LessonPlayerAnswer | undefined;
+  step: PlayableLibraryStep;
+}): PlayableLibraryStep {
+  return step.kind === "spokenAnswer" && step.listening && answer?.kind === "listening"
+    ? toListeningStep({ listening: step.listening, step })
+    : step;
+}
+
 export function canSelfCorrect(step: PlayableLibraryStep): boolean {
   return isLanguageStep(step) && SELF_CORRECT_KINDS.has(step.kind);
 }
@@ -48,13 +61,23 @@ export function isQuestionStep(step: PlayableLibraryStep): boolean {
 
 export function isServerGradedAnswer({
   answer,
+  isCorrect,
   step,
 }: {
   answer: LessonPlayerAnswer;
+  isCorrect: boolean | undefined;
   step: PlayableLibraryStep;
 }): boolean {
+  const ordersPending =
+    (isLanguageStep(step) && step.exercise.sentence?.ordersPending) ||
+    (step.kind === "spokenAnswer" && step.listening?.sentence?.ordersPending);
+
   return (
-    step.kind === "typedAnswer" || (step.kind === "spokenAnswer" && answer.kind === "spokenAnswer")
+    step.kind === "typedAnswer" ||
+    (step.kind === "spokenAnswer" && answer.kind === "spokenAnswer") ||
+    (isCorrect === false &&
+      (answer.kind === "reading" || answer.kind === "listening") &&
+      ordersPending === true)
   );
 }
 

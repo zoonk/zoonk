@@ -5,35 +5,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description names spreadsheets, cleaning, summaries, charts, comparisons, patterns, and checking AI analysis. The outcomes are observable and progress sensibly from organizing data to evaluating analysis. However, the required concrete workplace and everyday applications are missing, and drawing conclusions is only implicit.",
+          "reasoning": "The description names spreadsheets, cleaning, summaries, charts, pattern spotting, and AI verification, all appropriate to this course. The outcomes are observable beginner abilities. However, they largely mirror the initial chapter band and leave drawing conclusions implicit. Work and everyday applications are named only as broad settings, without the concrete uses requested.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The claims are measured and appropriate for a beginner data-analysis course. There are no job guarantees, inflated mastery claims, regulated-practice claims, or statements about duration, price, or access.",
+          "reasoning": "The copy makes a proportionate educational promise without guaranteeing employment, credentials, or other external results. It contains no inflated expertise claims, duration, pricing, or access claims.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with a concrete result in natural base-form English and uses familiar words. The outcomes are also accessible, but the clauses about trusting numbers and using an answer dilute the requested single-action phrasing. The averages-and-charts outcome is somewhat bundled rather than presenting one clean ability.",
+          "reasoning": "The promise opens with a recognizable result in plain, beginner-accessible English. The outcomes also start with base-form verbs and avoid unfamiliar jargon. However, two outcomes add clauses explaining when to trust or use results instead of remaining single, immediately scannable abilities.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "Students working with data and people using spreadsheets at work are recognizable, distinct audiences. “Curious problem-solvers” is too broad to help visitors identify a specific reason this course is for them.",
+          "reasoning": "Students working with data and people using spreadsheets at work are recognizable, distinct audiences. “Curious problem-solvers” is too broad to help visitors identify a specific reason this course fits them.",
           "score": 8,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy consistently uses natural US English, with accessible wording in the description and audience. It contains no banned educational openers, hype, or conspicuously stiff phrasing.",
+          "reasoning": "The copy uses natural US English, with plain description and audience wording. There are no banned educational openers, translation-like constructions, or hype.",
           "score": 10,
           "label": "Language and style",
           "weight": 15
@@ -50,28 +50,38 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2633,
-          "outputTokens": 804,
-          "reasoningTokens": 245
+          "cacheWriteTokens": 2767,
+          "inputTokens": 2770,
+          "outputTokens": 793,
+          "reasoningTokens": 240
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The copy mentions work and home but omits concrete applications such as workplace reports, marketing or operations decisions, personal finances, and evaluating statistics in the news. “Curious problem-solvers” is a vague audience label. Two outcomes add unnecessary purpose or timing clauses: “before trusting the numbers” and “before using its answer.”",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The page mentions work and home but omits concrete applications such as reports, marketing, operations, personal finances, and evaluating statistics in the news. “Curious problem-solvers” is a vague audience label. Two outcomes add unnecessary qualification clauses: “before trusting the numbers” and “before using its answer.”",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make drawing conclusions from data more explicit, rather than leaving it implied by “answers” and “better-informed choices.” This would better communicate the course's reach beyond preparing data and checking AI.",
+          "conclusion": "Make drawing conclusions an explicit learner ability, rather than leaving it implicit in “answers” and “choices.” Rebalance the outcomes to show the progression from preparing data to using findings, while retaining verification of AI analysis.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Names concrete parts of data analysis: organizing and cleaning data, summaries, charts, drawing conclusions, checking AI's analysis\n      - Uses at work (reports, decisions, marketing, operations) and everyday life (personal finances, reading statistics in the news) without promising a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["tech", "business", "math"] },
+        "expectations": "\n      - MUST be in US English\n      - Names concrete parts of data analysis: organizing and cleaning data, summaries, charts, drawing conclusions, checking AI's analysis\n      - Uses at work (reports, decisions, marketing, operations) and everyday life (personal finances, reading statistics in the news) without promising a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "tech",
+            "business",
+            "math"
+          ]
+        },
         "id": "en-data-analysis-beginner-1",
         "userInput": {
           "chapters": [
@@ -110,35 +120,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description accurately identifies the saga and covers mythology, world-building, filmmaking innovations, franchise expansion, and fandom. The outcomes progress from retelling the story to broader discussion and represent the course's range, although the final outcome is less specific about what learners can say about its cultural and filmmaking influence.",
-          "score": 9,
+          "reasoning": "The description accurately identifies the Skywalker saga and covers mythology, world-building, filmmaking innovations, franchise expansion, and fan culture. The outcomes progress from recounting the story to broader cultural discussion, showing the course's range without unsupported content claims.",
+          "score": 10,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Claims are modest and grounded in personal and cultural participation. There are no career claims, inflated expertise promises, guarantees, or statements about duration, price, or access.",
+          "reasoning": "Claims are restrained and focused on personal and cultural participation. There are no career claims, inflated guarantees, or statements about duration, prices, or access.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with the recognizable action “Discuss,” and all outcomes use base-form verbs and beginner-accessible language. However, “with context for its story, films, and place in pop culture” is a stiff formulation, triggering the cap of 8. The last outcome also reads as a list of topics rather than one focused ability.",
+          "reasoning": "The promise opens with a recognizable action and uses beginner-accessible English, as do the outcomes. However, “with context” makes the payoff less direct, and the final outcome bundles films, effects, and the franchise into a topic list rather than one focused action.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three labels are immediately recognizable and distinguish saga newcomers, viewers interested in filmmaking effects, and fans entering through books and games. They are neither vague catchalls nor sentences describing course activities.",
+          "reasoning": "The three labels are concise and recognizable, distinguishing saga newcomers, people interested in movie effects, and fans arriving through books and games.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy consistently uses natural US English. The description and audience labels use accessible language, and there are no prohibited learning-process phrases or hype.",
+          "reasoning": "The copy uses natural US English, accessible description and audience wording, and no banned educational openers or hype.",
           "score": 10,
           "label": "Language and style",
           "weight": 15
@@ -155,28 +165,37 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2653,
-          "outputTokens": 757,
-          "reasoningTokens": 217
+          "cacheWriteTokens": 2787,
+          "inputTokens": 2790,
+          "outputTokens": 841,
+          "reasoningTokens": 377
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The promise's phrase “with context for” is somewhat stiff and makes the benefit less immediate. The final outcome strings together “films, effects, and wider franchise” rather than identifying a focused ability.",
-          "kind": "minorErrors",
-          "score": 8
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Make the promise more direct, such as “Discuss Star Wars stories and their influence on pop culture.” Replace the final outcome with a clearer culminating ability, such as “Explain how Star Wars changed movies and fan culture.”",
+          "conclusion": "The final outcome, “Discuss Star Wars' films, effects, and wider franchise,” strings together broad topics rather than identifying one focused ability.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the promise's social payoff more tangible by naming participation in fan discussions rather than using the less direct phrase “with context.”",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Pop culture: personal, creative, social and cultural uses (discussion, criticism, fan communities, understanding references, storytelling), never careers or jobs\n      - Specific to Star Wars (its saga, characters, world-building, influence on film and franchises), not generic film copy\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["culture", "arts"] },
+        "expectations": "\n      - MUST be in US English\n      - Pop culture: personal, creative, social and cultural uses (discussion, criticism, fan communities, understanding references, storytelling), never careers or jobs\n      - Specific to Star Wars (its saga, characters, world-building, influence on film and franchises), not generic film copy\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "culture",
+            "arts"
+          ]
+        },
         "id": "en-star-wars-overview-1",
         "userInput": {
           "chapters": [
@@ -215,35 +234,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description accurately covers contract formation, terms, enforceability, breach, and everyday agreements without treating the initial chapters as an exhaustive syllabus. The outcomes are course-specific, but the final two overlap rather than showing a clear progression to a distinct further ability.",
+          "reasoning": "The description accurately identifies contract formation, terms, enforceability, and consequences of breach, with relevant everyday examples. It presents the subject broadly rather than limiting the course to an initial chapter band. The outcomes are course-specific, but the final two repeat the same territory instead of demonstrating a distinct next ability.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The copy frames the course around reading and understanding agreements, not practicing law or advising clients. It makes no qualification, career, guaranteed-result, duration, price, or access claims and uses appropriately cautious language about legal consequences.",
+          "reasoning": "The copy frames the course around reading agreements and identifying questions, without suggesting qualification to practice law or advise clients. It contains no inflated claims, guaranteed achievements, or claims about duration, pricing, or access.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with recognizable actions and connects contract reading to an everyday financial concern. All outcomes use beginner-accessible language and English base-form verbs. However, “See what may follow a broken agreement” is vague about the observable ability the learner gains.",
+          "reasoning": "The promise opens with concrete actions in familiar language and connects contract reading to an everyday financial concern. The outcomes use accessible words and base-form verbs, but “See what may follow a broken agreement” is abstract, and “Compare possible outcomes” leaves the practical ability underspecified.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The audience items provide recognizable situations or interests: renters and employees, freelancers, and people curious about everyday agreements. They are short labels rather than course-task sentences, and curiosity-based labels are permitted.",
+          "reasoning": "The audience items are short, recognizable labels covering people signing personal or employment agreements, freelancers reviewing client contracts, and people curious about everyday agreements. Curiosity-based labels are permitted, and these are not sentences describing course activities.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy uses natural US English throughout. The description and audience are accessible, with no banned educational openers, conspicuous jargon, or hype.",
+          "reasoning": "The copy uses natural US English throughout. The description and audience are accessible, with no banned introductory phrasing, hype, or unnecessarily technical language.",
           "score": 10,
           "label": "Language and style",
           "weight": 15
@@ -260,28 +279,36 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2611,
-          "outputTokens": 707,
-          "reasoningTokens": 182
+          "cacheWriteTokens": 2745,
+          "inputTokens": 2748,
+          "outputTokens": 790,
+          "reasoningTokens": 250
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The last two outcomes substantially repeat the same ability: anticipating consequences of a broken agreement. This reduces the range and progression of the outcomes. “See what may follow” also describes a less concrete, observable action than the other outcomes.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The last two outcomes substantially overlap: both concern what happens after an agreement is broken. “See what may follow” also describes a vague awareness rather than a clearly observable ability, weakening the outcomes’ range and progression.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace one of the overlapping outcomes with “Identify questions to ask a lawyer before signing.” This would broaden the practical abilities presented and make the course’s role in supporting informed consultation clearer.",
+          "conclusion": "Replace one overlapping outcome with “Recognize when to ask a lawyer about a contract.” Make the remaining breach outcome more concrete, such as “Identify possible consequences of breaking an agreement.”",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Regulated profession: the course helps someone understand contracts, read them carefully and know when to ask a lawyer; nothing says or implies giving legal advice, representing clients, drafting binding contracts for others or replacing law school or a lawyer\n      - Audience examples like freelancers, small business owners, tenants or students preparing for law school fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["law"] },
+        "expectations": "\n      - MUST be in US English\n      - Regulated profession: the course helps someone understand contracts, read them carefully and know when to ask a lawyer; nothing says or implies giving legal advice, representing clients, drafting binding contracts for others or replacing law school or a lawyer\n      - Audience examples like freelancers, small business owners, tenants or students preparing for law school fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "law"
+          ]
+        },
         "id": "en-contract-law-beginner-1",
         "userInput": {
           "chapters": [
@@ -315,44 +342,44 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description names substantive pharmacology content and extends beyond the initial chapters to major medicine groups and their uses. The outcomes progress from medicine action to administration, interactions and antibiotic resistance. However, “Perceber interações” is less observable than identifying interaction warnings in a specific source.",
+          "reasoning": "The description names genuine pharmacology content and extends beyond the initial chapters to medication groups and uses. The outcomes progress sensibly from medicine action to administration, interactions and resistance. However, “Perceber interações” is a loosely specified ability rather than a clearly observable task.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The page consistently frames the course as supporting study and conversations with health professionals, explicitly without replacing professional guidance. It does not claim qualification to prescribe, diagnose, treat or select doses, and contains no inflated or guaranteed results.",
+          "reasoning": "The page consistently frames the course as supporting study and conversations with health professionals, explicitly without replacing professional guidance. It promises no prescribing, diagnosis, treatment qualification, credentials or other unsupported results.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with an infinitive and gives a recognizable everyday result: discussing medicines during health appointments. All outcomes also start with infinitives. However, two outcomes rely on unexplained beginner-level technical language—“vias” and “interações”—triggering the maximum score of 7 for unfamiliar terminology in two or more outcomes.",
-          "score": 7,
+          "reasoning": "The promise opens with an infinitive and offers a recognizable everyday result: discussing medicines during consultations. All outcomes also begin with infinitives. However, “diferentes vias” is unexplained field terminology for a beginner visitor, triggering the cap of 8 for one unfamiliar outcome.",
+          "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three labels are recognizable and meaningfully distinct: early-stage health students, everyday medicine users and people curious about medicine action. They are concise Brazilian Portuguese labels rather than course-activity sentences or empty catch-all audiences.",
+          "reasoning": "The three short Portuguese labels identify distinct, recognizable audiences: beginning health students, everyday medicine users and people curious about medicine action. They describe people rather than course activities.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The prose and audience labels are natural Brazilian Portuguese, without hype or prohibited learning openers. The description nevertheless compresses technical expressions such as “vias” and “efeitos adversos” without explanation; plainer wording would better serve its beginner audience. This triggers the cap of 8 for jargon-heavy phrasing.",
-          "score": 8,
+          "reasoning": "The prose and audience labels are natural Brazilian Portuguese. The description explains the subject directly, without banned learning openers, hype or conspicuous translation artifacts. The outcome terminology issue is assessed under the promise category.",
+          "score": 10,
           "label": "Language and style",
           "weight": 15
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "3 of 4 parts passed. audience items over 6 words: Estudantes de saúde no começo da faculdade | Quem usa remédios no dia a dia.",
-          "score": 7.75,
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -360,28 +387,37 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2684,
-          "outputTokens": 1099,
-          "reasoningTokens": 508
+          "cacheWriteTokens": 2818,
+          "inputTokens": 2821,
+          "outputTokens": 947,
+          "reasoningTokens": 401
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Two outcomes retain unexplained terminology for complete beginners: “por diferentes vias” and “Perceber interações.” The description also uses “vias” without a plain-language explanation. These choices reduce accessibility despite the otherwise natural Brazilian Portuguese.",
-          "kind": "minorErrors",
-          "score": 7
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Make the interaction outcome more observable by anchoring it in reading warnings in a bula. Replace “diferentes vias” with recognizable examples such as taking a medicine by mouth or applying it to the skin.",
-          "kind": "potentialImprovements",
+          "conclusion": "The beginner-facing outcome “Comparar efeitos de um remédio por diferentes vias” uses unexplained technical shorthand. “Perceber interações e efeitos indesejados” is also less observable than the other outcomes: it does not clearly identify what the learner will demonstrate.",
+          "kind": "minorErrors",
           "score": 8
+        },
+        {
+          "conclusion": "Replace “diferentes vias” with familiar wording about how a medicine is taken or applied. Ground the interactions outcome in an everyday activity, such as identifying interaction warnings in a package insert.",
+          "kind": "potentialImprovements",
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, including audience nouns and roles\n      - Regulated field: frames the course as understanding and study of how medicines act, never as qualifying anyone to prescribe, diagnose, treat or choose doses for patients; nursing or pharmacy students, caregivers and curious people fit\n      - Everyday use such as reading a package insert (bula) or talking with a doctor is welcome\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["health", "science"] },
+        "expectations": "\n      - MUST be in Brazilian Portuguese, including audience nouns and roles\n      - Regulated field: frames the course as understanding and study of how medicines act, never as qualifying anyone to prescribe, diagnose, treat or choose doses for patients; nursing or pharmacy students, caregivers and curious people fit\n      - Everyday use such as reading a package insert (bula) or talking with a doctor is welcome\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "health",
+            "science"
+          ]
+        },
         "id": "pt-farmacologia-beginner-1",
         "userInput": {
           "chapters": [
@@ -415,35 +451,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description clearly identifies economics and covers scarcity, prices, interest, inflation and government, extending beyond the supplied chapters into employment and growth. Outcomes progress from individual choices to public spending and are observable abilities. However, required coverage of trade and an explicit workplace application are missing.",
+          "reasoning": "The description accurately presents economics, expresses scarcity in plain words, and extends beyond the supplied chapters through employment and growth. The outcomes progress from individual choices to public spending. However, required trade coverage and an explicit workplace application are missing.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The page makes appropriately limited educational claims. It promises no employment, credentials, guaranteed results or professional qualification, and mentions no duration, prices or access rules.",
+          "reasoning": "The page makes modest educational claims without promising employment, credentials, professional qualification, or guaranteed results. It includes no duration, pricing, or access claims.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with an infinitive and a recognizable everyday result: deciding between buying, saving and paying in installments. Outcomes also use infinitives and accessible language without technical prerequisites. The first outcome is less natural than the others because of “pelo que você abre mão”; otherwise the actions are clear and appropriately beginner-level.",
+          "reasoning": "The promise opens with an infinitive and a recognizable everyday result: choosing between buying, saving, and paying in installments. Outcomes also use infinitives and familiar vocabulary, with concrete actions rather than topic labels. The first outcome is less natural and immediately readable because “pelo que você abre mão” awkwardly expresses the comparison criterion.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three labels identify distinct, recognizable audiences: secondary-school students, household budget organizers and people curious about specific economic issues. None is a generic “anyone interested” label or a sentence describing course activities.",
+          "reasoning": "The three short labels identify distinct, recognizable audiences: secondary-school students, household budget managers, and people curious about economic developments. None describes course activities or relies on an unrestricted “anyone interested” label.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The descriptive copy and audience labels use natural Brazilian Portuguese and accessible vocabulary. There are no banned learning-process phrases, inflated language or unexplained jargon. Promise and outcome wording is assessed separately.",
+          "reasoning": "The copy uses Brazilian Portuguese and accessible language, with no hype or prohibited learning-process phrasing. The description and audience avoid unexplained jargon; the outcome wording issue is assessed under the promise category.",
           "score": 10,
           "label": "Language and style",
           "weight": 15
@@ -460,32 +496,36 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2675,
-          "outputTokens": 1005,
-          "reasoningTokens": 440
+          "cacheWriteTokens": 2809,
+          "inputTokens": 2812,
+          "outputTokens": 1049,
+          "reasoningTokens": 516
         }
       },
       "steps": [
         {
-          "conclusion": "The page omits comércio, one of the explicitly required big ideas, and does not identify a workplace use. It does cover household budgeting, news, credit decisions and government effects, but those do not replace the missing requirements.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "The first outcome, “Comparar escolhas pelo que você abre mão”, is slightly unnatural Portuguese. “Comparar escolhas considerando o que fica de fora” would express the trade-off more naturally.",
+          "conclusion": "The copy omits trade, one of the explicitly required economic ideas, and does not identify a workplace use; mentioning employment as a topic does not supply that application. Everyday uses and evaluating government spending are represented well.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Make an outcome directly demonstrate the financial decision promised in the headline—for example, comparing the total cost of paying upfront versus in installments.",
+          "conclusion": "Make the first outcome more natural: “Comparar escolhas considerando aquilo de que você abre mão.” Add trade and a recognizable workplace application without turning the page into a longer list of topics.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Names the big ideas of economics (escassez, preços, juros, inflação, papel do governo, comércio) in plain words; Brazilian examples are welcome\n      - Includes everyday uses (orçamento pessoal, entender notícias, decidir sobre crédito) next to work and civic ones, with no promise of a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["economics"] },
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Names the big ideas of economics (escassez, preços, juros, inflação, papel do governo, comércio) in plain words; Brazilian examples are welcome\n      - Includes everyday uses (orçamento pessoal, entender notícias, decidir sobre crédito) next to work and civic ones, with no promise of a job\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "economics"
+          ]
+        },
         "id": "pt-economia-overview-1",
         "userInput": {
           "chapters": [
@@ -524,36 +564,36 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description names relevant beginner situations and extends beyond the first chapters into reading, writing, study and work. The outcomes show a credible progression toward more confident communication. However, the repeated US-specific framing narrows the course without support from its title or chapters.",
+          "reasoning": "The description names presentations, requests and routines from the supplied chapters while extending appropriately into reading, writing, study and work. The outcomes progress from introductions to expressing opinions and show whole-course range. However, defining this broadly titled English course as specifically US English is unsupported and unnecessarily narrows its positioning.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no promises of fluency, credentials, employment or guaranteed external results, and no duration, price or access claims. The communication abilities are appropriately framed as course outcomes.",
+          "reasoning": "There are no guarantees of fluency, employment, certification or other external results, and no duration, price or access claims. The progression toward more complex communication is a reasonable course ambition rather than an inflated guarantee.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with the infinitive “Conversar” and a concrete everyday result. All outcomes also begin with infinitives and remain accessible to beginners. However, the promise's long sequence of settings and trailing progression clause make it wordy, triggering the maximum score of 8. “Resolver pedidos” also makes one outcome less immediately clear.",
+          "reasoning": "The promise opens with the concrete infinitive “Conversar,” and every outcome also starts with an infinitive. The language is accessible to beginners. However, the promise strings together several contexts and adds “avançando até estudos e trabalho,” making it wordy and triggering the maximum score of 8. “Resolver pedidos” also weakens the clarity of the second outcome.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three items identify distinct, recognizable groups through travel, study and cultural interest. They function as concise audience labels rather than descriptions of course activities, with no vague catch-all items.",
+          "reasoning": "The three items are concise, recognizable labels for distinct audiences: travelers, students and people interested in culture. They describe real language-use motivations rather than course activities, and none is a vague catch-all.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy is in Brazilian Portuguese and avoids banned learning openers and hype. There are minor naturalness problems: “ampliando vocabulário, pronúncia, leitura, escrita” stretches one verb across incompatible objects, and “resolver pedidos” is an awkward collocation.",
-          "score": 8,
+          "reasoning": "The copy is in Brazilian Portuguese, including the audience labels. The description and audience use accessible, natural phrasing without prohibited learning-process openers or hype. Promise and outcome wording issues are assessed separately under the promise category.",
+          "score": 10,
           "label": "Language and style",
           "weight": 15
         },
@@ -569,27 +609,31 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2635,
-          "outputTokens": 835,
-          "reasoningTokens": 235
+          "cacheWriteTokens": 2769,
+          "inputTokens": 2772,
+          "outputTokens": 925,
+          "reasoningTokens": 341
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The description and audience introduce an unsupported US-specific focus for a course titled simply “Inglês.” The promise becomes wordy with “avançando até estudos e trabalho,” shifting from a recognizable ability to course progression. “Resolver pedidos” is unnatural, and “ampliando” does not combine naturally with every skill in the description's list.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description unnecessarily defines the subject as US English, and two audience labels reinforce that unsupported geographic restriction. The promise is wordy for a first-glance result, especially its closing progression clause. “Resolver pedidos” is also an awkward, unclear description of a travel ability.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Keep travel and cultural uses geographically broad unless a US focus is established. Shorten the promise to a direct communication ability, and replace “Resolver pedidos” with a natural action such as “Fazer pedidos.” Preserve the outcomes' useful progression from introductions to expressing opinions.",
+          "conclusion": "Replace “assuntos mais complexos” in the description with recognizable later-course uses, such as discussing plans and expressing opinions. This would make the course’s broader scope more tangible without adding length.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese; the course is English itself, for Brazilian learners\n      - Focuses on communicating in real situations (conversas, viagens, estudo, trabalho, cultura), from first conversations to confident use\n      - Never promises fluency, a certificate, an exam score or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese; the course is English itself, for Brazilian learners\n      - Focuses on communicating in real situations (conversas, viagens, estudo, trabalho, cultura), from first conversations to confident use\n      - Never promises fluency, a certificate, an exam score or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-ingles-language-beginner-1",
         "userInput": {
           "chapters": [
@@ -624,36 +668,36 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description accurately identifies quantum physics and connects atoms, light, measurement, supporting math, and devices. The outcomes span conceptual explanations, experimental plots, mathematical work, and applications. However, the first outcome is broad, and the quantum-state outcome does not clearly communicate an observable achievement to this course's intended beginner.",
+          "reasoning": "The description covers quantum phenomena, supporting math, experiments, and devices rather than merely summarizing the opening chapters. The outcomes show that range in a sensible order, but the broad first outcome and abstract quantum-state outcome make the abilities less concrete and observable.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no inflated mastery claims, guarantees, career promises, or statements about duration, pricing, or access. The stated educational abilities are consistent with the course's scope.",
+          "reasoning": "There are no inflated mastery claims, guaranteed academic or career results, or claims about duration, pricing, or access. The educational and curiosity-oriented framing is appropriate.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with the base-form action “Explain” and names recognizable devices. However, “quantum states” is unfamiliar terminology used as an outcome's main content, triggering the cap of 8 for one such outcome. “Shapes atoms” and “Describe how atoms and light behave” also provide less concrete results than the expectations call for.",
+          "reasoning": "The promise opens with the base-form action “Explain” and connects the subject to familiar devices without equations or mathematical models. However, “Use math to track changing quantum states” uses terminology a complete beginner would not know, triggering the cap of 8 for one such outcome. The first outcome also lacks a specific everyday result.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three labels identify recognizable situations: high school beginners, college students strengthening mathematical foundations, and readers curious about science news. They are concise, sufficiently distinct, and avoid career or grade promises.",
+          "reasoning": "All three items are short, recognizable labels. High school newcomers, college students strengthening their math foundations, and science-news readers represent distinct educational situations and curiosity-driven uses.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy uses natural US English without hype or banned learning-process phrases. The description names relevant subject areas while explaining the overall scope in readable language. The technical wording in an outcome is assessed under the promise category rather than penalized again here.",
-          "score": 9,
+          "reasoning": "The copy uses US English, avoids banned learning-process openers, and contains no hype. The description is somewhat less plain than requested: “reading experiments” is unnatural phrasing, and “entanglement” appears without an everyday explanation. These localized wording issues keep it at 8.",
+          "score": 8,
           "label": "Language and style",
           "weight": 15
         },
@@ -669,32 +713,36 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3877,
-          "outputTokens": 862,
-          "reasoningTokens": 258
+          "cacheWriteTokens": 4011,
+          "inputTokens": 4014,
+          "outputTokens": 977,
+          "reasoningTokens": 381
         }
       },
       "steps": [
         {
-          "conclusion": "The outcome “Use math to track changing quantum states” is not accessible to someone who has never studied physics. It makes an unfamiliar technical concept the main result instead of describing a recognizable ability in everyday words.",
+          "conclusion": "The outcome “Use math to track changing quantum states” does not work for someone who has never studied physics: “quantum states” is unexplained jargon, and the result is not recognizable in everyday terms. Replace it with a concrete ability such as reading changes in experimental measurements.",
           "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "“Describe how atoms and light behave” is too broad to communicate a clear achievement. The promise's phrase “shapes atoms” is also less concrete than explaining why atoms do not collapse or where light's colors come from.",
+          "conclusion": "“Describe how atoms and light behave” is too broad to communicate a clear achievement. In the description, “math for reading experiments” is awkward shorthand for interpreting experimental measurements.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Keep the math outcome, but express it through a practical ability such as calculating with very small measurements. Make the first outcome more recognizable, for example “Explain why atoms do not collapse.”",
+          "conclusion": "Make the opening outcome more tangible—for example, explaining why atoms do not collapse or how light behaves like both waves and particles. Preserve the existing progression from physical explanations through practical math to devices.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - The course starts from scratch: the promise and the outcomes are for a visitor who has never studied physics. They say what the learner will be able to explain or do about real things (why atoms don't collapse, where the colors of LEDs and neon signs come from, how light can act as a wave and as a particle, what's inside a phone's chip or a laser) in everyday words\n      - Regression: an earlier promise was \"Use mathematical models and experimental data to explain quantum probabilities and trace how quantum effects appear in real devices\", with outcomes like \"Apply wave functions and the Schrödinger equation to reason about probabilities and energy levels\". Mathematical models, wave functions, named equations, derivatives and integrals in the promise or as an outcome's main words fail this case\n      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (working with very large and very small numbers, reading a graph), not as a list of calculus terms\n      - School, curiosity and science communication uses; no promise of a grade or a career\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["science"] },
+        "expectations": "\n      - MUST be in US English\n      - The course starts from scratch: the promise and the outcomes are for a visitor who has never studied physics. They say what the learner will be able to explain or do about real things (why atoms don't collapse, where the colors of LEDs and neon signs come from, how light can act as a wave and as a particle, what's inside a phone's chip or a laser) in everyday words\n      - Regression: an earlier promise was \"Use mathematical models and experimental data to explain quantum probabilities and trace how quantum effects appear in real devices\", with outcomes like \"Apply wave functions and the Schrödinger equation to reason about probabilities and energy levels\". Mathematical models, wave functions, named equations, derivatives and integrals in the promise or as an outcome's main words fail this case\n      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (working with very large and very small numbers, reading a graph), not as a list of calculus terms\n      - School, curiosity and science communication uses; no promise of a grade or a career\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "science"
+          ]
+        },
         "id": "en-quantum-physics-from-scratch-1",
         "userInput": {
           "chapters": [
@@ -858,35 +906,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description accurately covers the course's mathematical preparation, classical physics and advanced quantum material rather than stopping at the opening overview. The outcomes progress from scale and atoms to waves and quantum probabilities, demonstrating range through observable actions. The copy is course-specific and makes no clearly unsupported content claims.",
+          "reasoning": "The description accurately identifies quantum physics and covers the course's mathematical, classical-physics and advanced quantum range. The outcomes are abilities rather than topic labels and progress from scale comparisons through atomic phenomena and classical calculations to quantum probabilities. They are course-specific and supported by the supplied content.",
           "score": 9,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no inflated mastery claims, guaranteed academic or career results, or statements about duration, pricing or access. The promised explanatory and computational abilities are consistent with the supplied course content.",
+          "reasoning": "There are no inflated mastery claims, guaranteed academic or career results, or claims about duration, pricing or access. The proposed explanatory and calculation abilities are consistent with the course content.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise correctly starts with the infinitive “Explicar” and names recognizable results involving colors and chips. However, two outcomes introduce unfamiliar concepts through “campos elétricos” and “medições quânticas,” triggering the maximum score of 7. The first outcome also adds a method clause instead of remaining one standalone action.",
+          "reasoning": "The promise correctly opens with an infinitive and names atoms and chips, although “efeitos quânticos” leaves the practical result underspecified. Two outcomes depend on unfamiliar technical language: varying electric fields and quantum measurements. This triggers the cap of 7. The first outcome additionally includes the prohibited explanation of how the action is performed, “usando números muito pequenos.”",
           "score": 7,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "All three items are short, recognizable labels rather than course-process sentences. They identify school students, curious visitors and people returning to mathematics. No audience cap is triggered, although science communication—the other intended use named in the expectations—is not explicitly represented.",
-          "score": 9,
+          "reasoning": "The three items are short, recognizable labels identifying distinct situations: secondary-school study, curiosity about physical phenomena, and returning to mathematics. None is a course-activity sentence or an empty label such as “anyone interested.”",
+          "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The text is natural Brazilian Portuguese, uses “você,” and avoids hype and banned learning-process phrasing. However, the description accumulates unexplained specialist terms, particularly “spin,” “emaranhamento” and “probabilidades quânticas.” This triggers the maximum score of 8 for jargon-heavy phrasing.",
+          "reasoning": "The copy uses natural Brazilian Portuguese and addresses the reader with “você,” without hype or banned learning-oriented phrasing. However, the description's dense sequence of specialist terms, especially “spin” and “emaranhamento,” is not plain language for this starting level, triggering the cap of 8 for jargon-heavy phrasing.",
           "score": 8,
           "label": "Language and style",
           "weight": 15
@@ -903,32 +951,36 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4041,
-          "outputTokens": 1132,
-          "reasoningTokens": 454
+          "cacheWriteTokens": 4175,
+          "inputTokens": 4178,
+          "outputTokens": 1060,
+          "reasoningTokens": 375
         }
       },
       "steps": [
         {
-          "conclusion": "The outcomes do not consistently serve someone who has never studied physics. “Calcular como ondas e campos elétricos variam” and “Calcular as chances de resultados em medições quânticas” rely on unfamiliar concepts without recognizable everyday results. The first outcome also appends a method clause, “usando números muito pequenos,” contrary to the explicit requirement for a single, immediately readable action.",
+          "conclusion": "The outcomes do not consistently address someone who has never studied physics. “Calcular como ondas e campos elétricos variam” and “Calcular as chances de resultados em medições quânticas” require familiarity with technical ideas rather than naming recognizable everyday results. “Comparar átomos e objetos usando números muito pequenos” also adds a how-clause, explicitly disallowed by this case.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "The description's sequence of “probabilidades quânticas,” “spin” and “emaranhamento” makes part of the page jargon-heavy for a complete beginner. Its coverage is appropriate, but its presentation is less accessible than the requested plain-language introduction.",
+          "conclusion": "The description becomes a syllabus-like list containing unexplained terms such as “spin” and “emaranhamento.” Although relevant to the course, this weakens the otherwise natural, beginner-friendly Portuguese.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Anchor more outcomes in recognizable situations, such as LED colors or light behaving as both a wave and particles. Preserve the mathematical range with a standalone plain-language ability. An audience label for science communicators would also make that intended use more visible.",
+          "conclusion": "Make the promise more tangible by naming what the learner can explain about a chip, LED or laser instead of “como chips usam efeitos quânticos.” Preserve the mathematical range with a short outcome such as “Fazer contas com números muito grandes e muito pequenos,” and frame the advanced outcome around a recognizable phenomenon.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, natural and informal (\"você\"), not translated from English\n      - The course starts \"do zero\": the promise and the outcomes are for a visitor who never studied physics. They say what the learner will be able to explain or do about real things (por que o átomo não desaba, de onde vêm as cores de um LED ou de um letreiro de neon, como a luz pode ser onda e partícula, o que tem de quântico num celular ou num laser) in everyday words\n      - Regression: an earlier promise was \"Você poderá acompanhar as ideias centrais da física quântica e relacioná-las à matemática e a tecnologias do cotidiano\". A promise built on abstract verbs (\"acompanhar as ideias centrais\", \"relacionar\"), an opener like \"Você poderá\" before the outcome, or outcomes centered on \"função de onda\" or \"equação de Schrödinger\" fail this case\n      - Regression: an earlier outcome was \"Usar potências de dez, unidades, equações e gráficos para fazer contas com grandezas muito pequenas\", too dense for the page. Outcomes that list tools or topics, or add a clause on how or why, fail this case\n      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (fazer contas com números muito grandes e muito pequenos, ler um gráfico), not as a list of calculus terms\n      - School, curiosity and science communication uses; no promise of a grade or a career\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["science"] },
+        "expectations": "\n      - MUST be in Brazilian Portuguese, natural and informal (\"você\"), not translated from English\n      - The course starts \"do zero\": the promise and the outcomes are for a visitor who never studied physics. They say what the learner will be able to explain or do about real things (por que o átomo não desaba, de onde vêm as cores de um LED ou de um letreiro de neon, como a luz pode ser onda e partícula, o que tem de quântico num celular ou num laser) in everyday words\n      - Regression: an earlier promise was \"Você poderá acompanhar as ideias centrais da física quântica e relacioná-las à matemática e a tecnologias do cotidiano\". A promise built on abstract verbs (\"acompanhar as ideias centrais\", \"relacionar\"), an opener like \"Você poderá\" before the outcome, or outcomes centered on \"função de onda\" or \"equação de Schrödinger\" fail this case\n      - Regression: an earlier outcome was \"Usar potências de dez, unidades, equações e gráficos para fazer contas com grandezas muito pequenas\", too dense for the page. Outcomes that list tools or topics, or add a clause on how or why, fail this case\n      - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (fazer contas com números muito grandes e muito pequenos, ler um gráfico), not as a list of calculus terms\n      - School, curiosity and science communication uses; no promise of a grade or a career\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "science"
+          ]
+        },
         "id": "pt-fisica-quantica-do-zero-1",
         "userInput": {
           "chapters": [
@@ -1082,35 +1134,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description explicitly covers all four exam areas and the essay rather than treating the available chapters as the entire course. The outcomes are observable exam abilities and collectively show that breadth, progressing from interpretation and problem-solving to essay production.",
-          "score": 9,
+          "reasoning": "The description explicitly covers all four exam areas and the essay, rather than limiting the course to the supplied chapters. The outcomes are observable exam tasks and progress from interpretation to essay production. However, the description relies on broad phrases such as “resolução de problemas” and “conteúdos dessas áreas” instead of giving tangible examples of the mathematics and science covered.",
+          "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There is no guarantee of a score, passing, admission, or other external result, and no inflated mastery claim or access information. University entry is mentioned as a purpose, not promised as an outcome, so the admission-promise cap does not apply.",
+          "reasoning": "There is no guaranteed score, admission, pass or other unsupported result, and no claim about duration, price or access. “Com foco ... no ingresso à universidade” describes an intended purpose rather than promising admission. No honesty cap is triggered.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens directly with the infinitive “Resolver” and names recognizable ENEM tasks, avoiding the rejected “Você poderá” opener and abstract language. Every outcome also begins with an infinitive and describes a concrete ability. “Dissertativo-argumentativa” is familiar exam terminology for this audience, not an unexplained technical barrier.",
+          "reasoning": "The promise immediately starts with the concrete infinitive “Resolver”, names ENEM questions and includes essay preparation. It avoids the rejected “Você poderá” opener and abstract competency language. The description establishes the preparation framing. All outcomes begin with infinitives and use recognizable school and exam vocabulary; none introduces unfamiliar technical tools or explanatory clauses.",
           "score": 9,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "All three items are short, recognizable labels, and returning students provide a distinct situation. However, high-school students and people taking the ENEM substantially overlap; the cap of 8 for two items describing the same kind of person applies.",
+          "reasoning": "All three items are short, recognizable labels. However, “Estudantes do ensino médio” and “Quem vai prestar o ENEM” substantially overlap instead of distinguishing different learner situations. The cap of 8 for two items describing the same kind of person applies.",
           "score": 8,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy is consistently Brazilian Portuguese, clear, and free of banned learning verbs or hype. However, phrases such as “A preparação cobre” and “no ingresso à universidade” make the description somewhat institutional rather than naturally informal, triggering the cap of 8 for stiff phrasing.",
+          "reasoning": "The text is consistently Brazilian Portuguese, with no prohibited learning verbs or hype. The description is nevertheless more formal than the requested informal high-school voice, particularly “conteúdos dessas áreas e escrita dissertativo-argumentativa”. This triggers the cap of 8 for stiff phrasing.",
           "score": 8,
           "label": "Language and style",
           "weight": 15
@@ -1127,27 +1179,31 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4212,
-          "outputTokens": 951,
-          "reasoningTokens": 349
+          "cacheWriteTokens": 4346,
+          "inputTokens": 4349,
+          "outputTokens": 1137,
+          "reasoningTokens": 512
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The audience labels overlap: “Estudantes do ensino médio” and “Quem vai prestar o ENEM” largely address the same prospective learner rather than clearly different situations. The description's reference to university entry also distracts from the requested emphasis on preparing for exam tasks, although it does not promise admission.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The audience labels overlap: “Quem vai prestar o ENEM” includes the high-school students already named, rather than identifying a distinct situation. The description also sounds more institutional than conversational, especially “conteúdos dessas áreas e escrita dissertativo-argumentativa”.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the audience labels more distinct. The promise could foreground writing the required essay rather than only organizing ideas, matching the stronger final outcome. Replacing the university-entry reference with a concrete exam task would keep the description focused on preparation.",
+          "conclusion": "Make the description more tangible with examples such as percentages, graphs and environmental questions while preserving coverage of all four areas and the essay. Replace the broad second audience label with a distinct situation, such as students retaking the exam.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese, natural and informal (\"você\"), in a high school student's words\n      - Exam preparation: the promise opens with what the student will be able to do on the Enem (resolver as questões que mais caem, ler gráficos e textos da prova, escrever a redação que a prova pede), framed as preparation. Never a score, a pass, a place at a university or \"aprovação\"\n      - Regression: an earlier promise was \"Você poderá aplicar conteúdos de diferentes áreas e critérios da redação para resolver questões e planejar suas respostas no ENEM\". A promise built on abstract terms (\"aplicar conteúdos de diferentes áreas\", \"critérios da redação\", \"competências avaliadas\") or an opener like \"Você poderá\" before the outcome fails this case\n      - CHAPTERS are only the first band (math, data, waves, reading, ecology): the copy covers the whole exam, its four areas and the redação\n      - Don't judge how the exam's name is capitalized\n      - Categories don't matter for exam courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese, natural and informal (\"você\"), in a high school student's words\n      - Exam preparation: the promise opens with what the student will be able to do on the Enem (resolver as questões que mais caem, ler gráficos e textos da prova, escrever a redação que a prova pede), framed as preparation. Never a score, a pass, a place at a university or \"aprovação\"\n      - Regression: an earlier promise was \"Você poderá aplicar conteúdos de diferentes áreas e critérios da redação para resolver questões e planejar suas respostas no ENEM\". A promise built on abstract terms (\"aplicar conteúdos de diferentes áreas\", \"critérios da redação\", \"competências avaliadas\") or an opener like \"Você poderá\" before the outcome fails this case\n      - CHAPTERS are only the first band (math, data, waves, reading, ecology): the copy covers the whole exam, its four areas and the redação\n      - Don't judge how the exam's name is capitalized\n      - Categories don't matter for exam courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-enem-exam-1",
         "userInput": {
           "chapters": [
@@ -1311,36 +1367,36 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description identifies advanced harmony and its creative applications, including borrowed harmony, key changes, voice leading, and reharmonization. The outcomes describe observable abilities and progress from seventh-chord construction to reharmonizing melodies. Together they convey the course’s range without claiming unsupported content or presenting the supplied chapters as an exhaustive syllabus.",
-          "score": 10,
+          "reasoning": "The description identifies the course's harmonic focus and connects it to songwriting and arranging. The outcomes progress from constructing seventh chords through harmonic color and key changes to reharmonization, showing the course's range through observable abilities without unsupported content claims.",
+          "score": 9,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Claims are measured and grounded in the supplied material. Writing, arranging, and playing are creative uses, with no career framing, inflated mastery claims, guarantees, or statements about duration, pricing, or access.",
+          "reasoning": "Claims are restrained and creative rather than career-oriented. There are no guarantees, inflated mastery claims, or statements about duration, pricing, credentials, or access.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "“Give familiar melodies a new mood” opens with a concrete creative result. The musical vocabulary is appropriate for an intermediate-to-advanced visitor. Every outcome starts with a base-form action verb and names a recognizable ability; using borrowed chords and secondary dominants is a coherent action rather than a sprawling topic list.",
+          "reasoning": "The promise opens directly with a recognizable creative result: giving familiar melodies a new mood. The outcomes use base-form verbs and familiar musical terminology appropriate to an intermediate-to-advanced learner. Each is a short, actionable phrase without explanatory clauses.",
           "score": 10,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three labels offer recognizable entry points through songwriting, playing, and interest in key changes. They are concise and avoid generic “anyone interested” framing. The player label could communicate the assumed music-reading familiarity more precisely.",
+          "reasoning": "The three short labels offer recognizable entry points through songwriting, existing playing experience, and curiosity about key changes. They are not course-task sentences or generic \"anyone interested\" labels.",
           "score": 9,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy consistently uses natural US English and avoids banned educational openers and hype. Musical terms fit the intended audience, and the description connects them to accessible creative purposes.",
-          "score": 10,
+          "reasoning": "The copy consistently uses US English, avoids banned educational openers and hype, and is generally natural. The description's \"move its harmony\" is an awkward collocation that would benefit from revision.",
+          "score": 8,
           "label": "Language and style",
           "weight": 15
         },
@@ -1356,24 +1412,36 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2712,
-          "outputTokens": 850,
-          "reasoningTokens": 339
+          "cacheWriteTokens": 2846,
+          "inputTokens": 2849,
+          "outputTokens": 932,
+          "reasoningTokens": 438
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Refine “Players who know basic chords” to signal that the course suits players who already read music. This would make the intermediate starting level clearer without simplifying the musical terminology.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description's phrase \"move its harmony\" is slightly unnatural and less informative than the otherwise concrete musical language.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Sharpen the description by replacing \"move its harmony\" with \"create harmonic direction\" and naming seventh chords rather than only \"richer chords.\" These terms suit the course's intermediate-to-advanced audience.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Level-appropriate, not dumbed down: the title names an advanced level and the chapters start at intermediate, so the visitor already plays and reads music. Terms that visitor uses (chords, keys, scales, seventh chords, modulation) are fine and shouldn't be replaced by vaguer words; the promise still opens with a concrete result (reharmonize a song, change key without a jolt, write richer chord progressions)\n      - Hobby and creative uses (playing, songwriting, arranging, playing in a band), never careers or jobs\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["arts"] },
+        "expectations": "\n      - MUST be in US English\n      - Level-appropriate, not dumbed down: the title names an advanced level and the chapters start at intermediate, so the visitor already plays and reads music. Terms that visitor uses (chords, keys, scales, seventh chords, modulation) are fine and shouldn't be replaced by vaguer words; the promise still opens with a concrete result (reharmonize a song, change key without a jolt, write richer chord progressions)\n      - Hobby and creative uses (playing, songwriting, arranging, playing in a band), never careers or jobs\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "arts"
+          ]
+        },
         "id": "en-advanced-music-theory-1",
         "userInput": {
           "chapters": [
@@ -1417,35 +1485,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description identifies personal finance and covers pay, budgeting, emergencies, borrowing, tax filing and investments, extending beyond the supplied chapters. The outcomes progress sensibly from reading income information to managing money and investment decisions. However, pension coverage remains unstated, and the final outcome provides a relatively vague endpoint.",
+          "reasoning": "The description and outcomes are specific to personal finance, use Italian examples, and extend beyond the supplied chapters into investments. The outcomes progress sensibly from payslips and monthly spending to borrowing and investing. However, retirement is not named, instalment purchases are omitted, and the final outcome provides a relatively vague picture of the furthest ability taught.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no promises of returns, guaranteed savings, qualifications or professional practice, and no specific products are recommended. The everyday-decision framing is appropriate. However, the explicit requirement to address when to seek a financial adviser, accountant or CAF is unmet. No prohibited-result or practice-claim cap is triggered.",
-          "score": 7,
+          "reasoning": "There are no guaranteed returns or savings, product recommendations, inflated expertise claims, or claims that the learner becomes qualified to advise others. However, the expressly required framing about knowing when to seek a financial adviser, accountant or CAF is missing. The regulated-practice cap is not triggered because the page does not claim professional authority.",
+          "score": 8,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens with an infinitive and describes recognizable everyday results in accessible Italian. Every outcome also starts with an infinitive, with no unfamiliar technical vocabulary. The investment outcome is weaker because evaluating how to invest for future goals does not identify a clear, observable task as effectively as reading net pay or comparing borrowing costs.",
-          "score": 8,
+          "reasoning": "The promise opens with an infinitive and presents recognizable everyday results: balancing a salary against expenses and planning for unexpected costs. Every outcome also starts with an infinitive, uses familiar words, and remains short. There is no technical or abstract promise, imperative opening, or overloaded outcome that triggers a cap.",
+          "score": 9,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "All three items are recognizable, concise audience labels: first-paycheck recipients, families managing household finances and employees dealing with the 730. They describe distinct situations rather than course activities or vague interest groups.",
+          "reasoning": "The three short labels identify recognizable situations: receiving a first payslip, managing a family budget, and handling an employee's tax return. Although some visitors could fit more than one, the labels express distinct needs rather than repeating the same audience or describing course activities.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy uses natural Italian, familiar Italian financial references and no US defaults. It contains no formal “Lei,” translated-sounding commands, banned learning openers or hype. The description and audience remain accessible to beginners.",
+          "reasoning": "The prose is natural Italian, with idiomatic expressions such as 'far quadrare lo stipendio' and 'alle prese col 730'. It contains no formal 'Lei', English-default financial references, hype, or prohibited learning-process language. The description and audience labels are accessible.",
           "score": 10,
           "label": "Language and style",
           "weight": 15
@@ -1462,32 +1530,37 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2953,
-          "outputTokens": 1003,
-          "reasoningTokens": 367
+          "cacheWriteTokens": 3011,
+          "inputTokens": 3014,
+          "outputTokens": 1118,
+          "reasoningTokens": 427
         }
       },
       "steps": [
         {
-          "conclusion": "The page omits the required guidance on knowing when to consult a consulente finanziario, commercialista or CAF. Although it frames finance as everyday decision-making and makes no prohibited financial promises, this professional-support boundary is missing, including from the investment outcome.",
+          "conclusion": "The page omits the required guidance on when to consult a consulente finanziario, commercialista or CAF. This leaves the intended boundary between everyday financial understanding and professional advice unstated, particularly alongside the investment outcome. It does not, however, recommend products or claim professional competence.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Pensions are not explicitly covered: “pianificazione del futuro” could mean many things. The final outcome, “Valutare come investire i risparmi per obiettivi futuri,” is also less concrete and observable than the preceding abilities.",
+          "conclusion": "Some required subject areas are insufficiently explicit: pensione becomes the vague 'pianificazione del futuro', acquisti a rate are absent, and taxes are represented only by '730'. The outcomes cover a useful progression, but the final investment outcome is less observable than reading a payslip or comparing borrowing costs.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Name pension planning directly and make the final outcome more tangible, for example identifying investment risks and costs. Integrate professional-support guidance into the description without suggesting that the course provides personalized advice.",
+          "conclusion": "Make the final outcome a recognizable decision, such as distinguishing money needed soon from money intended for retirement. Preserve the concise Italian phrasing and infinitive openings while making the course's full scope and professional-support boundary explicit.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in natural Italian, \"tu\" wherever the copy speaks to the visitor (never \"Lei\"), not translated from English\n      - The promise and the outcomes start with the infinitive (\"Leggere la busta paga…\", \"Scegliere…\"), never an imperative (\"Leggi…\", \"Risparmia…\")\n      - Names the main areas of personal finance in plain words (budget, risparmio, prestiti e rate, tasse, investimenti e pensione) with Italian examples such as the busta paga, the TFR, the 730, a conto corrente, a fondo pensione or acquisti a rate; amounts, if any, in euro written the Italian way (1.000 €). Penalize dollars, credit scores, 401(k) or other US defaults\n      - Regulated field: frames the course as understanding everyday money decisions and knowing when to ask a consulente finanziario, a commercialista or a CAF; never recommends specific investments or products and never promises returns or savings\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["economics", "business"] },
+        "expectations": "\n      - MUST be in natural Italian, \"tu\" wherever the copy speaks to the visitor (never \"Lei\"), not translated from English\n      - The promise and the outcomes start with the infinitive (\"Leggere la busta paga…\", \"Scegliere…\"), never an imperative (\"Leggi…\", \"Risparmia…\")\n      - Names the main areas of personal finance in plain words (budget, risparmio, prestiti e rate, tasse, investimenti e pensione) with Italian examples such as the busta paga, the TFR, the 730, a conto corrente, a fondo pensione or acquisti a rate; amounts, if any, in euro written the Italian way (1.000 €). Penalize dollars, credit scores, 401(k) or other US defaults\n      - Regulated field: frames the course as understanding everyday money decisions and knowing when to ask a consulente finanziario, a commercialista or a CAF; never recommends specific investments or products and never promises returns or savings\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "economics",
+            "business"
+          ]
+        },
         "id": "it-finanza-personale-beginner-1",
         "userInput": {
           "chapters": [
@@ -1526,35 +1599,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description identifies nutrition and covers nutrient functions, labels, meal planning, and differing nutritional needs. The outcomes progress from nutrients to labels, meal composition, and adjustment. Age and activity are reasonable whole-course extensions for 栄養学, not unsupported departures from the initial chapters. The first outcome is less observable than the others.",
+          "reasoning": "The description clearly identifies nutrition and covers nutrient functions, labels, meal planning, and differing nutritional needs. It appropriately describes a broader course rather than treating the supplied chapters as exhaustive. Outcomes progress from nutrients to labels, meal assembly, and adjustment, but the first does not specify an observable application.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The page frames nutrition as everyday food understanding and selection. It makes no credential, professional-practice, illness-treatment, weight-loss, timing, pricing, or access claims, and contains no inflated promises.",
+          "reasoning": "The copy stays within everyday food choices and nutritional understanding. It makes no professional qualification, disease-treatment, weight-loss, guaranteed-result, duration, price, or access claims.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise immediately presents a recognizable everyday result: choosing meals at convenience stores or restaurants while considering balance and salt. All outcomes use natural potential forms. However, the first outcome combines the beginner-level taught term 三大栄養素 with the abstract 生かせる instead of naming a specific decision learners can make; the one-unfamiliar-outcome cap of 8 applies. The final adjustment outcome could also be more concrete.",
+          "reasoning": "The promise offers a recognizable everyday result: choosing meals at convenience stores or restaurants while considering balance and salt. All outcomes end in natural potential forms rather than commands. However, applying the roles of the three major nutrients to food selection is abstract and leaves a beginner unsure what concrete action they will perform.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "All three items are short, recognizable Japanese labels. However, 自炊や献立づくりをする人 and 家族の食事を用意する人 both describe home meal preparation, with the first broad enough to include the second. Their insufficient differentiation triggers the cap of 8 for two overlapping audience items.",
+          "reasoning": "All three items are concise, recognizable Japanese labels. However, cooking or planning menus and preparing family meals largely identify the same meal-preparation audience, triggering the cap of 8 for overlapping audience items. Frequent convenience-store or restaurant users provide a clearly distinct situation.",
           "score": 8,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The visitor-facing copy is natural Japanese, with polite description sentences, no stiff honorifics, no あなた, and no prohibited learning or introductory phrasing. List items have no terminal punctuation. Convenience-store meals, eating out, and 栄養成分表示 provide appropriate Japanese everyday context without American defaults.",
+          "reasoning": "The Japanese is natural, with appropriate です・ます description endings and no stiff honorifics, direct あなた address, banned learning language, or hype. The page uses familiar Japanese food contexts and nutrition-label terminology without American defaults.",
           "score": 10,
           "label": "Language and style",
           "weight": 15
@@ -1571,28 +1644,37 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3095,
-          "outputTokens": 1163,
-          "reasoningTokens": 514
+          "cacheWriteTokens": 3153,
+          "inputTokens": 3156,
+          "outputTokens": 908,
+          "reasoningTokens": 348
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The first outcome, 三大栄養素の役割を食事選びに生かせる, relies on a taught term and an abstract application claim rather than a clearly observable food-selection skill. Two audience labels—people who cook or plan menus and people who prepare family meals—overlap without clearly distinguishing their situations.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The first outcome, 三大栄養素の役割を食事選びに生かせる, describes abstract application rather than an observable food-choice skill. The audience labels for people who cook or plan menus and people who prepare family meals substantially overlap.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the final outcome easier to picture by specifying what learners can adjust, such as meal quantity, rather than leaving 食事を調整できる broad.",
+          "conclusion": "Use 食塩相当量 in the label-reading outcome to identify the actual wording learners will find on Japanese nutrition labels.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in natural Japanese: sentences in the description use です・ます without stiff keigo (no いただけます or ございます copy) and never address the visitor as あなた\n      - The promise and the outcomes read as abilities the learner will have, in plain form or ～できる (「栄養成分表示から食塩相当量を読み取れる」), never a command (「～しよう」「～してください」); list items don't end with 「。」\n      - Never uses 学ぶ, 学べる, 入門, 基礎から or 徹底ガイド\n      - Uses Japanese everyday food: コンビニ弁当, 定食, 給食, みそ汁, the 栄養成分表示 or the 食事バランスガイド. Penalize American defaults (MyPlate, the Nutrition Facts label, ounces, US portion sizes)\n      - Health: frames the course as understanding everyday eating; nothing implies it qualifies anyone as a 管理栄養士 or 栄養士, diagnoses, treats or plans diets for an illness, or promises weight loss; saying to ask a 医師 or 管理栄養士 about a specific condition is fine\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["health", "science"] },
+        "expectations": "\n      - MUST be in natural Japanese: sentences in the description use です・ます without stiff keigo (no いただけます or ございます copy) and never address the visitor as あなた\n      - The promise and the outcomes read as abilities the learner will have, in plain form or ～できる (「栄養成分表示から食塩相当量を読み取れる」), never a command (「～しよう」「～してください」); list items don't end with 「。」\n      - Never uses 学ぶ, 学べる, 入門, 基礎から or 徹底ガイド\n      - Uses Japanese everyday food: コンビニ弁当, 定食, 給食, みそ汁, the 栄養成分表示 or the 食事バランスガイド. Penalize American defaults (MyPlate, the Nutrition Facts label, ounces, US portion sizes)\n      - Health: frames the course as understanding everyday eating; nothing implies it qualifies anyone as a 管理栄養士 or 栄養士, diagnoses, treats or plans diets for an illness, or promises weight loss; saying to ask a 医師 or 管理栄養士 about a specific condition is fine\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "health",
+            "science"
+          ]
+        },
         "id": "ja-eiyogaku-beginner-1",
         "userInput": {
           "chapters": [
@@ -1631,35 +1713,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The copy is specific to the Korean History Proficiency Test and covers prehistory through modern history rather than stopping at Goryeo. Outcomes describe observable exam tasks and progress through historical periods before a broader source-based question-solving outcome. The colonial period is included implicitly within modern history but could be made more visible.",
+          "reasoning": "The description identifies the exam, historical sources, artifacts, people, and historical change. It covers prehistory through modern history rather than stopping at Goryeo. The outcomes span early history, Goryeo and Joseon, modern history, and source-based exam questions, giving a useful picture of the whole course.",
           "score": 9,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no promises of passing, attaining a grade, receiving a certificate, or obtaining employment benefits. The employee audience’s interest in a qualification is not presented as a guaranteed result. No inflated claims, duration, pricing, or access claims appear.",
+          "reasoning": "There are no promises of passing, achieving a grade, obtaining a certificate, or receiving employment benefits. Answering exam questions is framed as a learner ability, not a guaranteed examination result. No inflated claims, duration, pricing, or access claims appear.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise opens directly with an exam-specific task: identifying period clues in source texts and photographs to select an answer. It and every outcome use ability endings, not commands. Vocabulary is appropriate to the exam context. The chronological-order outcome is slightly awkward and would be clearer as arranging events in order rather than finding their order in a question.",
+          "reasoning": "The promise opens directly with an exam-specific task: finding period clues in sources and photographs to select an answer. It and all outcomes use ability endings rather than commands, with accessible wording. However, the second outcome awkwardly describes finding an event sequence in a question instead of clearly expressing the ability to order events chronologically.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The three items are recognizable labels covering exam candidates, students struggling with historical chronology, and working adults seeking a qualification. They are not course-action sentences or vague 'anyone interested' labels.",
+          "reasoning": "The three short labels identify exam candidates, students struggling with the historical timeline, and working adults seeking a history credential. These are recognizable audience situations rather than course activities or vague labels, although the groups naturally overlap.",
           "score": 9,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy is Korean, and all description sentences use 해요체. However, “살펴봐요” falls under the prohibited equivalents of “explore,” triggering the maximum score of 8. The description also redundantly states the historical range, making its middle sentence less natural and economical.",
+          "reasoning": "The copy is Korean, and every description sentence uses 해요체. However, “살펴봐요” falls under the discouraged exploration wording, triggering the cap of 8. The repeated historical-range wording and the unnatural phrase “한국사 자격을 더하려는” also reduce fluency.",
           "score": 8,
           "label": "Language and style",
           "weight": 15
@@ -1676,27 +1758,31 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3026,
-          "outputTokens": 859,
-          "reasoningTokens": 253
+          "cacheWriteTokens": 3084,
+          "inputTokens": 3087,
+          "outputTokens": 889,
+          "reasoningTokens": 258
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The description uses “살펴봐요,” an equivalent of the prohibited “explore” phrasing. It also repeats the historical scope in a cumbersome sentence. The outcome “사건 순서를 문제에서 찾을 수 있어요” is less natural and precise than saying the learner can arrange events chronologically.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description repeats the historical range and uses “살펴봐요,” an equivalent of the discouraged “explore” phrasing. “사건 순서를 문제에서 찾을 수 있어요” is less natural and precise than saying the learner can put events in chronological order. The audience label “한국사 자격을 더하려는 직장인” also sounds awkward.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Name the Japanese colonial period explicitly within the modern-history coverage to make the full exam scope immediately visible. Streamline the description around the course’s coverage rather than opening with a definition of the exam.",
+          "conclusion": "Streamline the description into a direct statement of the course’s coverage and exam use. Make the chronological-order outcome more concrete, and replace the employee audience label with a recognizable situation such as workers preparing for the exam alongside their jobs.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in natural Korean: sentences in the description use 해요체, never 반말 or stiff 하십시오체 copy\n      - The promise and the outcomes read as abilities the learner will have, ending in ～할 수 있어요 or ～할 수 있다 (～하기 also fits a list item), never a command (～하세요, ～해 보세요, ～하자)\n      - Exam preparation: the promise opens with what the candidate will do on the 한국사능력검정시험's own questions (사료나 사진 자료를 보고 시대와 사건 찾기, 사건을 시대 순서로 놓기), framed as preparation. Never promises a 급수, 합격 or a 공무원 시험 benefit\n      - CHAPTERS are only the first band (선사 시대 to 고려): the copy covers the whole exam, from 선사 시대 through 조선, 근대, 일제 강점기 and 현대사\n      - Categories don't matter for exam courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in natural Korean: sentences in the description use 해요체, never 반말 or stiff 하십시오체 copy\n      - The promise and the outcomes read as abilities the learner will have, ending in ～할 수 있어요 or ～할 수 있다 (～하기 also fits a list item), never a command (～하세요, ～해 보세요, ～하자)\n      - Exam preparation: the promise opens with what the candidate will do on the 한국사능력검정시험's own questions (사료나 사진 자료를 보고 시대와 사건 찾기, 사건을 시대 순서로 놓기), framed as preparation. Never promises a 급수, 합격 or a 공무원 시험 benefit\n      - CHAPTERS are only the first band (선사 시대 to 고려): the copy covers the whole exam, from 선사 시대 through 조선, 근대, 일제 강점기 and 현대사\n      - Categories don't matter for exam courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "ko-hanguksa-exam-1",
         "userInput": {
           "chapters": [
@@ -1735,35 +1821,35 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description names recognizable starting situations from the chapters and extends beyond them to broader communication, texts and culture. The outcomes progress from introducing oneself and ordering to responding in conversation and defending an opinion. They are observable German-language abilities rather than generic educational goals.",
+          "reasoning": "The description names the supplied situations and explicitly extends beyond them to longer texts, more nuanced conversations and cultural context. Outcomes progress from introducing oneself and ordering to following conversations and defending an opinion, showing the whole course's range rather than merely repeating the initial chapters.",
           "score": 9,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no promises of fluency, certification, employment or other guaranteed results, and no duration, price or access claims. Responding naturally and defending an opinion are bounded communication goals, not promises of fluency.",
+          "reasoning": "There are no guarantees of fluency, examination results, employment or other external outcomes, and no duration, price or access claims. More advanced communication abilities are presented as course outcomes without inflated mastery language.",
           "score": 10,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise immediately presents recognizable practical results: ordering, arranging an appointment and finding the correct platform. It and all four outcomes use accessible vocabulary and Turkish verb-final infinitive forms rather than imperatives. Understanding everyday conversation is a legitimate language ability here.",
+          "reasoning": "The promise immediately presents recognizable practical abilities using familiar Turkish words. Both it and every outcome end in an infinitive, not an imperative. The outcomes are readable ability phrases; understanding daily conversations is appropriately concrete for a language course. The promise's three situations could be unified more elegantly, but they are neither technical nor abstract.",
           "score": 9,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "The labels identify beginners, travelers and prospective students in German-speaking countries. They are recognizable, distinct entry points rather than course-activity sentences, with travel and study explicitly grounded in real communication situations.",
+          "reasoning": "The labels are short and distinguish beginners, travelers and prospective students. Travel and education are relevant real-world language contexts. The beginner label is broader than the others, but the audience does not trigger the caps for multiple vague or substantially repetitive items.",
           "score": 9,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy is Turkish throughout and uses informal singular address in 'kurmana', never 'siz'. However, the opening construction 'Almanca; ... konuşma, dinleme, okuma ve yazmayı kapsayan bir dildir' is stiff and definition-like rather than natural course-page prose. The stiff-phrasing cap of 8 applies.",
+          "reasoning": "The copy is Turkish throughout and uses informal singular address in 'kurmana', with no formal 'siz', banned learning slogans or hype. However, the opening definition, particularly 'konuşma, dinleme, okuma ve yazmayı kapsayan bir dildir', is stiff and unhelpfully generic. This warrants the cap for stiff phrasing.",
           "score": 8,
           "label": "Language and style",
           "weight": 15
@@ -1780,27 +1866,31 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2878,
-          "outputTokens": 908,
-          "reasoningTokens": 340
+          "cacheWriteTokens": 2936,
+          "inputTokens": 2939,
+          "outputTokens": 1095,
+          "reasoningTokens": 509
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The description opens with an awkward definition of German as a language that encompasses speaking, listening, reading and writing. This sounds formulaic in Turkish and delays the useful explanation of what the course covers.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description opens with an awkward, unnecessary definition of German as a language encompassing speaking, listening, reading and writing. This delays the useful explanation of the course and sounds less natural than the rest of the copy.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the opening definition with a direct description of communicating in German in daily life, education and work. The beginner audience label could also identify a real situation, such as communicating with German-speaking friends or family, to complement travel and study.",
+          "conclusion": "The promise could communicate a more unified real-life benefit instead of combining three separate beginner situations. An audience label tied to work or personal relationships could also provide more situational specificity than the general beginner label.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in natural Turkish, \"sen\" wherever the copy speaks to the visitor (never \"siz\"); the course is German itself, for Turkish speakers\n      - The promise and the outcomes are verb-final phrases, as Turkish learning goals are written (\"Kafede Almanca sipariş vermek\", \"…sipariş verebilmek\"), never an imperative (\"Sipariş ver\", \"Konuş\")\n      - Focuses on communicating in real situations where German is spoken (travel, Erasmus or a university in Germany, Austria or Switzerland, work, friends and family there), from first conversations to confident use\n      - Never promises fluency, a Goethe-Zertifikat or TestDaF result, a visa or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in natural Turkish, \"sen\" wherever the copy speaks to the visitor (never \"siz\"); the course is German itself, for Turkish speakers\n      - The promise and the outcomes are verb-final phrases, as Turkish learning goals are written (\"Kafede Almanca sipariş vermek\", \"…sipariş verebilmek\"), never an imperative (\"Sipariş ver\", \"Konuş\")\n      - Focuses on communicating in real situations where German is spoken (travel, Erasmus or a university in Germany, Austria or Switzerland, work, friends and family there), from first conversations to confident use\n      - Never promises fluency, a Goethe-Zertifikat or TestDaF result, a visa or a job, and never mentions how long it takes\n      - Categories don't matter for language courses: don't judge them\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "tr-almanca-language-beginner-1",
         "userInput": {
           "chapters": [
@@ -1835,36 +1925,36 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The description covers recognizable employment-law subjects and extends appropriately beyond the initial chapters. The outcomes are observable and progress from contract distinctions through entitlements to leaving employment. However, generic references to civil-law contracts and documents omit useful, explicitly requested Polish anchors such as umowa zlecenie, świadectwo pracy, the Kodeks pracy and PIP.",
+          "reasoning": "The description identifies substantive labor-law coverage beyond the initial chapters, and the outcomes provide observable abilities progressing from contract distinctions to leaving employment. However, the requested Polish legal grounding is weaker than it should be: the Kodeks pracy, zlecenie, świadectwo pracy and PIP remain unnamed.",
           "score": 8,
           "label": "Fit and specificity",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "There are no guarantees, inflated expertise claims or claims of qualification to provide legal services. Preparing questions for a lawyer and explicitly disclaiming replacement of individual legal advice are appropriate safeguards. The remaining gap is the requested framing around knowing when to seek help from a qualified legal professional or the PIP.",
+          "reasoning": "There are no inflated claims, guarantees or practice qualifications. Preparing questions for a lawyer and explicitly stating that the course does not replace individual legal advice establish an appropriate educational boundary. The remaining weakness is that the requested guidance on when to approach a qualified professional or the PIP is not expressed.",
           "score": 8,
           "label": "Honest claims",
           "weight": 25
         },
         {
           "categoryId": "promise",
-          "reasoning": "The promise and all outcomes begin with imperfective infinitives, and the abilities concern recognizable work situations. However, “umowy cywilnoprawne” is an unexplained technical umbrella term in one beginner-level outcome, triggering the maximum score of 8. The promise's wording “przy umowie” is also less concrete than referring to signing a contract.",
+          "reasoning": "The promise opens directly with an ability tied to recognizable employment situations. It and every outcome correctly begin with imperfective infinitives. However, “umów cywilnoprawnych” introduces a technical classification that a first-job beginner may not know; this triggers the cap of 8 for one unfamiliar outcome.",
           "score": 8,
           "label": "Plain, outcome-first promise",
           "weight": 20
         },
         {
           "categoryId": "audience",
-          "reasoning": "All three items are concise, recognizable labels: first-job entrants, people working under civil-law contracts and people preparing to change jobs. They identify distinct situations rather than describing course activities or using vague catch-all labels.",
+          "reasoning": "The three items are short, recognizable labels covering distinct employment situations: starting a first job, working under civil-law contracts and preparing to change jobs. They are neither generic interest labels nor descriptions of course activities.",
           "score": 10,
           "label": "Audience",
           "weight": 10
         },
         {
           "categoryId": "language",
-          "reasoning": "The copy is natural Polish and addresses the visitor informally through “Ci,” without formal honorifics. The description and audience avoid hype and banned learning-process language. The promise and outcome accessibility issues are assessed separately under promise.",
-          "score": 10,
+          "reasoning": "The copy is Polish, uses informal singular address consistently and avoids hype and banned learning-process phrases. The audience label “Pracownicy na umowach cywilnoprawnych” is jargon-heavy for this beginner page and less accessible than naming familiar contract types, warranting the cap of 8.",
+          "score": 8,
           "label": "Language and style",
           "weight": 15
         },
@@ -1880,28 +1970,36 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2986,
-          "outputTokens": 1158,
-          "reasoningTokens": 481
+          "cacheWriteTokens": 3044,
+          "inputTokens": 3047,
+          "outputTokens": 1046,
+          "reasoningTokens": 402
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The Polish legal grounding is less explicit than requested: the copy never names the Kodeks pracy, umowa zlecenie, świadectwo pracy or PIP. It appropriately disclaims replacing legal advice, but does not indicate when to seek professional help. For beginners, “umowy cywilnoprawne” is less accessible than naming umowa zlecenie directly, and “przy umowie” makes the promise slightly imprecise.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The page leaves several requested Polish anchors implicit: it does not name the Kodeks pracy, umowa zlecenie, świadectwo pracy or PIP. It mentions preparing questions for a lawyer but does not indicate when to seek professional help. “Umowy cywilnoprawne” is also unnecessarily technical for beginners, both in an outcome and an audience label.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Anchor the page in the Kodeks pracy, name the familiar contract and employment-document examples, and briefly identify situations warranting help from the PIP, a radca prawny or an adwokat. Make the promise more concrete by referring to signing a contract rather than “przy umowie.”",
+          "conclusion": "Use familiar, specific labels such as “umowa zlecenie” and “świadectwo pracy”, and briefly indicate when to contact the PIP, a radca prawny or an adwokat. These substitutions would strengthen Polish specificity without making the page longer.",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in natural Polish, \"ty\" wherever the copy speaks to the visitor (never \"Pan\", \"Pani\" or \"Państwo\")\n      - The promise and the outcomes start with the infinitive, imperfective for a skill (\"Liczyć…\", \"Rozpoznawać…\"), never an imperative (\"Policz…\", \"Sprawdź…\")\n      - Uses Polish labor law and work situations: the Kodeks pracy, umowa o pracę versus umowa zlecenie, urlop, L4, the świadectwo pracy, the PIP. Penalize US at-will employment, dollars or Brazilian defaults (CLT, FGTS)\n      - Regulated profession: frames the course as understanding one's rights and duties at work and knowing when to ask a radca prawny, an adwokat or the PIP; nothing says or implies giving legal advice, representing anyone in court or replacing a lawyer or law school\n      - Audience examples like people on their first job, small business owners hiring their first employee, HR and payroll staff (kadry i płace) or law students fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
-        "expected": { "categories": ["law"] },
+        "expectations": "\n      - MUST be in natural Polish, \"ty\" wherever the copy speaks to the visitor (never \"Pan\", \"Pani\" or \"Państwo\")\n      - The promise and the outcomes start with the infinitive, imperfective for a skill (\"Liczyć…\", \"Rozpoznawać…\"), never an imperative (\"Policz…\", \"Sprawdź…\")\n      - Uses Polish labor law and work situations: the Kodeks pracy, umowa o pracę versus umowa zlecenie, urlop, L4, the świadectwo pracy, the PIP. Penalize US at-will employment, dollars or Brazilian defaults (CLT, FGTS)\n      - Regulated profession: frames the course as understanding one's rights and duties at work and knowing when to ask a radca prawny, an adwokat or the PIP; nothing says or implies giving legal advice, representing anyone in court or replacing a lawyer or law school\n      - Audience examples like people on their first job, small business owners hiring their first employee, HR and payroll staff (kadry i płace) or law students fit\n\n      \n  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them\n  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's \"What you'll be able to do\" list\n  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters\n  - The page is shared by every learner of the course, so nothing is tailored to one person\n  - Don't evaluate JSON formatting\n\n    ",
+        "expected": {
+          "categories": [
+            "law"
+          ]
+        },
         "id": "pl-prawo-pracy-beginner-1",
         "userInput": {
           "chapters": [

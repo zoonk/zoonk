@@ -96,6 +96,7 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
+import com.zoonk.android.feature.player.engine.asAnswered
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
@@ -237,6 +238,7 @@ fun LessonPlayer(
     tutor: LessonTutor? = null,
     certificatesMoment: CertificatesMoment? = null,
     finishedChapter: FinishedChapterSlot? = null,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -246,10 +248,16 @@ fun LessonPlayer(
         }
     val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
     val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
+    androidx.lifecycle.compose.LifecycleResumeEffect(viewModel, shownStep != null) {
+        if (shownStep != null) viewModel.firstSceneVisible()
+        onPauseOrDispose {}
+    }
     language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
-        viewModel.resendAnswers()
+        viewModel.resume()
+        viewModel.resendUnsaved()
+        viewModel.retryFailedFinish()
         onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() }
     }
     val actions =
@@ -473,6 +481,7 @@ fun LessonPlayer(
                             help,
                             touches,
                             canvasWork,
+                            onReportSaveFailure,
                         )
                     }
                 }
@@ -542,7 +551,7 @@ private fun Segments(
     state: LessonPlayerState,
 ) {
     val label = stringResource(R.string.player_progress)
-    val done = if (state.phase == LessonPhase.Completed) segments.size else state.position
+    val done = segments.count { it != TaskSegment.Ahead && it != TaskSegment.Current }
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
@@ -583,6 +592,7 @@ private fun Content(
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
+    onReportSaveFailure: () -> Unit,
 ) {
     val run = state.run
 
@@ -596,7 +606,7 @@ private fun Content(
         state.phase == LessonPhase.Completed -> {
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
-                if (ownEnd == null) LessonCompletionView(state, ending, buddy, finishedChapter) else ownEnd.body(state)
+                if (ownEnd == null) LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure) else ownEnd.body(state)
             }
         }
 
@@ -812,7 +822,7 @@ private fun Result(
             LessonResultNotes(next, screen.hyperdriveStreak)
         } else {
             val explanations by viewModel.explanations.collectAsStateWithLifecycle()
-            LessonStepResultView(step, result, next, screen.hyperdriveStreak) {
+            LessonStepResultView(step.asAnswered(state.answers[step.id]), result, next, screen.hyperdriveStreak) {
                 ExplainAnswer(
                     explanation = explanations[step.id],
                     onExplain = viewModel::explainAnswer,

@@ -1,4 +1,5 @@
 import "server-only";
+import { type StudySessionBlock } from "@zoonk/db";
 import { countFinishedMocksBefore } from "../../exams/mocks/_utils/mock-number";
 import { loadMockPace } from "../../exams/mocks/_utils/mock-pace";
 import { getMock } from "../../exams/mocks/get-mock";
@@ -140,9 +141,11 @@ const CALL_SIZE: ChallengeSize = {
 export function loadChallengeSize({
   block,
   challenge,
+  plannedBlock,
 }: {
   block: ChallengeBlock | null;
   challenge: OwnedChallenge;
+  plannedBlock?: Pick<StudySessionBlock, "estimatedMinutes" | "payload"> | null;
 }): ChallengeSize | Promise<ChallengeSize> {
   if (challenge.item.kind === "mock") {
     return loadMockSize({ block, challenge });
@@ -150,6 +153,12 @@ export function loadChallengeSize({
 
   if (isLanguageCall(challenge)) {
     return CALL_SIZE;
+  }
+
+  if (plannedBlock) {
+    const questions = getPlannedQuestions(readBlockPayload(plannedBlock).itemIds.length);
+    const minutes = plannedBlock.estimatedMinutes;
+    return { ...getCheckpointSize(questions), estimatedMinutes: minutes, minutes };
   }
 
   return block ? loadCheckpointSize(block) : getOfferSize(challenge);

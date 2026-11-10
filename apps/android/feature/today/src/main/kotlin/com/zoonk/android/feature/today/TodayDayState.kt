@@ -6,17 +6,6 @@ import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
 
-val DayView.limitReached: Boolean
-    get() = dailyLimit?.reached == true
-
-/** The learner's daily time limit is shorter than the day's plan, so the day stops at it. */
-val DayView.limitCapsDay: Boolean
-    get() = dailyLimit?.limitMinutes?.let { it < minutes.dailyGoal } == true
-
-/** The limit ended the day before it held the plan's time. */
-val DayView.limitCutDayShort: Boolean
-    get() = limitReached && minutes.planned < minutes.dailyGoal
-
 val DayView.started: Boolean
     get() = steps.any { it.status != StudyBlock.Status.PENDING }
 
@@ -29,29 +18,35 @@ data class TodayQueue(
     val after: List<DayStep>,
 )
 
-fun DayView.queue(nextPosition: Long): TodayQueue {
-    val nextIndex = steps.indexOfFirst { it.position == nextPosition }
+/** Without a next block, every step still to do comes after the done ones. */
+val DayView.queue: TodayQueue
+    get() {
+        val nextIndex = steps.indexOfFirst { it.position == nextPosition }
 
-    return TodayQueue(
-        done = steps.filter(DayStep::isFinished),
-        before = steps.take(nextIndex.coerceAtLeast(0)).filterNot(DayStep::isFinished),
-        after = steps.drop(nextIndex + 1).filterNot(DayStep::isFinished),
-    )
-}
+        return TodayQueue(
+            done = steps.filter(DayStep::isFinished),
+            before = steps.take(nextIndex.coerceAtLeast(0)).filterNot(DayStep::isFinished),
+            after = steps.drop(nextIndex + 1).filterNot(DayStep::isFinished),
+        )
+    }
 
-fun DayView.minutesLeft(): Long = steps.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }
+/** How many rows follow the next one before "+N more" folds the rest. */
+internal const val UPCOMING_ROWS = 4
+
+/** The blocks "+N more" holds while the queue is folded. */
+internal val DayView.foldedSteps: List<DayStep>
+    get() = queue.after.drop(UPCOMING_ROWS)
+
+internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
+    (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
+
+internal val DayView.heldMinutes: Double
+    get() = if (lessonsComing || lessonsToPrepare) minutesAfter(steps) else 0.0
 
 fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null && !studiedToday && !started
 
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
 fun DayView.studiedToday(): Long = week.days.firstOrNull { it.isToday }?.minutes ?: 0
-
-/**
- * A lesson nobody has started writing is written when the learner opens it, so it never claims to
- * be in progress.
- */
-fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
-    kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
 
 /** While lessons are written or outlined, Today reads itself again until they land. */
 fun DayView.isWaitingForLessons(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =

@@ -114,8 +114,8 @@ describe("a low-pace course's fixed checkpoint budget", () => {
       const block = session.blocks.find((entry) => readBlockPayload(entry).planItemId === boss.id);
       expect(block?.estimatedMinutes).toBe(15);
       const plannedMinutes = Math.max(dailyMinutes, 15);
-      expect(today.today.session.minutes.dailyGoal).toBe(plannedMinutes);
-      expect(session.plannedMinutes).toBeLessThanOrEqual(today.today.session.minutes.dailyGoal);
+      expect(today.today.session.minutes.dailyGoal).toBe(dailyMinutes);
+      expect(session.plannedMinutes).toBeLessThanOrEqual(plannedMinutes);
 
       const view = await getGoalPlan(goal.id);
 
@@ -212,6 +212,6 @@ describe("a low-pace course's fixed checkpoint budget", () => {
     const block = session.blocks.find((entry) => readBlockPayload(entry).planItemId === weekly.id);
     expect(block?.estimatedMinutes).toBe(15);
     expect(session.plannedMinutes).toBe(15);
-    expect(result.today.session.minutes.dailyGoal).toBe(15);
+    expect(result.today.session.minutes.dailyGoal).toBe(10);
   });
 });

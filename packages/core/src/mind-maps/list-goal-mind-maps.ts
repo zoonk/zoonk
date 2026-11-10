@@ -76,5 +76,8 @@ export async function listGoalMindMaps(
 
   const chapters = listed.toSorted(compareBySyllabus).map((row) => row.view);
 
-  return { mindMaps: { chapters, goal: { id: goal.id, title: goal.title } }, status: "ready" };
+  return {
+    mindMaps: { chapters, goal: { displayName: goal.displayName, id: goal.id, title: goal.title } },
+    status: "ready",
+  };
 }

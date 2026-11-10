@@ -8,8 +8,8 @@ import { type StudyBlockCompletion } from "../completion-contract";
 import { getMissionBonus } from "../missions";
 import { type MissionCompletionSource } from "../missions/settle-missions";
 import { NOTHING_REACHED, getReached } from "../reached";
+import { loadCompletionQueue } from "./completion-queue";
 import { type ProgressChange } from "./session-progress";
-import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
 
 type BlockResult = Pick<
@@ -65,6 +65,7 @@ export async function completeBlockMoment({
   userId: string;
 }): Promise<StudyBlockCompletion> {
   const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
+
   const { missionResult } = settled;
   const bonus = getMissionBonus(settled.missions);
   const fullMeal = missionResult.fullMealPaid ? bonus : 0;
@@ -78,13 +79,15 @@ export async function completeBlockMoment({
     brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },
   };
 
-  const milestones = await awardMilestones({
-    ...getBlockMilestoneAwards({ payload, reward }),
-    brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
-    userId,
-  });
-
-  const blocks = settled.session.blocks;
+  // The completion carries the settled queue, so its next step and aside never depend on an earlier lesson prefetch.
+  const [milestones, queue] = await Promise.all([
+    awardMilestones({
+      ...getBlockMilestoneAwards({ payload, reward }),
+      brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
+      userId,
+    }),
+    loadCompletionQueue({ blockId, sessionId, timeZone, userId }),
+  ]);
 
   const [ceremony, certificates] = await Promise.all([
     loadCeremony(userId),
@@ -92,6 +95,7 @@ export async function completeBlockMoment({
   ]);
 
   return {
+    ...queue,
     ...result,
     blockId,
     brainPower: result.brainPower + fullMeal,
@@ -101,7 +105,6 @@ export async function completeBlockMoment({
     fullMeal: { bonus, paid: missionResult.fullMealPaid },
     milestones,
     missions: settled.missions,
-    nextBlockId: getNextBlockId(blocks),
     reached: energy
       ? getReached({
           brainPower: {
@@ -111,7 +114,5 @@ export async function completeBlockMoment({
           energy,
         })
       : NOTHING_REACHED,
-    sessionBar: getSessionBar(blocks),
-    sessionCompleted: settled.sessionCompleted,
   };
 }

@@ -19,6 +19,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.player.SessionEndActions
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.AnswerActions
@@ -237,6 +238,7 @@ internal fun Runner(
     onClose: () -> Unit,
     examTomorrow: Boolean = false,
 ) {
+    val saveReport = rememberSaveFailureReport(app, "question-block")
     val detail = read.detail
     val questions = read.questions
     val question = questions.getOrNull(run.index)
@@ -263,7 +265,7 @@ internal fun Runner(
         mainAction = mainAction,
         report = runReportTarget("question-block", question, run),
         progress = { RunSegments(questions, run) },
-        actions = { BlockActions(read, run, question, draft, viewModel, app, navigator) },
+        actions = { BlockActions(read, run, question, draft, viewModel, app, navigator, onReportSaveFailure = saveReport::open) },
     ) { part, inlineSet, _ ->
         if (run.phase == RunPhase.FinishReady) {
             if (part.showsScreen) FinishReady()
@@ -297,6 +299,7 @@ private fun BlockActions(
     viewModel: QuestionBlockViewModel,
     app: AppContainer,
     navigator: AppNavigator,
+    onReportSaveFailure: () -> Unit,
 ) {
     when (run.phase) {
         RunPhase.FinishReady -> {
@@ -306,7 +309,7 @@ private fun BlockActions(
         }
 
         RunPhase.FinishFailed -> {
-            SaveErrorText()
+            SaveErrorText(run.saveFailures, onReport = onReportSaveFailure)
             TaskActions { width ->
                 Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
             }
@@ -314,7 +317,7 @@ private fun BlockActions(
 
         else -> {
             question?.let {
-                AnswerActions(read.questions, it, run, draft, viewModel, ask = {
+                AnswerActions(read.questions, it, run, draft, viewModel, onReportSaveFailure = onReportSaveFailure, ask = {
                     RunAskButton(
                         it,
                         run,

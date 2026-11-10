@@ -1,11 +1,23 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { type BlockPayload, readBlockPayload } from "../block-payload";
 import { type MissionPick } from "./catalog";
 
 export type BlockMissionResult = NonNullable<BlockPayload["missionResult"]>;
 
-/** Requires the settlement transaction and lock; replays the stored moment or saves this settlement's result once. */
+/** Read under the settlement's lock: a kept result means this block's finish already settled. */
+export function readBlockMissionResult({
+  blockId,
+  blocks,
+}: {
+  blockId: string | undefined;
+  blocks: readonly Pick<StudySessionBlock, "id" | "payload">[];
+}): BlockMissionResult | null {
+  const block = blocks.find((row) => row.id === blockId);
+  return block ? readBlockPayload(block).missionResult : null;
+}
+
+/** Requires the settlement transaction and lock; keeps even an empty result as proof the finish settled. */
 export async function keepBlockMissionResult(
   tx: TransactionClient,
   {
@@ -18,26 +30,13 @@ export async function keepBlockMissionResult(
     return null;
   }
 
-  const block = await tx.studySessionBlock.findUnique({
-    select: { id: true, payload: true },
-    where: { id: blockId },
-  });
-
-  const kept = block ? readBlockPayload(block).missionResult : null;
-
-  if (kept) {
-    return kept;
-  }
-
   const result = { completed: newlyDone.map((pick) => pick.kind), fullMealPaid };
 
-  if (result.completed.length > 0 || result.fullMealPaid) {
-    await tx.$executeRaw`
-      UPDATE study_session_blocks
-      SET payload = jsonb_set(payload, '{missionResult}', ${JSON.stringify(result)}::jsonb)
-      WHERE id = ${blockId}::uuid
-    `;
-  }
+  await tx.$executeRaw`
+    UPDATE study_session_blocks
+    SET payload = jsonb_set(payload, '{missionResult}', ${JSON.stringify(result)}::jsonb)
+    WHERE id = ${blockId}::uuid
+  `;
 
   return result;
 }

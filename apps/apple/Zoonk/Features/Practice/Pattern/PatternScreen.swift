@@ -13,7 +13,8 @@ struct PatternScreen: View {
   @State private var draft: PracticeAnswer?
   @State private var checked: Int?
   @State private var isSaving = false
-  @State private var saveFailed = false
+  @State private var saveFailures = 0
+  @State private var showsSaveReport = false
   @State private var showsRule = false
   /// One id for this drill, sent again by Try again, so a retry after a lost response counts once.
   @State private var requestId = UUID().uuidString.lowercased()
@@ -45,6 +46,9 @@ struct PatternScreen: View {
       certificates: finished?.certificates ?? [], ceremony: finished?.ceremony?.value1
     )
     .task(id: session.authenticatedSession) { await read() }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "mistake-pattern", reportType: .saveFailure), isReport: true)
   }
 
   private var finished: Components.Schemas.MistakePatternPracticeResult? {
@@ -155,8 +159,10 @@ struct PatternScreen: View {
           verdict: PracticeVerdict(isCorrect: result.isCorrect), explanation: item.feedback)
       }
     } actions: {
-      if saveFailed {
-        PracticeSaveError { Task { await save(pattern) } }
+      if saveFailures > 0, !isSaving {
+        PracticeSaveError(
+          failures: saveFailures, onReport: { showsSaveReport = true },
+          retry: { Task { await save(pattern) } })
       }
 
       if result != nil {
@@ -268,7 +274,6 @@ struct PatternScreen: View {
 
   private func save(_ pattern: Components.Schemas.MistakePattern) async {
     isSaving = true
-    saveFailed = false
     defer { isSaving = false }
 
     let answers = picks
@@ -281,8 +286,10 @@ struct PatternScreen: View {
           token: identity.bearerToken, patternId: patternId, answers: answers, requestId: requestId)
       })
     {
-    case .done(let result): step = .result(result)
-    case .refused, .failed: saveFailed = true
+    case .done(let result):
+      saveFailures = 0
+      step = .result(result)
+    case .refused, .failed: saveFailures += 1
     case .obsolete: break
     }
   }

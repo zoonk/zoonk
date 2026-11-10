@@ -211,3 +211,27 @@ export function findNextCall({
 
   return { blockId: block.id, sessionId: session.id };
 }
+
+/** A written lesson Today can show as startable is a prefetched link; the player's start admits its block. */
+export function isLessonLink({
+  block,
+  current,
+  saved,
+}: {
+  block: Pick<
+    DayView["blocks"][number],
+    "kind" | "lessonId" | "screen" | "status" | "waitReason"
+  > & { id?: string };
+  current: boolean;
+  saved: boolean;
+}): boolean {
+  return (
+    current &&
+    (!saved || Boolean(block.id)) &&
+    block.kind === "learn" &&
+    block.screen === "lesson" &&
+    Boolean(block.lessonId) &&
+    (block.status === "pending" || block.status === "active") &&
+    block.waitReason === null
+  );
+}

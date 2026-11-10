@@ -25,6 +25,7 @@ env:
   VERCEL_PROJECT_ID_API: ${{ vars.VERCEL_PROJECT_ID_API }}
   VERCEL_PROJECT_ID_MAIN: ${{ vars.VERCEL_PROJECT_ID_MAIN }}
   VERCEL_PROJECT_ID_ADMIN: ${{ vars.VERCEL_PROJECT_ID_ADMIN }}
+  VERCEL_PROJECT_ID_BLOG: ${{ vars.VERCEL_PROJECT_ID_BLOG }}
 
 jobs:
   preview:
@@ -44,11 +45,11 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       # Secrets deploy this code, so only an open PR from this repository can be previewed.
-      - name: Read the pull request
+      - name: Read the pull request and the apps it changes
         run: |
-          IFS=$'\t' read -r state repo sha ref < <(
+          IFS=$'\t' read -r state repo base sha ref < <(
             gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
-              --jq '[.state, .head.repo.full_name, .head.sha, .head.ref] | @tsv'
+              --jq '[.state, .head.repo.full_name, .base.sha, .head.sha, .head.ref] | @tsv'
           )
 
           if [ "$state" != "open" ] || [ "$repo" != "$GITHUB_REPOSITORY" ]; then
@@ -58,6 +59,20 @@ jobs:
 
           echo "DEPLOY_SHA=$sha" >> "$GITHUB_ENV"
           echo "DEPLOY_REF=$ref" >> "$GITHUB_ENV"
+
+          # The blog is static and reads no database, so a PR that changes only the blog gets no
+          # database branch or other apps. GitHub lists at most 300 of a comparison's files, so a
+          # diff that reaches the cap previews both.
+          files=$(gh api "repos/$GITHUB_REPOSITORY/compare/$base...$sha" --jq '.files[].filename')
+          capped=$(( $(wc -l <<< "$files") >= 300 ))
+
+          if (( capped )) || grep -q '^apps/blog/' <<< "$files"; then
+            echo "PREVIEW_BLOG=true" >> "$GITHUB_ENV"
+          fi
+
+          if (( capped )) || grep -qv '^apps/blog/' <<< "$files"; then
+            echo "PREVIEW_DATABASE_APPS=true" >> "$GITHUB_ENV"
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ env.DEPLOY_SHA }}
@@ -75,9 +90,14 @@ jobs:
         run: pnpm deploy cancel-previews
       - name: Confirm the PR is still open
         run: pnpm deploy check-preview
+      - name: Deploy the blog
+        if: env.PREVIEW_BLOG == 'true'
+        run: pnpm deploy blog-preview
       - name: Validate the preview database parent
+        if: env.PREVIEW_DATABASE_APPS == 'true'
         run: pnpm deploy:database
       - name: Create or reuse the PR database branch
+        if: env.PREVIEW_DATABASE_APPS == 'true'
         id: neon
         uses: neondatabase/create-branch-action@fb620d43d4c565abaf088b848a4e28e5c4ea4d9c # v6
         with:
@@ -89,11 +109,13 @@ jobs:
           role: ${{ env.NEON_ROLE }}
           suspend_timeout: 300
       - name: Migrate the PR database once
+        if: env.PREVIEW_DATABASE_APPS == 'true'
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_pooled }}
           DATABASE_URL_UNPOOLED: ${{ steps.neon.outputs.db_url }}
         run: pnpm --filter @zoonk/db db:deploy
-      - name: Deploy every app at once against the same PR database
+      - name: Deploy every database app at once against the same PR database
+        if: env.PREVIEW_DATABASE_APPS == 'true'
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_pooled }}
           DATABASE_URL_UNPOOLED: ${{ steps.neon.outputs.db_url }}

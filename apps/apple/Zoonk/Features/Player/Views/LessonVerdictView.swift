@@ -4,6 +4,7 @@ struct LessonVerdictView: View {
   @Environment(\.legibilityWeight) private var legibility
 
   let step: LessonStep
+  let answer: LessonAnswer?
   let result: LessonStepResult
   let store: LessonPlayerStore
   let willReturn: Bool
@@ -47,8 +48,18 @@ struct LessonVerdictView: View {
           text: content.sampleAnswer)
       }
 
-      if let heard = result.heard, case .spokenAnswer(let content, _) = step.content {
-        LessonSpokenWordsView(heard: heard, language: content.language)
+      if case .spokenAnswer(let content, _) = step.content {
+        if let heard = result.heard {
+          LessonSpokenWordsView(heard: heard, language: content.language)
+        } else if store.state?.answers[step.id] == nil, let transcript = result.answerText {
+          // A recording restored from an earlier sitting keeps only its words.
+          LabeledText(
+            label: Text(
+              "What we heard", tableName: "Player",
+              comment: "Above a spoken answer's words as heard"
+            ),
+            text: transcript)
+        }
       }
 
       ForEach(result.corrections, id: \.self) { correction in
@@ -94,16 +105,33 @@ struct LessonVerdictView: View {
     .accessibilityElement(children: .contain)
   }
 
-  /// A guess's reveal already names the right option, and the option list marks it.
+  /// A guess's reveal already names the right option, and the option list marks it. A word-bank
+  /// answer right in another order shows the lesson's own order too.
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if !result.isCorrect, let correctAnswer = result.correctAnswer,
-      !Self.marksItsAnswer.contains(step.kind)
-    {
-      LabeledText(
-        label: Text(
-          "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
-        text: correctAnswer)
+    if let correctAnswer = result.correctAnswer {
+      if !result.isCorrect, !Self.marksItsAnswer.contains(step.kind) {
+        LabeledText(
+          label: Text(
+            "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
+          text: correctAnswer)
+      } else if result.isCorrect, isWordBankAnswer {
+        LabeledText(
+          label: Text(
+            "Also correct", tableName: "Player",
+            comment:
+              "After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too"
+          ),
+          text: correctAnswer)
+      }
+    }
+  }
+
+  /// A device grade sets the right answer on other right answers too.
+  private var isWordBankAnswer: Bool {
+    switch answer {
+    case .reading, .listening: true
+    default: false
     }
   }
 

@@ -8,12 +8,11 @@
   "today_behind_kept": "5878a4129a15af58d4dd8b40c8323572fe8a87bd5f004ee469e3d58da1bbe51f",
   "today_building_plan": "b6949b3ddc3a279d7a92fe3e82845711d082d99bc7a93e4791eb9b7cdc5d95ee",
   "today_building_plan_detail": "2b8ebfd45208ce01a315812d92eb57f4a6e01ca65084699964b080944d35fee9",
-  "today_building_plan_goal": "8f96cd3843c5d36acade67d055af56ebd370d3a0b9d1f2848e6a99f5bb361a37",
+  "today_building_plan_goal": "2d40df567720f45a951a4b06e1292cfc3190ee3cc05ad2c9f7a19a5e212a728f",
   "today_catch_up_before_exam": "f6205c92882df251a7fedf3c000b1896d15187dafcdd4bc7a05259d617c28e7a",
   "today_catch_up_next_days": "6319837f5b75d32cb916c29650bc2e77854456a47b9a23802ee5cc30b44709d1",
   "today_catch_up_today": "52df3cdc81ccb2a0e705619055dde2dd5db749b0d0538afc3ee77662536b58d3",
   "today_catch_up_tomorrow": "7ed7218c5a978768cf4d50a36c084165d6e04431ff6aff461bac9522eeba14ad",
-  "today_change_limit": "a3073e2ee21003ee2faf686010e04e7d255354ea5c6f7f78fc683efbff9f61e2",
   "today_choose_focus": "e149028297c8a18a4ae7355e053c19cf0282209f704cd1072c12b4cc9a12db70",
   "today_coming_not_written": "320399a151fe474df1f42eb5a0a8a54d640f95f030b7a549404d275d40488847",
   "today_coming_stalled": "dbd84c3081e9c4ea1f49bbb2ac064b6931d95b49222d2bbf5b219323a9b2d46b",
@@ -43,7 +42,7 @@
   "today_exam_tomorrow": "e5c2a1406876b6a9ac72fd5ea1d7506d206b377071d19f57a7cd351e1bb2b4f6",
   "today_finished": "a8094a6c077b4ab42dbed4daaa899bd95d9626da0bb3e11f1bec20ba9394cd6e",
   "today_finished_detail": "36677b8739247e4e689b2fdf8ec13014292128ed49cde736039507a3e496e2de",
-  "today_finished_goal": "bb6840d0ae4ecce08c8e7bbdd5feca59c60db2fcc03ee9c03b5caaab8398d7b9",
+  "today_finished_goal": "e6f730d2cb179059c05a34be8d856a7c0e0ffcc18606be18dffaec4724efa385",
   "today_fresh_start_new_phase": "2eb800e300c832af0770b90bb3d9958c7ddc0b2f1b9be311b0d4e14a5b24d234",
   "today_fresh_start_new_week": "ffea1dc6e4ce655b4f25f725715f96553989a607517c26e5f0e6b132cf49217a",
   "today_fresh_start_welcome_back": "580cf2828003fdf3ce79a43f6d19a65f06d062e4b8a89a7c42c45ac5fe84dade",
@@ -61,8 +60,6 @@
   "today_keep_learning_failed": "6e1e801a86059aa3a6c9a077b86d2040c0ac748487c5b8b10129d698ac4e5f97",
   "today_keep_my_time": "9d6ce895695f3b4c97c501b3495a812673b6095afd3962500721cf33bc31a2d4",
   "today_lessons_not_written": "a96529591521c8111921107fba243c216f8904acc97e52a17d2d73f8f5e46dfb",
-  "today_limit_reached": "0bd9c8f355fc7dd8a5ff04484c475c912326de686f2bf43ccd5e3ee59f7d21a0",
-  "today_limit_stops": "b6227ba0a9bd76841868aabfed9a0857a271b75622aae7af77520a8294073813",
   "today_mistakes_notebook": "c3276dd08db2994543e26630c8e509f767662dd9a0658336c03ac72a040f6361",
   "today_mistakes_ready": "7f0d2c8989e90d40ff14a4526a9630f937433ce6a3cf2cb9b7495378fdda1eae",
   "today_mistakes_redo": "678b2660fbc744168efae51c4f50f0c6ce47214a32c48bfe16ba8d1d50aec6e2",
@@ -102,7 +99,7 @@
   "today_past_date_exam": "eedc7b5b7e764f1c2ffc2ea571b0c4f062ae62dca75769d58b219dfb0d0b99a7",
   "today_paused": "4bd0f65f9b297cf9cb67941081061cf3ba5d34d6c5dae3489ad90b8226682906",
   "today_paused_detail": "f44777742b291a8c84828628033f978e26f2a5390ddbc669622ba0a6d6e9a683",
-  "today_paused_goal": "dbc8b3595983f24a4c41bbb24de924ea586a2f5bf3079be68b84bd9358e25011",
+  "today_paused_goal": "48dd9cc83f07d28efe2f7de45e53e1f60f0b0764e6344db429c1ec99520f5430",
   "today_paused_this_goal": "bcbd6bcb4596960cf7caa2616466fbca882da39d3b9f5966c9bf42672ee76068",
   "today_plan_apply": "694c54bf212c5ae26e841d7d34ed1ecebdd0421c27b516f8bf38ae776fdc852a",
   "today_plan_keep_mine": "2d4cb2176b53f3d50df7f6d545c3e302a30fe66f437c719a87453ea5aec0871c",
@@ -133,19 +130,15 @@
   "today_see_day_mock": "4e965831c20b2a60123b4e46fa5ddd8039fede0194d6a3a58d73d419b70ecc44",
   "today_see_plan": "cf7111482d2a3bca2e8f54ebce7fd171f7dad1334a63af7f1731eaa022d82ef8",
   "today_see_summary": "d321692bb3dc962dc65c7ffc8fed55d3ea56dad8d34760d35017389b0545599f",
-  "today_see_you_day": "10be17f8b2a45efb33a360e44c0906591790c4f64b6870f150aae47f8ad2c03c",
-  "today_see_you_next_session": "c3795f196ebb73513891a222b8e4e7a9736749fcf3d09da0f028a7816bfec9f1",
-  "today_see_you_tomorrow": "2496c43e185a85c78c22dc5d20149fbef19c910f0fac3b3c647bdd0a3bd37ca5",
   "today_see_your_plan": "62ee8faa0cafebfcff3d0fc1cfa829cfb7b9e6fba07353f60e783397d829fa55",
   "today_setting_up": "6ebf5cdfd41efebca4c2ed4a2ed9273e661d962b928b774f93c02f596004aa5e",
   "today_setting_up_detail": "193a19c0dcac36cb5414eb253837b3bdc3a5bf2d75039e67562dbadfc2a97780",
-  "today_setting_up_goal": "47216a8768cd14d2622e0befec2d4d1d32aa726f31cf357aa853f4d76ce7a8d4",
+  "today_setting_up_goal": "657edf312bdd75144431335704eca81f6924d8fcf3d9fa086d66a1970bcd1f4b",
+  "today_show_less": "b7e7f158a3d6a8be6b53331e3c7947d3fbd0d066afa545fcc0ea83e62057132f",
   "today_start_new_goal": "44f063b5c39f7ae0c19d3bf4992ae226ecb083e75d30c9992c87129a5f7483da",
   "today_start_session": "15736c8dd3868806531c9fa8b9b2ede8731f1d23f41811531fe971a18951f8dd",
-  "today_step_after_challenge": "af080f26830ed653958a6f246dcbeced226ded0021cb1fba56115294cf59e586",
-  "today_step_after_challenge_phase": "70a5ad31817d66874d6c49e7ddfab3a43765382dc92dc75f429e7fc2f64409fd",
-  "today_step_after_lessons": "11eff26ec9a58cb0a9a9fee5afa1024c6d2192e16c03f592ab53fd6419210cf7",
-  "today_step_after_lessons_phase": "b28de3cf804d6d3de8d2ba54e1218961cf4f7dbba983477c20dde67df7dc6531",
+  "today_step_after_lessons": "c0250b82cb775626a523946a774aa247f846ff72028e2d86f8d597fd25217c47",
+  "today_step_after_lessons_phase": "659795cb0216e41a092532d6454ba7b7eeb520c14d4dd255d259adece7efa55a",
   "today_step_being_written": "0ffba6fcc1262f020f7b5cadb365b2d0a4821df5fa10b2ed322d080ea8b666ab",
   "today_step_catching_up": "907fef7124c5e88fa35325715fde17a3dd7df3505afb5e514202809661876b1e",
   "today_step_catching_up_subject": "b6f8567efb7afcea7f8d1f7b687031f70b11aee20e24d8eed77a8d4fcf8e484d",
@@ -256,6 +249,8 @@
         <item quantity="one">+%d daha</item>
         <item quantity="other">+%d daha</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Daha az göster</string>
     <string name="today_step_done">Tamamlandı</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Sıradaki adım</string>
@@ -268,11 +263,9 @@
     <string name="today_step_catching_up_subject">Arayı kapatma · %1$s</string>
     <string name="today_step_often_tested">Sınavlarda sık çıkar</string>
     <string name="today_step_often_tested_label">%1$s · sık sorulur</string>
-    <string name="today_step_after_lessons">Bugünkü derslerden sonra</string>
+    <string name="today_step_after_lessons">Bu aşamanın derslerinden sonra</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · bugünkü derslerden sonra</string>
-    <string name="today_step_after_challenge">Önceki meydan okumadan sonra</string>
-    <string name="today_step_after_challenge_phase">%1$s · önceki meydan okumadan sonra</string>
+    <string name="today_step_after_lessons_phase">%1$s · bu aşamanın derslerinden sonra</string>
     <string name="today_done">Bugünkü çalışman tamamlandı.</string>
     <string name="today_done_day_off">Dinlenme gününde çalıştın.</string>
     <string name="today_see_summary">Bugünün özetini gör</string>
@@ -294,16 +287,6 @@
         <item quantity="other">Hedef tarihin geldiğinde %d ders kalmıştı.</item>
     </plurals>
     <string name="today_past_date_detail">Devam etmek için planını ayarla.</string>
-    <!-- The daily time limit is a setting that stops study for the day; it's shorter than the plan's time for today. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_stops">Bugünkü çalışma, %1$s olan günlük süre sınırında biter.</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a duration, such as "3 hr". -->
-    <string name="today_limit_reached">%1$s olan günlük süre sınırına ulaştın.</string>
-    <!-- A link to the setting for the daily time limit. -->
-    <string name="today_change_limit">Sınırı değiştir</string>
-    <string name="today_see_you_next_session">Bir sonraki çalışmanda görüşürüz!</string>
-    <string name="today_see_you_tomorrow">Yarın görüşürüz!</string>
-    <!-- %1$s is a weekday, such as "Monday". -->
-    <string name="today_see_you_day">%1$s görüşürüz!</string>
     <string name="today_nothing_to_review">Bugün tekrar edilecek bir şey yok.</string>
     <string name="today_nothing_new">Bugün yeni ders yok.</string>
     <string name="today_nothing_new_detail">Planındaki tüm dersleri ya tamamladın ya da zaten biliyordun.</string>
@@ -326,12 +309,12 @@
     <string name="today_not_now">Sonraya bırak</string>
     <string name="today_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <string name="today_finished">Tamamlandı</string>
-    <!-- %1$s is the goal's title. -->
+    <!-- %1$s is the goal's short name, like "CGU" or "Italian". -->
     <string name="today_finished_goal">%1$s hedefini tamamladın.</string>
     <string name="today_finished_detail">Yeni bir hedefe başla veya yukarıdan başka bir hedef seç.</string>
     <string name="today_start_new_goal">Yeni bir hedefe başla</string>
     <string name="today_paused">Duraklatıldı</string>
-    <string name="today_paused_goal">%1$s hedefi duraklatıldı.</string>
+    <string name="today_paused_goal">%1$s hedefin duraklatıldı.</string>
     <string name="today_paused_this_goal">Bu hedef duraklatıldı.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">Hedefine devam edene kadar hiçbir şey planlanmaz.</string>
@@ -340,11 +323,11 @@
     <string name="today_resume_effect">Planın bugünden itibaren devam eder; önce ara verdiğin günler için planlanan dersler gelir.</string>
     <string name="today_resume_goal_limit">Ücretsiz pakette aynı anda tek hedef üzerinde çalışabilirsin. Bu hedefe devam etmek için diğer hedefini duraklat veya daha fazla hedef için Plus’a geç.</string>
     <string name="today_setting_up">Hazırlıyoruz</string>
-    <string name="today_setting_up_goal">%1$s hedefine yönelik planın için birkaç yanıt daha gerekiyor.</string>
+    <string name="today_setting_up_goal">%1$s planın için birkaç cevap daha gerekiyor.</string>
     <string name="today_setting_up_detail">Planını bize anlattıklarına göre hazırlıyoruz.</string>
     <string name="today_continue_setting_up">Planını oluşturmaya devam et</string>
     <string name="today_building_plan">Planını hazırlıyoruz</string>
-    <string name="today_building_plan_goal">%1$s için planını hazırlıyoruz</string>
+    <string name="today_building_plan_goal">%1$s planını hazırlıyoruz</string>
     <string name="today_building_plan_detail">Genellikle bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır.</string>
     <string name="today_quick_explanation">Kısa açıklama</string>
     <string name="today_continue_explanation">Açıklamaya devam et</string>

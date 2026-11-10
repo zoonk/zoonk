@@ -105,8 +105,6 @@ class PreferencesViewModel(
 
     fun setShareUsageData(share: Boolean) = save { profile.setShareUsageData(share) }
 
-    fun setDailyLimit(minutes: Long?) = save { profile.setDailyLimit(minutes) }
-
     fun setBuddy(
         kind: BuddyKind,
         glasses: BuddyGlasses,
@@ -246,15 +244,6 @@ internal fun LessonsSection(
     profile: LearningProfile,
     preferences: PreferencesViewModel,
 ) {
-    var isChoosingLimit by rememberSaveable { mutableStateOf(false) }
-    val locale = currentLocale()
-    val limits = listOf(null) + (profile.dailyTimes + listOfNotNull(profile.dailyLimitMinutes)).distinct().sorted()
-
-    @Composable
-    fun limitLabel(minutes: Long?) =
-        minutes?.let { stringResource(R.string.settings_preferences_limit_a_day, formatMinutes(it.toInt(), locale)) }
-            ?: stringResource(R.string.settings_preferences_no_limit)
-
     SettingsSection(stringResource(R.string.settings_preferences_lessons)) {
         Column {
             SwitchRow(
@@ -263,50 +252,6 @@ internal fun LessonsSection(
                 checked = profile.soundsEnabled,
                 onCheckedChange = preferences::setSoundsEnabled,
             )
-            ListDivider()
-            Box {
-                ListRow(
-                    headline = { Text(stringResource(R.string.settings_preferences_daily_limit)) },
-                    supporting = { Text(stringResource(R.string.settings_preferences_daily_limit_description)) },
-                    trailing = { SettingValue(limitLabel(profile.dailyLimitMinutes)) },
-                    modifier = Modifier.clickable(role = Role.DropdownList) { isChoosingLimit = true },
-                )
-                DropdownMenu(
-                    expanded = isChoosingLimit,
-                    onDismissRequest = { isChoosingLimit = false },
-                    modifier = Modifier.align(Alignment.TopEnd),
-                ) {
-                    val current = remember { BringIntoViewRequester() }
-                    limits.forEach { minutes ->
-                        val isCurrent = minutes == profile.dailyLimitMinutes
-                        DropdownMenuItem(
-                            text = { Text(limitLabel(minutes)) },
-                            trailingIcon =
-                                if (isCurrent) {
-                                    (
-                                        {
-                                            Icon(
-                                                painterResource(R.drawable.ic_check),
-                                                contentDescription = null,
-                                            )
-                                        }
-                                    )
-                                } else {
-                                    null
-                                },
-                            modifier =
-                                Modifier
-                                    .semantics { selected = isCurrent }
-                                    .then(if (isCurrent) Modifier.bringIntoViewRequester(current) else Modifier),
-                            onClick = {
-                                isChoosingLimit = false
-                                if (minutes != profile.dailyLimitMinutes) preferences.setDailyLimit(minutes)
-                            },
-                        )
-                    }
-                    LaunchedEffect(Unit) { current.bringIntoView() }
-                }
-            }
         }
     }
 }

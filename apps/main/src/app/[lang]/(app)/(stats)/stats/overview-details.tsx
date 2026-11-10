@@ -5,6 +5,7 @@ import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns"
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowLink,
   ListRowTitle,
@@ -86,13 +87,15 @@ function PatternsRow({
 }) {
   return (
     <ListRow>
-      <ListRowContent>
-        <ListRowTitle>{label}</ListRowTitle>
-      </ListRowContent>
-      <ListRowTrailing className="gap-3">
-        <span className="text-foreground font-sans text-sm first-letter:uppercase">{value}</span>
-        {score && <span>{score}</span>}
-      </ListRowTrailing>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{label}</ListRowTitle>
+        </ListRowContent>
+        <ListRowTrailing className="gap-3">
+          <span className="text-foreground font-sans text-sm first-letter:uppercase">{value}</span>
+          {score && <span>{score}</span>}
+        </ListRowTrailing>
+      </ListRowBody>
     </ListRow>
   );
 }
@@ -150,12 +153,14 @@ export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsDat
   return (
     <ListGroup className="md:hidden">
       <ListRowLink href={getMenu("patterns").url}>
-        <ListRowContent>
-          <ListRowTitle>{t("Patterns")}</ListRowTitle>
-        </ListRowContent>
-        <ListRowTrailing className="font-sans text-sm first-letter:uppercase">
-          {value || t("Not yet")}
-        </ListRowTrailing>
+        <ListRowBody>
+          <ListRowContent>
+            <ListRowTitle>{t("Patterns")}</ListRowTitle>
+          </ListRowContent>
+          <ListRowTrailing className="font-sans text-sm first-letter:uppercase">
+            {value || t("Not yet")}
+          </ListRowTrailing>
+        </ListRowBody>
       </ListRowLink>
     </ListGroup>
   );

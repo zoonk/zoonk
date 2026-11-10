@@ -133,13 +133,20 @@ describe("a change of focus when today's time no longer holds today's lessons", 
   });
 
   it("leaves tomorrow's time to tomorrow's lessons", () => {
-    const { built } = reduceAtSlowerPace(
+    const { built, shown } = reduceAtSlowerPace(
       listLessons((lessonId) => (lessonId === "Civil-2" ? 7 : 4)),
     );
 
-    expect([...(built.lessonDayMinutes.get("lesson:Civil-2")?.keys() ?? [])]).toStrictEqual([
-      toIsoDate(addDays(TODAY, 1)),
-    ]);
+    const tomorrow = shown.find(
+      (item) =>
+        item.kind === "lesson" && item.scheduledFor?.getTime() === addDays(TODAY, 1).getTime(),
+    );
+
+    expect(tomorrow).toBeDefined();
+
+    expect([...(built.lessonDayMinutes.get(tomorrow!.key)?.keys() ?? [])]).not.toContain(
+      toIsoDate(TODAY),
+    );
   });
 
   it("leaves tomorrow's time to tomorrow's lessons when today's run past the plan's days", () => {

@@ -28,7 +28,7 @@ async function createGoal(userId: string) {
   const suffix = randomUUID().slice(0, 6);
 
   const [goal, finished, current, finishedLesson, currentLesson, skills] = await Promise.all([
-    goalFixture({ title: "Cells", userId }),
+    goalFixture({ displayName: "Cell biology", title: "Cells", userId }),
     libraryChapterFixture({ title: `Cell parts ${suffix}` }),
     libraryChapterFixture({ title: `Cell energy ${suffix}` }),
     libraryLessonFixture({ contentStatus: "completed" }),
@@ -134,7 +134,7 @@ test.describe("Mind maps API", () => {
           title: current.title,
         },
       ],
-      goal: { id: goal.id, title: "Cells" },
+      goal: { displayName: "Cell biology", id: goal.id, title: "Cells" },
     });
 
     await expect(

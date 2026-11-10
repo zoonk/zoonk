@@ -1,6 +1,8 @@
 "use client";
 
-import { type Dispatch, type RefObject, useCallback, useEffect } from "react";
+import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
+import { type Dispatch, type RefObject, useCallback } from "react";
+import { fromLocalGrade } from "./_utils/lesson-results";
 import {
   type UnsentAnswer,
   dropUnsentAnswer,
@@ -8,7 +10,12 @@ import {
   readUnsentAnswers,
 } from "./_utils/unsent-answers";
 import { type LessonPlayerAction } from "./lesson-player-state";
-import { type LessonPlayerAdapters, type LessonRunAnswers } from "./lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonPlayerLesson,
+  type LessonRunAnswers,
+} from "./lesson-player-types";
+import { usePageLifecycle } from "./use-page-lifecycle";
 
 export type StartedRun = { learnerId: string; runId: string };
 
@@ -20,8 +27,34 @@ export type HeldAnswer = { check: HeldCheck; fromDevice: boolean; run: StartedRu
 /** `sending`: the screen's held answers going out, oldest first, which every trigger joins. */
 export type ScreenQueue = { last: Promise<unknown>; sending: Promise<boolean> | null };
 
-export function toRunAnswer({ answeredAt, isCorrect, stepId }: HeldCheck) {
-  return { answeredAt, isCorrect, stepId };
+export type HeldLesson = Pick<LessonPlayerLesson, "id" | "language" | "steps">;
+
+export function toRunAnswer({
+  check,
+  lesson,
+}: {
+  check: HeldCheck;
+  lesson: HeldLesson;
+}): LessonRunAnswers[number] {
+  const { answer, answeredAt, isCorrect, stepId } = check;
+  const step = lesson.steps.find((item) => item.id === stepId);
+  const graded = step ? gradeStepAnswer({ answer, language: lesson.language, step }) : null;
+
+  return {
+    answer: graded ? answer : null,
+    answeredAt,
+    isCorrect,
+    result: fromLocalGrade(
+      graded ?? {
+        answerText: null,
+        correctAnswer: null,
+        expected: null,
+        feedback: null,
+        isCorrect,
+      },
+    ),
+    stepId,
+  };
 }
 
 function byAnsweredAt(first: HeldAnswer, second: HeldAnswer): number {
@@ -38,7 +71,8 @@ function findNext(held: Map<string, HeldAnswer>, stepId: string): HeldAnswer | u
 
 /**
  * Answers graded on the device whose save hasn't been confirmed: kept on the device until the
- * server checks or refuses them, and sent again, a screen's oldest first, on each trigger.
+ * server checks or refuses them, and sent again, a screen's oldest first, on each trigger, which
+ * also sends again a lesson clock change that didn't get through.
  */
 export function useHeldAnswers({
   adapters,
@@ -47,7 +81,8 @@ export function useHeldAnswers({
   getQueue,
   heldRef,
   keepPending,
-  lessonId,
+  lesson,
+  resendClock,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
@@ -55,8 +90,11 @@ export function useHeldAnswers({
   getQueue: (stepId: string) => ScreenQueue;
   heldRef: RefObject<Map<string, HeldAnswer>>;
   keepPending: <T>(request: Promise<T>) => Promise<T>;
-  lessonId: string;
+  lesson: HeldLesson;
+  resendClock: () => void;
 }) {
+  const lessonId = lesson.id;
+
   const keepInRun = useCallback(
     async (check: HeldCheck): Promise<StartedRun | null> => {
       const run = await ensureRun().catch(() => null);
@@ -132,11 +170,12 @@ export function useHeldAnswers({
     [getQueue, heldRef, keepPending, send],
   );
 
-  const resendHeld = useCallback(async (): Promise<boolean> => {
+  const resendUnsaved = useCallback(async (): Promise<boolean> => {
+    resendClock();
     const stepIds = new Set([...heldRef.current.values()].map((held) => held.check.stepId));
     const sent = await Promise.all([...stepIds].map((stepId) => resendScreen(stepId)));
     return sent.every(Boolean);
-  }, [heldRef, resendScreen]);
+  }, [heldRef, resendClock, resendScreen]);
 
   const hold = useCallback(
     (check: HeldCheck) => {
@@ -145,11 +184,11 @@ export function useHeldAnswers({
 
       void resendScreen(check.stepId).then((saved) => {
         if (saved) {
-          void resendHeld();
+          void resendUnsaved();
         }
       });
     },
-    [heldRef, keepInRun, resendHeld, resendScreen],
+    [heldRef, keepInRun, resendScreen, resendUnsaved],
   );
 
   const holdKept = useCallback(
@@ -177,12 +216,12 @@ export function useHeldAnswers({
       const kept = holdKept(learnerId);
 
       if (kept.length > 0) {
-        void resendHeld().then(() => ensureRun());
+        void resendUnsaved().then(() => ensureRun());
       }
 
-      return kept.map((answer) => toRunAnswer(answer));
+      return kept.map((check) => toRunAnswer({ check, lesson }));
     },
-    [ensureRun, holdKept, resendHeld],
+    [ensureRun, holdKept, lesson, resendUnsaved],
   );
 
   /** Before the run ends, so the server never turns away an answer another tab still holds. */
@@ -193,24 +232,10 @@ export function useHeldAnswers({
       holdKept(run.learnerId);
     }
 
-    return resendHeld();
-  }, [ensureRun, holdKept, resendHeld]);
+    return resendUnsaved();
+  }, [ensureRun, holdKept, resendUnsaved]);
 
-  useEffect(() => {
-    const resendWhenBack = () => {
-      if (document.visibilityState === "visible") {
-        void resendHeld();
-      }
-    };
+  usePageLifecycle({ onBack: () => void resendUnsaved() });
 
-    globalThis.addEventListener("online", resendWhenBack);
-    document.addEventListener("visibilitychange", resendWhenBack);
-
-    return () => {
-      globalThis.removeEventListener("online", resendWhenBack);
-      document.removeEventListener("visibilitychange", resendWhenBack);
-    };
-  }, [resendHeld]);
-
-  return { hold, reopen, resendHeld, resendKept };
+  return { hold, reopen, resendKept, resendUnsaved };
 }

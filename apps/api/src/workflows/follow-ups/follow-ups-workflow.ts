@@ -2,9 +2,13 @@ import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
 import { createHook } from "workflow";
 import { start } from "workflow/api";
+import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "../calls/call-content-workflow";
+import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
+import { placementItemsWorkflow } from "../goals/placement-items-workflow";
+import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { getChapterMindMapToken } from "../mind-maps/chapter-mind-map-input";
@@ -14,12 +18,12 @@ import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
 import {
-  countFollowUpsStep,
   endFollowUpStep,
   listFollowUpsStep,
   requestLessonWritingStep,
   requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
+import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
 
 const MAX_PASSES = 20;
 
@@ -30,16 +34,42 @@ export function getFollowUpsToken(userId: string): string {
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
+// oxlint-disable-next-line complexity -- Each follow-up kind starts its own workflow.
 async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
   const { userId } = followUp;
 
   switch (followUp.kind) {
+    case "refreshStudyDay":
+      await retryPlanConflicts(refreshStudyDayStep, { ...followUp.input, userId });
+      return;
     case "prepareSession":
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;
     case "prepareGoalLessons":
       await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
       return;
+    case "rebuildGoalCurriculum": {
+      const ask = getGoalRebuildAsk({ followUp, goalId: followUp.input.goalId });
+
+      await startOnce(
+        rebuildGoalCurriculumWorkflow,
+        [{ ...followUp.input, followUp: { id: followUp.id, revision: followUp.revision } }],
+        ask,
+      );
+
+      return;
+    }
+    case "preparePlacementItems": {
+      const ask = `placement-items:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
+
+      await startOnce(
+        placementItemsWorkflow,
+        [{ ...followUp.input, analytics: { distinctId: userId } }],
+        ask,
+      );
+
+      return;
+    }
     case "writeLesson": {
       const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
 
@@ -104,13 +134,19 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 /** A row asked for again while its run started survives its end and starts on the next pass. */
 async function runFollowUp(followUp: OwedFollowUp): Promise<void> {
   await startFollowUp(followUp);
-  await endFollowUpStep({ id: followUp.id, revision: followUp.revision });
+
+  if (followUp.kind !== "rebuildGoalCurriculum") {
+    await endFollowUpStep({ id: followUp.id, revision: followUp.revision });
+  }
 }
 
-async function runPass(userId: string): Promise<number> {
-  const followUps = await listFollowUpsStep(userId);
+async function runPass(
+  userId: string,
+  started: Pick<OwedFollowUp, "id" | "revision">[],
+): Promise<number> {
+  const followUps = await listFollowUpsStep(userId, started);
   await Promise.all(followUps.map((followUp) => runFollowUp(followUp)));
-
+  started.push(...followUps.map(({ id, revision }) => ({ id, revision })));
   return followUps.length;
 }
 
@@ -118,18 +154,20 @@ export async function followUpsWorkflow({ userId }: FollowUpsInput): Promise<voi
   "use workflow";
 
   const startHook = createHook({ token: getFollowUpsToken(userId) });
+  const started: Pick<OwedFollowUp, "id" | "revision">[] = [];
 
   await repeatUntil({
     done: (count) => count === 0,
-    run: () => runPass(userId),
+    run: () => runPass(userId, started),
     times: MAX_PASSES,
   });
 
-  // Releases the run's start token, so it can start its successor for work asked for while it ran:
-  // those starts found this run.
+  // Releases the run's start token, so an ask arriving after this can start its successor.
   startHook.dispose();
 
-  if ((await countFollowUpsStep(userId)) > 0) {
+  const remaining = await listFollowUpsStep(userId, started);
+
+  if (remaining.length > 0) {
     await startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId));
   }
 }

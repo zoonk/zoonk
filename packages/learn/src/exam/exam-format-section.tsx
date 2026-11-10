@@ -1,6 +1,7 @@
 "use client";
 
 import { type ExamFormatDay } from "@zoonk/core/exams/view/contract";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
@@ -9,6 +10,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
@@ -75,18 +77,20 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   const formatDuration = useFormatDuration();
 
   return (
-    <li className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-x-3 py-2.5">
+    <li className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 py-2.5">
       <span className="text-muted-foreground font-mono text-xs tabular-nums">
         {numbered ? t("Day {number, number}", { number: day.day }) : null}
       </span>
-      <span className="min-w-0 text-[0.8125rem] font-medium">
-        {day.date ? dayDate(day.date) : t("Day {number, number}", { number: day.day })}
-      </span>
-      <span className="text-muted-foreground font-mono text-xs tabular-nums">
-        {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
-      </span>
-      <span className="text-muted-foreground col-start-2 col-end-4 pt-0.5 text-xs text-pretty">
-        {dayParts(day)}
+      <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
+        <span className="text-[0.8125rem] font-medium">
+          {day.date ? dayDate(day.date) : t("Day {number, number}", { number: day.day })}
+        </span>
+        <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
+          {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
+        </span>
+        <span className="text-muted-foreground basis-full pt-0.5 text-xs text-pretty">
+          {dayParts(day)}
+        </span>
       </span>
     </li>
   );

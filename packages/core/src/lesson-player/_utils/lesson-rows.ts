@@ -116,6 +116,7 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
           language: true,
           level: true,
           planItems: ownExplanationItems(userId),
+          sentenceOrdersAttempts: true,
           skills: {
             orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
             select: { skillId: true },

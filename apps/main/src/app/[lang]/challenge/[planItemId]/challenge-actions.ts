@@ -32,7 +32,6 @@ export async function startChallengeAction(
   | ChallengeDestination
   | Extract<StartChallengeResult, { status: "earlierFirst" }>
   | "blockFinished"
-  | "dailyLimitReached"
   | "notToday"
   | "plusRequired"
   | "questionsNeeded"
@@ -49,7 +48,6 @@ export async function startChallengeAction(
 
   if (
     result.status === "blockFinished" ||
-    result.status === "dailyLimitReached" ||
     result.status === "notToday" ||
     result.status === "plusRequired" ||
     result.status === "questionsNeeded"

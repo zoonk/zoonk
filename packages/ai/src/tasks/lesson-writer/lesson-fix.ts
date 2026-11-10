@@ -15,7 +15,8 @@ import {
 } from "./format-lesson-plan";
 import fixPrompt from "./lesson-fix.prompt.md";
 import { normalizeLessonMap } from "./lesson-map";
-import { getScreenCharacterLimit } from "./screen-length";
+import { WRITER_MODELS } from "./lesson-writer";
+import { getScreenCharacterTarget } from "./screen-length";
 import { fitWrittenBounds } from "./written-lesson-bounds";
 import {
   type WrittenLesson,
@@ -23,15 +24,6 @@ import {
   numberedScreenSchema,
   writtenLessonSchema,
 } from "./written-lesson-schema";
-
-/**
- * A fix rewrites a few flagged screens, so the cheapest model that fixes them leads: Luna fixed 4
- * of 5 cases and Terra all 5 (30 Oct 2026). Opus keeps another family in the chain; on the one case
- * that could be scored cleanly (3 Nov 2026) it fixed the flagged screen but left a 921-character
- * screen over the 750 limit, a new problem the next check catches.
- */
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"] as const;
 
 /**
  * Each fixed screen comes back as `LESSON` shows it, its number among its fields: with the screen
@@ -47,7 +39,7 @@ const fixOutput = schemaInPrompt(schema, { repair: fitWrittenBounds });
 export type FixLessonDraftParams = LessonWritingContext & {
   lesson: WrittenLesson;
   problems: LessonProblem[];
-  model?: string;
+  model: string;
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -89,25 +81,30 @@ function applyLessonFixes({
   };
 }
 
-/** Returns the indexes of the screens it changed, so callers can record which run wrote each. */
+/**
+ * The owner keeps the writer's own model as fixer: Luna broke the correct § 2º into § 1º.
+ * On the citation/term cases (8 Nov 2026), Luna scored 6 and 10 ($0.00189, 15.06s / $0.00238,
+ * 30.85s); Terra scored 10 on both ($0.01161, 3.55s / $0.01554, 19.06s); Opus scored 6 and 10
+ * ($0.08849, 9.65s / $0.12343, 16.75s): it kept § 2º but harmlessly filled another screen's
+ * empty basis. All three corrected the repeated term claim; Terra left the citation lesson intact.
+ * Returns changed screen indexes for provenance.
+ */
 export async function fixLessonDraft(params: FixLessonDraftParams) {
-  const {
-    analytics,
-    lesson,
-    model = defaultModel,
-    reasoning,
-    serviceTier,
-    useFallback = true,
-  } = params;
+  const { analytics, lesson, model, reasoning, serviceTier, useFallback = true } = params;
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+  const providerOptions = buildProviderOptions({
+    fallbackModels: WRITER_MODELS,
+    model,
+    serviceTier,
+    useFallback,
+  });
 
   const novice = readsNoviceRules(params);
 
   const rules = selectPromptVariants({
     template: fixPrompt,
     variants: { novice, shortAnswers: Boolean(params.shortAnswers) },
-  }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterLimit(params.language)));
+  }).replaceAll("{{SCREEN_CHARACTERS}}", String(getScreenCharacterTarget(params.language)));
 
   const systemPrompt = `${rules}\n\n${fixOutput.outputRules}`;
 

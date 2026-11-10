@@ -22,6 +22,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.practice.AnswerActions
 import com.zoonk.android.feature.practice.Draft
 import com.zoonk.android.feature.practice.RunAskButton
@@ -120,6 +121,7 @@ internal fun PracticeRun(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val saveReport = rememberSaveFailureReport(app, "mistake-practice")
     val run = state.run
     val ending = run.phase == RunPhase.Finishing
     val endsRun = state.answerIds.isNotEmpty() && !ending
@@ -153,6 +155,7 @@ internal fun PracticeRun(
                     draft,
                     viewModel,
                     ask = { RunAskButton(it, run, blockId = null, app, navigator) },
+                    onReportSaveFailure = saveReport::open,
                     notSureOnEvery = true,
                 )
             }

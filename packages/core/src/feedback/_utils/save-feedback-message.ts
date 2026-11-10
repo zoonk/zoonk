@@ -16,7 +16,7 @@ export async function saveFeedbackMessage({
   userId,
 }: {
   context: StoredFeedbackContext;
-  email: string;
+  email: string | null;
   message: string;
   subject?: string;
   userId: string | null;

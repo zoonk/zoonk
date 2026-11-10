@@ -32,13 +32,9 @@
   "settings_preferences_buddy_line": "2ee727f79b0792f73340137908425486db2ffaccb546148aec77b7803ff7e3fa",
   "settings_preferences_change": "1dbe883a6135e4678ea92ed25e9d8a0fedc4d84fad3d56f148fabe9ed7a6fbba",
   "settings_preferences_choose_buddy": "94d4e1dbab7da3f910304ed87614fc43f8d1ff6d59bceb6ecc7d914807d1feb8",
-  "settings_preferences_daily_limit": "e22795ae68b6e090525c70bf064b7857967af30b5a1c0f277b1089901971fd36",
-  "settings_preferences_daily_limit_description": "52122516e5e9e54f0849ebcd2f43390b64a2b086d6effd9a97e034f5a889e3f4",
   "settings_preferences_description": "39cf9482936c982717fcef609d24ad6cf95374cd1f19f2ed8d0981b652fa34b0",
   "settings_preferences_language": "d032543b70ff0a517ecea60d7bd3f839d7c0ca3104d8b81369aa4379eba0f076",
   "settings_preferences_lessons": "dcdcd9429f9761c7311c1a845bf51d46e121cee4021090f7ef4409d13b6e8912",
-  "settings_preferences_limit_a_day": "dc6ad2b31f76a865a1c823ee0542d85e5de96988189a74fa37aa2e5e369ea8b6",
-  "settings_preferences_no_limit": "0c7874e763098319adc77d2941949fc43fb882339e78138bf686fa55ddfadba6",
   "settings_preferences_on_this_device": "48433e73b7a6be59bdc8807419d47f12622bfbb7bc9ac7f3a795a770cdb359c3",
   "settings_preferences_save_failed": "028f556add08e82330210f50c5ccf3528accf4cb067731d7a3ab85455fcc35f9",
   "settings_preferences_share_usage_data": "5855c6e2a5782c6fb4517c81216d53bd97ed4715eec40c8ec90d10ae7a466045",
@@ -94,11 +90,6 @@
     <string name="settings_preferences_lessons">Leçons</string>
     <string name="settings_preferences_sounds">Sons</string>
     <string name="settings_preferences_sounds_description">Quand tu réponds correctement ou que tu termines</string>
-    <string name="settings_preferences_daily_limit">Limite de temps quotidienne</string>
-    <string name="settings_preferences_daily_limit_description">Arrête d’étudier pour la journée après cette durée.</string>
-    <string name="settings_preferences_no_limit">Sans limite</string>
-    <!-- %1$s is a duration, like "45 min". -->
-    <string name="settings_preferences_limit_a_day">%1$s par jour</string>
     <string name="settings_preferences_language">Langue</string>
     <string name="settings_preferences_app_language">Langue de l’application</string>
     <string name="settings_preferences_on_this_device">Sur cet appareil</string>

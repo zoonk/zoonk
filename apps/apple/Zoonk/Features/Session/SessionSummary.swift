@@ -74,6 +74,19 @@ struct SessionSummary: Decodable, Equatable, Sendable {
 }
 
 struct BlockMoment: Decodable, Hashable, Sendable {
+  struct Next: Decodable, Hashable, Sendable {
+    let block: StudyBlock
+    let target: StudyBlockOpeningTarget
+    let opensInPlayer: Bool
+  }
+  let blocks: [StudyBlock]
+  let deferredLessonsCount: Int
+  let minutes: StudyDay.Minutes
+  let sessionId: String
+  let goalId: String?
+  let finishedChapterId: String?
+  let next: Next?
+
   struct FullMeal: Decodable, Hashable, Sendable {
     let bonus: Int
     let paid: Bool

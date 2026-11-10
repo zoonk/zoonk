@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -12,7 +13,7 @@ import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
 import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
-import { isLanguageStep } from "./_utils/lesson-steps";
+import { getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { LessonResultNotes } from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
@@ -22,6 +23,7 @@ import { type LessonPlayerState } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { type ScreenTurn } from "./use-screen-turns";
+import { CHECK_BOUNDS } from "./use-step-grading";
 
 function NoticeLine({
   action,
@@ -118,6 +120,35 @@ function LessonNotice() {
   }
 }
 
+/** A check that names its own problem (no words heard, a limit) says it where the learner records. */
+function LessonCheckNote() {
+  const t = useExtracted();
+  const { state } = useLessonPlayer();
+  const isFailed = state.checkFailed && !state.checkIssue;
+
+  const isSlow = useTakingLong({
+    active: state.phase === "checking",
+    afterMs: CHECK_BOUNDS.slowMs,
+  });
+
+  if (!isFailed && !isSlow) {
+    return null;
+  }
+
+  return (
+    <PlayerContentFrame className="pb-6">
+      <p
+        className={cn("text-sm", isFailed ? "text-destructive-text" : "text-muted-foreground")}
+        role="status"
+      >
+        {isFailed
+          ? t("We couldn't check your answer this time. Try again.")
+          : t("Still checking. This is taking longer than usual.")}
+      </p>
+    </PlayerContentFrame>
+  );
+}
+
 const PICTURES_AHEAD = 2;
 
 const TURN_CLASS: Record<ScreenTurn, string> = {
@@ -187,6 +218,7 @@ export function LessonStage({
         />
       </LessonScreenFrame>
 
+      {isShown && <LessonCheckNote />}
       {isShown && !isLanguageStep(step) && <LessonCitation citation={step.citation} />}
 
       {isShown && state.phase === "feedback" && result && next && (
@@ -198,7 +230,7 @@ export function LessonStage({
               hyperdriveStreak={screen.hyperdriveStreak}
               next={next}
               result={result}
-              step={step}
+              step={getAnsweredStep({ answer: state.answers[step.id], step })}
             />
           )}
 

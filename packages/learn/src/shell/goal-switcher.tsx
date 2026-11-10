@@ -38,7 +38,7 @@ type SwitcherGoal = {
   status: "active" | "completed" | "paused";
   targetDate: string | null;
   targetLanguage: string | null;
-  title: string;
+  displayName: string;
 };
 
 const goalSwitches = { listeners: new Set<() => void>(), pending: 0 };
@@ -115,7 +115,7 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
     <DropdownMenuRadioItem className={GOAL_ROW_CLASS} closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
       <span className="flex min-w-0 flex-col">
-        <span>{goal.title}</span>
+        <span>{goal.displayName}</span>
         <GoalLine goal={goal} />
       </span>
     </DropdownMenuRadioItem>
@@ -131,7 +131,7 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
       <LineMarker aria-hidden="true">
         <LightbulbIcon className="text-muted-foreground size-4 shrink-0" />
       </LineMarker>
-      <span className="min-w-0">{goal.title}</span>
+      <span className="min-w-0">{goal.displayName}</span>
     </DropdownMenuItem>
   );
 }
@@ -219,7 +219,7 @@ export function GoalSwitcher({
       <DropdownMenuTrigger
         aria-busy={isPending}
         className={TRIGGER_CLASS[placement]}
-        title={selected?.title}
+        title={selected?.displayName}
       >
         {selected ? (
           <GoalMark goal={selected} />
@@ -227,7 +227,7 @@ export function GoalSwitcher({
           <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
         )}
         <span className="min-w-0 flex-1 truncate text-left">
-          {selected?.title ?? t("Start a goal")}
+          {selected?.displayName ?? t("Start a goal")}
         </span>
         {/* After the title, so the trigger's name starts with the words on screen. */}
         {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}

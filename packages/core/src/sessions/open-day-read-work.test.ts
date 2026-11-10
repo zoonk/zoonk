@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -79,51 +78,5 @@ describe("opening a day and reading it", () => {
     }
 
     expect(read.result.today.session).toStrictEqual(opened.session);
-  });
-
-  it("keeps the same display-limit day when a different owned goal crosses midnight", async () => {
-    const user = await userFixture();
-    const selected = await sessionGoalFixture({ goal: { timezone: "UTC" }, userId: user.id });
-
-    const other = await sessionGoalFixture({
-      goal: { timezone: "Pacific/Kiritimati" },
-      userId: user.id,
-    });
-
-    await learningProfileFixture({
-      activeGoalId: selected.goal.id,
-      dailyLimitMinutes: 30,
-      userId: user.id,
-    });
-
-    await prisma.dailyProgress.create({
-      data: {
-        date: new Date("2026-09-30T00:00:00Z"),
-        dayOfWeek: 3,
-        timeSpentSeconds: 1200,
-        userId: user.id,
-      },
-    });
-
-    mockSession(user.id);
-
-    const input = {
-      goalId: other.goal.id,
-      keepEmpty: true,
-      shownDate: "2026-10-01",
-      timeZone: "Pacific/Kiritimati",
-    };
-
-    const opened = await openStudyDay(input);
-    const read = await getTodayView(input);
-    expect(opened.status).toBe("opened");
-    expect(read.status).toBe("ready");
-
-    if (opened.status !== "opened" || read.status !== "ready") {
-      throw new Error("Expected the other goal's day to open and read");
-    }
-
-    expect(opened.session.dailyLimit).toStrictEqual(read.today.session.dailyLimit);
-    expect(opened.session.dailyLimit).toMatchObject({ remainingMinutes: 10, usedMinutes: 20 });
   });
 });

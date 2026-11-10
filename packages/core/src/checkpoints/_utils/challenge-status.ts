@@ -5,13 +5,11 @@ export function getChallengeStatus({
   due,
   itemStatus,
   plusRequired,
-  queued = false,
   todayBlockStatus,
 }: {
   due: boolean;
   itemStatus: PlanItem["status"];
   plusRequired: boolean;
-  queued?: boolean;
   todayBlockStatus: StudySessionBlock["status"] | null;
 }): ChallengeStatus {
   if (itemStatus !== "todo") {
@@ -32,10 +30,6 @@ export function getChallengeStatus({
 
   if (todayBlockStatus === "completed") {
     return "tried";
-  }
-
-  if (queued) {
-    return "queued";
   }
 
   return due ? "waiting" : "upcoming";

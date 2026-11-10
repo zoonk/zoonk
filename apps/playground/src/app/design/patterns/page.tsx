@@ -5,6 +5,7 @@ import { KindMark, kindFillClass } from "@zoonk/learn/kind-tile";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -77,29 +78,35 @@ function StatusSpecimen() {
         <ListRowLeading>
           <StatusMark status="done" />
         </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle className="text-muted-foreground">Quick review</ListRowTitle>
-        </ListRowContent>
-        <ListRowTrailing>2 min</ListRowTrailing>
+        <ListRowBody>
+          <ListRowContent>
+            <ListRowTitle className="text-muted-foreground">Quick review</ListRowTitle>
+          </ListRowContent>
+          <ListRowTrailing>2 min</ListRowTrailing>
+        </ListRowBody>
       </ListRow>
       <ListRow aria-current="step">
         <ListRowLeading>
           <StatusMark status="next" />
         </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>Writing very big and very small numbers</ListRowTitle>
-          <ListRowDescription>Exponents and scientific notation</ListRowDescription>
-        </ListRowContent>
-        <ListRowTrailing>5 min</ListRowTrailing>
+        <ListRowBody>
+          <ListRowContent>
+            <ListRowTitle>Writing very big and very small numbers</ListRowTitle>
+            <ListRowDescription>Exponents and scientific notation</ListRowDescription>
+          </ListRowContent>
+          <ListRowTrailing>5 min</ListRowTrailing>
+        </ListRowBody>
       </ListRow>
       <ListRow>
         <ListRowLeading>
           <StatusMark status="todo" />
         </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>Multiplying and dividing powers of ten</ListRowTitle>
-        </ListRowContent>
-        <ListRowTrailing>5 min</ListRowTrailing>
+        <ListRowBody>
+          <ListRowContent>
+            <ListRowTitle>Multiplying and dividing powers of ten</ListRowTitle>
+          </ListRowContent>
+          <ListRowTrailing>5 min</ListRowTrailing>
+        </ListRowBody>
       </ListRow>
     </ListGroup>
   );
@@ -120,10 +127,12 @@ function KindsSpecimen() {
           <ListRowLeading>
             <KindMark kind={kind} />
           </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle>{title}</ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing>{minutes}</ListRowTrailing>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{title}</ListRowTitle>
+            </ListRowContent>
+            <ListRowTrailing>{minutes}</ListRowTrailing>
+          </ListRowBody>
         </ListRow>
       ))}
     </ListGroup>

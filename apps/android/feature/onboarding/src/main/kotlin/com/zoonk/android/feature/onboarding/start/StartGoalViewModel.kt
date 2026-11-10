@@ -61,6 +61,7 @@ data class StartFlowState(
     val intent: MaterialIntent? = null,
     /** When the wait for the draft's read began on this device: its send, a Try again that starts it over or the screen opening on it. */
     val waitStartedAt: Long? = null,
+    val attemptId: String? = null,
 )
 
 enum class WaitlistOutcome { Joined, SignInRequired, Failed }
@@ -246,17 +247,33 @@ class StartGoalViewModel(
     ) {
         if (isSending) return
         isSending = true
-        analytics.track(AnalyticsEvent.GoalTyped(hasAttachment = flow.attached.isNotEmpty()))
+        val attempt = AnalyticsEvent.GoalTyped(hasAttachment = flow.attached.isNotEmpty())
+        analytics.track(attempt)
         draftId?.let(store::forgetSent)
         entryError = null
-        update { it.copy(screen = StartScreen.Sending(goal), waitStartedAt = System.currentTimeMillis()) }
+        update { it.copy(screen = StartScreen.Sending(goal), waitStartedAt = attempt.submittedAt, attemptId = attempt.attemptId) }
         viewModelScope.launch {
             val outcome = store.sendGoal(goal, language)
             isSending = false
             when (outcome) {
-                is WriteOutcome.Done -> showDraft(outcome.value)
-                WriteOutcome.Obsolete -> showEntry(goal)
-                else -> showEntry(goal, outcome.startError())
+                is WriteOutcome.Done -> {
+                    analytics.track(
+                        AnalyticsEvent.OnboardingProgressed(
+                            "attempt_linked",
+                            onboardingId = outcome.value.id.toString(),
+                            attemptId = attempt.attemptId,
+                        ),
+                    )
+                    showDraft(outcome.value)
+                }
+
+                WriteOutcome.Obsolete -> {
+                    showEntry(goal)
+                }
+
+                else -> {
+                    showEntry(goal, outcome.startError())
+                }
             }
         }
     }

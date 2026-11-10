@@ -1,18 +1,25 @@
-import { generateText } from "ai";
+import { generateText, streamText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import {
   type GenerateLessonQuestionAnswerParams,
   generateLessonQuestionAnswer,
+  streamLessonQuestionAnswer,
 } from "./lesson-question";
+import { type LessonScopeContext } from "./lesson-question-context";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor the learner." }));
+vi.mock("../tutor/learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
+vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor in {{LEARNER_LANGUAGE}}." }));
 
 vi.mock("./lesson-question-lesson.prompt.md", () => ({
   default:
     "{{#questionScreen}}Hint, never reveal.{{/questionScreen}}{{#teachingScreen}}Answer directly.{{/teachingScreen}}",
+}));
+
+vi.mock("./lesson-screen-rules.prompt.md", () => ({
+  default: "{{#guessScreen}}Hint until it's revealed.{{/guessScreen}}Weigh their reasoning.",
 }));
 
 vi.mock("./lesson-question-beyond.prompt.md", () => ({ default: "Beyond a lesson." }));
@@ -21,7 +28,7 @@ vi.mock("./lesson-question-mock.prompt.md", () => ({ default: "Mock rules." }));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
-  return { ...actual, generateText: vi.fn() };
+  return { ...actual, generateText: vi.fn(), streamText: vi.fn() };
 });
 
 type Snapshot = GenerateLessonQuestionAnswerParams["contextSnapshot"];
@@ -54,15 +61,14 @@ const MOCK = {
   version: 1,
 } satisfies Snapshot;
 
-function lessonSnapshot(kind: "answer" | "lesson" | "step", answerable = true): Snapshot {
-  const step = {
-    answerable,
-    content: {},
-    kind: "check",
-    sentence: null,
-    stepNumber: 1,
-    word: null,
-  };
+const CHECK_SCREEN = { content: {}, kind: "check" };
+
+function lessonSnapshot(
+  kind: "answer" | "lesson" | "step",
+  answerable = true,
+  screen: { content: object; kind: string } = CHECK_SCREEN,
+): LessonScopeContext {
+  const step = { answerable, ...screen, sentence: null, stepNumber: 1, word: null };
 
   return {
     answer: null,
@@ -97,25 +103,81 @@ describe(generateLessonQuestionAnswer, () => {
     });
   });
 
+  it("keeps needs out of the recorded prompt version", async () => {
+    const input = { contextSnapshot: lessonSnapshot("step"), priorTurns: [], question: "Why?" };
+    const ordinary = await generateLessonQuestionAnswer(input);
+
+    const personal = await generateLessonQuestionAnswer({
+      ...input,
+      learnerNeeds: { note: null, variants: ["adhd"] },
+    });
+
+    expect(personal.systemPrompt).not.toBe(ordinary.systemPrompt);
+    expect(personal.provenance.promptVersion).toBe(ordinary.provenance.promptVersion);
+  });
+
+  it("keeps needs out of the streamed answer's prompt version", async () => {
+    const result = createGenerateTextResult(null, "openai/gpt-6-luna");
+
+    vi.mocked(streamText).mockReturnValue({
+      finalStep: Promise.resolve(result.finalStep),
+      steps: Promise.resolve(result.steps),
+    } as never);
+
+    const input = { contextSnapshot: lessonSnapshot("step"), priorTurns: [], question: "Why?" };
+    const ordinary = streamLessonQuestionAnswer(input);
+
+    const personal = streamLessonQuestionAnswer({
+      ...input,
+      learnerNeeds: { note: null, variants: ["adhd"] },
+    });
+
+    const [first, second] = await Promise.all([ordinary.provenance, personal.provenance]);
+    expect(second.promptVersion).toBe(first.promptVersion);
+    const calls = vi.mocked(streamText).mock.calls;
+    expect(calls[0]?.[0].instructions).not.toBe(calls[1]?.[0].instructions);
+  });
+
   it("sends each scope only its own rules after the shared ones", async () => {
     await expect(getInstructions(lessonSnapshot("step"))).resolves.toBe(
-      "Tutor the learner.\nHint, never reveal.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
     );
 
     await expect(getInstructions(lessonSnapshot("answer"))).resolves.toBe(
-      "Tutor the learner.\nHint, never reveal.",
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
+    );
+
+    await expect(getInstructions(lessonSnapshot("lesson"))).resolves.toBe(
+      "Tutor in US English.\nHint, never reveal.\nWeigh their reasoning.",
     );
 
     await expect(getInstructions(lessonSnapshot("step", false))).resolves.toBe(
-      "Tutor the learner.\nAnswer directly.",
+      "Tutor in US English.\nAnswer directly.\nWeigh their reasoning.",
+    );
+
+    const guess = { content: { variant: "guess" }, kind: "hook" };
+
+    await expect(getInstructions(lessonSnapshot("step", false, guess))).resolves.toBe(
+      "Tutor in US English.\n\nHint until it's revealed.Weigh their reasoning.",
     );
 
     await expect(getInstructions(CHAPTER)).resolves.toBe(
-      "Tutor the learner.\nBeyond a lesson.\nChapter rules.",
+      "Tutor in US English.\nBeyond a lesson.\nChapter rules.",
     );
 
     await expect(getInstructions(MOCK)).resolves.toBe(
-      "Tutor the learner.\nBeyond a lesson.\nMock rules.",
+      "Tutor in US English.\nBeyond a lesson.\nMock rules.",
     );
+  });
+
+  it("names the course's language as the answer's", async () => {
+    const snapshot = lessonSnapshot("answer");
+
+    await expect(
+      getInstructions({
+        ...snapshot,
+        course: { ...snapshot.course, language: "pt", targetLanguage: "it", title: "Italiano" },
+      }),
+    ).resolves.toBe("Tutor in Português Brasileiro.\nHint, never reveal.\nWeigh their reasoning.");
   });
 });

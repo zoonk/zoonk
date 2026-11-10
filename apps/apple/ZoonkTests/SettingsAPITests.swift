@@ -5,17 +5,6 @@ import XCTest
 @testable import Zoonk
 
 final class SettingsAPITests: XCTestCase {
-  func testNoLimitSendsAnExplicitNull() async throws {
-    let transport = ProfileUpdateTransport()
-    let api = SettingsAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
-
-    let preferences = try await api.updatePreferences(token: "token", .dailyLimitMinutes(nil))
-
-    XCTAssertEqual(transport.sentBodies.value, [["dailyLimitMinutes": NSNull()]])
-    XCTAssertNil(preferences.dailyLimitMinutes)
-  }
 
   func testOtherChangesSendOnlyTheirOwnField() async throws {
     let transport = ProfileUpdateTransport()
@@ -23,13 +12,12 @@ final class SettingsAPITests: XCTestCase {
       clients: APIClientFactory(
         baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
 
-    _ = try await api.updatePreferences(token: "token", .dailyLimitMinutes(30))
     _ = try await api.updatePreferences(token: "token", .soundsEnabled(false))
     _ = try await api.updatePreferences(token: "token", .shareUsageData(false))
 
     XCTAssertEqual(
       transport.sentBodies.value,
-      [["dailyLimitMinutes": 30], ["soundsEnabled": false], ["shareUsageData": false]])
+      [["soundsEnabled": false], ["shareUsageData": false]])
   }
 
   func testNoWebPlusIsNotFound() async {
@@ -190,8 +178,6 @@ private struct ProfileUpdateTransport: ClientTransport {
             "activeGoalId": null,
             "availableGlasses": ["round"],
             "buddy": { "glasses": "round", "kind": "zu", "name": null, "picked": false },
-            "dailyLimitMinutes": null,
-            "dailyTimes": [5, 360, 390],
             "shareUsageData": null,
             "soundsEnabled": true
           }

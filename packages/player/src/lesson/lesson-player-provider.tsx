@@ -6,7 +6,7 @@ import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
 import { useEffectEvent, useLayoutEffect, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
-import { resumeLesson } from "./_utils/lesson-resume";
+import { addHeldAnswers, resumeLesson } from "./_utils/lesson-resume";
 import {
   LessonPlayerConfigContext,
   LessonPlayerRuntimeContext,
@@ -27,6 +27,7 @@ import { LessonTutor } from "./tutor/lesson-tutor";
 import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
 import { useExampleLines } from "./use-example-lines";
+import { useFirstSceneClock } from "./use-first-scene-clock";
 import { useLessonPlayerActions } from "./use-lesson-player-actions";
 import { usePreloadActivityCanvases } from "./use-preload-activity-canvases";
 import { CANT_WRITE_TODAY, isChosenToday } from "./use-today-choice";
@@ -92,6 +93,7 @@ export type LessonPlayerProviderProps = {
   children: React.ReactNode;
   /** Only a hook reveals `firstAnswer` immediately; graded screens still require Check. */
   firstAnswer?: LessonPlayerAnswer | string | null;
+  goalId?: string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
   onExit: () => void;
@@ -118,6 +120,7 @@ export function LessonPlayerProvider({
   challengeTeam = null,
   children,
   firstAnswer = null,
+  goalId = null,
   lesson,
   linkComponent,
   onExit,
@@ -137,11 +140,12 @@ export function LessonPlayerProvider({
   );
 
   const exampleLines = useExampleLines({ adapters, steps: lesson.steps });
+  useFirstSceneClock({ goalId, lessonId: lesson.id, state, track });
 
   const { actions, reopen } = useLessonPlayerActions({
     adapters,
     dispatch,
-    language: lesson.language,
+    lesson,
     state,
     track,
     writeExampleLines: exampleLines.write,
@@ -168,7 +172,7 @@ export function LessonPlayerProvider({
     }
 
     if (held.length > 0) {
-      dispatch({ answers: [...resume, ...held], type: "unsentPlaced" });
+      dispatch({ answers: addHeldAnswers(resume, held), type: "unsentPlaced" });
       return;
     }
 

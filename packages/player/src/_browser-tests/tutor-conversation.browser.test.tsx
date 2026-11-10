@@ -6,7 +6,7 @@ import {
   type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { type ReactNode, useState, useTransition } from "react";
+import { Activity, type ReactNode, useState, useTransition } from "react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { render } from "../_test-utils/render";
@@ -57,6 +57,7 @@ const OFFERED_CALL: TutorToolOffer = {
 };
 
 function renderConversation({
+  around = (conversation) => conversation,
   beside,
   draft,
   initialThread,
@@ -64,6 +65,7 @@ function renderConversation({
   onAsked,
   openBlock,
 }: {
+  around?: (conversation: ReactNode) => ReactNode;
   beside?: ReactNode;
   draft?: string;
   initialThread?: LessonQuestionThreadPage;
@@ -71,7 +73,7 @@ function renderConversation({
   onAsked?: () => void;
   openBlock?: (blockId: string) => Promise<boolean | "changed">;
 } = {}) {
-  render(
+  const conversation = (
     <TutorConversation
       composerLabel="Message Zu"
       draft={draft}
@@ -86,8 +88,10 @@ function renderConversation({
       renderToolOffer={(offer) => <p>Tool: {offer.kind}</p>}
       suggestions={[]}
       tutor={buildTutor(openBlock ? { appLinks: { openBlock } } : {})}
-    />,
+    />
   );
+
+  render(around(conversation));
 
   if (beside) {
     render(beside);
@@ -104,6 +108,28 @@ function AppNavigation() {
       Showing {shown}
     </button>
   );
+}
+
+/** Stands for the app's router, which keeps a page the learner left mounted but hidden. */
+function LeaveAndComeBack({ children }: { children: ReactNode }) {
+  const [here, setHere] = useState(true);
+
+  return (
+    <>
+      <button
+        onClick={() => setHere(!here)}
+        style={{ position: "fixed", top: 0, zIndex: 1 }}
+        type="button"
+      >
+        {here ? "Leave" : "Come back"}
+      </button>
+      <Activity mode={here ? "visible" : "hidden"}>{children}</Activity>
+    </>
+  );
+}
+
+function topOf(text: string) {
+  return page.getByText(text).element().getBoundingClientRect().top;
 }
 
 const BLOCK_ID = "01a11014-0000-7000-8000-00000000000b";
@@ -180,6 +206,30 @@ describe("the buddy's conversation", () => {
     });
 
     expect(api.requests.thread).toBe(0);
+  });
+
+  it("opens at the latest turn again when the learner comes back to the page", async () => {
+    const api = stubTutorApi({});
+    const longAnswer = `${TUTOR_ANSWER} `.repeat(30);
+
+    api.questions = [
+      "What is an orbit?",
+      "Why don't satellites fall?",
+      "What is escape velocity?",
+    ].map((question) => api.question({ answer: longAnswer, question, status: "completed" }));
+
+    renderConversation({
+      around: (conversation) => <LeaveAndComeBack>{conversation}</LeaveAndComeBack>,
+      initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
+    });
+
+    await expect.poll(() => topOf("What is escape velocity?")).toBeLessThan(window.innerHeight / 2);
+
+    await page.getByRole("button", { name: "Leave" }).click();
+    window.scrollTo({ top: 0 });
+    await page.getByRole("button", { name: "Come back" }).click();
+
+    await expect.poll(() => topOf("What is escape velocity?")).toBeLessThan(window.innerHeight / 2);
   });
 
   it("shows a proposed plan change with the words that say it, never alone under Thinking…", async () => {

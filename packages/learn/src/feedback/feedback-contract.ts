@@ -1,6 +1,9 @@
 import { type FeedbackContext, type FeedbackMessageInput } from "@zoonk/core/feedback/contract";
 
-export type FeedbackFormContext = Pick<FeedbackContext, "contentId" | "contentKind" | "screen">;
+export type FeedbackFormContext = Pick<
+  FeedbackContext,
+  "contentId" | "contentKind" | "reportType" | "screen"
+>;
 
 export type FeedbackFormRequest = { context: FeedbackFormContext; isReport: boolean };
 

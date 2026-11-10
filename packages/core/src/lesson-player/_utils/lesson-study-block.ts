@@ -3,6 +3,8 @@ import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { readFinishedChapter } from "../../mind-maps/finished-chapters";
+import { MAX_PACE_FACTOR, MIN_PACE_FACTOR } from "../../plans/planner/plan-pace";
+import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -12,9 +14,11 @@ import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
 import { oweDaySettlement } from "../../sessions/settle-owed-session-day";
 import { type LibraryLessonCompletion } from "../contract";
 
+const MS_PER_MINUTE = 60_000;
+
 export type RunCompletion = Omit<
   LibraryLessonCompletion,
-  "ceremony" | "certificates" | "finishedChapter" | "reached" | "studyBlock"
+  "ceremony" | "certificates" | "finishedChapter" | "planReveal" | "reached" | "studyBlock"
 >;
 
 export type LessonProgress = { brainPower: ProgressChange; energy: ProgressChange };
@@ -85,11 +89,31 @@ export async function completeRunBlock(
     tx.learningEvent.findUniqueOrThrow({ select: { contentIds: true }, where: { id: run.id } }),
   ]);
 
+  const payload = readBlockPayload(current);
+
+  const raw =
+    payload.timing?.recordedMs !== undefined && block.lessonId
+      ? await tx.lesson.findUnique({
+          select: { estimatedMinutes: true },
+          where: { id: block.lessonId },
+        })
+      : null;
+
+  const rawMinutes = raw?.estimatedMinutes || DEFAULT_LESSON_MINUTES;
+
+  const creditedMinutes =
+    payload.timing?.recordedMs === undefined
+      ? (block.estimatedMinutes ?? 0)
+      : Math.max(
+          rawMinutes * MIN_PACE_FACTOR,
+          Math.min(rawMinutes * MAX_PACE_FACTOR, payload.timing.recordedMs / MS_PER_MINUTE),
+        );
+
   await tx.studySessionBlock.update({
     data: {
       brainPower: brainPower.after - brainPower.before,
       completedAt: now,
-      payload: { ...readBlockPayload(current), milestoneReward: { bossWon: false, brainPower } },
+      payload: { ...payload, creditedMinutes, milestoneReward: { bossWon: false, brainPower } },
       status: "completed",
     },
     where: { id: block.id },
@@ -125,7 +149,7 @@ export async function withStudyBlock({
   runId: string;
   timeZone: string;
   userId: string;
-}): Promise<LibraryLessonCompletion> {
+}): Promise<Omit<LibraryLessonCompletion, "planReveal">> {
   const run = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
   const blockId = getString(run.contentIds, "studySessionBlockId");
 

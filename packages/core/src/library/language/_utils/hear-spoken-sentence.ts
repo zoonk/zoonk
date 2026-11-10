@@ -2,13 +2,18 @@ import "server-only";
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import {
   MAX_SPOKEN_ANSWER_DURATION_MS,
   MAX_SPOKEN_AUDIO_BYTES,
   isSpokenAudioMediaType,
 } from "../spoken-answer-contract";
-import { type SpokenAnswerMatch, matchSpokenAnswer } from "../spoken-answer-match";
+import {
+  type SpokenAnswerMatch,
+  hasTranscribedLetterNames,
+  matchSpokenAnswer,
+} from "../spoken-answer-match";
 import { readPlayedMs } from "./played-length";
 
 export type SpokenAudio = { bytes: Uint8Array; mediaType: string };
@@ -76,7 +81,8 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
 
 /**
  * Each check backs up the other, on another provider. It also covers a language the transcriber
- * refuses, such as Irish or Malagasy, which the word-by-word check hears.
+ * refuses, such as Irish or Malagasy, which the word-by-word check hears. A spelled-out word goes
+ * to the word-by-word check too, since only it hears which letter names were said.
  */
 export async function hearSpokenSentence({
   check = "fast",
@@ -87,10 +93,19 @@ export async function hearSpokenSentence({
       ? [transcribeAndCompare, assessWordByWord]
       : [assessWordByWord, transcribeAndCompare];
 
-  try {
-    return await first(input);
-  } catch (error) {
+  const { data: heard, error } = await safeAsync(() => first(input));
+
+  if (error) {
     logError(`The ${check} speech check failed; trying the other one`, error);
     return backup(input);
   }
+
+  if (
+    check === "fast" &&
+    hasTranscribedLetterNames({ language: input.language, words: heard.match.words })
+  ) {
+    return assessWordByWord(input);
+  }
+
+  return heard;
 }

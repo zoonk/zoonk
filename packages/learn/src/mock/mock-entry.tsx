@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { KindDot } from "../_components/kind-tile";
 import {
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -60,15 +61,17 @@ export function MockEntryRow({
       <ListRowLeading>
         <KindDot kind="mock" />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
-        <ListRowDescription>{description}</ListRowDescription>
-      </ListRowContent>
-      {view.access === "plusRequired" && (
-        <ListRowTrailing>
-          <PlusMark />
-        </ListRowTrailing>
-      )}
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
+          <ListRowDescription>{description}</ListRowDescription>
+        </ListRowContent>
+        {view.access === "plusRequired" && (
+          <ListRowTrailing>
+            <PlusMark />
+          </ListRowTrailing>
+        )}
+      </ListRowBody>
     </ListRowLink>
   );
 }

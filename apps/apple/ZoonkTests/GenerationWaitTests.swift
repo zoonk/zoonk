@@ -95,17 +95,17 @@ final class GenerationWaitTests: XCTestCase {
     let start = Date(timeIntervalSince1970: 1_000)
     var wait = GenerationWait(kind: .lesson).started
 
-    // The device's clock runs 30 seconds ahead; a replayed event arrives late, so the smallest gap
-    // is the clocks' difference.
-    wait.apply(
-      GenerationEvent(at: start, status: "started", step: "planLesson"),
-      receivedAt: start.addingTimeInterval(90))
-    wait.apply(
-      GenerationEvent(at: start.addingTimeInterval(52), status: "completed", step: "planLesson"),
-      receivedAt: start.addingTimeInterval(82))
-    wait.apply(
-      GenerationEvent(at: start.addingTimeInterval(55), status: "started", step: "writeLesson"),
-      receivedAt: start.addingTimeInterval(85))
+    // The device's clock runs 30 seconds ahead, as the stream's connection said; its replayed
+    // events arrive long after their times.
+    for event in [
+      GenerationEvent(at: start, status: "started", step: "planLesson", clockOffset: 30),
+      GenerationEvent(
+        at: start.addingTimeInterval(52), status: "completed", step: "planLesson", clockOffset: 30),
+      GenerationEvent(
+        at: start.addingTimeInterval(55), status: "started", step: "writeLesson", clockOffset: 30),
+    ] {
+      wait.apply(event, receivedAt: start.addingTimeInterval(120))
+    }
 
     let plan = wait.visiblePhases[0]
     let write = wait.visiblePhases[1]
@@ -144,11 +144,95 @@ final class GenerationWaitTests: XCTestCase {
       ])
   }
 
-  func testIgnoresStepsItDoesntKnow() {
+  func testLessonOneIsReadyOnceTheRunOrTheReadSaysSo() {
     var wait = GenerationWait(kind: .curriculum)
+    let writing = GenerationEvent(
+      lessonID: "lesson", lessonTitle: "Why birds sing at dawn", status: "started",
+      step: "writeFirstLesson")
+
+    wait.apply(writing)
+    XCTAssertEqual(wait.firstLesson?.isReady, false)
+
+    let ready = GenerationWait.FirstLesson(
+      id: "lesson", title: "Why birds sing at dawn", isReady: true)
+    XCTAssertEqual(wait.firstLesson(read: ready)?.isReady, true)
+
+    wait.apply(GenerationEvent(lessonID: "lesson", status: "completed", step: "firstLessonReady"))
+    // A reconnection replays the lesson being picked after it was ready.
+    wait.apply(writing)
+    XCTAssertEqual(wait.firstLesson?.isReady, true)
+    XCTAssertEqual(wait.firstLesson(read: ready)?.isDone, false)
+
+    // Finished, as only the read knows: the stream's replayed ready never offers it again.
+    var done = ready
+    done.isDone = true
+    XCTAssertEqual(wait.firstLesson(read: done)?.isDone, true)
+  }
+
+  /// A wait opened two minutes into its stage goes on from there, its steps replayed at once.
+  func testAWaitOpenedPartwayDriftsFromWhenItsStageStarted() {
+    let opened = Date()
+    var wait = GenerationWait(kind: .curriculum, since: opened).started
+
+    for event in [
+      GenerationEvent(
+        at: opened.addingTimeInterval(-130), status: "completed", step: "understandGoal",
+        clockOffset: 0),
+      GenerationEvent(
+        at: opened.addingTimeInterval(-120), status: "started", step: "buildSkillGraph",
+        clockOffset: 0),
+    ] {
+      wait.apply(event, receivedAt: opened)
+    }
+
+    XCTAssertGreaterThan(wait.shownShare(at: opened), wait.progress.share + 0.1)
+  }
+
+  func testIgnoresStepsItDoesntKnow() {
+    let fresh = GenerationWait(kind: .curriculum)
+    var wait = fresh
 
     wait.apply(GenerationEvent(status: "started", step: "somethingNew"))
 
-    XCTAssertEqual(wait, GenerationWait(kind: .curriculum))
+    XCTAssertEqual(wait, fresh)
   }
+  func testStoppedLessonOutranksReplayedWriting() {
+    var wait = GenerationWait(kind: .curriculum)
+    wait.apply(
+      GenerationEvent(
+        lessonID: "lesson", lessonTitle: "Dawn", status: "started", step: "writeFirstLesson"))
+    let stopped = GenerationWait.FirstLesson(
+      .init(id: "lesson", status: .stopped, title: "Dawn"))
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, true)
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isReady, false)
+  }
+
+  func testReadyFromEitherSourceOutranksStoppedAndANewerReadRecoversWriting() {
+    var wait = GenerationWait(kind: .curriculum)
+    wait.apply(
+      GenerationEvent(
+        lessonID: "lesson", lessonTitle: "Dawn", status: "started", step: "writeFirstLesson"))
+    let stopped = GenerationWait.FirstLesson(.init(id: "lesson", status: .stopped, title: "Dawn"))
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, true)
+    let writing = GenerationWait.FirstLesson(.init(id: "lesson", status: .writing, title: "Dawn"))
+    XCTAssertEqual(wait.firstLesson(read: writing)?.isStopped, false)
+    wait.apply(GenerationEvent(lessonID: "lesson", status: "completed", step: "firstLessonReady"))
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isReady, true)
+    XCTAssertEqual(wait.firstLesson(read: stopped)?.isStopped, false)
+  }
+
+  func testANewRunResetsThePreviousRunsStoppedRead() {
+    var wait = GenerationWait(kind: .curriculum)
+    wait.apply(
+      GenerationEvent(
+        lessonID: "lesson", lessonTitle: "Dawn", status: "started", step: "writeFirstLesson"))
+    let read = GenerationWait.FirstLesson(.init(id: "lesson", status: .stopped, title: "Dawn"))
+    XCTAssertEqual(
+      wait.firstLesson(read: read, readGenerationID: "old", generationID: "old")?.isStopped, true)
+    XCTAssertEqual(
+      wait.firstLesson(read: read, readGenerationID: "old", generationID: "new")?.isStopped, false)
+    XCTAssertEqual(
+      wait.firstLesson(read: read, readGenerationID: "new", generationID: "new")?.isStopped, true)
+  }
+
 }

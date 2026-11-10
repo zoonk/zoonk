@@ -48,8 +48,7 @@ fun rememberScreenWork(
         }
 
     LaunchedEffect(stepId, round) {
-        if (round > 0) {
-            val ended = workKey(stepId, round - 1)
+        (0 until round).map { workKey(stepId, it) }.forEach { ended ->
             listOf(ended, pageKey(ended, turn = true), pageKey(ended, turn = false)).forEach(holder::removeState)
         }
     }

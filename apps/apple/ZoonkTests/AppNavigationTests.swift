@@ -5,6 +5,12 @@ import XCTest
 @testable import Zoonk
 
 final class AppNavigationTests: XCTestCase {
+  func testIncompleteLessonOpeningsNeverBecomeStandaloneStarts() {
+    for query in ["block=", "goal=", "day=", "ref=", "goal=g&day=2026-11-07&ref=invalid"] {
+      XCTAssertNil(AppLink(url: URL(string: "https://www.zoonk.com/learn/l1?" + query)!))
+    }
+  }
+
   func testLinksToMainPagesOpenTheirRoutes() throws {
     let links: [(String, AppLink)] = [
       ("https://www.zoonk.com/today", .tab(.today)),
@@ -21,6 +27,10 @@ final class AppNavigationTests: XCTestCase {
       (
         "https://www.zoonk.com/learn/l1?session=s1",
         .route(.lesson(lessonId: "l1", sessionId: "s1"))
+      ),
+      (
+        "https://www.zoonk.com/learn/l1?session=s1&block=b1",
+        .route(.lesson(lessonId: "l1", sessionId: "s1", opening: .block("b1")))
       ),
       ("https://www.zoonk.com/learn/l1?session=", .route(.lesson(lessonId: "l1"))),
       ("https://www.zoonk.com/mistakes/practice?skill=k1", .route(.mistakePractice(skillId: "k1"))),

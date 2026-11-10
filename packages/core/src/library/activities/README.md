@@ -28,7 +28,7 @@ Formulas use the safe expression language in `expression/`: numbers, variables, 
 
 ## Validation
 
-`validateActivity(content)` runs before publishing and returns `{ ok: true, content }` or `{ ok: false, issues }`. Issue codes: `invalidSchema`, `labelTooLong`, `unknownTemplate`, `missingCheck`, `checkNotAllowed`, `missingInteraction` (nothing to move, order or find), `formulaFails`, `answerMismatch`, `missingDataSource`, `inconsistentFields` and `unknownAsset` (a base map that isn't in core's checked library, `base-maps.ts`). Messages say what to fix, for the writer's repair step.
+`validateActivity(content)` runs before publishing and returns `{ ok: true, content }` or `{ ok: false, issues }`. Issue codes: `invalidSchema`, `unknownTemplate`, `missingCheck`, `checkNotAllowed`, `missingInteraction` (nothing to move, order or find), `formulaFails`, `answerMismatch`, `missingDataSource`, `inconsistentFields` and `unknownAsset` (a base map that isn't in core's checked library, `base-maps.ts`). Messages say what to fix, for the writer's repair step.
 
 ## Code activities
 

@@ -2,7 +2,10 @@
   "modelId": "spacexai/grok-stt",
   "results": [
     {
-      "classification": { "expected": "said right", "predicted": "said right" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "said right"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"How much is the rent?\" and we heard \"How much is the rent?\". Expected flagged words []; flagged [].",
@@ -21,7 +24,9 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "en-rent-correct-1",
         "userInput": {
           "language": "en",
@@ -31,7 +36,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"How much is the hent?\" and we heard \"How much is the hint?\". Expected flagged words [\"rent?\"]; flagged [\"rent?\"].",
@@ -50,7 +58,11 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["rent?"] },
+        "expected": {
+          "flaggedWords": [
+            "rent?"
+          ]
+        },
         "id": "en-rent-hent-1",
         "userInput": {
           "language": "en",
@@ -60,7 +72,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"I live here since 2020.\" and we heard \"I live here since 2020.\". Expected flagged words [\"I've\",\"lived\"]; flagged [\"I've\",\"lived\"].",
@@ -79,7 +94,12 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["I've", "lived"] },
+        "expected": {
+          "flaggedWords": [
+            "I've",
+            "lived"
+          ]
+        },
         "id": "en-lived-live-1",
         "userInput": {
           "language": "en",
@@ -89,7 +109,10 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "said right" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "said right"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"Is the apartment still available?\" and we heard \"Is the apartment still available?\". Expected flagged words []; flagged [].",
@@ -108,7 +131,9 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "en-available-correct-1",
         "userInput": {
           "language": "en",
@@ -118,7 +143,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"Can I see apartment on Saturday?\" and we heard \"Can I see Apartment on Saturday?\". Expected flagged words [\"the\"]; flagged [\"the\"].",
@@ -137,7 +165,11 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["the"] },
+        "expected": {
+          "flaggedWords": [
+            "the"
+          ]
+        },
         "id": "en-missing-the-1",
         "userInput": {
           "language": "en",
@@ -147,7 +179,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"The sheep is very big\" and we heard \"The sheep is very big.\". Expected flagged words [\"ship\"]; flagged [\"ship\"].",
@@ -166,7 +201,11 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["ship"] },
+        "expected": {
+          "flaggedWords": [
+            "ship"
+          ]
+        },
         "id": "en-ship-sheep-1",
         "userInput": {
           "language": "en",
@@ -176,7 +215,10 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "said right" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "said right"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"I sink it's cheap\" and we heard \"I think it's cheap.\". Expected flagged words []; flagged [].",
@@ -195,7 +237,9 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "en-think-sink-1",
         "userInput": {
           "language": "en",
@@ -205,7 +249,10 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "said right" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "said right"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"O apartamento ainda está disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words []; flagged [].",
@@ -224,7 +271,9 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "pt-disponivel-correct-1",
         "userInput": {
           "language": "pt",
@@ -234,26 +283,33 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "said right"
+      },
       "steps": [
         {
-          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"].",
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words [\"está\"]; flagged [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"].",
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words [\"está\"]; flagged [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 2
         },
         {
-          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda estar disponível?\". Expected flagged words [\"está\"]; flagged [\"está\"].",
+          "conclusion": "The clip says \"O apartamento ainda estar disponível?\" and we heard \"O apartamento ainda está disponível?\". Expected flagged words [\"está\"]; flagged [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 2
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["está"] },
+        "expected": {
+          "flaggedWords": [
+            "está"
+          ]
+        },
         "id": "pt-estar-1",
         "userInput": {
           "language": "pt",
@@ -263,7 +319,10 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "mistake" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"Eu quero mas café\" and we heard \"Eu quero mas café.\". Expected flagged words []; flagged [\"mais\"].",
@@ -282,7 +341,9 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "pt-mais-mas-1",
         "userInput": {
           "language": "pt",
@@ -292,7 +353,10 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "said right" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "said right"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"¿Cuánto cuesta el alquiler?\" and we heard \"¿Cuánto cuesta el alquiler?\". Expected flagged words []; flagged [].",
@@ -311,7 +375,9 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "es-alquiler-correct-1",
         "userInput": {
           "language": "es",
@@ -321,7 +387,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"Tengo un pero\" and we heard \"Tengo un pero.\". Expected flagged words [\"perro\"]; flagged [\"perro\"].",
@@ -340,7 +409,11 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["perro"] },
+        "expected": {
+          "flaggedWords": [
+            "perro"
+          ]
+        },
         "id": "es-perro-pero-1",
         "userInput": {
           "language": "es",
@@ -350,7 +423,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"Quiero ver piso mañana\" and we heard \"Quiero ver piso mañana.\". Expected flagged words [\"el\"]; flagged [\"el\"].",
@@ -369,7 +445,11 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["el"] },
+        "expected": {
+          "flaggedWords": [
+            "el"
+          ]
+        },
         "id": "es-missing-el-1",
         "userInput": {
           "language": "es",
@@ -379,26 +459,101 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "mistake" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "said right"
+      },
       "steps": [
         {
-          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storshund Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" and we heard \"請問圖書館在哪裡？\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" and we heard \"請問圖書館在哪裡？\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" and we heard \"請問圖書館在哪裡？\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "flaggedWords": []
+        },
+        "id": "zh-library-correct-1",
+        "userInput": {
+          "language": "zh",
+          "spokenText": "请问，图书馆在哪里？",
+          "targetText": "请问，图书馆在哪里？"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
+      "steps": [
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "flaggedWords": [
+            "请问，图书馆在哪里？"
+          ]
+        },
+        "id": "zh-library-station-1",
+        "userInput": {
+          "language": "zh",
+          "spokenText": "请问，地铁站在哪里？",
+          "targetText": "请问，图书馆在哪里？"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "said right",
+        "predicted": "mistake"
+      },
+      "steps": [
+        {
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storch in Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
           "kind": "majorErrors",
           "score": 2
         },
         {
-          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storshund Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storch in Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
           "kind": "minorErrors",
           "score": 2
         },
         {
-          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storshund Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
+          "conclusion": "The clip says \"Cá bhfuil an stáisiún traenach?\" and we heard \"Cowell and Storch in Traunach.\". Expected flagged words []; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
           "kind": "potentialImprovements",
           "score": 2
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "ga-station-correct-1",
         "userInput": {
           "language": "ga",
@@ -408,7 +563,10 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
           "conclusion": "The clip says \"Cá bhfuil an siopa traenach?\" and we heard \"Kahwilun shopper trainer.\". Expected flagged words [\"stáisiún\"]; flagged [\"Cá\",\"bhfuil\",\"an\",\"stáisiún\",\"traenach?\"].",
@@ -427,7 +585,11 @@
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["stáisiún"] },
+        "expected": {
+          "flaggedWords": [
+            "stáisiún"
+          ]
+        },
         "id": "ga-station-shop-1",
         "userInput": {
           "language": "ga",
@@ -437,26 +599,31 @@
       }
     },
     {
-      "classification": { "expected": "said right", "predicted": "mistake" },
+      "classification": {
+        "expected": "said right",
+        "predicted": "mistake"
+      },
       "steps": [
         {
-          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Nigara as Afadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Negara as a Fadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
           "kind": "majorErrors",
           "score": 2
         },
         {
-          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Nigara as Afadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Negara as a Fadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
           "kind": "minorErrors",
           "score": 2
         },
         {
-          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Nigara as Afadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
+          "conclusion": "The clip says \"Aiza ny gara, azafady?\" and we heard \"Aiza Negara as a Fadi.\". Expected flagged words []; flagged [\"ny\",\"gara,\",\"azafady?\"].",
           "kind": "potentialImprovements",
           "score": 2
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": [] },
+        "expected": {
+          "flaggedWords": []
+        },
         "id": "mg-station-correct-1",
         "userInput": {
           "language": "mg",
@@ -466,26 +633,33 @@
       }
     },
     {
-      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "classification": {
+        "expected": "mistake",
+        "predicted": "mistake"
+      },
       "steps": [
         {
-          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"I Zani Zena, as a fadi.\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"Iza ni tsena, azafadi?\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"I Zani Zena, as a fadi.\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"Iza ni tsena, azafadi?\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"I Zani Zena, as a fadi.\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
+          "conclusion": "The clip says \"Aiza ny tsena, azafady?\" and we heard \"Iza ni tsena, azafadi?\". Expected flagged words [\"gara,\"]; flagged [\"Aiza\",\"ny\",\"gara,\",\"azafady?\"].",
           "kind": "potentialImprovements",
           "score": 7
         }
       ],
       "testCase": {
-        "expected": { "flaggedWords": ["gara,"] },
+        "expected": {
+          "flaggedWords": [
+            "gara,"
+          ]
+        },
         "id": "mg-station-market-1",
         "userInput": {
           "language": "mg",

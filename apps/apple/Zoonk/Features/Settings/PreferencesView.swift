@@ -57,27 +57,6 @@ struct PreferencesView: View {
               "When you get it right or finish", tableName: "Settings",
               comment: "When the lessons' sounds play"))
 
-          Picker(selection: dailyLimitBinding(preferences)) {
-            Text("No limit", tableName: "Settings", comment: "Daily time limit option: none")
-              .tag(Int?.none)
-
-            ForEach(preferences.dailyLimitChoices, id: \.self) { minutes in
-              Text(
-                "\(studyDuration(minutes: minutes)) a day",
-                tableName: "Settings",
-                comment: "Daily time limit option, as in “30 min a day”"
-              )
-              .tag(Int?.some(minutes))
-            }
-          } label: {
-            ListRow(
-              Text(
-                "Daily time limit", tableName: "Settings",
-                comment: "Setting that ends the day's study after a time"),
-              description: Text(
-                "Stop for the day after this much study.", tableName: "Settings",
-                comment: "Explains the daily time limit"))
-          }
         } header: {
           SectionTitle(
             Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons"))
@@ -181,30 +160,6 @@ struct PreferencesView: View {
       })
   }
 
-  private func dailyLimitBinding(_ preferences: LearningPreferences) -> Binding<Int?> {
-    Binding(
-      get: { preferences.dailyLimitMinutes },
-      set: { minutes in
-        Task {
-          await settings.updatePreferences(.dailyLimitMinutes(minutes))
-        }
-      })
-  }
-}
-
-struct ChangeLimitButton: View {
-  @Environment(AppRouter.self) private var router
-
-  var body: some View {
-    Button {
-      router.present(.account(.preferences))
-    } label: {
-      Text("Change limit", tableName: "Settings", comment: "Opens the daily time limit setting")
-        .typeWeight(.semibold)
-        .underline()
-    }
-    .buttonStyle(.borderless)
-  }
 }
 
 struct SettingsSaveError: View {

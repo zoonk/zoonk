@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_questions_title">About you</string>
+    <string name="profile_questions_description">What you tell us here shapes your examples and your buddy. Everything is optional.</string>
+    <string name="profile_questions_progress">About you · %1$d of %2$d</string>
+    <string name="profile_questions_skip_all">Skip all</string>
+    <string name="profile_questions_skip_all_label">Skip the rest of the questions about you</string>
+    <string name="profile_questions_never_ask">Don\'t ask me these again</string>
+    <string name="profile_questions_never_ask_help">You can still answer them anytime in Settings › About you.</string>
+    <string name="profile_questions_cap">Pick up to 3.</string>
+    <string name="profile_questions_work_title">What do you do now?</string>
+    <string name="profile_questions_work_description">We\'ll use situations from your day in your examples.</string>
+    <string name="profile_questions_job">Your job (optional)</string>
+    <string name="profile_questions_job_placeholder">E.g., software engineer, nurse</string>
+    <string name="profile_questions_earlier_answer">From your earlier answer</string>
+    <string name="profile_questions_prefer_not">I\'d rather not say</string>
+    <string name="profile_questions_tools_title">Which apps and tools do you use most?</string>
+    <string name="profile_questions_tools_description">Pick up to 3. We\'ll use them in your examples.</string>
+    <string name="profile_questions_tools_other">Others (optional)</string>
+    <string name="profile_questions_tools_placeholder">E.g., Photoshop, Python, SAP</string>
+    <string name="profile_questions_none">None of these</string>
+    <string name="profile_questions_studies_title">What have you studied?</string>
+    <string name="profile_questions_studies_description">Past or present, finished or not. It can be different from your work.</string>
+    <string name="profile_questions_nothing_to_add">Nothing to add</string>
+    <string name="profile_questions_subject">%1$s: course or subject (optional)</string>
+    <string name="profile_questions_which_field">Which field?</string>
+    <string name="profile_questions_subject_placeholder">E.g., journalism</string>
+    <string name="profile_questions_interest_description">Pick up to 3. We\'ll use them for examples in your lessons.</string>
+    <string name="profile_questions_watch_title">What do you like to watch?</string>
+    <string name="profile_questions_watch_favorites">Favorite shows, films, teams or channels (optional)</string>
+    <string name="profile_questions_watch_placeholder">E.g., Star Trek, Flamengo</string>
+    <string name="profile_questions_listen_title">What do you like to listen to?</string>
+    <string name="profile_questions_listen_favorites">Favorite artists or podcasts (optional)</string>
+    <string name="profile_questions_listen_placeholder">E.g., Coldplay, Radiolab</string>
+    <string name="profile_questions_play_title">What do you like to play?</string>
+    <string name="profile_questions_play_favorites">Favorite games (optional)</string>
+    <string name="profile_questions_play_placeholder">E.g., Catan, Valorant</string>
+    <string name="profile_questions_read_title">What do you like to read?</string>
+    <string name="profile_questions_read_favorites">Favorite books, writers or sites (optional)</string>
+    <string name="profile_questions_read_placeholder">E.g., Dune, The Economist</string>
+    <string name="profile_questions_activities_title">What do you like to do?</string>
+    <string name="profile_questions_activities_favorites">Anything else you\'re into? (optional)</string>
+    <string name="profile_questions_activities_placeholder">E.g., baking bread, cars, astronomy</string>
+    <string name="profile_questions_conditions_title">Do any of these apply to you?</string>
+    <string name="profile_questions_conditions_description">Optional. Nothing here is saved unless you choose to.</string>
+    <string name="profile_questions_conditions_next">Optional. We\'ll suggest what often helps on the next screen. Nothing here is saved unless you choose to.</string>
+    <string name="profile_questions_condition_note">What should we know?</string>
+    <string name="profile_questions_consent">Save this to my profile</string>
+    <string name="profile_questions_consent_help">Zoonk uses it to adapt to you, now and over time. It\'s never shared or used in lesson examples. Remove it anytime in Settings.</string>
+    <string name="profile_questions_support_title">What helps you learn?</string>
+    <string name="profile_questions_support_description">Pick anything that helps. No label or diagnosis needed.</string>
+    <string name="profile_questions_suggested">We checked what often helps with what you picked. Change anything you like.</string>
+    <string name="profile_questions_nothing_particular">Nothing in particular</string>
+    <string name="profile_questions_something_else">+ Something else that helps</string>
+    <string name="profile_questions_support_note">What helps you, in your words (optional)</string>
+    <string name="profile_questions_support_placeholder">E.g., I understand diagrams better than text</string>
+    <string name="profile_questions_support_note_help">We\'ll remember this for your buddy. You can delete it in Memory.</string>
+    <string name="profile_questions_lesson_ready">Lesson 1 is ready.</string>
+    <string name="profile_questions_start_lesson">Start lesson 1</string>
+    <string name="profile_questions_save_start_lesson">Save and start lesson 1</string>
+    <string name="profile_questions_your_day">Your day</string>
+    <string name="profile_questions_for_fun">For fun</string>
+    <string name="profile_questions_how_learn">How you learn</string>
+    <string name="profile_questions_row_work">What you do now</string>
+    <string name="profile_questions_row_tools">Apps and tools</string>
+    <string name="profile_questions_row_studies">What you\'ve studied</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
+    <string name="profile_questions_row_watch">Watch</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
+    <string name="profile_questions_row_listen">Listen</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">Play</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
+    <string name="profile_questions_row_read">Read</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
+    <string name="profile_questions_row_activities">Do</string>
+    <string name="profile_questions_row_conditions">Conditions</string>
+    <string name="profile_questions_row_support">What helps you learn</string>
+    <string name="profile_questions_not_answered">Not answered</string>
+    <string name="profile_questions_not_shared">Not shared</string>
+    <string name="profile_questions_add">Add</string>
+    <plurals name="profile_questions_conditions_saved">
+        <item quantity="one">%1$d saved</item>
+        <item quantity="other">%1$d saved</item>
+    </plurals>
+    <string name="profile_questions_memory_off">Memory is off, so Zoonk isn\'t using your day or what you do for fun. Turn it on in Memory to change them.</string>
+    <string name="profile_questions_you_told_us">You told us</string>
+</resources>

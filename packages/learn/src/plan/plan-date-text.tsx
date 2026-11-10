@@ -15,7 +15,8 @@ const STYLE_OPTIONS: Record<PlanDateStyle, DateTimeFormatOptions> = {
   monthYear: { month: "short", year: "numeric" },
 };
 
-const PLAN_DATE_CLASS = "font-mono tabular-nums whitespace-nowrap";
+/** Kept whole on its line, unless it's wider than the whole line. */
+const PLAN_DATE_CLASS = "inline-block font-mono tabular-nums";
 
 export function useFormatPlanDate() {
   const format = useFormatter();

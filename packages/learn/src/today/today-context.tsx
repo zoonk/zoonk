@@ -44,7 +44,6 @@ export type TodayActions = {
    */
   continueHref: string | null;
   continueSession: () => Promise<boolean>;
-  dailyLimitHref: string;
   /**
    * Resolves to the change as it stands after the answer, `stale` when it was out of date (Today
    * reads itself again), or null when it wasn't saved.
@@ -55,6 +54,7 @@ export type TodayActions = {
     surface?: PlanChangeDecisionInput["surface"];
   }) => Promise<PlanChangeView | "stale" | null>;
   /** The standalone player for a lesson finished today, never its block in the session. */
+  lessonHref: (block: DayStep) => string | null;
   lessonAgainHref: (lessonId: string) => string;
   missionLinks: MissionLinks;
   openBlock: (step: DayStep) => Promise<boolean>;

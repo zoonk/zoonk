@@ -541,6 +541,41 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
+  test("renames a goal without changing its internal summary or plan", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "goal-rename",
+    });
+
+    const { goal, plan } = await createPlannedGoal(user.id);
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    const renamed = await readBody({
+      response: await apiContext.patch(`/v1/goals/${goal.id}`, {
+        data: { displayName: "  My markets  " },
+      }),
+      schema: goalUpdateResponseSchema,
+    });
+
+    expect(renamed).toMatchObject({
+      change: null,
+      goal: { displayName: "My markets", title: goal.title },
+    });
+
+    const blank = await apiContext.patch(`/v1/goals/${goal.id}`, { data: { displayName: "  " } });
+    expect(blank.status()).toBe(400);
+
+    await expect(
+      readBody({ response: await apiContext.get(`/v1/goals/${goal.id}`), schema: goalSchema }),
+    ).resolves.toMatchObject({ displayName: "My markets", title: goal.title });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toEqual(
+      before,
+    );
+
+    await apiContext.dispose();
+  });
+
   test("updates a goal's time, which re-plans, and hides other learners' goals", async () => {
     const [{ apiContext, user }, stranger] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "goals-update" }),

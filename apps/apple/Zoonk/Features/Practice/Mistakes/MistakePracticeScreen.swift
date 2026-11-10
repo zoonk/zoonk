@@ -16,6 +16,7 @@ struct MistakePracticeScreen: View {
   @State private var labels = PracticeTrueFalseLabels.trueFalse
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
+  @State private var showsSaveReport = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
   @State private var pressedWithFocus: PracticeFocus?
@@ -58,6 +59,10 @@ struct MistakePracticeScreen: View {
     ) {
       await read()
     }
+    .feedbackSheet(
+      isPresented: $showsSaveReport,
+      context: FeedbackContext(screen: "mistake-practice", reportType: .saveFailure), isReport: true
+    )
   }
 
   @ViewBuilder
@@ -94,12 +99,15 @@ struct MistakePracticeScreen: View {
     if state.phase == .idea, let lesson = drill.lesson {
       DrillIdeaView(drill: drill, lesson: lesson)
     } else {
-      if !drill.isIdeaFirst || !step.isFirstOfEntry {
+      let lastAnswer =
+        step.isMistakeQuestion
+        ? TrueFalseWords.savedAnswer(step.entry.snapshotAnswer, labels: labels) : nil
+
+      if drill.isIdeaFirst ? lastAnswer != nil : step.isFirstOfEntry {
         DrillNoteView(
           drill: drill,
-          lastAnswer: step.isMistakeQuestion
-            ? TrueFalseWords.savedAnswer(step.entry.snapshotAnswer, labels: labels) : nil,
-          isAnswered: graded != nil)
+          lastAnswer: lastAnswer,
+          isAnswered: graded != nil || drill.isIdeaFirst)
       }
 
       if let seconds = drill.timeLimitSeconds, state.phase == .answering {
@@ -172,7 +180,6 @@ struct MistakePracticeScreen: View {
           answer: $0.answer, correctAnswer: $0.grade.correctAnswer, isCorrect: $0.grade.isCorrect)
       },
       isLocked: !state.acceptsAnswer,
-      hidesAnswers: state.phase == .reading,
       askedIn: "mistake:\(step.entry.mistakeId)",
       draft: $draft)
   }
@@ -190,17 +197,6 @@ struct MistakePracticeScreen: View {
         shownAt = .now
         state.start()
       }
-    case .reading:
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "I've read it. Show the answers", table: "Practice",
-          comment: "Shows a misread drill's answers once the question was read."),
-        icon: .reveal
-      ) {
-        if focuses.has(.reveal) { focuses.move(to: .answer) }
-        state.reveal()
-      }
-      .practiceFocus(.reveal)
     case .feedback(_, let grade, _):
       PracticeActionRow {
         PracticeMainButton(
@@ -215,7 +211,9 @@ struct MistakePracticeScreen: View {
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed(let sent) = state.phase {
-        PracticeSaveError { Task { await send(sent) } }
+        PracticeSaveError(
+          failures: state.saveFailures, onReport: { showsSaveReport = true },
+          retry: { Task { await send(sent) } })
       }
 
       PracticeActionRow {

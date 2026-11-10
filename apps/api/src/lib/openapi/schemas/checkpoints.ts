@@ -1,6 +1,7 @@
 import { CHALLENGE_STATUSES, type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { BuddyGlasses } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -11,11 +12,7 @@ import {
   checkpointPhaseSchema,
 } from "./checkpoint-evidence";
 import { mockLeftOutSchema } from "./mock-left-out";
-import {
-  logicalDateSchema,
-  studyBlockDetailResponseSchema,
-  studyBlockSchema,
-} from "./study-sessions";
+import { logicalDateSchema, studyBlockDetailResponseSchema } from "./study-sessions";
 import { mockWrittenPartsSchema } from "./weekly-challenge";
 
 const unknownSizeSchema = z.int().min(0).nullable();
@@ -144,13 +141,12 @@ export const challengeResponseSchema = z
       .meta({
         description: '"Move to Monday": the weekly challenge before it starts, from today on',
       }),
-    dailyLimitReached: z
-      .boolean()
+    date: logicalDateSchema
+      .nullable()
       .meta({
         description:
-          "Today's study time is used up under the learner's daily limit, so a `ready` challenge can't start today: starting it is refused with `DAILY_LIMIT_REACHED`. False for every other status, and while `waitReason` says what comes first. A phase challenge is back on `nextStudyDate`, the first day within a week the plan's next run can put it on (say tomorrow when it's the day after `today`, else name the day; null: say the next session). `nextStudyDate` is null for an exam goal's phase challenges, whose day the plan's next run picks away from the exam's eve and its mock days, and for the weekly challenge, which doesn't come back on its own once its day is over: offer Move to Monday to keep it when `canMove`",
+          "A reached phase challenge's next capable day when it is upcoming, from the same estimate the Plan shows. Null before its preceding lessons finish or when today's day holds it. Weekly challenges and mocks keep their real calendar date.",
       }),
-    date: logicalDateSchema.nullable().meta({ description: "The day it's planned for" }),
     estimatedMinutes: unknownSizeSchema.meta({
       description:
         "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. Display minutes as the canonical mock duration, the real time limit funded by the plan.",
@@ -177,7 +173,6 @@ export const challengeResponseSchema = z
     }),
     mock: z.boolean().meta({ description: "An exam's weekly mock, in the exam's conditions" }),
     netScored: z.boolean().meta({ description: "Wrong answers cost points (see `wrongPenalty`)" }),
-    nextStudyDate: logicalDateSchema.nullable().meta({ description: "See `dailyLimitReached`" }),
     number: z.number().int().min(1).nullable().meta({ description: '"Mock exam 3"' }),
     passMark: unknownSizeSchema.meta({
       description:
@@ -226,7 +221,7 @@ export const challengeResponseSchema = z
       .enum(CHALLENGE_STATUSES)
       .meta({
         description:
-          "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it: the next one has it); queued (a phase challenge whose lessons are done, after one still to win: it comes in the session after that one is won)",
+          "upcoming before its preceding lessons finish, while a reached phase challenge with an established offer waits for a day with room, or before a weekly challenge or mock's calendar date; ready or started when offered; tried after a loss today; done once won; plusRequired while locked; waiting when reached but its offer is not yet established, or while its goal is paused. queued is retained for older clients and is never returned",
       }),
     timeZone: z.string().nullable(),
     title: z.string(),
@@ -247,7 +242,7 @@ export const challengeResponseSchema = z
       }),
     waitReason: studyBlockSchema.shape.waitReason.meta({
       description:
-        "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) or an earlier phase challenge (`challenge`) are still pending or active. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+        "Why it waits in today's day, the saved session or, before Start builds it, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
     }),
     written: mockWrittenPartsSchema,
     wrongPenalty: z

@@ -38,7 +38,7 @@ struct CompletedLessonsScreen: View {
     case .loaded(let page):
       ZoonkList {
         Section {
-          PageHeader(title, eyebrow: Text(goal.title))
+          PageHeader(title, eyebrow: Text(goal.displayName))
         }
 
         ForEach(days(page.lessons)) { day in

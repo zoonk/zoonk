@@ -43,7 +43,7 @@ Never the exam's own facts (dates, fees, number of questions, scoring, cutoffs, 
   - Wrong answers are what a beginner might really believe (a common belief, a near miss), never silly, and none is also true or partly true.
   - Each option stands alone: never "both", "all of the above" or "none of these".
   - The app shuffles them, so their order doesn't matter.
-- `reveal`: 1 or 2 sentences, at most about 220 characters. It starts with the answer, then gives the why or the surprising detail, and never repeats the question. Every learner reads the same reveal, so it never says whether they guessed right.
+- `reveal`: 1 or 2 sentences, aiming for 220 characters or fewer. It starts with the answer, then gives the why or the surprising detail, and never repeats the question. Every learner reads the same reveal, so it never says whether they guessed right.
 
 A good card makes the learner think "oh, really?": the obvious guess is wrong, or the reason is a surprise. A card that gives its answer away teaches nothing: the question never contains the right answer's key word, and the right option isn't the only one that sounds technical or exact.
 

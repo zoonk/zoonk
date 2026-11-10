@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   checkDayOneHasSession,
+  checkDayOneLessonShare,
   checkDayOneOpensWithGaps,
   checkMocksInEveryPhase,
 } from "./day-rules";
@@ -174,5 +175,46 @@ describe("R24 every exam phase has mocks", () => {
     expect(checkMocksInEveryPhase(ruleContext({ after }))).toMatchObject([
       { details: { studyDays: 4 }, rule: "R24" },
     ]);
+  });
+});
+
+const firstDayFacts = (practice: number) => ({
+  minutes: 240,
+  parts: { checkpoint: 0, practice, unwritten: 240 - practice, written: 0 },
+  schemaVersion: 1,
+  skillIds: [],
+});
+
+describe("R46 the first open day holds no practice share", () => {
+  it("flags a first-day allocation that gives practice forty percent of its time", () => {
+    const after = rulePlan({
+      goal: { kind: "exam" },
+      items: [ruleLesson({ day: 0, facts: firstDayFacts(96), skillId: "texto" })],
+      skills,
+    });
+
+    expect(checkDayOneLessonShare(ruleContext({ after, event: created }))).toMatchObject([
+      { details: { practice: 96 }, rule: "R46" },
+    ]);
+  });
+
+  it("allows a full lesson allocation and preserves a closed final stretch", () => {
+    const after = rulePlan({
+      items: [ruleLesson({ day: 0, facts: firstDayFacts(0), skillId: "texto" })],
+      skills,
+    });
+
+    expect(checkDayOneLessonShare(ruleContext({ after, event: created }))).toStrictEqual([]);
+
+    const closed = rulePlan({
+      goal: { kind: "exam", targetDate: ruleDay(1) },
+      items: [ruleLesson({ day: 0, facts: firstDayFacts(96), skillId: "texto" })],
+      phases: [rulePhase({ end: 0, kind: "finalStretch", start: 0 })],
+      skills,
+    });
+
+    expect(checkDayOneLessonShare(ruleContext({ after: closed, event: created }))).toStrictEqual(
+      [],
+    );
   });
 });

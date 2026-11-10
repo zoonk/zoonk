@@ -20,6 +20,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
           dayEndsAt: DAY_ENDS_AT,
           lessonsComing: false,
           localDate: LOCAL_DATE,
+          minutes: { dailyGoal: 20, done: 0, left: 20, planned: 20 },
           nextPosition: 0,
           sessionBar: { completed: 0, total: 2 },
         },

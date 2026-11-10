@@ -4,20 +4,11 @@ struct LearningPreferences: Equatable, Sendable {
   var buddy: BuddyChoice
   var buddyPicked: Bool
   var availableGlasses: [BuddyGlasses]
-  var dailyLimitMinutes: Int?
-  /// Core's daily times for the limit's picker.
-  let dailyTimes: [Int]
   var soundsEnabled: Bool
-
-  /// A saved limit the list lacks, such as one set on the web, shows as itself.
-  var dailyLimitChoices: [Int] {
-    ScheduleTime.dailyTimes(dailyTimes, with: dailyLimitMinutes)
-  }
 }
 
 enum PreferencesUpdate: Equatable, Sendable {
   case buddy(BuddyChoice)
-  case dailyLimitMinutes(Int?)
   /// The summary shows it, so it changes nothing here.
   case shareUsageData(Bool)
   case soundsEnabled(Bool)
@@ -29,8 +20,6 @@ enum PreferencesUpdate: Equatable, Sendable {
     case .buddy(let buddy):
       next.buddy = buddy
       next.buddyPicked = true
-    case .dailyLimitMinutes(let minutes):
-      next.dailyLimitMinutes = minutes
     case .shareUsageData:
       break
     case .soundsEnabled(let enabled):
@@ -50,8 +39,6 @@ enum PreferencesUpdate: Equatable, Sendable {
     case .buddy:
       next.buddy = source.buddy
       next.buddyPicked = source.buddyPicked
-    case .dailyLimitMinutes:
-      next.dailyLimitMinutes = source.dailyLimitMinutes
     case .shareUsageData:
       break
     case .soundsEnabled:
@@ -59,11 +46,6 @@ enum PreferencesUpdate: Equatable, Sendable {
     }
 
     return next
-  }
-
-  /// "No limit" clears the daily limit, which the generated body would leave out.
-  var nullKeys: [String] {
-    self == .dailyLimitMinutes(nil) ? ["dailyLimitMinutes"] : []
   }
 
   var body: Components.Schemas.LearningProfileUpdate {
@@ -75,8 +57,6 @@ enum PreferencesUpdate: Equatable, Sendable {
             glasses: .init(rawValue: buddy.glasses.rawValue),
             kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
             name: buddy.name)))
-    case .dailyLimitMinutes(let minutes):
-      .init(dailyLimitMinutes: minutes)
     case .shareUsageData(let shares):
       .init(shareUsageData: shares)
     case .soundsEnabled(let enabled):
@@ -128,6 +108,8 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   let category: Category
   let source: Source
   let createdAt: Date
+  /// The About you question this fact answers, which is where it's changed.
+  var profileQuestion: ProfileQuestion?
 }
 
 /// What a free account can do; nil means no cap.
@@ -162,8 +144,6 @@ extension LearningPreferences {
         glasses: BuddyGlasses(rawValue: profile.buddy.glasses.rawValue) ?? .round),
       buddyPicked: profile.buddy.picked,
       availableGlasses: profile.availableGlasses.compactMap { BuddyGlasses(rawValue: $0.rawValue) },
-      dailyLimitMinutes: profile.dailyLimitMinutes,
-      dailyTimes: profile.dailyTimes,
       soundsEnabled: profile.soundsEnabled)
   }
 }
@@ -177,7 +157,7 @@ extension MemoryFact {
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding
       case (_, .session): .session
-      case (_, nil): .told
+      case (_, .profile), (_, nil): .told
       }
 
     self.init(
@@ -185,7 +165,9 @@ extension MemoryFact {
       statement: fact.statement,
       category: Category(rawValue: fact.category.rawValue) ?? .context,
       source: source,
-      createdAt: fact.createdAt)
+      createdAt: fact.createdAt,
+      profileQuestion: fact.source?.value1.kind == .profile
+        ? fact.source?.value1.id.flatMap(ProfileQuestion.init(rawValue:)) : nil)
   }
 }
 

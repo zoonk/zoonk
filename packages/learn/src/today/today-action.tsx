@@ -113,6 +113,7 @@ function ContinueLink({ href }: { href: string }) {
       aria-describedby={NEXT_TITLE_ID}
       className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
       href={href}
+      lessonWritten={href.startsWith("/learn/")}
       ref={ref}
     >
       <BusyContent icon={<PlayIcon aria-hidden="true" />}>

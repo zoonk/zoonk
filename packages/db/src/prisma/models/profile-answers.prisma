@@ -1,0 +1,66 @@
+enum ProfileQuestion {
+  work
+  tools
+  studies
+  watch
+  listen
+  play
+  read
+  activities
+  conditions
+  learningSupport @map("learning_support")
+}
+
+enum ProfileAnswerOutcome {
+  answered
+  declined
+}
+
+enum LearningNeed {
+  stepByStep @map("step_by_step")
+  plainWords @map("plain_words")
+  shortAnswers @map("short_answers")
+  examplesFirst @map("examples_first")
+  shorterDays @map("shorter_days")
+}
+
+enum LearnerConditionKind {
+  adhd
+  autism
+  dyslexia
+  dyscalculia
+  blindOrLowVision @map("blind_or_low_vision")
+  colorBlind @map("color_blind")
+  deafOrHardOfHearing @map("deaf_or_hard_of_hearing")
+  speech
+  motor
+  anxiety
+  other
+}
+
+/// Records the version answered or declined; the answer lives in memory, conditions or needs.
+model ProfileAnswer {
+  id String @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question ProfileQuestion
+  version Int
+  outcome ProfileAnswerOutcome
+  answeredAt DateTime @map("answered_at")
+
+  @@unique([userId, question])
+  @@map("profile_answers")
+}
+
+/// Consent-only health data, excluded from ordinary learning-profile reads.
+model LearnerCondition {
+  id String @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  condition LearnerConditionKind
+  note String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, condition])
+  @@map("learner_conditions")
+}

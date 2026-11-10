@@ -22,9 +22,10 @@ import {
   type PlanChangeSource,
   toPlanChangePayload,
 } from "./plan-change-payload";
-import { type PlanContext, getStateTargetDate } from "./plan-context";
+import { type PlanContext } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
 import { getPlanPreviewBasis } from "./plan-preview-basis";
+import { getGoalUpdate } from "./plan-unchanged";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { replaceWaitingProposals } from "./replace-waiting-proposals";
 import { type ComputedChange, type PlanChangeRecord, revalidatePlanTags } from "./replan";
@@ -131,10 +132,11 @@ async function savePlanState({
     write: async (tx) => {
       await markPlanWrite(tx, context.plan);
 
-      await tx.goal.update({
-        data: { dailyMinutes: state.goal.dailyMinutes, targetDate: getStateTargetDate(state) },
-        where: { id: context.goal.id },
-      });
+      const goalUpdate = getGoalUpdate({ context, state });
+
+      if (goalUpdate) {
+        await tx.goal.update({ data: goalUpdate, where: { id: context.goal.id } });
+      }
 
       await tx.plan.update({ data: { settings: state.settings }, where: { id: context.plan.id } });
 

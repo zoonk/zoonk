@@ -42,6 +42,9 @@ function makeSentence(overrides: Partial<SentenceInput> = {}): SentenceInput {
     distractors: [],
     explanation: null,
     id: "1",
+    ordersPending: false,
+    otherSentenceOrders: [],
+    otherTranslationOrders: [],
     romanization: null,
     sentence: "sentence",
     translation: "translation",
@@ -227,6 +230,31 @@ describe(serializeExerciseSteps, () => {
     expect(result[0]?.word?.distractors).toStrictEqual(["boa tarde", "bom dia"]);
     expect(result[1]?.sentence?.distractors).toStrictEqual(["Abend", "Fenster"]);
     expect(result[1]?.sentence?.translationDistractors).toStrictEqual(["tchau", "logo"]);
+  });
+
+  it("serializes other orders using the segmenter of each screen", () => {
+    const [step] = serialize({
+      steps: [
+        makeStep({
+          content: {},
+          kind: "reading",
+          sentence: makeSentence({
+            otherSentenceOrders: ["The bus arrived yesterday."],
+            otherTranslationOrders: ["昨日は紅茶を飲みました。"],
+            sentence: "Yesterday the bus arrived.",
+            translation: "紅茶を昨日は飲みました。",
+          }),
+        }),
+      ],
+    });
+
+    expect(step?.sentence?.otherSentenceOrders).toStrictEqual([
+      ["The", "bus", "arrived", "yesterday."],
+    ]);
+
+    expect(step?.sentence?.otherTranslationOrders).toStrictEqual([
+      ["昨日は", "紅茶を", "飲みました。"],
+    ]);
   });
 
   it("builds translation options from stored distractors and hydrated metadata", () => {

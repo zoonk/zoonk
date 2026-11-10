@@ -1,10 +1,12 @@
 "use client";
 
+import { type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowTitle,
@@ -20,9 +22,27 @@ import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { SheetSections, hasSeveralSections } from "./mock-sheet-sections";
 
-export function MockBreak({ until }: { until: string }) {
+function NextSectionRow({ section }: { section: MockSectionView }) {
   const t = useExtracted();
   const duration = useFormatDuration();
+
+  return (
+    <ListRow>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>
+            {section.name ? t("Next: {name}", { name: section.name }) : t("Next section")}
+          </ListRowTitle>
+          {section.tools && <ListRowDescription>{section.tools}</ListRowDescription>}
+        </ListRowContent>
+        <ListRowTrailing>{duration(section.minutes)}</ListRowTrailing>
+      </ListRowBody>
+    </ListRow>
+  );
+}
+
+export function MockBreak({ until }: { until: string }) {
+  const t = useExtracted();
   const { runner } = useMockScreen();
   // When the break ends, its clock already started the next section on the server; this shows it.
   const remaining = useTimeLeft({ deadline: until, onTimeUp: () => void runner.endBreak() });
@@ -72,15 +92,7 @@ export function MockBreak({ until }: { until: string }) {
 
         {next && (
           <ListGroup className="border-border w-full border-y">
-            <ListRow>
-              <ListRowContent>
-                <ListRowTitle>
-                  {next.name ? t("Next: {name}", { name: next.name }) : t("Next section")}
-                </ListRowTitle>
-                {next.tools && <ListRowDescription>{next.tools}</ListRowDescription>}
-              </ListRowContent>
-              <ListRowTrailing>{duration(next.minutes)}</ListRowTrailing>
-            </ListRow>
+            <NextSectionRow section={next} />
           </ListGroup>
         )}
       </StepCard>

@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import {
   explanationSchema,
@@ -16,11 +17,11 @@ import {
 import { issue } from "./_utils/template-helpers";
 
 const MAX_SAMPLES = 6;
-const MAX_SAMPLE_LENGTH = 40;
+const SAMPLE_TARGET = 40;
 const MAX_HINTS = 4;
 const MAX_INPUTS = 6;
 
-const sampleSchema = z.string().max(MAX_SAMPLE_LENGTH);
+const sampleSchema = aimForCharacters(z.string(), SAMPLE_TARGET);
 
 const hintsSchema = z
   .array(z.object({ hint: explanationSchema, mistake: optionTextSchema }).strict())

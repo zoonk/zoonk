@@ -54,11 +54,6 @@
   "challenge_trickster_recordings": "94a6a824703d6dcbe81095db6b5aff84261e0b7dddb1b4311b3ad0cc095dc33b",
   "challenge_trickster_rule": "6e483f09a7c52cc3a8ca001158c8a59741d2e835e2ed585b7d03a8f15f89d862",
   "challenge_undo": "b6431e30a3dbe22216573eab92ea72f9438dbad96266e5a42b6dd2def1b32119",
-  "challenge_used_up_move": "85c9eaa26b415bf3992cb1a2147be41bd14acaa75be3b67b425fefe5bac23f25",
-  "challenge_used_up_next_session": "25db59a34f340f3988893106d06cfa522f07f1d5bf877ab1b88a367666f57b2c",
-  "challenge_used_up_on": "73e569c0f7dd19b47c32928d07d81ed520f095570482c1d0c02f5394b4c5645e",
-  "challenge_used_up_tomorrow": "d6bb51b7420acf3fb6b8daee51360df728359daac82b837b3f99596de782e0ea",
-  "challenge_used_up_weekly": "873b9da2b1fea0644c72a095e7159bf293d0ceae23079f9891cc1466af1334cc",
   "challenge_weekly_detail": "8688810b10bdbe23f5582aed88ac2ffdc44c58e67f366a25fd1a1526166e71e2",
   "challenge_weekly_rule": "ff70f08c96a53dc0530ed3b94e1a7d475d436efd5fc3545a9b149ab3fb8785c1",
   "challenge_writing": "bf74f5044f26274995d6e265636f4897426ad44bf558074a43fd875794a9bf21",
@@ -164,16 +159,6 @@
     <string name="challenge_opens_after_lessons">Se abre al completar las lecciones de esta fase</string>
     <string name="challenge_not_ready">Este desafío aún no está listo.</string>
     <string name="challenge_next_session">En tu próxima sesión</string>
-    <!-- The daily time limit is a setting that stops study for the day. The weekly challenge can't move to another day, so the learner misses it this week. -->
-    <string name="challenge_used_up_weekly">Alcanzaste tu límite de tiempo diario. Te perderás el desafío de esta semana.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_move">Alcanzaste tu límite de tiempo diario. Mueve el desafío al lunes para no perderlo.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_next_session">Alcanzaste tu límite de tiempo diario. El desafío estará disponible en tu próxima sesión.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="challenge_used_up_tomorrow">Alcanzaste tu límite de tiempo diario. El desafío estará disponible mañana.</string>
-    <!-- The daily time limit is a setting that stops study for the day. %1$s is a weekday, like Monday. -->
-    <string name="challenge_used_up_on">Alcanzaste tu límite de tiempo diario. El desafío estará aquí el %1$s.</string>
     <string name="challenge_back_to_today">Volver a Hoy</string>
     <string name="challenge_move">Mover al lunes</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

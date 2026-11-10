@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 }

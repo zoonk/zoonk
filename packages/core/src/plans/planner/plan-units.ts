@@ -46,6 +46,8 @@ export type QueueUnit = {
   lessons?: number;
   minutes: number;
   outcome?: boolean;
+  /** Past its skill's core like `depth`, but kept whole and in place for the chapter in progress. */
+  pastCore?: boolean;
   phase: number;
   rankedOut?: boolean;
   reduced?: boolean;

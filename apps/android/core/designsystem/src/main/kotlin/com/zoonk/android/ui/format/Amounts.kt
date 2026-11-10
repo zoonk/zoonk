@@ -132,13 +132,13 @@ fun fractionDigitsFor(value: Double): Int {
     }
 }
 
-private data class MoneyUnit(
+internal data class MoneyUnit(
     val currency: String,
     val rest: String,
 )
 
 /** "R$" is money, and so is "R$ per month", whose words stay after the amount. */
-private fun moneyUnit(unit: String?): MoneyUnit? {
+internal fun moneyUnit(unit: String?): MoneyUnit? {
     currencyFor(unit)?.let { return MoneyUnit(it, "") }
     val words = unit?.split(" ").orEmpty()
     val currency = currencyFor(words.firstOrNull()) ?: return null

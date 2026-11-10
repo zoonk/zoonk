@@ -25,7 +25,7 @@ const LESSON_SECONDS = 240;
 
 async function setup() {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 2, userId: user.id });
   const [firstSkill] = fixture.skills;
 
   await Promise.all([
@@ -190,7 +190,13 @@ describe("session outcomes sent from the server", () => {
 
   it('counts a session once when "10 more minutes" reopens it and it ends again', async () => {
     const user = await userFixture();
-    const { goal } = await sessionGoalFixture({ lessons: 3, userId: user.id });
+
+    const { goal } = await sessionGoalFixture({
+      challengesDone: true,
+      lessons: 3,
+      userId: user.id,
+    });
+
     mockSession(user.id);
 
     const today = await getTodayStudySession({ goalId: goal.id });

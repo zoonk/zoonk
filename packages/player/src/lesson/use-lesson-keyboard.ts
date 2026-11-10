@@ -16,7 +16,7 @@ export function useLessonKeyboard() {
   const leave = useLeaveLesson();
   const { isPaused } = useLessonInteraction();
   const buddy = useTutorBuddy();
-  const turns = useScreenTurns();
+  const turns = useScreenTurns({ keepFocus: true });
 
   useEnterKey(() => {
     if (isPaused || state.phase === "completed") {

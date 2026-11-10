@@ -68,11 +68,6 @@ class ExplainViewModelTest {
                     session: AuthenticatedSession,
                     goalId: String,
                 ) = "gen-2".also { writes += goalId }
-
-                override suspend fun recordWait(
-                    session: AuthenticatedSession,
-                    milliseconds: Long,
-                ) = Unit
             }
         val source =
             object : GenerationSource {
@@ -80,7 +75,7 @@ class ExplainViewModelTest {
 
                 override suspend fun status(id: String) = Generation.Status.COMPLETED
             }
-        return ExplainViewModel(GOAL_ID, ExplainStore(api, cache), cache, session, { source }) { testScheduler.currentTime }
+        return ExplainViewModel(GOAL_ID, ExplainStore(api, cache), cache, session, { source })
     }
 
     @Test

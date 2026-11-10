@@ -6,16 +6,19 @@ final class LessonPlayerDependencies {
   let cache: AppCache
   let preferences: Resource<LearningPreferences>
   let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
+  let sessionStarted: @MainActor (_ sessionID: String) -> Void
   private var lessons: [String: Resource<LessonLoad>] = [:]
 
   init(
     api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>,
-    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void
+    blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void,
+    sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void
   ) {
     self.api = api
     self.cache = cache
     self.preferences = preferences
     self.blockFinished = blockFinished
+    self.sessionStarted = sessionStarted
   }
 
   func lesson(id: String) -> Resource<LessonLoad> {
@@ -44,14 +47,27 @@ struct LessonPlayerScreen: View {
   let lessonId: String
   var sessionId: String?
   var fromCatalog = false
+  var opening: LessonOpening?
+  var activated = false
+  @Environment(AppRouter.self) private var router
 
   var body: some View {
     if let player {
       LessonPlayerContent(
         store: LessonPlayerStore(
-          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog,
+          lessonId: lessonId, studySessionId: sessionId, fromCatalog: fromCatalog, opening: opening,
+          activated: activated,
+          onOpened: { opening in
+            guard case .lesson(let id, _, _, _, _)? = router.tasks.last, id == lessonId else {
+              return
+            }
+            router.dismissTask()
+            let destination = StudyDestination(opening)
+            router.openStudy(destination == .changed ? .today : destination)
+          },
           api: player.api, cache: player.cache, preferences: player.preferences,
-          lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished)
+          lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished,
+          sessionStarted: player.sessionStarted)
       )
       .id(lessonId)
     }
@@ -89,7 +105,8 @@ private struct LessonPlayerContent: View {
                   store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
               )
               // The lesson's column; on iPhone Duo, the page before the hinge.
-              .lonePage(readableWidth: 680)
+              .frame(maxWidth: 680)
+              .lonePage()
               .scenePadding(.horizontal)
               .padding(.bottom, 4)
             }
@@ -116,7 +133,12 @@ private struct LessonPlayerContent: View {
           }
       }
     }
-    // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
+    // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
+    .simultaneousGesture(TapGesture().onEnded { store.act() })
+    .onKeyPress(phases: .down) { _ in
+      store.act()
+      return .ignored
+    }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
         .zoonkStyles()
@@ -151,6 +173,21 @@ private struct LessonPlayerContent: View {
       _, isAnonymous in
       store.isGuest = isAnonymous == true
     }
+    .onChange(of: learnerSummary?.summary.value?.activeGoalID, initial: true) { _, goalID in
+      store.goalID = goalID
+
+      if scenePhase == .active {
+        store.reportFirstScene()
+      }
+    }
+    .onChange(
+      of: FirstScene(shown: store.state?.currentStep != nil, phase: scenePhase), initial: true
+    ) {
+      _, scene in
+      if scene.shown, scene.phase == .active {
+        store.reportFirstScene()
+      }
+    }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
     // From here rather than the stage, which is made anew as a lesson comes back from its end.
@@ -162,14 +199,20 @@ private struct LessonPlayerContent: View {
           comment: "Names the lesson's header icon shown while some answers haven't reached Zoonk")
         : nil
     )
+    .onAppear { store.setVisible(scenePhase == .active) }
     .onChange(of: scenePhase) { _, phase in
+      store.setVisible(phase == .active)
       switch phase {
-      case .active: store.sendHeldAnswers()
+      case .active:
+        store.sendUnsaved()
+        Task { await store.retryFailedFinish() }
       case .background: store.reportAbandonment()
       default: break
       }
     }
     .onDisappear {
+      store.setVisible(false)
+      store.cancelStart()
       store.reportAbandonment()
     }
   }
@@ -181,7 +224,7 @@ private struct LessonPlayerContent: View {
   @ViewBuilder
   private var content: some View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
-      WarmUpHold(
+      WaitHold(
         surface: .lessonWait, isReady: writing == .written,
         announcement: LessonWaitingView.lessonReady
       ) { stage in
@@ -189,7 +232,8 @@ private struct LessonPlayerContent: View {
         case .waiting(let holding):
           LessonWaitingView(
             outline: warmUp.outline, writing: writing, progress: store.writingProgress,
-            alternative: store.alternative, warmUpID: warmUp.deckID, holding: holding
+            alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
+            holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -230,7 +274,7 @@ private struct LessonPlayerContent: View {
     case .waiting(let outline, let writing):
       LessonWaitingView(
         outline: outline, writing: writing, progress: store.writingProgress,
-        alternative: store.alternative
+        alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
       }
@@ -465,4 +509,9 @@ private struct VerticalToolbarReader<Content: View>: View {
   var body: some View {
     content(isToolbarVertical)
   }
+}
+
+private struct FirstScene: Equatable {
+  let shown: Bool
+  let phase: ScenePhase
 }

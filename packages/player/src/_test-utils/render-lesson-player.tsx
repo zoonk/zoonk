@@ -11,7 +11,11 @@ import {
   type LessonPlayerProviderProps,
 } from "../lesson/lesson-player-provider";
 import { LessonPlayerShell } from "../lesson/lesson-player-shell";
-import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonRunAnswers,
+  type LessonStartOutcome,
+} from "../lesson/lesson-player-types";
 import { type PlayerLinkComponent } from "../player-context";
 import { localAdapters } from "../preview/preview-lesson";
 import { render } from "./render";
@@ -46,17 +50,34 @@ export function TestLink({
 const MS_PER_MINUTE = 60_000;
 
 export function runAnswer({
+  answer = null,
+  answerText = null,
   isCorrect = true,
   minutesAgo = 1,
   stepId,
-}: {
-  isCorrect?: boolean;
+}: Partial<Pick<LessonRunAnswers[number], "answer" | "isCorrect">> & {
+  answerText?: string | null;
   minutesAgo?: number;
   stepId: string;
-}) {
+}): LessonRunAnswers[number] {
   return {
+    answer,
     answeredAt: new Date(Date.now() - minutesAgo * MS_PER_MINUTE).toISOString(),
     isCorrect,
+    result: {
+      answerText,
+      checked: true,
+      correctAnswer: null,
+      corrections: [],
+      expected: null,
+      feedback: null,
+      isCorrect,
+      keyPoints: null,
+      nextReviewAt: null,
+      savedMistake: false,
+      score: null,
+      spelling: null,
+    },
     stepId,
   };
 }
@@ -65,6 +86,7 @@ export const LEARNER_ID = "learner";
 
 export function startedRun({
   answers = [],
+  clockId = null,
   hyperdrive = { knownStepIds: [], streak: 0 },
   learnerId = LEARNER_ID,
   optionalStepIds,
@@ -74,6 +96,7 @@ export function startedRun({
 }: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
   return {
     answers,
+    clockId,
     hyperdrive,
     learnerId,
     optionalStepIds,
@@ -154,6 +177,7 @@ export function lessonPlayerElement({
             exit: "/",
             exitTo: null,
             nextLesson: null,
+            seePlan: (goalId: string) => `/start/${goalId}`,
             signUp: "/login",
             upgrade: "/subscription",
           }}

@@ -3,14 +3,35 @@ import { type PaceSource } from "./plan-state";
 /** `ratio` is time taken over the estimate: 1.2 means 20% longer. */
 export type PaceSample = { count: number; ratio: number };
 
+export const PACE_FAMILIES = ["language", "subject"] as const;
+export type PaceFamily = (typeof PACE_FAMILIES)[number];
 export type Pace = { factor: number; source: PaceSource };
+export type CalibratedPace = Pace & { family?: PaceFamily };
+
+export function getPaceFamily(targetLanguage: string | null): PaceFamily {
+  return targetLanguage === null ? "subject" : "language";
+}
+
+/** A legacy pooled calibration is replaced on the next sample. */
+export function keepSlowerPace({
+  family,
+  sampled,
+  saved,
+}: {
+  family: PaceFamily;
+  sampled: Pace;
+  saved: CalibratedPace | null;
+}): CalibratedPace {
+  const pace = saved?.family === family && saved.factor > sampled.factor ? saved : sampled;
+  return { ...pace, family };
+}
 
 const MIN_LESSONS: Record<PaceSource, number> = { course: 20, own: 5, typical: 50 };
 
-const MIN_FACTOR = 0.5;
-const MAX_FACTOR = 2.5;
+export const MIN_PACE_FACTOR = 0.5;
+export const MAX_PACE_FACTOR = 2.5;
 
-const PRIOR_LESSONS = 20;
+const PRIOR_LESSONS = 5;
 
 function isTrusted({ sample, source }: { sample: PaceSample | null; source: PaceSource }) {
   return sample !== null && sample.count >= MIN_LESSONS[source] && sample.ratio > 0;
@@ -40,7 +61,7 @@ export function choosePace({ course, own, typical }: Record<PaceSource, PaceSamp
     ? ["own", blendOwn({ own: ownTrusted, prior })]
     : [others?.[0] ?? "typical", prior];
 
-  const factor = Math.min(MAX_FACTOR, Math.max(MIN_FACTOR, ratio));
+  const factor = Math.min(MAX_PACE_FACTOR, Math.max(MIN_PACE_FACTOR, ratio));
 
   return { factor: Math.round(factor * 100) / 100, source };
 }

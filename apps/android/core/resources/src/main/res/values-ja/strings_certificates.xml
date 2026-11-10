@@ -60,7 +60,7 @@
   "certificates_linkedin_title": "5a0582159cc95faa005f0db7a32f0b6ca82f0c0d87697c06aedfba91ebfdc5b2",
   "certificates_locked": "f70a88098cfd74d90e8b79706535da5e4bc83e6b707e9a196c4a5c4c562d32fd",
   "certificates_meaning_cefr": "878b00f1533d2ff7117f7ffbb0171b4bca0aebc2423af40b58a33b4363649b77",
-  "certificates_meaning_language": "ec4707183e4af3660632efb4df80757b368bf8b510175a4b8927d51305c40689",
+  "certificates_meaning_language": "5bde9c485e3d399c63d593fb12842753ebc4303c561be9f2e5935dca91b10f4d",
   "certificates_meaning_level": "ef5cab6d24e236a3b9aa1c0be1d615ca9fe732887b89b729b483effc6cda2196",
   "certificates_meaning_name": "9f0c1dbbff4a5d36028d9ff3c55b53a2c0dbaa7b53d3b23ee8fd81c58fa3378f",
   "certificates_meaning_plan": "7b688f7e4d50fa33681a29c8b744c6e85dfe7bba9bcf24d86fe293e6b447c20a",
@@ -89,7 +89,7 @@
   "certificates_topics_covered": "d20d81c6286d247451cc79f6a8ec27169378ec6a5102fa42c7deec58c1ab7fda",
   "certificates_up_next": "9f5d866fefcc21a9751bc4daf8e719add5e21f7ae4d0db8692e177425b6d4d7d",
   "certificates_up_next_course": "83c78b1e3a079f1e55d79ea82fd07107b0c7218f078841ea948873de90042220",
-  "certificates_up_next_language": "871752638e454f3cb98344db6ca4fe78b69f6840a956ed30633eee803c992ecd",
+  "certificates_up_next_language": "2aab577af68c5329eefe9ac4894c5fd86bf2e8b2c461acc7bdd25d673ea9813d",
   "certificates_verified": "aeeb04205281e25f8b44ac5d71a78ae25ccaec88346e1961c1b6859571b8898a",
   "certificates_view": "7cfaf61c3e9e471b53090e894fcb8ebd2f93968a876c2dcfd955a9a3b8fe9f5e",
   "certificates_view_several": "0f7c78974441e69337b1508e5ddb5ca98eb6b82afe29e7206a127927bf98260c"
@@ -119,8 +119,8 @@
     <string name="certificates_get">証明書を受け取る</string>
     <string name="certificates_up_next">次の学習</string>
     <string name="certificates_up_next_course">学習計画を終えると証明書がもらえます</string>
-    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">練習しているすべてのスキルが次のレベルに進むと取得できます</string>
+    <!-- Under a language goal: its next certificate comes when the learner finishes a CEFR level of their plan, having studied at least half of that level's lessons. -->
+    <string name="certificates_up_next_language">レベルのレッスンを半分以上学習し、そのレベルを終えると取得できます</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">コース修了！</string>
     <string name="certificates_level_complete">%1$s修了！</string>
@@ -204,7 +204,7 @@
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">約%1$s</string>
     <string name="certificates_meaning_title">この証明書が示すこと</string>
-    <string name="certificates_meaning_language">Zoonkは、レッスンや練習での回答から、各スキル（リーディング、リスニング、スピーキング、ライティング）を測定します。回答を通じて伸びたスキルがすべて次のレベルに達すると、学習中のレベルを修了したことになります。この証明書は、それらのスキルがすべて%1$sに達した時点で発行されました。</string>
+    <string name="certificates_meaning_language">Zoonkは、レッスンの半分以上を学習してレベルを修了した方に、この証明書を発行します。</string>
     <string name="certificates_meaning_level">Zoonkは、コースの各レベルで、各レッスンを学習するかテストに合格してすべての章を終え、すべてのチャレンジをクリアした学習者に、この証明書を発行します。</string>
     <string name="certificates_meaning_plan">Zoonkでは、コースの学習計画にあるすべてのレッスンを、学習またはテストへの合格で終え、計画内のすべてのチャレンジに勝つと、この証明書が発行されます。</string>
     <string name="certificates_meaning_record">Zoonkでの修了記録で、学校の単位にはなりません。</string>

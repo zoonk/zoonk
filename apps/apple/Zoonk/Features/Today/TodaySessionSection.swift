@@ -22,9 +22,10 @@ struct TodaySessionSection: View {
   var showsAction = true
   let prepare: () -> Void
 
-  /// Done blocks shown before folding them into one row, and upcoming ones before "+N more".
-  private let doneRows = 2
-  private let upcomingRows = 6
+  static let moreFold = "TodaySessionSection.moreFold"
+
+  /// Done blocks shown before folding them into one row.
+  private let doneRows = 1
 
   private var session: StudyDay { view.session }
 
@@ -49,10 +50,6 @@ struct TodaySessionSection: View {
 
       queue
 
-      ForEach(Array(session.plusLessons.enumerated()), id: \.offset) { _, lesson in
-        PlusLessonRow(title: lesson.title)
-      }
-
       if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
         status
       }
@@ -71,15 +68,14 @@ struct TodaySessionSection: View {
 
   @ViewBuilder
   private var queue: some View {
-    let next = session.dailyLimit?.reached == true ? nil : session.nextBlock
+    let next = session.nextBlock
     let done = session.blocks.filter(\.isFinished)
     let (before, upcoming) = session.queue(next: next)
-    let foldsDone = next != nil && done.count > doneRows
-    let markedUpTo = upcoming.lastIndex { countsTowardMission($0) }.map { $0 + 1 } ?? 0
+    let foldsDone = done.count > doneRows
     let coming = next == nil ? nil : session.comingLessons
-    let upcomingCount = upcoming.count + (coming == nil ? 0 : 1)
-    let foldedFrom = max(upcomingRows, markedUpTo)
-    let shownUpcoming = disclosures.showsMore ? upcomingCount : foldedFrom
+    let timedRows = upcoming.count + (coming == nil ? 0 : 1)
+    let upcomingCount = timedRows + session.plusLessons.count
+    let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
 
     if foldsDone {
       FoldRow(isOpen: $disclosures.showsDone, isDone: true, count: done.count, minutes: nil)
@@ -134,10 +130,22 @@ struct TodaySessionSection: View {
       .disabled(busy != nil && busy != .prepare)
     }
 
-    if upcomingCount > shownUpcoming || (disclosures.showsMore && upcomingCount > upcomingRows) {
+    ForEach(
+      Array(session.plusLessons.prefix(max(0, shownUpcoming - timedRows)).enumerated()),
+      id: \.offset
+    ) { _, lesson in
+      PlusLessonRow(title: lesson.title)
+    }
+
+    if upcomingCount > StudyDay.upcomingRows {
       FoldRow(
-        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedFrom,
-        minutes: upcoming.dropFirst(foldedFrom).reduce(0) { $0 + $1.estimatedMinutes })
+        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - StudyDay.upcomingRows,
+        minutes: timedRows > StudyDay.upcomingRows
+          ? session.foldedMinutes(
+            showing: before + [next].compactMap { $0 } + upcoming.prefix(StudyDay.upcomingRows))
+          : nil
+      )
+      .id(Self.moreFold)
     }
   }
 
@@ -235,7 +243,7 @@ struct TodaySessionAction: View {
     switch view.session.state {
     case .underway: return view.session.nextBlock != nil
     case .done, .prepare: return true
-    case .ahead, .limit, .rest, .waiting: return false
+    case .ahead, .rest, .waiting: return false
     }
   }
 
@@ -279,7 +287,7 @@ struct TodaySessionAction: View {
       return TodayMainAction(
         kind: .prepareLessons, isBusy: busy == .prepare, failed: failed == .prepare,
         action: prepare)
-    case .ahead, .limit, .rest, .waiting:
+    case .ahead, .rest, .waiting:
       return nil
     }
   }
@@ -394,7 +402,7 @@ struct TodayDayLead: View {
 
   private var session: StudyDay { view.session }
 
-  var isEmpty: Bool { freshStart == nil && mockDay == nil && session.blocks.isEmpty }
+  var isEmpty: Bool { freshStart == nil && mockDay == nil && !session.showsDayProgress }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -406,7 +414,7 @@ struct TodayDayLead: View {
 
       mockFunding
 
-      if !session.blocks.isEmpty {
+      if session.showsDayProgress {
         DayProgressRow(session: session)
       }
     }
@@ -416,13 +424,13 @@ struct TodayDayLead: View {
   /// nothing to start says its own words instead.
   private var freshStart: String? {
     let state = session.state
-    guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
+    guard !view.studiedToday, !session.isStarted,
       state != .ahead, state != .rest
     else {
       return nil
     }
 
-    let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
+    let time = studyDuration(minutes: session.minutes.left)
 
     switch session.freshStart {
     case .welcomeBack:
@@ -516,6 +524,8 @@ struct BlockRow: View {
   var isBusy = false
   var failed = false
   var showsDetail = false
+  /// Main's reveal tags its next block where to start, on the moment's third beat.
+  var tag: Text?
 
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -526,6 +536,13 @@ struct BlockRow: View {
           Text(block.displayTitle)
             .typeStyle(.rowTitle)
             .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
+
+          if let tag {
+            tag
+              .typeStyle(.meta.weight(.medium))
+              .foregroundStyle(.successText)
+              .settles(delay: 2 * .beat)
+          }
 
           if failed {
             FailureLine(
@@ -729,7 +746,7 @@ private struct FoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
   let count: Int
-  let minutes: Int?
+  let minutes: Double?
 
   var body: some View {
     Button {
@@ -772,7 +789,6 @@ private struct FoldRow: View {
 
 struct TodayDayStatus: View {
   private enum Link {
-    case changeLimit
     case summary
   }
 
@@ -796,31 +812,6 @@ struct TodayDayStatus: View {
       clause = String(
         localized: "Adjust your plan to keep going.", table: "Today",
         comment: "The goal's date passed")
-      return
-    }
-
-    if let limit = session.limitStatus {
-      let time = studyDuration(minutes: session.dailyLimit?.limitMinutes ?? 0)
-      systemImage = "hourglass"
-      link = .changeLimit
-
-      switch limit {
-      case .reached:
-        sentence = String(
-          localized: "You've reached your daily time limit of \(time).", table: "Today",
-          comment:
-            "The daily time limit is a setting that stops study for the day. The argument is a time, like '3 hr'."
-        )
-        clause = Self.seeYou(session.week)
-      case .cuts:
-        sentence = String(
-          localized: "Today stops at your daily time limit of \(time).", table: "Today",
-          comment:
-            "The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today. The argument is a time, like '3 hr'."
-        )
-        clause = nil
-      }
-
       return
     }
 
@@ -895,7 +886,7 @@ struct TodayDayStatus: View {
           localized: "You've done every lesson in your plan, or already know it.", table: "Today",
           comment: "Nothing new")
       }
-    case .limit, .underway:
+    case .underway:
       return nil
     }
   }
@@ -915,8 +906,6 @@ struct TodayDayStatus: View {
         }
 
         switch link {
-        case .changeLimit:
-          ChangeLimitButton()
         case .summary:
           Button {
             router.open(.session)

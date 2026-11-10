@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemSupport
@@ -105,7 +106,7 @@ internal fun ChoiceQuestionsRun(
     app: AppContainer,
     screen: String,
     pending: Boolean,
-    failed: Boolean,
+    failures: Int,
     onAnswer: (Question, Answer) -> Unit,
     onSend: () -> Unit,
     onClose: () -> Unit,
@@ -114,6 +115,7 @@ internal fun ChoiceQuestionsRun(
     upcoming: UpcomingQuestions? = null,
     waiting: @Composable ColumnScope.() -> Unit = {},
 ) {
+    val saveReport = rememberSaveFailureReport(app, screen)
     val total = maxOf(questions.size, upcoming?.total ?: 0)
     val waitingForMore = answered >= questions.size && answered < total
     val finishNow = waitingForMore && upcoming?.ended == true
@@ -123,7 +125,7 @@ internal fun ChoiceQuestionsRun(
     val question = questions.getOrNull(shown)
     var saved by rememberDraft()
     val pick = saved.answerFor(shown, question)
-    val locked = pending || failed || sent
+    val locked = pending || failures > 0 || sent
     var sender by rememberSaveable { mutableStateOf<AnswerSender?>(null) }
 
     fun send(
@@ -155,7 +157,7 @@ internal fun ChoiceQuestionsRun(
                 null
             } else {
                 {
-                    if (failed && !pending) SaveErrorText(onSend)
+                    if (failures > 0 && !pending) SaveErrorText(failures, onSend, onReport = saveReport::open)
                     TaskActions { width ->
                         if (question != null) {
                             NotSureButton(

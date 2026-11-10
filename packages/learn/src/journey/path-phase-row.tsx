@@ -7,14 +7,14 @@ import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
 import { toLocalIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
-import { useFormatPlanDate } from "../plan/plan-date-text";
+import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { useShortDays } from "../plan/use-short-plan";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { useRoadmapFinish } from "./use-roadmap";
 
 const TRAILING_CLASS =
-  "text-muted-foreground shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums";
+  "text-muted-foreground text-right font-mono text-xs tabular-nums stacked:text-left";
 
 export function PhaseLessons({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
@@ -65,33 +65,58 @@ export function PhaseUntil({ isLast, phase }: { isLast: boolean; phase: PlanPhas
     return null;
   }
 
-  const estimate =
-    (phase.kind === "learn" || phase.kind === "afterExam") && phase.state === "upcoming";
+  const learns = phase.kind === "learn" || phase.kind === "afterExam";
 
-  const date = formatPlanDate(phase.endDate, { month: estimate });
+  if (learns && phase.state === "upcoming") {
+    const month = formatPlanDate(phase.endDate, { month: true });
 
-  if (!estimate) {
-    return <span className={TRAILING_CLASS}>{t("until {date}", { date })}</span>;
+    return (
+      <span className={TRAILING_CLASS}>
+        <span aria-hidden="true">
+          {t({
+            description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
+            message: "until ~{date}",
+            values: { date: month },
+          })}
+        </span>
+        <span className="sr-only">
+          {t({
+            description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
+            message: "until about {date}",
+            values: { date: month },
+          })}
+        </span>
+      </span>
+    );
   }
 
-  return (
-    <span className={TRAILING_CLASS}>
-      <span aria-hidden="true">
-        {t({
-          description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
-          message: "until ~{date}",
-          values: { date },
-        })}
+  const date = formatPlanDate(phase.endDate);
+
+  // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+  if (learns && phase.checkpoint?.state === "upcoming") {
+    return (
+      <span className={TRAILING_CLASS}>
+        <span aria-hidden="true">
+          {t({
+            description: '{date} is a day, like "Nov 10".',
+            id: "phaseUntilAboutDay",
+            message: "until ~{date}",
+            values: { date },
+          })}
+        </span>
+        <span className="sr-only">
+          {t({
+            description: '{date} is a day, like "Nov 10".',
+            id: "phaseUntilAboutDaySpoken",
+            message: "until about {date}",
+            values: { date },
+          })}
+        </span>
       </span>
-      <span className="sr-only">
-        {t({
-          description: '{date} is a month, like "Jan" or "Jan 2028", never a day.',
-          message: "until about {date}",
-          values: { date },
-        })}
-      </span>
-    </span>
-  );
+    );
+  }
+
+  return <span className={TRAILING_CLASS}>{t("until {date}", { date })}</span>;
 }
 
 export function PhaseMark({ phase }: { phase: PlanPhaseView }) {
@@ -174,7 +199,6 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
 
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   const t = useExtracted();
-  const formatPlanDate = useFormatPlanDate();
 
   const challengeDate =
     phase.checkpoint?.state === "upcoming" && phase.checkpoint.when === "date"
@@ -197,17 +221,19 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
     return <PhaseResume phase={phase} />;
   }
 
-  const date = challengeDate && formatPlanDate(challengeDate);
-
-  if (!writing && !date) {
-    return null;
+  if (!challengeDate) {
+    return writing ? (
+      <span className="text-muted-foreground text-xs">{t("More lessons on the way")}</span>
+    ) : null;
   }
+
+  const date = () => <PlanDateText className="font-sans" estimate isoDate={challengeDate} />;
 
   return (
     <span className="text-muted-foreground text-xs">
-      {writing && date && t("More lessons on the way · challenge {date}", { date })}
-      {writing && !date && t("More lessons on the way")}
-      {!writing && date && t("Lessons done · challenge {date}", { date })}
+      {writing
+        ? t.rich("More lessons on the way · challenge <date></date>", { date })
+        : t.rich("Lessons done · challenge <date></date>", { date })}
     </span>
   );
 }

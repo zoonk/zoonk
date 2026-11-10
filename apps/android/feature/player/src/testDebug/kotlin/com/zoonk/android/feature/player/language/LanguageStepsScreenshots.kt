@@ -39,6 +39,7 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.playable
 import com.zoonk.android.navigation.AppRoute
@@ -109,6 +110,19 @@ class LanguageStepsScreenshots {
             "match-columns" to listOf(matchColumns("s")),
         )
 
+    private val otherOrderReading =
+        step(
+            "s",
+            StepKind.Reading,
+            "reading",
+            sentence =
+                """{"audioUrl":null,"distractors":[],"explanation":null,"id":"s-3","ordersPending":false,"otherSentenceOrders":[["Quando","pioveva","è","arrivato","l'autobus"]],
+                   "otherTranslationOrders":[],"romanization":null,"sentence":"Quando pioveva l'autobus è arrivato",
+                   "translation":"Quando chovia o ônibus chegou","translationDistractors":[]}""",
+            wordBank = bank("arrivato", "Quando", "l'autobus", "pioveva", "è"),
+            promptWords = promptWords("Quando" to null, "chovia" to null, "o" to null, "ônibus" to null, "chegou" to null),
+        )
+
     private fun at(
         steps: List<LessonStep>,
         vararg actions: LessonAction,
@@ -148,6 +162,21 @@ class LanguageStepsScreenshots {
                     "reading-wrong",
                     listOf(reading("s")),
                     checked(LessonAnswer.Reading(listOf("veo", "Yo", "un", "gato.")), false, "The subject comes first."),
+                ),
+                Triple(
+                    "reading-right-other-order",
+                    listOf(otherOrderReading),
+                    arrayOf(
+                        LessonAction.SelectAnswer("s", LessonAnswer.Reading(listOf("Quando", "pioveva", "è", "arrivato", "l'autobus"))),
+                        LessonAction.CheckStarted("s"),
+                        LessonAction.CheckResolved(
+                            "s",
+                            checkResult(true, "Both orders say when the bus came.")
+                                .toStepResult(null)
+                                .copy(correctAnswer = "Quando pioveva l'autobus è arrivato"),
+                            counts = true,
+                        ),
+                    ),
                 ),
                 Triple("fill-blank-right", listOf(fillBlank("s")), checked(LessonAnswer.FillBlank(listOf("pay")), true, "You pay rent.")),
                 Triple(

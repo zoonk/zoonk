@@ -25,7 +25,6 @@ import {
 import { planChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
-  forbiddenResponse,
   guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
@@ -144,7 +143,7 @@ export const checkpointPaths = {
   "/challenges/{planItemId}/starts": {
     post: {
       description:
-        "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons and phase challenges in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
+        "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
       operationId: "startChallenge",
       requestBody: {
         content: { "application/json": { schema: studyBlockStartInputSchema } },
@@ -162,7 +161,6 @@ export const checkpointPaths = {
           ...paymentRequiredResponse,
           description: `The learner's plan leaves it to Plus (\`status\` \`plusRequired\` on the challenge): a language phase/final call on Free or after Plus lapses, a mock without mocks in the plan, or a phase challenge past a free exam plan's first week. Error code: ${studySessionErrorCodes.plusRequired}.`,
         },
-        "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,

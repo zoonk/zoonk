@@ -1,7 +1,9 @@
 import { ModelStatusBadge, ModelStatusBadgeSkeleton } from "@/components/model-status-badge";
+import { type EvalSummary } from "@/lib/eval-summary";
 import { DEFAULT_REASONING, type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type OutputProgress } from "@/lib/output-loader";
 import { type ReviewExportEntry } from "@/lib/review-export";
+import { type FailedRun } from "@/lib/types";
 import { ButtonSkeleton } from "@zoonk/ui/components/button";
 import {
   Card,
@@ -21,6 +23,8 @@ import { ReviewPdfExport } from "./review-pdf-export";
 
 export function TaskModelActionsCard({
   exportEntries,
+  failedRuns,
+  summary,
   model,
   modelId,
   outputStatus,
@@ -29,6 +33,8 @@ export function TaskModelActionsCard({
   taskName,
 }: {
   exportEntries: OutputExportEntry[];
+  failedRuns: FailedRun[];
+  summary: EvalSummary;
   model: ModelConfig;
   modelId: string;
   outputStatus: OutputProgress;
@@ -79,12 +85,19 @@ export function TaskModelActionsCard({
             </SubmitButton>
           </form>
 
-          <DeleteModelDataDialog disabled={!hasOutputs} modelId={modelId} taskId={taskId} />
+          <DeleteModelDataDialog
+            disabled={summary.attempted === 0}
+            modelId={modelId}
+            taskId={taskId}
+          />
 
-          <OutputsExport entries={exportEntries} />
+          <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
 
           <ReviewPdfExport
             entries={reviewEntries}
+            summary={summary}
+            modelId={modelId}
+            taskId={taskId}
             key={`${taskId}-${modelId}`}
             taskName={taskName}
           />

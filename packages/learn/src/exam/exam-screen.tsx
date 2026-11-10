@@ -11,6 +11,7 @@ import {
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { PageEyebrow } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatTimeOfDay } from "../_utils/time-format";
@@ -160,11 +161,7 @@ function ExamFacts() {
 
   return (
     <DetailFacts>
-      {facts.map((fact, index) => (
-        <span className="whitespace-nowrap" key={fact}>
-          {index < facts.length - 1 ? `${fact} ·` : fact}
-        </span>
-      ))}
+      <FactSegments facts={facts} />
     </DetailFacts>
   );
 }

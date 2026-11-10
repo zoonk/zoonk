@@ -16,7 +16,7 @@ import { PromptAudioButton } from "../components/prompt-audio-button";
 import { usePromptAudio } from "../player-audio-context";
 import { TutorAskButton } from "../questions/tutor-dock";
 import { useIsRequiredPictureDrawing } from "./_components/lesson-pictures";
-import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
+import { LESSON_BACK_ID, LESSON_PRIMARY_ID, pressKeepingFocus } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
 import { type LessonPlayerActions, useLessonPlayer } from "./lesson-player-context";
 import { type LessonPrimaryLabel, type LessonScreen } from "./lesson-player-screen";
@@ -113,7 +113,8 @@ export function LessonActionBar() {
           <Button
             aria-keyshortcuts="ArrowLeft"
             className={TASK_BACK_ACTION_CLASS}
-            onClick={actions.goBack}
+            id={LESSON_BACK_ID}
+            onClick={(event) => pressKeepingFocus(event, actions.goBack)}
             size="icon"
             variant="outline"
           >
@@ -131,7 +132,7 @@ export function LessonActionBar() {
           disabled={primary.disabled}
           focusableWhenDisabled
           id={LESSON_PRIMARY_ID}
-          onClick={() => runPrimary({ actions, screen })}
+          onClick={(event) => pressKeepingFocus(event, () => runPrimary({ actions, screen }))}
           size="xl"
           variant={isReveal ? "secondary" : "default"}
           {...PRIMARY_ICONS[primary.label]}

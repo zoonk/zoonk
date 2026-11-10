@@ -252,7 +252,6 @@ msgstr "Prova"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Conversação"
@@ -317,6 +316,14 @@ msgstr "Perfil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr "Sobre você"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
@@ -334,7 +341,7 @@ msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "Aparência"
 
-#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
+#. A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -1007,9 +1014,9 @@ msgid "Start a new goal, or pick another one above."
 msgstr "Comece um novo objetivo ou escolha outro acima."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "WDKpPN"
-msgid "You finished {goal}."
-msgstr "Você concluiu {goal}."
+msgctxt "PcSnMu"
+msgid "You finished your {goal} goal."
+msgstr "Você concluiu seu objetivo de {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "EQpfkS"
@@ -1022,9 +1029,9 @@ msgid "Nothing is planned until you resume it."
 msgstr "Nada está planejado até você retomar o objetivo."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "CSgdxh"
-msgid "{goal} is paused."
-msgstr "Objetivo em pausa: {goal}."
+msgctxt "lEE47Z"
+msgid "Your {goal} goal is paused."
+msgstr "Seu objetivo de {goal} está pausado."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1037,6 +1044,26 @@ msgid "Paused"
 msgstr "Pausado"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Ver seu plano"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "7aP-Hw"
+msgid "Look it over before you start."
+msgstr "Dê uma olhada antes de começar."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "_V80Fi"
+msgid "Your {goal} plan is ready."
+msgstr "Seu plano de {goal} está pronto."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "yKjBeN"
+msgid "Plan ready"
+msgstr "Plano pronto"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
 msgid "Continue setting up"
 msgstr "Continuar a configuração"
@@ -1047,9 +1074,9 @@ msgid "It's built from what you tell us."
 msgstr "Ele é criado com base no que você conta para a gente."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "zvtDTr"
-msgid "Your plan for {goal} needs a few more answers."
-msgstr "Seu plano para {goal} precisa de mais algumas respostas."
+msgctxt "CIgx3N"
+msgid "Your {goal} plan needs a few more answers."
+msgstr "Seu plano de {goal} precisa de mais algumas respostas."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"
@@ -1284,10 +1311,10 @@ msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Salvo."
 
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-msgctxt "VnpW_P"
-msgid "Choose your buddy, sounds, a daily time limit and the app's language."
-msgstr "Escolha seu parceiro, os sons, um limite de tempo diário e o idioma do app."
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "JXl2gz"
+msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
+msgstr "O que você conta aqui ajuda a personalizar seus exemplos e seu parceiro. Tudo é opcional."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx
@@ -3483,21 +3510,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "e mais {count}"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Escuta"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "Leitura"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "Escrita"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3558,11 +3570,11 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "Verifique este certificado"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#. The fine print on a language level certificate, such as B1.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Concedido quando todas as habilidades praticadas no Zoonk atingiram {level}, com base nas respostas dadas. Este não é um resultado oficial de prova."
+msgctxt "0ytAdy"
+msgid "Awarded for finishing this level on Zoonk. This is not an official exam result."
+msgstr "Concedido pela conclusão deste nível no Zoonk. Não é um resultado oficial de prova."
 
 #. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
 #: src/lib/certificates/certificate-view.ts

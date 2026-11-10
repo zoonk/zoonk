@@ -25,6 +25,7 @@ function checkWriteItemSetOutput(output: string, input: WriteItemSetCase): CodeC
     const item = repairItem({ item: toSetItem(question), language: input.language, optionCount });
 
     return {
+      itemLocator: `questions[${index}]`,
       problems: [
         ...(check.questions[index] ?? []),
         ...checkItem({ item, language: input.language, optionCount }),
@@ -37,10 +38,14 @@ function checkWriteItemSetOutput(output: string, input: WriteItemSetCase): CodeC
 
   return {
     judgedOutput: JSON.stringify(
-      { ...set, questions: passing.map((entry) => entry.question) },
+      {
+        ...set,
+        questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })),
+      },
       null,
       2,
     ),
+    keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length === 0 ? 0 : passing.length + (check.set.length === 0 ? SET_CHECKS : 0),
     problems: [...check.set, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,

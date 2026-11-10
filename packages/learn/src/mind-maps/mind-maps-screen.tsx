@@ -121,7 +121,7 @@ export function MindMapsScreen({
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <PageEyebrow>{mindMaps.goal.title}</PageEyebrow>
+            <PageEyebrow>{mindMaps.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
             <DetailFacts>
               {t("{count, plural, =0 {# maps} one {# map} other {# maps}}", { count: ready })}

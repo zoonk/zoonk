@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requiredEnv } from "./config.mts";
 
 const API_TIMEOUT_MS = 60_000;
+const HTTP_NOT_FOUND = 404;
 const POLL_INTERVAL_MS = 10_000;
 const MAX_POLL_ATTEMPTS = 240;
 
@@ -24,6 +25,10 @@ export async function request({
     signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
+  if (method === "DELETE" && response.status === HTTP_NOT_FOUND) {
+    return null;
+  }
+
   if (!response.ok) {
     // Provider error bodies can echo credentials from the request.
     throw new Error(`${url.hostname}${url.pathname}: HTTP ${response.status}`);
@@ -40,7 +45,7 @@ export function vercel({
   query,
 }: {
   path: string;
-  method?: "GET" | "POST" | "PATCH";
+  method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   query?: Record<string, string>;
 }): Promise<unknown> {

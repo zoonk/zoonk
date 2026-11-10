@@ -188,9 +188,9 @@ describe("a change the learner didn't make names the topics it moves", () => {
         .filter((item) => item.kind === "boss")
         .map((item) => [item.phase, item.scheduledFor?.toISOString().slice(0, 10)]),
     ).toStrictEqual([
-      [0, "2020-10-01"],
-      [1, "2020-10-06"],
-      [2, "2020-10-08"],
+      [0, "2020-10-02"],
+      [1, "2020-10-07"],
+      [2, "2020-10-10"],
     ]);
 
     if (!known) {

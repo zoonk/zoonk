@@ -17,6 +17,7 @@
     <string name="practice_finish_ready_detail">Finish to see how it went.</string>
     <string name="practice_already_answered">You already answered this question.</string>
     <string name="practice_save_error">That didn\'t go through. Your answers are kept.</string>
+    <string name="practice_save_error_repeat">Still not going through. You can come back later.</string>
     <plurals name="practice_net_right">
         <item quantity="one">%d right</item>
         <item quantity="other">%d right</item>

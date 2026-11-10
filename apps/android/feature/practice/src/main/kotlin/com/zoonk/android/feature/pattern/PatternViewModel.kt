@@ -33,7 +33,7 @@ data class PatternDrill(
     val answers: List<String> = emptyList(),
     val picked: Int? = null,
     val saving: Boolean = false,
-    val failed: Boolean = false,
+    val failures: Int = 0,
 ) {
     val isTypos: Boolean get() = pattern.kind == MistakePattern.Kind.TYPOS || pattern.drill.isEmpty()
     val index: Int get() = (step as? DrillStep.Question)?.index ?: 0
@@ -115,13 +115,13 @@ class PatternViewModel(
     private fun save() {
         val drill = mutableState.value
         if (drill == null || drill.saving || drill.step !is DrillStep.Question) return
-        change { it.copy(saving = true, failed = false) }
+        change { it.copy(saving = true) }
         viewModelScope.launch {
             val result = store.practice(patternId, drill.answers, requestId)
             change {
                 when (result) {
-                    is MutationResult.Done -> it.copy(step = DrillStep.Result(result.value), saving = false)
-                    else -> it.copy(saving = false, failed = true)
+                    is MutationResult.Done -> it.copy(step = DrillStep.Result(result.value), saving = false, failures = 0)
+                    else -> it.copy(saving = false, failures = it.failures + 1)
                 }
             }
             if (closeWhenSaved) closing.value = true

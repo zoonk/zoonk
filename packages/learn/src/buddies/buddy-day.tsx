@@ -6,6 +6,7 @@ import { useId } from "react";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowButton,
   ListRowContent,
   ListRowLink,
@@ -64,19 +65,23 @@ function BuddyRows({
         </ListRow>
 
         <ListRowLink href={hrefs.memory}>
-          <ListRowContent>
-            <ListRowTitle>{t("What {buddy} remembers", { buddy: name })}</ListRowTitle>
-          </ListRowContent>
-          {memoryCount !== undefined && <ListRowTrailing>{memoryCount}</ListRowTrailing>}
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{t("What {buddy} remembers", { buddy: name })}</ListRowTitle>
+            </ListRowContent>
+            {memoryCount !== undefined && <ListRowTrailing>{memoryCount}</ListRowTrailing>}
+          </ListRowBody>
         </ListRowLink>
 
         <ListRowButton aria-haspopup="dialog" onClick={onGlasses}>
-          <ListRowContent>
-            <ListRowTitle>{t("Glasses")}</ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing>
-            <GlassesCount status={status} />
-          </ListRowTrailing>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{t("Glasses")}</ListRowTitle>
+            </ListRowContent>
+            <ListRowTrailing>
+              <GlassesCount status={status} />
+            </ListRowTrailing>
+          </ListRowBody>
         </ListRowButton>
 
         <ListRowLink href={hrefs.logbook}>

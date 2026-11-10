@@ -22,7 +22,7 @@ export type LearnerPalette = {
   buddy: Pick<LearnBuddy, "kind" | "name"> | null;
   canAskBuddy: boolean;
   explanations: { id: string; title: string }[];
-  goals: { id: string; kind: string; title: string }[];
+  goals: { displayName: string; id: string; kind: string; title: string }[];
   /** Resolves to whether the goal is now the active one. */
   onSwitchGoal: (goalId: string) => Promise<boolean>;
   places: LearnerSummary["places"];
@@ -177,7 +177,8 @@ export function useLearnerPaletteGroups({
     .map((goal) =>
       createGoalPaletteItem({
         goalId: goal.id,
-        label: t("Switch to {goal}", { goal: goal.title }),
+        keywords: goal.title,
+        label: t("Switch to {goal}", { goal: goal.displayName }),
       }),
     );
 

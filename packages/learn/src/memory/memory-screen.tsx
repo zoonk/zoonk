@@ -208,6 +208,7 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
               {group.facts.map((fact) => (
                 <MemoryFactRow
                   fact={fact}
+                  memoryEnabled={screen.enabled}
                   key={fact.id}
                   onDelete={() => screen.removeFact(fact.id)}
                   onEdit={(statement) => screen.updateFact(fact.id, statement)}

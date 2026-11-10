@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ReactNode } from "react";
+import { type ReactNode, useLayoutEffect } from "react";
 import { PageEyebrow } from "../_components/page";
 import { toLabelCase } from "../_utils/label-case";
 import { OnboardingBarRow } from "./onboarding-bar";
@@ -59,12 +59,18 @@ export function OnboardingFrame({
 }
 
 export function OnboardingColumn({
+  bar,
   children,
   className,
   rail,
   wide = false,
   ...props
-}: React.ComponentProps<"main"> & { rail?: ReactNode; wide?: boolean }) {
+}: React.ComponentProps<"main"> & {
+  /** Pinned at the screen's bottom, across the page: a wait's actions. */
+  bar?: ReactNode;
+  rail?: ReactNode;
+  wide?: boolean;
+}) {
   const host = useOnboardingHost();
   const flowRail = useOnboardingRail();
 
@@ -73,6 +79,7 @@ export function OnboardingColumn({
       <OnboardingScreenPage
         backHref={host.backHref}
         barEnd={host.barEnd}
+        bottomBar={bar}
         rail={rail === undefined ? flowRail : rail}
         wide={wide}
       >
@@ -95,6 +102,7 @@ export function OnboardingColumn({
         {...props}
       >
         {children}
+        {bar}
       </section>
     );
   }
@@ -105,7 +113,10 @@ export function OnboardingColumn({
       data-slot="onboarding-column"
       {...props}
     >
-      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", className)}>{children}</div>
+      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", className)}>
+        {children}
+        {bar}
+      </div>
     </main>
   );
 }
@@ -276,4 +287,13 @@ export function OnboardingSecondaryButton({
       {...props}
     />
   );
+}
+
+/** The window keeps the scroll of a long screen, so the next one would open past its title. */
+export function OnboardingScreenTop() {
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  return null;
 }

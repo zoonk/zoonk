@@ -7,11 +7,12 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import systemPrompt from "./course-intent.prompt.md";
 
 /**
- * Flash Lite got all 175 course-intent cases right (1.7s p50); Luna and Claude Haiku 5.5 each
- * missed one (7 Oct 2026).
+ * On the stored current-prompt runs (read 8 Nov 2026), Luna got 174 of 175 labels at $0.0519/1k
+ * and Flash Lite 169 of 169 at $0.7172/1k, both near 1.6 s p50. Luna's one miss asks to clarify
+ * "michelin recipes", a harmless extra step.
  */
-const defaultModel = "google/gemini-3.5-flash-lite";
-const fallbackModels = ["openai/gpt-6-luna"] as const;
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
 const courseIntentSchema = z.enum(["unsafe", "exam", "question", "learn", "ambiguous"]);
 

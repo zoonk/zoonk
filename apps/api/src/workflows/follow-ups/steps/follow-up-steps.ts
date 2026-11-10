@@ -1,6 +1,5 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import {
-  countFollowUps,
   endFollowUp,
   listFollowUps,
   listLearnersWithOldFollowUps,
@@ -14,22 +13,19 @@ import {
   toChapterMindMapInput,
 } from "../../mind-maps/chapter-mind-map-input";
 
-export async function listFollowUpsStep(userId: string): Promise<OwedFollowUp[]> {
+export async function listFollowUpsStep(
+  userId: string,
+  started: Pick<OwedFollowUp, "id" | "revision">[] = [],
+): Promise<OwedFollowUp[]> {
   "use step";
 
-  return listFollowUps(userId);
+  return listFollowUps(userId, started);
 }
 
 export async function endFollowUpStep(input: { id: string; revision: number }): Promise<void> {
   "use step";
 
   await endFollowUp(input);
-}
-
-export async function countFollowUpsStep(userId: string): Promise<number> {
-  "use step";
-
-  return countFollowUps(userId);
 }
 
 export async function listLearnersWithOldFollowUpsStep(): Promise<string[]> {

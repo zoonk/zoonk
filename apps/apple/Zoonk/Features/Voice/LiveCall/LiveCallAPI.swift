@@ -98,8 +98,6 @@ struct LiveCallAPI: Sendable {
         throw APIError.notFound
       case .code402(let response):
         return .done(.refused(voiceRefusal(status: 402, error: try? response.body.json)))
-      case .forbidden(let response):
-        return .done(.refused(voiceRefusal(status: 403, error: try? response.body.json)))
       case .conflict(let response):
         return .done(.refused(voiceRefusal(status: 409, error: try? response.body.json)))
       case .unprocessableContent(let response):
@@ -168,8 +166,6 @@ struct LiveCallAPI: Sendable {
         throw APIError.unauthorized
       case .code402(let response):
         return CallReservation(refusal: voiceRefusal(status: 402, error: try? response.body.json))
-      case .forbidden(let response):
-        return CallReservation(refusal: voiceRefusal(status: 403, error: try? response.body.json))
       case .conflict(let response):
         return CallReservation(refusal: voiceRefusal(status: 409, error: try? response.body.json))
       case .tooManyRequests(let response):

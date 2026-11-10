@@ -67,7 +67,37 @@ export async function checkWithoutRecording({
   });
 }
 
-/** Replays the saved verdict; model feedback is not persisted and must never come from another request. */
+type SavedVerdict = Pick<Attempt, "isCorrect" | "score">;
+
+/** The saved verdict wins; model feedback is not persisted and must never come from another request. */
+export function toSavedVerdict({
+  fromCode,
+  saved,
+  verdict,
+}: {
+  fromCode: boolean;
+  saved: SavedVerdict;
+  verdict: LessonAnswerVerdict;
+}): LessonAnswerVerdict {
+  const sameAsCode = fromCode && verdict.checked && verdict.isCorrect === saved.isCorrect;
+
+  if (sameAsCode) {
+    return { ...verdict, score: saved.score };
+  }
+
+  return {
+    ...verdict,
+    checked: true,
+    correctAnswer: saved.isCorrect ? null : verdict.correctAnswer,
+    corrections: [],
+    feedback: null,
+    isCorrect: saved.isCorrect,
+    keyPoints: null,
+    score: saved.score,
+    spelling: null,
+  };
+}
+
 export function checkSaved({
   fromCode,
   hasQuestion,
@@ -77,26 +107,11 @@ export function checkSaved({
 }: Parameters<typeof checkWithoutRecording>[0] & {
   fromCode: boolean;
   hasQuestion: boolean;
-  saved: Pick<Attempt, "isCorrect" | "score">;
+  saved: SavedVerdict;
 }) {
-  const sameAsCode = fromCode && verdict.checked && verdict.isCorrect === saved.isCorrect;
-
-  const savedVerdict: LessonAnswerVerdict = sameAsCode
-    ? { ...verdict, score: saved.score }
-    : {
-        ...verdict,
-        checked: true,
-        corrections: [],
-        feedback: null,
-        isCorrect: saved.isCorrect,
-        keyPoints: null,
-        score: saved.score,
-        spelling: null,
-      };
-
   return checkWithoutRecording({
     ...input,
     savedMistake: !saved.isCorrect && hasQuestion,
-    verdict: savedVerdict,
+    verdict: toSavedVerdict({ fromCode, saved, verdict }),
   });
 }

@@ -5,25 +5,41 @@ import { type LessonPlayerAction } from "./lesson-player-state";
 import { type LessonPlayerAdapters } from "./lesson-player-types";
 import {
   type HeldAnswer,
+  type HeldLesson,
   type ScreenQueue,
   type StartedRun,
   toRunAnswer,
   useHeldAnswers,
 } from "./use-held-answers";
+import { useLessonClock } from "./use-lesson-clock";
 
 export function useLessonRun({
   adapters,
   dispatch,
-  lessonId,
+  lesson,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
-  lessonId: string;
+  lesson: HeldLesson;
 }) {
   const runRef = useRef<Promise<StartedRun | null> | null>(null);
   const pendingRef = useRef(new Set<Promise<unknown>>());
   const screensRef = useRef(new Map<string, ScreenQueue>());
   const heldRef = useRef(new Map<string, HeldAnswer>());
+  const { closeClock, flushClock, resendClock, runClock } = useLessonClock(adapters);
+
+  const startRun = useCallback(
+    async (input?: { runId: string }) => {
+      const outcome = await adapters.startLesson(input);
+
+      if (outcome.reason === "started") {
+        runClock(outcome);
+      }
+
+      return outcome;
+    },
+    [adapters, runClock],
+  );
 
   const ensureRun = useCallback((): Promise<StartedRun | null> => {
     if (runRef.current) {
@@ -32,11 +48,15 @@ export function useLessonRun({
 
     dispatch({ type: "runStarting" });
 
-    const run = adapters.startLesson().then((outcome) => {
+    const run = startRun().then((outcome) => {
+      if (outcome.reason === "opened") {
+        return null;
+      }
+
       if (outcome.reason === "started") {
         dispatch({
           answers: outcome.answers,
-          held: [...heldRef.current.values()].map((held) => toRunAnswer(held.check)),
+          held: [...heldRef.current.values()].map(({ check }) => toRunAnswer({ check, lesson })),
           hyperdrive: outcome.hyperdrive,
           optionalStepIds: outcome.optionalStepIds,
           replay: outcome.replay,
@@ -55,7 +75,7 @@ export function useLessonRun({
 
     runRef.current = run;
     return run;
-  }, [adapters, dispatch]);
+  }, [dispatch, lesson, startRun]);
 
   const keepPending = useCallback(<T>(request: Promise<T>): Promise<T> => {
     pendingRef.current.add(request);
@@ -83,20 +103,24 @@ export function useLessonRun({
     [getQueue, keepPending],
   );
 
-  const { hold, reopen, resendHeld, resendKept } = useHeldAnswers({
+  const { hold, reopen, resendKept, resendUnsaved } = useHeldAnswers({
     adapters,
     dispatch,
     ensureRun,
     getQueue,
     heldRef,
     keepPending,
-    lessonId,
+    lesson,
+    resendClock,
   });
 
-  const flushChecks = useCallback(async (): Promise<boolean> => {
+  const flushUnsaved = useCallback(async (): Promise<boolean> => {
     await Promise.allSettled(pendingRef.current);
-    return resendKept();
-  }, [resendKept]);
+    const saved = await resendKept();
+    // The run's study time counts up to its clock's latest change, so that lands first.
+    await flushClock();
+    return saved;
+  }, [flushClock, resendKept]);
 
-  return { ensureRun, flushChecks, hold, keepGrade, reopen, resendHeld };
+  return { closeClock, ensureRun, flushUnsaved, hold, keepGrade, reopen, resendUnsaved, startRun };
 }

@@ -40,14 +40,14 @@ test("a Free learner can open the next lesson while the earlier call challenge s
   await page.goto("/today");
   const today = page.getByRole("region", { name: "Today's session" });
   const lessonName = `${nextLesson?.title}, counts toward a mission`;
-  await expect(today.getByRole("button", { exact: true, name: lessonName })).toBeVisible();
-  await today.getByRole("button", { name: /^Start session/u }).click();
+  await expect(today.getByRole("link", { exact: true, name: lessonName })).toBeVisible();
+  await today.getByRole("link", { name: /^Start session/u }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${nextLesson?.id}\\?session=`, "u"));
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
 
-  await expect(
-    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: nextBlock?.id } }),
-  ).resolves.toMatchObject({ status: "active" });
+  await expect
+    .poll(() => prisma.studySessionBlock.findUniqueOrThrow({ where: { id: nextBlock?.id } }))
+    .toMatchObject({ status: "active" });
 
   await expect(
     prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),

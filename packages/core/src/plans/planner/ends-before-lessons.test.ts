@@ -6,6 +6,7 @@ import { parsePlanSettings } from "./plan-state";
 
 function filed(key: string, skillId: string, date: string) {
   return {
+    chapterId: null,
     key,
     kind: "lesson" as const,
     lessonId: key,
@@ -22,7 +23,8 @@ function skill(skillId: string, phase: number) {
 
 describe(listEndsBeforeLessons, () => {
   const end = fromIsoDate("2026-10-18");
-  const ends = new Map([[0, end]]);
+  const phaseEnds = new Map([[0, end]]);
+  const skillLessons = new Map<string, number>();
 
   const given = {
     graph: { phases: [], skills: [skill("arrival", 0), skill("renting", 1)] },
@@ -33,7 +35,13 @@ describe(listEndsBeforeLessons, () => {
     const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
 
     expect(
-      listEndsBeforeLessons({ ends, given, items, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({
+        given,
+        items,
+        laidOut: [{ depth: false, key: "a" }],
+        phaseEnds,
+        skillLessons,
+      }),
     ).toStrictEqual([0]);
   });
 
@@ -55,12 +63,19 @@ describe(listEndsBeforeLessons, () => {
     };
 
     expect(
-      listEndsBeforeLessons({ ends, given: course, items, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({
+        given: course,
+        items,
+        laidOut: [{ depth: false, key: "a" }],
+        phaseEnds,
+        skillLessons,
+      }),
     ).toStrictEqual([]);
   });
 
   it("never counts the end of a phase whose challenge the learner already won", () => {
     const won = {
+      chapterId: null,
       key: "boss:0",
       kind: "boss" as const,
       lessonId: null,
@@ -73,7 +88,13 @@ describe(listEndsBeforeLessons, () => {
     const items = [won, filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
 
     expect(
-      listEndsBeforeLessons({ ends, given, items, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({
+        given,
+        items,
+        laidOut: [{ depth: false, key: "a" }],
+        phaseEnds,
+        skillLessons,
+      }),
     ).toStrictEqual([]);
   });
 
@@ -81,7 +102,13 @@ describe(listEndsBeforeLessons, () => {
     const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
 
     expect(
-      listEndsBeforeLessons({ ends, given, items, units: [{ depth: true, key: "a" }] }),
+      listEndsBeforeLessons({
+        given,
+        items,
+        laidOut: [{ depth: true, key: "a" }],
+        phaseEnds,
+        skillLessons,
+      }),
     ).toStrictEqual([]);
   });
 });

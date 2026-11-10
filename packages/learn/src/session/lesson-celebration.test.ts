@@ -17,6 +17,7 @@ function lessonCompletion(
     incorrectCount: 0,
     isFirstCompletion: true,
     nextReviewAt: null,
+    planReveal: null,
     reached: { energy: null, level: null },
     seconds: 60,
     studyBlock: null,

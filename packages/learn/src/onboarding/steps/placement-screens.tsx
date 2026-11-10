@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListGroup,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -61,15 +62,17 @@ function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
         <ListRowLeading>
           <KindDot kind="mock" />
         </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{t("Or take a mock exam")}</ListRowTitle>
-          <ListRowDescription>{offerText(mock)}</ListRowDescription>
-        </ListRowContent>
-        {mock.access === "plusRequired" && (
-          <ListRowTrailing>
-            <PlusMark />
-          </ListRowTrailing>
-        )}
+        <ListRowBody>
+          <ListRowContent>
+            <ListRowTitle>{t("Or take a mock exam")}</ListRowTitle>
+            <ListRowDescription>{offerText(mock)}</ListRowDescription>
+          </ListRowContent>
+          {mock.access === "plusRequired" && (
+            <ListRowTrailing>
+              <PlusMark />
+            </ListRowTrailing>
+          )}
+        </ListRowBody>
       </ListRowLink>
     </ListGroup>
   );

@@ -195,7 +195,7 @@ class LiveConversationApi(
     }
 }
 
-private val CHANGED = setOf("BLOCK_FINISHED", "DAILY_LIMIT_REACHED", "EARLIER_FIRST", "NOT_LANGUAGE")
+private val CHANGED = setOf("BLOCK_FINISHED", "EARLIER_FIRST", "NOT_LANGUAGE")
 
 /** Starts a call from the learner's tap, and reads the run a start can answer with. */
 interface CallStarter {

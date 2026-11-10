@@ -4,6 +4,7 @@ import { Disclosure } from "@zoonk/learn/disclosure";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowIcon,
   ListRowLeading,
@@ -170,17 +171,19 @@ function LessonOutline() {
           <ListRowLeading>
             <span className="text-faint w-4 font-mono text-xs tabular-nums">{row.number}</span>
           </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle className={cn(row.state === "read" && "text-muted-foreground")}>
-              <LessonRichText text={row.title} />
-              {row.state === "read" && <span className="sr-only">{t(", read")}</span>}
-            </ListRowTitle>
-          </ListRowContent>
-          {row.state === "read" && (
-            <ListRowTrailing>
-              <CheckIcon aria-hidden="true" className="text-faint size-3.5" />
-            </ListRowTrailing>
-          )}
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle className={cn(row.state === "read" && "text-muted-foreground")}>
+                <LessonRichText text={row.title} />
+                {row.state === "read" && <span className="sr-only">{t(", read")}</span>}
+              </ListRowTitle>
+            </ListRowContent>
+            {row.state === "read" && (
+              <ListRowTrailing>
+                <CheckIcon aria-hidden="true" className="text-faint size-3.5" />
+              </ListRowTrailing>
+            )}
+          </ListRowBody>
         </ListRow>
       ))}
 

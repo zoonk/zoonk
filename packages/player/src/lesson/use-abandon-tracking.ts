@@ -1,9 +1,10 @@
 "use client";
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
-import { useEffect, useEffectEvent, useRef } from "react";
+import { useRef } from "react";
 import { getAbandonEvent } from "./_utils/lesson-abandon";
 import { type LessonPlayerState } from "./lesson-player-state";
+import { usePageLifecycle } from "./use-page-lifecycle";
 
 export function useAbandonTracking({
   state,
@@ -14,24 +15,16 @@ export function useAbandonTracking({
 }): void {
   const sent = useRef(false);
 
-  const report = useEffectEvent(() => {
-    const event = getAbandonEvent(state);
+  usePageLifecycle({
+    onLeave: () => {
+      const event = getAbandonEvent(state);
 
-    if (sent.current || !event) {
-      return;
-    }
+      if (sent.current || !event) {
+        return;
+      }
 
-    sent.current = true;
-    track(event, { instant: true });
+      sent.current = true;
+      track(event, { instant: true });
+    },
   });
-
-  useEffect(() => {
-    const onPageHide = () => report();
-    window.addEventListener("pagehide", onPageHide);
-
-    return () => {
-      window.removeEventListener("pagehide", onPageHide);
-      report();
-    };
-  }, []);
 }

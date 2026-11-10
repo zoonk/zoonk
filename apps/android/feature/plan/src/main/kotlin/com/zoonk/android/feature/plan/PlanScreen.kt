@@ -230,7 +230,7 @@ private fun PlanSetupLeft(
     goal: LearnerSummaryGoal,
     navigator: AppNavigator,
 ) {
-    Text(text = goal.title, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(text = goal.displayName, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     PlanTitle()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
@@ -283,7 +283,7 @@ private fun PlanBuilding(
         onRetry = viewModel.follower::retry,
     ) {
         Text(
-            text = stringResource(R.string.plan_building_eyebrow, goal.title),
+            text = stringResource(R.string.plan_building_eyebrow, goal.displayName),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

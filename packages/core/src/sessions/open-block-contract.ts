@@ -129,8 +129,7 @@ export const studyBlockOpeningSchema = z
       .object({ kind: z.literal("today") })
       .strict()
       .meta({
-        description:
-          "Back to Today: the day is over, today's time limit is reached, or earlier work comes first",
+        description: "Back to Today: the day is over or earlier work comes first",
         id: "StudyBlockOpeningToday",
       }),
     z

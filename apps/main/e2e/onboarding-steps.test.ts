@@ -4,7 +4,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
-import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
+import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
 
 /** The page gives a run 45 s to appear. */
 const RUN_START_LIMIT_MS = 46_000;
@@ -47,11 +47,11 @@ test.describe("Refreshing mid-onboarding", () => {
     await expectHydrated(purpose);
     await purpose.click();
 
-    const date = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
-    await expect(date).toBeVisible();
+    const level = page.getByRole("heading", { name: "How much do you already know?" });
+    await expect(level).toBeVisible();
 
     await page.reload();
-    await expect(date).toBeVisible();
+    await expect(level).toBeVisible();
 
     await page.getByRole("button", { name: "More" }).click();
     await page.getByRole("menuitem", { name: /^Start over/u }).click();
@@ -106,6 +106,42 @@ test.describe("Waiting for placement's questions", () => {
 });
 
 test.describe("When a wait can't go on", () => {
+  test("a failed rebuild keeps the old plan hidden and offers Try again", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await createMappedGoal(noProgressUser.id);
+    const runId = `e2e-rebuild-${randomUUID()}`;
+
+    await prisma.goal.update({
+      data: {
+        details: { answered: [...ANSWERED, "placement"], subject: "algebra" },
+        generationRunId: runId,
+      },
+      where: { id: goal.id },
+    });
+
+    await prisma.plan.update({ data: { buildFailedAt: new Date() }, where: { goalId: goal.id } });
+
+    await stopRuns({ entityId: goal.id, page });
+    await page.goto(`/start/${goal.id}`);
+
+    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
+    await expect(failed).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
+    await failed.getByRole("button", { name: "Try again" }).click();
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.generationRunId;
+      })
+      .not.toBe(runId);
+
+    await expect(failed).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
+  });
+
   test("a failed run says so, and Try again starts it over", async ({
     noProgressUser,
     userWithoutProgress: page,
@@ -170,7 +206,7 @@ test.describe("When a wait can't go on", () => {
 
     await expect(notice).toBeVisible();
 
-    const nextQuestion = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
+    const nextQuestion = page.getByRole("heading", { name: "How much do you already know?" });
     await expect(nextQuestion).toBeVisible();
 
     await stopRuns({ entityId: goal.id, page });
@@ -187,5 +223,37 @@ test.describe("When a wait can't go on", () => {
         return saved.generationRunId;
       })
       .toEqual(expect.any(String));
+  });
+});
+
+test.describe("Why a language learner studies it", () => {
+  test("sets how far the course goes: a trip aims it at A2", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await goalFixture({
+      details: { answered: [], level: "none", subject: "Italian" },
+      kind: "language",
+      planRevealedAt: null,
+      prompt: `learn italian ${randomUUID()}`,
+      targetLanguage: "it",
+      title: "Learn Italian",
+      userId: noProgressUser.id,
+    });
+
+    await page.goto(`/start/${goal.id}`);
+
+    const travel = page.getByRole("radio", { name: /^Travel/u });
+    await expectHydrated(travel);
+    await travel.click();
+
+    await expect(page.getByRole("heading", { name: "Why are you learning it?" })).toBeHidden();
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.details;
+      })
+      .toMatchObject({ reason: "travel", targetScore: "A2" });
   });
 });

@@ -22,12 +22,17 @@ import {
   findLanding,
   getLandingSkillMinutes,
   listLandedUnits,
+  withoutRepeatedLandings,
 } from "./landed-lessons";
 import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
-import { listChallengesLeftOut, listTaughtPhases } from "./phase-checkpoints";
+import {
+  listChallengesLeftOut,
+  listTaughtPhases,
+  withoutUntestableChallenges,
+} from "./phase-checkpoints";
 import { placeItemsInPhaseTime } from "./phase-time";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
@@ -42,7 +47,7 @@ import { type BossPlanFacts, settlePlannedBosses } from "./planned-bosses";
 import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
-import { summarizePlan } from "./summarize-plan";
+import { listDroppedSkills, summarizePlan } from "./summarize-plan";
 import { getPendingOrder, listStillSetAside } from "./this-week-items";
 import { markKeptLessons } from "./whole-boss";
 
@@ -100,7 +105,10 @@ export type { BuiltPlan } from "./built-plan";
 
 /** Pure: the same inputs always give the same plan. */
 export function buildPlan(given: BuildPlanInput) {
-  return settlePlannedBosses({ build: buildWithBosses, input: given });
+  return withoutUntestableChallenges({
+    built: settlePlannedBosses({ build: buildWithBosses, input: given }),
+    input: given,
+  });
 }
 
 function buildWithBosses(given: BuildPlanInput): BuiltPlan {
@@ -154,15 +162,6 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
   );
 }
 
-function listDroppedSkills(dropped: readonly { depth?: boolean; skillId: string | null }[]) {
-  return {
-    droppedSkillIds: [...new Set(dropped.flatMap((unit) => (unit.skillId ? [unit.skillId] : [])))],
-    waitingSkillIds: [
-      ...new Set(dropped.flatMap((unit) => (unit.skillId && !unit.depth ? [unit.skillId] : []))),
-    ],
-  };
-}
-
 function planGoal({
   given,
   input,
@@ -192,7 +191,7 @@ function planGoal({
     thisWeek,
   } = splitExistingItems({ input, keepsRest, landedSkillIds: landedUnits ?? undefined, queue });
 
-  const { finishedKeys, ordered, unitsByKey } = getPendingOrder({ finished, queue });
+  const { finishedKeys, ordered, unitsByKey } = getPendingOrder({ finished, frozen, queue });
   const start = frozen.length > 0 ? addDays(getEndOfWeek(input.today), 1) : getOpenStart(input);
   const days = createDays({ input, planStart });
 
@@ -231,7 +230,7 @@ function planGoal({
     input,
     kept: keepsRest ? listKeptTime({ frozen, units: unitsByKey }) : null,
     keptParts,
-    landed: landedUnits,
+    landed: withoutRepeatedLandings({ kept: [...finished, ...frozen], landed: landedUnits }),
     start,
     units: [...carriedSchedule.units, ...restSchedule.units],
   });
@@ -303,19 +302,22 @@ function planGoal({
     today: input.today,
   });
 
+  const { skillLessons, ...outline } = summarizePlan({
+    afterExam: afterExam?.span ?? null,
+    challengesLeftOut: listChallengesLeftOut({ dropped, items, taught }),
+    graph: input.graph,
+    items,
+    kept: phaseEnds,
+    queue: [...queue.filter((unit) => finishedKeys.has(unit.key)), ...unplaced],
+    scheduleStart: start,
+    windows: days.windows,
+  });
+
   return {
-    ...summarizePlan({
-      afterExam: afterExam?.span ?? null,
-      challengesLeftOut: listChallengesLeftOut({ dropped, items, taught }),
-      graph: input.graph,
-      items,
-      kept: phaseEnds,
-      queue: [...queue.filter((unit) => finishedKeys.has(unit.key)), ...unplaced],
-      scheduleStart: start,
-      windows: days.windows,
-    }),
+    ...outline,
+    skillLessons,
     ...listDroppedSkills(dropped),
-    endsBeforeLessons: listEndsBeforeLessons({ ends: phaseEnds, given, items, units: laidOut }),
+    endsBeforeLessons: listEndsBeforeLessons({ given, items, laidOut, phaseEnds, skillLessons }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
     ...listLessonDays(units, keptPortions),

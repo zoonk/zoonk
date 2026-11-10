@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { MemoryCategory, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { markMemoryFactsUsed } from "../../memory/_utils/mark-facts-used";
@@ -8,7 +8,7 @@ import { type MemoryChange } from "../../memory/memory-contract";
 import { updateMemoryFromActivity } from "../../memory/update-memory-from-activity";
 import { findThreadSubject } from "./tutor-subject";
 
-const TUTOR_MEMORY_CATEGORIES = ["learning", "goals"] as const;
+const TUTOR_MEMORY_CATEGORIES = Object.values(MemoryCategory);
 
 /** Memory failures never block an answer; markTutorMemoryUsed records only facts used in a personal answer. */
 export async function findTutorMemory({

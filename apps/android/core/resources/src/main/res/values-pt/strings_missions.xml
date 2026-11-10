@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "047e744f2e27b5751a492bb3d351c79a5d394d9882e5194110ddf0d4bf78af99",
-  "missions_after_lessons": "daee1748881b0b3504a466c246cd35371598fc4664ca370b342ba28e4b3b064a",
+  "missions_after_lessons": "750eb2bbf6af780e7a215d0710e6884dfc9f684d66eec45518c0112b9afa7103",
   "missions_already_earned": "1cae78adfa887a683780e64a0d7c757df5110dd8d29b918f3c3fab005ff381b4",
   "missions_ask_anything": "e15e0b04345105e8f6e9d0fc38926f2eb2d80b20d6cadf18eb34e6b8cc87335f",
   "missions_ask_buddy": "aa7b425602a28170a834910fd381d84aa68af6858322a5979caf5ceb6da1ee4f",
@@ -125,8 +124,7 @@
     <string name="missions_ask_buddy">Perguntar algo para %1$s</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">Praticar %1$s</string>
-    <string name="missions_after_lessons">Depois das aulas de hoje</string>
-    <string name="missions_after_challenge">Depois do desafio anterior</string>
+    <string name="missions_after_lessons">Depois das aulas desta fase</string>
     <string name="missions_from_notebook">Do seu Caderno de erros</string>
     <string name="missions_due_today">Para hoje</string>
     <!-- %1$s is a language unit's title. -->

@@ -83,6 +83,7 @@ describe.each([
           reasoning: "Fits the rubric.",
           score: 8,
         })),
+        keyFlaws: [],
         steps: [],
       },
       usage: { inputTokens: 1, outputTokens: 1 },

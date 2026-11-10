@@ -25,6 +25,7 @@ import {
   generatedMultipleChoice,
   generatedProvenance,
   generatedTypedItem,
+  keyChecked,
 } from "./_test-utils/generated-items";
 import { discountMath, discountQuestion } from "./_test-utils/math-problems";
 import { createItems } from "./create-items";
@@ -94,6 +95,39 @@ describe(createItems, () => {
     expect(
       parseItemContent({ content: created[0]!.content, format: "multipleChoice" }),
     ).toStrictEqual({ content: { ...expectedContent, select: 1 }, format: "multipleChoice" });
+  });
+
+  it("reads a language goal's options in the practiced language and its setup in the learner's", async () => {
+    const skill = await skillFixture({ language: "pt", targetLanguage: "en" });
+
+    const item = generatedMultipleChoice({
+      options: [
+        {
+          isCorrect: true,
+          misconception: null,
+          reason: "O aluguel é mil dólares.",
+          text: "$1,000",
+        },
+        {
+          isCorrect: false,
+          misconception: "Lê a vírgula como decimal",
+          reason: "Isso é um dólar.",
+          text: "$1",
+        },
+      ],
+    });
+
+    const { created, rejected } = await createItems({
+      format: "multipleChoice",
+      items: [item, { ...item, context: "Observe a imagem abaixo." }],
+      language: "pt",
+      optionLanguage: "en",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    expect(created).toMatchObject([{ language: "pt" }]);
+    expect(rejected).toMatchObject([{ index: 1 }]);
   });
 
   it("stores how its exam answers a question: the options picked and how a number is typed", async () => {
@@ -310,7 +344,7 @@ describe(createItems, () => {
 
     const { created } = await createItems({
       format: "trueFalse",
-      items: [drill],
+      items: [keyChecked(drill)],
       language: "pt",
       provenance: generatedProvenance(),
       skillId: skill.id,
@@ -330,7 +364,7 @@ describe(createItems, () => {
 
     const { created, rejected } = await createItems({
       format: "multipleChoice",
-      items: [twoCorrect, good, generatedTypedItem()],
+      items: [twoCorrect, good, keyChecked(generatedTypedItem())],
       language: "en",
       provenance: generatedProvenance(),
       skillId: skill.id,

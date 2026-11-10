@@ -50,7 +50,7 @@ export type PlanActions = {
 /** A null `buddy` uses the default buddy. */
 export type PlanTutor = { buddy: Pick<LearnBuddy, "kind" | "name"> | null; href: string };
 
-export type PlanGoal = { kind: "exam" | "explain" | "language" | "learn"; title: string };
+export type PlanGoal = { kind: "exam" | "explain" | "language" | "learn"; displayName: string };
 
 type PlanScreenValue = {
   actions: PlanActions;

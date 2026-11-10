@@ -55,7 +55,7 @@ export function Essay({ q }: { q: URLSearchParams }) {
       <EssayScreen
         actions={{ finish: NOOP_ASYNC, submit: NOOP_ASYNC }}
         essay={essayView(q)}
-        hrefs={{ dailyLimit: "/settings/appearance", exit: "/today" }}
+        hrefs={{ exit: "/today" }}
       />
     </LangLearn>
   );

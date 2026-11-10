@@ -2,6 +2,9 @@ package com.zoonk.android.feature.player.model
 
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.LessonRunAnswerResult
+import com.zoonk.api.models.LessonRunAnswerResultCorrectionsInner
+import com.zoonk.api.models.LessonRunAnswerResultKeyPointsInner
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf1
@@ -16,16 +19,14 @@ import com.zoonk.api.models.LessonStepAnswerOneOf7UserPairsInner
 import com.zoonk.api.models.LessonStepAnswerOneOf8
 import com.zoonk.api.models.LessonStepAnswerOneOf9
 import com.zoonk.api.models.LessonStepCheckResult
-import com.zoonk.api.models.LessonStepCheckResultCorrectionsInner
-import com.zoonk.api.models.LessonStepCheckResultKeyPointsInner
 import com.zoonk.api.models.SpokenAnswerGrade
 import com.zoonk.api.models.SpokenPracticeWord
 import com.zoonk.api.models.SpokenWordResult
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
-typealias AnswerCorrection = LessonStepCheckResultCorrectionsInner
-typealias AnswerKeyPoint = LessonStepCheckResultKeyPointsInner
+typealias AnswerCorrection = LessonRunAnswerResultCorrectionsInner
+typealias AnswerKeyPoint = LessonRunAnswerResultKeyPointsInner
 
 /** A learner's answer to one screen. A hook's guess is never sent: it isn't graded. */
 @Immutable
@@ -169,6 +170,58 @@ fun LessonAnswer.toApi(): LessonStepAnswer? =
         }
     }
 
+fun LessonStepAnswer.toLessonAnswer(): LessonAnswer =
+    when (this) {
+        is LessonStepAnswer.LessonStepAnswerOneOfValue -> {
+            LessonAnswer.Check(value.optionId)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf1Value -> {
+            LessonAnswer.Typed(value.text)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf2Value -> {
+            LessonAnswer.Spoken(value.text)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf3Value -> {
+            LessonAnswer.Activity(value.answer)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf4Value -> {
+            LessonAnswer.Challenge(value.choiceIds)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf5Value -> {
+            LessonAnswer.FillBlank(value.userAnswers)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf6Value -> {
+            LessonAnswer.Listening(value.arrangedWords)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf7Value -> {
+            LessonAnswer.MatchColumns(
+                value.userPairs.map {
+                    it.left to it.right
+                },
+                value.mistakes.toInt(),
+            )
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf8Value -> {
+            LessonAnswer.MultipleChoice(value.selectedOptionId)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf9Value -> {
+            LessonAnswer.Reading(value.arrangedWords)
+        }
+
+        is LessonStepAnswer.LessonStepAnswerOneOf10Value -> {
+            LessonAnswer.Translation(value.selectedOptionId)
+        }
+    }
+
 /** What a spoken answer was heard as, word by word, with up to two words to practice. */
 @Immutable
 data class SpokenHeard(
@@ -215,6 +268,23 @@ fun LessonStepCheckResult.toStepResult(answerText: String?): StepResult =
         score = score,
         spelling = spelling,
     )
+
+/** A saved answer's result; a recording, which has no answer to show, shows what was heard. */
+fun LessonRunAnswerResult.toStepResult(isRecording: Boolean): StepResult =
+    LessonStepCheckResult(
+        checked = checked,
+        correctAnswer = correctAnswer,
+        corrections = corrections,
+        expected = expected,
+        feedback = feedback,
+        isCorrect = isCorrect,
+        keyPoints = keyPoints,
+        nextReviewAt = nextReviewAt,
+        savedMistake = savedMistake,
+        score = score,
+        spelling = spelling,
+    ).toStepResult(answerText)
+        .copy(heard = answerText?.takeIf { isRecording }?.let { SpokenHeard(it, words = emptyList(), wordsToPractice = emptyList()) })
 
 /** Main's `fromSpokenGrade`: what was heard, and the sentence to say when it wasn't right. */
 fun SpokenAnswerGrade.toStepResult(targetText: String): StepResult =

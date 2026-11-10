@@ -252,7 +252,6 @@ msgstr "Sınav"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Konuşma"
@@ -317,6 +316,14 @@ msgstr "Profil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr "Senin hakkında"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
@@ -334,7 +341,7 @@ msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "Görünüm"
 
-#. A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.
+#. A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -1007,8 +1014,8 @@ msgid "Start a new goal, or pick another one above."
 msgstr "Yeni bir hedefe başla veya yukarıdan başka bir hedef seç."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "WDKpPN"
-msgid "You finished {goal}."
+msgctxt "PcSnMu"
+msgid "You finished your {goal} goal."
 msgstr "{goal} hedefini tamamladın."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
@@ -1022,9 +1029,9 @@ msgid "Nothing is planned until you resume it."
 msgstr "Devam edene kadar hiçbir şey planlanmaz."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "CSgdxh"
-msgid "{goal} is paused."
-msgstr "{goal} hedefi duraklatıldı."
+msgctxt "lEE47Z"
+msgid "Your {goal} goal is paused."
+msgstr "{goal} hedefin duraklatıldı."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1037,6 +1044,26 @@ msgid "Paused"
 msgstr "Duraklatıldı"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "SedhMm"
+msgid "See your plan"
+msgstr "Planını gör"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "7aP-Hw"
+msgid "Look it over before you start."
+msgstr "Başlamadan önce gözden geçir."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "_V80Fi"
+msgid "Your {goal} plan is ready."
+msgstr "{goal} planın hazır."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+msgctxt "yKjBeN"
+msgid "Plan ready"
+msgstr "Plan hazır"
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "nggkj2"
 msgid "Continue setting up"
 msgstr "Planını oluşturmaya devam et"
@@ -1047,9 +1074,9 @@ msgid "It's built from what you tell us."
 msgstr "Planını bize anlattıklarına göre hazırlıyoruz."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "zvtDTr"
-msgid "Your plan for {goal} needs a few more answers."
-msgstr "{goal} için planını tamamlamak üzere birkaç cevaba daha ihtiyacımız var."
+msgctxt "CIgx3N"
+msgid "Your {goal} plan needs a few more answers."
+msgstr "{goal} planın için birkaç cevap daha gerekiyor."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"
@@ -1284,10 +1311,10 @@ msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Kaydedildi."
 
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-msgctxt "VnpW_P"
-msgid "Choose your buddy, sounds, a daily time limit and the app's language."
-msgstr "Arkadaşını, sesleri, günlük süre sınırını ve uygulama dilini seç."
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "JXl2gz"
+msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
+msgstr "Burada anlattıkların sana sunulan örnekleri ve ders arkadaşını şekillendirir. Her şey isteğe bağlı."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx
@@ -3483,21 +3510,6 @@ msgctxt "oDI_Rp"
 msgid "and {count} more"
 msgstr "ve {count} konu daha"
 
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Dinleme"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "MOK_yK"
-msgid "Reading"
-msgstr "Okuma"
-
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "GoReDj"
-msgid "Writing"
-msgstr "Yazma"
-
 #. A certificate's fact: the day the learner finished the course or level.
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
@@ -3558,11 +3570,11 @@ msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "Bu sertifikayı doğrula"
 
-#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#. The fine print on a language level certificate, such as B1.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "yA8QN_"
-msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
-msgstr "Zoonk’ta çalıştığı tüm beceriler, verdiği cevaplara göre {level} düzeyine ulaştığında verildi. Bu resmî bir sınav sonucu değildir."
+msgctxt "0ytAdy"
+msgid "Awarded for finishing this level on Zoonk. This is not an official exam result."
+msgstr "Zoonk’ta bu seviyeyi tamamladığın için verilmiştir. Resmî bir sınav sonucu değildir."
 
 #. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
 #: src/lib/certificates/certificate-view.ts

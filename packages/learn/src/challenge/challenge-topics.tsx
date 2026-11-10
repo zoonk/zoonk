@@ -5,6 +5,7 @@ import { useExtracted, useFormatter } from "next-intl";
 import {
   ListGroup,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowTitle,
@@ -60,19 +61,23 @@ export function ChallengeTopics() {
       <ListGroup>
         {rows.map((row) => (
           <ListRow key={`${row.subject ?? ""}:${row.topics.join(",")}`}>
-            <ListRowContent>
-              <ListRowTitle>{row.subject ?? row.topics[0]}</ListRowTitle>
+            <ListRowBody>
+              <ListRowContent>
+                <ListRowTitle>{row.subject ?? row.topics[0]}</ListRowTitle>
+                {row.subject !== null && (
+                  <ListRowDescription className="line-clamp-2">
+                    {format.list(row.topics, { style: "short", type: "unit" })}
+                  </ListRowDescription>
+                )}
+              </ListRowContent>
               {row.subject !== null && (
-                <ListRowDescription className="line-clamp-2">
-                  {format.list(row.topics, { style: "short", type: "unit" })}
-                </ListRowDescription>
+                <ListRowTrailing>
+                  {t("{count, plural, one {# topic} other {# topics}}", {
+                    count: row.topics.length,
+                  })}
+                </ListRowTrailing>
               )}
-            </ListRowContent>
-            {row.subject !== null && (
-              <ListRowTrailing>
-                {t("{count, plural, one {# topic} other {# topics}}", { count: row.topics.length })}
-              </ListRowTrailing>
-            )}
+            </ListRowBody>
           </ListRow>
         ))}
       </ListGroup>

@@ -7,6 +7,9 @@ import Observation
 final class OnboardingStore {
   private(set) var sentGoal: SentGoal?
   let resume: Resource<OnboardingResume>
+  /// What each goal run's stream said of its deck: ready (its id), or nil once the run ended its
+  /// deck step without one. A ready onboarding read wins; a writing one may be older.
+  private var decks: [String: String?] = [:]
 
   @ObservationIgnored private let api: OnboardingAPI
   @ObservationIgnored private let cache: AppCache
@@ -14,6 +17,7 @@ final class OnboardingStore {
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
+  @ObservationIgnored private var revealDays: [String: Resource<PlanRevealRead>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
     let api = OnboardingAPI(clients: clients)
@@ -98,17 +102,49 @@ final class OnboardingStore {
     clients.generationEvents(id: generationID, token: session.authenticatedSession?.bearerToken)
   }
 
-  /// The warm-up deck a goal's run reported, read from its first event. Nil when it reported none
-  /// or its stream broke: the deck is optional.
-  func warmUpID(generationID: String) async -> String? {
+  func found(deckID: String, generationID: String) {
+    if decks[generationID] != .some(deckID) {
+      decks[generationID] = .some(deckID)
+    }
+  }
+
+  /// The deck a wait deals from, and whether one is on its way: the onboarding read names the
+  /// deck at open, and the run's stream says when it's ready or that none is coming.
+  func waitDeck(for view: GoalOnboarding) -> WaitDeck {
+    if view.warmUp?.status == .ready {
+      return WaitDeck(id: view.warmUp?.id, isComing: false)
+    }
+
+    if let generationID = view.generationId, let heard = decks[generationID] {
+      return WaitDeck(id: heard, isComing: false)
+    }
+
+    return WaitDeck(id: nil, isComing: view.warmUp?.status == .writing)
+  }
+
+  /// Follows a goal's run until it says whether its deck is ready, so every wait after it knows.
+  /// Returns the deck once it's ready; nil when the run ended its deck step without one, or ended.
+  func followDeck(generationID: String) async -> String? {
     do {
       for try await event in events(generationID: generationID) {
         if let id = event.warmUpID {
+          found(deckID: id, generationID: generationID)
           return id
         }
+
+        if event.step == "warmUpFailed", event.status == "completed" {
+          break
+        }
       }
+    } catch is GenerationStopped {
+      // A stopped run writes no deck.
     } catch {
+      // A broken stream says nothing about the deck.
       return nil
+    }
+
+    if !Task.isCancelled {
+      decks[generationID] = .some(nil)
     }
 
     return nil
@@ -189,8 +225,10 @@ final class OnboardingStore {
       return resource
     }
 
-    // Only this flow's answers change it, and each answer's response is the new value.
-    let resource: Resource<GoalOnboarding> = cache.resource(audience: .signedIn) { [api] session in
+    // Read again each time setup opens: Settings › About you and the Memory switch change which
+    // questions it asks, and this flow's own answers carry the new value in their response.
+    let resource: Resource<GoalOnboarding> = cache.resource(audience: .signedIn, maxAge: .zero) {
+      [api] session in
       guard let session else {
         return nil
       }
@@ -202,14 +240,46 @@ final class OnboardingStore {
     return resource
   }
 
+  /// About you answers also change memory and what the learner model reads.
   func answer(_ answer: OnboardingAnswer, goalID: String) async throws -> GoalOnboarding {
-    let updated = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+    let updated = try await cache.onboardingWrite(
+      invalidating: [.goals, .learningProfile, .memory, .learnerModel]
+    ) {
       [api] identity in
       try await api.answer(answer, goalID: goalID, token: identity.bearerToken)
     }
 
     onboarding(goalID: updated.goal.id).update { _ in updated }
     return updated
+  }
+
+  /// The reveal's Today: the goal's first day as Today will show it. Reading it writes nothing.
+  func revealToday(goalID: String) -> Resource<PlanRevealRead> {
+    if let resource = revealDays[goalID] {
+      return resource
+    }
+
+    let resource: Resource<PlanRevealRead> = cache.resource(
+      audience: .signedIn, domains: [.goals, .learnerModel, .userProgress]
+    ) { [api] session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.revealToday(goalID: goalID, token: session.bearerToken)
+    }
+
+    revealDays[goalID] = resource
+    return resource
+  }
+
+  /// The reveal's action: until it's saved, resume and Today bring the learner back to the plan.
+  func markPlanRevealed(goalID: String) async throws {
+    try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
+      try await api.markPlanRevealed(goalID: goalID, token: identity.bearerToken)
+    }
+
+    onboarding(goalID: goalID).invalidate()
   }
 
   func writeGoal(goalID: String) async throws -> String {
@@ -298,14 +368,16 @@ final class OnboardingStore {
     }
   }
 
-  func timeAdvice(goalID: String, week: ScheduleWeek, dailyMinutes: Int) async throws -> TimeAdvice
-  {
+  /// `aim` asks about a language goal's other aim; nil answers for its own.
+  func timeAdvice(
+    goalID: String, week: ScheduleWeek, dailyMinutes: Int, aim: String? = nil
+  ) async throws -> TimeAdvice {
     guard let token = session.authenticatedSession?.bearerToken else {
       throw CancellationError()
     }
 
     return try await api.timeAdvice(
-      goalID: goalID, week: week, dailyMinutes: dailyMinutes, token: token)
+      goalID: goalID, week: week, dailyMinutes: dailyMinutes, aim: aim, token: token)
   }
 
   func timeToCover(goalID: String, week: ScheduleWeek) async throws -> TimeToCover {

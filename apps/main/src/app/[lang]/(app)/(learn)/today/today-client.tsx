@@ -14,6 +14,7 @@ import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
+import { getStudyLessonHref } from "@/lib/session/lesson-opening";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useMissionLinks } from "@/lib/session/use-mission-links";
@@ -193,15 +194,26 @@ export function TodayClient({
         },
         chooseFocusHref: "/plan?focus=choose",
         completedLessonsHref: "/completed-lessons",
-        continueHref: call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null,
+        continueHref: (() => {
+          const next = today.session.blocks.find(
+            (block) => block.position === today.session.nextPosition,
+          );
+
+          return (
+            (next &&
+              getStudyLessonHref({ block: next, goalId: today.goal.id, session: today.session })) ||
+            (call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null)
+          );
+        })(),
         continueSession: () => {
           const next = stepAt(today.session.nextPosition);
           return next ? taps.next(next) : Promise.resolve(false);
         },
-        dailyLimitHref: "/settings/appearance",
         decidePlanChange,
         examHref: "/exam",
         lessonAgainHref: (lessonId) => getLessonAgainHref({ lessonId, origin: "/today" }),
+        lessonHref: (block) =>
+          getStudyLessonHref({ block, goalId: today.goal.id, session: today.session }),
         missionLinks,
         mistakesHref: "/mistakes",
         openBlock: (block: DayStep) => {

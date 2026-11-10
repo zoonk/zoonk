@@ -154,11 +154,6 @@ final class QuestionBlockRun {
 
   func startDrill() {
     shownAt = now()
-    drillStage = DrillStage.afterIdea(drill: drill)
-  }
-
-  /// A misread's "Show the answers": reading counts toward the answer's time.
-  func revealAnswers() {
     drillStage = .open
   }
 

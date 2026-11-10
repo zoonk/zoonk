@@ -1,4 +1,5 @@
 import AVFoundation
+import Accelerate
 import XCTest
 
 @testable import Zoonk
@@ -512,12 +513,6 @@ final class MusicActivitiesTests: XCTestCase {
   }
 
   private func correlation(_ samples: [Float], lag: Int) -> Float {
-    var sum: Float = 0
-
-    for index in 0..<(samples.count - lag) {
-      sum += samples[index] * samples[index + lag]
-    }
-
-    return sum
+    vDSP.dot(samples.dropLast(lag), samples.dropFirst(lag))
   }
 }

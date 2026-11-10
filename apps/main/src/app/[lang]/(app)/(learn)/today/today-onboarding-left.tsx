@@ -1,29 +1,69 @@
 import { Link } from "@/i18n/navigation";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
+import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { ListChecksIcon } from "lucide-react";
+import { ListChecksIcon, MapIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-export async function isOnboardingLeft(goalId: string): Promise<boolean> {
+type OnboardingLeft = "questions" | "reveal";
+
+/** Null while the plan is still being made: Today then follows its build like any other. */
+export async function readOnboardingLeft(goalId: string): Promise<OnboardingLeft | null> {
   const result = await getOnboarding({ goalId });
-  return result.status === "ready" && result.onboarding.steps.some((step) => step !== "plan");
+
+  if (result.status !== "ready") {
+    return null;
+  }
+
+  const { planReadiness, planRevealed, steps } = result.onboarding;
+
+  if (hasOnboardingQuestions(steps)) {
+    return "questions";
+  }
+
+  return planReadiness.ready && !planRevealed ? "reveal" : null;
 }
 
-export async function TodayOnboardingLeft({ goal }: { goal: { id: string; title: string } }) {
+export async function TodayOnboardingLeft({
+  goal,
+  left,
+}: {
+  goal: { displayName: string; id: string; title: string };
+  left: OnboardingLeft;
+}) {
   const t = await getExtracted();
+  const href = `/start/${goal.id}`;
+
+  if (left === "reveal") {
+    return (
+      <TodayAtRest
+        actions={
+          <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
+            {t("See your plan")}
+          </Link>
+        }
+        clause={t("Look it over before you start.")}
+        date={null}
+        icon={<MapIcon />}
+        sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
+        state={t("Plan ready")}
+        title={t("Today")}
+      />
+    );
+  }
 
   return (
     <TodayAtRest
       actions={
-        <Link className={buttonVariants({ size: "lg" })} href={`/start/${goal.id}`}>
+        <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
           {t("Continue setting up")}
         </Link>
       }
       clause={t("It's built from what you tell us.")}
       date={null}
       icon={<ListChecksIcon />}
-      sentence={t("Your plan for {goal} needs a few more answers.", { goal: goal.title })}
+      sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}
       state={t("Setting up")}
       title={t("Today")}
     />

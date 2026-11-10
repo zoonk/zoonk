@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type GoalSkillGraph } from "../../library/curriculum/save-goal-skills";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { pickPlacementGraphSkillIds, pickPlacementItemSkillIds } from "./placement-item-picks";
+import { pickPlacementItemSkillIds } from "./placement-item-picks";
 
 function positionsOf(ids: readonly string[]): number[] {
   return ids.map((id) => Number(id.split("/")[1]));
@@ -179,83 +178,5 @@ describe(pickPlacementItemSkillIds, () => {
     expect(
       pickPlacementItemSkillIds({ graph: { phases: [], skills: [] }, prerequisites: NO_EDGES }),
     ).toStrictEqual([]);
-  });
-});
-
-function skillGraphOf(skills: { course: string; key: string; phase: number }[]): GoalSkillGraph {
-  const courses = [...new Set(skills.map((skill) => skill.course))];
-
-  return {
-    courses: courses.map((key) => ({ key, levels: ["beginner"], title: `Course ${key}` })),
-    estimatedHours: 10,
-    phases: [1, 2].map((phase) => ({
-      estimatedHours: 5,
-      milestone: `Milestone ${phase}`,
-      title: `Phase ${phase}`,
-    })),
-    skills: skills.map((skill) => ({
-      ...skill,
-      area: `Course ${skill.course}`,
-      description: skill.key,
-      estimatedLessons: 1,
-      examWeight: null,
-      level: "beginner",
-      name: skill.key,
-      prerequisites: [],
-      topics: [],
-    })),
-  };
-}
-
-describe(pickPlacementGraphSkillIds, () => {
-  it("picks from the skill graph what the plan will pick, before the plan is saved", () => {
-    const graph = skillGraphOf([
-      ...Array.from({ length: 7 }, (_, index) => ({ course: "math", key: `m${index}`, phase: 1 })),
-      { course: "history", key: "h0", phase: 1 },
-      { course: "math", key: "m7", phase: 2 },
-    ]);
-
-    const idsByKey = Object.fromEntries(
-      graph.skills.map((skill) => [skill.key, `id-${skill.key}`]),
-    );
-
-    const planGraph = graphOf(
-      graph.skills.map((skill) => ({
-        area: `Course ${skill.course}`,
-        id: `id-${skill.key}`,
-        phase: skill.phase - 1,
-      })),
-    );
-
-    expect(pickPlacementGraphSkillIds({ everySkill: false, graph, idsByKey })).toStrictEqual(
-      pickPlacementItemSkillIds({ graph: planGraph, prerequisites: NO_EDGES }),
-    );
-
-    expect(pickPlacementGraphSkillIds({ everySkill: false, graph, idsByKey })).toStrictEqual(
-      ["m0", "m3", "m6", "h0", "m7"].map((key) => `id-${key}`),
-    );
-  });
-
-  it("picks what the plan picks when the Library found one skill for two of the graph's", () => {
-    const graph = skillGraphOf(
-      Array.from({ length: 7 }, (_, index) => ({ course: "math", key: `m${index}`, phase: 1 })),
-    );
-
-    const idsByKey = {
-      ...Object.fromEntries(graph.skills.map((skill) => [skill.key, `id-${skill.key}`])),
-      m1: "id-m0",
-    };
-
-    const planGraph = graphOf(
-      ["m0", "m2", "m3", "m4", "m5", "m6"].map((key) => ({
-        area: "Course math",
-        id: `id-${key}`,
-        phase: 0,
-      })),
-    );
-
-    expect(pickPlacementGraphSkillIds({ everySkill: false, graph, idsByKey })).toStrictEqual(
-      pickPlacementItemSkillIds({ graph: planGraph, prerequisites: NO_EDGES }),
-    );
   });
 });

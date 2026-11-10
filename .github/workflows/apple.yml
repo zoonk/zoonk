@@ -123,11 +123,27 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
+      - name: Identify Xcode toolchain
+        id: xcode
+        run: |
+          set -o pipefail
+          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
+
       - name: Cache Swift packages
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
           key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+
+      # The simulator build compiles differently from the build job's device build, so it keeps its
+      # own entry, keyed the same way.
+      - name: Cache Xcode compilations
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/apple/DerivedData/Make/CompilationCache.noindex
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
 
       - name: Run unit tests
         env:
@@ -136,6 +152,9 @@ jobs:
             -onlyUsePackageVersionsFromResolvedFile
             -skipPackageUpdates
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
+            COMPILATION_CACHE_ENABLE_CACHING=YES
+            COMPILER_INDEX_STORE_ENABLE=NO
+            GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         # The newest runtime the image installs, which can trail Xcode's SDK while a new image rolls out
         # (xcodebuild's default OS is the SDK's).
         run: |

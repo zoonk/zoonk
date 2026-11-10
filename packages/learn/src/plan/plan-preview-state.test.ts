@@ -10,6 +10,7 @@ const request = { operations, plan, status: "loading" } as const;
 const unchanged: PlanChangePreview = {
   effect: null,
   feasibility: null,
+  finishDate: null,
   ready: true,
   unchanged: true,
 };

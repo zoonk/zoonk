@@ -1,38 +1,78 @@
 import "server-only";
 import { createHash } from "node:crypto";
-import { MemoryCategory, prisma } from "@zoonk/db";
-import { findMemoryForTask } from "../../../memory/get-memory-for-task";
-
-const EXAMPLE_LINE_CATEGORIES = Object.values(MemoryCategory);
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { currentFactsWhere } from "../../../memory/_utils/memory-fact-view";
+import { memorySourceSchema } from "../../../memory/memory-contract";
 
 export type ExampleLineContext = {
   facts: { id: string; statement: string }[];
   goal: string | null;
   key: string;
+  plainWords: boolean;
 };
 
-function hashContext({ facts, goal }: Pick<ExampleLineContext, "facts" | "goal">): string {
+async function findEligibleFacts({
+  client,
+  memoryEnabled,
+  userId,
+}: {
+  client: TransactionClient;
+  memoryEnabled: boolean;
+  userId: string;
+}) {
+  if (!memoryEnabled) {
+    return [];
+  }
+
+  const facts = await client.memoryFact.findMany({
+    select: { id: true, sourceRef: true, statement: true },
+    where: { ...currentFactsWhere({ now: new Date(), userId }), sensitive: false },
+  });
+
+  return facts.flatMap(({ id, sourceRef, statement }) => {
+    const source = memorySourceSchema.safeParse(sourceRef);
+
+    return source.success && source.data.kind === "profile" && source.data.id === "learningSupport"
+      ? []
+      : [{ id, statement }];
+  });
+}
+
+function hashContext({ facts, goal, plainWords }: Omit<ExampleLineContext, "key">): string {
   const statements = facts.map((fact) => fact.statement).toSorted();
-  return createHash("sha256").update(JSON.stringify({ goal, statements })).digest("hex");
+
+  return createHash("sha256")
+    .update(JSON.stringify({ goal, plainWords, statements }))
+    .digest("hex");
 }
 
 export async function loadExampleLineContext({
-  language,
+  client = prisma,
   userId,
 }: {
-  language: string;
+  client?: TransactionClient;
   userId: string;
 }): Promise<ExampleLineContext | null> {
-  const [profile, facts] = await Promise.all([
-    prisma.userLearningProfile.findUnique({ include: { activeGoal: true }, where: { userId } }),
-    findMemoryForTask({ categories: EXAMPLE_LINE_CATEGORIES, language, userId }),
-  ]);
+  const profile = await client.userLearningProfile.findUnique({
+    include: { activeGoal: { select: { status: true, title: true } } },
+    where: { userId },
+  });
 
-  const goal = profile?.activeGoal?.status === "active" ? profile.activeGoal.title : null;
+  const facts = await findEligibleFacts({
+    client,
+    memoryEnabled: profile?.memoryEnabled ?? true,
+    userId,
+  });
 
   if (facts.length === 0) {
     return null;
   }
 
-  return { facts, goal, key: hashContext({ facts, goal }) };
+  const context = {
+    facts,
+    goal: profile?.activeGoal?.status === "active" ? profile.activeGoal.title : null,
+    plainWords: profile?.learningNeeds.includes("plainWords") ?? false,
+  };
+
+  return { ...context, key: hashContext(context) };
 }

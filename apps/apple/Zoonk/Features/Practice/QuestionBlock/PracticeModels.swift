@@ -243,8 +243,6 @@ struct PracticeDrill: Hashable, Sendable, Decodable {
   /// A content gap brings its lesson's ideas back on a screen of their own before the questions.
   var isIdeaFirst: Bool { kind == .reteach && !(lesson?.ideas.isEmpty ?? true) }
 
-  /// A misread is drilled by reading the whole question before its answers show.
-  var isReadFirst: Bool { kind == .readCarefully }
 }
 
 /// The learner's last answer to this question before today; its text only when it was wrong.

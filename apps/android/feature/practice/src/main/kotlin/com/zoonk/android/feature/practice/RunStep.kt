@@ -106,9 +106,7 @@ interface RunControls {
     /** The last answer didn't go through and can be sent again as it was. */
     val canRetry: Boolean
 
-    fun startDrill(questions: List<Question>)
-
-    fun reveal()
+    fun startDrill()
 
     /** [minDurationMs] is a timed drill's whole time when it ran out, however the clock ticked. */
     fun submit(
@@ -313,9 +311,6 @@ internal fun RunQuestion(
     val checked = phase as? RunPhase.Checked
     val openLesson: (String) -> Unit = { lessonId -> navigator.open(AppRoute.Lesson(lessonId)) }
     val previous = questions.getOrNull(run.index - 1)
-    val answers = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    val revealing = remember { run.stage == DrillStage.Reading }
 
     if (drill != null && run.stage == DrillStage.Ideas) {
         if (part.showsScreen) DrillIdeas(drill, openLesson)
@@ -328,7 +323,7 @@ internal fun RunQuestion(
 
         if (drill != null) {
             val first = previous?.mistakeId != question.mistakeId
-            val shown = if (drill.isIdeaFirst) lastAnswer != null else first || drill.isReadFirst
+            val shown = if (drill.isIdeaFirst) lastAnswer != null else first
             if (shown) {
                 DrillNote(
                     drill,
@@ -346,7 +341,7 @@ internal fun RunQuestion(
     }
 
     if (part.showsScreen) {
-        if (question.placement && run.stage != DrillStage.Reading) PlacementNote()
+        if (question.placement) PlacementNote()
         question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
 
         question.set?.let { set ->
@@ -360,13 +355,7 @@ internal fun RunQuestion(
         ItemSupport(question)
     }
 
-    if (run.stage == DrillStage.Reading) {
-        if (part.showsScreen) QuestionTitle(question.question)
-        return
-    }
-
     if (part.showsScreen && question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = checked != null)
-    if (revealing && part.showsTurn) LaunchedEffect(Unit) { moveFocus(answers) }
 
     QuestionAnswer(
         question = question,
@@ -377,7 +366,6 @@ internal fun RunQuestion(
         enabled = run.canAnswer,
         onAnswer = onDraft,
         onSubmit = { controls.submit(question, it) },
-        modifier = Modifier.focusMoveTarget(answers),
         part = part,
     )
 
@@ -397,7 +385,7 @@ internal fun RunQuestion(
     }
 }
 
-/** What Enter does on a question: Continue, start the drill, show the answers, or check the pick. */
+/** What Enter does on a question: Continue, start the drill, or check the pick. */
 internal fun answerAction(
     questions: List<Question>,
     question: Question?,
@@ -408,8 +396,7 @@ internal fun answerAction(
     when {
         run.phase is RunPhase.Checked || run.phase == RunPhase.AlreadyAnswered -> ({ controls.next(questions) })
         question == null -> null
-        run.stage == DrillStage.Ideas -> ({ controls.startDrill(questions) })
-        run.stage == DrillStage.Reading -> controls::reveal
+        run.stage == DrillStage.Ideas -> controls::startDrill
         run.canAnswer && draft != null -> ({ controls.submit(question, draft) })
         else -> null
     }
@@ -422,6 +409,7 @@ internal fun AnswerActions(
     draft: Answer?,
     controls: RunControls,
     ask: @Composable () -> Unit,
+    onReportSaveFailure: () -> Unit,
     notSureOnEvery: Boolean = false,
 ) {
     val phase = run.phase
@@ -429,11 +417,10 @@ internal fun AnswerActions(
     val done = phase is RunPhase.Checked || answeredElsewhere
 
     if (!done && run.stage == DrillStage.Ideas) {
-        TaskActions { width -> DrillStartButton(onStart = { controls.startDrill(questions) }, modifier = width) }
+        TaskActions { width -> DrillStartButton(onStart = controls::startDrill, modifier = width) }
         return
     }
 
-    val reading = !done && run.stage == DrillStage.Reading
     val sender = (phase as? RunPhase.Checking)?.sender
     key(run.index) {
         val main = remember { FocusRequester() }
@@ -441,10 +428,14 @@ internal fun AnswerActions(
         var notSureSent by rememberSaveable { mutableStateOf(false) }
         LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
 
-        if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+        if (phase ==
+            RunPhase.AnswerFailed
+        ) {
+            SaveErrorText(run.saveFailures, onRetry = controls::retry.takeIf { controls.canRetry }, onReport = onReportSaveFailure)
+        }
         if (answeredElsewhere) AlreadyAnsweredText()
         TaskActions { width ->
-            notSureOffer(question, every = notSureOnEvery)?.takeUnless { done || reading }?.let { offer ->
+            notSureOffer(question, every = notSureOnEvery)?.takeUnless { done }?.let { offer ->
                 NotSureButton(
                     onClick = {
                         notSureSent = true
@@ -456,38 +447,28 @@ internal fun AnswerActions(
                     dontKnowYet = offer == NotSure.DontKnowYet,
                 )
             }
-            // One button through Show the answers, Check and Continue, so focus stays on it as it changes.
+            // One button through Check and Continue, so focus stays on it as it changes.
             Button(
                 busy = sender == AnswerSender.Check || sender == AnswerSender.Timer,
                 onClick = {
                     when {
                         done -> controls.next(questions)
-                        reading -> controls.reveal()
                         else -> draft?.let { controls.submit(question, it) }
                     }
                 },
                 modifier = width.focusMoveTarget(main),
-                enabled = done || reading || (run.canAnswer && draft != null),
+                enabled = done || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
-                leadingIcon =
-                    when {
-                        done -> null
-                        reading -> ({ ButtonIcon(R.drawable.ic_visibility) })
-                        else -> ({ ButtonIcon(R.drawable.ic_check) })
-                    },
+                leadingIcon = if (done) null else ({ ButtonIcon(R.drawable.ic_check) }),
                 trailingIcon = if (done) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
             ) {
                 Text(
                     stringResource(
-                        when {
-                            done -> R.string.practice_continue
-                            reading -> R.string.questions_drill_show_answers
-                            else -> R.string.practice_check
-                        },
+                        if (done) R.string.practice_continue else R.string.practice_check,
                     ),
                 )
             }
-            if (!reading && !answeredElsewhere) ask()
+            if (!answeredElsewhere) ask()
         }
     }
 }

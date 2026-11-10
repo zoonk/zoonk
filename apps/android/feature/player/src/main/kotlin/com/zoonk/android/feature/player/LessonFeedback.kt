@@ -128,6 +128,9 @@ fun LessonStepResultView(
             result.correctAnswer != null && !result.isCorrect && result.checked && step.isLanguageStep &&
                 step.kind !in OPTION_LANGUAGE_KINDS
         if (showsCorrectAnswer) LabeledAnswer(stringResource(R.string.player_correct_answer_label), result.correctAnswer.orEmpty())
+        if (result.isCorrect && result.checked) {
+            result.correctAnswer?.let { LabeledAnswer(stringResource(R.string.player_also_correct_label), it) }
+        }
 
         SampleAnswer(result)
 

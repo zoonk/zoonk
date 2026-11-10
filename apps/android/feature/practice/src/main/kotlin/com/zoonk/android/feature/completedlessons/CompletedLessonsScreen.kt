@@ -82,7 +82,7 @@ fun CompletedLessonsScreen(
                     // `finishedOn` is the goal's local day, and the summary is read again at its midnight.
                     val today = LocalDate.now(read.timeZone?.let(ZoneId::of) ?: ZoneId.systemDefault())
                     val goal = read.goals.firstOrNull { it.id == goalId }
-                    CompletedLessons(goalId, today, app.completedLessons, listState, eyebrow = goal?.title) {
+                    CompletedLessons(goalId, today, app.completedLessons, listState, eyebrow = goal?.displayName) {
                         navigator.open(AppRoute.Lesson(it.toString()))
                     }
                 }

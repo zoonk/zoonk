@@ -125,7 +125,8 @@ class GoalSetupFlowTest {
         show()
 
         rule.onNodeWithText("Why are you learning it?").assertIsDisplayed()
-        rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE B2 in May")
+        rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("DELE B2 in May")
         api.generationReads.clear()
         rule.onNodeWithText("Continue").performScrollTo().performClick()
 
@@ -180,11 +181,11 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(1_000)
-        rule.onNodeWithText("Continue").performScrollTo().assertIsNotEnabled()
+        rule.onNodeWithText("See your plan").performScrollTo().assertIsNotEnabled()
 
         rule.mainClock.advanceTimeBy(45_000)
         rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.onNodeWithText("See your plan").performScrollTo().performClick()
         rule.waitForIdle()
 
         assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value.dailyMinutes)
@@ -381,9 +382,10 @@ class GoalSetupFlowTest {
         api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
         show(drafts = drafts)
 
+        rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
         rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
         rule.onNodeWithText("To pass the DELE").assertExists()
-        rule.waitUntil(5_000) { saved.value == listOf("To pass the DELE") }
+        rule.waitUntil(5_000) { saved.value == listOf("certificate", "To pass the DELE") }
         screen++
 
         rule.onNodeWithText("To pass the DELE").assertIsDisplayed()

@@ -15,6 +15,7 @@
   "player_activity_your_answer": "18fe7582508bc0af69f9b42742db633b98eaf0b5fbd8af202330ae4937f98fd0",
   "player_ai_note": "1b427d9de684bf3b3ee6b31f980af6da1c0e072bc973f305dfe32e001822e4d2",
   "player_already_knew": "9e0ebc0f29ee9d507ac776c046adbdd8cccd21e9d32a8f742c428a7763b271bd",
+  "player_also_correct_label": "689f540528983d09072a7dbd27e56470d207fae5cf9b5830db4fb9f884d163d0",
   "player_answer_feedback": "925c255004620fd92be8487a1e5add20891ba0c1d2a1f3947db4eb77a1a4e474",
   "player_answer_options": "60c900f851047ce70d7af0b0e4fa1de4d1a9c02efeef9084dea1e4a14ba5fd69",
   "player_ask_something_else": "d39131562815f02ec03990db1981a9fdcd0ddee96d47341a07a72f5d9a9c6b32",
@@ -95,7 +96,9 @@
   "player_lesson_complete": "36d2a70d7cfd4713bcbb94f0dd610c91f8e7f97e6c9069ac6e628758795fa235",
   "player_lesson_map": "41762a67a134a47ddcd4678faa9bae81cfd325108c0d79ea7addb91823065210",
   "player_lesson_map_nested": "2c050a8255cde596287017ac1405380c2b7d1806b2ceea04739716b8937b5e25",
+  "player_lesson_not_saved": "8886fab3bdc652708e96ed3be0d4ce790b7f130797df691b33dad1415880433d",
   "player_lesson_of": "1062104bd23d7e1820e0e9ab8e5196b8f29622506e859c4b90a9fa2d35c421c5",
+  "player_lessons_deferred": "e9687453b8ab350a4da96c0a26e454ac0688c263b11e9ea7bb7442e82f4152a0",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
   "player_microphone_blocked": "6347cfd9522a5d5fb670890f070a888f91d6ad42f493d1190575411ddb09c64f",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
@@ -168,6 +171,7 @@
   "player_stop_for_today": "472db717c3a08fd47b72a37c56badedffcba72e84ed5e09cd34798d3e1f5ed32",
   "player_summary": "662e443f1c50af361c3b3a3ef31819590792d7092b92938e7d2e658db059be66",
   "player_summary_ideas": "1693857678708108e9bde80eacae9c9432860ee9ab55def2f5928f61a3428820",
+  "player_time_studied": "de809d138f482b1ab33389771eebbdf8d9351f3b123c45d02dfb518835869ec7",
   "player_try_again": "98c42e59730cf58e9c534343d929414f919eb4b3d2e66179d23be4828287cd4e",
   "player_unchecked_compare": "a22cedd09f0b036c8eae50b72af0d192cf7b021589c4ab99fe357dd5c610ae3c",
   "player_verdict_almost": "9089dbe39a23e172c9175286850fb03bf42908070012881a8171d5c3661c362e",
@@ -244,6 +248,8 @@
     <string name="player_answer_feedback">回答へのフィードバック</string>
     <string name="player_spelled">つづり：</string>
     <string name="player_correct_answer_label">答え：</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">こちらも正解です：</string>
     <string name="player_explain_answer">自分の答えの解説を見る</string>
     <string name="player_explain_answer_failed">今は解説できません。少し待ってからもう一度試してください。</string>
     <string name="player_explain_answer_title">この答えが正解ではない理由</string>
@@ -403,8 +409,15 @@
     <string name="player_already_knew">もともと知っていた内容でした</string>
     <string name="player_saving_progress">学習の進捗を保存しています…</string>
     <string name="player_save_failed">送信できませんでした。回答はそのまま残っています。</string>
+    <string name="player_lesson_not_saved">レッスンはまだ保存されていません</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s学習済み</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">%1$sに復習</string>
+    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="player_lessons_deferred">
+        <item quantity="other">%1$sレッスンを別の日に移して、今日の学習時間が%2$sに収まるようにしました。</item>
+    </plurals>
     <string name="player_next_lesson">次のレッスン</string>
     <string name="player_stop_for_today">今日はここまでにする</string>
     <string name="player_see_todays_summary">今日のまとめを見る</string>

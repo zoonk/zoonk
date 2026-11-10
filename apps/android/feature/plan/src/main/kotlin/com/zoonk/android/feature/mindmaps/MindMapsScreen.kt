@@ -239,8 +239,12 @@ private fun MindMapsHero(
     navigate: (AppRoute) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(mindMaps.goal.title)
-        Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+        Eyebrow(mindMaps.goal.displayName)
+        Text(
+            stringResource(R.string.navigation_mind_maps),
+            Modifier.pageTitle(),
+            style = MaterialTheme.typography.headlineMedium,
+        )
         if (mindMaps.chapters.isNotEmpty()) {
             Text(
                 pluralStringResource(R.plurals.mindmaps_count, drawn, formatNumber(drawn.toDouble(), currentLocale())),

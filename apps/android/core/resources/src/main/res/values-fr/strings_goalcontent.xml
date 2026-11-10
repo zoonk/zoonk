@@ -53,7 +53,6 @@
   "goalcontent_percent_done": "771311628be3bcafd45ca6a8adc426fa09e3a1b6672d2e623ae9a0a85f86623a",
   "goalcontent_practice": "684706db3beab299a139c57b7f6df96b6199b529109d312b38045f80cd11c497",
   "goalcontent_practice_chapter": "8619fe7f85de82b9dfd0340005f1462dedb6295c67f2f116fea135ce61e11662",
-  "goalcontent_practice_daily_limit": "15273ade54349a2b3da02c4ef71ddf0e70d22790c20f3ca62a2d801e575ac01d",
   "goalcontent_practice_failed": "b77ea1a045c29ee1d76c2353177536541224520f93006c4867142e460a4bcba1",
   "goalcontent_practice_nothing": "19bf53d782cc0f0299f342ec28ec35090cc9d93ffb3e24ffe6e5f27b4037a2e7",
   "goalcontent_preparation": "8249745c39fc2b2ffe4c8f69663cf74f792dcd8fa47440eebc3933e9dab8ad60",
@@ -313,8 +312,6 @@
     <string name="goalcontent_progress">Progression</string>
     <string name="goalcontent_practice">S’entraîner</string>
     <string name="goalcontent_practice_chapter">S’entraîner sur ce chapitre</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="goalcontent_practice_daily_limit">Tu as atteint ta limite de temps quotidienne. Tu reprendras ce chapitre à la séance de demain.</string>
     <string name="goalcontent_practice_nothing">Rien à travailler dans ce chapitre pour le moment.</string>
     <string name="goalcontent_practice_failed">Ça n’a pas marché. Réessaie dans un instant.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->

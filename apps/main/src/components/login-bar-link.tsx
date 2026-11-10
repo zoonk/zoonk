@@ -27,7 +27,7 @@ export async function LoginBarLink({
 export function VisitorBarLinks({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-1", className)}>
-      <PricingBarLink className="max-sm:group-data-title-away/page-bar:hidden" />
+      <PricingBarLink className="max-sm:group-data-title-away/page-bar:hidden @max-2xs/page-bar:hidden" />
       <LoginBarLink />
     </div>
   );

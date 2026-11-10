@@ -41,14 +41,17 @@ openApiGenerate {
             "CourseGoalStartInput",
             "ExamTopicFrequency",
             "LanguageLevelTestSpokenAnswerRequest",
-            // Its explicit nulls mean "clear it" (no daily limit, no active goal), which the model can't tell from absent.
+            // Its explicit nulls mean "clear it" (no active goal), which the model can't tell from absent.
             "LearningProfileUpdate",
+            "LibraryLessonOpened",
             "MeDeletion",
             "PronunciationAnswerRequest",
             "SpokenAnswerRequest",
             "__schema0",
             "__schema1",
-        ).associateWith { "kotlinx.serialization.json.JsonElement" }
+        ).associateWith { "kotlinx.serialization.json.JsonElement" } +
+        // The response's copy of `LessonStepAnswer`, which differs only in refusing extra keys.
+        mapOf("LessonStepAnswerOutput" to "com.zoonk.api.models.LessonStepAnswer")
     // The plugin passes its own supporting-file list, which skips any ignore file; the app builds its
     // own client, so only the serializers the models use are listed.
     globalProperties =

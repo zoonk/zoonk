@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,11 +49,12 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
-import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
@@ -109,7 +109,8 @@ internal fun ColumnScope.PlacementStep(
     mocks: MockStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
-    onDone: () -> Unit,
+    onDone: suspend () -> WriteOutcome<*>,
+    onReportSaveFailure: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
@@ -131,6 +132,8 @@ internal fun ColumnScope.PlacementStep(
         }
 
         is PlacementPhase.Intro -> {
+            com.zoonk.android.data
+                .TrackOnboardingQuestion(goalId, "placement")
             PlacementIntro(
                 subject = subject,
                 areaCount = areaCount,
@@ -167,19 +170,25 @@ internal fun ColumnScope.PlacementStep(
         }
 
         is PlacementPhase.Question -> {
-            key(shown.item.itemId) {
-                PlacementQuestion(
-                    item = shown.item,
-                    eyebrow = factsLine(subject.labelCase(), stringResource(R.string.onboarding_placement_question_number, shown.number)),
-                    labels = shown.labels,
-                    typedWords = rememberUnsentWords(goalId, typedDraftStep(shown.item.itemId), count = 1),
-                    pending = vm.isSaving,
-                    answerFailed = vm.answerFailed,
-                    finishFailed = vm.finishFailed,
-                    onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                    onRetry = vm::retryAnswer,
-                    onStop = { finish(false) },
-                )
+            SetupContent {
+                FinishFailed(vm.finishFailed)
+                key(shown.item.itemId) {
+                    PlacementQuestion(
+                        item = shown.item,
+                        eyebrow =
+                            factsLine(
+                                subject.labelCase(),
+                                stringResource(R.string.onboarding_placement_question_number, shown.number),
+                            ),
+                        labels = shown.labels,
+                        typedWords = rememberUnsentWords(goalId, typedDraftStep(shown.item.itemId), count = 1),
+                        pending = vm.isSaving,
+                        saveFailures = vm.saveFailures,
+                        onReportSaveFailure = onReportSaveFailure,
+                        onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
+                        onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = onDone) },
+                    )
+                }
             }
         }
 
@@ -200,7 +209,9 @@ internal fun ColumnScope.PlacementStep(
 
 @Composable
 internal fun ColumnScope.StepLoading() {
-    Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    SetupContent {
+        Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+    }
 }
 
 @Composable
@@ -215,35 +226,37 @@ private fun ColumnScope.PlacementIntro(
     onStart: () -> Unit,
     onScratch: () -> Unit,
 ) {
-    Eyebrow(subject.labelCase())
-    OnboardingHeading(
-        stringResource(R.string.onboarding_placement_title),
-        if (areaCount > 0) {
-            pluralStringResource(R.plurals.onboarding_placement_description_areas, areaCount, areaCount)
-        } else {
-            stringResource(R.string.onboarding_placement_description)
-        },
-    )
-    mock?.let { MockOfferRow(it, onMock) }
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = starting,
-            onClick = onStart,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !pending,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_start))
-        }
-        TextButton(
-            busy = pending,
-            onClick = onScratch,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !starting,
-            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_skip_basics))
+    SetupContent {
+        Eyebrow(subject.labelCase())
+        OnboardingHeading(
+            stringResource(R.string.onboarding_placement_title),
+            if (areaCount > 0) {
+                pluralStringResource(R.plurals.onboarding_placement_description_areas, areaCount, areaCount)
+            } else {
+                stringResource(R.string.onboarding_placement_description)
+            },
+        )
+        mock?.let { MockOfferRow(it, onMock) }
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = starting,
+                onClick = onStart,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_start))
+            }
+            TextButton(
+                busy = pending,
+                onClick = onScratch,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !starting,
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_skip_basics))
+            }
         }
     }
 }
@@ -298,47 +311,49 @@ private fun ColumnScope.PlacementWaiting(
         patient = true
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        GenerationWait(
-            kind = GenerationKind.Placement,
-            run = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run,
-            onRetry = onRetry,
-        ) {
+    val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
+    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title)
+    SetupWait(
+        shown,
+        GenerationKind.Placement,
+        AnalyticsEvent.WarmUpSurface.PlacementWait,
+        title,
+        hold,
+        stringResource(R.string.onboarding_continue),
+        onRetry,
+        afterWait = {
+            if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
+                OnboardingActions {
+                    FinishFailed(failed)
+                    TextButton(
+                        busy = pending,
+                        onClick = onSkip,
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                    ) {
+                        Text(stringResource(R.string.onboarding_placement_skip_for_now))
+                    }
+                    Text(
+                        text = stringResource(R.string.onboarding_placement_skip_note),
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+        },
+    ) { share ->
+        GenerationWait(GenerationKind.Placement, shown, onRetry, share = share) {
             OnboardingHeading(
-                stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title),
+                title,
                 stringResource(
                     when {
                         hold.holding -> R.string.warm_up_questions_ready_description
-
-                        // The learner's own material is read in the `readExamNotice` step.
                         READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
-
                         else -> R.string.onboarding_placement_waiting_skills
                     },
                 ),
-            )
-        }
-        SetupWarmUpCard(run.warmUpId, AnalyticsEvent.WarmUpSurface.PlacementWait, hold)
-    }
-    PageHold(hold, stringResource(R.string.onboarding_continue))
-
-    if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
-        OnboardingActions {
-            FinishFailed(failed)
-            TextButton(
-                busy = pending,
-                onClick = onSkip,
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-            ) {
-                Text(stringResource(R.string.onboarding_placement_skip_for_now))
-            }
-            Text(
-                text = stringResource(R.string.onboarding_placement_skip_note),
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -351,6 +366,8 @@ private class Choice(
     val rich: Boolean,
 )
 
+private enum class PlacementSender { Confirm, DontKnow, Stop }
+
 /** Shared with the language level test; only a typed question needs [typedWords]. */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
@@ -359,18 +376,17 @@ internal fun ColumnScope.PlacementQuestion(
     labels: TrueFalseLabels,
     typedWords: UnsentWords?,
     pending: Boolean,
-    answerFailed: Boolean,
-    finishFailed: Boolean,
+    saveFailures: Int,
     onAnswer: (PlacementAnswer, Long) -> Unit,
-    onRetry: () -> Unit,
     onStop: () -> Unit,
+    onReportSaveFailure: () -> Unit = {},
     dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
     media: @Composable () -> Unit = {},
 ) {
     val choices = choices(item.format, labels)
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
     val typed = typedWords?.values?.first().orEmpty()
-    var sent by rememberSaveable { mutableStateOf(false) }
+    var sender by rememberSaveable { mutableStateOf<PlacementSender?>(null) }
     val shownAt = remember { SystemClock.elapsedRealtime() }
     val answer: PlacementAnswer? =
         if (item.format == PlacementFormat.Typed) {
@@ -378,13 +394,13 @@ internal fun ColumnScope.PlacementQuestion(
         } else {
             picked?.let { choices.getOrNull(it)?.answer }
         }
-    val send = { chosen: PlacementAnswer ->
+    val send = { chosen: PlacementAnswer, pressed: PlacementSender ->
         if (!pending) {
-            sent = true
+            sender = pressed
             onAnswer(chosen, SystemClock.elapsedRealtime() - shownAt)
         }
     }
-    val confirm = { answer?.let(send) }
+    val confirm = { answer?.let { send(it, PlacementSender.Confirm) } }
     val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
 
     QuestionPages(
@@ -414,35 +430,46 @@ internal fun ColumnScope.PlacementQuestion(
             }
         },
     ) {
-        if (answerFailed && sent && !pending) {
-            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                Text(
-                    stringResource(R.string.onboarding_placement_answer_failed),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.onboarding_placement_try_again)) }
-            }
+        if (saveFailures > 0 && !pending) {
+            SaveErrorText(
+                failures = saveFailures,
+                firstFailureMessage = stringResource(R.string.onboarding_placement_answer_failed),
+                onReport = onReportSaveFailure,
+            )
         }
-        FinishFailed(finishFailed)
         BesideOrAbove(
             start = {
                 OutlinedButton(
-                    onClick = { send(DONT_KNOW) },
+                    onClick = { send(DONT_KNOW, PlacementSender.DontKnow) },
+                    busy = pending && sender == PlacementSender.DontKnow,
                     enabled = !pending,
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                    focusableWhenDisabled = pending,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
                 ) {
-                    Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
-                    Text(dontKnowLabel, modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+                    Text(dontKnowLabel)
                 }
             },
             end = {
-                Button(onClick = { confirm() }, enabled = answer != null && !pending) {
+                Button(
+                    onClick = { confirm() },
+                    busy = pending && sender == PlacementSender.Confirm,
+                    enabled = answer != null && !pending,
+                    focusableWhenDisabled = pending,
+                ) {
                     Text(stringResource(R.string.onboarding_placement_confirm))
                 }
             },
         )
-        TextButton(onClick = onStop, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            onClick = {
+                sender = PlacementSender.Stop
+                onStop()
+            },
+            busy = pending && sender == PlacementSender.Stop,
+            enabled = !pending,
+            focusableWhenDisabled = pending,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Text(stringResource(R.string.onboarding_placement_stop))
         }
     }
@@ -587,17 +614,19 @@ private fun ColumnScope.PlacementOutcome(
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
-    eyebrow?.let { SuccessEyebrow(it) }
-    OnboardingHeading(title, description)
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(
-            busy = pending,
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_see_plan))
+    SetupContent {
+        eyebrow?.let { SuccessEyebrow(it) }
+        OnboardingHeading(title, description)
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(
+                busy = pending,
+                onClick = onContinue,
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_see_plan))
+            }
         }
     }
 }
@@ -609,22 +638,24 @@ private fun ColumnScope.PlacementMockRunning(
     onContinue: () -> Unit,
     onStop: () -> Unit,
 ) {
-    OnboardingHeading(
-        stringResource(R.string.onboarding_placement_mock_waiting_title),
-        stringResource(R.string.onboarding_placement_mock_waiting_description),
-    )
-    OnboardingActions {
-        FinishFailed(failed)
-        Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_placement_continue_mock))
-        }
-        TextButton(
-            busy = pending,
-            onClick = onStop,
-            modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
-        ) {
-            Text(stringResource(R.string.onboarding_placement_stop_mock))
+    SetupContent {
+        OnboardingHeading(
+            stringResource(R.string.onboarding_placement_mock_waiting_title),
+            stringResource(R.string.onboarding_placement_mock_waiting_description),
+        )
+        OnboardingActions {
+            FinishFailed(failed)
+            Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.onboarding_placement_continue_mock))
+            }
+            TextButton(
+                busy = pending,
+                onClick = onStop,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
+            ) {
+                Text(stringResource(R.string.onboarding_placement_stop_mock))
+            }
         }
     }
 }

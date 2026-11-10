@@ -9,6 +9,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -161,9 +162,28 @@ test.describe("Library lesson player", () => {
       steps: TEACHING_LESSON_STEPS.filter((kind) => kind !== "summary"),
     });
 
+    const events = await captureAnalytics(page);
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: noProgressUser.id });
+
     await page.goto(`/learn/${lesson.id}`);
 
     await answerHook(page);
+
+    await expect
+      .poll(() =>
+        events
+          .filter((event) => event.name === "Onboarding Progressed")
+          .map((event) => event.data.stage),
+      )
+      .toEqual(["first_scene_visible", "first_answer"]);
+
+    expect(
+      events
+        .filter((event) => event.name === "Onboarding Progressed")
+        .every((event) => event.data.goal_id === goal.id && event.data.lesson_id === lesson.id),
+    ).toBe(true);
+
     await readExplanation(page);
     await followWorkedExample(page);
     await answerCheckWithKeys(page);
@@ -267,6 +287,67 @@ test.describe("Library lesson player", () => {
     await expect
       .poll(() => prisma.mistake.count({ where: { stepId: missed, userId: noProgressUser.id } }))
       .toBe(1);
+  });
+
+  test("shows a question answered before a reload as answered on the way back, and counts it once", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [
+        "explanation",
+        "check",
+        {
+          content: { text: "Denser means more likely.", title: "Reading it" },
+          kind: "explanation",
+        },
+        "check",
+      ],
+    });
+
+    const answered = steps[1]?.id ?? "";
+
+    const attempts = () =>
+      prisma.attempt.count({ where: { stepId: answered, userId: noProgressUser.id } });
+
+    const rightOption = page.getByRole("radio", {
+      name: "Where the electron is most likely to be found",
+    });
+
+    await page.goto(`/learn/${lesson.id}`);
+    await readExplanation(page);
+    await rightOption.click();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Correct!");
+    await expect.poll(attempts).toBe(1);
+
+    await page.reload();
+    await expect(page.getByText("Reading it")).toBeVisible();
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect(rightOption).toBeChecked();
+    await expectVerdict(page, "Correct!");
+    await primary(page, /^Continue/u).click();
+
+    await expect(page.getByText("Reading it")).toBeVisible();
+    await primary(page, /^Next/u).click();
+    await rightOption.click();
+    await primary(page, /^Check/u).click();
+    await expectVerdict(page, "Correct!");
+    await primary(page, /^Continue/u).click();
+
+    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    await expect
+      .poll(() =>
+        prisma.learningEvent.findFirst({
+          select: { correctAnswers: true },
+          where: { endedAt: { not: null }, userId: noProgressUser.id },
+        }),
+      )
+      .toStrictEqual({ correctAnswers: 2 });
+
+    expect(await attempts()).toBe(1);
   });
 
   test("keeps a signed-in learner when the session check fails, and opens the lesson on a retry", async ({

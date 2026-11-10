@@ -18,7 +18,9 @@ final class GenerationEventsTests: XCTestCase {
       transport: transport)
 
     var events: [GenerationEvent] = []
-    for try await event in clients.generationEvents(id: "run-1", token: "learner-token") {
+    for try await event in clients.generationEvents(
+      id: "run-1", token: "learner-token", backoff: .milliseconds(1))
+    {
       events.append(event)
     }
 
@@ -46,6 +48,45 @@ final class GenerationEventsTests: XCTestCase {
 
     XCTAssertEqual(
       event, GenerationEvent(skillName: "Variables", status: "started", step: "buildSkillGraph"))
+  }
+
+  func testAReadyPlanKeepsReadingUntilItsFirstLessonIsReady() async throws {
+    let written =
+      [
+        #"data: {"lessonId":"lesson","lessonTitle":"Dawn","status":"started","step":"writeFirstLesson"}"#,
+        #"data: {"status":"completed","step":"goalReady"}"#,
+        #"data: {"lessonId":"lesson","status":"completed","step":"firstLessonReady"}"#,
+      ].joined(separator: "\n\n") + "\n\n"
+    let transport = RunsTransport(events: ["/v1/generations/run-1/events?startIndex=0": [written]])
+    let clients = APIClientFactory(
+      baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
+    var steps: [String] = []
+    for try await event in clients.generationEvents(id: "run-1", token: nil) {
+      steps.append(event.step)
+    }
+    XCTAssertEqual(steps, ["writeFirstLesson", "goalReady", "firstLessonReady"])
+    let requests = await transport.requests
+    XCTAssertEqual(requests, ["/v1/generations/run-1/events?startIndex=0"])
+  }
+
+  func testAClosedReadyPlanDoesNotReopenWhileItsRunKeepsWorking() async throws {
+    let written =
+      [
+        #"data: {"lessonId":"lesson","lessonTitle":"Dawn","status":"started","step":"writeFirstLesson"}"#,
+        #"data: {"status":"completed","step":"goalReady"}"#,
+      ].joined(separator: "\n\n") + "\n\n"
+    let transport = RunsTransport(
+      events: ["/v1/generations/run-1/events?startIndex=0": [written]],
+      statuses: ["/v1/generations/run-1": ["running"]])
+    let clients = APIClientFactory(
+      baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport)
+    var steps: [String] = []
+    for try await event in clients.generationEvents(id: "run-1", token: nil) {
+      steps.append(event.step)
+    }
+    XCTAssertEqual(steps, ["writeFirstLesson", "goalReady"])
+    let requests = await transport.requests
+    XCTAssertEqual(requests, ["/v1/generations/run-1/events?startIndex=0"])
   }
 
   func testDecodesTheWarmUpDeckAGoalsRunReports() throws {
@@ -83,6 +124,24 @@ final class GenerationEventsTests: XCTestCase {
     XCTAssertEqual(outcome, .stopped)
     let statusChecks = await transport.statusChecks
     XCTAssertEqual(statusChecks, 1)
+  }
+
+  func testStoppedStatusDoesNotDiscardPersistedReplayDeliveredInTwoPackets() async throws {
+    var steps: [String] = []
+    var isStopped = false
+
+    do {
+      for try await event in try clients(EndedRunTransport()).generationEvents(
+        id: "run-1", token: "learner-token")
+      {
+        steps.append(event.step)
+      }
+    } catch is GenerationStopped {
+      isStopped = true
+    }
+
+    XCTAssertEqual(steps, ["understandGoal", "buildSkillGraph"])
+    XCTAssertTrue(isStopped)
   }
 
   func testARunStillWorkingKeepsItsStreamOpen() async throws {
@@ -138,7 +197,8 @@ final class GenerationEventsTests: XCTestCase {
       ],
       statuses: ["/v1/generations/run-1": ["running"]])
 
-    let events = try await collect(clients(transport).generationEvents(id: "run-1", token: "t"))
+    let events = try await collect(
+      clients(transport).generationEvents(id: "run-1", token: "t", backoff: .milliseconds(1)))
 
     XCTAssertEqual(events.map(\.step), ["writeTestOutQuestions", "testOutQuestionsReady"])
     let requests = await transport.requests
@@ -364,6 +424,53 @@ private actor OpenStreamTransport: ClientTransport {
     return (
       HTTPResponse(status: .ok, headerFields: headerFields),
       HTTPBody(#"{"id":"run-1","status":"\#(status)"}"#)
+    )
+  }
+}
+
+/// A cancelled run as the events route serves it: what it wrote, from where it's resumed, its first
+/// event split across two packets, then the end.
+private actor EndedRunTransport: ClientTransport {
+  private static let written = [
+    #"data: {"status":"completed","step":"understandGoal"}"# + "\n\n",
+    #"data: {"status":"started","step":"buildSkillGraph"}"# + "\n\n",
+  ]
+
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+
+    if operationID == "getGeneration" {
+      headerFields[.contentType] = "application/json"
+      return (
+        HTTPResponse(status: .ok, headerFields: headerFields),
+        HTTPBody(#"{"id":"run-1","status":"cancelled"}"#)
+      )
+    }
+
+    XCTAssertEqual(operationID, "streamGenerationEvents")
+    headerFields[.contentType] = "text/event-stream"
+    let startIndex =
+      request.path
+      .flatMap { URLComponents(string: $0)?.queryItems?.first { $0.name == "startIndex" }?.value }
+      .flatMap { Int($0) } ?? 0
+    let bytes = Array(Self.written.dropFirst(startIndex).joined().utf8)
+    let stream = AsyncThrowingStream<ArraySlice<UInt8>, any Error> { continuation in
+      Task {
+        continuation.yield(bytes.prefix(1))
+        try? await Task.sleep(for: .milliseconds(200))
+        continuation.yield(bytes.dropFirst())
+        continuation.finish()
+      }
+    }
+
+    return (
+      HTTPResponse(status: .ok, headerFields: headerFields),
+      HTTPBody(stream, length: .unknown, iterationBehavior: .single)
     )
   }
 }

@@ -4,12 +4,7 @@ import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
 import { mergeReached } from "../_utils/merge-reached";
 import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
-import {
-  type AnswerSender,
-  isIdeaFirst,
-  isReadFirst,
-  isUnchangedAnswer,
-} from "./drill/drill-types";
+import { type AnswerSender, isIdeaFirst, isUnchangedAnswer } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
@@ -54,7 +49,6 @@ export type SentPracticeAnswer = { answer: ChoiceAnswer; durationMs: number; sen
 
 type PracticePhase =
   | { kind: "idea" }
-  | { kind: "reading" }
   | { kind: "answering"; selected: ChoiceAnswer | null }
   | ({ kind: "checking" } & SentPracticeAnswer)
   | ({ kind: "answerFailed" } & SentPracticeAnswer)
@@ -68,6 +62,7 @@ type PracticePhase =
  */
 type PracticeState = {
   answerIds: string[];
+  failures: number;
   fixedIds: string[];
   index: number;
   phase: PracticePhase;
@@ -78,7 +73,6 @@ type PracticeState = {
 
 type PracticeAction =
   | { type: "start" }
-  | { type: "reveal" }
   | { answer: ChoiceAnswer | null; type: "select" }
   | ({ type: "check" } & SentPracticeAnswer)
   | { feedback: Graded; mistakeId: string; type: "answered" }
@@ -99,12 +93,8 @@ function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
     return { kind: "ending" };
   }
 
-  if (step.firstOfEntry && isIdeaFirst(step.entry.drill)) {
-    return { kind: "idea" };
-  }
-
-  return isReadFirst(step.entry.drill)
-    ? { kind: "reading" }
+  return step.firstOfEntry && isIdeaFirst(step.entry.drill)
+    ? { kind: "idea" }
     : { kind: "answering", selected: null };
 }
 
@@ -113,6 +103,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
 
   return {
     answerIds: [],
+    failures: 0,
     fixedIds: [],
     index: 0,
     phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
@@ -120,12 +111,6 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     steps,
     verdicts: [],
   };
-}
-
-function afterIdea(step: PracticeStep | undefined): PracticePhase {
-  return isReadFirst(step?.entry.drill ?? null)
-    ? { kind: "reading" }
-    : { kind: "answering", selected: null };
 }
 
 function getFixedIds(state: PracticeState, action: Extract<PracticeAction, { type: "answered" }>) {
@@ -167,6 +152,7 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
   return {
     ...state,
     answerIds: [...state.answerIds, action.feedback.answerId],
+    failures: 0,
     fixedIds: getFixedIds(state, action),
     phase: { ...phase, feedback: action.feedback, kind: "feedback" as const },
     reached: mergeReached(state.reached, action.feedback.reached),
@@ -180,8 +166,6 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
 export function practiceReducer(state: PracticeState, action: PracticeAction): PracticeState {
   switch (action.type) {
     case "start":
-      return { ...state, phase: afterIdea(state.steps[state.index]) };
-    case "reveal":
       return { ...state, phase: { kind: "answering", selected: null } };
     case "select":
       return state.phase.kind === "answerFailed" &&
@@ -202,7 +186,11 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
       return answered(state, action);
     case "answerFailed":
       return state.phase.kind === "checking"
-        ? { ...state, phase: { ...state.phase, kind: "answerFailed" } }
+        ? {
+            ...state,
+            failures: state.failures + 1,
+            phase: { ...state.phase, kind: "answerFailed" },
+          }
         : state;
     case "retry":
       return state.phase.kind === "answerFailed"

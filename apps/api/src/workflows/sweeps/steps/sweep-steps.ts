@@ -5,10 +5,11 @@ import { deleteInactiveGuests } from "@zoonk/core/guests/delete-inactive";
 import { type FreshnessTarget } from "@zoonk/core/library/exams/check-freshness";
 import { listDueFreshnessTargets } from "@zoonk/core/library/exams/freshness-checks";
 import { recalibrateItemDifficulties } from "@zoonk/core/library/items/recalibrate";
+import { listOwedSentenceOrders } from "@zoonk/core/library/language/write-owed-sentence-orders";
 import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
 import { listOwedPictureChecks } from "@zoonk/core/library/media/check-image";
-import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
 import { countOpenReviewFlags } from "@zoonk/core/library/review-flags/flagged";
+import { listOwedSkillLevels } from "@zoonk/core/library/skills/tag-levels";
 import { purgeMemoryFacts } from "@zoonk/core/memory/purge";
 
 export async function listDueFreshnessTargetsStep(): Promise<FreshnessTarget[]> {
@@ -39,16 +40,22 @@ export async function purgeEvaluationRunsStep(): Promise<number> {
   return purged;
 }
 
-export async function listLessonsForLaterReviewStep(): Promise<string[]> {
-  "use step";
-
-  return listLessonsForLaterReview();
-}
-
 export async function listOwedPictureChecksStep(): Promise<string[]> {
   "use step";
 
   return listOwedPictureChecks();
+}
+
+export async function listOwedSentenceOrdersStep(): Promise<string[]> {
+  "use step";
+
+  return listOwedSentenceOrders();
+}
+
+export async function listOwedSkillLevelsStep(): Promise<string[]> {
+  "use step";
+
+  return listOwedSkillLevels();
 }
 
 export async function recalibrateItemDifficultiesStep(): Promise<number> {

@@ -18,6 +18,28 @@ function testCase(
 }
 
 export const TEST_CASES: UnderstandGoalCase[] = [
+  testCase("pt-display-names-distinguish-public-exams", {
+    expected: {
+      goals: [
+        { displayName: /^IBAMA$/iu, kind: "exam" },
+        { displayName: /^(?:Banco Central|BACEN|BCB)$/iu, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "Quero passar no concurso do IBAMA e no concurso do Banco Central",
+    language: "pt",
+  }),
+  testCase("en-display-names-distinguish-language-purpose", {
+    expected: {
+      goals: [
+        { displayName: /^German(?: for work)?$/u, kind: "language" },
+        { displayName: /^Japanese(?: for travel)?$/u, kind: "language" },
+      ],
+      route: "goals",
+    },
+    goal: "I want to learn German for work and Japanese for travel",
+    language: "en",
+  }),
   testCase("en-learn-named-version-kept", {
     expected: { goals: [{ kind: "learn", title: /4\.20/u }], route: "goals" },
     goal: "I'm on Docker Desktop 4.20 at work and want to use it better",
@@ -96,6 +118,46 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     },
     goal: "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
     language: "pt",
+  }),
+  testCase("en-language-reason-trip-a2", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "it", targetScore: /^A2$/u }],
+      route: "goals",
+    },
+    goal: "I want to learn Italian for my trip to Rome next summer",
+    language: "en",
+  }),
+  testCase("en-language-reason-partner-family-b1", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "it", targetScore: /^B1$/u }],
+      route: "goals",
+    },
+    goal: "I want to learn Italian so I can talk with my partner's family",
+    language: "en",
+  }),
+  testCase("pt-language-reason-viagem-a2", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "es", targetScore: /^A2$/u }],
+      route: "goals",
+    },
+    goal: "quero aprender espanhol pra viajar pela América do Sul nas férias",
+    language: "pt",
+  }),
+  testCase("pt-language-reason-mestrado-b2", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "de", targetScore: /^B2$/u }],
+      route: "goals",
+    },
+    goal: "quero aprender alemão para fazer mestrado na Alemanha",
+    language: "pt",
+  }),
+  testCase("en-language-reason-other-b1", {
+    expected: {
+      goals: [{ kind: "language", targetLanguage: "ja", targetScore: /^B1$/u }],
+      route: "goals",
+    },
+    goal: "I want to learn Japanese so I can read manga without translations",
+    language: "en",
   }),
   testCase("pt-exam-enem-medicina-ufmg", {
     expected: {

@@ -54,8 +54,10 @@ function fakeServer(lesson: PlayableLibraryLesson) {
 
     if (outcome.status === "checked" && !answers.has(input.attemptId)) {
       answers.set(input.attemptId, {
+        answer: input.answer,
         answeredAt: new Date().toISOString(),
         isCorrect: outcome.result.isCorrect,
+        result: { ...outcome.result, answerText: null },
         stepId: input.stepId,
       });
     }

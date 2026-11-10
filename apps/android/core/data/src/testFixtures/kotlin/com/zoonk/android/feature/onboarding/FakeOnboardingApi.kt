@@ -75,7 +75,7 @@ fun goalsUnderstanding(
 ) = """
     {"status":"goals","schedule":{"dailyMinutes":15,"studyDays":null,"studyTime":null,"studyTimeNote":null},
      "goals":[{"cutoff":null,"examDates":$examDates,
-       "draft":{"kind":"exam","language":"en","prompt":"pass the bar exam","title":"$title","details":$details${targetDate?.let {
+       "draft":{"kind":"exam","language":"en","prompt":"pass the bar exam","title":"$title","displayName":"$title","details":$details${targetDate?.let {
     ""","targetDate":"$it""""
 } ?: ""}}}]}
     """.trimIndent()
@@ -86,7 +86,7 @@ internal fun goalCreated(): GoalCreateResponse =
         {"generations":[],"refused":[],"research":[],"goals":[{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":15,"details":{},
          "examBlueprintId":null,"id":"$GOAL_ID","isActive":true,"kind":"exam","language":"en","plan":null,"primaryCourseId":null,
          "prompt":"pass the bar exam","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,
-         "timezone":null,"title":"Pass the bar exam"}]}
+         "timezone":null,"title":"Pass the bar exam","displayName":"Bar exam"}]}
         """.trimIndent(),
     )
 
@@ -110,11 +110,16 @@ fun setupView(
     targetLanguage: String? = null,
     examChoices: String = "[]",
     planReady: Boolean = true,
+    startsOnRecommended: Boolean = false,
+    firstLesson: String = "null",
+    warmUp: String = "null",
+    planRevealed: Boolean = false,
+    languageAim: String = if (kind == "language") languageAimOf() else "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
         {"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
-         "libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
+         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
@@ -122,7 +127,9 @@ fun setupView(
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
             "\"$it\""
-        } ?: "null"},"targetLanguage":${targetLanguage?.let { "\"$it\"" } ?: "null"},"timezone":null,"title":"Learn statistics"}}
+        } ?: "null"},"targetLanguage":${targetLanguage?.let {
+            "\"$it\""
+        } ?: "null"},"timezone":null,"title":"Learn statistics","displayName":"Statistics"}}
         """.trimIndent(),
     )
 
@@ -258,6 +265,16 @@ class FakeOnboardingApi : OnboardingApi {
     var generationId: (String) -> String? = { null }
     val generationReads = mutableListOf<String>()
 
+    override suspend fun revealToday(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): com.zoonk.api.models.PlanRevealToday = throw ApiException(ApiError.NotFound)
+
+    override suspend fun markPlanRevealed(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {}
+
     override suspend fun goalGenerationRun(
         session: AuthenticatedSession,
         goalId: String,
@@ -384,11 +401,14 @@ class FakeOnboardingApi : OnboardingApi {
         return PlacementAnswerResult(isCorrect = true, placement = placement)
     }
 
+    var placementFinishGate: CompletableDeferred<Unit>? = null
+
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
     ) {
+        placementFinishGate?.await()
         writeFailure?.let { throw it }
     }
 
@@ -512,3 +532,12 @@ fun adviceOf(
 val DAILY_TIMES = listOf(5, 10) + (15..240 step 15) + (270..1440 step 30)
 
 private const val MOST_SUGGESTED = 240L
+
+fun languageAimOf(aim: String? = null): String =
+    """
+    {"aim":${aim?.let { "\"$it\"" } ?: "null"},
+     "choices":[{"aim":"A2","hours":190},{"aim":"B1","hours":375},{"aim":"B2","hours":550},{"aim":"C1","hours":750}],
+     "reasons":[{"reason":"travel","aim":"A2","hours":190},{"reason":"talk","aim":"B1","hours":375},
+       {"reason":"work","aim":"B2","hours":550},{"reason":"fluent","aim":"C1","hours":750},
+       {"reason":"certificate","aim":null,"hours":null},{"reason":"other","aim":"B1","hours":375}]}
+    """.trimIndent()

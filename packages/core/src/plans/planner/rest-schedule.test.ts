@@ -110,7 +110,7 @@ describe("a class test short on time", () => {
   it("keeps a topic the learner missed, though they answered it right since, before one asked as often", () => {
     const plan = buildPlan({
       answeredWrongSkillIds: new Set(["virus"]),
-      goal: { dailyMinutes: 20, kind: "exam", targetDate: addDays(TODAY, 3) },
+      goal: { dailyMinutes: 12, kind: "exam", targetDate: addDays(TODAY, 3) },
       graph: { phases: [{ milestone: null, name: "Células" }], skills },
       items: [],
       knownSkillIds: new Set(["virus"]),

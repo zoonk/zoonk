@@ -118,7 +118,7 @@ test.describe("Coming back", () => {
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(/\/today\?draft=[0-9a-f-]{36}$/u);
-    await expect(page.getByText("Understand quantum physics", { exact: true })).toBeVisible();
+    await expect(page.getByText("Quantum physics", { exact: true })).toBeVisible();
 
     await page.goto("/");
 
@@ -164,7 +164,7 @@ test.describe("Coming back", () => {
     });
 
     await page.getByRole("button", { name: "Try again" }).click();
-    await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
+    await expect(page.getByText("Juggling", { exact: true })).toBeVisible();
 
     await prisma.onboardingDraft.update({
       data: { status: "understanding", understanding: DbNull },
@@ -201,6 +201,6 @@ test.describe("Coming back", () => {
     release.resolve(null);
 
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
-    await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
+    await expect(page.getByText("Juggling", { exact: true })).toBeVisible();
   });
 });

@@ -1,6 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { getCheckpointMinutes } from "../../checkpoints/checkpoint-minutes";
-import { CHECKPOINT_QUESTIONS } from "../../checkpoints/checkpoint-rules";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { fundMocks } from "./mock-funding";
 import { matchSavedMocks } from "./mock-identity";
@@ -95,8 +93,6 @@ function readDay({
   return { budget, items, minutes: items.reduce((total, item) => total + item.minutes, 0) };
 }
 
-const BOSS = getCheckpointMinutes(CHECKPOINT_QUESTIONS);
-
 describe("a mock moved onto a day that holds something", () => {
   it("replaces the review of a day in the final stretch", () => {
     const input = examInput({
@@ -113,7 +109,7 @@ describe("a mock moved onto a day that holds something", () => {
     expect(day.minutes).toBeCloseTo(day.budget);
   });
 
-  it("keeps a phase checkpoint's time beside it", () => {
+  it("keeps a moved mock day free of phase checkpoints", () => {
     const plain = buildPlan(examInput({ lessons: 200, targetDate: fromIsoDate("2020-11-04") }));
 
     const target = plain.items
@@ -142,12 +138,9 @@ describe("a mock moved onto a day that holds something", () => {
       day.items
         .map((item) => [item.kind, item.minutes] as const)
         .toSorted((a, b) => a[0].localeCompare(b[0])),
-    ).toStrictEqual([
-      ["boss", BOSS],
-      ["mock", 165],
-    ]);
+    ).toStrictEqual([["mock", 165]]);
 
-    expect(day.budget).toBeCloseTo(165 + BOSS);
+    expect(day.budget).toBeCloseTo(165);
   });
 });
 

@@ -46,7 +46,6 @@ class NextStopTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val signIn = FakeSession(ana)
     private val api = FakeStudyApi()
-    private val waits = mutableListOf<Long>()
     private val waiting = step(0, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private val practice = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private var shown by mutableStateOf(waiting)
@@ -89,7 +88,6 @@ class NextStopTest {
             SessionViewModel(
                 StudyOpener(api, api::writeLesson, cache, { "UTC" }),
                 StudySessionStore(api, cache) { "UTC" },
-                { _, milliseconds -> waits += milliseconds },
                 cache,
                 readiness = { _, _ ->
                     readinessReads++
@@ -146,7 +144,6 @@ class NextStopTest {
         assertEquals(0, api.opened.size)
         rule.onNodeWithText("Your lesson is ready.").assertExists()
         rule.onNodeWithText("Start").assertIsFocused()
-        assertEquals(1, waits.size)
     }
 
     @Test
@@ -168,7 +165,6 @@ class NextStopTest {
         rule.onNodeWithText("Your lesson is ready.").assertExists()
         assertEquals(3, readinessReads)
         assertEquals(1, dayReads)
-        assertEquals(1, waits.size)
     }
 
     @Test
@@ -178,6 +174,7 @@ class NextStopTest {
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
         rule.waitForIdle()
+        rule.onNodeWithText("Play a quiz while you wait").performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         rule.onNodeWithText("Next guess").assertExists()
 
@@ -207,7 +204,6 @@ class NextStopTest {
 
         rule.onNodeWithText("Your lesson is ready.").assertExists()
         assertEquals(2, dayReads)
-        assertEquals(1, waits.size)
     }
 
     @Test
@@ -234,7 +230,6 @@ class NextStopTest {
         rule.onNodeWithText("Try again").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
-        assertEquals(0, waits.size)
     }
 
     @Test
@@ -340,7 +335,6 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Your lesson is ready.").assertExists()
-        assertEquals(1, waits.size)
     }
 
     @Test
@@ -367,7 +361,6 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
-        assertEquals(0, waits.size)
     }
 
     private companion object {

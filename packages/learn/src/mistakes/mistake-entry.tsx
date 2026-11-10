@@ -15,6 +15,7 @@ import {
 import { useExtracted, useFormatter } from "next-intl";
 import { TagBesideOrUnder } from "../_components/answer-option";
 import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -182,11 +183,11 @@ export function MistakeEntryCard({
       data-slot="mistake-entry"
       data-status={mistake.status}
     >
-      <div className="text-muted-foreground flex items-center justify-between gap-3 text-xs">
+      <div className={cn(TITLE_ROW_CLASS, "text-muted-foreground text-xs")}>
         <MistakeCauseLabel cause={mistake.cause} fixed={mistake.status === "fixed"} />
         {/* Formatted in the viewer's time zone, which the server can't know. */}
         <time
-          className="shrink-0 font-mono tabular-nums"
+          className="font-mono tabular-nums"
           dateTime={date.toISOString()}
           suppressHydrationWarning
         >

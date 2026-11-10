@@ -70,11 +70,15 @@ struct LessonHyperdriveStart: Hashable, Sendable {
   static let none = LessonHyperdriveStart(knownStepIds: [], streak: 0)
 }
 
-/// Oldest first.
+/// Oldest first. `answer` is nil for a recording, whose words are the result's `answerText`, and
+/// for an answer that no longer fits its screen.
 struct LessonRunAnswer: Hashable, Sendable {
   let stepId: String
-  let isCorrect: Bool
   let answeredAt: Date
+  let answer: LessonAnswer?
+  let result: LessonStepResult
+
+  var isCorrect: Bool { result.isCorrect }
 }
 
 enum LessonRunRefusal: Hashable, Sendable, Error {
@@ -108,4 +112,14 @@ struct LessonCompletionSummary: Hashable, Sendable {
   /// When the lesson was one of the session's blocks.
   let block: BlockMoment?
   let finishedChapter: Components.Schemas.FinishedChapter?
+  /// Set when this was the goal's first lesson, started before the learner saw their plan.
+  var planReveal: PlanRevealLead?
+}
+
+/// Where the goal's first lesson leads when the learner hasn't seen their plan yet.
+struct PlanRevealLead: Hashable, Sendable {
+  let goalID: String
+  let goalTitle: String
+  /// False while the plan is still being built.
+  let planReady: Bool
 }

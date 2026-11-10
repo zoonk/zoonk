@@ -225,7 +225,7 @@ async function expectChallengeDate({ date, planId }: { date: string; planId: str
   await expect(
     getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
   ).resolves.toMatchObject({
-    challenge: { date, planItemId: boss.id, status: "upcoming" },
+    challenge: { date: null, planItemId: boss.id, status: "upcoming" },
     status: "ready",
   });
 }
@@ -313,68 +313,53 @@ describe("phase dates through system refreshes", () => {
     ).resolves.toBe(0);
   });
 
-  it("offers to move a phase's end past lessons that land longer than planned, so its challenge comes after them", async () => {
-    const { goal, library, outline, plan } = await setup({ targetDate: FAR });
-    const ends = await readPhaseEnds(plan.id);
+  it.each([true, false])(
+    "quietly moves only an unsafe end after longer lessons land (lost challenge: %s)",
+    async (lost) => {
+      const { goal, library, outline, plan } = await setup({
+        challengeTaken: !lost,
+        targetDate: FAR,
+      });
 
-    await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
-    await refreshGoalPlan({ goalId: goal.id });
+      const ends = await readPhaseEnds(plan.id);
 
-    const [[kept], outlined] = await Promise.all([
-      readChallengeDates(plan.id),
-      prisma.planItem.count({
-        where: { lessonId: { not: null }, planId: plan.id, status: "todo" },
-      }),
-    ]);
+      if (lost) {
+        const boss = await prisma.planItem.findFirstOrThrow({
+          where: { kind: "boss", planId: plan.id },
+        });
 
-    expect(ends[0]).not.toBeNull();
-    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
-    expect(kept).toBe(ends[0]);
-    expect(outlined).toBeGreaterThanOrEqual(20);
+        await lostChallengeFixture({ date: LAST_WEEK, planItemId: boss.id });
+      }
 
-    const { moves, proposal } = await readProposedMoves(plan.id);
+      await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
+      await refreshGoalPlan({ goalId: goal.id });
+      const after = await readPhaseEnds(plan.id);
+      expect(after[0] && ends[0] && after[0] > ends[0]).toBe(true);
+      expect(after.slice(1)).toStrictEqual(ends.slice(1));
+      await expect(readProposals(plan.id)).resolves.toHaveLength(0);
+      await expect(readChallengeDates(plan.id)).resolves.toContain(after[0]);
 
-    expect(moves).toStrictEqual([
-      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
-    ]);
+      const applied = await prisma.planChange.findFirstOrThrow({
+        orderBy: { createdAt: "desc" },
+        where: { kind: "estimateUpdated", planId: plan.id, status: "applied" },
+      });
 
-    await decidePlanChange({
-      changeId: proposal?.id ?? "",
-      goalId: goal.id,
-      input: { status: "applied", timeZone: "UTC" },
-    });
+      expect(parsePlanChangePayload(applied.payload).effect?.phaseEnds).toContainEqual({
+        after: after[0],
+        before: ends[0],
+        lessonsFirst: true,
+        name: "Basics",
+      });
 
-    const [end] = await readPhaseEnds(plan.id);
-    const [challenge] = await readChallengeDates(plan.id);
+      const last = await readLastLessonDay({
+        phase: 0,
+        planId: plan.id,
+        skills: library.graph.skills,
+      });
 
-    const last = await readLastLessonDay({
-      phase: 0,
-      planId: plan.id,
-      skills: library.graph.skills,
-    });
-
-    expect(end).toBe(moves[0]?.after);
-    expect(challenge).toBe(end);
-    expect(last && end && last <= end).toBe(true);
-  });
-
-  it("still asks a learner who lost a challenge, which stays to do in the plan", async () => {
-    const { goal, outline, plan } = await setup({ challengeTaken: false, targetDate: FAR });
-    const [boss] = await prisma.planItem.findMany({ where: { kind: "boss", planId: plan.id } });
-    const ends = await readPhaseEnds(plan.id);
-
-    await lostChallengeFixture({ date: LAST_WEEK, planItemId: boss?.id ?? "" });
-    await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
-    await refreshGoalPlan({ goalId: goal.id });
-
-    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
-
-    const { moves } = await readProposedMoves(plan.id);
-
-    expect(moves).toStrictEqual([
-      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
-    ]);
-  });
+      expect(last && after[0] && last <= after[0]).toBe(true);
+    },
+  );
 
   it("keeps a new learner's challenge after lessons that land longer than planned, without asking", async () => {
     const { goal, library, outline, plan } = await setup({
@@ -404,64 +389,36 @@ describe("phase dates through system refreshes", () => {
     });
   });
 
-  it("moves an unsafe phase end after a focus and names the applied move", async () => {
-    const { goal, library, outline, plan } = await setup({ targetDate: FAR });
-    const ends = await readPhaseEnds(plan.id);
-    expect(ends[0]).toBe("2020-10-06");
-
+  it("keeps the quiet move recorded when a later learner focus changes the plan", async () => {
+    const { goal, outline, plan } = await setup({ targetDate: FAR });
     await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
-
-    const before = await readProposedMoves(plan.id);
+    const ends = await readPhaseEnds(plan.id);
+    expect(ends[0]).toBe("2020-10-14");
 
     const changed = await changeGoalPlan({
       goalId: goal.id,
       input: { operations: [{ areas: ["Projects"], kind: "reduceAreas" }], timeZone: "UTC" },
     });
 
-    expect(before.moves).toHaveLength(1);
-
-    if (changed.status !== "applied" || !changed.change) {
-      throw new Error("Expected the actual focus change");
-    }
-
-    const phaseEnds = [
-      { after: "2020-10-14", before: "2020-10-06", lessonsFirst: true, name: "Basics" },
-    ];
-
-    expect(changed.change.effect?.phaseEnds).toStrictEqual(phaseEnds);
-    const applied = await prisma.planChange.findUniqueOrThrow({ where: { id: changed.change.id } });
-    expect(applied).toMatchObject({ kind: "edited", status: "applied" });
-    const payload = parsePlanChangePayload(applied.payload);
-    expect(payload.source).toBe("learner");
-    expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
+    expect(changed.status).toBe("applied");
+    expect(changed.status === "applied" && changed.change?.effect?.phaseEnds).toBeUndefined();
+    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
     await expect(readProposals(plan.id)).resolves.toHaveLength(0);
 
-    await expect(
-      prisma.planChange.findUniqueOrThrow({ where: { id: before.proposal?.id ?? "" } }),
-    ).resolves.toMatchObject({ status: "replaced" });
+    const system = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "estimateUpdated", planId: plan.id },
+    });
 
-    const [end] = await readPhaseEnds(plan.id);
-    expect(end).toBe("2020-10-14");
-
-    await expect(
-      readLastLessonDay({ phase: 0, planId: plan.id, skills: library.graph.skills }),
-    ).resolves.toBe("2020-10-13");
-
-    await expect(
-      prisma.planItem.count({
-        where: {
-          kind: "lesson",
-          planId: plan.id,
-          skillId: { in: library.skills.slice(0, 2).map((skill) => skill.id) },
-        },
-      }),
-    ).resolves.toBe(14);
-
-    await expectChallengeDate({ date: "2020-10-14", planId: plan.id });
+    expect(parsePlanChangePayload(system.payload).effect?.phaseEnds).toContainEqual({
+      after: "2020-10-14",
+      before: "2020-10-06",
+      lessonsFirst: true,
+      name: "Basics",
+    });
   });
 
-  it("offers to move a phase's end this week past lessons that land longer than planned", async () => {
+  it("quietly moves an unsafe end this week past lessons that land longer than planned", async () => {
     vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
 
     const { goal, library, outline, plan } = await setup({
@@ -481,19 +438,7 @@ describe("phase dates through system refreshes", () => {
     await outline({ outline: { count: 3, minutes: 12 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
 
-    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
-
-    const { moves, proposal } = await readProposedMoves(plan.id);
-
-    expect(moves).toStrictEqual([
-      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
-    ]);
-
-    await decidePlanChange({
-      changeId: proposal?.id ?? "",
-      goalId: goal.id,
-      input: { status: "applied", timeZone: "UTC" },
-    });
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
 
     const [end] = await readPhaseEnds(plan.id);
     const [challenge] = await readChallengeDates(plan.id);
@@ -504,7 +449,7 @@ describe("phase dates through system refreshes", () => {
       skills: library.graph.skills,
     });
 
-    expect(end).toBe(moves[0]?.after);
+    expect(end && ends[0] && end > ends[0]).toBe(true);
     expect(challenge).toBe(end);
     expect(last && end && last <= end).toBe(true);
   });
@@ -824,7 +769,7 @@ describe("phase dates through system refreshes", () => {
 
     await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
-    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
+    const afterLanding = await readPhaseEnds(plan.id);
 
     vi.setSystemTime(new Date("2020-10-01T12:00:00Z"));
     await refreshGoalPlan({ goalId: goal.id });
@@ -859,13 +804,13 @@ describe("phase dates through system refreshes", () => {
     expect(last).toBe(ends[1]);
 
     expect(settled?.payload).toMatchObject({
-      effect: { phaseEnds: [{ after: end, before: ends[0], name: "Basics" }] },
+      effect: { phaseEnds: [{ after: end, before: afterLanding[0], name: "Basics" }] },
     });
 
     await expect(readProposals(plan.id)).resolves.toHaveLength(0);
   });
 
-  it("asks again from the end missed days moved it to, after the learner kept the one it replaced", async () => {
+  it("quietly moves an unsafe end again when later lessons land", async () => {
     const { goal, outline, plan } = await setup({
       skills: [
         { lessons: 4, phase: 0 },
@@ -877,39 +822,19 @@ describe("phase dates through system refreshes", () => {
     });
 
     const ends = await readPhaseEnds(plan.id);
-
     await outline({ outline: { count: 14, minutes: 10 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
-
-    const declined = await readProposedMoves(plan.id);
-
-    expect(declined.moves).toStrictEqual([
-      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
-    ]);
-
-    await decidePlanChange({
-      changeId: declined.proposal?.id ?? "",
-      goalId: goal.id,
-      input: { status: "declined", timeZone: "UTC" },
-    });
-
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
     vi.setSystemTime(new Date("2020-09-29T12:00:00Z"));
     await refreshGoalPlan({ goalId: goal.id });
-
     const [end] = await readPhaseEnds(plan.id);
-
     expect(end && ends[0] && end > ends[0]).toBe(true);
-
     await outline({ outline: { count: 6, minutes: 8 }, skill: 2 });
     await refreshGoalPlan({ goalId: goal.id });
-
-    const { moves } = await readProposedMoves(plan.id);
-
-    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual([end, ends[1]]);
-
-    expect(moves).toStrictEqual([
-      { after: expect.any(String), before: end, lessonsFirst: true, name: "Basics" },
-    ]);
+    const after = await readPhaseEnds(plan.id);
+    expect(after[0] && end && after[0] > end).toBe(true);
+    expect(after[1]).toBe(ends[1]);
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
   });
 
   it("still moves the dates when the learner changes their plan", async () => {

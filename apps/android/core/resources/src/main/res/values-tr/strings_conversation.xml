@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "918addff25082c1248b1874a0c79522d0bca5d19f7cf0b0977b3539e81c0b5bb",
   "conversation_answers_first": "78e69121069fd819195f25dd079e83c39492d7dda8e63fbd1b86f4be0bf85214",
   "conversation_at_level": "d7ad9f50b3358a21b0e73fa2bbe314c3334e82b4f3634e517669858fc4715717",
-  "conversation_back_to_today": "599c4a8a8d4661577012dbcd8f9e08cf04693d4be76753e6295614ac6845d9f8",
   "conversation_band": "01d5b5eb03f7d36d21b78e6af6eebb459f48b3a94de7ec535d7b72fd11dfe96b",
   "conversation_band_points": "1ea64795bcbc1b9c1db49f78d52c9e6df57a6232fc9d39b1f2b5540b661e9042",
   "conversation_below_level": "df6085ab98d57072b5c863a25ff1e92f1931757b6e99db753660907aaed523f8",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "4d418029c9ee93a9f09817f59860696b370350f278d757cc7125d15ba359605c",
   "conversation_still_closing": "d4341a1996f2055df26d9b1e51f6100f224ccb5f59915b6d80264eacf6e51c2c",
   "conversation_still_to_get_across": "e7515811d2c6469f5b708f58d63611e052b1e5dcdf284e2f500152781aafd3b1",
-  "conversation_study_time_used_up": "bd66ce26350f4d5578864f2c95a98407c88f4fe1136dea536096b8370f84c149",
   "conversation_take_over": "0fef444bb3dfe64d7fd5f0d5f2a046278cab50e4bc05bba76b0c1db4972b8cd5",
   "conversation_take_your_time": "f9c538ef19e9c6009815fcf6b188ce017965057748e02cf0d0b120292eaf783b",
   "conversation_taken_over": "582e54c33f5b59139fb1a0532eb660b95ed0b2c08a52ebd73a698cccfaa97f43",
@@ -312,9 +310,6 @@
     <string name="conversation_call_length">Sohbet süresi</string>
     <string name="conversation_longer_calls_plus">Plus ile daha uzun sohbetler yapabilirsin.</string>
     <string name="conversation_opens_when_ready">Sohbetin hazır olur olmaz açılır.</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">Günlük süre sınırına ulaştın. Bu sohbeti bir sonraki çalışmanda yapabilirsin.</string>
-    <string name="conversation_back_to_today">Bugün’e dön</string>
     <string name="conversation_get_ready">Sohbeti hazırla</string>
     <string name="conversation_get_ready_description">Bu meydan okuma, üniteyle ilgili kısa bir sohbet. Önce konuşma seviyene göre hazırlıyoruz; bu da yarım dakikaya kadar sürebilir.</string>
     <string name="conversation_getting_ready">Sohbetini hazırlıyoruz</string>

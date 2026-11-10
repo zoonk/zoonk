@@ -31,6 +31,10 @@ class AppNavigator(
     internal val tasks: NavBackStack<NavKey>,
     private val openWebPage: (AppRoute.WebPage) -> Unit,
 ) {
+    private var tappedLesson: AppRoute.Lesson? = null
+
+    fun takeLessonTap(route: AppRoute.Lesson): Boolean = (tappedLesson == route).also { tappedLesson = null }
+
     val selectedTab: AppTab
         get() = selected.value
 
@@ -68,6 +72,7 @@ class AppNavigator(
      * again.
      */
     fun open(route: AppRoute) {
+        tappedLesson = (route as? AppRoute.Lesson)?.takeIf { it.opening != null }
         when (val presentation = route.presentation) {
             is Presentation.Tab -> {
                 showRoot(presentation.tab, root = route)
@@ -119,6 +124,7 @@ class AppNavigator(
             }
         }
 
+        tappedLesson = null
         isSwitchingTabs = false
     }
 

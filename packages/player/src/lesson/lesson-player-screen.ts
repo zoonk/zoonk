@@ -1,7 +1,7 @@
 import { type TaskSegment } from "@zoonk/learn/task-header";
 import { getChallengeProgress } from "./_utils/challenge-progress";
 import { isAtEnd } from "./_utils/lesson-end";
-import { canGoBack } from "./_utils/lesson-flow";
+import { canGoBack, continueStopsAt } from "./_utils/lesson-flow";
 import { getHyperdriveStreak } from "./_utils/lesson-hyperdrive";
 import {
   getExplanationsAfter,
@@ -148,7 +148,30 @@ function canTurnForward(state: LessonPlayerState, step: PlayableLibraryStep | nu
   return state.phase === "feedback" || (state.phase === "playing" && isReadStep(step));
 }
 
-function getPassedSegment(state: LessonPlayerState, index: number): TaskSegment {
+/** A retry or a quick check starts its screen over, so only a first copy keeps the run's answer. */
+function hasRunAnswer(state: LessonPlayerState, index: number): boolean {
+  const stepId = state.queue[index] ?? "";
+
+  return (
+    !state.quickCheck &&
+    state.queue.indexOf(stepId) === index &&
+    (stepId in state.results || stepId in state.firstVerdicts)
+  );
+}
+
+function isDone(state: LessonPlayerState, index: number): boolean {
+  if (index < state.position || isAtEnd(state)) {
+    return true;
+  }
+
+  if (index === state.position) {
+    return state.phase === "feedback";
+  }
+
+  return hasRunAnswer(state, index) || !continueStopsAt(state, index);
+}
+
+function getDoneSegment(state: LessonPlayerState, index: number): TaskSegment {
   const stepId = state.queue[index] ?? "";
 
   const verdict =
@@ -177,10 +200,8 @@ function getMapSegment(state: LessonPlayerState): TaskSegment {
 
 function getSegments(state: LessonPlayerState): TaskSegment[] {
   const screens = state.queue.map((_, index): TaskSegment => {
-    const answeredInView = index === state.position && state.phase === "feedback";
-
-    if (index < state.position || answeredInView || isAtEnd(state)) {
-      return getPassedSegment(state, index);
+    if (isDone(state, index)) {
+      return getDoneSegment(state, index);
     }
 
     return index === state.position ? "current" : "ahead";
@@ -196,14 +217,9 @@ const MAP_PRIMARY: LessonPrimaryAction = {
   label: "continue",
 };
 
-function getProgress(state: LessonPlayerState): LessonScreen["progress"] {
-  const total = state.queue.length + (endsOnMap(state) ? 1 : 0);
-
-  if (state.phase === "completed") {
-    return { current: total, total };
-  }
-
-  return { current: state.phase === "map" ? state.queue.length : state.position, total };
+function getProgress(segments: TaskSegment[]): LessonScreen["progress"] {
+  const done = segments.filter((segment) => segment !== "ahead" && segment !== "current");
+  return { current: done.length, total: segments.length };
 }
 
 function getScreenActions(
@@ -224,6 +240,7 @@ function getScreenActions(
 export function getLessonScreen(state: LessonPlayerState): LessonScreen {
   const step = isAtEnd(state) ? null : getCurrentStep(state);
   const isPlaying = state.phase === "playing" && state.run.status !== "refused";
+  const segments = getSegments(state);
 
   return {
     canExplainFirst:
@@ -239,9 +256,9 @@ export function getLessonScreen(state: LessonPlayerState): LessonScreen {
       getQuickCheckQueue(state).length > 0,
     hyperdriveStreak:
       state.phase === "feedback" && step ? getHyperdriveStreak({ state, stepId: step.id }) : null,
-    progress: getProgress(state),
+    progress: getProgress(segments),
     quickCheck: state.quickCheck ? { current: state.position, total: state.queue.length } : null,
-    segments: getSegments(state),
+    segments,
     step,
     struggleOffer: getStruggleOffer(state),
     unsentAnswer: hasUnsentAnswer(state, step),

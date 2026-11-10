@@ -117,7 +117,7 @@ export const goalMindMapsSchema = z
     chapters: z
       .array(goalMindMapSchema)
       .meta({ description: "Every chapter of the plan that can have a map, in plan order" }),
-    goal: z.object({ id: uuidSchema(), title: z.string() }),
+    goal: z.object({ displayName: z.string(), id: uuidSchema(), title: z.string() }),
   })
   .meta({ id: "GoalMindMaps" });
 

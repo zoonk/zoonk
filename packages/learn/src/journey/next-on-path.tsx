@@ -13,6 +13,7 @@ import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
+import { MarkedText, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -21,6 +22,7 @@ import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
   MockRow,
+  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
   usePhaseMocksLine,
@@ -70,19 +72,21 @@ function NextChapterRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <ChapterMark chapter={chapter} isNext />
       </span>
-      <span className="min-w-0 flex-1 truncate font-medium">{chapter.title}</span>
-      <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-        <span aria-hidden="true">
-          {t("{done, number} / {total, number}", {
-            done: chapter.lessonsDone,
-            total: chapter.lessonsTotal,
-          })}
-        </span>
-        <span className="sr-only">
-          {t(
-            "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-            { done: chapter.lessonsDone, total: chapter.lessonsTotal },
-          )}
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{chapter.title}</span>
+        <span className="text-muted-foreground font-mono text-xs tabular-nums">
+          <span aria-hidden="true">
+            {t("{done, number} / {total, number}", {
+              done: chapter.lessonsDone,
+              total: chapter.lessonsTotal,
+            })}
+          </span>
+          <span className="sr-only">
+            {t(
+              "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
+              { done: chapter.lessonsDone, total: chapter.lessonsTotal },
+            )}
+          </span>
         </span>
       </span>
       <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
@@ -101,7 +105,7 @@ function FinishRow({ examHref }: { examHref: string | null }) {
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{goal.title}</span>
+        <span className="truncate font-medium">{goal.displayName}</span>
         {finish && (
           <PlanDateText
             className="text-muted-foreground text-xs"
@@ -139,27 +143,31 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <StatusMark status="todo" />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{phaseName(phase)}</span>
-        {phase.mocks.count > 0 && (
-          <span className="text-muted-foreground flex items-center gap-2 text-xs">
-            {mocksLine({
-              count: phase.mocks.count,
-              forNextSitting: true,
-              nextSitting: plan.schedule.nextSitting,
-            })}
-            {plan.access.mocksRequirePlus && <PlusMark />}
-          </span>
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className="flex flex-col">
+          <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
+          {phase.mocks.count > 0 && (
+            <MarkedText
+              className="text-muted-foreground text-xs"
+              mark={plan.access.mocksRequirePlus && <PlusMark />}
+            >
+              {mocksLine({
+                count: phase.mocks.count,
+                forNextSitting: true,
+                nextSitting: plan.schedule.nextSitting,
+              })}
+            </MarkedText>
+          )}
+        </span>
+        {phase.endDate && (
+          <PlanDateText
+            className="text-muted-foreground text-xs"
+            estimate
+            isoDate={phase.endDate}
+            month
+          />
         )}
       </span>
-      {phase.endDate && (
-        <PlanDateText
-          className="text-muted-foreground shrink-0 text-xs"
-          estimate
-          isoDate={phase.endDate}
-          month
-        />
-      )}
     </div>
   );
 }
@@ -171,6 +179,24 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
   const chapter = goal.kind === "exam" ? null : findNextChapter(plan.phases);
   const afterExam = plan.phases.filter((phase) => phase.kind === "afterExam");
   const hasNext = Boolean(mockDate || chapter?.chapterId || checkpoint) || afterExam.length > 0;
+
+  // A challenge in the next session comes before the next phase's lessons, as on Today.
+  const challengeFirst =
+    checkpoint?.when === "nextSession" &&
+    plan.phases.findIndex((phase) => phase.checkpoint === checkpoint) <
+      plan.phases.findIndex((phase) => chapter !== null && phase.chapters.includes(chapter));
+
+  const chapterRow = chapter?.chapterId && (
+    <li>
+      <NextChapterRow chapter={{ ...chapter, chapterId: chapter.chapterId }} links={links} />
+    </li>
+  );
+
+  const checkpointRow = checkpoint && (
+    <li>
+      <CheckpointRow checkpoint={checkpoint} links={links} />
+    </li>
+  );
 
   if (!hasNext && goal.kind !== "exam") {
     return null;
@@ -194,17 +220,8 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
           </li>
         )}
 
-        {chapter?.chapterId && (
-          <li>
-            <NextChapterRow chapter={{ ...chapter, chapterId: chapter.chapterId }} links={links} />
-          </li>
-        )}
-
-        {checkpoint && (
-          <li>
-            <CheckpointRow checkpoint={checkpoint} links={links} />
-          </li>
-        )}
+        {challengeFirst ? checkpointRow : chapterRow}
+        {challengeFirst ? chapterRow : checkpointRow}
 
         <li>
           <FinishRow examHref={links.exam} />

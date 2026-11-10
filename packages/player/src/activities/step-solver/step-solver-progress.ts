@@ -32,3 +32,22 @@ export function addPick(picks: SolverPicks, stepId: string, choiceId: string): S
   const current = picks[stepId] ?? [];
   return current.includes(choiceId) ? picks : { ...picks, [stepId]: [...current, choiceId] };
 }
+
+/** A saved answer holds each step's first pick; when it was wrong, the right move came after it. */
+export function picksFromFirst(
+  steps: readonly SolverStep[],
+  firsts: Readonly<Record<string, string>>,
+): SolverPicks {
+  return Object.fromEntries(
+    steps.flatMap((step) => {
+      const first = firsts[step.id];
+      const correct = correctChoiceId(step);
+
+      if (!first) {
+        return [];
+      }
+
+      return [[step.id, correct === null || correct === first ? [first] : [first, correct]]];
+    }),
+  );
+}

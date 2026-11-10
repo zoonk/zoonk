@@ -288,12 +288,27 @@ describe(checkpointDuelReducer, () => {
     });
   });
 
-  it("keeps the state and reports a failed request so the learner can try again", () => {
+  it("keeps the state and counts failed requests in a row until one goes through", () => {
     const pending = checkpointDuelReducer(createDuelState(checkpoint()), { type: "pending" });
     const failed = checkpointDuelReducer(pending, { error: "answer", type: "failed" });
 
-    expect(failed).toMatchObject({ error: "answer", pending: false, phase: "duel" });
-    expect(checkpointDuelReducer(failed, { type: "pending" }).error).toBeNull();
+    expect(failed).toMatchObject({ error: "answer", failures: 1, pending: false, phase: "duel" });
+
+    const retrying = checkpointDuelReducer(failed, { type: "pending" });
+    expect(retrying).toMatchObject({ error: null, failures: 1 });
+
+    const failedAgain = checkpointDuelReducer(retrying, { error: "answer", type: "failed" });
+    expect(failedAgain.failures).toBe(2);
+
+    const answered = checkpointDuelReducer(failedAgain, {
+      isCorrect: true,
+      itemId: "a",
+      recording: null,
+      reinforcementLessons: null,
+      type: "answered",
+    });
+
+    expect(answered.failures).toBe(0);
   });
 });
 

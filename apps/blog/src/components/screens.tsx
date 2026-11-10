@@ -1,4 +1,5 @@
 import { ThemeImage } from "./theme-image";
+import { ThemeVideo } from "./theme-video";
 
 export function Screens({ children }: { children: React.ReactNode }) {
   return (
@@ -14,29 +15,46 @@ export function Screens({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Takes screenshots of the 390 × 844 phone screen that `pnpm pr:capture` shoots. */
+/**
+ * Takes screenshots of the 390 × 844 phone screen that `pnpm pr:capture` shoots. With
+ * `videoSrc` and `darkVideoSrc`, it plays that screen's clip and shows the screenshots as posters.
+ */
 export function Screen({
   alt,
   children,
   darkSrc,
+  darkVideoSrc,
   src,
+  videoSrc,
 }: {
   alt: string;
   children?: React.ReactNode;
   darkSrc: string;
+  darkVideoSrc?: string;
   src: string;
+  videoSrc?: string;
 }) {
   return (
     <figure className="shrink-0 snap-start">
       <div className="bg-card ring-border relative aspect-390/844 overflow-hidden rounded-4xl ring-1">
-        <ThemeImage
-          alt={alt}
-          className="object-cover"
-          darkSrc={darkSrc}
-          fill
-          sizes="19rem"
-          src={src}
-        />
+        {videoSrc && darkVideoSrc ? (
+          <ThemeVideo
+            darkPoster={darkSrc}
+            darkSrc={darkVideoSrc}
+            label={alt}
+            poster={src}
+            src={videoSrc}
+          />
+        ) : (
+          <ThemeImage
+            alt={alt}
+            className="object-cover"
+            darkSrc={darkSrc}
+            fill
+            sizes="19rem"
+            src={src}
+          />
+        )}
       </div>
 
       {children && (

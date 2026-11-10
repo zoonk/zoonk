@@ -15,6 +15,7 @@ export type SpokenAnswerMatch = {
 };
 
 const MAX_WORDS_TO_EXPLAIN = 2;
+const LONE_LETTER = /^\p{L}\p{M}*$/u;
 
 const ENGLISH_CONTRACTIONS: readonly [RegExp, string][] = [
   [/\bcan't\b/gu, "can not"],
@@ -56,6 +57,15 @@ function toComparableScript({ language, text }: { language: string; text: string
   return CHINESE_SCRIPT_LANGUAGES.has(getBaseLanguage(language)) ? toSimplifiedChinese(text) : text;
 }
 
+function isLoneLetter(token: string): boolean {
+  return LONE_LETTER.test(token);
+}
+
+function splitSpelledLetters(token: string): string[] {
+  const parts = token.split("-");
+  return parts.length > 1 && parts.every((part) => isLoneLetter(part)) ? parts : [token];
+}
+
 function toTokens({ language, text }: { language: string; text: string }): string[] {
   const normalized = expandContractions({
     language,
@@ -70,7 +80,10 @@ function toTokens({ language, text }: { language: string; text: string }): strin
       .map((segment) => segment.segment);
   }
 
-  return normalized.split(" ").filter(Boolean);
+  return normalized
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((token) => splitSpelledLetters(token));
 }
 
 function getTokenSeparator(language: string): string {
@@ -190,6 +203,56 @@ export function matchSpokenAnswer({
     score: words.length === 0 ? 0 : correctCount / words.length,
     words,
   };
+}
+
+function isWrittenAsLetters({ language, text }: { language: string; text: string }): boolean {
+  return toTokens({ language, text }).every((token) => isLoneLetter(token));
+}
+
+/** A letter's name can take two words ("double u", "i griega"), so a mistake beside it may be the rest. */
+function isLetterNameHeardAsLetters({
+  index,
+  language,
+  words,
+}: {
+  index: number;
+  language: string;
+  words: readonly SpokenWordResult[];
+}): boolean {
+  const word = words[index];
+
+  if (
+    word?.status !== "different" ||
+    word.heard === null ||
+    !word.heard.split(" ").every((token) => isLoneLetter(token))
+  ) {
+    return false;
+  }
+
+  const name = [words[index - 1], word, words[index + 1]].filter(
+    (part): part is SpokenWordResult => part !== undefined && part.status !== "correct",
+  );
+
+  return name.some((part) => !isWrittenAsLetters({ language, text: part.text }));
+}
+
+/**
+ * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), so its
+ * transcript can't tell whether the name said was the one expected.
+ */
+export function hasTranscribedLetterNames({
+  language,
+  words,
+}: {
+  language: string;
+  words: readonly SpokenWordResult[];
+}): boolean {
+  // A Chinese or Japanese character heard alone is usually a whole word, not a letter.
+  if (getUnspacedSegmenter(language)) {
+    return false;
+  }
+
+  return words.some((_, index) => isLetterNameHeardAsLetters({ index, language, words }));
 }
 
 export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWordResult[] {

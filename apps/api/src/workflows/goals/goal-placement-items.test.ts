@@ -8,8 +8,10 @@ import {
   generatePlacementItems,
 } from "@zoonk/ai/tasks/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { uploadImage } from "@zoonk/core/images/upload";
+import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -18,13 +20,16 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
+import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { solveAsKeyed } from "../_test-utils/solved-items";
+import { getStartMock } from "../_test-utils/start-mock";
 import { TEST_IMAGE, imageProvenance, sceneFor } from "../images/_test-utils/image-results";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
-import { prepareGraphPlacement } from "./goal-placement-items";
+import { preparePlanPlacement } from "./goal-placement-items";
 import { preparePlacementItems } from "./placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import { shortPlanPracticeWorkflow } from "./short-plan-practice-workflow";
@@ -182,32 +187,55 @@ describe(shortPlanPracticeWorkflow, () => {
   });
 });
 
-describe(prepareGraphPlacement, () => {
-  it("starts the questions' own run with the graph's picks once the skills are saved, without waiting for it", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 3 });
+describe(preparePlanPlacement, () => {
+  it("picks from answers saved after the graph gate opened", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 4, kind: "exam" });
     const keys = skillIds.map((_, index) => `skill-${index}`);
+    const initial = oneCoursePerSkill(keys);
 
-    await prepareGraphPlacement({
-      context,
-      everySkill: false,
-      goalId: goal.id,
-      graph: oneCoursePerSkill(keys),
-      knownAreas: [],
-      ownLevel: null,
-      skillIds: Promise.resolve(
-        Object.fromEntries(skillIds.map((id, index) => [keys[index]!, id])),
-      ),
-      waitsForNotice: false,
+    const graph = {
+      ...initial,
+      courses: initial.courses.slice(0, 1),
+      skills: initial.skills.map((skill) => ({ ...skill, area: "Math", course: keys[0]! })),
+    };
+
+    const idsByKey = Object.fromEntries(skillIds.map((id, index) => [keys[index]!, id]));
+
+    await prisma.plan.update({
+      data: { graph: toGoalPlanGraph({ courseIdsByKey: {}, graph, idsByKey }) },
+      where: { goalId: goal.id },
     });
 
-    expect(start).toHaveBeenCalledWith(placementItemsWorkflow, [
-      {
-        analytics: context.analytics,
-        goalId: goal.id,
-        skillIds: expect.arrayContaining(skillIds),
-        waitsForNotice: false,
-      },
-    ]);
+    await prisma.goal.update({ data: { details: { level: "basic" } }, where: { id: goal.id } });
+
+    await preparePlanPlacement({ context, goalId: goal.id, waitsForNotice: false });
+
+    const [input] = getStartMock().mock.calls.find(
+      ([workflow]) => workflow === placementItemsWorkflow,
+    )![1];
+
+    vi.mocked(generatePlacementItems).mockImplementation(async (params) => writtenFor(params));
+    await placementItemsWorkflow(input as Parameters<typeof placementItemsWorkflow>[0]);
+
+    const picked = await prisma.item.findMany({ where: { skillId: { in: skillIds } } });
+
+    expect(
+      [...new Set(picked.map((item) => item.skillId))].toSorted((a, b) => a!.localeCompare(b!)),
+    ).toStrictEqual(
+      [skillIds[0], skillIds[2], skillIds[3]].toSorted((a, b) => a!.localeCompare(b!)),
+    );
+  });
+
+  it("starts the questions' own run after the plan commits, without capturing its answers", async () => {
+    const { goal } = await goalWithSkills({ count: 3 });
+
+    await preparePlanPlacement({ context, goalId: goal.id, waitsForNotice: false });
+
+    expect(start).toHaveBeenCalledWith(
+      placementItemsWorkflow,
+      [{ analytics: context.analytics, goalId: goal.id, waitsForNotice: false }],
+      { experimental_hook: { token: `placement-items:${goal.id}` } },
+    );
 
     expect(generatePlacementItems).not.toHaveBeenCalled();
 
@@ -280,6 +308,44 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
+  it("never stores a quick question whose key a blind solve doesn't reach, and keeps the one written beside it", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 1 });
+
+    const noRightOption = {
+      ...QUICK_ITEMS.multipleChoice,
+      question: `Which answer is right? ${randomUUID()}`,
+    };
+
+    vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
+      taskResult({
+        skills: params.skills.map(() => ({
+          quick: [noRightOption, QUICK_ITEMS.multipleChoice],
+          typed: [],
+        })),
+      }),
+    );
+
+    vi.mocked(solveItems).mockImplementation(async ({ items }) =>
+      taskResult({
+        solutions: items.map((item) =>
+          item.format === "multipleChoice" && item.question === noRightOption.question
+            ? { format: "multipleChoice" as const, picks: [], work: "No option is right." }
+            : solveAsKeyed(item),
+        ),
+      }),
+    );
+
+    await expect(
+      placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
+    ).resolves.toStrictEqual({ failed: 0, status: "written", written: 1 });
+
+    await expect(
+      prisma.item.findMany({ select: { content: true }, where: { skillId: { in: skillIds } } }),
+    ).resolves.toStrictEqual([
+      { content: expect.objectContaining({ question: QUICK_ITEMS.multipleChoice.question }) },
+    ]);
+  });
+
   it("writes the picked skills a few per call, with the quick questions that confirm a right pick", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 7 });
 
@@ -299,6 +365,13 @@ describe(placementItemsWorkflow, () => {
     expect(
       vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
     ).toStrictEqual(["priority", undefined, undefined, undefined]);
+
+    expect(vi.mocked(solveItems).mock.calls.map(([params]) => params.serviceTier)).toStrictEqual([
+      "priority",
+      undefined,
+      undefined,
+      undefined,
+    ]);
 
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(14);
     await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);
@@ -416,8 +489,6 @@ describe(placementItemsWorkflow, () => {
     const { blueprint, goal, listeningSkills, reading } = await listeningGoalFixture();
     const listeningIds = listeningSkills.map((skill) => skill.id);
 
-    const { sleep } = await import("workflow");
-
     await prisma.goal.update({
       data: {
         details: { noticeFormats: MULTIPLE_CHOICE_STRUCTURE.formats },
@@ -450,14 +521,21 @@ describe(placementItemsWorkflow, () => {
     ).resolves.toStrictEqual([1, 0]);
   });
 
-  it("joins the run already writing the goal's questions", async () => {
+  it("waits for earlier placement writing, then picks from the latest answer", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2 });
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-run" });
 
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      expect(generatePlacementItems).not.toHaveBeenCalled();
+      await prisma.goal.update({ data: { details: { level: "none" } }, where: { id: goal.id } });
+      mockHookConflict(null);
+    });
+
     await expect(
       placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
-    ).resolves.toStrictEqual({ failed: 0, status: "joined", written: 0 });
+    ).resolves.toStrictEqual({ failed: 0, status: "written", written: 0 });
 
+    expect(sleep).toHaveBeenCalledExactlyOnceWith("10s");
     expect(generatePlacementItems).not.toHaveBeenCalled();
   });
 
@@ -566,7 +644,6 @@ describe(placementItemsWorkflow, () => {
 
   it("waits for a new notice's formats before writing questions, and goes on without them in the end", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 1, kind: "exam" });
-    const { sleep } = await import("workflow");
 
     await expect(
       placementItemsWorkflow({

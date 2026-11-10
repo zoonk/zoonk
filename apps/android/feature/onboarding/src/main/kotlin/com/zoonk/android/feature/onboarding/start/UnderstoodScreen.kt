@@ -134,6 +134,7 @@ internal fun ColumnScope.UnderstoodScreen(
                 FactRow(
                     row = row,
                     timeZone = timeZone,
+                    languageAim = understood.languageAim.takeIf { row.id == "targetScore" },
                     editValue = editValue(understood, row),
                     editing = edits.editing == key,
                     saving = edits.saving != null,
@@ -246,6 +247,7 @@ internal class FactEdits(
 @Composable
 private fun FactRow(
     row: UnderstoodRow,
+    languageAim: com.zoonk.api.models.LanguageAim? = null,
     timeZone: String,
     editValue: String,
     editing: Boolean,
@@ -256,7 +258,7 @@ private fun FactRow(
 ) {
     val save: (String) -> Unit = { value -> if (!saving) onSave(value) }
     val label = if (editing) row.editLabel ?: row.label else row.label
-    val editor = row.editable?.kind
+    val editor = row.editable?.kind.takeIf { languageAim == null }
     val today = LocalDate.now(goalZone(timeZone))
     val offered = targetDateBounds(today)
 
@@ -328,6 +330,16 @@ private fun FactRow(
             initial = runCatching { LocalDate.parse(editValue) }.getOrNull(),
             onDismiss = { onEdit(false) },
             onPick = { save(it.toString()) },
+        )
+    }
+    if (editing && languageAim != null) {
+        com.zoonk.android.feature.plan.LanguageAimSheet(
+            languageAim.aim?.value,
+            languageAim.choices,
+            onDismiss = { onEdit(false) },
+            onPick = save,
+            pending = saving,
+            failed = failed,
         )
     }
     if (editing && editor == EditorKind.Time) {
@@ -435,8 +447,8 @@ private fun editValue(
             row.editDefault ?: row.value
         }
 
-        EditableField.Title -> {
-            goal.draft.title
+        EditableField.DisplayName -> {
+            goal.draft.displayName.orEmpty()
         }
 
         EditableField.TargetDate -> {
@@ -460,9 +472,9 @@ private fun draftEdit(
             OnboardingDraftEdit.OnboardingDraftEditOneOf3Value(OnboardingDraftEditOneOf3(OnboardingDraftEditOneOf3.Field.STUDY_TIME, value))
         }
 
-        EditableField.Title -> {
+        EditableField.DisplayName -> {
             OnboardingDraftEdit.OnboardingDraftEditOneOfValue(
-                OnboardingDraftEditOneOf(OnboardingDraftEditOneOf.Field.TITLE, goal.toLong(), value),
+                OnboardingDraftEditOneOf(OnboardingDraftEditOneOf.Field.DISPLAY_NAME, goal.toLong(), value),
             )
         }
 

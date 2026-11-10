@@ -1,6 +1,8 @@
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
+import { TITLE_ROW_CLASS } from "@zoonk/learn/title-row";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
 function RowsSkeleton({ count, rowClassName }: { count: number; rowClassName: string }) {
@@ -62,9 +64,9 @@ export async function PlanSkeleton() {
           <div className="flex h-4 items-center" data-slot="page-eyebrow">
             <Skeleton className="h-3 w-48 rounded-sm" />
           </div>
-          <PageHeader className="items-center">
+          <PageHeader className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
             <PageTitle>{t("Plan")}</PageTitle>
-            <div className="flex shrink-0 items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
               <Skeleton className="h-7.5 w-24 rounded-lg" />
               <Skeleton className="size-7.5 rounded-lg" />
             </div>

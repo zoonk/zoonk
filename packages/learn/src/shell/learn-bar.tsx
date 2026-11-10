@@ -147,7 +147,7 @@ function PageBarStart({
   const label = fromApp ? undefined : back.label;
 
   return (
-    <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-3 lg:gap-1.5">
+    <div className="@container/page-bar-start col-start-1 row-start-1 flex min-w-11 items-center gap-3 lg:gap-1.5">
       {root ? (
         <LearnBackLink className="lg:hidden" href={back.href} toApp />
       ) : (
@@ -164,10 +164,12 @@ function PageBarStart({
         </span>
       )}
 
+      {/* Beside the back button only with about 3.5rem to spare, so it shows words, not a couple
+          of letters. */}
       {title && titleAway && (
         <span
           aria-hidden="true"
-          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden"
+          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden @max-[7rem]/page-bar-start:hidden"
         >
           {title}
         </span>
@@ -197,12 +199,14 @@ export function LearnPageBar({
     <PageBarSurface className={cn(root && !children && "lg:hidden")} ref={ref}>
       {/* As tall as an action's button even without one, so every page's bar, and its skeleton,
           share one height. */}
-      {/* `data-title-away` lets an action give way to the page's name on a phone (a visitor's
-          Pricing, `group-data-title-away/page-bar`). */}
+      {/* Actions get only the room the back button leaves. `data-title-away`
+          (`group-data-title-away/page-bar`) lets one give way to the page's name on a phone, and
+          the `page-bar` container lets one shorten in a narrow row, as Ask (its face alone) and
+          a visitor's Pricing (hidden) do. */}
       <div
         className={cn(
           PAGE_COLUMN_CLASS,
-          "group/page-bar grid min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 lg:min-h-10",
+          "group/page-bar @container/page-bar grid min-h-11 grid-cols-[1fr_minmax(0,auto)] items-center gap-x-3 lg:min-h-10",
         )}
         data-title-away={(title && titleAway) || undefined}
       >
@@ -214,7 +218,7 @@ export function LearnPageBar({
           titleAway={titleAway}
         />
 
-        <div className="col-start-2 row-start-1 flex items-center justify-end gap-1">
+        <div className="col-start-2 row-start-1 flex items-center justify-end-safe gap-1">
           {children}
         </div>
       </div>

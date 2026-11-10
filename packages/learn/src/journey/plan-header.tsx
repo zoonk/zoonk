@@ -1,7 +1,9 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageEyebrow, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
 
@@ -11,7 +13,7 @@ function JourneyEyebrow() {
   const { targetDate, targetDateEstimated } = plan.schedule;
 
   if (!targetDate || targetDate < today) {
-    return <PageEyebrow>{goal.title}</PageEyebrow>;
+    return <PageEyebrow>{goal.displayName}</PageEyebrow>;
   }
 
   const days = daysBetween(today, targetDate);
@@ -19,7 +21,7 @@ function JourneyEyebrow() {
   if (!targetDateEstimated) {
     return (
       <PageEyebrow>
-        {`${goal.title} · `}
+        {`${goal.displayName} · `}
         {t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days })}
       </PageEyebrow>
     );
@@ -27,7 +29,7 @@ function JourneyEyebrow() {
 
   return (
     <PageEyebrow>
-      {`${goal.title} · `}
+      {`${goal.displayName} · `}
       <span aria-hidden="true">
         {t("{days, plural, one {~# day left} other {~# days left}}", { days })}
       </span>
@@ -44,12 +46,12 @@ export function PlanHeader({ children }: { children: React.ReactNode }) {
   return (
     <PageHeaderContent>
       <JourneyEyebrow />
-      <PageHeader className="items-center">
+      <PageHeader className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
         <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
           {t("Plan")}
         </PageTitle>
 
-        <div className="flex shrink-0 items-center gap-1.5">{children}</div>
+        <div className="flex flex-wrap items-center gap-1.5">{children}</div>
       </PageHeader>
     </PageHeaderContent>
   );

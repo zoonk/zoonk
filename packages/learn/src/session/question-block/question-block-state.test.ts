@@ -53,6 +53,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   mistakesOnly: false,
   netScored: false,
   oftenTested: false,
+  opensInPlayer: false,
   planItemId: null,
   planItemKey: null,
   position: 0,
@@ -159,6 +160,13 @@ describe(questionBlockReducer, () => {
 
       expect(failed.index).toBe(0);
       expect(failed.phase).toStrictEqual({ ...sent, kind: "answerFailed" });
+      expect(failed.failures).toBe(1);
+
+      const failedAgain = reduce(reduce(failed, { ...sent, type: "check" }), {
+        type: "answerFailed",
+      });
+
+      expect(failedAgain.failures).toBe(2);
     },
   );
 });

@@ -13,7 +13,6 @@
   "essay_criterion_legal_basis": "18699697b94b1367bedf46fff2efb85c0f0b25875f6a4e69500d61cf7076bb95",
   "essay_criterion_requests": "87fef4f4a271e1a57939479ed374a8fb117fe3e1deeea8ab0755dff0f35fe0fc",
   "essay_criterion_topic": "bfe7c8a8024c170885642c0809411a161d4187b4fc4dc5c18554f657458c23da",
-  "essay_daily_limit_reached": "c201332f1e616e24923044485f5f8bd51b66f39823d19dfd75cbe0df1f6c70ed",
   "essay_element_action": "e11a07e21b4c02653323dd6b9e38f8824d050037e1cb1e49423b1e7d97c72892",
   "essay_element_agent": "9c5f76d5d95128227430405eec094189871d1117ea8da0ec7dd0d2e804810822",
   "essay_element_detail": "8bc090561f2a9f6ce59658285a707ed3029eeede263c1a9bf52f4b6a1218dbec",
@@ -107,8 +106,6 @@
     <string name="essay_skipped">Bu kompozisyonu atladın.</string>
     <string name="essay_back_to_today">Bugün’e dön</string>
     <string name="essay_send_failed">İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene.</string>
-    <!-- The daily time limit is a setting that stops study for the day. A "Change limit" link follows. -->
-    <string name="essay_daily_limit_reached">Günlük süre sınırına ulaştın. Yazdıkların burada kalacak.</string>
     <string name="essay_limit_reached">Bugünkü kompozisyon değerlendirme haklarını kullandın. Metnin burada kalacak; yarın gönder.</string>
     <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
     <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>

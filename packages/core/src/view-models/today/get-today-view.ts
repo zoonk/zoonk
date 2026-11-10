@@ -10,10 +10,7 @@ import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-sug
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
-import {
-  type LessonGenerationState,
-  getLessonGenerationStates,
-} from "../../library/generation/lesson-generation-state";
+import { type LessonGenerationState } from "../../library/generation/lesson-generation-state";
 import {
   type GoalUploadRequest,
   toGoalUploadRequest,
@@ -28,7 +25,6 @@ import {
 import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type PlanStatus } from "../../preparation/plan-status";
-import { withLessonScreens } from "../../sessions/_utils/lesson-screens";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
@@ -37,6 +33,7 @@ import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
 import { type TodayAdmission, admitToday } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
+import { readDaySession } from "./_utils/day-session";
 import { listEarlierWork } from "./_utils/earlier-work";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
@@ -44,6 +41,7 @@ import { hasStudiedOn } from "./_utils/studied-on-day";
 import { type TodayNoticeKind, pickTodayNotice } from "./today-notice";
 
 type TodayGoal = {
+  displayName: string;
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
   dateEstimated: boolean;
   /** From the session's learner-local day; null without a date or after it passed. */
@@ -115,7 +113,11 @@ export type TodayViewResult =
   /** No goal yet: the apps open onboarding, or first offer the suggested goal when there's one. */
   | { status: "noGoal"; suggestedGoal: SuggestedGoalView | null; userId: string }
   | { status: "notFound" }
-  | { goal: Pick<TodayGoal, "id" | "kind" | "title">; status: "preparing"; userId: string }
+  | {
+      goal: Pick<TodayGoal, "id" | "kind" | "title" | "displayName">;
+      status: "preparing";
+      userId: string;
+    }
   | { status: "ready"; today: TodayView }
   | { status: "unauthorized" };
 
@@ -160,10 +162,6 @@ async function loadSessionDay({
 }) {
   const studySession = day.session;
 
-  const lessonIds = studySession.blocks.flatMap((block) =>
-    block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
-  );
-
   const shortPlan = await loadShortPlanDay({
     goal,
     source: day.selection
@@ -176,9 +174,9 @@ async function loadSessionDay({
     today: studySession.localDate,
   });
 
-  const [studied, lessonStates, exam] = await Promise.all([
+  const [studied, { lessonStates, session }, exam] = await Promise.all([
     hasStudiedOn({ localDate: studySession.localDate, userId }),
-    getLessonGenerationStates(lessonIds),
+    readDaySession(day),
     loadExamMoment({
       goal,
       includesMockExams: studySession.examAccess.includesMockExams,
@@ -187,13 +185,7 @@ async function loadSessionDay({
     }),
   ]);
 
-  return {
-    exam,
-    lessonStates,
-    shortPlan,
-    studied,
-    studySession: withLessonScreens(studySession, lessonStates),
-  };
+  return { exam, lessonStates, shortPlan, studied, studySession: session };
 }
 
 async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
@@ -240,7 +232,11 @@ async function readAdmittedToday({
   const day = await readStudyDay({ goal: owned.goal, now: new Date(), timeZone, userId });
 
   if (!day) {
-    return { goal: { id, kind, title }, status: "preparing", userId };
+    return {
+      goal: { displayName: owned.goal.displayName, id, kind, title },
+      status: "preparing",
+      userId,
+    };
   }
 
   const mockFunding = await loadDayMockFunding({
@@ -314,6 +310,7 @@ async function readAdmittedToday({
       goal: {
         dateEstimated: dateKind.estimated,
         daysLeft: getDaysLeft({ localDate: studySession.localDate, targetDate }),
+        displayName: owned.goal.displayName,
         id,
         kind,
         targetDate,

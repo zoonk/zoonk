@@ -242,7 +242,9 @@ export async function finishMistakePractice(
     userId,
   });
 
-  if (counted) {
+  // Answers count as they come, so a run's last finish usually has nothing new. It expires tags
+  // anyway: only that drops the notebook the browser kept, which still shows what the run fixed.
+  if (counted || input.ended) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
   }
 

@@ -9,11 +9,13 @@ typeOverrides:
   schemas:
     LessonMap: LessonSummary
     LessonStepAnswer: LessonAnswer
+    LessonStepAnswerOutput: LessonAnswer
     PlayableLibraryStep: LessonStep
 filter:
   operations:
     - acknowledgeTodayPlanChange
     - adaptPlanFromMock
+    - answerCurrentUserProfileQuestion
     - answerLanguageLevelTest
     - answerLanguageLevelTestOutLoud
     - answerMemoryInsight
@@ -114,12 +116,12 @@ filter:
     - getCurrentUserActivity
     - getCurrentUserAllowance
     - getCurrentUserBuddy
-    - getCurrentUserDailyTimeLimit
     - getCurrentUserEnergy
     - getCurrentUserLearningProfile
     - getCurrentUserLevel
     - getCurrentUserMemory
     - getCurrentUserMistakePractice
+    - getCurrentUserProfileQuestions
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine
@@ -161,6 +163,7 @@ filter:
     - getMock
     - getMockQuestionThread
     - getOnboarding
+    - getPlanRevealToday
     - getOnboardingResume
     - getPlanChangedSince
     - getPlanLink
@@ -196,6 +199,7 @@ filter:
     - listPronunciationReviews
     - listSourceChangeNotices
     - markCertificateShown
+    - markPlanRevealed
     - moveChallenge
     - moveWeeklyChallenge
     - openStudyBlock
@@ -230,5 +234,6 @@ filter:
     - updateCurrentUserLearningProfile
     - updateCurrentUserMemorySettings
     - updateGoal
+    - updateLibraryLessonClock
     - updateMemoryFact
     - updateOwnLevel

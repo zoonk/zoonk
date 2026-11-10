@@ -16,6 +16,7 @@ import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
   ListRow,
+  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -180,18 +181,20 @@ function GroupLine({ group, showFrequency }: { group: Group; showFrequency: bool
       <ListRowLeading>
         <TopicMark mark={mark} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle className={cn(mark?.kind === "notPlanned" && "text-muted-foreground")}>
-          <TopicNumber number={group.number} />
-          {group.text}
-          <span className="sr-only">{statusText(mark)}</span>
-        </ListRowTitle>
-        {group.children.length === 0 && <TopicNote topic={group.topic} />}
-      </ListRowContent>
-      <ListRowTrailing className="empty:hidden">
-        {showFrequency && <FrequencyChip frequency={getGroupFrequency(group)} />}
-        <GroupCount group={group} />
-      </ListRowTrailing>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle className={cn(mark?.kind === "notPlanned" && "text-muted-foreground")}>
+            <TopicNumber number={group.number} />
+            {group.text}
+            <span className="sr-only">{statusText(mark)}</span>
+          </ListRowTitle>
+          {group.children.length === 0 && <TopicNote topic={group.topic} />}
+        </ListRowContent>
+        <ListRowTrailing className="empty:hidden">
+          {showFrequency && <FrequencyChip frequency={getGroupFrequency(group)} />}
+          <GroupCount group={group} />
+        </ListRowTrailing>
+      </ListRowBody>
     </>
   );
 }

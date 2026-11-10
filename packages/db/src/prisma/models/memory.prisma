@@ -53,6 +53,8 @@ model MemoryFact {
   conversations  LanguageConversation[]
   confidence     Float?
   sensitive      Boolean          @default(false)
+  /// Structured profile answer, cleared when the learner rewords the fact.
+  profileAnswer Json? @map("profile_answer")
   sourceRef      Json?            @map("source_ref")
   expiresAt      DateTime?        @map("expires_at")
   lastUsedAt     DateTime?        @map("last_used_at")

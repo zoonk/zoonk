@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import {
   goalFixture,
@@ -16,7 +17,15 @@ import {
 const SHORT_ID_LENGTH = 8;
 const SKILLS_PER_PHASE = [3, 2];
 
-export const ANSWERED = ["purpose", "targetDate", "level", "schedule", "buddy"];
+/** The questions about the learner count as skipped, so these goals open past them. */
+export const ANSWERED = [
+  "purpose",
+  "targetDate",
+  "level",
+  "schedule",
+  "buddy",
+  ...PROFILE_QUESTIONS,
+];
 
 export async function createMappedGoal(userId: string) {
   const id = randomUUID().slice(0, SHORT_ID_LENGTH);
@@ -24,6 +33,7 @@ export async function createMappedGoal(userId: string) {
   const goal = await goalFixture({
     dailyMinutes: 30,
     details: { answered: ANSWERED, subject: "algebra" },
+    planRevealedAt: null,
     prompt: `learn algebra ${id}`,
     title: `Learn algebra ${id}`,
     userId,

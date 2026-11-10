@@ -13,6 +13,7 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
+import { MarkedText } from "../_components/title-row";
 import { useBuddyName } from "../buddies/use-buddy-name";
 import { CatchUpLater } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
@@ -61,11 +62,12 @@ function ChallengeRow() {
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
       <ListRowContent>
-        <ListRowTitle className="flex items-center gap-2">
-          {challenge.kind === "mock"
-            ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
-            : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
-          {challenge.access === "plusRequired" && <PlusMark />}
+        <ListRowTitle>
+          <MarkedText mark={challenge.access === "plusRequired" && <PlusMark />}>
+            {challenge.kind === "mock"
+              ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
+              : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
+          </MarkedText>
         </ListRowTitle>
       </ListRowContent>
     </ListRowLink>

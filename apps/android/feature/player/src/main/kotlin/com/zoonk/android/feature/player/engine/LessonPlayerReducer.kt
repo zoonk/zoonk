@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.engine
 
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
@@ -62,8 +63,6 @@ sealed interface LessonAction {
         val savedMistake: Boolean,
     ) : LessonAction
 
-    data object RunStarting : LessonAction
-
     data class RunStarted(
         val runId: String,
         val answers: List<RunAnswer>,
@@ -71,6 +70,9 @@ sealed interface LessonAction {
         val startedAt: Instant,
         val optionalStepIds: List<String> = emptyList(),
         val heldAnswers: List<RunAnswer> = emptyList(),
+        /** The learner already did something on this visit, so their screen stays where it is. */
+        val keepsScreen: Boolean = false,
+        val workedStepIds: Set<String> = emptySet(),
     ) : LessonAction
 
     /** A fresh read of the lesson's screens while some pictures were still being drawn. */
@@ -165,10 +167,6 @@ fun reduce(
             state.confirmCheck(action)
         }
 
-        LessonAction.RunStarting -> {
-            state.copy(run = LessonRun.Starting)
-        }
-
         is LessonAction.RunStarted -> {
             state.startRun(action, now)
         }
@@ -186,11 +184,11 @@ fun reduce(
         }
 
         is LessonAction.CompletionSaved -> {
-            state.withCompletion { it.copy(status = CompletionStatus.Saved, result = action.result) }
+            state.withCompletion { it.copy(status = CompletionStatus.Saved, result = action.result, saveFailures = 0) }
         }
 
         LessonAction.CompletionFailed -> {
-            state.withCompletion { it.copy(status = CompletionStatus.Failed) }
+            state.withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
         }
 
         LessonAction.CompletionRetried -> {
@@ -234,7 +232,10 @@ private fun LessonPlayerState.confirmCheck(action: LessonAction.CheckConfirmed):
 private fun LessonPlayerState.withCompletion(change: (LessonCompletion) -> LessonCompletion): LessonPlayerState =
     completion?.let { copy(completion = change(it)) } ?: this
 
-/** Starts over from the lesson's own order, then resumes at the first screen [answers] leave open. */
+/**
+ * Starts over from the lesson's own order, then resumes at the first screen [answers] leave open. The opening guess,
+ * never saved, stays as the learner left it; a canvas starts over only where its screen's answer changes.
+ */
 private fun LessonPlayerState.resumeFrom(
     answers: List<RunAnswer>,
     now: Long,
@@ -242,12 +243,21 @@ private fun LessonPlayerState.resumeFrom(
     val fresh = LessonPlayerState.initial(lessonId, steps.values.toList(), now = now)
     val restore = writingRestore.takeIf { notice == LessonNotice.WritingSkipped }
     val skipped = restore?.skippedWritingStepIds ?: skippedWritingStepIds
-    val available = fresh.copy(queue = fresh.queue.filterNot { it in unavailableStepIds || it in skipped })
+    val isGuess = { id: String -> steps[id]?.content is StepContent.Guess }
+    val available =
+        fresh.copy(
+            answers = this.answers.filterKeys(isGuess),
+            queue = fresh.queue.filterNot { it in unavailableStepIds || it in skipped },
+            results = results.filterKeys(isGuess),
+            rounds = rounds,
+        )
 
     if (available.queue.isEmpty()) return this
 
     val resumed = available.resume(answers, now).copy(run = run, skippedWritingStepIds = skipped, unavailableStepIds = unavailableStepIds)
-    return if (restore != null) resumed.skipWriting(opening = true, now = now) else resumed
+    val changed = (this.answers.keys + resumed.answers.keys).filter { this.answers[it] != resumed.answers[it] }
+    val restarted = resumed.copy(rounds = resumed.rounds + changed.associateWith { round(it) + 1 })
+    return if (restore != null) restarted.skipWriting(opening = true, now = now) else restarted
 }
 
 private fun LessonPlayerState.startRun(
@@ -259,20 +269,26 @@ private fun LessonPlayerState.startRun(
             .filter { it.answeredAt < action.startedAt }
             .map(RunAnswer::stepId)
             .toSet()
+    val answers = withHeld(action.answers, action.heldAnswers).filter { it.stepId in steps }
     val started =
         copy(run = LessonRun.Started(action.runId, action.hyperdrive, carried))
             .skipSteps(action.optionalStepIds, now)
-    val isUntouched = results.isEmpty() && quickCheck == null
-    val answers = (action.answers + action.heldAnswers).filter { it.stepId in steps }.sortedBy(RunAnswer::answeredAt)
 
-    if (!isUntouched || firstVerdicts == runVerdicts(answers)) return started
+    if (action.keepsScreen || firstVerdicts == runVerdicts(answers)) return started.fillUntouched(answers, action.workedStepIds)
 
     return started.resumeFrom(answers, now)
 }
 
-private val LessonPlayerState.isAllAnswered: Boolean
-    get() = phase == LessonPhase.Completed || currentStep?.kind == StepKind.Map
+/** The server's answers, then the device's held ones in turn; the server records nothing on a screen after its right answer. */
+private fun withHeld(
+    answers: List<RunAnswer>,
+    held: List<RunAnswer>,
+): List<RunAnswer> = held.fold(answers) { all, answer -> if (all.any { it.stepId == answer.stepId && it.isCorrect }) all else all + answer }
 
+/**
+ * Pictures drawn since are restored first; then every screen the server has no answer for is marked with why, and the
+ * learner lands on the first of them with the whole lesson around it.
+ */
 private fun LessonPlayerState.resync(
     action: LessonAction.RunResynced,
     now: Long,
@@ -282,28 +298,21 @@ private fun LessonPlayerState.resync(
     val started = run as? LessonRun.Started
 
     if (started != null && action.runId != null && action.runId != started.runId) {
-        return withCompletion { it.copy(status = CompletionStatus.Failed) }
+        return withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
     }
 
     val available = skipSteps(action.optionalStepIds, now)
-    val missing = available.resumeFrom(action.answers, now)
-
-    if (!missing.isAllAnswered) return missing.copy(notice = LessonNotice.AnswerNotSaved)
-
     val drawn = action.pictures.filterKeys { it in available.unavailableStepIds && it !in action.optionalStepIds }
+    val resumed =
+        available
+            .copy(
+                steps = available.steps.mapValues { (id, step) -> drawn[id]?.let { step.copy(image = it, imagePending = false) } ?: step },
+                unavailableStepIds = available.unavailableStepIds - drawn.keys,
+            ).resumeFrom(action.answers, now)
+    val missing = resumed.queue.distinct().filter { resumed.steps[it]?.isAnswerable == true && it !in resumed.results }
+    val first =
+        missing.firstOrNull() ?: return withCompletion { it.copy(status = CompletionStatus.Failed, saveFailures = it.saveFailures + 1) }
+    val recovery = missing.associateWith { if (it in drawn) LessonNotice.PictureReady else LessonNotice.AnswerNotSaved }
 
-    if (drawn.isEmpty()) return withCompletion { it.copy(status = CompletionStatus.Failed) }
-
-    val restored =
-        available.copy(
-            steps = available.steps.mapValues { (id, step) -> drawn[id]?.let { step.copy(image = it, imagePending = false) } ?: step },
-            unavailableStepIds = available.unavailableStepIds - drawn.keys,
-        )
-    val pictured = restored.resumeFrom(action.answers, now)
-
-    return if (pictured.isAllAnswered) {
-        withCompletion { it.copy(status = CompletionStatus.Failed) }
-    } else {
-        pictured.copy(notice = LessonNotice.PictureReady)
-    }
+    return resumed.copy(recovery = recovery).enterPosition(resumed.queue.indexOf(first), now)
 }

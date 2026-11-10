@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { turnKeepingFocus } from "./_utils/lesson-focus";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 import { type LessonPlayerState } from "./lesson-player-state";
@@ -9,9 +10,18 @@ export type ScreenTurn = "back" | "forward";
 
 type SeenScreen = { position: number; queue: readonly string[]; turn: ScreenTurn | null };
 
-export function useScreenTurns(): { back: () => boolean; forward: () => boolean } {
+function run(turn: () => void): void {
+  turn();
+}
+
+/** `keepFocus`: keys move a focused Previous or main button's focus to the next screen's; taps and swipes don't. */
+export function useScreenTurns({ keepFocus = false }: { keepFocus?: boolean } = {}): {
+  back: () => boolean;
+  forward: () => boolean;
+} {
   const { actions, screen } = useLessonPlayer();
   const { isPaused } = useLessonInteraction();
+  const turn = keepFocus ? turnKeepingFocus : run;
 
   return {
     back: () => {
@@ -19,7 +29,7 @@ export function useScreenTurns(): { back: () => boolean; forward: () => boolean 
         return false;
       }
 
-      actions.goBack();
+      turn(actions.goBack);
       return true;
     },
     forward: () => {
@@ -27,7 +37,7 @@ export function useScreenTurns(): { back: () => boolean; forward: () => boolean 
         return false;
       }
 
-      actions.continue();
+      turn(actions.continue);
       return true;
     },
   };

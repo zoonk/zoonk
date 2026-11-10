@@ -187,7 +187,7 @@ class GoalContentScreenshots {
             CompositionLocalProvider(LocalPrivatePictures provides pictures) {
                 ChapterPage(
                     goalChapter(),
-                    PracticeState(outcome = PracticeOutcome.DailyLimit),
+                    PracticeState(outcome = PracticeOutcome.Failed),
                     ChapterActions({}, {}, {}, {}),
                     menu,
                     ask,

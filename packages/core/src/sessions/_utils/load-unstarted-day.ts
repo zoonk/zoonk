@@ -1,6 +1,7 @@
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import "server-only";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -12,12 +13,12 @@ import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
-import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
-import { type PlannedStudyDay } from "./plan-study-day";
+import { type PlannedStudyDay, toUnstartedBlocks } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
+import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
 
@@ -33,12 +34,7 @@ export async function loadUnstartedDayView({
 }): Promise<UnstartedDayView> {
   const { blueprint, goal, localDate, now, timeZone, userId } = context;
 
-  const blocks = day.blocks.map((block, position) => ({
-    ...block,
-    brainPower: 0,
-    position,
-    status: "pending" as const,
-  }));
+  const blocks = toUnstartedBlocks(day.blocks).map((block) => ({ ...block, brainPower: 0 }));
 
   const missionDay = { blocks, localDate, userId };
   const { dayMinutes, examPrep } = day.plan;
@@ -63,12 +59,18 @@ export async function loadUnstartedDayView({
     loadBlockedTestOutChapters({
       chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],
       goalId: goal.id,
-      known: { source: readSavedPlan(userId, goal.id) },
+      known: { blueprint, goal, source: readSavedPlan(userId, goal.id) },
       now,
       timeZone,
       userId,
     }),
-    loadMissionDayViews({ picks: day.missions.picks, session: missionDay, through: now, timeZone }),
+    loadMissionDayViews({
+      picks: day.missions.picks,
+      readProgress: readDayMissionProgress,
+      session: missionDay,
+      through: now,
+      timeZone,
+    }),
     hasDayMissionBonus({ now, session: { fullMealAt: null, localDate, userId }, timeZone }),
     loadDayPlusLessons({
       access: examAccess,
@@ -81,20 +83,29 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
+  const reserved = hasSessionLessonReservation({
+    access: examAccess,
+    plan: day.plan,
+    prerequisites: day.plan.prerequisites,
+    session: {
+      blocks,
+      freshStart: day.input.freshStart,
+      goal,
+      localDate,
+      plannedMinutes: day.plannedMinutes,
+      status: "planned",
+    },
+  });
+
   const fields = toDayViewFields({
     answers: [],
     current: true,
-    dailyLimit: day.plan.limit,
     dayMinutes,
     examAccess,
     fullMealEarned: earned,
-    lessonRoom: hasLessonRoom({
-      day: day.input,
-      limitMinutes: day.plan.limit?.limitMinutes ?? null,
-      plannedMinutes: day.plannedMinutes,
-    }),
+    lessonRoom: reserved,
     missions,
-    outlines: day.plan.outlines,
+    outlines: reserved ? (day.plan.outlines ?? "idle") : null,
     plusLessons,
     session: {
       blocks,

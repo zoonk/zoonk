@@ -3,7 +3,6 @@ import {
   type PlanDay,
   getBlockMinutes,
   getNextStudyDate,
-  getSessionMinutesDone,
   getWeekDayKind,
   getWeekDays,
 } from "./daily-goal";
@@ -63,14 +62,23 @@ describe(getWeekDays, () => {
     ]);
   });
 
-  it("counts a day whose session was finished as reaching its goal, in fewer minutes too", () => {
+  it("counts a day whose sessions all finished as reaching its goal, in fewer minutes too", () => {
     const week = getWeekDays({
-      completedDates: [new Date("2026-09-29T00:00:00Z"), new Date("2026-10-04T00:00:00Z")],
-      days: [{ date: new Date("2026-09-29T00:00:00Z"), seconds: 17 * 60 }],
+      days: [
+        { date: new Date("2026-09-28T00:00:00Z"), seconds: 5 * 60 },
+        { date: new Date("2026-09-29T00:00:00Z"), seconds: 17 * 60 },
+      ],
+      finishedDates: [new Date("2026-09-29T00:00:00Z")],
       getPlanDay: restsOnSundays(21),
+      studiedDates: [
+        new Date("2026-09-28T00:00:00Z"),
+        new Date("2026-09-29T00:00:00Z"),
+        new Date("2026-10-04T00:00:00Z"),
+      ],
       today: WEDNESDAY,
     });
 
+    expect(week[0]).toMatchObject({ goalMinutes: 21, hitGoal: false, minutes: 5, studied: true });
     expect(week[1]).toMatchObject({ goalMinutes: 21, hitGoal: true, minutes: 17, studied: true });
 
     expect(week.at(-1)).toMatchObject({ goalMinutes: 0, hitGoal: false, studied: true });
@@ -159,26 +167,5 @@ describe(getBlockMinutes, () => {
     expect(getBlockMinutes({ completedAt: WEDNESDAY, estimatedMinutes: 5, startedAt: null })).toBe(
       5,
     );
-  });
-});
-
-describe(getSessionMinutesDone, () => {
-  it("counts the planned minutes of finished blocks, however fast the learner went", () => {
-    const start = new Date("2026-10-06T12:00:00Z");
-    const oneMinuteLater = new Date("2026-10-06T12:01:00Z");
-
-    const blocks = [
-      ...Array.from({ length: 4 }, () => ({
-        completedAt: oneMinuteLater,
-        estimatedMinutes: 8,
-        startedAt: start,
-        status: "completed" as const,
-      })),
-      { completedAt: null, estimatedMinutes: 10, startedAt: start, status: "active" as const },
-      { completedAt: null, estimatedMinutes: 12, startedAt: null, status: "pending" as const },
-      { completedAt: start, estimatedMinutes: 6, startedAt: null, status: "skipped" as const },
-    ];
-
-    expect(getSessionMinutesDone(blocks)).toBe(32);
   });
 });

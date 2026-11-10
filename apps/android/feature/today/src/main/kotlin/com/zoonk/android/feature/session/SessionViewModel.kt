@@ -13,7 +13,6 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.player.LessonWritingApi
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
@@ -30,12 +29,11 @@ enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
 
 /**
  * The session screen's taps, one at a time, and what the screen keeps across a rotation. Opening
- * the screen writes nothing but, once a lesson the learner waited on is written, how long that took.
+ * the screen writes nothing.
  */
 class SessionViewModel(
     private val opener: StudyOpener,
     private val sessions: StudySessionStore,
-    private val writingApi: LessonWritingApi,
     private val cache: AppCache,
     private val readiness: suspend (AuthenticatedSession, UUID) -> LessonReadiness,
     private val generations: () -> GenerationSource,
@@ -126,7 +124,8 @@ class SessionViewModel(
      * Reads [lessonId]'s readiness every few seconds and follows the run writing it, reading the day
      * again once it's written: the wait shows until the day does, so its step is offered as ready. A
      * lesson nobody writes is waited on only when the learner [asked] for it; a failed one is still
-     * read, since it may be written again elsewhere, unless its checks set it aside.
+     * read for as long as Main's wait reads it, since it may be written again elsewhere, unless its
+     * checks set it aside.
      */
     suspend fun followLesson(
         lessonId: UUID,
@@ -134,6 +133,7 @@ class SessionViewModel(
         readDay: suspend () -> Unit,
     ) {
         try {
+            var failedSince: Long? = null
             while (true) {
                 when (val read = cache.mutate { readiness(it, lessonId) }) {
                     MutationResult.Obsolete -> {
@@ -151,8 +151,10 @@ class SessionViewModel(
                         }
                         if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
                         if ((status == LessonReadiness.Status.NOT_STARTED && !asked) || read.value.setAside) return
+                        failedSince = if (status == LessonReadiness.Status.FAILED) failedSince ?: now() else null
                     }
                 }
+                if (failedSince?.let { now() - it >= FAILED_LESSON_READ_MILLIS } == true) return
                 delay(LESSON_CHECK_MILLIS)
             }
         } finally {
@@ -189,10 +191,9 @@ class SessionViewModel(
     }
 
     fun lessonWritten(position: Long) {
-        val wait = waiting?.takeIf { it.position == position } ?: return
+        waiting?.takeIf { it.position == position } ?: return
         waiting = null
         writtenWhileWaiting = position
-        viewModelScope.launch { cache.mutate { writingApi.recordWait(it, now() - wait.since) } }
     }
 
     /** A saved day's shown step may be one the learner asked for, so only a day not saved yet starts it as the next one. */
@@ -239,6 +240,8 @@ class SessionViewModel(
 }
 
 internal const val LESSON_CHECK_MILLIS = 5_000L
+
+internal const val FAILED_LESSON_READ_MILLIS = 600_000L
 
 /** Main's `NextStopLesson` while it isn't ready: what the next stop waits on. */
 enum class NextStopLesson { NotStarted, Writing, Failed }

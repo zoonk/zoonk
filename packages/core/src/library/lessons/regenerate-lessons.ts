@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getAdminAccess } from "../../users/get-admin-access";
-import { pullLessonForFix } from "../quality/later-reviews";
+import { pullLessonForFix } from "../quality/pull-lesson-for-fix";
 import {
   type LessonRegenerationFilter,
   MAX_LESSONS_PER_REGENERATION,

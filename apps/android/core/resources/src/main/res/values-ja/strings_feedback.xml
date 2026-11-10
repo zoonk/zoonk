@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "feedback_email": "0b9b0af7f5e3fe3a7874419c84c0988e58932c052435f28d5d0e155701bc5546",
+  "feedback_email_optional": "602a656446d958d19390b7a5c7f418f988c6fa3a509dada15d3755c0bc9595a4",
   "feedback_failed": "96e04d152d392e00cbb2fb05808a9dc2940badcf76daf723f0daea99804d46aa",
   "feedback_follow_us": "20343960c1ef56ceae5dd989a878463f814295733fdc135c1286cec827c98347",
   "feedback_help_description": "8b1920b886097a3ad0cfc431762c7f61b9002f1335e4aa487682cfcefe5ef9c2",
@@ -9,6 +10,7 @@
   "feedback_message_placeholder": "d5eaf2139cf5bee1be20d80911fd86c8f92d7a13386fec02a7322ef44271f4bf",
   "feedback_more": "fdce4da14e3a4e12d2629210dfb98300d7bd91cafda4185cbf51ed71eddfc8a4",
   "feedback_report_problem": "5dd08c21f586d4d0c498a9d560be6779f3734811da24c617d027b0df986b2fa4",
+  "feedback_save_failure_message": "7df5940c07cf976e1f013328f29ed326419bc3ae9dcd026c89f329881da2f195",
   "feedback_screen_attached": "4dc1f2c23e36076e268b550bba44884cc079533e3aadbac1a7aa8146562a9c5a",
   "feedback_send": "64c8c390f329640f7e78850cc40665a645eaada461fc34993e3cf2aca5a5ae17",
   "feedback_send_feedback": "9f936c3071374012e11543712344268af4f5c2e34f34b1aba7ae6255bb8cf19c",
@@ -32,4 +34,6 @@
     <string name="feedback_send_feedback_description">気になる点やアイデアはありますか？下の欄に書くか、hello@zoonk.comにメールでお知らせください。</string>
     <string name="feedback_thanks">ありがとうございます！メッセージを受け取りました。</string>
     <string name="feedback_more">その他のオプション</string>
+    <string name="feedback_save_failure_message">回答を保存できませんでした。</string>
+    <string name="feedback_email_optional">メールアドレス（返信をご希望の場合）</string>
 </resources>

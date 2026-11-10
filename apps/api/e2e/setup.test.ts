@@ -1,7 +1,9 @@
+import { randomBytes } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
+import { lettersOnly, translatePage } from "@zoonk/e2e/page-translation";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
@@ -177,6 +179,25 @@ test.describe("Profile Setup Flow", () => {
     expect(location.searchParams.get("token")).toBeTruthy();
 
     await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toStrictEqual(saved);
+
+    await cleanupVerifications(email);
+  });
+
+  test("a page the browser translates keeps working when React replaces the translated text", async ({
+    page,
+  }) => {
+    const email = `e2etranslated${Date.now()}@zoonk.test`;
+    const username = `translated_${lettersOnly(randomBytes(8))}`;
+
+    await signInToSetup({ email, page });
+    const change = page.getByRole("button", { name: "Change username" });
+    await expectHydrated(change);
+    await translatePage(page);
+    await change.click();
+
+    // "Checking..." sits beside a spinner, so React removes its own text node when the check ends.
+    await page.getByRole("textbox", { exact: true, name: "[Username]" }).fill(username);
+    await expect(page.getByText(`[${username} is available]`)).toBeVisible();
 
     await cleanupVerifications(email);
   });

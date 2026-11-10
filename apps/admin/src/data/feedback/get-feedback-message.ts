@@ -6,7 +6,9 @@ import { parseFeedbackMessageContext } from "./_utils/feedback-message-context";
 
 export const getFeedbackMessage = cacheAdminData(async (id: string) => {
   const feedback = await prisma.feedback.findUnique({
-    include: { user: { select: { email: true, id: true, name: true, username: true } } },
+    include: {
+      user: { select: { email: true, id: true, isAnonymous: true, name: true, username: true } },
+    },
     where: { id },
   });
 

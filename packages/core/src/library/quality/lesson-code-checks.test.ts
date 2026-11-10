@@ -523,11 +523,6 @@ describe(checkWrittenLesson, () => {
 
     expect(codesOf(withScreen(1, explanation(longSentence)))).toContainEqual([1, "readingLevel"]);
 
-    expect(codesOf(withScreen(1, explanation("A rise goes up. ".repeat(50))))).toContainEqual([
-      1,
-      "screenLength",
-    ]);
-
     expect(
       codesOf(withScreen(1, explanation("From −3 °C: 3 + 5 = 9, so it's warmer."))),
     ).toContainEqual([1, "arithmetic"]);

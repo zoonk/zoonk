@@ -15,6 +15,7 @@
   "player_activity_your_answer": "2ddda952260395832a5591d07046bc9f16c0340e4971496cdec09a5bf681221b",
   "player_ai_note": "c166454671239b81742c255ca203f00e00be86f68f11069364a901f17691bca4",
   "player_already_knew": "44bd811d003f59c98b63b6ef4274d696e30d19f40d489b514523f639801cfb69",
+  "player_also_correct_label": "de95025e27a3153dc913b555f3cb2191a124864d4ddf0277b62ceb201168eed0",
   "player_answer_feedback": "fdbe6fe3657603b1ec7fd1bc53464847aae3d1dc6a017b85bd01245172d60486",
   "player_answer_options": "d001d566050b5250e20ac01a461ef94e19d388cc03426862f922014915c6456f",
   "player_ask_something_else": "b2453278c3637ff604a538b602dc61e75ae43bc6d2eda7b2dbfe9aa505fda47e",
@@ -95,7 +96,9 @@
   "player_lesson_complete": "160a45c5a119e7feb7dfff8e22d01bf7ff8fc7877fec6b08c20ecbbbf860642a",
   "player_lesson_map": "2380b0753fbb8cbce86707e6360a98322b31dd96a0e6dbc532fe455eb6f8a875",
   "player_lesson_map_nested": "2acaa10214e0acede3a6a24c29bc7d1507f8a787a8e17c040789246649e2bfdc",
+  "player_lesson_not_saved": "860f6b25e3bd40e4414787a7ea9c64560ffcc6d7a212ff57c43f5dbf8ff21279",
   "player_lesson_of": "efcedf1fe6d89dc646ff522b46eccd75d22285cd57f78a0953af976f8278acfc",
+  "player_lessons_deferred": "560c2f3fd5f7e3585116e4e72832e69751d0e5143d2c69fcda4e6f394c15d962",
   "player_listen": "d9dad9e7c623905d3013c143263066b9f6f0e26fd187df1695b182293095f454",
   "player_microphone_blocked": "13b897da575ea51ff3e3820f5ccf8f78f7f337b2784bb2db76115dc2f0e9a76f",
   "player_next_lesson": "6898b6896b43bea69e2c7208782df158a7062e36bb29cee631252c38c8a9be0f",
@@ -168,6 +171,7 @@
   "player_stop_for_today": "96706943b27911017e31bb9aeec9d17fb4c3e8ae4ce0aef6a5f3a363c888c27d",
   "player_summary": "fd3017780b28c46bf495ead93847c55c911b00548426446de8a69105e6e6d3a0",
   "player_summary_ideas": "4c0683353d8abbbb319e6eece10bb8be9631c2bd79e0fd9cb7d835590ff9aac7",
+  "player_time_studied": "ed297a896ab9312f7abd4c8f2114b570bf895ed05c5200cf2fc2297d967a4d57",
   "player_try_again": "674c2530a33f8b4b1e30caf14286e809723da03ab24c52c677c7310571919756",
   "player_unchecked_compare": "6b24c07bfd53a406e93f361c86c4c716abf32d5ce6df433adceb6c331da2f866",
   "player_verdict_almost": "3aadb766daeb6e520d9207c241d22b569cae1268b02713d2e07c6bde1b6517b4",
@@ -244,6 +248,8 @@
     <string name="player_answer_feedback">Commenti sulla risposta</string>
     <string name="player_spelled">Hai scritto:</string>
     <string name="player_correct_answer_label">Risposta:</string>
+    <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
+    <string name="player_also_correct_label">Anche questa è corretta:</string>
     <string name="player_explain_answer">Spiega la mia risposta</string>
     <string name="player_explain_answer_failed">Al momento non riusciamo a spiegarla. Riprova tra poco.</string>
     <string name="player_explain_answer_title">Perché questa risposta non è corretta</string>
@@ -411,8 +417,17 @@
     <string name="player_already_knew">Lo sapevi già</string>
     <string name="player_saving_progress">Stiamo salvando i tuoi progressi…</string>
     <string name="player_save_failed">L’invio non è riuscito. Le tue risposte sono al sicuro.</string>
+    <string name="player_lesson_not_saved">La tua lezione non è ancora stata salvata</string>
+    <!-- At a finished lesson's end: the study time it counted. %1$s is a duration, such as "4 min". -->
+    <string name="player_time_studied">%1$s di studio</string>
     <!-- At a finished lesson's end: the day it comes back for review. %1$s is a day, such as "Nov 3". -->
     <string name="player_review_on">Ripasso il %1$s</string>
+    <!-- At a saved lesson's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
+    <plurals name="player_lessons_deferred">
+        <item quantity="one">%1$s lezione spostata a un altro giorno per non superare %2$s di studio oggi.</item>
+        <item quantity="many">%1$s lezioni spostate a un altro giorno per non superare %2$s di studio oggi.</item>
+        <item quantity="other">%1$s lezioni spostate a un altro giorno per non superare %2$s di studio oggi.</item>
+    </plurals>
     <string name="player_next_lesson">Vai alla prossima lezione</string>
     <string name="player_stop_for_today">Fermati per oggi</string>
     <string name="player_see_todays_summary">Vedi il riepilogo di oggi</string>

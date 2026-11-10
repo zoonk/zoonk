@@ -3,7 +3,7 @@
 import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { type Dispatch, useCallback } from "react";
+import { type Dispatch, useCallback, useRef } from "react";
 import { fromServerCheck, fromSpokenGrade } from "./_utils/lesson-results";
 import { type UnsentAnswer } from "./_utils/unsent-answers";
 import { type LessonPlayerAction, type LessonPlayerState } from "./lesson-player-state";
@@ -12,6 +12,8 @@ import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-pl
 export type CheckContext = { answer: LessonStepAnswer; step: PlayableLibraryStep };
 
 type RecordContext = CheckContext & { attemptId: string; isCorrect: boolean };
+
+type PendingAttempt = { attemptId: string; text: string };
 
 export const CHECK_BOUNDS = {
   slowMs: 15_000,
@@ -33,7 +35,7 @@ export function useStepGrading({
   ensureRun,
   hold,
   keepGrade,
-  resendHeld,
+  resendUnsaved,
   state,
 }: {
   adapters: LessonPlayerAdapters;
@@ -41,9 +43,11 @@ export function useStepGrading({
   ensureRun: () => Promise<{ runId: string } | null>;
   hold: (check: Omit<UnsentAnswer, "runId">) => void;
   keepGrade: <T>(grade: { request: Promise<T>; stepId: string }) => Promise<T>;
-  resendHeld: () => Promise<boolean>;
+  resendUnsaved: () => Promise<boolean>;
   state: LessonPlayerState;
 }) {
+  const pendingRef = useRef(new Map<string, PendingAttempt>());
+
   const recordInBackground = useCallback(
     ({ answer, attemptId, isCorrect, step }: RecordContext) => {
       hold({
@@ -60,12 +64,20 @@ export function useStepGrading({
   );
 
   const gradeOnServer = useCallback(
-    async ({ answer, step }: CheckContext) => {
+    async ({
+      answer,
+      answerText: localAnswerText,
+      step,
+    }: CheckContext & { answerText?: string | null }) => {
       const durationMs = getAnswerDurationMs(state.stepStartedAt);
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
+      const answerText = localAnswerText ?? ("text" in answer ? answer.text : "");
+      const pending = pendingRef.current.get(step.id);
 
-      const attemptId = crypto.randomUUID();
+      // Asked again after its reply was lost, the server replays the saved verdict for the same id.
+      const attemptId = pending?.text === answerText ? pending.attemptId : crypto.randomUUID();
+      pendingRef.current.set(step.id, { attemptId, text: answerText });
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.typed, () =>
         keepGrade({
@@ -86,7 +98,7 @@ export function useStepGrading({
       );
 
       if (outcome?.status === "checked") {
-        const answerText = "text" in answer ? answer.text : "";
+        pendingRef.current.delete(step.id);
 
         dispatch({
           counts: outcome.result.checked,
@@ -95,13 +107,13 @@ export function useStepGrading({
           type: "checkResolved",
         });
 
-        void resendHeld();
+        void resendUnsaved();
         return;
       }
 
       dispatch({ stepId: step.id, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, keepGrade, resendHeld, state.helped, state.stepStartedAt],
+    [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.helped, state.stepStartedAt],
   );
 
   const submitSpokenAnswer = useCallback(
@@ -125,8 +137,8 @@ export function useStepGrading({
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
         keepGrade({
-          request: ensureRun().then(() =>
-            gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }),
+          request: ensureRun().then((run) =>
+            run ? gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }) : null,
           ),
           stepId,
         }),
@@ -140,7 +152,7 @@ export function useStepGrading({
           type: "checkResolved",
         });
 
-        void resendHeld();
+        void resendUnsaved();
         return;
       }
 
@@ -154,7 +166,7 @@ export function useStepGrading({
 
       dispatch({ issue, stepId, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, keepGrade, resendHeld, state.phase, state.steps],
+    [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.phase, state.steps],
   );
 
   return { gradeOnServer, recordInBackground, submitSpokenAnswer };

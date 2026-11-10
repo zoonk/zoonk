@@ -1,14 +1,17 @@
 import "server-only";
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type StatuteDrill } from "@zoonk/ai/tasks/items/statute-drills";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../../library/_utils/library-rows";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { asksShortAnswers } from "../../library/exams/short-answers";
+import { type KeyCheckedItem, checkItemKeys } from "../../library/items/check-item-keys";
 import { createItems } from "../../library/items/create-items";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { namesMatch } from "../_utils/name-match";
 import {
   type StatuteArticleText,
+  formatStatuteSource,
   isStatuteSource,
   splitStatuteArticles,
   toStatuteShortName,
@@ -125,13 +128,40 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
     .slice(0, MAX_LAWS);
 }
 
+/** Solves the drills against the articles they were written from; each keeps its reference. */
+export async function checkStatuteDrillKeys({
+  analytics,
+  articles,
+  drills,
+  language,
+  law,
+  optionCount,
+}: {
+  analytics?: AiGenerationContext;
+  articles: readonly StatuteArticleText[];
+  drills: readonly StatuteDrill[];
+  language: string;
+  law: { shortName: string; title: string };
+  optionCount: number;
+}): Promise<KeyCheckedItem<StatuteDrill>[]> {
+  const { kept } = await checkItemKeys({
+    analytics,
+    items: drills,
+    language,
+    optionCount,
+    stimulus: formatStatuteSource({ articles, law }),
+  });
+
+  return kept.map(({ item }) => item);
+}
+
 export async function writeStatuteDrills({
   drills,
   optionCount,
   provenance,
   target,
 }: {
-  drills: readonly StatuteDrill[];
+  drills: readonly KeyCheckedItem<StatuteDrill>[];
   optionCount: number;
   provenance: LibraryProvenance;
   target: StatuteDrillTarget;

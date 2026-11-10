@@ -96,15 +96,21 @@ private fun LessonPlayerState.passedSegment(index: Int): TaskSegment {
     }
 }
 
+private fun LessonPlayerState.segment(index: Int): TaskSegment {
+    val id = queue[index]
+    val inView = index == position && (phase == LessonPhase.Playing || phase == LessonPhase.Checking)
+    val answered = quickCheck == null && queue.indexOf(id) == index && (id in results || id in firstVerdicts)
+    val toPlay = index > position && phase != LessonPhase.Completed && !answered && continueStopsAt(index)
+
+    return when {
+        inView -> TaskSegment.Current
+        toPlay -> TaskSegment.Ahead
+        else -> passedSegment(index)
+    }
+}
+
 private fun LessonPlayerState.segments(): List<TaskSegment> =
-    queue.indices.map { index ->
-        val answeredInView = index == position && phase == LessonPhase.Feedback
-        when {
-            index < position || answeredInView || phase == LessonPhase.Completed -> passedSegment(index)
-            index == position -> TaskSegment.Current
-            else -> TaskSegment.Ahead
-        }
-    } + listOfNotNull(TaskSegment.Ahead.takeIf { isMapAhead && phase != LessonPhase.Completed })
+    queue.indices.map(::segment) + listOfNotNull(TaskSegment.Ahead.takeIf { isMapAhead && phase != LessonPhase.Completed })
 
 fun LessonPlayerState.screen(): LessonScreen {
     val step = if (phase == LessonPhase.Completed) null else currentStep

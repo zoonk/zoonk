@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "a7048382bdf95d4a5c407dc9c27369694ef5161b35df1fd90f6ee2412d3b393c",
-  "missions_after_lessons": "216725e0704cf61e49ae0cb1b8540fe60a3927c258e4fcb78f2ced8cabe252ec",
+  "missions_after_lessons": "6383f44a45451401915ea46633ce876ec8e2d3b5d4dfa1aa92852aaf4539309c",
   "missions_already_earned": "d4aaf7e39df9ab563354bc549deb084658ea83aa93846f6c1baa20a30af5ef10",
   "missions_ask_anything": "aa7421a13f41c09aafdbdc50c6ad5367f08c0e3d5771f19b66d65990d192af8e",
   "missions_ask_buddy": "5a16edbe40dab7b957fb033352dba7411c9f50a83c20b32907fba37a5ec580cf",
@@ -120,8 +119,7 @@
     <string name="missions_ask_buddy">%1$s adlı arkadaşına bir şey sor</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$s alanında alıştırma yap</string>
-    <string name="missions_after_lessons">Bugünkü derslerden sonra</string>
-    <string name="missions_after_challenge">Önceki meydan okumadan sonra</string>
+    <string name="missions_after_lessons">Bu aşamanın derslerinden sonra</string>
     <string name="missions_from_notebook">Yanlış defterinden</string>
     <string name="missions_due_today">Bugün yapılacak</string>
     <!-- %1$s is a language unit's title. -->

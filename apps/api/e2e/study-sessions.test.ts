@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
+import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contract";
 import { prisma } from "@zoonk/db";
@@ -23,7 +24,6 @@ import {
   startedStudyBlockResponseSchema,
   studyAnswerFeedbackResponseSchema,
   studyBlockDetailResponseSchema,
-  studyBlockSchema,
   studySessionResponseSchema,
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
@@ -33,6 +33,8 @@ import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
 const CHALLENGE_QUESTIONS = 5;
+/** The phase's challenge then asks ten, too long for the welcome-back day after its lesson. */
+const QUESTIONS_PER_SKILL = 10;
 
 async function createSessionWithChallengeQuestions(userId: string) {
   const [session, skill] = await Promise.all([
@@ -123,7 +125,7 @@ async function createGoal(userId: string) {
   const [items] = await Promise.all([
     Promise.all(
       skills.flatMap((skill) =>
-        Array.from({ length: 3 }, () =>
+        Array.from({ length: QUESTIONS_PER_SKILL }, () =>
           itemFixture({ content: choiceItemContent(), skillId: skill.id }),
         ),
       ),

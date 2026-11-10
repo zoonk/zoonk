@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { WAITING_RUN, getNoticeStop, getPlanWait, getRevealWait } from "./wait-run";
+import { WAITING_RUN, getFirstLesson, getNoticeStop, getPlanWait, getRevealWait } from "./wait-run";
 
 function restart() {
   return null;
@@ -95,5 +95,66 @@ describe(getRevealWait, () => {
     expect(getRevealWait(null)).toBe("building");
     expect(getRevealWait(reading)).toBe("notice");
     expect(getRevealWait(read)).toBeNull();
+  });
+});
+
+describe(getFirstLesson, () => {
+  const writing = { id: "lesson", status: "writing" as const, title: "Why birds sing at dawn" };
+  const ready = { ...writing, status: "ready" as const };
+
+  it("takes the run's word once it names the lesson, and the read's until then", () => {
+    expect(getFirstLesson({ read: null, run: WAITING_RUN })).toBeNull();
+    expect(getFirstLesson({ read: writing, run: WAITING_RUN })).toStrictEqual(writing);
+    expect(getFirstLesson({ read: null, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(ready);
+  });
+
+  it("keeps a lesson ready that either side calls ready", () => {
+    expect(getFirstLesson({ read: ready, run: { ...WAITING_RUN, firstLesson: writing } })).toBe(
+      ready,
+    );
+
+    expect(getFirstLesson({ read: writing, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(
+      ready,
+    );
+  });
+
+  it("keeps a lesson the learner finished done when the stream replays it as ready", () => {
+    const done = { ...writing, status: "done" as const };
+
+    expect(getFirstLesson({ read: done, run: { ...WAITING_RUN, firstLesson: ready } })).toBe(done);
+  });
+
+  it("keeps a stopped lesson stopped when the goal replays writing", () => {
+    const read = { id: "lesson", status: "stopped" as const, title: "Dawn" };
+
+    expect(
+      getFirstLesson({
+        read,
+        run: { ...WAITING_RUN, firstLesson: { ...read, status: "writing" } },
+      }),
+    ).toBe(read);
+  });
+
+  it("lets live readiness recover a stopped read", () => {
+    expect(
+      getFirstLesson({
+        read: { ...writing, status: "stopped" },
+        run: { ...WAITING_RUN, firstLesson: ready },
+      }),
+    ).toBe(ready);
+  });
+
+  it("resets a stopped read only when the followed run changes", () => {
+    const read = { ...writing, status: "stopped" as const };
+    const old = { ...WAITING_RUN, firstLesson: writing, id: "old" };
+    expect(getFirstLesson({ read, readGenerationId: "old", run: old })?.status).toBe("stopped");
+
+    expect(
+      getFirstLesson({ read, readGenerationId: "old", run: { ...old, id: "new" } })?.status,
+    ).toBe("writing");
+
+    expect(
+      getFirstLesson({ read, readGenerationId: "new", run: { ...old, id: "new" } })?.status,
+    ).toBe("stopped");
   });
 });

@@ -57,6 +57,7 @@ async function createAnsweredTest(targetLanguage = "fr") {
     data: {
       dailyMinutes: 20,
       details: { level: "A2" },
+      displayName: "French",
       kind: "language",
       language: "es",
       prompt: "French",

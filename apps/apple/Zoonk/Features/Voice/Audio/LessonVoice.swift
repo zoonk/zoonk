@@ -29,8 +29,9 @@ private struct SpokenStepRecorder: View {
     if !context.isLocked {
       VoiceAnswerRecorder(
         grade: { voice, recording in
-          await voice.gradeSpokenStep(
-            stepId: context.stepId, studySessionId: context.studySessionId, recording: recording)
+          guard await context.waitForRun() else { return .failed }
+          return await voice.gradeSpokenStep(
+            stepId: context.stepId, studySessionId: context.studySessionId(), recording: recording)
         },
         onGraded: { grade in
           context.onGraded(

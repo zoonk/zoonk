@@ -113,9 +113,11 @@ enum ScheduleTime {
 
   /// Nil while the first time is still being worked out: no other time is shown in its place. The time
   /// follows the suggestion as the days change only when the screen started on one; `settled` says
-  /// none is coming (no date, or asking failed), so the screen's own time shows.
+  /// none is coming (no date, or asking failed), so the screen's own time shows, as it does when core
+  /// says the screen `startsOnRecommended` (a learner who asked for shorter days).
   static func shownMinutes(
     fallback: Int,
+    startsOnRecommended: Bool,
     first: TimeToCover?,
     found: TimeToCover?,
     picked: Int?,
@@ -123,6 +125,10 @@ enum ScheduleTime {
   ) -> Int? {
     if let picked {
       return picked
+    }
+
+    if startsOnRecommended {
+      return fallback
     }
 
     guard let first else {
@@ -137,8 +143,11 @@ enum ScheduleTime {
   }
 
   /// Picking the suggested time again follows the suggestion as the days change, where it's followed.
-  static func pickedMinutes(first: TimeToCover?, found: TimeToCover?, minutes: Int) -> Int? {
-    suggestedMinutes(first) != nil && suggestedMinutes(found) == minutes ? nil : minutes
+  static func pickedMinutes(
+    startsOnRecommended: Bool, first: TimeToCover?, found: TimeToCover?, minutes: Int
+  ) -> Int? {
+    !startsOnRecommended && suggestedMinutes(first) != nil && suggestedMinutes(found) == minutes
+      ? nil : minutes
   }
 
   /// Core's split of the time shown: the question's own times carry theirs, and a suggestion between
@@ -158,9 +167,10 @@ enum ScheduleTime {
   /// The time shown is a suggestion it follows, still the one for the days before: Continue waits
   /// for the new one.
   static func waitsForSuggestion(
-    failed: Bool, first: TimeToCover?, found: TimeToCover?, picked: Int?
+    startsOnRecommended: Bool, failed: Bool, first: TimeToCover?, found: TimeToCover?, picked: Int?
   ) -> Bool {
-    picked == nil && found == nil && !failed && suggestedMinutes(first) != nil
+    picked == nil && !startsOnRecommended && found == nil && !failed
+      && suggestedMinutes(first) != nil
   }
 
   /// Continue saves only a time the learner picked, or one the screen has said what it covers.

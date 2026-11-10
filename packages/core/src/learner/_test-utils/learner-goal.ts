@@ -17,12 +17,15 @@ import {
   skillFixture,
   skillPrerequisiteFixture,
 } from "@zoonk/testing/fixtures/skills";
+import { finishChallengesFixture } from "../../plans/_test-utils/finish-challenges";
 
 export async function learnerGoalFixture({
+  challengesDone = false,
   itemsPerSkill = 2,
   phases,
   userId,
 }: {
+  challengesDone?: boolean;
   itemsPerSkill?: number;
   /** Skills per phase, such as `[3, 2]`. */
   phases: number[];
@@ -89,6 +92,10 @@ export async function learnerGoalFixture({
       ),
     ),
   );
+
+  if (challengesDone) {
+    await finishChallengesFixture(plan.id);
+  }
 
   return { chapters, goal, items, plan, planItems, skills };
 }

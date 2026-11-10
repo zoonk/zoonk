@@ -1,5 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type ExtractPastQuestionsParams } from "@zoonk/ai/tasks/items/past-questions";
+import papers from "./papers.json";
 
 type PastQuestionsInput = Omit<ExtractPastQuestionsParams, "model" | "useFallback" | "reasoning">;
 
@@ -138,6 +139,75 @@ export const TEST_CASES: TestCase<unknown, PastQuestionsInput>[] = [
         {
           description: "Find the total cost of several items bought in different quantities.",
           name: "Total cost of several items",
+        },
+      ],
+    },
+  },
+  {
+    // The whole second-day paper as the production parser reads Inep's PDF; Inep publishes the
+    // answer key apart, so the paper carries none.
+    expectations: `Up to ten questions in Brazilian Portuguese, only from Matemática (136 to 180) and only on the three listed skills, each tagged with the skill it tests. Every copied question's correct option matches Inep's official key: 136 B, 137 C, 138 C, 139 D, 140 E, 141 E, 142 A, 143 B, 144 C, 145 B, 146 E, 147 D, 148 C, 149 E, 150 A, 151 B, 152 B, 153 E, 154 B, 155 D, 156 A, 157 B, 158 D, 159 D, 160 A, 161 D, 162 D, 163 A, 165 E, 166 C, 167 A, 168 A, 169 D, 170 D, 171 C, 172 C, 173 B, 174 E, 175 B, 176 E, 177 A, 178 B, 179 C, 180 C. Question 164 was annulled and is never copied. A question whose answer depends on a figure, chart, graph or table the text doesn't carry in full is left out. Context, question and options are copied as the paper words them, credit lines included. The text reader glued many of the paper's words together ("Onúmeromínimodesalasquedeverãoserconstruídasé"): a copied question puts the spaces back, since learners read it as written. Citations name Enem 2023, the second day and the number.`,
+    id: "pt-enem-2023-full-day-2",
+    userInput: {
+      count: 10,
+      exam: "Enem",
+      format: "multipleChoice",
+      language: "pt",
+      optionCount: 5,
+      paper: { text: papers.enem2023Day2Blue, title: "Enem 2023 – 2º dia – Caderno 7 – Azul" },
+      skills: [
+        {
+          description:
+            "Calcular porcentagens, aumentos, descontos e juros em situações do dia a dia.",
+          name: "Porcentagem e juros",
+        },
+        {
+          description:
+            "Calcular a probabilidade de um evento em situações com resultados igualmente prováveis.",
+          name: "Probabilidade",
+        },
+        {
+          description: "Calcular e interpretar média, mediana e moda de um conjunto de dados.",
+          name: "Média, mediana e moda",
+        },
+      ],
+    },
+  },
+  {
+    // The whole paper as the production parser reads NYSED's PDF: it turns +, - and = into 1, 2
+    // and 5, and drops radicals and figures. NYSED publishes the scoring key apart.
+    expectations: `Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text ("The sum of 3 and 5 is"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as "2x2 1 3x 1 1") are left out. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.`,
+    id: "en-algebra-one-regents-june-2025-full",
+    userInput: {
+      count: 10,
+      exam: "Regents Examination in Algebra I",
+      format: "multipleChoice",
+      language: "en",
+      optionCount: 4,
+      paper: {
+        text: papers.algebraOneJune2025,
+        title: "Regents Examination in Algebra I – June 2025",
+      },
+      skills: [
+        {
+          description:
+            "Tell whether a situation grows by a constant amount or by a constant percent.",
+          name: "Linear and exponential relationships",
+        },
+        {
+          description:
+            "Compare the center and spread of two data sets, such as their means and standard deviations.",
+          name: "Compare data sets",
+        },
+        {
+          description:
+            "Find the average rate of change of a function over an interval from a table.",
+          name: "Average rate of change",
+        },
+        {
+          description:
+            "Tell whether sums and products of rational and irrational numbers are rational.",
+          name: "Rational and irrational numbers",
         },
       ],
     },

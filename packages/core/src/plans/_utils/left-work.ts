@@ -10,13 +10,21 @@ type LeftWorkItem = Pick<
   "kind" | "lessonId" | "phase" | "scheduledFor" | "status"
 >;
 
-function isPendingStudyItem<Item extends LeftWorkItem>(
+type PendingStudyItem = Pick<LeftWorkItem, "kind" | "scheduledFor" | "status">;
+
+function isPendingStudyItem<Item extends PendingStudyItem>(
   item: Item,
 ): item is Item & { scheduledFor: Date } {
   return item.status === "todo" && PHASE_WORK_KINDS.has(item.kind) && item.scheduledFor !== null;
 }
 
-export function hasOverduePlanWork({ items, today }: Pick<PlanContext, "items" | "today">) {
+export function hasOverduePlanWork({
+  items,
+  today,
+}: {
+  items: readonly PendingStudyItem[];
+  today: Date;
+}) {
   return items.some((item) => isPendingStudyItem(item) && item.scheduledFor < today);
 }
 

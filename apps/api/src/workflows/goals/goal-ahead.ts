@@ -7,11 +7,11 @@ import { type GoalRunContext } from "./goal-run-context";
 import { writeMockQuestions } from "./mock-question-writes";
 import {
   pickExamFormatSkillsStep,
-  prepareExamFormatItemsStep,
+  prepareSkillExamFormatItems,
 } from "./steps/exam-format-items-step";
 import {
   listGoalFieldItemTargetsStep,
-  prepareFieldItemsStep,
+  prepareSkillFieldItems,
   readGoalField,
 } from "./steps/field-items-steps";
 import {
@@ -21,7 +21,7 @@ import {
 import { pickItemSetTargetsStep, prepareItemSetStep } from "./steps/item-set-step";
 import { listMockPrepWritesStep } from "./steps/mock-question-steps";
 import { importPastQuestionsStep, listPastQuestionPapersStep } from "./steps/past-questions-step";
-import { loadStatuteDrillTargetsStep, prepareStatuteDrillsStep } from "./steps/statute-drills-step";
+import { loadStatuteDrillTargetsStep, prepareLawDrills } from "./steps/statute-drills-step";
 
 async function prepareFieldItems({
   context,
@@ -38,7 +38,7 @@ async function prepareFieldItems({
   }
 
   const targets = await listGoalFieldItemTargetsStep({ field, goalId });
-  await Promise.allSettled(targets.map((target) => prepareFieldItemsStep({ ...context, target })));
+  await Promise.allSettled(targets.map((target) => prepareSkillFieldItems({ ...context, target })));
 }
 
 async function prepareFreeResponseItems({
@@ -63,7 +63,7 @@ async function prepareExamFormatItems({
   inputs: GoalCurriculumInputs;
 }) {
   const picks = inputs.isGuest ? [] : await pickExamFormatSkillsStep(inputs.goal.id);
-  await Promise.allSettled(picks.map((pick) => prepareExamFormatItemsStep({ ...context, pick })));
+  await Promise.allSettled(picks.map((pick) => prepareSkillExamFormatItems({ ...context, pick })));
 }
 
 async function prepareItemSets({
@@ -86,9 +86,7 @@ async function prepareStatuteDrills({
 }) {
   const targets = await loadStatuteDrillTargetsStep(goalId);
 
-  await Promise.allSettled(
-    targets.map((target) => prepareStatuteDrillsStep({ ...context, target })),
-  );
+  await Promise.allSettled(targets.map((target) => prepareLawDrills({ ...context, target })));
 }
 
 async function preparePastQuestions({
@@ -184,7 +182,6 @@ async function prepareMockQuestions({
   ]);
 }
 
-/** A rebuilt goal's learner is past placement, so only a first build writes their own work. */
 export function prepareAhead({
   context,
   inputs,

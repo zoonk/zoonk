@@ -1,10 +1,8 @@
 "use client";
 
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { MS_PER_DAY } from "@zoonk/utils/date";
-import { CalendarClockIcon, ClockIcon, HourglassIcon, MoonIcon, SparklesIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
-import { ChangeLimitLink, STATUS_LINK_CLASS } from "../_components/change-limit-link";
+import { CalendarClockIcon, ClockIcon, MoonIcon, SparklesIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
@@ -33,7 +31,11 @@ function DoneStatus({ className }: { className?: string }) {
       {keepLearning && (
         <>
           {studied > 0 ? " " : space}
-          <LearnLink className={STATUS_LINK_CLASS} href={actions.summaryHref} prefetch={false}>
+          <LearnLink
+            className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
+            href={actions.summaryHref}
+            prefetch={false}
+          >
             {t("See today's summary")}
           </LearnLink>
         </>
@@ -106,73 +108,11 @@ function PastDateStatus({ className, lessons }: { className?: string; lessons: n
   );
 }
 
-/**
- * "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the
- * next session.
- */
-function SeeYouClause() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const { today } = useTodayScreen();
-  const { days, nextStudyDate } = today.session.week;
-  const weekDate = days.find((day) => day.isToday)?.date ?? today.session.localDate;
-
-  if (!nextStudyDate) {
-    return <TodayStatusClause>{t("See you in your next session!")}</TodayStatusClause>;
-  }
-
-  if (nextStudyDate.getTime() - weekDate.getTime() === MS_PER_DAY) {
-    return <TodayStatusClause>{t("See you tomorrow!")}</TodayStatusClause>;
-  }
-
-  return (
-    <TodayStatusClause>
-      {t("See you {day}!", {
-        day: format.dateTime(nextStudyDate, { timeZone: "UTC", weekday: "long" }),
-      })}
-    </TodayStatusClause>
-  );
-}
-
-function LimitStatus({ className, reached }: { className?: string; reached: boolean }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const { actions, today } = useTodayScreen();
-  const limitTime = formatDuration(today.session.dailyLimit?.limitMinutes ?? 0);
-  const space = useSentenceSpace();
-
-  return (
-    <TodayStatusLine className={className} icon={<HourglassIcon />}>
-      <TodayStatusSentence>
-        {reached
-          ? t({
-              description: "The daily time limit is a setting that stops study for the day.",
-              message: "You've reached your daily time limit of {time}.",
-              values: { time: limitTime },
-            })
-          : t({
-              description:
-                "The daily time limit is a setting that stops study for the day. It's shorter than the plan's time for today.",
-              message: "Today stops at your daily time limit of {time}.",
-              values: { time: limitTime },
-            })}
-      </TodayStatusSentence>
-      {reached && <SeeYouClause />}
-      {space}
-      <ChangeLimitLink href={actions.dailyLimitHref} />
-    </TodayStatusLine>
-  );
-}
-
 export function TodayDayStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const { today } = useTodayScreen();
-  const { dailyLimit, minutes } = today.session;
-  const limit = dailyLimit?.limitMinutes ?? null;
-  const capped = limit !== null && limit < minutes.dailyGoal;
-  const cutShort = dailyLimit?.reached === true && minutes.planned < minutes.dailyGoal;
 
   if (pastDate) {
     return <PastDateStatus className={className} lessons={pastDate.lessons} />;
@@ -180,11 +120,7 @@ export function TodayDayStatus({ className }: { className?: string }) {
 
   switch (state) {
     case "done":
-      return cutShort ? (
-        <LimitStatus className={className} reached />
-      ) : (
-        <DoneStatus className={className} />
-      );
+      return <DoneStatus className={className} />;
     case "waiting":
       return <WaitingStatus className={className} />;
     case "prepare":
@@ -193,8 +129,6 @@ export function TodayDayStatus({ className }: { className?: string }) {
           <TodayStatusSentence>{t("Today's lessons aren't written yet.")}</TodayStatusSentence>
         </TodayStatusLine>
       );
-    case "limit":
-      return <LimitStatus className={className} reached />;
     case "rest":
       return <RestStatus className={className} />;
     case "ahead":
@@ -217,7 +151,7 @@ export function TodayDayStatus({ className }: { className?: string }) {
         </TodayStatusLine>
       );
     case "underway":
-      return capped ? <LimitStatus className={className} reached={false} /> : null;
+      return null;
     default:
       return null;
   }

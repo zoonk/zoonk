@@ -228,8 +228,8 @@ private struct UpNextRow: View {
   @ScaledMetric(relativeTo: .caption) private var meterWidth = 64.0
 
   var body: some View {
-    ListRow(Text(goal.title), description: description) {
-      GoalMark(title: goal.title, flag: goal.languageFlag.flatMap(flagEmoji))
+    ListRow(Text(goal.displayName), description: description) {
+      GoalMark(title: goal.displayName, flag: goal.languageFlag.flatMap(flagEmoji))
     } trailing: {
       if let progress = goal.progress {
         HStack(spacing: 8) {
@@ -248,7 +248,7 @@ private struct UpNextRow: View {
   private var description: Text {
     goal.progress == nil
       ? Text(
-        "Comes when every skill you practice reaches the next level", tableName: "Certificates",
+        "Comes when you finish a level, studying at least half of it", tableName: "Certificates",
         comment: "Under a language goal on the empty certificates page: when it earns one")
       : Text(
         "Your certificate comes when you finish the plan", tableName: "Certificates",

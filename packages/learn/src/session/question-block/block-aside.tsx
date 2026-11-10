@@ -29,14 +29,15 @@ export function useBlockAside({
 }: {
   detail: StudyBlockDetail;
   question: StudyQuestion | null;
-  session: Pick<StudySession, "blocks">;
+  session: Pick<StudySession, "blocks" | "minutes">;
 }): TaskFrameAside {
   const t = useExtracted();
   const materialTitle = useMaterialTitle();
 
-  const queue = useSessionQueueAside(
-    getSessionQueue({ blocks: session.blocks, nextId: detail.block.id }),
-  );
+  const queue = useSessionQueueAside({
+    left: session.minutes.left,
+    rows: getSessionQueue({ blocks: session.blocks, nextId: detail.block.id }),
+  });
 
   const material = question ? getQuestionMaterial(question) : null;
 

@@ -163,8 +163,16 @@ export async function buildExtraLessons({
     },
   });
 
+  const plan = session.goalId
+    ? await prisma.plan.findUnique({
+        select: { settings: true },
+        where: { goalId: session.goalId },
+      })
+    : null;
+
   const lessons = await loadPlanLessons({
     items: items.filter((item) => !item.lessonId || !done.has(item.lessonId)),
+    paceFactor: parsePlanSettings(plan?.settings).pace?.factor,
   });
 
   const unique = lessons.filter(
@@ -311,7 +319,15 @@ export async function appendExtraBlocks({
     })),
   });
 
-  await transaction.studySession.update({ data: { status: "active" }, where: { id: session.id } });
+  await transaction.studySession.update({
+    data: {
+      plannedMinutes: {
+        increment: planned.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+      },
+      status: "active",
+    },
+    where: { id: session.id },
+  });
 
   const first = blocks.find((block) => block.position === start);
 

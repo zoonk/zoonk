@@ -75,6 +75,7 @@ function toSummaryGoals({
         courseId: followsCourse(goal) ? goal.primaryCourseId : null,
         courseLevel: next?.nextLevel ?? null,
         dailyMinutes: goal.dailyMinutes,
+        displayName: goal.displayName,
         id: goal.id,
         isActive: goal.id === activeGoalId,
         isSettingUp: isGoalSetupLeft(goal),

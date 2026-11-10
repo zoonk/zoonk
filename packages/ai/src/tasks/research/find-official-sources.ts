@@ -12,8 +12,13 @@ import {
 import { type ResearchSearchTool } from "./research-search-tools";
 import { runSearchTask } from "./run-search-task";
 
-/** With Parallel, Flash found every current notice in about 10 seconds, the cheapest that did. */
+/**
+ * With Parallel on 15 cases (8 Nov 2026), Flash scored 10.00 at $18.94/1k; Flash Lite (9.87,
+ * $9.46/1k) missed the IELTS Speaking page, even at high reasoning. Haiku 5.5 (9.80) is an outage
+ * route only: it missed a downloadable notice copy.
+ */
 const defaultModel = "google/gemini-3.8-flash";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 const defaultSearchTool: ResearchSearchTool = "parallel";
 
 const MAX_STEPS = 8;
@@ -135,6 +140,7 @@ export async function findOfficialSources({
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
     analytics,
+    fallbackModels,
     libraryInput: true,
     maxSteps: MAX_STEPS,
     model,

@@ -40,6 +40,7 @@ export async function finishConversationDay({
     const block = finished.row.studyBlockId
       ? await prisma.studySessionBlock.findFirst({
           select: {
+            id: true,
             session: { select: { goal: { select: { timezone: true } } } },
             sessionId: true,
           },
@@ -53,7 +54,13 @@ export async function finishConversationDay({
         const zone = block?.session.goal?.timezone ?? timeZone;
 
         const blockDay = block
-          ? await settleMissions({ sessionId: block.sessionId, source, timeZone: zone, userId })
+          ? await settleMissions({
+              blockId: block.id,
+              sessionId: block.sessionId,
+              source,
+              timeZone: zone,
+              userId,
+            })
           : null;
 
         if (block) {

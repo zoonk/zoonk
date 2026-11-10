@@ -36,7 +36,6 @@ function getProfileData(input: LearningProfileUpdateInput) {
     ...(input.activeGoalId !== undefined && { activeGoalId: input.activeGoalId }),
     ...(input.soundsEnabled !== undefined && { soundsEnabled: input.soundsEnabled }),
     ...(input.shareUsageData !== undefined && { shareUsageData: input.shareUsageData }),
-    ...(input.dailyLimitMinutes !== undefined && { dailyLimitMinutes: input.dailyLimitMinutes }),
     ...getBuddyData(input.buddy),
   };
 }
@@ -49,7 +48,6 @@ const UNSAVED_PROFILE = {
   buddyGlasses: DEFAULT_BUDDY.glasses,
   buddyKind: null,
   buddyName: null,
-  dailyLimitMinutes: null,
   shareUsageData: null,
   soundsEnabled: true,
 } satisfies { [Field in keyof ProfileData]-?: ProfileData[Field] | null };

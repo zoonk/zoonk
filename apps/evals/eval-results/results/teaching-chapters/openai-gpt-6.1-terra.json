@@ -292,301 +292,6 @@
       ],
       "testCase": {
         "expected": {
-          "allergy": {
-            "chapters": [
-              13
-            ]
-          },
-          "calls": {
-            "chapters": [
-              null
-            ]
-          },
-          "directions": {
-            "chapters": [
-              null
-            ]
-          },
-          "restaurant": {
-            "chapters": [
-              13
-            ]
-          },
-          "stay": {
-            "chapters": [
-              16
-            ]
-          },
-          "symptoms": {
-            "chapters": [
-              null
-            ]
-          },
-          "weather": {
-            "chapters": [
-              null
-            ]
-          }
-        },
-        "id": "pt-italian-beginner-band-continued-1",
-        "userInput": {
-          "chapters": [
-            {
-              "lessons": [
-                "Vogais e sílaba tônica",
-                "Sons de c e g",
-                "Cumprimentos e despedidas",
-                "Expressões de cortesia",
-                "Pedidos de repetição e esclarecimento"
-              ],
-              "title": "Primeiros contatos e pronúncia"
-            },
-            {
-              "lessons": [
-                "Nomes e apresentações",
-                "Origem e lugar onde mora",
-                "Idade e ocupação",
-                "Perguntas de acompanhamento",
-                "Tratamento com tu e Lei"
-              ],
-              "title": "Conhecer pessoas"
-            },
-            {
-              "lessons": [
-                "Família e amizades",
-                "Adjetivos possessivos",
-                "Artigos e concordância na descrição",
-                "Relações entre pessoas"
-              ],
-              "title": "Pessoas próximas"
-            },
-            {
-              "lessons": [
-                "Horas e partes do dia",
-                "Presente dos verbos regulares",
-                "Verbos reflexivos na rotina",
-                "Frequência e hábitos",
-                "Horários e mudanças na rotina"
-              ],
-              "title": "Rotina e horários"
-            },
-            {
-              "lessons": [
-                "Atividades de lazer",
-                "Preferências com piacere",
-                "Negação com non",
-                "Interesses em comum"
-              ],
-              "title": "Lazer e interesses"
-            },
-            {
-              "lessons": [
-                "Convites informais",
-                "Respostas a convites",
-                "Alternativas de local e horário",
-                "Confirmação de encontros"
-              ],
-              "title": "Convites e encontros"
-            },
-            {
-              "lessons": [
-                "Mensagens sobre planos",
-                "Avisos de atraso",
-                "Pedidos por mensagem",
-                "Confirmações por mensagem"
-              ],
-              "title": "Mensagens do dia a dia"
-            },
-            {
-              "lessons": [
-                "Abertura de ligações",
-                "Motivo da ligação",
-                "Esclarecimentos por telefone",
-                "Encerramento e próximos passos"
-              ],
-              "title": "Assuntos simples por telefone"
-            },
-            {
-              "lessons": [
-                "Endereço e localização da moradia",
-                "Ambientes com c'è e ci sono",
-                "Objetos e preposições de lugar",
-                "Problemas domésticos",
-                "Pedidos para a casa"
-              ],
-              "title": "Moradia e necessidades domésticas"
-            },
-            {
-              "lessons": [
-                "Lugares da cidade",
-                "Direções e movimentos",
-                "Pontos de referência",
-                "Linhas e paradas na cidade",
-                "Confirmação de trajetos"
-              ],
-              "title": "Caminhos pela cidade"
-            },
-            {
-              "lessons": [
-                "Partidas e chegadas",
-                "Compra de passagens",
-                "Conferência do embarque",
-                "Conexões e trocas",
-                "Atrasos no transporte"
-              ],
-              "title": "Viagens curtas de transporte"
-            },
-            {
-              "lessons": [
-                "Recomendações do cardápio",
-                "Ingredientes e dúvidas do cardápio",
-                "Pedido de comida e bebida",
-                "Alterações no pedido",
-                "Conta e cobrança",
-                "Pagamento no restaurante"
-              ],
-              "title": "Comida em estabelecimentos"
-            },
-            {
-              "lessons": [
-                "Alergias e intolerâncias no pedido",
-                "Pratos sem um ingrediente",
-                "Prato errado ou frio",
-                "Reclamação educada ao garçom",
-                "Divisão da conta entre amigos"
-              ],
-              "title": "Restrições alimentares e problemas com o pedido"
-            },
-            {
-              "lessons": [
-                "Preços e números",
-                "Características e disponibilidade",
-                "Comparação de produtos",
-                "Experimentar antes de comprar",
-                "Trocas simples"
-              ],
-              "title": "Compras e trocas"
-            },
-            {
-              "lessons": [
-                "Datas e hóspedes",
-                "Disponibilidade e reserva",
-                "Condições da hospedagem",
-                "Chegada e check-in",
-                "Pedidos durante a estadia"
-              ],
-              "title": "Reserva e hospedagem"
-            },
-            {
-              "lessons": [
-                "Quarto com defeito",
-                "Barulho e troca de quarto",
-                "Cobranças indevidas na conta",
-                "Extensão da estadia",
-                "Check-out com pendências"
-              ],
-              "title": "Problemas durante a estadia"
-            },
-            {
-              "lessons": [
-                "Dores e partes do corpo",
-                "Sintomas comuns",
-                "Duração dos sintomas",
-                "Ajuda na farmácia",
-                "Pedido de ajuda urgente"
-              ],
-              "title": "Sintomas e pedidos de ajuda"
-            },
-            {
-              "lessons": [
-                "Marcadores de tempo recente",
-                "Passato prossimo com avere",
-                "Passato prossimo com essere",
-                "Particípios irregulares frequentes",
-                "Sequência de acontecimentos",
-                "Perguntas sobre uma experiência recente"
-              ],
-              "title": "Acontecimentos recentes"
-            }
-          ],
-          "courseTitle": "Italiano",
-          "language": "pt",
-          "level": "beginner",
-          "skills": [
-            {
-              "description": "Escolher no cardápio, tirar dúvidas sobre ingredientes, pedir e pagar a conta.",
-              "key": "restaurant",
-              "name": "Pedir uma refeição em um restaurante",
-              "taughtIn": [
-                12
-              ]
-            },
-            {
-              "description": "Confirmar a reserva, fazer o check-in e perguntar pelos serviços da hospedagem.",
-              "key": "stay",
-              "name": "Hospedar-se em um hotel",
-              "taughtIn": [
-                15
-              ]
-            },
-            {
-              "description": "Abrir uma ligação, dizer o motivo, pedir repetição e confirmar os dados ouvidos.",
-              "key": "calls",
-              "name": "Resolver um assunto breve por telefone",
-              "taughtIn": [
-                8
-              ]
-            },
-            {
-              "description": "Perguntar como chegar a um lugar e acompanhar um percurso explicado.",
-              "key": "directions",
-              "name": "Pedir e seguir indicações na cidade",
-              "taughtIn": [
-                10
-              ]
-            },
-            {
-              "description": "Dizer onde dói e há quanto tempo, e entender orientações simples de cuidado.",
-              "key": "symptoms",
-              "name": "Descrever sintomas em uma consulta",
-              "taughtIn": [
-                17
-              ]
-            },
-            {
-              "description": "Dizer a que você é alérgico, perguntar pelos ingredientes e pedir um prato sem eles.",
-              "key": "allergy",
-              "name": "Explicar uma alergia ao pedir comida"
-            },
-            {
-              "description": "Descrever as condições do tempo, entender uma previsão simples e ajustar atividades.",
-              "key": "weather",
-              "name": "Falar do tempo e mudar planos conforme a previsão"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
           "argue": {
             "chapters": [
               7
@@ -1453,6 +1158,1147 @@
               "description": "Distinguir a estrutura e as características da Constituição de 1988 e aplicar seus princípios fundamentais a assertivas.",
               "key": "principles",
               "name": "Julgar princípios fundamentais da Constituição"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "allergy": {
+            "chapters": [
+              13
+            ]
+          },
+          "calls": {
+            "after": [
+              8
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "directions": {
+            "after": [
+              10
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "restaurant": {
+            "chapters": [
+              13
+            ]
+          },
+          "stay": {
+            "chapters": [
+              16
+            ]
+          },
+          "symptoms": {
+            "after": [
+              17
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "weather": {
+            "chapters": [
+              null
+            ]
+          }
+        },
+        "id": "pt-italian-beginner-band-continued-1",
+        "userInput": {
+          "chapters": [
+            {
+              "lessons": [
+                "Vogais e sílaba tônica",
+                "Sons de c e g",
+                "Cumprimentos e despedidas",
+                "Expressões de cortesia",
+                "Pedidos de repetição e esclarecimento"
+              ],
+              "title": "Primeiros contatos e pronúncia"
+            },
+            {
+              "lessons": [
+                "Nomes e apresentações",
+                "Origem e lugar onde mora",
+                "Idade e ocupação",
+                "Perguntas de acompanhamento",
+                "Tratamento com tu e Lei"
+              ],
+              "title": "Conhecer pessoas"
+            },
+            {
+              "lessons": [
+                "Família e amizades",
+                "Adjetivos possessivos",
+                "Artigos e concordância na descrição",
+                "Relações entre pessoas"
+              ],
+              "title": "Pessoas próximas"
+            },
+            {
+              "lessons": [
+                "Horas e partes do dia",
+                "Presente dos verbos regulares",
+                "Verbos reflexivos na rotina",
+                "Frequência e hábitos",
+                "Horários e mudanças na rotina"
+              ],
+              "title": "Rotina e horários"
+            },
+            {
+              "lessons": [
+                "Atividades de lazer",
+                "Preferências com piacere",
+                "Negação com non",
+                "Interesses em comum"
+              ],
+              "title": "Lazer e interesses"
+            },
+            {
+              "lessons": [
+                "Convites informais",
+                "Respostas a convites",
+                "Alternativas de local e horário",
+                "Confirmação de encontros"
+              ],
+              "title": "Convites e encontros"
+            },
+            {
+              "lessons": [
+                "Mensagens sobre planos",
+                "Avisos de atraso",
+                "Pedidos por mensagem",
+                "Confirmações por mensagem"
+              ],
+              "title": "Mensagens do dia a dia"
+            },
+            {
+              "lessons": [
+                "Abertura de ligações",
+                "Motivo da ligação",
+                "Esclarecimentos por telefone",
+                "Encerramento e próximos passos"
+              ],
+              "title": "Assuntos simples por telefone"
+            },
+            {
+              "lessons": [
+                "Endereço e localização da moradia",
+                "Ambientes com c'è e ci sono",
+                "Objetos e preposições de lugar",
+                "Problemas domésticos",
+                "Pedidos para a casa"
+              ],
+              "title": "Moradia e necessidades domésticas"
+            },
+            {
+              "lessons": [
+                "Lugares da cidade",
+                "Direções e movimentos",
+                "Pontos de referência",
+                "Linhas e paradas na cidade",
+                "Confirmação de trajetos"
+              ],
+              "title": "Caminhos pela cidade"
+            },
+            {
+              "lessons": [
+                "Partidas e chegadas",
+                "Compra de passagens",
+                "Conferência do embarque",
+                "Conexões e trocas",
+                "Atrasos no transporte"
+              ],
+              "title": "Viagens curtas de transporte"
+            },
+            {
+              "lessons": [
+                "Recomendações do cardápio",
+                "Ingredientes e dúvidas do cardápio",
+                "Pedido de comida e bebida",
+                "Alterações no pedido",
+                "Conta e cobrança",
+                "Pagamento no restaurante"
+              ],
+              "title": "Comida em estabelecimentos"
+            },
+            {
+              "lessons": [
+                "Alergias e intolerâncias no pedido",
+                "Pratos sem um ingrediente",
+                "Prato errado ou frio",
+                "Reclamação educada ao garçom",
+                "Divisão da conta entre amigos"
+              ],
+              "title": "Restrições alimentares e problemas com o pedido"
+            },
+            {
+              "lessons": [
+                "Preços e números",
+                "Características e disponibilidade",
+                "Comparação de produtos",
+                "Experimentar antes de comprar",
+                "Trocas simples"
+              ],
+              "title": "Compras e trocas"
+            },
+            {
+              "lessons": [
+                "Datas e hóspedes",
+                "Disponibilidade e reserva",
+                "Condições da hospedagem",
+                "Chegada e check-in",
+                "Pedidos durante a estadia"
+              ],
+              "title": "Reserva e hospedagem"
+            },
+            {
+              "lessons": [
+                "Quarto com defeito",
+                "Barulho e troca de quarto",
+                "Cobranças indevidas na conta",
+                "Extensão da estadia",
+                "Check-out com pendências"
+              ],
+              "title": "Problemas durante a estadia"
+            },
+            {
+              "lessons": [
+                "Dores e partes do corpo",
+                "Sintomas comuns",
+                "Duração dos sintomas",
+                "Ajuda na farmácia",
+                "Pedido de ajuda urgente"
+              ],
+              "title": "Sintomas e pedidos de ajuda"
+            },
+            {
+              "lessons": [
+                "Marcadores de tempo recente",
+                "Passato prossimo com avere",
+                "Passato prossimo com essere",
+                "Particípios irregulares frequentes",
+                "Sequência de acontecimentos",
+                "Perguntas sobre uma experiência recente"
+              ],
+              "title": "Acontecimentos recentes"
+            }
+          ],
+          "courseTitle": "Italiano",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Escolher no cardápio, tirar dúvidas sobre ingredientes, pedir e pagar a conta.",
+              "key": "restaurant",
+              "name": "Pedir uma refeição em um restaurante",
+              "taughtIn": [
+                12
+              ]
+            },
+            {
+              "description": "Confirmar a reserva, fazer o check-in e perguntar pelos serviços da hospedagem.",
+              "key": "stay",
+              "name": "Hospedar-se em um hotel",
+              "taughtIn": [
+                15
+              ]
+            },
+            {
+              "description": "Abrir uma ligação, dizer o motivo, pedir repetição e confirmar os dados ouvidos.",
+              "key": "calls",
+              "name": "Resolver um assunto breve por telefone",
+              "taughtIn": [
+                8
+              ]
+            },
+            {
+              "description": "Perguntar como chegar a um lugar e acompanhar um percurso explicado.",
+              "key": "directions",
+              "name": "Pedir e seguir indicações na cidade",
+              "taughtIn": [
+                10
+              ]
+            },
+            {
+              "description": "Dizer onde dói e há quanto tempo, e entender orientações simples de cuidado.",
+              "key": "symptoms",
+              "name": "Descrever sintomas em uma consulta",
+              "taughtIn": [
+                17
+              ]
+            },
+            {
+              "description": "Dizer a que você é alérgico, perguntar pelos ingredientes e pedir um prato sem eles.",
+              "key": "allergy",
+              "name": "Explicar uma alergia ao pedir comida"
+            },
+            {
+              "description": "Descrever as condições do tempo, entender uma previsão simples e ajustar atividades.",
+              "key": "weather",
+              "name": "Falar do tempo e mudar planos conforme a previsão"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "coaster": {
+            "chapters": [
+              7
+            ]
+          },
+          "float": {
+            "chapters": [
+              13
+            ]
+          },
+          "heat": {
+            "chapters": [
+              null
+            ]
+          },
+          "orbit": {
+            "chapters": [
+              11
+            ]
+          },
+          "seatbelt": {
+            "chapters": [
+              8
+            ]
+          },
+          "seesaw": {
+            "chapters": [
+              9,
+              10
+            ]
+          },
+          "sound": {
+            "after": [
+              12,
+              13
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "swing": {
+            "chapters": [
+              12
+            ]
+          },
+          "throw": {
+            "chapters": [
+              3
+            ]
+          }
+        },
+        "id": "en-mechanics-beginner-plan-skills-1",
+        "userInput": {
+          "chapters": [
+            {
+              "lessons": [
+                "SI units and prefixes",
+                "Dimensional analysis",
+                "Scalars and vectors",
+                "Vector components",
+                "Vector addition and subtraction"
+              ],
+              "title": "Units and vectors"
+            },
+            {
+              "lessons": [
+                "Position, displacement and distance",
+                "Average velocity and speed",
+                "Instantaneous velocity",
+                "Acceleration in one dimension",
+                "Velocity-time graphs",
+                "Constant-acceleration motion"
+              ],
+              "title": "Motion in one dimension"
+            },
+            {
+              "lessons": [
+                "Position, velocity and acceleration vectors",
+                "Projectile motion",
+                "Projectile flight time and range",
+                "Relative motion",
+                "Acceleration along a curved path"
+              ],
+              "title": "Motion in two dimensions"
+            },
+            {
+              "lessons": [
+                "Newton's first law and inertial frames",
+                "Free-body diagrams",
+                "Newton's second law",
+                "Newton's third law",
+                "Newton's laws in components"
+              ],
+              "title": "Newton's laws"
+            },
+            {
+              "lessons": [
+                "Mass and weight",
+                "Normal force",
+                "Static and kinetic friction",
+                "Hooke's law",
+                "Forces on inclined planes",
+                "Tension and connected objects",
+                "Drag and terminal speed"
+              ],
+              "title": "Common forces and constraints"
+            },
+            {
+              "lessons": [
+                "Centripetal acceleration",
+                "Speed and period in circular motion",
+                "Centripetal force",
+                "Vertical circular motion"
+              ],
+              "title": "Circular motion"
+            },
+            {
+              "lessons": [
+                "Work by a constant force",
+                "Kinetic energy and net work",
+                "Gravitational potential energy",
+                "Elastic potential energy",
+                "Conservation of mechanical energy",
+                "Energy balance with friction",
+                "Power"
+              ],
+              "title": "Work and energy"
+            },
+            {
+              "lessons": [
+                "Linear momentum",
+                "Impulse and momentum change",
+                "Conservation of linear momentum",
+                "Perfectly inelastic collisions",
+                "Elastic collisions",
+                "Momentum in two dimensions",
+                "Center of mass"
+              ],
+              "title": "Momentum and collisions"
+            },
+            {
+              "lessons": [
+                "Angular motion",
+                "Angular and tangential motion",
+                "Torque",
+                "Moment of inertia",
+                "Torque and angular acceleration",
+                "Rotational kinetic energy",
+                "Rolling without slipping"
+              ],
+              "title": "Rigid-body rotation"
+            },
+            {
+              "lessons": [
+                "Static equilibrium",
+                "Forces on a supported beam",
+                "Angular momentum",
+                "Conservation of angular momentum"
+              ],
+              "title": "Equilibrium and angular momentum"
+            },
+            {
+              "lessons": [
+                "Newton's law of gravitation",
+                "Gravitational field strength",
+                "Circular orbits",
+                "Gravitational potential energy at a distance",
+                "Escape speed",
+                "Kepler's laws"
+              ],
+              "title": "Gravitation and orbits"
+            },
+            {
+              "lessons": [
+                "Restoring force and simple harmonic motion",
+                "Oscillation amplitude, period and frequency",
+                "Sinusoidal motion",
+                "Mass-spring period",
+                "Simple pendulum period",
+                "Energy in harmonic motion",
+                "Damping and resonance"
+              ],
+              "title": "Oscillations"
+            },
+            {
+              "lessons": [
+                "Density and pressure",
+                "Hydrostatic pressure",
+                "Buoyancy",
+                "Continuity in fluid flow",
+                "Bernoulli's equation"
+              ],
+              "title": "Fluid mechanics"
+            }
+          ],
+          "courseTitle": "Classical mechanics",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Work out how long a ball thrown at an angle stays in the air and how far it goes.",
+              "key": "throw",
+              "name": "Predict where a thrown ball lands"
+            },
+            {
+              "description": "Relate a longer stopping time to a smaller force on the body in a crash.",
+              "key": "seatbelt",
+              "name": "Explain why seatbelts and airbags reduce injuries"
+            },
+            {
+              "description": "Trade height for speed when friction is small, and see what friction takes away.",
+              "key": "coaster",
+              "name": "Find a roller coaster's speed at the bottom of a drop"
+            },
+            {
+              "description": "Place two people so the turning effects on each side cancel out.",
+              "key": "seesaw",
+              "name": "Balance a seesaw with people of different weights"
+            },
+            {
+              "description": "Predict how long one back-and-forth swing takes and what changes it.",
+              "key": "swing",
+              "name": "Time a playground swing"
+            },
+            {
+              "description": "Compare an object's weight with the push of the water it moves aside.",
+              "key": "float",
+              "name": "Predict whether an object floats"
+            },
+            {
+              "description": "Relate a satellite's speed and height to the pull of gravity that keeps it circling.",
+              "key": "orbit",
+              "name": "Explain how satellites stay in orbit"
+            },
+            {
+              "description": "Describe how heat travels by conduction, convection and radiation from hot things to cold ones.",
+              "key": "heat",
+              "name": "Explain how heat moves between objects"
+            },
+            {
+              "description": "Describe sound as a wave that moves through air, with pitch set by its frequency.",
+              "key": "sound",
+              "name": "Explain how sound travels"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "amostra-viciada": {
+            "chapters": [
+              2
+            ]
+          },
+          "exame-positivo": {
+            "chapters": [
+              8
+            ]
+          },
+          "grafico-enganoso": {
+            "chapters": [
+              3
+            ]
+          },
+          "media-ponderada": {
+            "chapters": [
+              4
+            ]
+          },
+          "orcamento-planilha": {
+            "chapters": [
+              null
+            ]
+          },
+          "pesquisa-eleitoral": {
+            "chapters": [
+              11
+            ]
+          },
+          "previsao-vendas": {
+            "chapters": [
+              14
+            ]
+          },
+          "sazonalidade": {
+            "chapters": [
+              null
+            ]
+          },
+          "teste-ab": {
+            "chapters": [
+              13,
+              12
+            ]
+          }
+        },
+        "id": "pt-statistics-beginner-plan-skills-1",
+        "userInput": {
+          "chapters": [
+            {
+              "lessons": [
+                "População e unidade de análise",
+                "Amostras, parâmetros e estatísticas",
+                "Tipos de variáveis",
+                "Qualidade dos dados",
+                "Estrutura de uma tabela de dados",
+                "Privacidade e dados pessoais"
+              ],
+              "title": "Dados e perguntas estatísticas"
+            },
+            {
+              "lessons": [
+                "Amostragem aleatória e por conveniência",
+                "Viés de seleção e não resposta",
+                "Formulação de perguntas",
+                "Estudos observacionais e experimentos",
+                "Confundimento e atribuição aleatória",
+                "Generalização de resultados"
+              ],
+              "title": "Amostragem e desenho de estudos"
+            },
+            {
+              "lessons": [
+                "Tabelas de frequência",
+                "Gráficos de barras",
+                "Histogramas",
+                "Escalas e distorções gráficas",
+                "Frequências em planilhas"
+              ],
+              "title": "Tabelas e gráficos"
+            },
+            {
+              "lessons": [
+                "Média aritmética",
+                "Mediana",
+                "Moda",
+                "Média ponderada",
+                "Percentis e quartis",
+                "Escolha de medidas de centro"
+              ],
+              "title": "Centro e posição"
+            },
+            {
+              "lessons": [
+                "Amplitude",
+                "Intervalo interquartil",
+                "Variância e desvio padrão",
+                "Diagrama de caixa",
+                "Valores atípicos",
+                "Forma de uma distribuição"
+              ],
+              "title": "Dispersão e forma"
+            },
+            {
+              "lessons": [
+                "Tabelas de contingência",
+                "Gráficos de dispersão",
+                "Correlação de Pearson",
+                "Correlação e causalidade",
+                "Associação em dados agregados"
+              ],
+              "title": "Associação entre variáveis"
+            },
+            {
+              "lessons": [
+                "Espaço amostral e eventos",
+                "Probabilidade em casos equiprováveis",
+                "Probabilidade e frequência relativa",
+                "Regra do complemento",
+                "Regra da adição"
+              ],
+              "title": "Fundamentos de probabilidade"
+            },
+            {
+              "lessons": [
+                "Probabilidade condicional",
+                "Regra da multiplicação",
+                "Independência de eventos",
+                "Árvores de probabilidade",
+                "Teorema de Bayes",
+                "Testes e taxas de base"
+              ],
+              "title": "Probabilidade condicional e independência"
+            },
+            {
+              "lessons": [
+                "Variáveis aleatórias",
+                "Distribuições discretas",
+                "Valor esperado",
+                "Distribuição binomial",
+                "Distribuições contínuas",
+                "Distribuição normal e escore z"
+              ],
+              "title": "Distribuições de probabilidade"
+            },
+            {
+              "lessons": [
+                "Distribuições amostrais",
+                "Erro padrão",
+                "Tamanho amostral e precisão",
+                "Teorema central do limite",
+                "Erro amostral e viés"
+              ],
+              "title": "Variação amostral"
+            },
+            {
+              "lessons": [
+                "Estimativa pontual",
+                "Intervalos de confiança",
+                "Margem de erro",
+                "Intervalo de confiança para proporção",
+                "Intervalo de confiança para média",
+                "Condições para intervalos"
+              ],
+              "title": "Estimação e intervalos de confiança"
+            },
+            {
+              "lessons": [
+                "Hipóteses nula e alternativa",
+                "Estatística de teste",
+                "Valor p",
+                "Erros dos tipos I e II",
+                "Poder e tamanho de efeito",
+                "Significância e importância prática",
+                "Testes para uma amostra"
+              ],
+              "title": "Testes de hipóteses"
+            },
+            {
+              "lessons": [
+                "Grupos independentes e dados pareados",
+                "Comparação de médias",
+                "Comparação de proporções",
+                "Teste qui-quadrado de associação",
+                "Condições para comparação de grupos"
+              ],
+              "title": "Comparação de grupos"
+            },
+            {
+              "lessons": [
+                "Coeficientes de regressão linear",
+                "Ajuste por mínimos quadrados",
+                "Resíduos",
+                "Coeficiente de determinação",
+                "Limites da regressão linear",
+                "Regressão linear em planilhas"
+              ],
+              "title": "Regressão linear simples"
+            },
+            {
+              "lessons": [
+                "Comunicação de resultados",
+                "Estatística em notícias",
+                "Pedidos de análise para IA",
+                "Verificação de análises geradas por IA"
+              ],
+              "title": "Comunicação e verificação de análises"
+            }
+          ],
+          "courseTitle": "Estatística",
+          "language": "pt",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Ler o intervalo de uma pesquisa e dizer quando dois candidatos estão em empate técnico.",
+              "key": "pesquisa-eleitoral",
+              "name": "Interpretar a margem de erro de uma pesquisa eleitoral"
+            },
+            {
+              "description": "Calcular a nota final quando provas e trabalhos têm pesos diferentes.",
+              "key": "media-ponderada",
+              "name": "Calcular a média final com pesos"
+            },
+            {
+              "description": "Perceber quando um eixo cortado ou uma escala esticada exagera uma diferença.",
+              "key": "grafico-enganoso",
+              "name": "Desconfiar de um gráfico enganoso"
+            },
+            {
+              "description": "Calcular a chance de ter a doença quando o exame dá positivo, considerando quão rara ela é.",
+              "key": "exame-positivo",
+              "name": "Entender o resultado positivo de um exame"
+            },
+            {
+              "description": "Comparar as taxas de conversão de duas versões e decidir se a diferença pode ser acaso.",
+              "key": "teste-ab",
+              "name": "Decidir se a diferença entre duas versões de um site é real"
+            },
+            {
+              "description": "Ajustar uma reta aos dados de vendas e usá-la para estimar o próximo valor.",
+              "key": "previsao-vendas",
+              "name": "Prever vendas com uma reta de tendência"
+            },
+            {
+              "description": "Explicar por que uma enquete aberta na internet não representa a população.",
+              "key": "amostra-viciada",
+              "name": "Reconhecer uma enquete viciada"
+            },
+            {
+              "description": "Organizar receitas e despesas do mês numa planilha e acompanhar o saldo.",
+              "key": "orcamento-planilha",
+              "name": "Montar um orçamento doméstico numa planilha"
+            },
+            {
+              "description": "Separar o padrão que se repete a cada ano da tendência numa série de vendas mensais.",
+              "key": "sazonalidade",
+              "name": "Identificar a sazonalidade nas vendas"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "auth": {
+            "after": [
+              10
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "components": {
+            "after": [
+              2
+            ],
+            "chapters": [
+              4,
+              null
+            ]
+          },
+          "data": {
+            "after": [
+              7
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "deploy": {
+            "chapters": [
+              14
+            ]
+          },
+          "forms": {
+            "after": [
+              8
+            ],
+            "chapters": [
+              null
+            ]
+          },
+          "routes": {
+            "chapters": [
+              6
+            ]
+          },
+          "search": {
+            "chapters": [
+              12
+            ]
+          },
+          "styles": {
+            "after": [
+              5
+            ],
+            "chapters": [
+              null
+            ]
+          }
+        },
+        "id": "en-nextjs-beginner-band-continued-1",
+        "userInput": {
+          "chapters": [
+            {
+              "lessons": [
+                "Create a Next.js app",
+                "Edit the home page",
+                "Next.js project structure",
+                "Package scripts"
+              ],
+              "title": "Build your first page"
+            },
+            {
+              "lessons": [
+                "JSX elements and expressions",
+                "React components",
+                "Component props",
+                "Conditional rendering",
+                "Rendering lists and keys"
+              ],
+              "title": "Build pages with components"
+            },
+            {
+              "lessons": [
+                "File-based routes",
+                "Root and nested layouts",
+                "Navigation with Link",
+                "Route groups",
+                "Not-found pages"
+              ],
+              "title": "Create connected pages"
+            },
+            {
+              "lessons": [
+                "Server and Client Components",
+                "Client Components and events",
+                "React state",
+                "Data across the client boundary",
+                "Accessible interactive controls"
+              ],
+              "title": "Add interactive components"
+            },
+            {
+              "lessons": [
+                "Global CSS",
+                "CSS Modules",
+                "Responsive layouts",
+                "Images with next/image",
+                "Fonts with next/font"
+              ],
+              "title": "Style pages and add assets"
+            },
+            {
+              "lessons": [
+                "Dynamic route segments",
+                "Page params",
+                "Missing dynamic route data",
+                "Page searchParams",
+                "Shareable filter URLs"
+              ],
+              "title": "Build pages from URLs"
+            },
+            {
+              "lessons": [
+                "Server-side data fetching",
+                "Fetch response handling",
+                "Route loading states",
+                "Route error boundaries",
+                "Fetch caching",
+                "Server environment variables"
+              ],
+              "title": "Display external data"
+            },
+            {
+              "lessons": [
+                "Forms and Server Actions",
+                "Server-side form validation",
+                "Form validation feedback",
+                "Pending form submissions",
+                "Refresh and redirect after actions",
+                "Server Action security"
+              ],
+              "title": "Process form submissions"
+            },
+            {
+              "lessons": [
+                "Database connections",
+                "Database models",
+                "Reading database records",
+                "Creating database records",
+                "Updating and deleting records"
+              ],
+              "title": "Save app data"
+            },
+            {
+              "lessons": [
+                "Authentication library setup",
+                "Sign-in and sign-out",
+                "Server-side sessions",
+                "Protected pages",
+                "Ownership checks"
+              ],
+              "title": "Protect user data"
+            },
+            {
+              "lessons": [
+                "GET route handlers",
+                "POST route handlers",
+                "Route handler authorization",
+                "Testing endpoints with curl"
+              ],
+              "title": "Create API endpoints"
+            },
+            {
+              "lessons": [
+                "Page metadata",
+                "Dynamic metadata",
+                "Icons and social images",
+                "Sitemaps and robots rules"
+              ],
+              "title": "Prepare pages for search and sharing"
+            },
+            {
+              "lessons": [
+                "Reading development errors",
+                "Manual accessibility checks",
+                "Browser tests",
+                "Requesting a Next.js change from AI",
+                "Reviewing AI-generated code"
+              ],
+              "title": "Check and debug your app"
+            },
+            {
+              "lessons": [
+                "Production builds",
+                "Deployment environment variables",
+                "Deploying a Next.js app",
+                "Deployment checks",
+                "Persistent storage in production"
+              ],
+              "title": "Deploy your app"
+            }
+          ],
+          "courseTitle": "Next.js",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Accept a form, validate it on the server and show the result.",
+              "key": "forms",
+              "name": "Handle form submissions",
+              "taughtIn": [
+                8
+              ]
+            },
+            {
+              "description": "Create pages whose content depends on the address the visitor opens.",
+              "key": "routes",
+              "name": "Build pages from the URL",
+              "taughtIn": [
+                3
+              ]
+            },
+            {
+              "description": "Fetch records from another service and show them on a page, with loading and error states.",
+              "key": "data",
+              "name": "Show data from an external API",
+              "taughtIn": [
+                7
+              ]
+            },
+            {
+              "description": "Add sign-in and sign-out and keep pages private to signed-in users.",
+              "key": "auth",
+              "name": "Let users sign in",
+              "taughtIn": [
+                10
+              ]
+            },
+            {
+              "description": "Give pages a consistent look with CSS that adapts to the screen size.",
+              "key": "styles",
+              "name": "Style pages",
+              "taughtIn": [
+                5
+              ]
+            },
+            {
+              "description": "Split a page into components and pass each one the data it shows.",
+              "key": "components",
+              "name": "Build pages from reusable components",
+              "taughtIn": [
+                2
+              ]
+            },
+            {
+              "description": "Build the app for production and publish it so anyone can open it.",
+              "key": "deploy",
+              "name": "Put the app online"
+            },
+            {
+              "description": "Give each page a title, a description and a preview image for search and sharing.",
+              "key": "search",
+              "name": "Make pages show up well in search results"
             }
           ]
         }

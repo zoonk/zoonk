@@ -59,7 +59,7 @@ const PAGE_USES: Record<GoalTutorPage, string> = {
   activity:
     "their study days, the lessons they finished and their time spent learning. For when or how much they studied.",
   appearance:
-    'the Preferences page: their buddy ("Choose your buddy" opens its character, name and glasses; Save keeps the change), sounds when they get an answer right or finish, a daily time limit that stops them for the day, and the app\'s language. Light and dark mode follow their device. For changing their buddy, sounds, the daily limit or the language.',
+    'the Preferences page: their buddy ("Choose your buddy" opens its character, name and glasses; Save keeps the change), sounds when they get an answer right or finish, and the app\'s language. Light and dark mode follow their device. For changing their buddy, sounds or the language.',
   buddy:
     "this conversation with you, their buddy, for the goal they have open, and their buddy's day. For asking you something later.",
   courses:
@@ -89,7 +89,7 @@ const PAGE_USES: Record<GoalTutorPage, string> = {
   score:
     "how many of their answers are right and the weekly trend over the past 90 days. For how accurate they are.",
   settings:
-    "their settings in one list: their account, preferences (buddy, sounds, daily time limit, language), memory, subscription and help.",
+    "their settings in one list: their account, preferences (buddy, sounds, language), memory, subscription and help.",
   speaking:
     "for a language goal, speaking practice in an exam's format at the level they aim for: its tasks, one at a time, and their last results. For practising speaking in an exam's format.",
   startGoal: "starting a new goal: another subject, skill, language or exam.",

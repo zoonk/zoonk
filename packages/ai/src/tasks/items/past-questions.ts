@@ -10,11 +10,14 @@ import { GENERATED_ITEM_SCHEMAS } from "./item-schemas";
 import systemPrompt from "./past-questions.prompt.md";
 
 /**
- * The answer must copy long papers exactly: on the past-questions eval every quoted part matched
- * its paper and every key was right (27 Sep 2026).
+ * The answer must copy papers exactly. On 5 cases (8 Nov 2026), two of them whole real papers as
+ * the parser reads them, Luna scored 9.08 at $1.93/1k and Gemini 3.8 Flash 8.98 at $41.98/1k. Read
+ * blind, Luna won 2 and tied 3: on Enem 2023 it restored the spaces the parser drops between words,
+ * which Flash copied into every question. On the first 3 cases Haiku 5.5 also copied every question
+ * with the right key (9.58).
  */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["openai/gpt-6.1-sol"] as const;
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.8-flash"] as const;
 
 const DEFAULT_COUNT = 10;
 const MAX_COUNT = 20;

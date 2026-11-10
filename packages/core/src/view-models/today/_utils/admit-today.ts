@@ -5,7 +5,7 @@ import { readActiveGoal, readLearningProfile } from "../../../learner/facts/lear
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { getOwnedGoal } from "../../../learner/get-owned-goal";
 import { getSession } from "../../../users/get-session";
-import { isGoalSetupLeft } from "../../onboarding/onboarding-steps";
+import { isGoalSetupLeft, isPlanRevealOwed } from "../../onboarding/onboarding-steps";
 import { type TodayViewResult } from "../get-today-view";
 
 /** Do not persist an empty day before the background plan has items. */
@@ -29,8 +29,14 @@ export type TodayAdmission =
   | Exclude<TodayViewResult, { status: "ready" }>
   | { owned: Extract<OwnedGoal, { status: "ready" }>; status: "admitted" };
 
-/** Read-only; admits only an owned active goal with a built plan and completed setup. */
-export async function admitToday(requestedGoalId?: string): Promise<TodayAdmission> {
+/**
+ * Read-only; admits only an owned active goal with a built plan, completed setup and a seen
+ * reveal. The reveal reads the day it introduces before it's seen (`revealing`).
+ */
+export async function admitToday(
+  requestedGoalId?: string,
+  { revealing = false }: { revealing?: boolean } = {},
+): Promise<TodayAdmission> {
   const session = await getSession();
 
   if (!session) {
@@ -62,9 +68,14 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
 
   const { id, kind, title } = owned.goal;
 
-  // A plan is built while the questions are still answered, on a time the learner hasn't chosen yet.
-  if (!built || isGoalSetupLeft(owned.goal)) {
-    return { goal: { id, kind, title }, status: "preparing", userId };
+  // A plan is built while the questions are still answered, on a time the learner hasn't chosen
+  // yet, and is shown once before its first day.
+  if (!built || isGoalSetupLeft(owned.goal) || (!revealing && isPlanRevealOwed(owned.goal))) {
+    return {
+      goal: { displayName: owned.goal.displayName, id, kind, title },
+      status: "preparing",
+      userId,
+    };
   }
 
   return { owned, status: "admitted" };

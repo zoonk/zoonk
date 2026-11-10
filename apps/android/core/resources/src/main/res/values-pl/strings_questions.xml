@@ -9,11 +9,10 @@
   "questions_drill_not_sure_praise": "3a9b264fa7cc4957b8a979a6ba7e96a0423c68e1974b0982afe4ba092eb3ce9d",
   "questions_drill_open_lesson": "99b0a2e20750905d68ab56c21e44fa1d9ca8182970395151306dc43bef8ff103",
   "questions_drill_read_carefully": "94ed0a9052cef8a6aa9bb6f574c10c1d345b4538f5a227e85bd1dad77bc8a637",
-  "questions_drill_reteach": "fb98e31fcf129dcaa305b8f3c3ecdb34735df8cdf57dbe9d15ead3ede64fadb1",
-  "questions_drill_reteach_ideas": "b49b48887b33a9434932025b22855f73e9331f1280144986e2ad65b0bc2136d1",
+  "questions_drill_reteach": "ebe84f4da49f4550c74961be19da61dc2a0c64fced904d71c77f89ab1d9413db",
+  "questions_drill_reteach_ideas": "d0d97213a1427b755361d854243df071e54bd21954a352043a3fb89081c16e14",
   "questions_drill_retry": "b7808b8a16aae4a7794afae69ce418721819cbc3ed898cd26a477e2e73041c4d",
   "questions_drill_seconds_left": "a531beb915422bc9d4b0f52080108f5308f0f105bb518f263f6002578a237aa6",
-  "questions_drill_show_answers": "f7d65b29dfca7171342e2929a061b32265f0f7293b09107bbfafb295e1e4ea94",
   "questions_drill_spot_the_trap": "e34427757027d3932fd5a0544a8aafdfbd651f18c6ccbf3231c5d541653e8c62",
   "questions_drill_start": "7e74b3708e03e6dce6851840fdab68a99b4940da491ffc4fff5d86bf81dbc59c",
   "questions_drill_time_left": "88104ce2cfa3061d8553a8a70141c009efc29c503e728ad7b512dc1aa00ad48e",
@@ -135,8 +134,8 @@
     <string name="questions_placement_note">Dopracowujemy twój plan. Pomyłki w tym zadaniu nigdy nie trafiają do zeszytu błędów.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Pytanie z wcześniejszego egzaminu · %1$s</string>
-    <string name="questions_drill_reteach_ideas">Najpierw wyjaśnienie, potem kilka pytań na ten temat.</string>
-    <string name="questions_drill_reteach">Kilka pytań na temat, który sprawił ci trudność.</string>
+    <string name="questions_drill_reteach_ideas">Najpierw poznaj zagadnienie, potem je przećwicz.</string>
+    <string name="questions_drill_reteach">Wróćmy do zagadnienia, które ci umknęło.</string>
     <string name="questions_drill_read_carefully">Przeczytaj każde słowo, zanim odpowiesz.</string>
     <string name="questions_drill_spot_the_trap">Jest tu pułapka. Znajdź ją, zanim odpowiesz.</string>
     <plurals name="questions_drill_timed">
@@ -161,7 +160,6 @@
         <item quantity="many">%d sekund do końca</item>
         <item quantity="other">%d sekundy do końca</item>
     </plurals>
-    <string name="questions_drill_show_answers">Przeczytane. Pokaż odpowiedzi</string>
     <string name="questions_drill_not_sure">Nie mam pewności</string>
     <string name="questions_drill_open_lesson">Powtórz lekcję</string>
 </resources>

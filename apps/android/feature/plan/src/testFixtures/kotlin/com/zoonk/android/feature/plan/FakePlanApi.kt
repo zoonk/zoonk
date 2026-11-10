@@ -44,7 +44,7 @@ class FakePlanApi : PlanApi {
     var timeToCoverFailure: ApiException? = null
     var timeToCoverRequests = 0
     var previewGate: CompletableDeferred<Unit>? = null
-    var preview = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
+    var preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = true, unchanged = true)
 
     val examChoices = mutableListOf<Pair<String, List<String>>>()
     val toolAnswers = mutableListOf<ToolAnswer>()
@@ -119,6 +119,12 @@ class FakePlanApi : PlanApi {
         statusFailure?.let { throw it }
         statuses += status
     }
+
+    override suspend fun rename(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        displayName: String,
+    ) = Unit
 
     override suspend fun change(
         session: AuthenticatedSession,

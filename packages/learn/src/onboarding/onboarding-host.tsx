@@ -3,6 +3,8 @@
 import { type ReactNode, createContext, use } from "react";
 import { TestProgress } from "./onboarding-bar";
 
+export const FirstLessonReadContext = createContext<ReactNode>(null);
+
 type OnboardingHost =
   | { backHref: string; barEnd: ReactNode; kind: "page" }
   | { header: ReactNode; kind: "section" };

@@ -41,9 +41,7 @@ class AnswerActionsTest {
             object : RunControls {
                 override val canRetry = false
 
-                override fun startDrill(questions: List<Question>) = Unit
-
-                override fun reveal() = Unit
+                override fun startDrill() = Unit
 
                 override fun submit(
                     question: Question,
@@ -66,7 +64,16 @@ class AnswerActionsTest {
 
         rule.setContent {
             ZoonkTheme {
-                AnswerActions(listOf(question), question, run, Answer.Choice(0), controls, ask = {}, notSureOnEvery = true)
+                AnswerActions(
+                    listOf(question),
+                    question,
+                    run,
+                    Answer.Choice(0),
+                    controls,
+                    ask = {},
+                    onReportSaveFailure = {},
+                    notSureOnEvery = true,
+                )
             }
         }
     }

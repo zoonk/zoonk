@@ -1,3 +1,7 @@
+import { getBossSkillIds } from "../../checkpoints/checkpoint-rules";
+import { toBossPlan } from "./boss-plan";
+import { listBossCandidates, projectBossPlan } from "./boss-projection";
+import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { LEARN_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type QueueUnit, getBossKey } from "./plan-units";
@@ -73,4 +77,82 @@ export function listChallengesLeftOut({
       unit.kind === "boss" && taught.has(unit.phase) && !planned.has(unit.key) ? [unit.phase] : [],
     ),
   );
+}
+
+export function withoutUntestableChallenges<Plan extends BuiltPlan>({
+  built,
+  input,
+}: {
+  built: Plan;
+  input: BuildPlanInput;
+}) {
+  const facts = input.bossFacts;
+
+  const plan = toBossPlan({
+    input,
+    items: built.items,
+    phases: built.phases,
+    rows: facts?.rows,
+    skillLessons: built.skillLessons,
+    survivors: facts?.survivors,
+  });
+
+  const missing = listBossCandidates({ built }).filter(
+    (candidate) => !built.items.some((item) => item.key === candidate.key),
+  );
+
+  const projected =
+    missing.length > 0
+      ? projectBossPlan({
+          built,
+          candidates: missing,
+          input,
+          rows: facts?.rows,
+          survivors: facts?.survivors,
+        }).plan
+      : plan;
+
+  const missingKeys = new Set(missing.map((candidate) => candidate.key));
+
+  const empty = new Set([
+    ...plan.items
+      .filter(
+        (item) =>
+          item.kind === "boss" &&
+          item.status === "todo" &&
+          getBossSkillIds({ ...plan, boss: item }).length === 0,
+      )
+      .map((item) => item.key),
+    ...projected.items
+      .filter(
+        (item) =>
+          missingKeys.has(item.key) && getBossSkillIds({ ...projected, boss: item }).length === 0,
+      )
+      .map((item) => item.key),
+  ]);
+
+  const items = built.items.filter((item) => !empty.has(item.key));
+
+  const removedMinutes = built.items
+    .filter((item) => empty.has(item.key))
+    .reduce((sum, item) => sum + item.minutes, 0);
+
+  return {
+    ...built,
+    estimate: {
+      ...built.estimate,
+      remainingMinutes: built.estimate.remainingMinutes - removedMinutes,
+      totalMinutes: built.estimate.totalMinutes - removedMinutes,
+    },
+    items,
+    phases: built.phases.map((phase, index) => ({
+      ...phase,
+      minutes:
+        phase.minutes -
+        built.items
+          .filter((item) => item.phase === index && empty.has(item.key))
+          .reduce((sum, item) => sum + item.minutes, 0),
+      ...(empty.has(`boss:${index}`) && { challengeLeftOut: false }),
+    })),
+  };
 }

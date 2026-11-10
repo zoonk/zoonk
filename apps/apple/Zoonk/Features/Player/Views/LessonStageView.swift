@@ -155,7 +155,7 @@ struct LessonStageView: View {
               if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
                 VStack(alignment: .leading, spacing: 24) {
                   LessonVerdictView(
-                    step: step, result: result, store: store,
+                    step: step, answer: state.currentAnswer, result: result, store: store,
                     willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
                       ?? false,
                     hyperdriveStreak: state.hyperdriveStreak(for: step.id)
@@ -273,8 +273,9 @@ struct LessonStageView: View {
       .announcesStatus(isCheckSlow && state.phase == .checking ? LessonCheckNote.slowLine : nil)
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
-      .sensoryFeedback(trigger: state.countedVerdict(step.id)) { _, isCorrect in
-        isCorrect.map { $0 ? .success : .error }
+      .sensoryFeedback(trigger: state.countedVerdict(step.id)) {
+        [reviewing = state.reviewing] _, isCorrect in
+        reviewing ? nil : isCorrect.map { $0 ? .success : .error }
       }
       .onChange(of: state.currentResult?.isCorrect) { _, isCorrect in
         if isCorrect == true, store.soundsEnabled, !state.reviewing {

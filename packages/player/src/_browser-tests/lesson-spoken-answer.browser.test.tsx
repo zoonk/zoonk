@@ -2,8 +2,17 @@ import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playabl
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { type LessonPlayerAdapters, type SpokenAnswerOutcome } from "../lesson/lesson-player-types";
+import {
+  buildAdapters,
+  renderLessonPlayer,
+  runAnswer,
+  startedRun,
+} from "../_test-utils/render-lesson-player";
+import {
+  type LessonPlayerAdapters,
+  type LessonStartOutcome,
+  type SpokenAnswerOutcome,
+} from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
@@ -53,6 +62,23 @@ describe("spoken answers", () => {
     vi.restoreAllMocks();
   });
 
+  it("never sends a spoken grade when the pending start is refused", async () => {
+    allowMicrophone();
+    const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
+    const admission = Promise.withResolvers<LessonStartOutcome>();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { gradeSpokenAnswer, startLesson: () => admission.promise }),
+      lesson,
+    });
+
+    await sayIt();
+    admission.resolve({ reason: "plusRequired" });
+    await expect.element(page.getByRole("link", { name: /Plus/u })).toBeVisible();
+    expect(gradeSpokenAnswer).not.toHaveBeenCalled();
+  });
+
   it("plays a spoken screen as listening when the learner can't talk now, for the day", async () => {
     const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
     const step = spokenSentenceStep();
@@ -88,6 +114,51 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
   });
 
+  it("shows a typed answer to a spoken screen again on a device set to speak", async () => {
+    const step = spokenAnswerStep();
+    const lesson = buildLesson([step, teachingStep("explanation"), teachingStep("check")]);
+    const typed = "The electron is a cloud";
+
+    const resume = [
+      runAnswer({
+        answer: { kind: "spokenAnswer", text: typed },
+        answerText: typed,
+        stepId: step.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(),
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByRole("textbox")).toHaveValue(typed);
+    await expect.element(page.getByRole("button", { name: "Record" })).not.toBeInTheDocument();
+  });
+
+  it("shows the right translation after a missed listening answer, as a listening screen does", async () => {
+    openSpokenLesson({ gradeSpokenAnswer: vi.fn<GradeSpokenAnswer>(), step: spokenSentenceStep() });
+
+    await page.getByRole("button", { name: "I can't talk now" }).click();
+
+    const bank = page.getByRole("group", { name: "Word bank" });
+
+    for (const word of [/^aluguel\?$/iu, /^o$/iu, /^é$/iu, /^quanto$/iu]) {
+      // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+      await bank.getByRole("button", { name: word }).click();
+    }
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Not quite" }))
+      .toMatchTextContent(/Answer: Quanto é o aluguel\?/u);
+  });
+
   it("saves the listening answer that replaced a slow spoken one only after that grade settles", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     allowMicrophone();
@@ -119,6 +190,20 @@ describe("spoken answers", () => {
     late.resolve({ status: "failed" });
     await expect.poll(() => vi.mocked(adapters.checkStep).mock.calls.length).toBe(1);
     vi.useRealTimers();
+  });
+
+  it("puts a failed check away once the learner records again", async () => {
+    allowMicrophone();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(async () => ({ status: "failed" as const }));
+    openSpokenLesson({ gradeSpokenAnswer });
+    await sayIt();
+
+    const failed = page.getByText("We couldn't check your answer this time. Try again.");
+    await expect.element(failed).toBeVisible();
+
+    await page.getByRole("button", { name: "Record" }).click();
+    await expect.element(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+    await expect.element(failed).not.toBeInTheDocument();
   });
 
   it("with no words in it says so and lets the learner try again or type", async () => {

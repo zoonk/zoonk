@@ -106,7 +106,7 @@ struct MindMapsScreen: View {
 
     return Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(goal.title)
+        Text(goal.displayName)
           .typeStyle(.eyebrow)
           .foregroundStyle(.faint)
 

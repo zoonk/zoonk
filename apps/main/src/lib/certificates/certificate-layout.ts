@@ -42,10 +42,7 @@ function estimateLines({
   return Math.max(1, Math.ceil((ems * fontSize) / width));
 }
 
-export type SheetCovered =
-  | { kind: "readouts" }
-  | { kind: "topics"; topics: readonly string[] }
-  | null;
+export type SheetCovered = { topics: readonly string[] } | null;
 
 export type SheetGraphKind = "ladder" | "labelledRoute" | "route";
 
@@ -76,10 +73,6 @@ function getCoveredHeight(covered: SheetCovered): number {
 
   if (!covered) {
     return 0;
-  }
-
-  if (covered.kind === "readouts") {
-    return SHEET.covered.above + label + SHEET.covered.labelGap + SHEET.covered.readoutSize;
   }
 
   const rows = getTopicRowLines(covered.topics);
@@ -137,15 +130,11 @@ export function getSheetOverflow({
 
 /** The covered block's fallbacks, in the order the design gives way: all six, the first two, none. */
 export function getCoveredFallbacks(covered: SheetCovered): SheetCovered[] {
-  if (covered?.kind !== "topics") {
-    return [covered, null];
+  if (!covered) {
+    return [null];
   }
 
-  return [
-    covered,
-    { kind: "topics", topics: covered.topics.slice(0, SHEET.topics.shownAfterOverflow) },
-    null,
-  ];
+  return [covered, { topics: covered.topics.slice(0, SHEET.topics.shownAfterOverflow) }, null];
 }
 
 const { link, post } = SHARE;

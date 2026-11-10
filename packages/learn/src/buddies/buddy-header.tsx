@@ -1,7 +1,9 @@
 "use client";
 
 import { type ActorHandle, type BuddyActName } from "@zoonk/ui/components/buddy-actor";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { BuddyArt } from "./buddy-art";
 import { BuddyStageName } from "./buddy-labels";
 import { type BuddyStatusView } from "./buddy-status-view";
@@ -23,29 +25,37 @@ function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] }) {
   );
 }
 
+/** `children` is the day's line, kept beside the name while it fits; `menu` stays at the end. */
 export function BuddyHeader({
   buddy,
   children,
   faceRef,
+  menu,
   name,
   stage,
 }: {
   buddy: LearnBuddy;
   children?: React.ReactNode;
   faceRef?: React.Ref<ActorHandle<BuddyActName>>;
+  menu?: React.ReactNode;
   name: string;
   stage: BuddyStatusView["stage"];
 }) {
   return (
     <header className="flex items-center gap-2.5">
       <BuddyArt buddy={buddy} className="size-8" ref={faceRef} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="truncate text-sm leading-snug font-semibold">{name}</h1>
-        <p className="text-muted-foreground truncate text-xs leading-snug">
-          <BuddyLine stage={stage} />
-        </p>
+      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-1")}>
+        <div className="flex flex-col">
+          <h1 className={cn(TRUNCATED_TITLE_CLASS, "text-sm leading-snug font-semibold")}>
+            {name}
+          </h1>
+          <p className={cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-snug")}>
+            <BuddyLine stage={stage} />
+          </p>
+        </div>
+        {children}
       </div>
-      {children}
+      {menu}
     </header>
   );
 }

@@ -12,11 +12,13 @@ import { toDocumentParts } from "./research-documents";
 import { type ProductHints } from "./source-research-plan";
 
 /**
- * Terra and Flash kept every claim on the read-product-pages eval (6 Nov 2026); Terra cost about half
- * as much per run and answered faster.
+ * At high reasoning on 12 cases (8 Nov 2026), Luna kept every release and date (10.00) at $2.48/1k
+ * and Haiku 5.5 scored 9.86 at $3.23/1k, against Terra's 9.92 at $11.80/1k; at its default
+ * reasoning Luna dropped releases from the month-dated pages.
  */
-const defaultModel = "openai/gpt-6.1-terra";
-const fallbackModels = ["google/gemini-3.8-flash"] as const;
+const defaultModel = "openai/gpt-6-luna";
+const defaultReasoning: Reasoning = "high";
+const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
 const releaseSchema = z.object({
   ...cited,
@@ -101,7 +103,7 @@ export async function readProductPages({
   known = false,
   model = defaultModel,
   pages,
-  reasoning,
+  reasoning = defaultReasoning,
   serviceTier,
   useFallback = true,
 }: ReadProductPagesParams) {

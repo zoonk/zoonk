@@ -7,7 +7,6 @@ import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StatusRegion } from "../../_components/status-region";
-import { StudyTimeUsedUpActions, StudyTimeUsedUpNote } from "../../_components/study-time-used-up";
 import { TaskActions } from "../../_components/task-layout";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
 import { TaskMainButton } from "../../shell/task-frame";
@@ -20,12 +19,7 @@ import {
   openTypedCallAudio,
 } from "./use-call-microphone";
 
-export type CallIntroFooterState =
-  | "dailyLimitReached"
-  | "failed"
-  | "idle"
-  | "plusRequired"
-  | "starting";
+export type CallIntroFooterState = "failed" | "idle" | "plusRequired" | "starting";
 
 /** Long enough for a microphone already allowed to answer without a prompt. */
 const PROMPT_SHOWN_MS = 300;
@@ -131,16 +125,6 @@ export function CallIntroFooter({
   return (
     <>
       <StatusRegion className="outline-none" ref={status} tabIndex={-1}>
-        {start === "dailyLimitReached" && (
-          <StudyTimeUsedUpNote>
-            {t({
-              description: "The daily time limit is a setting that stops study for the day.",
-              message:
-                "You've reached your daily time limit. You can make this call in your next session.",
-            })}
-          </StudyTimeUsedUpNote>
-        )}
-
         {microphone.problem && <MicrophoneOff name={name} problem={microphone.problem} />}
 
         {microphone.prompting && (
@@ -150,7 +134,7 @@ export function CallIntroFooter({
         )}
       </StatusRegion>
 
-      {microphone.problem && start !== "dailyLimitReached" && start !== "plusRequired" ? (
+      {microphone.problem && start !== "plusRequired" ? (
         <TaskActions>
           <Button
             className="shrink-0"
@@ -218,10 +202,6 @@ function CallIntroActions({
         <SeePlusAction />
       </>
     );
-  }
-
-  if (start === "dailyLimitReached") {
-    return <StudyTimeUsedUpActions href="/today" />;
   }
 
   const starting = start === "starting";

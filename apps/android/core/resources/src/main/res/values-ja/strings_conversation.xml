@@ -4,7 +4,6 @@
   "conversation_answer_out_loud": "520f14d8202c25c750f2d335f679b58fdfd19afdc666bda5a55b7ba318c452c2",
   "conversation_answers_first": "03a1badb74ec1df5f0ba596d676e00a10f29b35eeb897078fb0e90dea23a44e5",
   "conversation_at_level": "cfcf9dc7d0fae3c252cb3cd3455f82a36d6138b876a76a17697c0a8d9cc4a56c",
-  "conversation_back_to_today": "708b4d675886878b5b72e85641bef511c498a7a8570ad796c95b2b174a961b5f",
   "conversation_band": "2708ccedb00a6c2bb68496d29a61b0e9e26c44bb58390f5dedb50888f96141b6",
   "conversation_band_points": "39dd53fe197f0433c6f66cc6a44f973e5ef8f7d02475c5d0c5c35bb714ee08cb",
   "conversation_below_level": "8e50533bb3c71a54b4fd33ca91905b88f2d2b9085dae8455251815a5c2252dc5",
@@ -142,7 +141,6 @@
   "conversation_start_preparing": "4886c7eb21efc24ca3fa3fa398443c4aa54943382e58367863debd2233591a15",
   "conversation_still_closing": "27de0396ef3cfd4767817efdd588bc4179bf5798d08cf037a3cdd2a11265fcb2",
   "conversation_still_to_get_across": "8c7caa10974b3c03bf1151517e2e7474da71ff0f9bec0e3c3b3b0b9203615082",
-  "conversation_study_time_used_up": "54b639debf056c43703adb2dedfe26a554dde0253d1ed7c2f16a3c12fd335321",
   "conversation_take_over": "4d04fbb60374762336ad8165461bd8719445b10301f2fe464a2b764c64394756",
   "conversation_take_your_time": "90be5ab34a633d501f509236445f5e536d633480dd2c54ac8d0e3751b1ba7549",
   "conversation_taken_over": "0233f0cf67d5f777b1e65464a8f06b5f624a5b9d267ef16bc006aba4005ed86a",
@@ -311,9 +309,6 @@
     <string name="conversation_call_length">会話時間</string>
     <string name="conversation_longer_calls_plus">Plusでは、より長く会話できます。</string>
     <string name="conversation_opens_when_ready">準備ができ次第、会話画面が開きます。</string>
-    <!-- The daily time limit is a setting that stops study for the day. -->
-    <string name="conversation_study_time_used_up">1日の学習時間の上限に達しました。この会話は次回の学習でできます。</string>
-    <string name="conversation_back_to_today">「今日」に戻る</string>
     <string name="conversation_get_ready">会話を準備する</string>
     <string name="conversation_get_ready_description">このチャレンジは、ユニットの内容についての短い会話です。先にスピーキングのレベルに合わせて内容を作成するため、最大30秒かかります。</string>
     <string name="conversation_getting_ready">会話を準備しています</string>

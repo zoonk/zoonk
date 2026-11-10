@@ -26,12 +26,12 @@ import {
 } from "./exam-outline";
 
 /**
- * Sonnet 5.5 found every planted gap on the coverage-check eval at 5.1s p50 (7 Oct 2026). Flash's
- * reasoning ran away on real goals while the learner waited; Opus matched Sonnet at twice the
- * price.
+ * On 10 cases (8 Nov 2026), Sonnet 5.5 found every gap at $7.67/1k and 6.46 s p95 and left alone
+ * exam weights the notice didn't support; Haiku 5.5's 10.00 hid such edits, and Terra (9.93)
+ * missed a planted gap.
  */
 const defaultModel = "anthropic/claude-sonnet-5.5";
-const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-sol"] as const;
+const fallbackModels = ["openai/gpt-6.1-terra", "anthropic/claude-haiku-5.5"] as const;
 
 const examWeightsSchema = z.array(z.object({ examWeight: z.number(), key: z.string() }));
 

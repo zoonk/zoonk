@@ -29,7 +29,6 @@
 - “essay” (graded writing practice): “에세이”; an exam's written part: “서술형”
 - “pause” (a goal): “일시 중지”; paused: “일시 중지됨”
 - “progress” (how far the learner is in the plan): “진도”
-- “daily time limit” (the cap in Settings): “하루 학습 시간 제한”, not “오늘 학습 시간”, which is the plan's time for today
 - “cancel” a subscription: “해지”
 - “real-world problem”: “실무 문제”
 - “goal” (the learner's goal): “목표”
@@ -102,7 +101,6 @@
 - “Past date”: “날짜 지남”, not “만료” or “종료”
 - “Needs adjusting”: “조정 필요”
 - “Too tight”: “너무 빠듯함”
-- “Even across skills”: “스킬 간 균형”
 - “left out”: “제외”, not “건너뜀”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “건너뛰기” / “건너뜀”
 - “Daily time”: “하루 학습 시간”

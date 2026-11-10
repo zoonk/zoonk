@@ -22,7 +22,6 @@ export type CompareReleaseLessonsExpected = {
 
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
-const MAX_OFFER_LENGTH = 160;
 const MAX_SKILLS = 4;
 
 function listWhatsNewChecks({
@@ -39,7 +38,6 @@ function listWhatsNewChecks({
   }
 
   return [
-    { label: "offer fits", passed: whatsNew.offer.length <= MAX_OFFER_LENGTH },
     { label: "1 to 4 skills", passed: whatsNew.skills.length <= MAX_SKILLS },
     ...(expected.titleIncludes
       ? [

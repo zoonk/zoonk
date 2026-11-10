@@ -24,7 +24,6 @@ type ExamRefusal = {
   status:
     | "blockFinished"
     | "blockNotActive"
-    | "dailyLimitReached"
     | "expired"
     | "finished"
     | "goalNotActive"
@@ -59,11 +58,6 @@ const REFUSALS = {
     code: studySessionErrorCodes.blockNotActive,
     message: "Start the block before sending the essay",
     status: httpStatus.conflict,
-  },
-  dailyLimitReached: {
-    code: studySessionErrorCodes.dailyLimitReached,
-    message: "Today's time limit is reached",
-    status: httpStatus.forbidden,
   },
   expired: {
     code: examErrorCodes.mockExpired,

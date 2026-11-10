@@ -286,7 +286,7 @@ struct PlanNumbersSection: View {
       return PlanNumber(
         label: String(
           localized: "Level", table: "Plan", comment: "Label of a language goal's level"),
-        value: language.levelText, detail: language.leadingSkill)
+        value: language.levelText)
     }
 
     guard context.goal.kind == .learn, let lessons = syllabus?.lessons else {
@@ -487,8 +487,14 @@ struct NextOnPathSection: View {
       $0.kind != .afterExam && ($0.state == .current || $0.state == .upcoming)
     }
     let mockDate = ahead.lazy.compactMap(\.mocks.nextDate).first
-    let checkpoint = ahead.lazy.compactMap(\.checkpoint).first { $0.state == .upcoming }
+    let checkpointPhase = ahead.first { $0.checkpoint?.state == .upcoming }
+    let checkpoint = checkpointPhase?.checkpoint
     let chapter = isExam ? nil : plan.nextChapter
+    let chapterPhase = plan.phases.first { $0.chapters.contains { $0.state == .current } }
+    // A challenge in the next session comes before the next phase's lessons, as on Today.
+    let challengeFirst =
+      checkpoint?.when == .nextSession
+      && (checkpointPhase?.index ?? 0) < (chapterPhase?.index ?? -1)
 
     if mockDate != nil || chapter?.chapterId != nil || checkpoint != nil || isExam {
       PageSection {
@@ -501,6 +507,10 @@ struct NextOnPathSection: View {
                 "Mock exam", tableName: "Plan", comment: "The next mock exam on the path"),
               detail: Text(PlanDate.text(mockDate, today: plan.today)), kind: .mock)
           }
+        }
+
+        if challengeFirst, let checkpoint {
+          checkpointRow(checkpoint)
         }
 
         if let chapter, let chapterId = chapter.chapterId {
@@ -521,14 +531,8 @@ struct NextOnPathSection: View {
           }
         }
 
-        if let checkpoint {
-          Button {
-            router.open(.challenge(planItemId: checkpoint.planItemId))
-          } label: {
-            PlanChallengeLabel(
-              when: checkpointWhen(checkpoint), explains: true,
-              isLanguage: context.goal.kind == .language)
-          }
+        if !challengeFirst, let checkpoint {
+          checkpointRow(checkpoint)
         }
 
         finishRow
@@ -538,6 +542,16 @@ struct NextOnPathSection: View {
             "Next on your path", tableName: "Plan",
             comment: "Section of what comes next on the plan"))
       }
+    }
+  }
+
+  private func checkpointRow(_ checkpoint: PlanPhase.Checkpoint) -> some View {
+    Button {
+      router.open(.challenge(planItemId: checkpoint.planItemId))
+    } label: {
+      PlanChallengeLabel(
+        when: checkpoint.whenText(today: context.plan.today), explains: true,
+        isLanguage: context.goal.kind == .language)
     }
   }
 
@@ -552,25 +566,12 @@ struct NextOnPathSection: View {
     .disclosureChevron()
   }
 
-  private func checkpointWhen(_ checkpoint: PlanPhase.Checkpoint) -> Text? {
-    switch checkpoint.when {
-    case .nextSession:
-      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
-    case .queued:
-      Text(
-        "After the challenge before it", tableName: "Plan",
-        comment: "When the phase's challenge comes")
-    case .date:
-      checkpoint.date.map { Text(PlanDate.text($0, today: context.plan.today)) }
-    }
-  }
-
   @ViewBuilder
   private var finishRow: some View {
     let finish = IconLabeledContent {
       planFinishText(context)
     } title: {
-      Text(context.goal.title).foregroundStyle(.primary)
+      Text(context.goal.displayName).foregroundStyle(.primary)
     } icon: {
       Image(systemName: "flag")
     }
@@ -598,8 +599,11 @@ func planFinishText(_ context: PlanContext) -> Text? {
   let schedule = plan.schedule
 
   if let targetDate = schedule.targetDate {
-    let date = PlanDate.text(targetDate, today: plan.today, month: schedule.targetDateNamedMonth)
-    return schedule.targetDateEstimated ? Text(verbatim: "~\(date)") : Text(date)
+    let month = schedule.targetDateNamedMonth
+
+    return schedule.targetDateEstimated
+      ? PlanDate.estimateText(targetDate, today: plan.today, month: month)
+      : Text(PlanDate.text(targetDate, today: plan.today, month: month))
   }
 
   if context.goal.kind == .exam {
@@ -607,7 +611,7 @@ func planFinishText(_ context: PlanContext) -> Text? {
       "Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet")
   }
 
-  return plan.estimate.endDate.map { Text(verbatim: "~\(PlanDate.text($0, today: plan.today))") }
+  return plan.estimate.endDate.map { PlanDate.estimateText($0, today: plan.today) }
 }
 
 struct PlanMoreSection: View {

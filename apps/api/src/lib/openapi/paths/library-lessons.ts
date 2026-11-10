@@ -1,3 +1,7 @@
+import {
+  lessonClockInputSchema,
+  lessonClockResultSchema,
+} from "@zoonk/core/lesson-player/clock-contract";
 import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
 import {
   answerExplanationInputSchema,
@@ -5,6 +9,8 @@ import {
   lessonStepCheckInputSchema,
   lessonStepCheckResultSchema,
   libraryLessonCompletionSchema,
+  libraryLessonOpenedSchema,
+  libraryLessonRetryableSchema,
   libraryLessonRunSchema,
   libraryLessonStartInputSchema,
 } from "@zoonk/core/lesson-player/contract";
@@ -66,6 +72,31 @@ export const libraryLessonPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get the team for a lesson's challenge",
+      tags: ["Library lessons"],
+    },
+  },
+  "/library/lessons/{lessonId}/clock": {
+    post: {
+      description:
+        "Pauses focused lesson time on hide, background or exit, and resumes it on return. Initial activation is part of Start. Use the runId and clockId returned by this player's latest lesson start, with a strictly increasing sequence starting at 1 for each visibility change. Retries reuse the same sequence. Replayed or out-of-order transitions, completed runs and clocks replaced by a later start or another block are ignored. No client timestamps or durations are accepted. A lesson outside an active study block has no clockId. Completion while paused counts only time already accrued.",
+      operationId: "updateLibraryLessonClock",
+      requestBody: {
+        content: { "application/json": { schema: lessonClockInputSchema } },
+        required: true,
+      },
+      requestParams: { path: lessonPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: lessonClockResultSchema } },
+          description:
+            "updated: applied to this interval; ignored: replayed, stale or no longer active",
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Pause or resume a lesson clock",
       tags: ["Library lessons"],
     },
   },
@@ -142,6 +173,11 @@ export const libraryLessonPaths = {
       },
       requestParams: { path: lessonPathParamsSchema },
       responses: {
+        "200": {
+          content: { "application/json": { schema: libraryLessonOpenedSchema } },
+          description:
+            "The explicit study opening leads elsewhere; no run or lesson allowance was created",
+        },
         "201": {
           content: { "application/json": { schema: libraryLessonRunSchema } },
           description: "The run to answer and finish",
@@ -159,6 +195,10 @@ export const libraryLessonPaths = {
         },
         "404": notFoundResponse,
         "429": tooManyRequestsResponse,
+        "503": {
+          content: { "application/json": { schema: libraryLessonRetryableSchema } },
+          description: "The study opening could not commit; retry the same opening",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Start a Library lesson",
@@ -194,7 +234,7 @@ export const libraryLessonPaths = {
   "/steps/{stepId}/checks": {
     post: {
       description:
-        "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; a screen answered more often than a run allows is graded by code and not recorded. `LESSON_RUN_ENDED` (409) means the run finished.",
+        "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
       operationId: "createStepCheck",
       requestBody: {
         content: { "application/json": { schema: lessonStepCheckInputSchema } },

@@ -5,6 +5,7 @@ import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
 import {
   ListGroup,
+  ListRowBody,
   ListRowButton,
   ListRowContent,
   ListRowLink,
@@ -39,10 +40,11 @@ function useSettingsPages({
       "appearance",
       t({
         description:
-          "A page inside Settings for the buddy, sounds, daily time limit and app language: use a word other than “Settings”.",
+          "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",
         message: "Preferences",
       }),
     ),
+    toPage("aboutYou", t("About you")),
     toPage("memory", t("Memory")),
   ].filter((item) => item !== false);
 
@@ -72,14 +74,16 @@ function SettingsGroup({ items }: { items: SettingsPage[] }) {
     <ListGroup>
       {items.map((item) => (
         <ListRowLink href={item.url} key={item.url}>
-          <ListRowContent>
-            <ListRowTitle>{item.label}</ListRowTitle>
-          </ListRowContent>
-          {item.trail !== null && item.trail !== undefined && (
-            <ListRowTrailing className={typeof item.trail === "number" ? undefined : "font-sans"}>
-              {item.trail}
-            </ListRowTrailing>
-          )}
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{item.label}</ListRowTitle>
+            </ListRowContent>
+            {item.trail !== null && item.trail !== undefined && (
+              <ListRowTrailing className={typeof item.trail === "number" ? undefined : "font-sans"}>
+                {item.trail}
+              </ListRowTrailing>
+            )}
+          </ListRowBody>
         </ListRowLink>
       ))}
     </ListGroup>
@@ -107,10 +111,12 @@ export function SettingsHubLists({
 }: SettingsPagesShown & { memoryCount?: number; preferencesSummary?: React.ReactNode }) {
   const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: false });
 
-  const summaries = yours.map((item) => ({
-    ...item,
-    trail: item.url === getMenu("appearance").url ? preferencesSummary : memoryCount,
-  }));
+  const trails = new Map<string, React.ReactNode>([
+    [getMenu("appearance").url, preferencesSummary],
+    [getMenu("memory").url, memoryCount],
+  ]);
+
+  const summaries = yours.map((item) => ({ ...item, trail: trails.get(item.url) }));
 
   return (
     <nav aria-label={label} className="flex flex-col gap-6">

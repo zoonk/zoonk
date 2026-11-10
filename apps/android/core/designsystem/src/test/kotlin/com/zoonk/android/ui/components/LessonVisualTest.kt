@@ -33,7 +33,7 @@ class LessonVisualTest {
     }
 
     @Test
-    fun categoryLabelsSplitThenSkipWhenTheyDontFit() {
+    fun categoryLabelsWrapThenSkipWhenAWordDoesntFit() {
         val width = { label: String -> label.length * 6.6f + 6 }
 
         assertEquals(CategoryLabels(listOf(listOf("2019"), listOf("2020")), 1), categoryLabels(40f, listOf("2019", "2020"), width))
@@ -42,8 +42,15 @@ class LessonVisualTest {
             categoryLabels(50f, listOf("Gross income", "Net income"), width),
         )
         assertEquals(
-            CategoryLabels(listOf(listOf("North America"), listOf("South-East Asia")), 2),
+            CategoryLabels(listOf(listOf("North", "America"), listOf("South-", "East", "Asia")), 1),
             categoryLabels(60f, listOf("North America", "South-East Asia"), width),
+        )
+        assertEquals(
+            CategoryLabels(
+                listOf(listOf("Responses", "from the", "regional", "customer", "support team"), listOf("Junho")),
+                1,
+            ),
+            categoryLabels(90f, listOf("Responses from the regional customer support team", "Junho"), width),
         )
         assertEquals(3, categoryLabels(30f, listOf("Brazilian", "Argentinian", "Chilean"), width).step)
     }

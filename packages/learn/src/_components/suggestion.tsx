@@ -17,6 +17,7 @@ import { LearnLink } from "../learn-link";
 import { ChangeSaveError } from "./save-error";
 import { type Answered, useFocusOnAnswer, useFocusOnRemovedControl } from "./suggestion-focus";
 import { SURFACE_CLASS } from "./surface";
+import { TITLE_ROW_CLASS } from "./title-row";
 
 type Presentation = "line" | "panel" | "sheet";
 
@@ -139,7 +140,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
         {...props}
       >
         <SuggestionMark />
-        {children}
+        <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-2")}>{children}</div>
       </div>
     </PresentationContext>
   );
@@ -149,7 +150,7 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground line-clamp-2 min-w-0 flex-1 text-[0.8125rem] leading-snug",
+        "text-muted-foreground stacked:line-clamp-none line-clamp-2 min-w-0 flex-1 text-[0.8125rem] leading-snug",
         className,
       )}
       data-slot="suggestion-summary"

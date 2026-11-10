@@ -282,6 +282,7 @@ private actor PlanAPIStub: PlanAPIClient {
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
   { .saved }
+  func rename(token: String, goalId: String, displayName: String) async throws -> Bool { true }
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   { nil }
   func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])

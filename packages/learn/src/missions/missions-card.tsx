@@ -8,6 +8,7 @@ import { useId } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { FactSegments } from "../_components/task-meta";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -90,10 +91,39 @@ function MissionRowEnd({ mission }: { mission: MissionView }) {
   return <TargetIcon aria-hidden="true" className="text-brain size-3.5" />;
 }
 
+function MissionsHeading({
+  missions,
+  points,
+  titleId,
+  won,
+}: {
+  missions: readonly MissionView[];
+  points: number;
+  titleId: string;
+  won: boolean;
+}) {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col gap-0.5">
+      <h2 className="text-sm leading-snug font-semibold wrap-break-word" id={titleId}>
+        {won ? t("Missions done") : t("Today's missions")}
+      </h2>
+      <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums">
+        <MissionsStatus missions={missions} points={points} />
+        <span className="sr-only">
+          {", "}
+          <ProgressCount done={countDoneMissions(missions)} total={missions.length} />
+        </span>
+      </p>
+    </div>
+  );
+}
+
 function MissionsLine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Surface
-      className={cn("flex min-h-14 items-center gap-3 px-4 py-2.5 text-sm", className)}
+      className={cn(TITLE_ROW_CLASS, "min-h-14 gap-y-1 px-4 py-2.5 text-sm", className)}
       data-slot="missions-card"
     >
       {children}
@@ -184,20 +214,10 @@ export function MissionsCard({
       <div className="flex items-start gap-2.5">
         {showBuddy && <BuddyFace buddy={buddy} className="mt-0.5 size-6" />}
 
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <h2 className="text-sm leading-snug font-semibold wrap-break-word" id={titleId}>
-            {won ? t("Missions done") : t("Today's missions")}
-          </h2>
-          <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums">
-            <MissionsStatus missions={missions} points={points} />
-            <span className="sr-only">
-              {", "}
-              <ProgressCount done={countDoneMissions(missions)} total={missions.length} />
-            </span>
-          </p>
+        <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 items-start gap-y-1")}>
+          <MissionsHeading missions={missions} points={points} titleId={titleId} won={won} />
+          <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
         </div>
-
-        <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
       </div>
 
       <MissionTrack className="mt-3.5" missions={missions} />

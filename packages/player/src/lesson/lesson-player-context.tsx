@@ -21,6 +21,8 @@ export type LessonPlayerActions = {
   check: () => void;
   continue: () => void;
   dontKnow: (stepId: string) => void;
+  /** Any press or key in the player: a canvas can hold work it hasn't reported yet. */
+  engage: () => void;
   explainFirst: () => void;
   goBack: () => void;
   knowThis: () => void;
@@ -31,6 +33,7 @@ export type LessonPlayerActions = {
   /** Applies to every lesson today without changing the plan. */
   skipWriting: () => void;
   skipSteps: (stepIds: string[]) => void;
+  startRecording: () => void;
   submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;
 };
 

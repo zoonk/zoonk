@@ -11,15 +11,20 @@ import {
   type LessonPlayerState,
   getCurrentStep,
 } from "./lesson-player-state";
-import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonPlayerLesson,
+  type PlayableLibraryStep,
+} from "./lesson-player-types";
 import { useLessonRun } from "./use-lesson-run";
+import { usePageLifecycle } from "./use-page-lifecycle";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
 import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
 
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
-  language: string;
+  lesson: Pick<LessonPlayerLesson, "id" | "language" | "steps">;
   state: LessonPlayerState;
   track: (event: AnalyticsEvent) => void;
   writeExampleLines: () => void;
@@ -55,26 +60,18 @@ function revealWithoutGuess({
   return true;
 }
 
-export function useLessonPlayerActions({
+function useCompletionSave({
   adapters,
+  closeClock,
   dispatch,
-  language,
+  ensureRun,
+  flushUnsaved,
+  startRun,
   state,
-  track,
-  writeExampleLines,
-}: ActionsInput) {
-  const lessonRun = useLessonRun({ adapters, dispatch, lessonId: state.lessonId });
-  const { ensureRun, flushChecks, resendHeld } = lessonRun;
-
-  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
-    ...lessonRun,
-    adapters,
-    dispatch,
-    state,
-  });
-
+}: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
+  Pick<ReturnType<typeof useLessonRun>, "closeClock" | "ensureRun" | "flushUnsaved" | "startRun">) {
   const saveCompletion = useEffectEvent(async () => {
-    const [allSaved, run] = await Promise.all([flushChecks(), ensureRun()]);
+    const [allSaved, run] = await Promise.all([flushUnsaved(), ensureRun()]);
 
     const outcome =
       allSaved && run
@@ -89,6 +86,7 @@ export function useLessonPlayerActions({
         : null;
 
     if (outcome?.status === "completed") {
+      closeClock();
       dispatch({ result: outcome.completion, type: "completionSaved" });
       return;
     }
@@ -96,7 +94,7 @@ export function useLessonPlayerActions({
     const [restarted, pictures] =
       outcome?.status === "incomplete"
         ? await Promise.all([
-            adapters.startLesson(run ? { runId: run.runId } : undefined).catch(() => null),
+            startRun(run ? { runId: run.runId } : undefined).catch(() => null),
             adapters.getLessonPictures?.().catch(() => []) ?? Promise.resolve([]),
           ])
         : [null, []];
@@ -124,6 +122,35 @@ export function useLessonPlayerActions({
     }
   }, [isSaving]);
 
+  usePageLifecycle({
+    onBack: () => {
+      if (state.phase === "completed" && state.completion?.status === "failed") {
+        dispatch({ type: "completionRetried" });
+      }
+    },
+  });
+}
+
+export function useLessonPlayerActions({
+  adapters,
+  dispatch,
+  lesson,
+  state,
+  track,
+  writeExampleLines,
+}: ActionsInput) {
+  const lessonRun = useLessonRun({ adapters, dispatch, lesson });
+  const { ensureRun, resendUnsaved } = lessonRun;
+
+  const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
+    ...lessonRun,
+    adapters,
+    dispatch,
+    state,
+  });
+
+  useCompletionSave({ ...lessonRun, adapters, dispatch, state });
+
   const check = useCallback(() => {
     const step = getCurrentStep(state);
     const answer = step ? state.answers[step.id] : undefined;
@@ -146,12 +173,12 @@ export function useLessonPlayerActions({
       return;
     }
 
-    if (isServerGradedAnswer({ answer, step })) {
-      void gradeOnServer({ answer, step });
+    const graded = gradeStepAnswer({ answer, language: lesson.language, step });
+
+    if (isServerGradedAnswer({ answer, isCorrect: graded?.isCorrect, step })) {
+      void gradeOnServer({ answer, answerText: graded?.answerText, step });
       return;
     }
-
-    const graded = gradeStepAnswer({ answer, language, step });
 
     if (!graded) {
       return;
@@ -177,7 +204,7 @@ export function useLessonPlayerActions({
     dispatch,
     ensureRun,
     gradeOnServer,
-    language,
+    lesson.language,
     recordInBackground,
     state,
     track,
@@ -189,7 +216,7 @@ export function useLessonPlayerActions({
       check,
       continue: () => {
         void ensureRun();
-        void resendHeld();
+        void resendUnsaved();
         writeExampleLines();
         dispatch({ type: "continue" });
       },
@@ -203,6 +230,7 @@ export function useLessonPlayerActions({
 
         dispatch({ stepId, type: "skipWriting" });
       },
+      engage: () => dispatch({ type: "engaged" }),
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => {
         writeExampleLines();
@@ -221,9 +249,10 @@ export function useLessonPlayerActions({
         setChosenToday(CANT_WRITE_TODAY, true);
         dispatch({ type: "skipWriting" });
       },
+      startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],
+    [check, dispatch, ensureRun, resendUnsaved, state.steps, submitSpokenAnswer, writeExampleLines],
   );
 
   return { actions, reopen: lessonRun.reopen };

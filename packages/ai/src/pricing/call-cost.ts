@@ -180,15 +180,20 @@ export function computeCallCostUsd({
   charge,
   model,
   serviceTier,
+  speed,
   usage,
 }: {
   at?: Date;
   charge?: GatewayCharge;
   model: string;
   serviceTier?: string;
+  /** The gateway lists a model's fast price as its own `-fast` model. */
+  speed?: "fast";
   usage: CallUsage;
 }): number | undefined {
-  const pricing = getModelPricing({ at, model });
+  const pricing =
+    (speed && getModelPricing({ at, model: `${model}-${speed}` })) ||
+    getModelPricing({ at, model });
 
   return addGatewayCharge({
     charge,

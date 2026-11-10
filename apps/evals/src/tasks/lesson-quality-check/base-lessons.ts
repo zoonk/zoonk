@@ -24,7 +24,7 @@ const RECORDED = {
         {
           image: null,
           kind: "hookText",
-          text: "Around 1160, builders in Paris began pointing the arches over church doors. The shape carried the weight down slender columns, so churches could grow taller and lighter. A doorway's shape still tells you when it was built.",
+          text: "Pointed arches, ribbed vaults and flying buttresses helped Gothic churches grow taller and admit more light. A doorway's shape can suggest its style, even when a later building imitates it. What can a doorway's shape tell you?",
           visual: null,
         },
         {
@@ -626,8 +626,7 @@ const RECORDED = {
             { isCorrect: false, text: "−8 °C" },
           ],
           question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-          reveal:
-            "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+          reveal: "It shows 2 °C.",
           visual: null,
         },
         {
@@ -655,7 +654,7 @@ const RECORDED = {
           visual: null,
         },
         {
-          basis: null,
+          basis: { quote: "A rise always moves **up** the thermometer.", screen: 2 },
           context: null,
           correctReason: "You start at {start} °C and move {rise} degrees up.",
           image: null,
@@ -708,7 +707,7 @@ const RECORDED = {
         },
         {
           acceptedAnswers: [],
-          basis: null,
+          basis: { quote: "From −3 °C, going up 3 degrees takes you to zero.", screen: 2 },
           context: null,
           keyPoints: ["Going up 3 degrees reaches zero", "The last 2 degrees go above zero"],
           kind: "typedAnswer",

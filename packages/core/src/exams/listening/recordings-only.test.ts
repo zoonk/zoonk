@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getChapterTestOut } from "../../learner/test-out/get-chapter-test-out";
+import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { getMistakePractice } from "../../mistakes/get-mistake-practice";
 import { getFocusTest } from "../../plans/focus-test/get-focus-test";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
@@ -54,11 +55,12 @@ function setGraphAreas({
 
 const LISTENING_GOAL = { kind: "exam", targetLanguage: "en" } as const;
 
-async function listeningLearnerFixture() {
+async function listeningLearnerFixture(challengesDone = true) {
   const user = await userFixture();
   const { blueprint } = await listeningExamFixture();
 
   const fixture = await sessionGoalFixture({
+    challengesDone,
     goal: { ...LISTENING_GOAL, dailyMinutes: 10, examBlueprintId: blueprint.id },
     itemsPerSkill: 6,
     lessons: 4,
@@ -136,7 +138,7 @@ async function recordingFixture(
 }
 
 async function listeningPhaseFixture() {
-  const fixture = await listeningLearnerFixture();
+  const fixture = await listeningLearnerFixture(false);
   const { plan, planItems, skills } = fixture;
 
   await Promise.all([
@@ -297,7 +299,7 @@ describe("an exam's listening skills outside practice", () => {
 
   it("stays out of its phase's challenge", async () => {
     const { goal, heardId, heardItemIds, plan, planItems, readIds, skills, user } =
-      await listeningLearnerFixture();
+      await listeningLearnerFixture(false);
 
     await Promise.all([
       ...planItems
@@ -446,6 +448,32 @@ describe("an exam's listening skills outside practice", () => {
       expect(practice[0]?.questions[0]?.set?.listening).toBeTruthy();
     },
   );
+
+  it("doesn't let a right answer on a recording fix a listening miss with no recording of its own", async () => {
+    const { heardId, user } = await listeningLearnerFixture();
+    const [, missed] = await recordingFixture(heardId);
+
+    const [practiced] = await Promise.all([
+      mistakeFixture({
+        createdAt: daysAgo(3),
+        itemId: missed?.id,
+        skillId: heardId,
+        userId: user.id,
+      }),
+      mistakeFixture({ createdAt: daysAgo(3), skillId: heardId, userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await answerMistakePractice({
+      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: missed?.id ?? "" },
+      mistakeId: practiced.id,
+    });
+
+    expect(result.status === "ready" && result.feedback.fixedMistakeIds).toStrictEqual([
+      practiced.id,
+    ]);
+  });
 });
 
 describe("an exam's listening skills in text tests", () => {
@@ -454,6 +482,7 @@ describe("an exam's listening skills in text tests", () => {
     const { blueprint } = await listeningExamFixture();
 
     const { chapters, goal, plan, skills } = await learnerGoalFixture({
+      challengesDone: true,
       itemsPerSkill: 4,
       phases: [2, 2],
       userId: user.id,

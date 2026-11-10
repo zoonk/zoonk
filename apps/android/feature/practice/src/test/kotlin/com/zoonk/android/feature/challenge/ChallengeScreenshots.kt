@@ -218,10 +218,6 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneUsedUp() = show("phone-used-up", "dailyLimitReached" to true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneMoved() = show("phone-moved", "kind" to "weekly", "canMove" to true, moved = true)
 
     private val noTopics = "topics" to JsonArray(emptyList())

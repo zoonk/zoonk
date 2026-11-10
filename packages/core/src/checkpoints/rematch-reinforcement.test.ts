@@ -123,9 +123,8 @@ describe("a lost duel's actual reinforcement lessons", () => {
 
     expect(tomorrow.session.blocks.filter((entry) => entry.reinforcement)).toHaveLength(count);
 
-    expect(tomorrow.session.blocks.at(-1)?.checkpoint).toMatchObject({
-      kind: final ? "finalBoss" : "boss",
-      rematch: true,
-    });
+    expect(
+      tomorrow.session.blocks.find((entry) => entry.checkpoint?.rematch)?.checkpoint,
+    ).toMatchObject({ kind: final ? "finalBoss" : "boss", rematch: true });
   });
 });

@@ -9,6 +9,7 @@ import { EnterButton } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
+import { useStudyTimeFact } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { DayMoment } from "./day-moment";
@@ -16,17 +17,19 @@ import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
-import { type StudyMomentView, type StudySession } from "./session-types";
+import { type StudyMomentView } from "./session-types";
 import { StudyMoment } from "./study-moment";
 import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
 type LessonMomentCompletion = {
+  failures: number;
   result:
     | (ProgressCelebration & {
         brainPower: number;
         finishedChapter: FinishedChapter | null;
         nextReviewAt: string | null;
+        seconds: number;
         studyBlock: StudyMomentView | null;
       })
     | null;
@@ -36,36 +39,35 @@ type LessonMomentCompletion = {
 
 type OutsideSessionResult = NonNullable<LessonMomentCompletion["result"]>;
 
-type LessonMomentSession = Pick<StudySession, "blocks">;
-
 function SavedMoment({
   buddy,
+  lessonSeconds,
   moment,
   onContinue,
   onStartTestOut,
   onStop,
-  session,
+  continueHref,
   testedOut,
 }: {
   buddy?: LearnBuddy | null;
+  lessonSeconds: number;
   moment: StudyMomentView;
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
-  session: LessonMomentSession;
+  continueHref?: string | null;
   testedOut: boolean;
 }) {
   return (
     <StudyMoment
-      blocks={session.blocks}
+      continueHref={continueHref}
       buddy={buddy}
-      finishedChapterId={
-        session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
-      }
+      finishedChapterId={moment.finishedChapterId}
       inLessonPlayer
       kind="learn"
+      lessonSeconds={lessonSeconds}
       moment={moment}
-      next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
+      next={moment.next?.block ?? null}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
@@ -87,6 +89,7 @@ function OutsideSession({
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const studied = useStudyTimeFact(result?.seconds ?? 0);
   const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
 
   return (
@@ -97,6 +100,7 @@ function OutsideSession({
             <MomentReadouts
               brainPower={result.brainPower}
               facts={[
+                studied,
                 result.nextReviewAt &&
                   t("Review on {date}", {
                     date: format.dateTime(new Date(result.nextReviewAt), {
@@ -164,7 +168,7 @@ export function LessonMoment({
   onRetry,
   onStartTestOut,
   onStop,
-  session,
+  continueHref,
 }: {
   buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
@@ -172,39 +176,34 @@ export function LessonMoment({
   onRetry: () => void;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
-  session: LessonMomentSession;
+  continueHref?: string | null;
 }) {
   const t = useExtracted();
   const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
-  const moment = completion.result?.studyBlock ?? null;
+  const result = completion.result;
+  const moment = result?.studyBlock ?? null;
 
   if (completion.status === "failed") {
-    return <FailedMoment onRetry={onRetry} title={title} />;
+    return <FailedMoment failures={completion.failures} onRetry={onRetry} />;
   }
 
   if (!moment && completion.status === "saved") {
-    return (
-      <OutsideSession
-        buddy={buddy}
-        onContinue={onContinue}
-        result={completion.result}
-        title={title}
-      />
-    );
+    return <OutsideSession buddy={buddy} onContinue={onContinue} result={result} title={title} />;
   }
 
-  if (!moment) {
-    return <PendingMoment action={t("Continue")} title={title} />;
+  if (!result || !moment) {
+    return <PendingMoment action={t("Continue")} />;
   }
 
   return (
     <SavedMoment
       buddy={buddy}
+      lessonSeconds={result.seconds}
       moment={moment}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
-      session={session}
+      continueHref={continueHref}
       testedOut={completion.testedOut}
     />
   );

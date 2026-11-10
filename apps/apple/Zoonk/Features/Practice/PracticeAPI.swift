@@ -4,7 +4,6 @@ import OpenAPIRuntime
 /// Transport, sign-in and missing resources stay `APIError`.
 enum PracticeAPIError: Error, Equatable, Sendable {
   case conflict(code: String?)
-  case dailyLimitReached
   case invalid(code: String?)
   case limit(HelpLimit)
   case plusRequired
@@ -125,7 +124,6 @@ struct PracticeAPI: Sendable {
       {
       case .ok: return
       case .unauthorized: throw APIError.unauthorized
-      case .forbidden: throw PracticeAPIError.dailyLimitReached
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
       default: throw APIError.unavailable
@@ -514,7 +512,6 @@ struct PracticeAPI: Sendable {
       {
       case .ok(let response): return try response.body.json
       case .code402: throw PracticeAPIError.plusRequired
-      case .forbidden: throw PracticeAPIError.dailyLimitReached
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
       case .unauthorized: throw APIError.unauthorized

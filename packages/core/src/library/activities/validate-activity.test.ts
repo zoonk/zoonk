@@ -213,10 +213,10 @@ describe(validateActivity, () => {
     expect(chart.ok && chart.content.data).toStrictEqual(exampleData);
   });
 
-  it("reports labels that don't fit as labelTooLong", () => {
+  it("keeps a label past its target as written", () => {
     const longLabel = structuredClone(fixtures.numberLine);
     longLabel.fields.label = "A temperature reading taken every hour at the station";
-    expect(issueCodes(longLabel)).toContain("labelTooLong");
+    expect(validateActivity(longLabel).ok).toBe(true);
   });
 
   it("rejects inconsistent template data", () => {

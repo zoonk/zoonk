@@ -172,3 +172,12 @@ export function summarizePlan({
     skillLessons: countSkillLessons(queue),
   };
 }
+
+export function listDroppedSkills(dropped: readonly { depth?: boolean; skillId: string | null }[]) {
+  return {
+    droppedSkillIds: [...new Set(dropped.flatMap((unit) => (unit.skillId ? [unit.skillId] : [])))],
+    waitingSkillIds: [
+      ...new Set(dropped.flatMap((unit) => (unit.skillId && !unit.depth ? [unit.skillId] : []))),
+    ],
+  };
+}

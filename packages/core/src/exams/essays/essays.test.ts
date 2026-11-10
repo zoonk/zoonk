@@ -1,7 +1,6 @@
 import { setTimeout as wait } from "node:timers/promises";
 import { gradeEssay } from "@zoonk/ai/tasks/grading/grade-essay";
 import { prisma } from "@zoonk/db";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -16,12 +15,7 @@ import {
 } from "../../entitlements/limits";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
-import {
-  DAY_MS,
-  SESSION_NOW,
-  SESSION_TODAY,
-  sessionGoalFixture,
-} from "../../sessions/_test-utils/session-goal";
+import { DAY_MS, SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { endEssayGradeClaim } from "./_utils/essay-grade-claims";
@@ -637,24 +631,6 @@ describe("essay drafts and access", () => {
     await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
       status: "ready",
     });
-  });
-
-  it("says the daily time limit is reached when a draft would start the writing block past it", async () => {
-    const { goal, user } = await essaySetup();
-    const today = await getTodayStudySession({ goalId: goal.id });
-    const blocks = today.status === "ready" ? today.session.blocks : [];
-    const blockId = blocks.find((block) => block.kind === "produce")?.id ?? "";
-
-    await Promise.all([
-      learningProfileFixture({ dailyLimitMinutes: 15, userId: user.id }),
-      dailyProgressFixtureMany([{ date: SESSION_TODAY, timeSpentSeconds: 1200, userId: user.id }]),
-    ]);
-
-    await expect(
-      submitEssay({ blockId, input: { durationMs: 1000, text: "My essay about it." } }),
-    ).resolves.toStrictEqual({ status: "dailyLimitReached" });
-
-    expect(gradeEssay).not.toHaveBeenCalled();
   });
 
   it("keeps a writing block to its learner, and only a writing block", async () => {

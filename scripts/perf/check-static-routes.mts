@@ -22,11 +22,12 @@ type PrerenderManifest = {
   dynamicRoutes: Record<string, Prerender>;
 };
 
-type Artifact = { artifact: string; problems: string[]; route: string };
+type Artifact = { artifact: string; problems: string[]; route: string; tags?: string[] };
 const HTTP_OK = 200;
 const HTTP_NOT_FOUND = 404;
 const REDIRECT_MIN = 300;
 const REDIRECT_END = 400;
+const IMPLICIT_TAG_PREFIX = "_N_T_";
 
 const METADATA_SOURCES = [
   "/robots.txt",
@@ -67,6 +68,33 @@ function staticProblems(entry: Prerender): string[] {
     entry.compute !== "static" && `compute=${entry.compute ?? "missing"}`,
     hasSetCookie(entry.initialHeaders) && "Set-Cookie in prerender headers",
   ].filter((problem) => problem !== false);
+}
+
+function cacheTags(meta: PageMeta): string[] {
+  return [meta.headers?.["x-next-cache-tags"] ?? ""]
+    .flat()
+    .join(",")
+    .split(",")
+    .filter((tag) => tag !== "" && !tag.startsWith(IMPLICIT_TAG_PREFIX));
+}
+
+/**
+ * Next renders the root layout and its not-found into every page, so a tagged read there tags them
+ * all, and each write to that tag re-renders the whole app.
+ */
+function sharedTagArtifacts(pages: Artifact[]): Artifact[] {
+  const [first, ...rest] = pages;
+
+  const shared =
+    rest.length === 0
+      ? []
+      : (first?.tags ?? []).filter((tag) => rest.every((page) => page.tags?.includes(tag)));
+
+  return shared.map((tag) => ({
+    artifact: "cache tags",
+    problems: [`carries ${tag}, so each write to it re-renders all of them`],
+    route: "every page",
+  }));
 }
 
 async function pageArtifact({
@@ -119,7 +147,7 @@ async function pageArtifact({
     problems.push(`${markers.skeletons} skeleton markers`);
   }
 
-  return { artifact: "HTML", problems, route: path };
+  return { artifact: "HTML", problems, route: path, tags: cacheTags(meta) };
 }
 
 async function metadataArtifact({
@@ -227,7 +255,8 @@ async function checkStatic(): Promise<void> {
     ),
   ]);
 
-  const artifacts = groups.flat();
+  const routes = groups.flat();
+  const artifacts = [...routes, ...sharedTagArtifacts(routes.filter(({ tags }) => tags))];
 
   console.table(
     artifacts.map(({ artifact, problems, route }) => ({

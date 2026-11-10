@@ -9,11 +9,9 @@ import { type EssayActions, EssayScreen } from "@zoonk/learn/essay";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useRef } from "react";
 
-const HREFS = { dailyLimit: "/settings/appearance", exit: "/today" };
+const HREFS = { exit: "/today" };
 
-type Submission = Promise<
-  EssayDraft | "dailyLimitReached" | "limitReached" | "signUpRequired" | null
->;
+type Submission = Promise<EssayDraft | "limitReached" | "signUpRequired" | null>;
 
 /**
  * Every draft still being graded is recorded before the block is finished, so the block counts it.
@@ -40,7 +38,7 @@ export function EssayClient({ essay }: { essay: EssayView }) {
       }
 
       const request: Submission = postToApp<
-        EssayDraft | "blockNotActive" | "dailyLimitReached" | "limitReached" | "signUpRequired"
+        EssayDraft | "blockNotActive" | "limitReached" | "signUpRequired"
       >({
         body: { ...input, timeZone: getLocalTimeZone() },
         path: `/api/essays/${encodeURIComponent(essay.blockId)}/submissions`,

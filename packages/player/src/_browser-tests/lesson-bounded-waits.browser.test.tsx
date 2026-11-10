@@ -21,7 +21,7 @@ describe("bounded waits", () => {
     vi.useRealTimers();
   });
 
-  it("a typed answer's check says it's still going, then offers to check again", async () => {
+  it("a typed answer's check says it's still going, then checks it again under the same id", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 
     const checkStep = vi
@@ -73,6 +73,7 @@ describe("bounded waits", () => {
       .element(page.getByRole("status").filter({ hasText: "Right, watch the spelling" }))
       .toBeVisible();
 
-    expect(checkStep).toHaveBeenCalledTimes(2);
+    const [first, again] = checkStep.mock.calls.map(([input]) => input.attemptId);
+    expect(again).toBe(first);
   });
 });

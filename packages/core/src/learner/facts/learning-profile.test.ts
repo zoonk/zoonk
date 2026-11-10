@@ -32,9 +32,7 @@ describe("learning profile request facts", () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
 
     const profile = await learningProfileFixture({
-      dailyLimitMinutes: 30,
-      instructions: "Use concrete examples",
-      interests: ["music"],
+      learningNeeds: ["examplesFirst"],
       memoryEnabled: false,
       soundsEnabled: false,
       userId: owner.id,
@@ -50,10 +48,7 @@ describe("learning profile request facts", () => {
 
     const view = await countDatabaseStatements(getLearningProfile);
 
-    expect(view).toMatchObject({
-      result: { activeGoalId: null, dailyLimitMinutes: 30, soundsEnabled: false },
-      writes: 0,
-    });
+    expect(view).toMatchObject({ result: { activeGoalId: null, soundsEnabled: false }, writes: 0 });
   });
 
   it.each(["active", "paused", "completed", "archived"] as const)(

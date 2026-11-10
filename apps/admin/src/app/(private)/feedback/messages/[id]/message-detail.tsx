@@ -3,13 +3,21 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
 import Link from "next/link";
-import { getLearnerLabel } from "@/lib/learner-label";
-import { feedbackContentKindLabels } from "../../_utils/feedback-labels";
+import {
+  feedbackContentKindLabels,
+  feedbackReportTypeLabels,
+  getFeedbackLearnerLabel,
+} from "../../_utils/feedback-labels";
 
 export type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
 
 function MessageContent({ message }: { message: FeedbackMessage }) {
   const { context } = message;
+
+  if (context.reportType) {
+    return feedbackReportTypeLabels[context.reportType];
+  }
+
   const kindLabel = context.contentKind ? feedbackContentKindLabels[context.contentKind] : null;
 
   if (!kindLabel) {
@@ -35,9 +43,9 @@ function MessageSenderField({ message }: { message: FeedbackMessage }) {
   return (
     <>
       <Link className="hover:underline" href={`/users/${message.user.id}`} prefetch>
-        {getLearnerLabel(message.user)}
+        {getFeedbackLearnerLabel(message.user)}
       </Link>
-      <span className="text-muted-foreground block">{message.email ?? message.user.email}</span>
+      <span className="text-muted-foreground block">{message.email ?? "No reply email"}</span>
     </>
   );
 }

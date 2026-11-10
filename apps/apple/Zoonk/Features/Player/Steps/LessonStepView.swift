@@ -62,7 +62,6 @@ struct LessonStepView: View {
   private var context: LessonStepContext {
     LessonStepContext(
       lessonId: state.lessonId,
-      studySessionId: store.studySessionId,
       answer: state.answers[step.id],
       result: state.results[step.id],
       isLocked: state.phase != .playing,
@@ -80,7 +79,6 @@ struct LessonStepView: View {
 
 struct LessonStepContext {
   let lessonId: String
-  let studySessionId: String?
   let answer: LessonAnswer?
   let result: LessonStepResult?
   let isLocked: Bool
@@ -411,6 +409,16 @@ enum SpokenAnswerMode: Equatable {
       self = .speak
     }
   }
+
+  /// An answered screen shows the way it was answered, whatever the learner picks today. A
+  /// recording keeps no answer.
+  init(answered answer: LessonAnswer?) {
+    switch answer {
+    case .spokenAnswer: self = .type
+    case .listening: self = .listen
+    default: self = .speak
+    }
+  }
 }
 
 extension LessonPlayerStore {
@@ -437,7 +445,9 @@ private struct SpokenAnswerStepView: View {
   }
 
   private var mode: SpokenAnswerMode {
-    store.spokenAnswerMode(canListen: listening != nil, canSpeak: recording.input != nil)
+    context.isLocked
+      ? SpokenAnswerMode(answered: context.answer)
+      : store.spokenAnswerMode(canListen: listening != nil, canSpeak: recording.input != nil)
   }
 
   var body: some View {
@@ -481,9 +491,10 @@ private struct SpokenAnswerStepView: View {
     if mode == .speak, let input = recording.input {
       input(
         SpokenAnswerContext(
-          lessonId: context.lessonId, studySessionId: context.studySessionId, stepId: step.id,
-          content: content,
+          lessonId: context.lessonId, stepId: step.id, content: content,
           isLocked: context.isLocked,
+          waitForRun: { await store.ensureRun() },
+          studySessionId: { store.studySessionId },
           onGraded: context.resolveSpoken,
           onBlocked: {
             store.isMicBlocked = true

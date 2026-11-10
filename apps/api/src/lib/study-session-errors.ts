@@ -6,7 +6,6 @@ export const studySessionErrorCodes = {
   alreadyAnswered: "ALREADY_ANSWERED",
   blockFinished: "BLOCK_FINISHED",
   blockNotActive: "BLOCK_NOT_ACTIVE",
-  dailyLimitReached: "DAILY_LIMIT_REACHED",
   earlierFirst: "EARLIER_FIRST",
   extraTimeUnavailable: "EXTRA_TIME_UNAVAILABLE",
   goalNotActive: "GOAL_NOT_ACTIVE",
@@ -31,7 +30,6 @@ type StudySessionRefusal =
         | "alreadyAnswered"
         | "blockFinished"
         | "blockNotActive"
-        | "dailyLimitReached"
         | "goalNotActive"
         | "invalidItem"
         | "lessonNotFinished"
@@ -50,7 +48,6 @@ const REFUSALS = {
   alreadyAnswered: { message: "This question was already answered", status: httpStatus.conflict },
   blockFinished: { message: "This block is already finished", status: httpStatus.conflict },
   blockNotActive: { message: "Start the block before answering", status: httpStatus.conflict },
-  dailyLimitReached: { message: "Today's time limit is reached", status: httpStatus.forbidden },
   goalNotActive: { message: "This goal is paused or finished", status: httpStatus.conflict },
   invalidItem: {
     message: "This question isn't part of the block",

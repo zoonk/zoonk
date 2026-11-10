@@ -5,7 +5,8 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockAccountSession, mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { feedbackMessageInputSchema } from "./contract";
 import { submitFeedback } from "./submit-feedback";
 
 const SENT = { data: Response.json({ ok: true }), error: null };
@@ -83,6 +84,102 @@ describe(submitFeedback, () => {
         textBody: "From: visitor@zoonk.test\n\nDo you have a course on welding?",
       }),
     );
+  });
+
+  it("stores a guest's save report without an email and emails it without a reply address", async () => {
+    const user = await userFixture();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockGuestSession(user.id);
+
+    const feedback = await submitFeedback(
+      feedbackMessageInputSchema.parse({
+        context: { platform: "web", reportType: "saveFailure", screen: "answers-save-error" },
+        message: "I couldn't save my answers.",
+      }),
+    );
+
+    await expect(
+      prisma.feedback.findUniqueOrThrow({ where: { id: feedback.id } }),
+    ).resolves.toMatchObject({
+      context: { platform: "web", reportType: "saveFailure", screen: "answers-save-error" },
+      email: null,
+      message: "I couldn't save my answers.",
+      status: "new",
+      userId: user.id,
+    });
+
+    expect(sendEmail).toHaveBeenCalledExactlyOnceWith({
+      subject: "Zoonk: a save keeps failing",
+      textBody: [
+        "From: no email",
+        "",
+        "I couldn't save my answers.",
+        "",
+        "---",
+        "Report: saveFailure",
+        "Screen: answers-save-error",
+        "Platform: web",
+      ].join("\n"),
+      to: "hello@zoonk.com",
+    });
+  });
+
+  it("stores a save report without a session or an email", async () => {
+    mockSession(null);
+
+    const feedback = await submitFeedback(
+      feedbackMessageInputSchema.parse({
+        context: { reportType: "saveFailure" },
+        message: "I couldn't save my answers.",
+      }),
+    );
+
+    await expect(
+      prisma.feedback.findUniqueOrThrow({ where: { id: feedback.id } }),
+    ).resolves.toMatchObject({ context: { reportType: "saveFailure" }, email: null, userId: null });
+  });
+
+  it("discards a guest's generated account email and emails without a reply address", async () => {
+    const user = await userFixture();
+    const guest = await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockAccountSession({ isAnonymous: true, user: guest });
+
+    const feedback = await submitFeedback({
+      email: guest.email,
+      message: "I couldn't save my answers.",
+    });
+
+    await expect(
+      prisma.feedback.findUniqueOrThrow({ where: { id: feedback.id } }),
+    ).resolves.toMatchObject({ email: null, userId: guest.id });
+
+    expect(sendEmail).toHaveBeenCalledExactlyOnceWith({
+      subject: "Zoonk Feedback",
+      textBody: "From: no email\n\nI couldn't save my answers.",
+      to: "hello@zoonk.com",
+    });
+  });
+
+  it("keeps a different reply email supplied by a guest", async () => {
+    const user = await userFixture();
+    const guest = await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockAccountSession({ isAnonymous: true, user: guest });
+
+    const feedback = await submitFeedback({
+      email: "guest@zoonk.test",
+      message: "Please reply to this address.",
+    });
+
+    await expect(
+      prisma.feedback.findUniqueOrThrow({ where: { id: feedback.id } }),
+    ).resolves.toMatchObject({ email: "guest@zoonk.test", userId: guest.id });
+
+    expect(sendEmail).toHaveBeenCalledExactlyOnceWith({
+      replyTo: "guest@zoonk.test",
+      subject: "Zoonk Feedback",
+      textBody: "From: guest@zoonk.test\n\nPlease reply to this address.",
+      to: "hello@zoonk.com",
+    });
   });
 
   it("snapshots the provenance of the content the message is about", async () => {

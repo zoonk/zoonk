@@ -17,6 +17,8 @@ import { listOwed } from "../../_test-utils/follow-ups";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
+import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
+import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
 
 function sentTips() {
@@ -194,6 +196,100 @@ describe(gradeSpokenAnswer, () => {
     });
   });
 
+  it.each(["recording", "typed"])(
+    "returns the closing attempt after a right %s answer without recording a miss or changing evidence",
+    async (source) => {
+      const [step, learner] = await Promise.all([
+        createSpokenStep(),
+        userFixture(),
+        aiOrganizationFixture(),
+      ]);
+
+      mockSession(learner.id);
+      const run = await lessonRunFixture({ lessonId: step.lessonId, userId: learner.id });
+
+      if (source === "recording") {
+        mockTranscript(TARGET_TEXT);
+        await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+      } else {
+        await checkLessonStep({
+          input: {
+            answer: { kind: "spokenAnswer", text: TARGET_TEXT },
+            durationMs: 2400,
+            runId: run.id,
+            timeZone: FIELDS.timeZone,
+          },
+          stepId: step.id,
+        });
+      }
+
+      const closing = await prisma.attempt.findFirstOrThrow({
+        where: { stepId: step.id, userId: learner.id },
+      });
+
+      expect(closing.isCorrect).toBe(true);
+
+      const before = await Promise.all([
+        prisma.attempt.findMany({ where: { userId: learner.id } }),
+        prisma.languageSkillLevel.findMany({ where: { userId: learner.id } }),
+        prisma.learnerSkill.findMany({ where: { userId: learner.id } }),
+      ]);
+
+      mockTranscript("How much is the hent?");
+      mockExplanation('Ouvimos "hent".');
+      const refused = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+      expect(refused).toMatchObject({
+        grade: { attemptId: closing.id, isCorrect: false, transcript: "How much is the hent?" },
+        status: "graded",
+      });
+
+      const after = await Promise.all([
+        prisma.attempt.findMany({ where: { userId: learner.id } }),
+        prisma.languageSkillLevel.findMany({ where: { userId: learner.id } }),
+        prisma.learnerSkill.findMany({ where: { userId: learner.id } }),
+      ]);
+
+      expect(after).toStrictEqual(before);
+      await expect(prisma.mistake.count({ where: { userId: learner.id } })).resolves.toBe(0);
+
+      await expect(
+        prisma.pronunciationReview.count({ where: { userId: learner.id } }),
+      ).resolves.toBe(0);
+    },
+  );
+
+  it("returns the third saved attempt when a recording exceeds the progress window's cap", async () => {
+    const [step, learner] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(learner.id);
+    await lessonRunFixture({ lessonId: step.lessonId, userId: learner.id });
+    mockExplanation("Diga a frase inteira.");
+
+    const results = await [1, 2, 3, 4].reduce<
+      Promise<Awaited<ReturnType<typeof gradeSpokenAnswer>>[]>
+    >(async (earlier) => {
+      const saved = await earlier;
+      mockTranscript("How much?");
+      return [...saved, await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id })];
+    }, Promise.resolve([]));
+
+    expect(results.every((result) => result.status === "graded")).toBe(true);
+
+    const attemptIds = results.flatMap((result) =>
+      result.status === "graded" ? [result.grade.attemptId] : [],
+    );
+
+    expect(new Set(attemptIds)).toHaveLength(3);
+    expect(attemptIds[3]).toBe(attemptIds[2]);
+    await expect(prisma.attempt.count({ where: { userId: learner.id } })).resolves.toBe(3);
+
+    const evidence = await prisma.languageSkillLevel.findFirstOrThrow({
+      where: { userId: learner.id },
+    });
+
+    expect(evidence.windowTotal).toBe(3);
+  });
+
   it("checks word by word when the transcriber refuses the language", async () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);
@@ -220,6 +316,47 @@ describe(gradeSpokenAnswer, () => {
 
     expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ expectedText: TARGET_TEXT, mediaType: AUDIO.mediaType }),
+    );
+  });
+
+  it("checks word by word when the transcript writes spelled-out letter names as letters", async () => {
+    const spelled = "Emma si scrive: e, emme, emme, a";
+    const user = await userFixture();
+    const step = await createSpokenStep({ language: "pt", targetLanguage: "it" });
+
+    await prisma.step.update({
+      data: {
+        content: {
+          language: "it",
+          prompt: "Soletre o nome Emma usando os nomes italianos das letras.",
+          targetText: spelled,
+          translation: "Emma se escreve: e, eme, eme, a",
+        },
+      },
+      where: { id: step.id },
+    });
+
+    mockSession(user.id);
+    mockTranscript("Emma si scrive E, M, M, A.");
+
+    vi.mocked(assessPronunciation).mockResolvedValueOnce({
+      data: {
+        transcript: spelled,
+        words: spelled
+          .split(" ")
+          .map((text) => ({ heard: null, issue: null, status: "correct" as const, text })),
+      },
+    } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: { isCorrect: true, transcript: spelled },
+      status: "graded",
+    });
+
+    expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ expectedText: spelled, language: "it" }),
     );
   });
 

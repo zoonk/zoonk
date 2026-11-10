@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "All ten characters are correct, with standard Hepburn romanization and matching Japanese audioText. The sound cues are suitable beginner approximations for US English speakers, reinforced by short, steady vowels, no glide, and unrounded lips for u. No forms are invented. No accuracy cap applies.",
+          "reasoning": "All ten characters are genuine hiragana with correct standard Hepburn readings and appropriate audioText. The US English sound comparisons include useful adjustments, especially unrounded u and glide-free o. Vowels are explicitly short, and the intro explains keeping them pure. No forms are invented, and no accuracy cap is triggered.",
           "score": 10,
           "label": "Accurate letters and sounds",
           "weight": 45
         },
         {
           "categoryId": "pedagogy",
-          "reasoning": "The lesson presents exactly the five vowels followed by the K row in conventional order, with a clear can-do and short summary. The intro gives practical reading direction and pronunciation guidance, so the unhelpful-intro cap does not apply. However, it substitutes “one beat” for the explicitly requested explanation that hiragana represents syllables. A real-word reading example would also make the lesson more immediately useful.",
+          "reasoning": "The lesson presents exactly the five vowels followed by the K row in the expected order, with a clear can-do and a short summary containing readable real words. The intro is practical, so the unhelpful-intro cap does not apply. However, it substitutes beats for the requested syllable explanation, does not explicitly scope reading direction to this lesson, and repeats advanced devoicing details that could wait.",
           "score": 8,
           "label": "Right first letters, useful intro",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "The learner-facing explanations use plain, concrete US English. The intro's Japanese character includes its romanization in parentheses, and there are no meta lines or wrong-language passages. No language cap applies.",
+          "reasoning": "The learner-facing prose is clear US English with concrete pronunciation comparisons and no meta commentary. Both hiragana examples in the intro carry romanization in parentheses. No wrong-language cap is triggered.",
           "score": 10,
           "label": "Learner's language and tone",
           "weight": 20
@@ -27,7 +27,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
+          "reasoning": "All 8 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -37,115 +37,56 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1889,
-          "outputTokens": 613,
-          "reasoningTokens": 184
+          "inputTokens": 2214,
+          "outputTokens": 653,
+          "reasoningTokens": 209
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The intro explains characters as beats but does not explicitly say that hiragana represents syllables, as requested. Its left-to-right instruction and steady-vowel guidance are otherwise useful.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The intro explains characters as beats rather than explicitly saying hiragana represents syllables, as requested. It also describes left-to-right reading as usual rather than clearly limiting that direction to this lesson. These are small framing gaps; the intro still helps learners read the characters.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "Add a brief reading example using only the taught characters, such as かお (kao), meaning “face,” so learners can apply the set to a real word.",
+          "conclusion": "Defer the repeated vowel-devoicing notes until a later lesson. They are broadly accurate, but add complexity before beginners have practiced the basic vowel sounds.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
         "expectations": "The first hiragana for a US English speaker: the five vowels and the K row (か, き, く, け, こ), standard Hepburn romanization, vowels described as short and pure, no forms. The intro says hiragana stands for syllables, read left to right here. In US English.",
-        "expected": { "joined": false },
         "id": "en-ja-hiragana-1",
-        "userInput": { "learnerLanguage": "en", "targetLanguage": "ja" }
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "ja"
+        }
       }
     },
     {
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The letters are genuine Cyrillic, the romanizations are standard, and no positional forms are invented. The syllable audio is explicitly announced and matches the examples. However, comparing stressed о to the open vowel in “avó” is wrong, triggering the mandatory cap of 4. The Russian false-friend contrasts are also not explicitly named.",
-          "score": 4,
-          "label": "Accurate letters and sounds",
-          "weight": 45
-        },
-        {
-          "categoryId": "pedagogy",
-          "reasoning": "The nine-letter selection is manageable and begins with the requested misleading look-alikes. The intro provides practical reading guidance, and both a can-do and a short summary are present, so neither pedagogy cap applies. However, the lesson leaves the specific look-alike traps implicit, offers little clearly unfamiliar shape coverage, uses а in audio before introducing it, and never demonstrates reading a real word.",
-          "score": 7,
-          "label": "Right first letters, useful intro",
-          "weight": 35
-        },
-        {
-          "categoryId": "language",
-          "reasoning": "The learner-facing prose is natural Brazilian Portuguese, with concrete local pronunciation comparisons and a plain, encouraging tone. The Cyrillic character appearing in the intro has its romanization in parentheses. There are no wrong-language passages or meta lines.",
-          "score": 10,
-          "label": "Learner's language and tone",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1944,
-          "outputTokens": 707,
-          "reasoningTokens": 190
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The sound cue for о is incorrect: stressed Russian о is closer to the closed Portuguese ô in “avô,” not the open ó in “avó.” This teaches a wrong vowel sound and triggers the accuracy score cap of 4.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The lesson warns about misleading look-alikes but never explicitly identifies the traps, such as В sounding like v rather than b, or Р sounding like r rather than p. It also does not clearly provide the requested few unfamiliar shapes alongside the look-alikes.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Introduce а before using it in the consonant audio examples, and finish with a real word assembled from the taught letters, such as ура (ura). This would turn recognition of a letter list into a concrete first reading achievement.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "The first Cyrillic for a Brazilian Portuguese speaker learning Russian: letters that look Latin but sound different (such as В, Н, Р, С, У) and a few new shapes, with sound cues compared to Portuguese sounds and false friends named. No forms. In Brazilian Portuguese.",
-        "expected": { "joined": false },
-        "id": "pt-ru-cyrillic-1",
-        "userInput": { "learnerLanguage": "pt", "targetLanguage": "ru" }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "All seven letters, romanizations and positional forms are correct. Alif has only isolated and final forms, and its joining restriction is accurately stated. Portuguese pronunciation cues use appropriate consonants, and audioText matches the announced syllables, including bā for the long vowel. No accuracy cap is triggered.",
+          "reasoning": "The letters, romanizations and sound cues are accurate. Stressed О is explicitly compared with the closed ô in “avô,” and unstressed О is described as closer to a. The Russian false friends are identified, consonant audio syllables are explained, and no positional forms are invented. No accuracy cap applies.",
           "score": 10,
           "label": "Accurate letters and sounds",
           "weight": 45
         },
         {
           "categoryId": "pedagogy",
-          "reasoning": "The seven common letters form a manageable introductory set. The intro provides practical right-to-left, joining and vowel guidance, with a clear can-do and short summary. However, no real word or joined reading example demonstrates how the taught forms work together, and the positional labels could be explained more concretely. Neither the letter-dumping nor unhelpful-intro cap applies.",
+          "reasoning": "The manageable nine-letter set prioritizes the requested false friends. The intro gives practical reading guidance and a decodable real word, followed by a clear can-do and short summary. However, the set lacks the requested unfamiliar shapes. Neither the letter-dump nor unhelpful-intro cap applies.",
           "score": 8,
           "label": "Right first letters, useful intro",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "Learner-facing explanations and form labels are in natural Brazilian Portuguese. Every Arabic example in the intro has a parenthesized romanization. The wording is direct, accessible and free of meta commentary; there is no wrong-language content.",
+          "reasoning": "Learner-facing explanations are in natural Brazilian Portuguese, with concrete Portuguese pronunciation comparisons. Cyrillic examples in the intro have parenthesized romanizations. The tone is plain and supportive, with no meta commentary or wrong-language text.",
           "score": 10,
           "label": "Learner's language and tone",
           "weight": 20
@@ -153,7 +94,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
+          "reasoning": "All 8 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -163,50 +104,56 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2348,
-          "outputTokens": 668,
-          "reasoningTokens": 229
+          "inputTokens": 2139,
+          "outputTokens": 658,
+          "reasoningTokens": 246
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The lesson promises reading sequences and real words but supplies only individual letters and pronunciation syllables. A short joined-word example is missing, so learners do not get to apply the positional forms to actual reading.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The lesson covers the requested Latin-looking false friends but omits the requested few unfamiliar shapes. Its additional letters—Х, А, О and К—also resemble Latin letters.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Explain that Inicial, Medial and Final describe positions within a connected group, which can be interrupted by ا. Explicitly distinguish letter names from sounds, keeping the existing sound-based audio examples.",
+          "conclusion": "Give НОС (nos) its Portuguese meaning, “nariz,” so the introductory reading example connects decoding with understanding a real word.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "The first Arabic letters for a Brazilian Portuguese speaker: a few common letters (such as ب, ت, ن, ي, ا) with their real joining forms labeled in Portuguese, the intro explaining right-to-left reading and joining, the sound separate from the letter's name, and ا without invented medial forms. In Brazilian Portuguese.",
-        "expected": { "joined": true },
-        "id": "pt-ar-letters-1",
-        "userInput": { "learnerLanguage": "pt", "targetLanguage": "ar" }
+        "expectations": "The first Cyrillic for a Brazilian Portuguese speaker learning Russian: letters that look Latin but sound different (such as В, Н, Р, С, У) and a few new shapes, with sound cues compared to Portuguese sounds and false friends named. О is among them: stressed О is compared with the closed ô of \"avô\", never an open ó like \"pó\", and unstressed О is said to sound closer to a. No forms. In Brazilian Portuguese.",
+        "id": "pt-ru-cyrillic-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "ru"
+        }
       }
     },
     {
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "All letters are genuine Hangul, and the reading aids follow Revised Romanization. The US English sound cues are reasonable beginner approximations; importantly, ㄱ and ㄷ are explicitly described as having no puff of air rather than as English voiced stops. Consonant audio uses the syllables explicitly announced in the pronunciation text, and no forms are invented. A short explanation of the positional romanization alternatives would improve clarity. No accuracy cap is triggered.",
-          "score": 9,
+          "reasoning": "All letters and positional forms are real; ا and ر correctly have only isolated and final forms. The sound cues are suitable for Brazilian Portuguese, and the audio syllables are explicitly explained rather than presented as letter names. No wrong-sound, wrong-romanization, or invented-form cap is triggered. However, letter names are absent, and the romanization of the long-vowel use of ي is incomplete.",
+          "score": 8,
           "label": "Accurate letters and sounds",
           "weight": 45
         },
         {
           "categoryId": "pedagogy",
-          "reasoning": "The manageable selection of five vowels and five simple consonants builds both the demonstrated syllable blocks and the real words 나무 and 고기. The introduction directly teaches the essential block principle and beside-versus-below vowel placement. There is a clear can-do and a short, useful summary. This is a focused first lesson, not a letter dump.",
-          "score": 10,
+          "reasoning": "The introduction usefully explains right-to-left reading, joining, and short-vowel marks. There is a clear can-do and a short summary. Eight letters remain a manageable introductory selection rather than a large alphabet dump, so the cap is not triggered. Nevertheless, the selection is broader than necessary, no complete joined word demonstrates practical reading, and the nonjoining letters are not explicitly identified.",
+          "score": 7,
           "label": "Right first letters, useful intro",
           "weight": 35
         },
         {
           "categoryId": "language",
-          "reasoning": "The instructional text is consistently plain US English. Every Hangul example in the introduction carries romanization in parentheses. The tone is approachable and concrete, with no meta commentary or wrong-language instructional text.",
+          "reasoning": "The learner-facing explanations and positional labels are in natural Brazilian Portuguese. Pronunciation comparisons use familiar Portuguese words, the Arabic example in the introduction includes romanization, and there are no meta lines or wrong-language passages.",
           "score": 10,
           "label": "Learner's language and tone",
           "weight": 20
@@ -214,7 +161,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
+          "reasoning": "All 8 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -224,25 +171,102 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1954,
-          "outputTokens": 659,
-          "reasoningTokens": 228
+          "inputTokens": 2633,
+          "outputTokens": 895,
+          "reasoningTokens": 378
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Briefly explain the paired romanizations: ㄱ and ㄷ are written g and d before vowels, but k and t at the end of a syllable. This would help beginners interpret the reading aids without treating them as interchangeable pronunciations.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Letter names are omitted, so learners are not explicitly taught the distinction between a letter's name and its sound. The lesson also provides no complete joined word to read and does not identify ا and ر as the letters that cannot connect onward. For ي, the long-vowel pronunciation /iː/ is explained, but its romanization ī is missing alongside y.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Start with a tighter group of letters and use them immediately in a fully vowelled word, such as بَاب (bāb, porta). Explain how its letters connect and where the connection stops. Add separately labeled names and sounds, and demonstrate both the consonant and long-vowel uses of ي.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The first Arabic letters for a Brazilian Portuguese speaker: a few common letters (such as ب, ت, ن, ي, ا) with their real joining forms labeled in Portuguese, the intro explaining right-to-left reading and joining, the sound separate from the letter's name, and ا without invented medial forms. In Brazilian Portuguese.",
+        "id": "pt-ar-letters-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "targetLanguage": "ar"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All letters are real Hangul, the reading aids follow Revised Romanization, and no positional forms are invented. The ㄱ cue explicitly uses unaspirated k rather than equating it with English g. The positional explanations for ㅇ and ㅅ are accurate, and consonant audio examples match the syllables identified in their descriptions. No accuracy cap is triggered.",
+          "score": 10,
+          "label": "Accurate letters and sounds",
+          "weight": 45
+        },
+        {
+          "categoryId": "pedagogy",
+          "reasoning": "The five vowels and five consonants form a manageable, useful starter set. The intro explains syllable blocks and the silent vowel starter, and the lesson includes a clear can-do and short summary. However, it leaves the right-versus-below placement of vowels implicit and introduces several final-consonant rules before explicitly demonstrating basic block assembly. The intro still helps learners read, so the intro-related cap does not apply.",
+          "score": 8,
+          "label": "Right first letters, useful intro",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Learner-facing explanations use clear US English with familiar sound cues and no meta commentary. Every Hangul example in the intro has a parenthetical romanization. The tone is approachable and concrete.",
+          "score": 10,
+          "label": "Learner's language and tone",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2149,
+          "outputTokens": 721,
+          "reasoningTokens": 273
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Make block construction more concrete: show ㄱ (g) + ㅏ (a) → 가 (ga), with the vowel on the right, and ㄱ (g) + ㅗ (o) → 고 (go), with the vowel below. Present these basic combinations before the additional final-consonant pronunciation rules.",
+          "kind": "potentialImprovements",
+          "score": 8
         }
       ],
       "testCase": {
         "expectations": "The first Hangul for a US English speaker: a few basic vowels and simple consonants that build real blocks, the intro explaining syllable blocks, plain stops described as unaspirated rather than as English b or d, Revised Romanization, no forms. In US English.",
-        "expected": { "joined": false },
         "id": "en-ko-hangul-1",
-        "userInput": { "learnerLanguage": "en", "targetLanguage": "ko" }
+        "userInput": {
+          "learnerLanguage": "en",
+          "targetLanguage": "ko"
+        }
       }
     }
   ],

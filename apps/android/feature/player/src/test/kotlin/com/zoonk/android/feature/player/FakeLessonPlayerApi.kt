@@ -16,6 +16,8 @@ import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.GoalChapter
+import com.zoonk.api.models.LessonClockInput
+import com.zoonk.api.models.LessonClockResult
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonMap
@@ -69,6 +71,24 @@ fun checkResult(
         """.trimIndent(),
     )
 
+/** An answer from a sitting before the fake run's `startedAt`. */
+const val EARLIER_SITTING = "2026-10-28T09:59:00Z"
+
+/** A saved answer as a run sends it back; [answer] is its JSON, null for a recording. */
+fun runAnswerJson(
+    stepId: String,
+    isCorrect: Boolean,
+    answer: String = "null",
+    answerText: String? = null,
+    answeredAt: String = "2026-10-28T10:01:00Z",
+): String =
+    """
+    {"answer":$answer,"answeredAt":"$answeredAt","isCorrect":$isCorrect,"stepId":"$stepId",
+     "result":{"answerText":${answerText?.let { "\"$it\"" } ?: "null"},"checked":true,"correctAnswer":null,"corrections":[],
+     "expected":null,"feedback":null,"isCorrect":$isCorrect,"keyPoints":null,"nextReviewAt":null,"savedMistake":false,
+     "score":null,"spelling":null}}
+    """.trimIndent()
+
 val COMPLETION =
     """
     {"ceremony":null,"certificates":[],"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,
@@ -84,11 +104,16 @@ class FakeLessonPlayerApi(
     val completions = mutableListOf<String>()
     var optionalStepIds = "[]"
     var runAnswers = "[]"
+    var clockId: UUID? = null
+    val clockUpdates = mutableListOf<Pair<AuthenticatedSession, LessonClockInput>>()
+    var clockResponse: suspend (LessonClockInput) -> LessonClockResult = { LessonClockResult(LessonClockResult.Status.UPDATED) }
 
     /** The lesson opening an older server sent with the run, which the player ignores. */
     var support = "null"
     var startFailures = 0
     var checkFailures = 0
+    var completeFailures = 0
+    var completeGate: CompletableDeferred<Unit>? = null
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var gate: CompletableDeferred<Unit>? = null
     var lessonGate: CompletableDeferred<Unit>? = null
@@ -110,21 +135,40 @@ class FakeLessonPlayerApi(
         lessonId: String,
     ) = emptyList<String>()
 
+    var retryableStarts = 0
+    val startRunIds = mutableListOf<String?>()
+    val startOpenings = mutableListOf<com.zoonk.api.models.LibraryLessonStartInputOpening?>()
+    var startGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+    var opened: com.zoonk.api.models.StudyBlockOpening? = null
+
     override suspend fun start(
         session: AuthenticatedSession,
         lessonId: String,
         studySessionId: String?,
         runId: String?,
-    ): LibraryLessonRun {
+        opening: com.zoonk.api.models.LibraryLessonStartInputOpening?,
+    ): LessonStart {
+        startRunIds += runId
+        startOpenings += opening
+        if (retryableStarts > 0) {
+            retryableStarts--
+            throw ApiException(ApiError.Unavailable, status = 503)
+        }
+        startGate?.await()
+        opened?.let { return LessonStart.Opened(it) }
         if (startFailures > 0) {
             startFailures--
             throw ApiException(ApiError.Network)
         }
-        return ApiJson.decodeFromString(
-            """
-            {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-             "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
-            """.trimIndent(),
+        return LessonStart.Started(
+            ApiJson.decodeFromString(
+                """
+                {"clockId":${clockId?.let {
+                    "\"$it\""
+                } ?: "null"},"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
+                 "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
+                """.trimIndent(),
+            ),
         )
     }
 
@@ -140,6 +184,16 @@ class FakeLessonPlayerApi(
             throw ApiException(ApiError.Network)
         }
         return grade(stepId, input)
+    }
+
+    override suspend fun clock(
+        session: AuthenticatedSession,
+        lessonId: String,
+        input: LessonClockInput,
+    ): LessonClockResult {
+        check(lessonId == LESSON_ID)
+        clockUpdates += session to input
+        return clockResponse(input)
     }
 
     override suspend fun explainAnswer(
@@ -163,6 +217,11 @@ class FakeLessonPlayerApi(
         runId: String,
         skippedWritingStepIds: List<String>,
     ): LibraryLessonCompletion {
+        completeGate?.await()
+        if (completeFailures > 0) {
+            completeFailures--
+            throw ApiException(ApiError.Network)
+        }
         completions += runId
         return ApiJson.decodeFromString(COMPLETION)
     }

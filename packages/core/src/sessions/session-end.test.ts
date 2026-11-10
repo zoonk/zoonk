@@ -26,7 +26,7 @@ import { stopStudySession } from "./stop-study-session";
 
 async function setup() {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 3, userId: user.id });
 
   await userProgressFixture({ currentEnergy: 40, totalBrainPower: 2480n, userId: user.id });
   mockSession(user.id);
@@ -122,7 +122,7 @@ describe("ending a session", () => {
 
   it("says how a goal without an exam moved in its plan's lessons, from the session's start", async () => {
     const user = await userFixture();
-    const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
+    const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 3, userId: user.id });
 
     await prisma.plan.update({
       data: {
@@ -164,6 +164,7 @@ describe("ending a session", () => {
     const targetDate = new Date(SESSION_TODAY.getTime() + 3 * DAY_MS);
 
     const { goal, lessons, plan, skills } = await sessionGoalFixture({
+      challengesDone: true,
       goal: { dailyMinutes: 45, kind: "exam", targetDate },
       lessons: 2,
       userId: user.id,
@@ -266,6 +267,7 @@ describe("ending a session", () => {
       ["rememberSession", today.session.id],
       ["checkDailyInsight", "2026-09-30"],
       ["settleSessionDay", first?.id],
+      ["refreshStudyDay", today.session.id],
     ]);
 
     vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
@@ -399,6 +401,7 @@ describe("ending a session", () => {
     const user = await userFixture();
 
     const { goal, planItems } = await sessionGoalFixture({
+      challengesDone: true,
       itemsPerSkill: 0,
       lessons: 1,
       userId: user.id,
@@ -427,7 +430,7 @@ describe("ending a session", () => {
     expect(view.status === "ready" && view.session.extraTime).toStrictEqual(nothingLeft);
   });
 
-  it("names a lesson block's minutes as the lesson says them, as the player does", async () => {
+  it("keeps a lesson block's persisted minutes after its library estimate changes", async () => {
     const { goal, lessons, session } = await setup();
     const [first] = session.blocks;
 
@@ -439,7 +442,7 @@ describe("ending a session", () => {
     const today = await getTodayStudySession({ goalId: goal.id });
 
     expect(today.status === "ready" && today.session.blocks[0]).toMatchObject({
-      estimatedMinutes: 7,
+      estimatedMinutes: 4,
       lessonId: lessons[0]?.id,
     });
   });

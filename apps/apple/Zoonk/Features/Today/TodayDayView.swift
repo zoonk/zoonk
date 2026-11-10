@@ -35,36 +35,45 @@ struct TodayDayView: View {
   }
 
   var body: some View {
-    PaneSplit(primaryShare: 0.55) {
-      ZoonkList {
-        header(actionInHeader: false)
-        // It asks for a decision, so it leads the day where the day has room beside it.
-        notice
-        day(showsAction: true)
-      }
-    } secondary: {
-      ZoonkList {
-        aside
-        TodayPracticeSection(view: view, language: language)
-      }
-    } single: {
-      // Main's tablet column heads the day with its action.
-      let actionInHeader = horizontalSizeClass == .regular
+    ScrollViewReader { scroller in
+      PaneSplit(primaryShare: 0.55) {
+        ZoonkList {
+          header(actionInHeader: false)
+          // It asks for a decision, so it leads the day where the day has room beside it.
+          notice
+          day(showsAction: true)
+        }
+      } secondary: {
+        ZoonkList {
+          aside
+          TodayPracticeSection(view: view, language: language)
+        }
+      } single: {
+        // Main's tablet column heads the day with its action.
+        let actionInHeader = horizontalSizeClass == .regular
 
-      ZoonkList {
-        header(actionInHeader: actionInHeader)
-        day(showsAction: !actionInHeader)
-        notice
+        ZoonkList {
+          header(actionInHeader: actionInHeader)
+          day(showsAction: !actionInHeader)
+          notice
 
-        // Main's tablet column: missions beside the week, preparation beside practice.
-        if actionInHeader {
-          BlockGridSection {
+          // Main's tablet column: missions beside the week, preparation beside practice.
+          if actionInHeader {
+            BlockGridSection {
+              aside
+              TodayPracticeSection(view: view, language: language)
+            }
+          } else {
             aside
             TodayPracticeSection(view: view, language: language)
           }
-        } else {
-          aside
-          TodayPracticeSection(view: view, language: language)
+        }
+      }
+      // A new visit folds the day's later blocks out from under a learner who'd scrolled down them,
+      // which the list alone leaves scrolled past them.
+      .onChange(of: disclosures.showsMore) {
+        if !disclosures.showsMore {
+          scroller.scrollTo(TodaySessionSection.moreFold, anchor: nil)
         }
       }
     }
@@ -130,16 +139,11 @@ struct TodayDayView: View {
     .listSectionSpacing(.compact)
   }
 
-  /// Main's `DayTime`: the time still ahead while the day goes on, and once it's done, or the daily
-  /// limit ended it, the time actually studied rather than the plan's estimate for what was done.
+  /// Once the day ends, show time actually studied rather than the plan's estimate.
   private var dayTime: String? {
     let session = view.session
 
-    if session.state == .waiting {
-      return nil
-    }
-
-    if session.state == .done || session.dailyLimit?.reached == true {
+    if session.state == .done {
       let studied = session.week.days.first(where: \.isToday)?.minutes ?? 0
 
       return studied > 0
@@ -151,9 +155,9 @@ struct TodayDayView: View {
         : nil
     }
 
-    return session.minutesLeft > 0
+    return session.minutes.left > 0
       ? String(
-        localized: "\(studyDuration(minutes: session.minutesLeft)) left", table: "Today",
+        localized: "\(studyDuration(minutes: session.minutes.left)) left", table: "Today",
         comment: "The time still to go in today's session")
       : nil
   }
@@ -419,6 +423,8 @@ struct TodayDayView: View {
   /// answered stays only while they're here.
   private func startVisit() {
     shownNotice = view.notice
+    disclosures.showsDone = false
+    disclosures.showsMore = false
     examChoice = nil
     examChoiceDraft = []
     answeredUpload = nil
@@ -505,6 +511,8 @@ extension StudyDestination {
       .checkpoint(blockId: blockID, sessionId: sessionID)
     case .essay(let blockID):
       .essay(blockId: blockID)
+    case .instantLesson(let lessonID, let sessionID, let opening):
+      .lesson(lessonId: lessonID, sessionId: sessionID, opening: opening, activated: true)
     case .lesson(let lessonID, let sessionID):
       .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):

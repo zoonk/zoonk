@@ -87,6 +87,14 @@ sealed interface AppRoute : NavKey {
     data object Memory : AppRoute
 
     @Serializable
+    data object AboutYou : AppRoute
+
+    @Serializable
+    data class ProfileQuestionEdit(
+        val question: String,
+    ) : AppRoute
+
+    @Serializable
     data object Profile : AppRoute
 
     @Serializable
@@ -155,6 +163,7 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data class GoalSetup(
         val goalId: String,
+        val revealMoment: Boolean = false,
     ) : AppRoute
 
     /** `dailyMinutes` is the time a day the course's example plan showed. */
@@ -204,6 +213,7 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
         val firstAnswer: String? = null,
         val fromCatalog: Boolean = false,
+        val opening: String? = null,
     ) : AppRoute
 
     @Serializable
@@ -360,7 +370,7 @@ val AppRoute.presentation: Presentation
             AppRoute.EarlierQuestions, AppRoute.Certificates, is AppRoute.Certificate,
             -> Presentation.Push
 
-            AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Profile,
+            AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Profile, AppRoute.AboutYou, is AppRoute.ProfileQuestionEdit,
             AppRoute.Subscription, AppRoute.Help, AppRoute.Licenses,
             -> Presentation.Section(AppSection.Settings)
 
@@ -394,7 +404,8 @@ val AppRoute.requirement: Requirement
             AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
-            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,
+            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile,
+            AppRoute.AboutYou, is AppRoute.ProfileQuestionEdit, AppRoute.Statistics,
             AppRoute.StatsLevel, AppRoute.StatsEnergy, AppRoute.StatsActivity, AppRoute.StatsScore,
             AppRoute.StatsPatterns, is AppRoute.GoalSetup, is AppRoute.PlacementMock,
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,

@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
   CURRENT_ROW_CLASS,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -70,11 +71,13 @@ export function ExamRunningMock({
       <ListRowLeading>
         <StatusMark status={current ? "next" : "todo"} />
       </ListRowLeading>
-      <ListRowContent>
-        <ListRowTitle>{title(running)}</ListRowTitle>
-        <ListRowDescription>{shape ? `${shape} · ${answered}` : answered}</ListRowDescription>
-      </ListRowContent>
-      <RunningMockClock deadline={running.deadline} />
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{title(running)}</ListRowTitle>
+          <ListRowDescription>{shape ? `${shape} · ${answered}` : answered}</ListRowDescription>
+        </ListRowContent>
+        <RunningMockClock deadline={running.deadline} />
+      </ListRowBody>
     </ListRowLink>
   );
 }

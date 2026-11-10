@@ -146,6 +146,7 @@ export function LessonSpokenWords({
     <div className="flex flex-col gap-2" data-slot="lesson-spoken-words">
       <p className="text-muted-foreground text-sm font-medium">{t("What we heard")}</p>
       <p className="text-lg leading-relaxed">
+        {heard.words.length === 0 && heard.transcript}
         {heard.words.map((item, index) => {
           const key = `${item.text}-${index}`;
           const practiceIndex = findPracticeIndex(practice, item);

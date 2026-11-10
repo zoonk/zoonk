@@ -513,6 +513,21 @@ private struct RowEditor: View {
         .foregroundStyle(.mutedForeground)
 
       switch field.editor {
+      case .text where !row.aimChoices.isEmpty:
+        ForEach(row.aimChoices, id: \.self) { aim in
+          Button {
+            text = aim
+            save()
+          } label: {
+            AimName(aim: aim)
+              .frame(maxWidth: .infinity, alignment: .leading)
+              .padding(.vertical, 6)
+              .contentShape(.rect)
+          }
+          .buttonStyle(.plain)
+          .accessibilityAddTraits(aim == row.editValue ? .isSelected : [])
+          .disabled(isSaving)
+        }
       case .text:
         TextField(text: $text) {
           Text(row.label)

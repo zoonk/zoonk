@@ -85,9 +85,13 @@ describe(createPracticeState, () => {
     });
   });
 
-  it("shows a misread's question before its answers", () => {
+  it("asks a misread's question with its answers straight away", () => {
     const practice = [entry("misread", { kind: "readCarefully" })];
-    expect(createPracticeState(practice).phase).toStrictEqual({ kind: "reading" });
+
+    expect(createPracticeState(practice).phase).toStrictEqual({
+      kind: "answering",
+      selected: null,
+    });
   });
 
   it("has nothing to play without mistakes", () => {
@@ -124,12 +128,10 @@ describe(practiceReducer, () => {
       answerIds: ["a1", "a2"],
       fixedIds: ["gap"],
       index: 2,
-      phase: { kind: "reading" },
+      phase: { kind: "answering", selected: null },
     });
 
-    expect(reduce(reduce(state, { type: "reveal" }), { type: "next" }).phase).toStrictEqual({
-      kind: "ending",
-    });
+    expect(reduce(state, { type: "next" }).phase).toStrictEqual({ kind: "ending" });
   });
 
   it("keeps an answer that failed to save, with its time, when the same pick is made again", () => {
@@ -269,7 +271,12 @@ describe(practiceReducer, () => {
         sender,
       });
 
-      expect(reduce(failed, { type: "retry" }).phase).toStrictEqual(checking.phase);
+      const retrying = reduce(failed, { type: "retry" });
+      expect(retrying.phase).toStrictEqual(checking.phase);
+
+      expect([failed.failures, reduce(retrying, { type: "answerFailed" }).failures]).toStrictEqual([
+        1, 2,
+      ]);
     },
   );
 });

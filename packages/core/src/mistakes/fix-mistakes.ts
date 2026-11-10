@@ -6,6 +6,7 @@ import { getMistakePracticeBefore } from "./mistake-availability";
 export async function fixMistakesAnsweredRight(
   {
     answeredAt,
+    coveredMistakeIds = [],
     itemId,
     practicedMistakeId,
     stepId,
@@ -13,6 +14,7 @@ export async function fixMistakesAnsweredRight(
     userId,
   }: {
     answeredAt: Date;
+    coveredMistakeIds?: readonly string[];
     itemId: string | null;
     practicedMistakeId?: string | null;
     stepId: string | null;
@@ -25,6 +27,7 @@ export async function fixMistakesAnsweredRight(
     itemId ? { itemId } : null,
     stepId ? { stepId } : null,
     practicedMistakeId ? { id: practicedMistakeId } : null,
+    coveredMistakeIds.length > 0 ? { id: { in: [...coveredMistakeIds] } } : null,
   ].filter((target) => target !== null);
 
   if (targets.length === 0) {

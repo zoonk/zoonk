@@ -15,6 +15,7 @@ const GOAL_CONTENT_STEPS = [
   "joinRunningGoal",
   "understandGoal",
   "warmUpReady",
+  "warmUpFailed",
   "readExamNotice",
   "buildSkillGraph",
   "saveSkills",
@@ -22,6 +23,8 @@ const GOAL_CONTENT_STEPS = [
   "createPlan",
   "outlineCourses",
   "prepareFirstLessons",
+  "writeFirstLesson",
+  "firstLessonReady",
   "goalReady",
 ] as const;
 

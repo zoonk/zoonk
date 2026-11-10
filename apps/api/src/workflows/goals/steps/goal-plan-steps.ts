@@ -1,6 +1,10 @@
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { prepareCourseGoalPlan } from "@zoonk/core/goals/prepare-course-plan";
+import {
+  type GoalRebuildFollowUp,
+  recordGoalRebuildSaved,
+} from "@zoonk/core/goals/rebuild-follow-up";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { createGoalPlan } from "@zoonk/core/plans/create";
@@ -59,13 +63,21 @@ function toGraphPlan({
 }
 
 export async function createGoalPlanStep({
+  followUp,
   waitsForNotice,
   ...input
-}: GraphPlanInput & { waitsForNotice: boolean }): Promise<PlanStepOutcome<PlanSetupTask[]>> {
+}: GraphPlanInput & { followUp?: GoalRebuildFollowUp; waitsForNotice: boolean }): Promise<
+  PlanStepOutcome<PlanSetupTask[]>
+> {
   "use step";
 
   return catchPlanConflict(async () => {
-    const { setupTasks } = await createGoalPlan({ ...toGraphPlan(input), waitsForNotice });
+    const { setupTasks, status } = await createGoalPlan({ ...toGraphPlan(input), waitsForNotice });
+
+    if (followUp && status !== "notFound") {
+      await recordGoalRebuildSaved({ followUp, goalId: input.goalId });
+    }
+
     return setupTasks;
   });
 }

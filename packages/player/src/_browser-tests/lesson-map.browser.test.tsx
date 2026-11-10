@@ -89,7 +89,7 @@ describe("the lesson map", () => {
     expect(segments()).toStrictEqual(["read", "wrong", "right", "read"]);
   });
 
-  it("opens on the map when every screen was answered before, and saves only on Continue", async () => {
+  it("opens on the map when every screen was answered before, goes back to them answered, and saves only on Continue", async () => {
     const lesson = buildLesson([teachingStep("explanation"), teachingStep("check")], {
       summary: NESTED,
     });
@@ -108,14 +108,16 @@ describe("the lesson map", () => {
     await expect.element(page.getByText("An organism is one living thing.")).toBeVisible();
     expect(adapters.completeLesson).not.toHaveBeenCalled();
 
-    await expect
-      .element(page.getByRole("button", { name: "Previous screen" }))
-      .not.toBeInTheDocument();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    await next();
 
+    await expect.element(mapHeading()).toBeVisible();
     await next();
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     expect(adapters.completeLesson).toHaveBeenCalledOnce();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
   });
 
   it("shows in a study session too, before the session's own moment", async () => {

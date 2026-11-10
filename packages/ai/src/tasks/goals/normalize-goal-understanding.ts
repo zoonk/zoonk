@@ -3,7 +3,8 @@ import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languag
 const DAYS_PER_WEEK = 7;
 const MAX_GOALS = 3;
 const MAX_FOLLOW_UPS = 2;
-const MAX_TEXT_LENGTH = 120;
+/** The learner's app sends the title back to POST /goals, which takes up to 120 characters. */
+const MAX_TITLE_LENGTH = 120;
 const MIN_YEAR = 1900;
 const MAX_YEAR = 2200;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
@@ -22,6 +23,7 @@ type UnderstoodExamDay = "booked" | "official";
 
 /** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
+  displayName?: string;
   examDay: UnderstoodExamDay | null;
   examMonth: number | null;
   examName: string | null;
@@ -59,6 +61,7 @@ export type RawGoalUnderstanding = {
 
 /** Fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
+  displayName?: string;
   examDay?: UnderstoodExamDay;
   /** 1 to 12, for an exam named without its day ("in March"). */
   examMonth?: number;
@@ -99,7 +102,7 @@ export type GoalUnderstanding =
     };
 
 function cleanText(value: string | null): string | undefined {
-  const text = value?.trim().slice(0, MAX_TEXT_LENGTH);
+  const text = value?.trim();
   return text || undefined;
 }
 
@@ -174,7 +177,7 @@ function normalizeGoal({
   goal: RawUnderstoodGoal;
   today: string;
 }): UnderstoodGoal | null {
-  const title = cleanText(goal.title);
+  const title = cleanText(goal.title.slice(0, MAX_TITLE_LENGTH));
   const targetLanguage = cleanLanguageCode(goal.targetLanguage);
 
   if (!title || (goal.kind === "language" && !targetLanguage)) {
@@ -182,6 +185,7 @@ function normalizeGoal({
   }
 
   return {
+    displayName: cleanText(goal.displayName ?? null),
     examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
     examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
     examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,

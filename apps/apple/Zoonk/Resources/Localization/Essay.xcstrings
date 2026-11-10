@@ -2658,65 +2658,6 @@
         }
       }
     },
-    "You've reached your daily time limit. Your text stays here." : {
-      "comment" : "The daily time limit is a setting that stops study for the day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dein tägliches Zeitlimit erreicht. Dein Text bleibt hier."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcanzaste tu límite de tiempo diario. Tu texto se queda aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ta limite de temps quotidienne. Ton texte reste ici."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito il tempo di studio di oggi. Il tuo testo resta qui."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の学習時間の上限に達しました。書いた文章は残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 학습 시간 제한에 도달했어요. 작성한 글은 그대로 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój czas nauki na dziś się skończył. Twój tekst zostaje tutaj."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu seu limite diário de tempo. Seu texto continua aqui."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük süre sınırına ulaştın. Metnin burada kalacak."
-          }
-        }
-      }
-    },
     "You've used today's essay grades. Your text stays here; send it tomorrow." : {
       "comment" : "No essay grades left today",
       "localizations" : {

@@ -2,6 +2,7 @@ import { type PlanItem, type StudyFreshStart, prisma } from "@zoonk/db";
 import "server-only";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { readBlockPayload } from "../block-payload";
 import { type PlannedLesson } from "../session-builder";
@@ -81,10 +82,20 @@ export async function loadLaterCatchUp({
   blocks: readonly DayBlockInput[];
   goalId: string | null;
 }): Promise<{ items: PlanItem[]; lessons: PlannedLesson[] }> {
-  const items = await loadCatchUpItems(goalId);
+  const [items, plan] = await Promise.all([
+    loadCatchUpItems(goalId),
+    goalId ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId } }) : null,
+  ]);
+
   const later = listLater({ blocks, items });
 
-  return { items, lessons: await loadPlanLessons({ items: later }) };
+  return {
+    items,
+    lessons: await loadPlanLessons({
+      items: later,
+      paceFactor: parsePlanSettings(plan?.settings).pace?.factor,
+    }),
+  };
 }
 
 /** A long break leaves thousands of lessons for later: count and size them without loading them. */

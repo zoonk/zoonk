@@ -51,10 +51,12 @@ describe(toAiGenerationEvent, () => {
         $ai_span_name: "lesson-explanation",
         $ai_total_cost_usd: 0.0125,
         $ai_trace_id: "workflow-run-1",
+        completed_at: Date.parse(provenance.generatedAt),
         content_scope: "personal",
         goal_id: "goal-1",
         prompt_version: "3f9a1c2b7d4e",
         requested_model: "openai/gpt-6-sol",
+        started_at: Date.parse(provenance.generatedAt) - provenance.latencyMs,
         task: "lesson-explanation",
       },
     });
@@ -94,6 +96,20 @@ describe(toAiGenerationEvent, () => {
     expect(properties).toMatchObject({
       evaluation_answers: '{"reuse":{"probability":0.8,"type":"boolean"}}',
       service_tier: "flex",
+    });
+  });
+
+  it("keeps the clock and the tier and speed actually served on the same event", () => {
+    const { properties } = toAiGenerationEvent({
+      provenance: { ...provenance, serviceTier: "priority", speed: "fast" },
+      task: "lesson-writer",
+    });
+
+    expect(properties).toMatchObject({
+      completed_at: Date.parse(provenance.generatedAt),
+      service_tier: "priority",
+      speed: "fast",
+      started_at: Date.parse(provenance.generatedAt) - provenance.latencyMs,
     });
   });
 });

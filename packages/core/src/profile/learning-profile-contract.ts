@@ -1,7 +1,6 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { BUDDY_NAME_MAX_LENGTH } from "./buddy-name-limit";
 import { type ResolvedBuddy } from "./default-buddy";
 
@@ -48,13 +47,6 @@ export const learningProfileUpdateSchema = z
       .nullable()
       .optional()
       .meta({ description: "The learner's buddy choice, or null to return to the default buddy" }),
-    dailyLimitMinutes: z
-      .int()
-      .min(MIN_DAILY_MINUTES)
-      .max(MAX_DAILY_MINUTES)
-      .nullable()
-      .optional()
-      .meta({ description: "The learner's daily study limit in minutes, or null for no limit" }),
     shareUsageData: z
       .boolean()
       .optional()
@@ -73,10 +65,6 @@ export type LearningProfileUpdateInput = z.infer<typeof learningProfileUpdateSch
 export type LearningProfileView = {
   activeGoalId: string | null;
   availableGlasses: BuddyGlasses[];
-  /** The learner's own daily study limit in minutes, or null for none. */
-  dailyLimitMinutes: number | null;
-  /** The limits offered, in minutes: the same times a plan's day offers. */
-  dailyTimes: number[];
   buddy: ResolvedBuddy;
   /** Null until the learner chooses. */
   shareUsageData: boolean | null;

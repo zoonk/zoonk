@@ -1,7 +1,7 @@
 import Foundation
 
 /// A device-graded answer the server hasn't taken yet: its whole check, sent again under its own run
-/// and attempt id so the server records it once, with the verdict and time the lesson places the
+/// and attempt id so the server records it once, with the grade and time the lesson places the
 /// learner by until then.
 struct HeldAnswer: Codable, Hashable, Sendable {
   let stepId: String
@@ -10,11 +10,13 @@ struct HeldAnswer: Codable, Hashable, Sendable {
   let runId: String
   let durationMs: Int
   let usedHelp: Bool
-  let isCorrect: Bool
+  let grade: LocalGrade
   let answeredAt: Date
 
   var runAnswer: LessonRunAnswer {
-    LessonRunAnswer(stepId: stepId, isCorrect: isCorrect, answeredAt: answeredAt)
+    LessonRunAnswer(
+      stepId: stepId, answeredAt: answeredAt, answer: answer,
+      result: LessonStepResult(grade, attemptId: attemptId))
   }
 }
 

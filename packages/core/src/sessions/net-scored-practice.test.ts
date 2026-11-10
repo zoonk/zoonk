@@ -30,6 +30,7 @@ async function netScoredPracticeDay() {
   ]);
 
   const { goal, plan, planItems, skills } = await sessionGoalFixture({
+    challengesDone: true,
     goal: { examBlueprintId: blueprint.id, kind: "exam" },
     itemsPerSkill: 0,
     lessons: 1,
@@ -153,6 +154,7 @@ describe("net-scored practice", () => {
     const user = await userFixture();
 
     const { chapters, goal, plan, skills } = await learnerGoalFixture({
+      challengesDone: true,
       phases: [2, 2],
       userId: user.id,
     });

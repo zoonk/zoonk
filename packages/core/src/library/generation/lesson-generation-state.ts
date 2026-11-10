@@ -55,7 +55,10 @@ export async function getLessonGenerationStates(
 }
 
 export function canRedraftLesson(state: LessonGenerationState | null | undefined): boolean {
-  return state?.status === "failed" && state.heldBackDrafts > 0 && !state.setAside;
+  return (
+    state?.status === "notStarted" ||
+    (state?.status === "failed" && state.heldBackDrafts > 0 && !state.setAside)
+  );
 }
 
 export async function getLessonGenerationState(
@@ -124,7 +127,11 @@ export async function releaseStaleLessonClaims({
   const [content, spec] = await prisma.$transaction([
     prisma.lesson.updateMany({
       data: { contentStatus: "failed" },
-      where: { contentRunId: staleRunId, contentStatus: "running", id: lessonId },
+      where: {
+        contentRunId: staleRunId,
+        contentStatus: { in: ["pending", "running"] },
+        id: lessonId,
+      },
     }),
     prisma.lesson.updateMany({
       data: { specStatus: "failed" },

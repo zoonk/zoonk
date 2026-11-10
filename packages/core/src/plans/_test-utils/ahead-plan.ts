@@ -50,11 +50,16 @@ async function saveSampledPace({
   planId: string;
   userId: string;
 }) {
-  const pace = choosePace(await loadPaceSamples({ lessonIds, now: new Date(), userId }));
+  const pace = choosePace(
+    await loadPaceSamples({ family: "subject", lessonIds, now: new Date(), userId }),
+  );
+
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
 
   await prisma.plan.update({
-    data: { settings: { ...parsePlanSettings(plan.settings), pace } },
+    data: {
+      settings: { ...parsePlanSettings(plan.settings), pace: { ...pace, family: "subject" } },
+    },
     where: { id: planId },
   });
 }

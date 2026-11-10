@@ -58,12 +58,24 @@ describe("background goal plan marks", () => {
 
   it("marks a build failure once and leaves a missing goal alone", async () => {
     const { goal, plan, user } = await setup();
+    await recordGoalGeneration({ generationId: "failing-run", goalId: goal.id });
     const before = await stamp(user.id, plan.id);
-    await Promise.all([recordGoalBuildFailure(goal.id), recordGoalBuildFailure(goal.id)]);
+    const input = { generationId: "failing-run", goalId: goal.id };
+    await Promise.all([recordGoalBuildFailure(input), recordGoalBuildFailure(input)]);
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
-    await recordGoalBuildFailure(randomUUID());
+    await recordGoalBuildFailure({ generationId: "failing-run", goalId: randomUUID() });
+  });
+
+  it("does not let an earlier run's failure mark the rebuilt plan as failed", async () => {
+    const { goal, plan } = await setup();
+    await recordGoalGeneration({ generationId: "newer-rebuild", goalId: goal.id });
+    await recordGoalBuildFailure({ generationId: "earlier-run", goalId: goal.id });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      buildFailedAt: null,
+    });
   });
 
   it("serializes competing primary course links and keeps the first choice", async () => {

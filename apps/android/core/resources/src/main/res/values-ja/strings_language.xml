@@ -7,28 +7,35 @@
   "language_alphabet_skip_failed": "706f7fcf50d08bdb3d3af8a49b4476927934637465181447741bad381524e932",
   "language_can_already": "eef54cdd0bf2d96154ec8312fa66cb206c042818b2b6ae9df63927e0c5eb568f",
   "language_can_do_not_yet": "cd161210e9c1d56e91b17f8b6bce14ef3c2356e2b8783decd39933b744e95e52",
+  "language_estimate_listening": "b67c582504318ba44e7a2aff92d2d4856d98e355d117c8738c783788872be408",
+  "language_estimate_reading": "7de110cb1a6aeb1afa83481ce43a2ed2322c637381cdff5674cf1422d236ff2a",
+  "language_estimate_rose_listening": "5c807a62433a5c435e99f8c9f3b709d2a2f193108d7a7e5deacc021b12770021",
+  "language_estimate_rose_reading": "1ad4ef05c9bcc7b6acfde376a1aa95b63c6a66ae6934848a09377b84e06c37f7",
+  "language_estimate_rose_speaking": "ac25070a720d139aa60e1777ae0fb936b032db0fbbbcc5617c7ccbbd12bd84dd",
+  "language_estimate_rose_writing": "9ee44c30c325846c520741abb6b4d1a755916af01e4f73a2c65b2a01d7380b9a",
+  "language_estimate_speaking": "6ae8a3cfc34b054421b71335e460eaa7a805d6543b7b9055ef5bfe0f15143562",
+  "language_estimate_trend": "899b762999f7ec5c8623187cf57cc3afc583ccade4f345df65fbc52b44d609fe",
+  "language_estimate_writing": "0d5e2f07e78b1501201947315eab35914e80707f28e15f958328172cf4984430",
+  "language_estimates_note": "b91513d493ac11758cef7c160ec7125390f146f0f9036efa4a05a462024b3356",
+  "language_estimates_rose": "a102dabd7ce0a9dbff9c350fb032c6f82904d89451c6ab78acfc30e1e96d0143",
   "language_level": "c069a97644c5696ef410b7a0ccba5484f69ffaca44c1fbb89da1dffb7a53a610",
-  "language_level_by_skill": "7bf8be1c1ef6430ef4301f2ba3eb707736e760325731565a3cbfe129195be29e",
   "language_level_down": "b9a816ef8eb37e4ebec1943884e0f23860785a5b85d11b22e52a33f200ede8db",
   "language_level_goal": "bc2956d8136e82386ebfffc00ae44224b37f14f71dca0d6a0848300c0a7327fe",
   "language_level_goal_by": "f48a9ec376660d0ed2684780eaeff2b343b961a2f6f52dd9b048811aab04a0fa",
-  "language_level_rose": "3e2f8c91ba9709b59e3dd9db698ebd9eff7b0beed69f8dea994611cb412deee0",
   "language_level_toward": "665136ed1d7e4a75ff95eea8a81d0236650c1cc1c9e32d53b2eb76020577d715",
   "language_level_toward_goal": "2b1889630e0d8bc11cdf94b5dd17846631490c1d131cbffde6738f006d73aa17",
   "language_level_toward_spoken": "322362bb7e1a689df0523ad6046086f82d28a5bf1b6d27b395ba328cb6f2b5d4",
   "language_level_up": "7b9cc81f860d1813de0de44e4283c7ffbd416d37105c9963c66cf3ba0176ca5a",
   "language_levels_move": "ec7fcfb1f6b41bfb3ea37ae7b03ac2f306f6dfc42225054fb2f88b714111afc9",
-  "language_levels_rose": "289e123c09a315e5684f199d6a894f399482b32ce99c45f61fc418fc7c79570b",
   "language_pattern_noticed": "3e640e799841069d1a703ab49638bb607727f4da9daae84c0308dc8358c9485a",
   "language_pattern_noticed_summary": "b9a93f45d297dd1b60d1f61cc251ec6b273187273d0da36c4732074def937f7a",
   "language_pattern_practice": "5c4c21788383515218de950e08daa56c5a0693135b46403afc1e2e0ad104bda3",
   "language_pattern_typos": "2076bdf45be86b4b5ae90207ae6605b49b09945bbb5b7a4001fb47e6bef211e5",
   "language_pattern_typos_description": "507b790f0914572d9e6c57f41a9e16bb9a0e145973586d5164cc4e98ca7d3dfa",
+  "language_practice_estimates": "23dec09e933f85041242c89056131b0e79d618d465bc42f418755eea8a7f14fa",
   "language_say_again": "6cef94c3494294cafeb52d65889f22aa141a9d092ce98253b2db2d991021d6ea",
   "language_say_them": "aa2ce12dd16f51f492e7d825a1ee9f698ccec4b526b831abc82130d8e324cff0",
   "language_see_your_plan": "79c68d23ab7be528d65e8f2a6d7aba152118d45c2be0248628ea90612886420f",
-  "language_skill_level": "98d842cae17eeb80ed7a149542dd9330026769099f9c62e8474fd9e69ed356ed",
-  "language_skill_level_trend": "37069474797ccd03364dd0c3d38765f85080712c41ac6fbb13634d6b114e7d44",
   "language_skill_listening": "37045838d9c470105ff41699249cbf77384c23d4b5e6d0d2d1dce99268796d8c",
   "language_skill_reading": "a33aa6e35b9aeeb88117a791765812a5c300d26231d4c883420b59a7e22a1391",
   "language_skill_speaking": "770568b99410c9e09a684f7abd4f71b6c37f5590c94f8e3934fc7789ba04356b",
@@ -80,26 +87,34 @@
     <string name="language_skill_speaking">スピーキング</string>
     <string name="language_skill_words">語彙</string>
     <string name="language_skill_writing">ライティング</string>
-    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
-    <string name="language_level_by_skill">スキル別のレベル</string>
+    <!-- Heads each skill's level (reading, listening, speaking, writing) on the CEFR scale from A1 to C2, estimated from the learner's answers to set how hard practice is. -->
+    <string name="language_practice_estimates">練習用の推定レベル</string>
     <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
     <string name="language_level_goal_by">目標：%1$s（%2$sまで）</string>
     <!-- The level the learner aims for: "Goal B2". -->
     <string name="language_level_goal">目標：%1$s</string>
-    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
-    <string name="language_skill_level">%1$s、%2$s</string>
-    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
-    <string name="language_skill_level_trend">%1$s、%2$s、%3$s</string>
+    <!-- What TalkBack says for a skill's row. %1$s is a CEFR level, such as "B1". -->
+    <string name="language_estimate_reading">リーディングの推定レベル：%1$s</string>
+    <string name="language_estimate_listening">リスニングの推定レベル：%1$s</string>
+    <string name="language_estimate_speaking">スピーキングの推定レベル：%1$s</string>
+    <string name="language_estimate_writing">ライティングの推定レベル：%1$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Estimated reading level: B1, up since the level test". -->
+    <string name="language_estimate_trend">%1$s、%2$s</string>
     <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
     <string name="language_level_up">レベルテスト時より上がっています</string>
     <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
     <string name="language_level_down">レベルテスト時より下がっています</string>
     <string name="language_levels_move">レベルは練習に応じて変わります。毎週、より正確に実力を表すようになります。</string>
-    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
-    <string name="language_level_rose">%1$sのレベルが、レベルテスト時より上がって%2$sになりました。</string>
-    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
-    <plurals name="language_levels_rose">
-        <item quantity="other">%1$sのレベルが、レベルテスト時より上がりました。</item>
+    <!-- Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons. -->
+    <string name="language_estimates_note">推定レベルをもとに練習の難しさを調整します。証明書は、学習計画で終えたレッスンに応じて取得できます。</string>
+    <!-- One skill's estimate rose since the level test. %1$s is a CEFR level, such as "B2". -->
+    <string name="language_estimate_rose_reading">リーディングの推定レベルが%1$sに上がりました</string>
+    <string name="language_estimate_rose_listening">リスニングの推定レベルが%1$sに上がりました</string>
+    <string name="language_estimate_rose_speaking">スピーキングの推定レベルが%1$sに上がりました</string>
+    <string name="language_estimate_rose_writing">ライティングの推定レベルが%1$sに上がりました</string>
+    <!-- The count is how many skills' estimates rose since the level test, always two or more; %1$s lists them: "Speaking and Writing estimates went up". -->
+    <plurals name="language_estimates_rose">
+        <item quantity="other">%1$sの推定レベルが上がりました</item>
     </plurals>
     <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
     <string name="language_can_already">できるようになったこと…</string>
