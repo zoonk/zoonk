@@ -31,7 +31,7 @@ struct ReadDraftView: View {
         }
       }
       .onChange(of: draft) {
-        // A draft read after the refusal has room again, such as after pausing a goal.
+        // A draft read after the refusal has room again, such as after pausing a goal; nil is no cap.
         if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
           error = nil
         }
@@ -96,6 +96,13 @@ struct ReadDraftView: View {
       } catch is CancellationError {
       } catch {
         self.error = GoalError.creating(error)
+
+        // The card's room comes from the draft, so a refusal for it reads the draft again.
+        if self.error?.limit == .activeGoals,
+          let fresh = try? await onboarding.understanding(id: draft.id)
+        {
+          onDraft(fresh)
+        }
       }
     }
   }
@@ -224,7 +231,8 @@ private struct UnderstoodCard: View {
   private func rows(goal index: Int) -> [UnderstoodRow] {
     let rows = UnderstoodRows.rows(for: understood.goals[index])
 
-    guard index == 0,
+    // The schedule goes with the first goal that starts, so it leaves when none can.
+    guard index == 0, !startable.isEmpty,
       let schedule = UnderstoodRows.scheduleRow(understood)
     else {
       return rows
