@@ -69,6 +69,30 @@ describe(trackServerEvent, () => {
     expect(PostHog).not.toHaveBeenCalled();
   });
 
+  it("preserves profile option arrays in the server event", async () => {
+    const properties = {
+      from: "settings",
+      options: ["anime", "sciFi"],
+      outcome: "answered",
+      picks: 2,
+      question: "watch",
+      typedText: false,
+    } as const;
+
+    await trackServerEvent({
+      distinctId: "user-id",
+      name: "Profile Question Saved",
+      properties: { ...properties, options: [...properties.options] },
+      shared,
+    });
+
+    expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith({
+      distinctId: "user-id",
+      event: "Profile Question Saved",
+      properties: { ...properties, ...shared },
+    });
+  });
+
   it("never fails the caller and still closes the client when PostHog throws", async () => {
     posthogClient.capture.mockImplementationOnce(() => {
       throw new Error("PostHog is down");
