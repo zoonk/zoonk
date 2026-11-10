@@ -6,7 +6,6 @@ import {
   type UnitGoal,
   loadCertificateUnits,
 } from "../../certificates/_utils/load-certificate-units";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
@@ -88,12 +87,7 @@ export async function getFieldMapView(
       counts: countSkillStates(skills),
       course,
       courses: areaCourses.map(({ courseId, title }) => ({ courseId, title })),
-      goal: {
-        displayName: resolveGoalDisplayName(goal),
-        id: goal.id,
-        kind: goal.kind,
-        title: goal.title,
-      },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       next: map.finished ? buildStudyNext({ course, courses, goalKind: goal.kind }) : null,
       phases: map.phases,
       refresh: { emphasized: isRefreshGoal(goal.details), skills: listFadingSkills(skills) },

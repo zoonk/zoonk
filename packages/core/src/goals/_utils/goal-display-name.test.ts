@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultDisplayName, resolveGoalDisplayName } from "./goal-display-name";
+import { defaultDisplayName } from "./goal-display-name";
 
 describe(defaultDisplayName, () => {
   it("uses a named exam, a capitalized subject, then the internal summary", () => {
@@ -27,10 +27,5 @@ describe(defaultDisplayName, () => {
     expect(defaultDisplayName({ ...goal, details: { subject: "Ignored" }, kind: "explain" })).toBe(
       goal.title,
     );
-  });
-
-  it("preserves a saved label and resolves an unmigrated row", () => {
-    expect(resolveGoalDisplayName({ displayName: "My exam", title: "Prepare" })).toBe("My exam");
-    expect(resolveGoalDisplayName({ displayName: null, title: "Prepare" })).toBe("Prepare");
   });
 });

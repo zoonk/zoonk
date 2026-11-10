@@ -1,5 +1,4 @@
 import "server-only";
-import { resolveGoalDisplayName } from "../goals/_utils/goal-display-name";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
 import { loadMindMapChapters, loadUpNextChapter } from "./_utils/load-mind-map-chapters";
@@ -69,7 +68,7 @@ export async function listGoalMindMaps(
   return {
     mindMaps: {
       chapters,
-      goal: { displayName: resolveGoalDisplayName(goal), id: goal.id, title: goal.title },
+      goal: { displayName: goal.displayName, id: goal.id, title: goal.title },
       nextChapter,
     },
     status: "ready",

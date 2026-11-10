@@ -192,6 +192,7 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
     createdAt: daysFrom(now, goal.createdDay),
     dailyMinutes: goal.dailyMinutes,
     details: goal.details,
+    displayName: goal.title,
     examBlueprintId: goal.exam ? libraryIds.blueprint(goal.exam, learner.language) : null,
     kind: goal.kind,
     language: learner.language,

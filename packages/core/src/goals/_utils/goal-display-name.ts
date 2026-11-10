@@ -25,10 +25,3 @@ export function defaultDisplayName(goal: {
 
   return goal.title;
 }
-
-export function resolveGoalDisplayName(goal: {
-  displayName: string | null;
-  title: string;
-}): string {
-  return goal.displayName ?? goal.title;
-}

@@ -6,7 +6,6 @@ import { readExamPicks } from "../../exams/choices/exam-choices";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
@@ -234,7 +233,7 @@ async function readAdmittedToday({
 
   if (!day) {
     return {
-      goal: { displayName: resolveGoalDisplayName(owned.goal), id, kind, title },
+      goal: { displayName: owned.goal.displayName, id, kind, title },
       status: "preparing",
       userId,
     };
@@ -311,7 +310,7 @@ async function readAdmittedToday({
       goal: {
         dateEstimated: dateKind.estimated,
         daysLeft: getDaysLeft({ localDate: studySession.localDate, targetDate }),
-        displayName: resolveGoalDisplayName(owned.goal),
+        displayName: owned.goal.displayName,
         id,
         kind,
         targetDate,

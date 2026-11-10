@@ -1,6 +1,5 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { listCurrentUserSkills } from "../../learner/list-current-user-skills";
 import { countGoalMistakes } from "../../mistakes/count-goal-mistakes";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -57,7 +56,7 @@ export async function getProgressView(
   return {
     progress: {
       goal: {
-        displayName: resolveGoalDisplayName(goal),
+        displayName: goal.displayName,
         id: goal.id,
         kind: goal.kind,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
