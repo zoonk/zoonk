@@ -286,6 +286,47 @@ describe("profile write analytics", () => {
     ]);
   });
 
+  it.each([
+    { memoryEnabled: false, remaining: 2, skipWork: false },
+    { memoryEnabled: true, remaining: 9, skipWork: true },
+  ])(
+    "counts only currently offered questions for Don't ask again: $memoryEnabled/$skipWork",
+    async ({ memoryEnabled, remaining, skipWork }) => {
+      const user = await learner();
+
+      const [goal] = await Promise.all([
+        goalFixture({ planRevealedAt: null, userId: user.id }),
+        learningProfileFixture({ memoryEnabled, userId: user.id }),
+      ]);
+
+      const flush = runDeferredWork();
+
+      if (skipWork) {
+        await answerOnboardingQuestion({
+          goalId: goal.id,
+          input: { answer: null, question: "work" },
+        });
+      }
+
+      const request = {
+        goalId: goal.id,
+        input: { forever: true, question: "skipProfile" },
+      } as const;
+
+      await answerOnboardingQuestion(request);
+      await answerOnboardingQuestion(request);
+      await flush();
+
+      expect(events("Profile Questions Skipped")).toStrictEqual([
+        expect.objectContaining({ properties: { remaining } }),
+      ]);
+
+      await expect(
+        prisma.profileAnswer.count({ where: { outcome: "declined", userId: user.id } }),
+      ).resolves.toBe(10);
+    },
+  );
+
   it("respects the usage-data choice for saves and bulk skips", async () => {
     const user = await learner();
 

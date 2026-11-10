@@ -49,9 +49,18 @@ export async function skipProfileQuestions({
       return unchanged({ changed: false, skipped: [], status: "notFound" as const });
     }
 
-    if (forever) {
-      const answers = await tx.profileAnswer.findMany({ where: { userId } });
+    const [answers, profile] = await Promise.all([
+      tx.profileAnswer.findMany({ select: { question: true, version: true }, where: { userId } }),
+      tx.userLearningProfile.findUnique({ select: { memoryEnabled: true }, where: { userId } }),
+    ]);
 
+    const skipped = getProfileSteps({
+      answered: Object.fromEntries(answers.map((answer) => [answer.question, answer.version])),
+      goal,
+      memoryEnabled: profile?.memoryEnabled ?? true,
+    }).filter((question) => forever || questions.includes(question));
+
+    if (forever) {
       const missing = PROFILE_QUESTIONS.filter(
         (question) => !answers.some((answer) => answer.question === question),
       );
@@ -70,22 +79,11 @@ export async function skipProfileQuestions({
         })),
       });
 
-      return { changed: true, skipped: missing, status: "saved" as const };
+      return { changed: true, skipped, status: "saved" as const };
     }
 
     const goalIds = await findOnboardingGoalIds(goal, tx);
     const goals = await tx.goal.findMany({ where: { id: { in: goalIds }, userId } });
-
-    const [answers, profile] = await Promise.all([
-      tx.profileAnswer.findMany({ select: { question: true, version: true }, where: { userId } }),
-      tx.userLearningProfile.findUnique({ select: { memoryEnabled: true }, where: { userId } }),
-    ]);
-
-    const skipped = getProfileSteps({
-      answered: Object.fromEntries(answers.map((answer) => [answer.question, answer.version])),
-      goal,
-      memoryEnabled: profile?.memoryEnabled ?? true,
-    }).filter((question) => questions.includes(question));
 
     const changed = await Promise.all(
       goals.map(async (item) => {
