@@ -5625,6 +5625,65 @@
         }
       }
     },
+    "Starting another goal right now comes with Plus. Until then, keep going with your current goals." : {
+      "comment" : "Why a free learner can't start another goal now: either they follow as many goals at once as the free plan allows or they started as many new goals as it allows recently, so it names neither. Plus is the subscription's name, not \"more\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Plus kannst du jetzt gleich ein weiteres Ziel starten. Bis dahin machst du mit deinen aktuellen Zielen weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Plus puedes empezar otro objetivo ahora mismo. Mientras tanto, sigue con tus objetivos actuales."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Plus, tu peux commencer un autre objectif dès maintenant. En attendant, continue avec tes objectifs actuels."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Plus puoi iniziare subito un altro obiettivo. Nel frattempo, continua con i tuoi obiettivi attuali."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusに登録すると、今すぐ別の目標を始められます。それまでは、今の目標を続けましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus를 구독하면 지금 바로 다른 목표를 시작할 수 있어요. 그전까지는 지금 목표를 계속 진행해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W pakiecie Plus możesz od razu zacząć kolejny cel. Na razie kontynuuj swoje obecne cele."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o Plus, você pode começar outro objetivo agora mesmo. Até lá, continue com seus objetivos atuais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemen başka bir hedefe başlamak Plus’a özel. O zamana kadar mevcut hedeflerinle devam et."
+          }
+        }
+      }
+    },
     "Statistics" : {
       "comment" : "The buddy offers the statistics",
       "localizations" : {
@@ -6034,65 +6093,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Test: %@"
-          }
-        }
-      }
-    },
-    "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus." : {
-      "comment" : "Why a free learner can't start another goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Im Free-Tarif kannst du ein Ziel auf einmal verfolgen: Pausiere dein aktuelles Ziel über sein Menü oder verfolge mit Plus mehrere Ziele gleichzeitig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El plan gratis permite seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue más de uno con Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La formule gratuite permet de suivre un objectif à la fois : mets ton objectif actuel en pause depuis son menu, ou suis plusieurs objectifs avec Plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con la formula Free puoi seguire un obiettivo alla volta: metti in pausa quello attuale dal suo menu oppure segui più obiettivi con Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランでは、一度に1つの目標を進められます。今の目標はメニューから一時停止できます。Plusなら複数の目標を同時に進められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 현재 목표의 메뉴에서 일시 중지를 선택하거나, Plus로 여러 목표를 함께 진행해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W pakiecie Free możesz realizować jeden cel naraz: wstrzymaj obecny cel w jego menu lub realizuj kilka celów w pakiecie Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No plano Grátis, você acompanha um objetivo por vez: pause seu objetivo atual no menu dele ou acompanhe mais de um com o Plus."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketle aynı anda tek bir hedefi takip edebilirsin: mevcut hedefini menüsünden duraklat ya da Plus ile birden fazla hedefi takip et."
           }
         }
       }
