@@ -16,6 +16,7 @@ import {
   type ProfileDraft,
   canSendProfileDraft,
   getPrecheckedSupports,
+  getProfileJobPrefill,
   toProfileAnswer,
   toProfileDraft,
   withPrecheckedSupports,
@@ -215,7 +216,7 @@ export function ProfileStepScreen({
     question &&
     progress && (
       <ProfileStep
-        jobPrefill={getString(view.goal.details, "role")}
+        jobPrefill={getProfileJobPrefill(getString(view.goal.details, "role"))}
         lessonHref={lessonHref}
         memoryEnabled={view.profile.memoryEnabled}
         nextIsSupport={view.steps[view.steps.indexOf(step) + 1] === "learningSupport"}

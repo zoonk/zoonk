@@ -1,9 +1,14 @@
-import { type ProfileQuestionView } from "@zoonk/core/profile/questions/contract";
+import {
+  MAX_PROFILE_JOB_LENGTH,
+  type ProfileQuestionView,
+} from "@zoonk/core/profile/questions/contract";
+import { assert, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   type ProfileDraft,
   canSendProfileDraft,
   getPrecheckedSupports,
+  getProfileJobPrefill,
   toProfileAnswer,
   toProfileDraft,
   toggleProfileExclusive,
@@ -24,6 +29,46 @@ function view(overrides: Partial<ProfileQuestionView> & Pick<ProfileQuestionView
     ...overrides,
   } satisfies ProfileQuestionView;
 }
+
+describe(getProfileJobPrefill, () => {
+  it("an earlier role fits the job field and can be sent without editing", () => {
+    const role =
+      "  Senior software engineer responsible for infrastructure, operations, and deployment  ";
+
+    const text = getProfileJobPrefill(role);
+    expect(text).toBe(role.trim().slice(0, MAX_PROFILE_JOB_LENGTH));
+
+    expect(
+      toProfileAnswer({
+        draft: draft({ picks: ["work"], text: text ?? "" }),
+        memoryEnabled: true,
+        question: "work",
+      }),
+    ).not.toBeNull();
+  });
+
+  it("every earlier role produces a sendable work answer", () => {
+    assert(
+      property(string({ maxLength: 200, minLength: MAX_PROFILE_JOB_LENGTH }), (role) => {
+        const text = getProfileJobPrefill(role);
+        expect(text?.length ?? 0).toBeLessThanOrEqual(MAX_PROFILE_JOB_LENGTH);
+
+        expect(
+          toProfileAnswer({
+            draft: draft({ picks: ["work"], text: text ?? "" }),
+            memoryEnabled: true,
+            question: "work",
+          }),
+        ).not.toBeNull();
+      }),
+    );
+  });
+
+  it("no earlier role leaves the optional job empty", () => {
+    expect(getProfileJobPrefill(null)).toBeNull();
+    expect(getProfileJobPrefill(" \n ")).toBeNull();
+  });
+});
 
 describe(toggleProfilePick, () => {
   it("a fourth chip is refused and says so", () => {

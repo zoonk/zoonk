@@ -1,4 +1,5 @@
 import {
+  MAX_PROFILE_JOB_LENGTH,
   type ProfileAnswerInput,
   type ProfileQuestionView,
   profileAnswerInputSchema,
@@ -71,6 +72,10 @@ export function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive
 
 function emptyProfileDraft(): ProfileDraft {
   return { consented: false, exclusive: null, picks: [], studies: [], text: "" };
+}
+
+export function getProfileJobPrefill(role: string | null): string | null {
+  return role?.trim().slice(0, MAX_PROFILE_JOB_LENGTH) || null;
 }
 
 export function toProfileDraft(view: ProfileQuestionView): ProfileDraft {
