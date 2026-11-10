@@ -1,5 +1,8 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
+import { readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
+import { readLessonStates } from "../../learner/facts/lesson-states";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
@@ -31,8 +34,20 @@ export async function readSavedDayView({
   userId: string;
   weekDate?: Date;
 }): Promise<DayView> {
+  const { goalId } = session;
+  const readCatchUp = goalId ? () => readCatchUpItems(userId, goalId) : undefined;
+
   const [view, refill] = await Promise.all([
-    loadStudySessionView({ blueprint, session, timeZone, userId, weekDate }),
+    loadStudySessionView({
+      blueprint,
+      readCatchUp,
+      readDayProgress: readDayMissionProgress,
+      readLessonStates,
+      session,
+      timeZone,
+      userId,
+      weekDate,
+    }),
     session.goal
       ? planEntitlementLapseRefill({
           goal: session.goal,
@@ -54,7 +69,7 @@ export async function readSavedDayView({
         ...new Set(refill.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),
       ],
       goalId: session.goalId,
-      known: { source: readSavedPlan(userId, session.goalId) },
+      known: { blueprint, goal: session.goal, source: readSavedPlan(userId, session.goalId) },
       now: new Date(),
       timeZone,
       userId,
@@ -65,6 +80,7 @@ export async function readSavedDayView({
       examTomorrow: view.examTomorrow,
       freshStart: session.freshStart,
       goalId: session.goalId,
+      readItems: readCatchUp,
       trialEnded: view.examAccess.trialEnded,
     }),
   ]);

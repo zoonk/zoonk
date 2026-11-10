@@ -1,5 +1,5 @@
 import "server-only";
-import { getLessonGenerationStates } from "../../../library/generation/lesson-generation-state";
+import { readLessonStates } from "../../../learner/facts/lesson-states";
 import { withLessonScreens } from "../../../sessions/_utils/lesson-screens";
 import { type ReadStudyDay } from "../../../sessions/_utils/read-study-day";
 
@@ -9,7 +9,7 @@ export async function readDaySession(day: ReadStudyDay) {
     block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
   );
 
-  const lessonStates = await getLessonGenerationStates(lessonIds);
+  const lessonStates = await readLessonStates(lessonIds);
 
   return {
     lessonStates,

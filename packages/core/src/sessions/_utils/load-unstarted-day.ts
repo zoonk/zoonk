@@ -1,6 +1,7 @@
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import "server-only";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
+import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -58,12 +59,18 @@ export async function loadUnstartedDayView({
     loadBlockedTestOutChapters({
       chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],
       goalId: goal.id,
-      known: { source: readSavedPlan(userId, goal.id) },
+      known: { blueprint, goal, source: readSavedPlan(userId, goal.id) },
       now,
       timeZone,
       userId,
     }),
-    loadMissionDayViews({ picks: day.missions.picks, session: missionDay, through: now, timeZone }),
+    loadMissionDayViews({
+      picks: day.missions.picks,
+      readProgress: readDayMissionProgress,
+      session: missionDay,
+      through: now,
+      timeZone,
+    }),
     hasDayMissionBonus({ now, session: { fullMealAt: null, localDate, userId }, timeZone }),
     loadDayPlusLessons({
       access: examAccess,

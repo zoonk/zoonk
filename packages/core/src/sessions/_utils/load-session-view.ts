@@ -9,32 +9,37 @@ import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
+import { type DayProgressReader } from "../missions/mission-day-views";
 import { getVisibleSessionTotal } from "../session-minutes";
 import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
+import { type LessonStatesReader } from "./lesson-screens";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
+import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 async function loadDayOutlines({
   dayMinutes,
+  plan,
   session,
 }: {
   dayMinutes: number;
+  plan: { graph: unknown } | null;
   session: StudySessionRow;
 }): Promise<DayOutlines> {
   if (dayMinutes === 0 || session.status === "completed" || !session.goal) {
     return null;
   }
 
-  return getDayOutlines({ goal: session.goal, localDate: session.localDate });
+  return getDayOutlines({ goal: session.goal, graph: plan?.graph, localDate: session.localDate });
 }
 
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
@@ -84,12 +89,19 @@ async function loadLessonReservation({
 export async function loadStudySessionView({
   blueprint,
   initialDay,
+  readCatchUp,
+  readDayProgress,
+  readLessonStates,
   session: storedSession,
   timeZone,
   userId,
   weekDate = storedSession.localDate,
 }: {
   blueprint?: ExamBlueprint | null;
+  /** A GET's request-wide catch-up items; without it, they're read fresh. */
+  readCatchUp?: () => Promise<readonly SessionPlanItem[]>;
+  readDayProgress?: DayProgressReader;
+  readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
   timeZone: string;
   userId: string;
@@ -102,6 +114,7 @@ export async function loadStudySessionView({
     loadStudyWeek({ localDate: weekDate, userId }),
     loadSessionBlockViews({
       blueprint,
+      readLessonStates,
       session: storedSession,
       timeZone,
       userId,
@@ -158,8 +171,14 @@ export async function loadStudySessionView({
     : { includesMockExams: true, trialEnded: false };
 
   const [outlines, missions, fullMealEarned, plusLessons, reserved] = await Promise.all([
-    loadDayOutlines({ dayMinutes, session }),
-    getDayMissions({ displayBlocks, session, timeZone, ...(current && { through: new Date() }) }),
+    loadDayOutlines({ dayMinutes, plan, session }),
+    getDayMissions({
+      displayBlocks,
+      readProgress: readDayProgress,
+      session,
+      timeZone,
+      ...(current && { through: new Date() }),
+    }),
     hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
     loadDayPlusLessons({
       access: examAccess,
@@ -195,6 +214,7 @@ export async function loadStudySessionView({
       examTomorrow: view.examTomorrow,
       freshStart: session.freshStart,
       goalId: session.goalId,
+      readItems: readCatchUp,
       trialEnded: examAccess.trialEnded,
     }),
   ]);
