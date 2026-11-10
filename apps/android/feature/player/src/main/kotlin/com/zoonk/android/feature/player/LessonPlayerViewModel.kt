@@ -195,6 +195,13 @@ private sealed interface StartOutcome {
     ) : StartOutcome
 }
 
+private data class LessonClock(
+    val input: LessonClockInput,
+    val send: ClockSend = ClockSend.Sent,
+)
+
+private enum class ClockSend { Sending, Sent, Failed }
+
 private sealed interface CompletionOutcome {
     data class Completed(
         val completion: LibraryLessonCompletion,
@@ -262,7 +269,7 @@ class LessonPlayerViewModel(
     private var starting: Job? = null
     private val checksAwaitingRun = mutableListOf<Job>()
     private var admittedRunId: UUID? = null
-    private var clock: LessonClockInput? = null
+    private val clock = MutableStateFlow<LessonClock?>(null)
     private var visible = true
     private val heldDeviceVerdicts = mutableListOf<HeldDeviceVerdict>()
     private var completing: Job? = null
@@ -319,7 +326,7 @@ class LessonPlayerViewModel(
         this.lesson = lesson
         owner = session
         admittedRunId = null
-        clock = null
+        clock.value = null
         acted = false
         workedHere.clear()
         heldDeviceVerdicts.clear()
@@ -340,25 +347,31 @@ class LessonPlayerViewModel(
 
     fun resume() {
         visible = true
-        updateClock(LessonClockInput.State.RUNNING)
+        sendClock()
     }
 
     /** The app went to the background or the player closed: an unfinished run counts as abandoned, once. */
     fun leave() {
         visible = false
-        updateClock(LessonClockInput.State.PAUSED)
+        sendClock()
         if (abandonSent) return
         val event = mutableState.value?.abandonEvent() ?: return
         abandonSent = true
         analytics.track(event)
     }
 
-    private fun updateClock(state: LessonClockInput.State) {
+    private fun sendClock() {
         val session = owner ?: return
-        val previous = clock ?: return
-        if (sessions.current != session || previous.state == state) return
-        val input = previous.copy(sequence = previous.sequence + 1, state = state)
-        clock = input
+        val latest = clock.value ?: return
+        if (sessions.current != session) return
+        val state = if (visible) LessonClockInput.State.RUNNING else LessonClockInput.State.PAUSED
+        val input =
+            when {
+                latest.input.state != state -> latest.input.copy(sequence = latest.input.sequence + 1, state = state)
+                latest.send == ClockSend.Failed -> latest.input
+                else -> return
+            }
+        clock.value = LessonClock(input, ClockSend.Sending)
         viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
             // The exit pause must outlive the navigation entry that clears this ViewModel.
             val result =
@@ -367,12 +380,14 @@ class LessonPlayerViewModel(
                         if (current == session) store.api.clock(current, lessonId, input) else null
                     }
                 }
-            if (input.state == LessonClockInput.State.RUNNING &&
-                result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
-                sessions.current == session && clock == input
-            ) {
-                start(input.runId.toString())
-            }
+            if (clock.value?.input != input) return@launch
+            // The server dropped this clock, so running counts only once Start gives a new one.
+            val restarts =
+                input.state == LessonClockInput.State.RUNNING &&
+                    result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
+                    sessions.current == session
+            val delivered = if (restarts) start(input.runId.toString()) is StartOutcome.Started else result !is MutationResult.Failed
+            clock.update { if (it?.input == input) LessonClock(input, if (delivered) ClockSend.Sent else ClockSend.Failed) else it }
         }
     }
 
@@ -453,7 +468,7 @@ class LessonPlayerViewModel(
                 ?.let { workedHere += it }
         }
         if (action == LessonAction.Continue || action == LessonAction.GoBack) writeExampleLines()
-        if (action == LessonAction.Continue) resendAnswers()
+        if (action == LessonAction.Continue) resendUnsaved()
         val before = mutableState.value
         mutableState.update { state -> state?.let { reduce(it, action, now()) } }
         val after = mutableState.value ?: return
@@ -549,7 +564,7 @@ class LessonPlayerViewModel(
         return when (outcome) {
             is GradeOutcome.Graded -> {
                 dispatch(LessonAction.CheckResolved(stepId, outcome.value.toStepResult(spoken.content.targetText), counts = true))
-                resendAnswers()
+                resendUnsaved()
                 GradeOutcome.Graded(Unit)
             }
 
@@ -794,8 +809,8 @@ class LessonPlayerViewModel(
                 val outcome = result.value
                 if (outcome is StartOutcome.Started) {
                     val run = outcome.run
-                    clock = run.clockId?.let { LessonClockInput(it, run.runId, 0, LessonClockInput.State.RUNNING) }
-                    if (!visible) updateClock(LessonClockInput.State.PAUSED)
+                    clock.value = run.clockId?.let { LessonClock(LessonClockInput(it, run.runId, 0, LessonClockInput.State.RUNNING)) }
+                    sendClock()
                 }
                 outcome
             }
@@ -911,7 +926,7 @@ class LessonPlayerViewModel(
                     unverdicted.remove(step.id)
                     countActivity(step)
                     dispatch(LessonAction.CheckResolved(step.id, result, counts = outcome.result.checked))
-                    resendAnswers()
+                    resendUnsaved()
                 }
 
                 else -> {
@@ -961,11 +976,12 @@ class LessonPlayerViewModel(
                 unsaved.remove(stepId)
                 true
             }
-        if (checked) resendAnswers()
+        if (checked) resendUnsaved()
         return saved
     }
 
-    fun resendAnswers() {
+    fun resendUnsaved() {
+        sendClock()
         if (admittedRunId == null) return
         if (unsaved.isNotEmpty() && resending?.isActive != true) work.launch { sendUnsent() }
     }
@@ -1036,7 +1052,10 @@ class LessonPlayerViewModel(
             return
         }
         checksAwaitingRun.toList().forEach { it.join() }
+        sendClock()
         val allSaved = sendUnsent()
+        // The run's study time counts up to its clock's latest transition, so that lands first.
+        clock.first { it?.send != ClockSend.Sending }
         val state = mutableState.value ?: return
         val runId = (state.run as? LessonRun.Started)?.runId
 

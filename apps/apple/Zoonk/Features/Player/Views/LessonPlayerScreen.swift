@@ -204,7 +204,7 @@ private struct LessonPlayerContent: View {
       store.setVisible(phase == .active)
       switch phase {
       case .active:
-        store.sendHeldAnswers()
+        store.sendUnsaved()
         Task { await store.retryFailedFinish() }
       case .background: store.reportAbandonment()
       default: break

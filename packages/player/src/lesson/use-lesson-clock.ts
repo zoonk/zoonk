@@ -33,25 +33,26 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       void send(sent)
         .catch(() => null)
         .then(async (outcome) => {
-          clockRef.current = settleClock({
-            clock: clockRef.current,
-            delivered: outcome !== null,
-            sent,
-          });
+          // The server dropped this clock, so running counts only once Start gives a new one.
+          const restarts =
+            outcome?.status === "ignored" &&
+            sent.state === "running" &&
+            clockRef.current?.transition === sent;
 
-          if (
-            outcome?.status !== "ignored" ||
-            sent.state !== "running" ||
-            clockRef.current?.transition !== sent
-          ) {
-            return;
-          }
-
-          const run = await adapters.startLesson({ runId: sent.runId }).catch(() => null);
+          const run = restarts
+            ? await adapters.startLesson({ runId: sent.runId }).catch(() => null)
+            : null;
 
           if (run?.reason === "started" && clockRef.current?.transition.clockId === sent.clockId) {
             runClock(run);
+            return;
           }
+
+          clockRef.current = settleClock({
+            clock: clockRef.current,
+            delivered: outcome !== null && !restarts,
+            sent,
+          });
         });
     }
 

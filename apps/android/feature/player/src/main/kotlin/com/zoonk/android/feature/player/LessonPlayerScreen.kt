@@ -252,7 +252,7 @@ fun LessonPlayer(
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
         viewModel.resume()
-        viewModel.resendAnswers()
+        viewModel.resendUnsaved()
         viewModel.retryFailedFinish()
         onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() }
     }

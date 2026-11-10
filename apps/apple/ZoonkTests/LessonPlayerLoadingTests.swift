@@ -75,6 +75,26 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(clocks.map(\.state), ["paused", "running", "paused"])
   }
 
+  func testAnIgnoredResumeGoesAgainWhenItsRestartFails() async throws {
+    let first = UUID().uuidString
+    let second = UUID().uuidString
+    let transport = OpeningStartTransport(
+      holds: false, failingStarts: [2], clockIds: [first, first, second], clockStatus: "ignored")
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    await store.setVisible(false)?.value
+    await store.setVisible(true)?.value
+    await store.setVisible(true)?.value
+    await store.setVisible(false)?.value
+
+    let starts = await transport.count
+    XCTAssertEqual(starts, 3)
+    let clocks = await transport.clocks
+    XCTAssertEqual(clocks.map(\.clockId), [first, first, first, second])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 2, 1])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "running", "paused"])
+  }
+
   func testIgnoredRunningDoesNotRestartAfterLeavingAgain() async throws {
     let first = UUID().uuidString
     let second = UUID().uuidString
@@ -117,20 +137,46 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(clocks.first(where: { $0.sequence == 2 })?.state, "running")
   }
 
-  func testFailedClockUpdatesStaySilentAndAreNotRetried() async throws {
+  func testAFailedClockTransitionGoesAgainUnderItsSequenceUntilItGetsThrough() async throws {
     let transport = OpeningStartTransport(
-      holds: false, clockIds: [UUID().uuidString], failsFirstClock: true)
+      holds: false, clockIds: [UUID().uuidString], failingClocks: [2, 3])
     let store = try openingPlayer(markedLesson(), transport: transport)
     await store.load()
     await store.setVisible(false)?.value
     await store.setVisible(true)?.value
+    await store.setVisible(true)?.value
+    store.continueLesson()
+    await clocksSent(4, transport)
     XCTAssertNil(store.setVisible(true))
 
     let clocks = await transport.clocks
-    XCTAssertEqual(clocks.map(\.sequence), [1, 2])
-    XCTAssertEqual(clocks.map(\.state), ["paused", "running"])
+    XCTAssertEqual(clocks.map(\.sequence), [1, 2, 2, 2])
+    XCTAssertEqual(clocks.map(\.state), ["paused", "running", "running", "running"])
     XCTAssertEqual(store.screen, .playing)
     XCTAssertEqual(store.state?.runId, "run")
+  }
+
+  func testFinishingWaitsForTheClockToGetThrough() async throws {
+    let transport = OpeningStartTransport(
+      holds: false, clockIds: [UUID().uuidString], failingClocks: [2], holdsRunningClock: true)
+    let store = try openingPlayer(markedLesson(), transport: transport)
+    await store.load()
+    store.continueLesson()
+    await store.setVisible(false)?.value
+    await store.setVisible(true)?.value
+    store.continueLesson()
+    await clocksSent(3, transport)
+    for _ in 0..<1_000 { await Task.yield() }
+    let beforeClock = await transport.operations
+    XCTAssertFalse(beforeClock.contains("createLibraryLessonCompletion"))
+
+    await transport.releaseRunningClock()
+    await waitUntil { store.state?.completion?.status != .saving }
+
+    let operations = await transport.operations
+    XCTAssertEqual(
+      operations.filter { $0 != "createLibraryLessonStart" }.suffix(2),
+      ["updateLibraryLessonClock", "createLibraryLessonCompletion"])
   }
 
   func testALateRunPreservesCanvasWorkWithNoAnswerAfterGoingBack() async throws {
@@ -304,7 +350,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   func testRetryingStartKeepsAndSavesLocallyCheckedAnswersOnce() async throws {
-    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let transport = OpeningStartTransport(holds: true, failingStarts: [1])
     let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
@@ -336,7 +382,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   func testALessonFinishedWhileTheStartFailsCanRetryCompletion() async throws {
-    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let transport = OpeningStartTransport(holds: true, failingStarts: [1])
     let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
@@ -368,7 +414,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 
   func testRetryingStartShowsProgressAndHidesRetry() async throws {
-    let transport = OpeningStartTransport(holds: true, failsFirstStart: true)
+    let transport = OpeningStartTransport(holds: true, failingStarts: [1])
     let store = try openingPlayer(checkLesson(["one", "two"]), transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
@@ -523,7 +569,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
 
   func testAnAnswerGivenBeforeAFailedStartKeepsItsScreenAfterTryAgain() async throws {
     let transport = OpeningStartTransport(
-      holds: true, failsFirstStart: true, runAnswers: runAnswers(["one", "two"]))
+      holds: true, failingStarts: [1], runAnswers: runAnswers(["one", "two"]))
     let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
@@ -993,6 +1039,11 @@ final class LessonPlayerLoadingTests: XCTestCase {
     while await transport.count == 0, Date.now < deadline { await Task.yield() }
   }
 
+  private func clocksSent(_ count: Int, _ transport: OpeningStartTransport) async {
+    let deadline = Date.now.addingTimeInterval(5)
+    while await transport.clocks.count < count, Date.now < deadline { await Task.yield() }
+  }
+
   private func waitUntil(_ condition: () -> Bool) async {
     for _ in 0..<10_000 where !condition() {
       await Task.yield()
@@ -1311,10 +1362,12 @@ private actor OpeningStartTransport: ClientTransport {
 
   let holds: Bool
   let opensElsewhere: Bool
-  let failsFirstStart: Bool
+  /// By their place among the start requests, from 1: the ones that don't get through.
+  let failingStarts: Set<Int>
   let runAnswers: String
   let clockIds: [String?]
-  let failsFirstClock: Bool
+  /// By their place among the clock requests, from 1: the ones that don't get through.
+  let failingClocks: Set<Int>
   let clockStatus: String
   let holdsRunningClock: Bool
   private var gate: CheckedContinuation<Void, Never>?
@@ -1322,20 +1375,21 @@ private actor OpeningStartTransport: ClientTransport {
   private(set) var count = 0
   private(set) var inputs: [String] = []
   private(set) var clocks: [ClockInput] = []
+  private(set) var operations: [String] = []
   /// Each check as "step in run".
   private(set) var checks: [String] = []
 
   init(
-    holds: Bool, opensElsewhere: Bool = false, failsFirstStart: Bool = false,
-    runAnswers: String = "[]", clockIds: [String?] = [nil], failsFirstClock: Bool = false,
+    holds: Bool, opensElsewhere: Bool = false, failingStarts: Set<Int> = [],
+    runAnswers: String = "[]", clockIds: [String?] = [nil], failingClocks: Set<Int> = [],
     clockStatus: String = "updated", holdsRunningClock: Bool = false
   ) {
     self.holds = holds
     self.opensElsewhere = opensElsewhere
-    self.failsFirstStart = failsFirstStart
+    self.failingStarts = failingStarts
     self.runAnswers = runAnswers
     self.clockIds = clockIds
-    self.failsFirstClock = failsFirstClock
+    self.failingClocks = failingClocks
     self.clockStatus = clockStatus
     self.holdsRunningClock = holdsRunningClock
   }
@@ -1353,6 +1407,8 @@ private actor OpeningStartTransport: ClientTransport {
   func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
     async throws -> (HTTPResponse, HTTPBody?)
   {
+    operations.append(operationID)
+
     if operationID == "createStepCheck" {
       return try await check(request, body: body)
     }
@@ -1361,7 +1417,7 @@ private actor OpeningStartTransport: ClientTransport {
       let input = try JSONDecoder().decode(
         ClockInput.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
       clocks.append(input)
-      if failsFirstClock, clocks.count == 1 { throw APIError.network }
+      if failingClocks.contains(clocks.count) { throw APIError.network }
       if holdsRunningClock, input.state == "running" {
         await withCheckedContinuation { runningClockGate = $0 }
       }
@@ -1379,7 +1435,7 @@ private actor OpeningStartTransport: ClientTransport {
     if holds { await withCheckedContinuation { gate = $0 } }
     var headers = HTTPFields()
     headers[.contentType] = "application/json"
-    if failsFirstStart, count == 1 {
+    if failingStarts.contains(count) {
       throw APIError.network
     }
     if opensElsewhere {
