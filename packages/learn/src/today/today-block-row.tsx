@@ -125,7 +125,7 @@ export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
     : opens.ref.position === step.position;
 }
 
-export function useCountsTowardMission() {
+function useCountsTowardMission() {
   const { missions } = useTodayScreen();
 
   return (step: DayStep): boolean =>
