@@ -337,16 +337,17 @@ final class LessonPlayerStore {
 
       guard let self, self.clock?.input == input else { return }
 
-      if case .failed = updated {
-        self.clock?.send = .failed
-        return
-      }
-
-      self.clock?.send = .sent
-
+      // The server dropped this clock, so running counts only once Start gives a new one.
       guard input.state == .running, case .done(let result) = updated,
         result.status == .ignored, self.isCurrent(identity)
-      else { return }
+      else {
+        if case .failed = updated {
+          self.clock?.send = .failed
+        } else {
+          self.clock?.send = .sent
+        }
+        return
+      }
 
       let studySessionId = self.studySessionId
       let restarted = await self.write { token in
@@ -354,9 +355,12 @@ final class LessonPlayerStore {
           id: lessonId, studySessionId: studySessionId, runId: input.runId, token: token)
       }
 
-      guard self.isCurrent(identity), self.clock?.input.clockId == input.clockId,
-        case .done(.success(let run)) = restarted, run.runId == input.runId
-      else { return }
+      guard self.isCurrent(identity), self.clock?.input.clockId == input.clockId else { return }
+
+      guard case .done(.success(let run)) = restarted, run.runId == input.runId else {
+        if self.clock?.input == input { self.clock?.send = .failed }
+        return
+      }
 
       self.startClock(run)
     }
