@@ -22,6 +22,7 @@ import {
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
@@ -276,6 +277,12 @@ describe("course certificates", () => {
   it("awards nothing while a lesson or the challenge is left, then once for the last", async () => {
     const fixture = await courseGoal({
       items: [{ status: "todo" }, { status: "todo" }, { kind: "boss", status: "todo" }],
+    });
+
+    // The planner dates every lesson; a finished one then sorts before its phase's challenge.
+    await prisma.planItem.updateMany({
+      data: { scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE }) },
+      where: { planId: fixture.plan.id },
     });
 
     await finishLesson(fixture, fixture.plan.items[0]);
