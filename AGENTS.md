@@ -81,7 +81,7 @@ CI is the full gate. Every push to a PR runs the PR pipelines in [.github/workfl
 
 A task ends with one pull request the user can review, following [zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md), however many areas it spans (core, API, web, iOS, Android, prompts). The user and the reviewers check the change end to end, so never split a task into several PRs or a stack, and never ship one part first and the rest later. Build big work in slices on the task's one branch ([orchestration guide](.agents/guides/orchestration.md)). Only the user can ask for more than one PR. The agent that owns the task opens it; a subagent hands its work back to its lead instead.
 
-The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, a video of each side for a flow, transition or wait, and a link to its Vercel preview for a blog post ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit.
+The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, a video of each side for a flow, transition or wait, and a link to its Vercel preview for a blog post ([show the change](.agents/skills/zoonk-commit/SKILL.md#show-the-change)). Capture the before side before you edit. Whether a change needs screenshots depends only on whether it changes what a learner sees, never on its size: they let a reviewer see the change from the PR alone.
 
 1. Pass the [PR verification gate](#pr-verification-gate)'s local checks on the final tree.
 2. Open the PR ready for review and watch it while CI and the reviewers run.
