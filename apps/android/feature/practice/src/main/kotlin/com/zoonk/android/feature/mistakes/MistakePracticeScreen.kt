@@ -140,7 +140,9 @@ internal fun PracticeRun(
     val task = state.read.tasks.getOrNull(run.index)
     val question = (task as? MistakePracticeTask.Bank)?.question
     if (task is MistakePracticeTask.Lesson) {
-        MistakeLessonQuestion(state, task, viewModel, app, navigator)
+        key(run.index) {
+            MistakeLessonQuestion(state, task, viewModel, app, navigator)
+        }
         return
     }
     var saved by rememberDraft()

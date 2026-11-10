@@ -18,6 +18,10 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
+import {
+  mistakePracticeCompletionSchema,
+  mistakePracticeFeedbackSchema,
+} from "../src/lib/openapi/schemas/mistakes";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import {
@@ -144,7 +148,7 @@ async function createGoal(userId: string) {
     }),
   ]);
 
-  await Promise.all([
+  const [, mistake] = await Promise.all([
     learnerSkillFixture({
       difficulty: 5,
       due: new Date(Date.now() - DAY_MS),
@@ -163,7 +167,7 @@ async function createGoal(userId: string) {
     }),
   ]);
 
-  return { goal, lessons, skills };
+  return { goal, lessons, mistake, skills };
 }
 
 async function playBlock({
@@ -244,12 +248,43 @@ test.describe("Study sessions API", () => {
 
   test("plays today's session from capsules to the summary", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-session" });
-    const { goal, lessons, skills } = await createGoal(userId);
+    const { goal, lessons, mistake, skills } = await createGoal(userId);
 
     const today = await openStudyDay({ api, goalId: goal.id });
 
     expect(today.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "practice"]);
-    expect(today.missions.map((mission) => mission.kind)).toStrictEqual(["review", "somethingNew"]);
+
+    expect(today.missions.map((mission) => mission.kind)).toStrictEqual([
+      "review",
+      "somethingNew",
+      "fixMistake",
+    ]);
+
+    const correction = await readBody({
+      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
+        data: {
+          answer: { selectedIndex: 0 },
+          attemptId: randomUUID(),
+          durationMs: 2000,
+          itemId: mistake.itemId,
+          timeZone: "UTC",
+        },
+      }),
+      schema: mistakePracticeFeedbackSchema,
+    });
+
+    expect(correction).toMatchObject({ fixed: true, fixedMistakeIds: [mistake.id] });
+
+    const notebookDone = await readBody({
+      response: await api.post("/v1/me/mistake-practice/completions", {
+        data: { answerIds: [correction.answerId], ended: true, goalId: goal.id, timeZone: "UTC" },
+      }),
+      schema: mistakePracticeCompletionSchema,
+    });
+
+    expect(notebookDone).toMatchObject({
+      missionMoment: { completed: ["fixMistake"], fullMeal: { paid: false } },
+    });
 
     const { session: again } = await readBody({
       response: await api.get(`/v1/today?goalId=${goal.id}`),

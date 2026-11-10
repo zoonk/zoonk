@@ -15,8 +15,6 @@ import {
 } from "./mistake-practice-state";
 import { type RecordMistakeAction, usePracticeRecording } from "./use-practice-recording";
 
-export type { PracticeRecordingOutcome } from "./use-practice-recording";
-
 const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 

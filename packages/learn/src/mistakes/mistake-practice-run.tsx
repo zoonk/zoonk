@@ -33,13 +33,8 @@ import {
 import { getPracticeTutorItem } from "./practice-tutor-item";
 import { type MistakePracticeActions, useMistakePractice } from "./use-mistake-practice";
 
-export type { PracticeRecordingOutcome } from "./use-mistake-practice";
 export type { LessonPracticeRenderer } from "./practice-step";
-export type {
-  PracticeAnswer,
-  MistakePracticeFeedback,
-  MistakePracticeSummary,
-} from "./mistake-practice-state";
+export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-practice-state";
 
 type Run = ReturnType<typeof useMistakePractice>;
 

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   type Actions,
   practiceFeedback as feedback,
@@ -9,6 +9,16 @@ import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview
 
 describe("exact lesson mistake practice", () => {
   afterEach(() => vi.restoreAllMocks());
+
+  it("continues a checked typed replay with a fresh Enter, keeping feedback while Enter is held", async () => {
+    const actions = openPractice(teachingStep("typedAnswer"));
+    await page.getByRole("textbox").fill("Where the electron is likely to be");
+    await userEvent.keyboard("{Enter>8}{/Enter}");
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+    await userEvent.keyboard("{Enter}");
+    await expect.element(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
+    expect(actions.finish).toHaveBeenCalledWith({ answerIds: ["saved-answer"] });
+  });
 
   it("checks the original lesson option and counts the saved answer when ending early", async () => {
     const step = teachingStep("check");

@@ -67,6 +67,7 @@ export type LessonPracticeRenderer = (props: {
   onAnswer: (answer: PracticeAnswer | null) => void;
   onDontKnow: () => void;
   onCheck: (answer: PracticeAnswer) => void;
+  onContinue: () => void;
   result: NonNullable<MistakePracticeFeedback>["lessonResult"];
   spoken: Extract<Run["state"]["phase"], { kind: "feedback" }>["spoken"];
   onRecord: Run["record"];
@@ -186,6 +187,7 @@ function ReplayQuestion({
     lesson: step.lesson,
     onAnswer: run.select,
     onCheck: run.check,
+    onContinue: run.next,
     onDontKnow: run.notSure,
     onRecord: run.record,
     recordIssue: run.recordIssue,

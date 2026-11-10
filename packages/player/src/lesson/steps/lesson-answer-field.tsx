@@ -4,6 +4,7 @@ import { MAX_TYPED_ANSWER_LENGTH } from "@zoonk/core/lesson-player/contract";
 import { focusAnswerOnPointer, usesOnScreenKeyboard } from "@zoonk/learn/answer-field";
 import { Input } from "@zoonk/ui/components/input";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef } from "react";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
@@ -68,6 +69,12 @@ export function LessonAnswerField({
 
   function handleKeyDown(event: React.KeyboardEvent) {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
+      return;
+    }
+
+    ignoreHeldEnter(event);
+
+    if (event.defaultPrevented) {
       return;
     }
 

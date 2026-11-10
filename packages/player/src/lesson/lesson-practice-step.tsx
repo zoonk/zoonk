@@ -122,7 +122,13 @@ export function LessonPracticeStep(props: Props) {
         onCheck(selected);
       }
     },
-    continue: () => setShown(shown + 1),
+    continue: () => {
+      if (graded) {
+        props.onContinue();
+      } else {
+        setShown(shown + 1);
+      }
+    },
     dontKnow: onDontKnow,
     engage: idle,
     explainFirst: idle,

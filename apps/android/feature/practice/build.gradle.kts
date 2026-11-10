@@ -14,5 +14,6 @@ dependencies {
     implementation(project(":feature:plan"))
     implementation(project(":feature:player"))
 
+    testImplementation(testFixtures(project(":feature:activities")))
     testImplementation(testFixtures(project(":feature:plan")))
 }

@@ -103,10 +103,6 @@ export function getChoiceCorrectAnswer(
   return isSinglePick(item) ? { selectedIndex: right[0] ?? -1 } : { selectedIndexes: right };
 }
 
-export function getQuestionText(item: ChoiceItem): string {
-  return item.format === "trueFalse" ? item.content.statement : item.content.question;
-}
-
 export function hasMisconceptions(item: ChoiceItem): boolean {
   if (item.format === "trueFalse") {
     return Boolean(item.content.misconception);

@@ -15,7 +15,8 @@ type RecordingIssue =
   | { status: "limitReached"; tier: "free" | "guest" | "plus"; period?: "day" | "month" | "total" }
   | { status: "signUpRequired" }
   | { status: "slowDown"; retryAfterSeconds: number };
-export type PracticeRecordingOutcome =
+
+type PracticeRecordingOutcome =
   | { status: "graded"; feedback: NonNullable<MistakePracticeFeedback>; grade: SpokenAnswerGrade }
   | { status: "failed" }
   | RecordingIssue;
