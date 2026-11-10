@@ -128,9 +128,22 @@ struct PlanAllowance: Equatable, Sendable {
     case plus
   }
 
+  /// A nil limit is no cap.
+  struct Cap: Equatable, Sendable {
+    var limit: Int?
+    var used = 0
+
+    var isReached: Bool { limit.map { used >= $0 } ?? false }
+  }
+
   let tier: Tier
   let buddyMessagesToday: Int
   let buddyMessagesDailyLimit: Int?
+  /// Goals followed at once.
+  var activeGoals = Cap()
+  var newGoalsTotal = Cap()
+  var newGoalsToday = Cap()
+  var newGoalsThisMonth = Cap()
 }
 
 extension LearningPreferences {
@@ -170,10 +183,15 @@ extension MemoryFact {
 extension PlanAllowance {
   init(_ allowance: Components.Schemas.AllowanceResponse) {
     let messages = allowance.items.first { $0.kind == .tutorMessage }
+    let goals = allowance.items.first { $0.kind == .goal }
 
     self.init(
       tier: Tier(rawValue: allowance.tier.rawValue) ?? .free,
       buddyMessagesToday: messages?.usedToday ?? 0,
-      buddyMessagesDailyLimit: messages?.dailyLimit)
+      buddyMessagesDailyLimit: messages?.dailyLimit,
+      activeGoals: Cap(limit: allowance.activeGoals.limit, used: allowance.activeGoals.used),
+      newGoalsTotal: Cap(limit: goals?.totalLimit, used: goals?.usedTotal ?? 0),
+      newGoalsToday: Cap(limit: goals?.dailyLimit, used: goals?.usedToday ?? 0),
+      newGoalsThisMonth: Cap(limit: goals?.monthlyLimit, used: goals?.usedThisMonth ?? 0))
   }
 }

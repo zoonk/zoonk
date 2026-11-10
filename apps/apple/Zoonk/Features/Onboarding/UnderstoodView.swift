@@ -24,10 +24,16 @@ struct ReadDraftView: View {
       ) {
         create {
           try await onboarding.createGoals(
-            understood.startableGoals(limit: draft.activeGoalLimit).map(\.draft.value1),
+            understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
             schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
         } then: {
           onCreated($0)
+        }
+      }
+      .onChange(of: draft) {
+        // A draft read after the refusal has room again, such as after pausing a goal.
+        if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
+          error = nil
         }
       }
     case .case2(let explain):
@@ -155,27 +161,30 @@ private struct UnderstoodCard: View {
         }
       }
 
-      if !locked.isEmpty {
+      // Only goals started from this card make the rest wait in the learner's goals.
+      if !startable.isEmpty, !locked.isEmpty {
         Section {
           PlusNotice(
             description: locked.count == 1
               ? Text(
-                "Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.",
+                "Following more goals at once comes with Plus. Until then, this goal waits in your goals.",
                 tableName: "Onboarding",
                 comment:
-                  "Under the one goal the free plan can't follow yet, which waits in the learner's goal list; Plus is the subscription's name, not \"more\""
+                  "Under the one goal the free plan can't follow yet, because the learner follows as many goals at once as it allows; the goal waits in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
               )
               : Text(
-                "Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.",
+                "Following more goals at once comes with Plus. Until then, these goals wait in your goals.",
                 tableName: "Onboarding",
                 comment:
-                  "Under the goals the free plan can't follow yet, which wait in the learner's goal list; Plus is the subscription's name, not \"more\""
+                  "Under the goals the free plan can't follow yet, because the learner follows as many goals at once as it allows; they wait in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
               ),
             showsSeePlus: error?.limit?.isPlusLimit != true)
         }
       }
 
-      if let limit = error?.limit, limit.isPlusLimit {
+      if startable.isEmpty {
+        GoalLimitNoticeSection(reason: .activeGoals)
+      } else if let limit = error?.limit, limit.isPlusLimit {
         GoalLimitNoticeSection(reason: limit)
       } else {
         if let error {
@@ -205,7 +214,7 @@ private struct UnderstoodCard: View {
   }
 
   private var startable: Range<Int> {
-    understood.startableGoals(limit: draft.activeGoalLimit).indices
+    understood.startableGoals(left: draft.activeGoalsLeft).indices
   }
 
   private var locked: Range<Int> {
@@ -245,8 +254,8 @@ private struct UnderstoodCard: View {
 }
 
 extension Components.Schemas.GoalUnderstanding.Case1Payload {
-  fileprivate func startableGoals(limit: Int?) -> ArraySlice<Components.Schemas.UnderstoodGoal> {
-    goals.prefix(limit ?? goals.count)
+  fileprivate func startableGoals(left: Int?) -> ArraySlice<Components.Schemas.UnderstoodGoal> {
+    goals.prefix(left ?? goals.count)
   }
 }
 
