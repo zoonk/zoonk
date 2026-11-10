@@ -62,13 +62,14 @@ function revealWithoutGuess({
 
 function useCompletionSave({
   adapters,
+  closeClock,
   dispatch,
   ensureRun,
   flushUnsaved,
   startRun,
   state,
 }: Pick<ActionsInput, "adapters" | "dispatch" | "state"> &
-  Pick<ReturnType<typeof useLessonRun>, "ensureRun" | "flushUnsaved" | "startRun">) {
+  Pick<ReturnType<typeof useLessonRun>, "closeClock" | "ensureRun" | "flushUnsaved" | "startRun">) {
   const saveCompletion = useEffectEvent(async () => {
     const [allSaved, run] = await Promise.all([flushUnsaved(), ensureRun()]);
 
@@ -85,6 +86,7 @@ function useCompletionSave({
         : null;
 
     if (outcome?.status === "completed") {
+      closeClock();
       dispatch({ result: outcome.completion, type: "completionSaved" });
       return;
     }

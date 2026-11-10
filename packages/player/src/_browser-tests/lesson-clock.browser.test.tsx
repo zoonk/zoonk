@@ -403,6 +403,130 @@ describe("lesson clock", () => {
     ]);
   });
 
+  it("finishes only once every clock change sent while it waits has landed", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    const lesson = buildLesson([teachingStep("check")]);
+    const clockId = crypto.randomUUID();
+    const runId = crypto.randomUUID();
+    const resumed = Promise.withResolvers<{ status: "updated" }>();
+    const resumedAgain = Promise.withResolvers<{ status: "updated" }>();
+
+    const updateLessonClock = clockServer().mockImplementation(({ sequence }) => {
+      if (sequence === 2) {
+        return resumed.promise;
+      }
+
+      return sequence === 4 ? resumedAgain.promise : Promise.resolve({ status: "updated" });
+    });
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ clockId, runId })),
+      updateLessonClock,
+    });
+
+    renderLessonPlayer({ adapters, lesson });
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+    setVisibility("hidden");
+    setVisibility("visible");
+    await answerRight();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await vi.advanceTimersByTimeAsync(1000);
+    setVisibility("hidden");
+    setVisibility("visible");
+    resumed.resolve({ status: "updated" });
+
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+
+    resumedAgain.resolve({ status: "updated" });
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    expect(transitions(updateLessonClock)).toStrictEqual([
+      { clockId, runId, sequence: 1, state: "paused" },
+      { clockId, runId, sequence: 2, state: "running" },
+      { clockId, runId, sequence: 3, state: "paused" },
+      { clockId, runId, sequence: 4, state: "running" },
+    ]);
+  });
+
+  it("finishes only once the clock a restart gives has its change too", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    const lesson = buildLesson([teachingStep("check")]);
+    const runId = crypto.randomUUID();
+    const [firstClock, secondClock] = [crypto.randomUUID(), crypto.randomUUID()];
+    const restarted = Promise.withResolvers<ReturnType<typeof startedRun>>();
+    const freshPause = Promise.withResolvers<{ status: "updated" }>();
+
+    const updateLessonClock = clockServer().mockImplementation((input) =>
+      input.clockId === secondClock
+        ? freshPause.promise
+        : Promise.resolve({ status: input.state === "running" ? "ignored" : "updated" }),
+    );
+
+    const startLesson = vi
+      .fn<LessonPlayerAdapters["startLesson"]>()
+      .mockResolvedValueOnce(startedRun({ clockId: firstClock, runId }))
+      .mockReturnValue(restarted.promise);
+
+    const adapters = buildAdapters(lesson, { startLesson, updateLessonClock });
+    renderLessonPlayer({ adapters, lesson });
+
+    await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeVisible();
+    setVisibility("hidden");
+    setVisibility("visible");
+    await expect.poll(() => startLesson.mock.calls).toHaveLength(2);
+    await answerRight();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await vi.advanceTimersByTimeAsync(1000);
+    setVisibility("hidden");
+    restarted.resolve(startedRun({ clockId: secondClock, runId }));
+    await expect.poll(() => transitions(updateLessonClock)).toHaveLength(4);
+
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+
+    freshPause.resolve({ status: "updated" });
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    expect(transitions(updateLessonClock)).toStrictEqual([
+      { clockId: firstClock, runId, sequence: 1, state: "paused" },
+      { clockId: firstClock, runId, sequence: 2, state: "running" },
+      { clockId: firstClock, runId, sequence: 3, state: "paused" },
+      { clockId: secondClock, runId, sequence: 1, state: "paused" },
+    ]);
+  });
+
+  it("sends nothing more on the clock once the lesson is finished", async () => {
+    const lesson = buildLesson([teachingStep("check")]);
+    const clockId = crypto.randomUUID();
+    const runId = crypto.randomUUID();
+    const updateLessonClock = clockServer().mockResolvedValue({ status: "ignored" });
+
+    const startLesson = vi
+      .fn<LessonPlayerAdapters["startLesson"]>()
+      .mockResolvedValueOnce(startedRun({ clockId, runId }))
+      .mockResolvedValue({ reason: "notFound" });
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson, updateLessonClock }),
+      lesson,
+    });
+
+    await answerRight();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+    setVisibility("hidden");
+    setVisibility("visible");
+    globalThis.dispatchEvent(new Event("online"));
+
+    expect(updateLessonClock).not.toHaveBeenCalled();
+    expect(startLesson).toHaveBeenCalledOnce();
+  });
+
   it("counts again from the first change on the clock a new start gives", async () => {
     const lesson = buildLesson([teachingStep("check"), teachingStep("explanation")]);
     const runId = crypto.randomUUID();
