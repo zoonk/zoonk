@@ -9,6 +9,7 @@ import {
   languageGoalFixture,
   reachLanguageCheckpointFixture,
 } from "@zoonk/testing/fixtures/language";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -37,7 +38,13 @@ function addQuestions({ count, skillId }: { count: number; skillId: string }) {
   );
 }
 
-async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PER_SKILL) {
+async function createGoalAtBoss(
+  userId: string,
+  {
+    lessonsLeft = 0,
+    questionsPerSkill = QUESTIONS_PER_SKILL,
+  }: { lessonsLeft?: number; questionsPerSkill?: number } = {},
+) {
   const [goal, [skills, next], lessons] = await Promise.all([
     goalFixture({ dailyMinutes: 30, timezone: "UTC", userId }),
     Promise.all([
@@ -63,13 +70,14 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
       items: [
         ...lessons.map((lesson, position) => {
           const firstPhase = position < SKILL_NAMES.length;
+          const done = position < SKILL_NAMES.length - lessonsLeft;
 
           return {
             lessonId: lesson.id,
             phase: firstPhase ? 0 : 1,
             position: firstPhase ? position : position + 1,
             skillId: lessonSkills[position]?.id ?? null,
-            status: firstPhase ? ("done" as const) : ("todo" as const),
+            status: done ? ("done" as const) : ("todo" as const),
             titleSnapshot: lesson.title,
           };
         }),
@@ -242,9 +250,9 @@ test.describe("Checkpoints API", () => {
     expect(bossMove.status()).toBe(409);
   });
 
-  test("a boss after today's unfinished challenge says it waits, as Start refuses, until that work is completed", async () => {
+  test("a boss after today's unfinished lesson says it waits, as Start refuses, until that lesson is completed", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "challenge-wait" });
-    const goal = await createGoalAtBoss(userId);
+    const goal = await createGoalAtBoss(userId, { lessonsLeft: 1 });
 
     const boss = await prisma.planItem.findFirstOrThrow({
       where: { kind: "boss", phase: 0, plan: { goalId: goal.id } },
@@ -258,51 +266,43 @@ test.describe("Checkpoints API", () => {
         schema: challengeResponseSchema,
       });
 
-    await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: null });
+    await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: "lessons" });
 
     const today = await openStudyDay({ api, goalId: goal.id });
     const checkpoint = today.blocks.find((block) => block.kind === "checkpoint");
 
-    if (!checkpoint) {
-      throw new Error("Expected the boss in the opened day");
+    const lesson = today.blocks.find(
+      (block) => block.kind === "learn" && block.position < (checkpoint?.position ?? 0),
+    );
+
+    if (!checkpoint || !lesson) {
+      throw new Error("Expected the phase's last lesson, then its boss, in the opened day");
     }
 
     await expect(readIntro()).resolves.toMatchObject({
       blockId: checkpoint.id,
       status: "ready",
-      waitReason: null,
+      waitReason: "lessons",
     });
-
-    const last = Math.max(...today.blocks.map((block) => block.position));
-
-    await prisma.studySessionBlock.update({
-      data: { position: last + 1 },
-      where: { id: checkpoint.id },
-    });
-
-    const earlier = await prisma.studySessionBlock.create({
-      data: {
-        kind: "checkpoint",
-        payload: {
-          checkpoint: { kind: "boss", mock: false, passMark: 0, phase: 0, timeLimitMinutes: null },
-        },
-        position: checkpoint.position,
-        sessionId: today.id,
-      },
-    });
-
-    await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: "challenge" });
 
     const refused = await api.post(`${path}/starts`, { data: { timeZone: "UTC" } });
     expect(refused.status()).toBe(409);
 
     await expect(refused.json()).resolves.toMatchObject({
-      error: { code: "EARLIER_FIRST", details: { reason: "challenge" } },
+      error: { code: "EARLIER_FIRST", details: { reason: "lessons" } },
     });
 
-    await prisma.studySessionBlock.update({
-      data: { status: "completed" },
-      where: { id: earlier.id },
+    const lessonPath = `/v1/study-sessions/${today.id}/blocks/${lesson.id}`;
+    await api.post(`${lessonPath}/starts`, { data: {} });
+
+    await learningEventFixture({
+      contentIds: { lessonId: lesson.lessonId ?? "", studySessionId: today.id },
+      userId,
+    });
+
+    await readBody({
+      response: await api.post(`${lessonPath}/completions`, { data: {} }),
+      schema: studyBlockCompletionSchema,
     });
 
     await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: null });
@@ -323,7 +323,7 @@ test.describe("Checkpoints API", () => {
       createBearerLearner({ baseURL, prefix: "challenge-thin-other" }),
     ]);
 
-    const goal = await createGoalAtBoss(userId, 1);
+    const goal = await createGoalAtBoss(userId, { questionsPerSkill: 1 });
 
     const boss = await prisma.planItem.findFirstOrThrow({
       where: { kind: "boss", phase: 0, plan: { goalId: goal.id } },
