@@ -603,11 +603,11 @@ private fun HowItWorks(hasAccount: Boolean) {
             ) {
                 Text(
                     text = (index + 1).toString(),
-                    modifier = Modifier.clearAndSetSemantics {},
+                    modifier = Modifier.alignByBaseline().clearAndSetSemantics {},
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                 )
-                Text(stringResource(step), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(step), modifier = Modifier.alignByBaseline(), style = MaterialTheme.typography.bodyMedium)
             }
         }
         if (!hasAccount) {
