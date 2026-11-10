@@ -267,7 +267,7 @@ export const libraryLessonCompletionSchema = z
     planReveal: z
       .object({
         goalId: uuidSchema(),
-        goalTitle: z.string(),
+        goalTitle: z.string().meta({ description: "The goal's name, as the learner sees it" }),
         planReady: z.boolean().meta({ description: "False while the plan is still being built" }),
       })
       .nullable()

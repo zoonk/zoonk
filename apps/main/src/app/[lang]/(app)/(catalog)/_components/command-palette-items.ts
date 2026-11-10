@@ -131,11 +131,13 @@ export function createFeedbackPaletteItem({
 }
 
 export function createGoalPaletteItem({
+  keywords,
   goalId,
   label,
 }: {
   goalId: string;
   label: string;
+  keywords?: string;
 }): GoalPaletteItem {
   return {
     goalId,
@@ -143,7 +145,7 @@ export function createGoalPaletteItem({
     id: `goal-${goalId}`,
     kind: "goal",
     label,
-    searchValue: label,
+    searchValue: [label, keywords].filter(Boolean).join(" "),
   };
 }
 

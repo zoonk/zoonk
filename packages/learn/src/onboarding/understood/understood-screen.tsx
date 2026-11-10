@@ -41,8 +41,8 @@ function readEditValue({ draft, row }: { draft: GoalDraft; row: UnderstoodRow })
     return row.editDefault ?? row.value;
   }
 
-  if (field.key === "title") {
-    return draft.title;
+  if (field.key === "displayName") {
+    return draft.displayName ?? "";
   }
 
   if (field.key === "targetDate") {

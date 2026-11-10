@@ -94,7 +94,8 @@ fun GoalSwitcher(
     }
 
     val description =
-        selected?.let { stringResource(R.string.goal_switcher_current_goal, it.title) } ?: stringResource(R.string.goal_switcher_start_goal)
+        selected?.let { stringResource(R.string.goal_switcher_current_goal, it.displayName) }
+            ?: stringResource(R.string.goal_switcher_start_goal)
 
     Box {
         // The button keeps its role and click action; only the words it reads are replaced.
@@ -121,12 +122,12 @@ fun GoalSwitcher(
 @Composable
 private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
     if (selected != null) {
-        GoalMark(selected.title, selected.languageFlag)
+        GoalMark(selected.displayName, selected.languageFlag)
     } else {
         Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
     }
     Text(
-        text = selected?.title ?: stringResource(R.string.goal_switcher_start_goal),
+        text = selected?.displayName ?: stringResource(R.string.goal_switcher_start_goal),
         modifier = Modifier.padding(horizontal = 8.dp).widthIn(max = TITLE_WIDTH),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -158,11 +159,11 @@ private fun MenuItems(
             DropdownMenuItem(
                 text = {
                     Column {
-                        Text(goal.title)
+                        Text(goal.displayName)
                         GoalLine(goal)
                     }
                 },
-                leadingIcon = { GoalMark(goal.title, goal.languageFlag) },
+                leadingIcon = { GoalMark(goal.displayName, goal.languageFlag) },
                 trailingIcon = if (isSelected) ({ Icon(painterResource(R.drawable.ic_check), contentDescription = null) }) else null,
                 onClick = {
                     onDismiss()
@@ -172,14 +173,11 @@ private fun MenuItems(
             )
         }
         waiting.forEach { goal ->
-            val title =
-                goal.input.goals
-                    .first()
-                    .title
+            val name = goal.displayName
             DropdownMenuItem(
                 text = {
                     Column {
-                        Text(title)
+                        Text(name)
                         Text(
                             text =
                                 stringResource(
@@ -190,7 +188,7 @@ private fun MenuItems(
                         )
                     }
                 },
-                leadingIcon = { GoalMark(title) },
+                leadingIcon = { GoalMark(name) },
                 onClick = {
                     onDismiss()
                     if (goal.locked) {
@@ -208,7 +206,7 @@ private fun MenuItems(
         MenuLabel(stringResource(R.string.goal_switcher_quick_explanations))
         explanations.forEach { goal ->
             DropdownMenuItem(
-                text = { Text(goal.title) },
+                text = { Text(goal.displayName) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_lightbulb), contentDescription = null) },
                 onClick = {
                     onDismiss()

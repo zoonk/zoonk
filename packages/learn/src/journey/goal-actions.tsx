@@ -38,6 +38,7 @@ export type GoalStatusOutcome = "failed" | "limitReached" | "saved";
  * The host reads the page again once a change is saved, and leaves it once the goal is archived.
  */
 export type GoalStatusControl = {
+  onRename?: (displayName: string) => Promise<boolean>;
   onSetStatus: (status: GoalStatusChange) => Promise<GoalStatusOutcome>;
   resume: boolean;
   status: "active" | "completed" | "paused";
@@ -133,7 +134,7 @@ export function ResumeGoalDialog({
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Resume {goal}?", { goal: goalTitle })}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Resume your {goal} goal?", { goal: goalTitle })}</AlertDialogTitle>
           <AlertDialogDescription>{effectText}</AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -163,7 +164,7 @@ export function ArchiveGoalDialog({
     <AlertDialog onOpenChange={onOpenChange} open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Archive {goal}?", { goal: goalTitle })}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Archive your {goal} goal?", { goal: goalTitle })}</AlertDialogTitle>
           <AlertDialogDescription>
             {t("It leaves your goals and its plan stops. What you learned stays in your progress.")}
           </AlertDialogDescription>
@@ -188,7 +189,7 @@ export function GoalPausedSuggestion({
   const t = useExtracted();
   const effectText = useResumeEffectText();
   const { isPending, setStatus } = useSetGoalStatus(control.onSetStatus);
-  const title = t("{goal} is paused", { goal: goalTitle });
+  const title = t("Your {goal} goal is paused", { goal: goalTitle });
   const preview = control.resume;
 
   const resume = (

@@ -1,7 +1,7 @@
 import Foundation
 
 enum UnderstoodField: String, Equatable, Sendable {
-  case title
+  case displayName
   case targetDate
   case institution
   case reason
@@ -63,7 +63,7 @@ struct UnderstoodSource: Equatable {
 
 struct UnderstoodFacts: Decodable {
   let kind: String
-  let title: String
+  let displayName: String
   let language: String
   let targetDate: String?
   let targetLanguage: String?
@@ -108,10 +108,10 @@ enum UnderstoodRows {
 
     var rows = [
       UnderstoodRow(
-        id: "title",
+        id: "displayName",
         label: LocalizedStringResource(
           "Goal", table: "Onboarding", comment: "Row naming an understood goal"),
-        value: facts.title, field: .title, editValue: facts.title)
+        value: facts.displayName, field: .displayName, editValue: facts.displayName)
     ]
 
     if let date = dateRow(facts: facts, examDates: goal.examDates, today: today) {
@@ -204,7 +204,7 @@ enum UnderstoodRows {
     let native = text(facts.details?.nativeLanguage) ?? facts.language
     var rows: [UnderstoodRow] = []
 
-    if !isSaid(language, in: facts.title) {
+    if !isSaid(language, in: facts.displayName) {
       rows.append(
         UnderstoodRow(
           id: "targetLanguage",
@@ -228,7 +228,7 @@ enum UnderstoodRows {
     cutoff: Components.Schemas.TargetCutoff?
   ) -> [UnderstoodRow] {
     func unsaid(_ value: String?) -> String? {
-      text(value).flatMap { isSaid($0, in: facts.title) ? nil : $0 }
+      text(value).flatMap { isSaid($0, in: facts.displayName) ? nil : $0 }
     }
 
     let details = facts.details

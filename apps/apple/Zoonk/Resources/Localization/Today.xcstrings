@@ -1097,65 +1097,6 @@
         }
       }
     },
-    "%@ is paused." : {
-      "comment" : "Today for a paused goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Ziel %@ ist pausiert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ está en pausa."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objectif en pause : %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: in pausa."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は一時停止中です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@의 학습이 일시 중지됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cel wstrzymany: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objetivo em pausa: %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ duraklatıldı."
-          }
-        }
-      }
-    },
     "%@ left" : {
       "comment" : "The time still to go in today's session",
       "localizations" : {
@@ -6585,6 +6526,65 @@
         }
       }
     },
+    "Building your %@ plan" : {
+      "comment" : "A plan is being built for the goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen deinen Plan für „%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu plan de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ton plan %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo creando il tuo piano per %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の学習計画を作成しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 계획을 만들고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy twój plan: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando seu plano de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ planını hazırlıyoruz"
+          }
+        }
+      }
+    },
     "Building your plan" : {
       "comment" : "A plan is being built",
       "localizations" : {
@@ -6640,65 +6640,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planını hazırlıyoruz"
-          }
-        }
-      }
-    },
-    "Building your plan for %@" : {
-      "comment" : "A plan is being built for the goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen deinen Plan für %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Creando tu plan para %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Création de ton plan pour %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo creando il tuo piano per %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画を作成しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 맞춰 계획을 만들고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Układamy twój plan: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criando seu plano para %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için planını hazırlıyoruz"
           }
         }
       }
@@ -13118,13 +13059,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を再開する"
+            "value" : "「%@」を再開する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 재개하기"
+            "value" : "%@ 이어서 하기"
           }
         },
         "pl" : {
@@ -18442,37 +18383,37 @@
         }
       }
     },
-    "You finished %@." : {
+    "You finished your %@ goal." : {
       "comment" : "Today for a finished goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast %@ abgeschlossen."
+            "value" : "Du hast dein Ziel %@ erreicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completaste %@."
+            "value" : "Completaste tu objetivo de %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as terminé %@."
+            "value" : "Tu as atteint ton objectif %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai completato %@."
+            "value" : "Hai completato il tuo obiettivo %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を完了しました。"
+            "value" : "目標「%@」を達成しました。"
           }
         },
         "ko" : {
@@ -18484,13 +18425,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cel ukończony: %@."
+            "value" : "Udało ci się zrealizować cel: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você concluiu %@."
+            "value" : "Você concluiu seu objetivo de %@."
           }
         },
         "tr" : {
@@ -18615,6 +18556,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planındaki tüm dersleri tamamladın ya da konularını zaten biliyordun."
+          }
+        }
+      }
+    },
+    "Your %@ goal is paused." : {
+      "comment" : "Today for a paused goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ziel %@ ist pausiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu objetivo de %@ está en pausa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton objectif %@ est en pause."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo obiettivo %@ è in pausa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標「%@」は一時停止中です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 목표가 일시 중지되어 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój cel jest wstrzymany: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu objetivo de %@ está pausado."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hedefin duraklatıldı."
+          }
+        }
+      }
+    },
+    "Your %@ plan is ready." : {
+      "comment" : "A goal whose plan the learner hasn't looked at yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein %@-Plan ist bereit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan de %@ está listo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan %@ est prêt."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano per %@ è pronto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の学習計画ができました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 계획이 준비됐어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan jest gotowy: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano de %@ está pronto."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ planın hazır."
+          }
+        }
+      }
+    },
+    "Your %@ plan needs a few more answers." : {
+      "comment" : "A goal left halfway through its questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für deinen %@-Plan fehlen noch ein paar Antworten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faltan algunas respuestas para completar tu plan de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il manque encore quelques réponses pour ton plan %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano per %@ richiede ancora qualche risposta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の学習計画は、あと数問に答えると完成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 계획을 세우려면 몇 가지 답변이 더 필요해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan czeka na jeszcze kilka odpowiedzi: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano de %@ precisa de mais algumas respostas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ planın için birkaç cevap daha gerekiyor."
           }
         }
       }
@@ -18916,124 +19034,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın artık buna göre ilerliyor."
-          }
-        }
-      }
-    },
-    "Your plan for %@ is ready." : {
-      "comment" : "A goal whose plan the learner hasn't looked at yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan für %@ ist fertig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan para %@ está listo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan pour %@ est prêt."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano per %@ è pronto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画ができました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 목표를 위한 계획이 준비됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan jest gotowy. Cel: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano para %@ está pronto."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için planın hazır."
-          }
-        }
-      }
-    },
-    "Your plan for %@ needs a few more answers." : {
-      "comment" : "A goal left halfway through its questions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für deinen Plan für %@ fehlen noch ein paar Antworten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan para %@ necesita algunas respuestas más."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan pour %@ a besoin de quelques réponses supplémentaires."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al tuo piano per %@ manca ancora qualche risposta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画を作るには、あといくつかの質問に答える必要があります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 계획을 완성하려면 몇 가지 답변이 더 필요해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do ułożenia twojego planu brakuje jeszcze kilku odpowiedzi. Cel: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano para %@ precisa de mais algumas respostas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için planını tamamlamak için birkaç soruyu daha cevaplaman gerekiyor."
           }
         }
       }

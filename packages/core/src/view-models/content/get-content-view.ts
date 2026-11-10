@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type MasteryState } from "@zoonk/db";
+import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getCurrentUserReviewSchedule } from "../../learner/get-current-user-review-schedule";
 import { listCurrentUserSkills } from "../../learner/list-current-user-skills";
 import { type SkillStateCounts } from "../../learner/mastery-state";
@@ -30,7 +31,7 @@ type ContentGroup = {
 export type ContentView = {
   capsules: { dueToday: number };
   counts: SkillStateCounts;
-  goal: Pick<Goal, "id" | "kind" | "title">;
+  goal: Pick<Goal, "id" | "kind" | "title"> & { displayName: string };
   groups: ContentGroup[];
 };
 
@@ -67,7 +68,12 @@ export async function getContentView(input: { goalId?: string } = {}): Promise<C
     content: {
       capsules: { dueToday: dueToday.size },
       counts: skills.counts,
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: {
+        displayName: resolveGoalDisplayName(goal),
+        id: goal.id,
+        kind: goal.kind,
+        title: goal.title,
+      },
       groups: groupSkillsBySection(skills.skills).map(
         ({ areaId, counts, section, skills: cards, title }) => ({
           areaId,

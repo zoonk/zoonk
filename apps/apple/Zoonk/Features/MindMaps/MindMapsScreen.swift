@@ -40,7 +40,7 @@ struct MindMapsScreen: View {
         VStack(alignment: .leading, spacing: 12) {
           PageHeader(
             Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page"),
-            eyebrow: Text(goal.title)
+            eyebrow: Text(goal.displayName)
           )
           .padding(.bottom, 12)
 

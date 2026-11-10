@@ -110,7 +110,7 @@ private fun FinishRow(
         }
 
     ListRow(
-        headline = { Text(page.goal.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        headline = { Text(page.goal.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },
         supporting = date?.let { { Text(it) } },

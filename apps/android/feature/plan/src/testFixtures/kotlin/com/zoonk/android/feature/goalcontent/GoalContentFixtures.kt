@@ -112,7 +112,7 @@ fun examSyllabus(): Syllabus =
         """
         {"courseWeights":{"course":"Medicine","edition":null,"institution":"USP","source":{"title":null,"url":"https://www.fuvest.br/pesos"},
           "subjects":[{"name":"Natural sciences and their technologies","weight":3},{"name":"Spanish","weight":1},{"name":"Essay","weight":1}]},
-         "examDocument":"notice","fromMaterial":false,"goal":{"id":"$GOAL","kind":"exam","title":"Pass ENEM"},
+         "examDocument":"notice","fromMaterial":false,"goal":{"id":"$GOAL","kind":"exam","title":"Pass ENEM","displayName":"Pass ENEM"},
          "kind":"notice","knownTopicsReturn":"practice","lessons":{"done":8,"known":4,"total":45},"noticeUrl":null,"passMarks":null,
          "questionsSource":{"edition":"2024 edition","title":null,"url":"https://www.gov.br/inep"},
          "sharedExams":[],"subjects":[$spanishSubject,$essaySubject,$natureSubject,$studySkills],"topicCount":8,"topicsMapped":true,
@@ -124,7 +124,7 @@ fun examSyllabus(): Syllabus =
 fun modulesSyllabus(): Syllabus =
     ApiJson.decodeFromString(
         """
-        {"courseWeights":null,"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python"},
+        {"courseWeights":null,"examDocument":"guide","fromMaterial":false,"goal":{"id":"$GOAL","kind":"learn","title":"Learn Python","displayName":"Learn Python"},
          "kind":"modules","knownTopicsReturn":"practice","lessons":{"done":3,"known":2,"total":20},"noticeUrl":null,"passMarks":null,
          "questionsSource":null,"sharedExams":[],
          "subjects":[
@@ -162,7 +162,7 @@ fun goalChapter(): GoalChapter =
         {"chapter":{"chapterId":"${chapterId(3)}","level":"beginner","position":3,"state":"current",
           "subject":{"key":"natural-sciences","name":"Natural sciences"},"title":"Waves and sound"},
          "counts":{"fading":1,"learning":1,"mastered":1,"new":1,"solid":0,"total":4},
-         "goal":{"id":"$GOAL","kind":"exam","title":"Pass ENEM"},
+         "goal":{"id":"$GOAL","kind":"exam","title":"Pass ENEM","displayName":"Pass ENEM"},
          "lessons":[${lesson(1, "What a wave carries", "done")},${lesson(2, "Frequency and pitch", "done", minutes = 8)},
           ${lesson(3, "Echoes and resonance", "next")},${lesson(4, "The Doppler effect", "upcoming", plusRequired = true)},
           ${lesson(5, "Light as a wave", "upcoming", minutes = 0)}],

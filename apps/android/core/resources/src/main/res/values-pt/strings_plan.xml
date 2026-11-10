@@ -13,7 +13,7 @@
   "plan_archive": "a95d8ddcc47e5ed0bc11b79a6e8ee7c0a95362703f6a286565bfd7d8be007110",
   "plan_archive_description": "14e12a73c20eea0f61140d6b81981d2df4d8b420561c70f4a42aa474319bee39",
   "plan_archive_goal": "910c0e392aab6a3c46bc016f91cfec38e7bece5846cbcf7e3803a24bad594753",
-  "plan_archive_title": "023482246c80d54d00e3c50eec2274eab062244873875ac596de85b6c66405de",
+  "plan_archive_title": "695e2d5ef199eb8c8f387335f03261a795469475f2db7d9384d7985bcb666bf8",
   "plan_base_deep": "ec3bd90a7f59e1cb75af2a388306fe6661210c298f3427a08ad0f33eabe01872",
   "plan_base_deep_description": "baad3560aa7a6877e1c3412a8cfc0c98b6dbfd43cc1c29fe0e75bb0908b53a58",
   "plan_base_essential": "929cec6d898029b1c23e6969a5eef597abb8cacecef2b68f2e0efacdda500130",
@@ -42,7 +42,7 @@
   "plan_bases_topics_come_in": "b024c9c0a01f1ce6bd95ce59c5594f33973d653cc0ff89d2a7edf00d7c148f31",
   "plan_bases_topics_leave": "349c30cf58be80e27592dee76419840b4de47e9b9c9c0f5b4d193ffa2733b835",
   "plan_building_description": "9950de025469d2e67d1cd375227c085512159a8c4f4f3c0af0fc375e1abd5e8b",
-  "plan_building_eyebrow": "5fa5aa90f8f59367be6b27de157c8c4c82fa84faa0719abd47d14fc021a2616a",
+  "plan_building_eyebrow": "ce4b47d7bec4f19aeb7a4da7d2fc8b02007a3a25b733c033741109185086e17a",
   "plan_cadence_biweekly": "4e5b2b3cbf89d3a41485af4d6273b76b357167bdf352259503ae9a7f6ceeb3e0",
   "plan_cadence_biweekly_effect": "1fc187e9596a24cf196bf181494d9c87b29c9ad12673eb15e8f3c0dd94a1b8a2",
   "plan_cadence_final_weeks": "87d16919039dfd752e6d4fc9e9ef451265b543e8e5375cef10be8259e657e11b",
@@ -300,7 +300,7 @@
   "plan_go_to_today": "abf2646e09fb844fc1de46656d22c60abc476e11b0797016ddfa6fb423ba59dd",
   "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
   "plan_goal_limit_reached": "4fd3e62f75fb6175c1cc180430323b3e42ccc997c3285e35d556723df908cb37",
-  "plan_goal_paused": "99542c7d01448c522c5572809a8674ec293b594e8600da7156dc1c5312811d46",
+  "plan_goal_paused": "751bf1e9d619412bc9f613f7ee8035cbefce6ec11f73871deaeb6bbae08c8383",
   "plan_going_deeper": "b0f8eb4a8769cc8021251fd56031685a48aeccf4c370a2e497fd718c0200e78d",
   "plan_how_is_it_going": "bc25967a18e3fe41f4895f68907465b3c6071174a85f8a33632852d1b8614b59",
   "plan_last_week_recap": "a5cdeea1733a9c00d2e62799b85a072df3a69aad905ff1f48cfd3c328aa539df",
@@ -417,10 +417,13 @@
   "plan_recommendation_failed": "d594a6341a52d65d17580c2f4a38b78fadc0ff6a7fe80427530c36e3686c6222",
   "plan_recommendation_followed": "c1cc566826e31f41673bd165676cc1165c05a767765034aa3c23b533578c8bb7",
   "plan_recommended": "822705cf81762a7d372d5581315b69867a3549b4394dc11694bf867cdeccfbe8",
+  "plan_rename_description": "89ddf85048d2b17e81a27b08a8f7d118761a328c76a1a8ef7a26e5ea328f8869",
+  "plan_rename_goal": "cee66099796c00543b747894ac2000dfac7e8456bda4d4d205b035189d8bfdbb",
+  "plan_rename_label": "85e6d325e41ce42cbd2189c88149460f7668dfdc0fa6911e3f2d10a05f2a3ba9",
   "plan_resume": "8f55f1f11468393aa534ab02c076b7d230d08a7c17dff4b9628ed020e7747e2d",
   "plan_resume_effect": "3e31280a048cfcb82bd26ab43781e0714abb3fccab1f42b8dcd9977edcbd0267",
   "plan_resume_goal": "2a8ce5352feaf079371b533f9fc3804cd755bdff2acdb190d1ef1411c690dfa4",
-  "plan_resume_title": "cbcb5c97c8c803a0b0ebbd45075f7329f4b69404134349b59fa93ccd40bdf909",
+  "plan_resume_title": "17bce94900508a1bb6471f1db28094ee4b5462345c007e4fde66d72bce395afb",
   "plan_retention_caption": "9c9e7213c7fc5a0e814c49e49756e2277afad9551df554b968ed0ce078d89da6",
   "plan_roadmap_day_of": "7a65a33af3648cd7e2dd41e5903519988c5e09ff04a5db34020c04ff75fc8aff",
   "plan_roadmap_from": "6dddf7e091451f73c8f865ca21566b467800733770f6f489ecd0021dca8e1701",
@@ -626,7 +629,7 @@
     <string name="plan_setup_left_title">Seu plano vem depois de algumas perguntas</string>
     <string name="plan_setup_left_description">Responda e a gente planeja cada dia até você alcançar seu objetivo.</string>
     <string name="plan_continue">Continuar</string>
-    <string name="plan_building_eyebrow">%1$s · Montando seu plano</string>
+    <string name="plan_building_eyebrow">%1$s · Criando seu plano</string>
     <string name="plan_building_description">Isso costuma levar um ou dois minutos. Seu plano aparece aqui assim que estiver pronto.</string>
     <string name="plan_options">Opções do plano</string>
     <string name="plan_adjust_plan">Ajustar plano</string>
@@ -634,13 +637,17 @@
     <string name="plan_full_course">Ver o curso completo</string>
     <string name="plan_share">Compartilhar o plano</string>
     <string name="plan_talk_to">Conversar com %1$s</string>
+    <string name="plan_rename_goal">Renomear objetivo</string>
+    <!-- The label of the field holding a goal's name, not a person's. -->
+    <string name="plan_rename_label">Nome</string>
+    <string name="plan_rename_description">Escolha um nome fácil de reconhecer. Seu plano de estudo continua o mesmo.</string>
     <string name="plan_pause_goal">Pausar este objetivo</string>
     <string name="plan_resume_goal">Retomar este objetivo</string>
     <string name="plan_archive_goal">Arquivar este objetivo</string>
-    <string name="plan_archive_title">Arquivar %1$s?</string>
+    <string name="plan_archive_title">Arquivar seu objetivo de %1$s?</string>
     <string name="plan_archive_description">Ele sai dos seus objetivos e o plano para. O que você aprendeu continua no seu progresso.</string>
     <string name="plan_archive">Arquivar</string>
-    <string name="plan_resume_title">Retomar %1$s?</string>
+    <string name="plan_resume_title">Retomar seu objetivo de %1$s?</string>
     <string name="plan_resume_effect">Seu plano recomeça hoje, com as aulas planejadas para os dias em que você ficou em pausa.</string>
     <string name="plan_resume">Retomar</string>
     <string name="plan_cancel">Cancelar</string>
@@ -694,9 +701,13 @@
         <item quantity="other">%1$d de %2$d aulas concluídas</item>
     </plurals>
     <string name="plan_until">até %1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate">até ~%1$s</string>
+    <!-- %1$s is a day, such as "Nov 10". -->
     <string name="plan_until_estimate_spoken">até aproximadamente %1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
     <string name="plan_until_estimate_month">até ~%1$s</string>
+    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
     <string name="plan_until_estimate_month_spoken">até por volta de %1$s</string>
     <string name="plan_not_in_your_plan">Fora do seu plano</string>
     <plurals name="plan_lessons_left_out">
@@ -1595,7 +1606,7 @@
     <string name="plan_suggestion_previous">Anterior</string>
     <string name="plan_suggestion_next">Próximo</string>
     <string name="plan_suggestion_position">%1$s de %2$s</string>
-    <string name="plan_goal_paused">Objetivo em pausa: %1$s</string>
+    <string name="plan_goal_paused">Seu objetivo de %1$s está pausado</string>
     <string name="plan_no_longer_fits">Seu plano não cabe mais no tempo disponível</string>
     <string name="plan_catch_up">Um pouco para colocar em dia</string>
     <string name="plan_adjust">Ajustar</string>

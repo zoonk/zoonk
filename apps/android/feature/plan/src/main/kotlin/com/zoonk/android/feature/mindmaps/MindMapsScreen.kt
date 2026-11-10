@@ -347,7 +347,7 @@ private fun MindMapsHero(
     navigator: AppNavigator,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(mindMaps.goal.title)
+        Eyebrow(mindMaps.goal.displayName)
         Text(
             stringResource(R.string.navigation_mind_maps),
             Modifier.pageTitle(),

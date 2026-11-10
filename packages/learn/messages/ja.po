@@ -199,6 +199,7 @@ msgstr "{percent}%完了"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -1013,6 +1014,7 @@ msgstr "メガネ"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1026,6 +1028,7 @@ msgstr "キャンセル"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -4509,9 +4512,9 @@ msgid "Archive this goal"
 msgstr "この目標をアーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
-msgstr "「{goal}」を再開しますか？"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
+msgstr "目標「{goal}」を再開しますか？"
 
 #: src/journey/goal-actions.tsx
 msgctxt "3y9DGg"
@@ -4519,9 +4522,9 @@ msgid "Resume"
 msgstr "再開する"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
-msgstr "「{goal}」をアーカイブしますか？"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
+msgstr "目標「{goal}」をアーカイブしますか？"
 
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
@@ -4534,9 +4537,9 @@ msgid "Archive"
 msgstr "アーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "「{goal}」は一時停止中です"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "目標「{goal}」は一時停止中です"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -4687,6 +4690,12 @@ msgstr "コース全体を見る"
 msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "学習計画を共有する"
+
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "目標の名前を変更"
 
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
@@ -5202,6 +5211,17 @@ msgstr "初めての模試を受ける"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "初めての週間チャレンジに挑戦する"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "わかりやすい名前を付けてください。学習計画は変わりません。"
+
+#. A learning goal's name, not a person's name
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "goalDisplayName"
+msgid "Name"
+msgstr "目標名"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"
@@ -14160,9 +14180,9 @@ msgid "Practice anytime"
 msgstr "いつでも練習"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
-msgstr "{goal}に向けた学習計画を作成しています"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
+msgstr "{goal}の学習計画を作成しています"
 
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"

@@ -33,6 +33,7 @@ class LearnerAccessTest {
         targetDate = null,
         targetLanguage = null,
         title = "Goal",
+        displayName = "Goal",
     )
 
     @Test

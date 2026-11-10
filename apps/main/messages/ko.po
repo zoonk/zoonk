@@ -1006,9 +1006,9 @@ msgid "Start a new goal, or pick another one above."
 msgstr "새 목표를 시작하거나 위에서 다른 목표를 선택하세요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "WDKpPN"
-msgid "You finished {goal}."
-msgstr "{goal}을(를) 완료했어요."
+msgctxt "PcSnMu"
+msgid "You finished your {goal} goal."
+msgstr "{goal} 목표를 완료했어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "EQpfkS"
@@ -1021,9 +1021,9 @@ msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "CSgdxh"
-msgid "{goal} is paused."
-msgstr "{goal} 목표가 일시 중지되었어요."
+msgctxt "lEE47Z"
+msgid "Your {goal} goal is paused."
+msgstr "{goal} 목표가 일시 중지되어 있어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1046,9 +1046,9 @@ msgid "Look it over before you start."
 msgstr "시작하기 전에 계획을 살펴보세요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "rKFY6-"
-msgid "Your plan for {goal} is ready."
-msgstr "{goal} 목표를 위한 계획이 준비됐어요."
+msgctxt "_V80Fi"
+msgid "Your {goal} plan is ready."
+msgstr "{goal} 계획이 준비됐어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "yKjBeN"
@@ -1066,9 +1066,9 @@ msgid "It's built from what you tell us."
 msgstr "알려 주신 내용을 바탕으로 계획을 만들어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "zvtDTr"
-msgid "Your plan for {goal} needs a few more answers."
-msgstr "{goal} 계획을 만들려면 답변이 조금 더 필요해요."
+msgctxt "CIgx3N"
+msgid "Your {goal} plan needs a few more answers."
+msgstr "{goal} 계획을 세우려면 몇 가지 답변이 더 필요해요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"

@@ -2,6 +2,7 @@ import "server-only";
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { getSpeakingMockExam } from "../../exams/language-exam";
+import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { readGoalDetails } from "../../language/_utils/language-goal";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import {
@@ -69,6 +70,7 @@ export async function getLanguageProgressView(
     progress: {
       canDo: getCanDo({ doneIds, units }),
       goal: {
+        displayName: resolveGoalDisplayName(goal),
         id: goal.id,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
         targetLanguage: goal.targetLanguage,

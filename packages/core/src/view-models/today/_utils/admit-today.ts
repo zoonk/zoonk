@@ -1,3 +1,4 @@
+import { resolveGoalDisplayName } from "../../../goals/_utils/goal-display-name";
 import { hasStudyGoal } from "../../../goals/_utils/study-goal";
 import { getCurrentSuggestedGoal } from "../../../goals/suggestions/get-current-suggested-goal";
 import { type OwnedGoal } from "../../../learner/_utils/owned-goal";
@@ -71,7 +72,11 @@ export async function admitToday(
   // A plan is built while the questions are still answered, on a time the learner hasn't chosen
   // yet, and is shown once before its first day.
   if (!built || isGoalSetupLeft(owned.goal) || (!revealing && isPlanRevealOwed(owned.goal))) {
-    return { goal: { id, kind, title }, status: "preparing", userId };
+    return {
+      goal: { displayName: resolveGoalDisplayName(owned.goal), id, kind, title },
+      status: "preparing",
+      userId,
+    };
   }
 
   return { owned, status: "admitted" };

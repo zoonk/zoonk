@@ -571,7 +571,7 @@ struct NextOnPathSection: View {
     let finish = IconLabeledContent {
       planFinishText(context)
     } title: {
-      Text(context.goal.title).foregroundStyle(.primary)
+      Text(context.goal.displayName).foregroundStyle(.primary)
     } icon: {
       Image(systemName: "flag")
     }

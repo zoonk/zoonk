@@ -220,6 +220,7 @@ describe(getTodayView, () => {
     expect(today.goal).toStrictEqual({
       dateEstimated: false,
       daysLeft: DAYS_TO_EXAM,
+      displayName: "ENEM 2026",
       id: goal.id,
       kind: "exam",
       targetDate: goal.targetDate,
@@ -526,7 +527,12 @@ describe(getTodayView, () => {
 
   it("waits for a plan that is still being built instead of fixing an empty day", async () => {
     const user = await userFixture();
-    const goal = await goalFixture({ title: "Quantum physics", userId: user.id });
+
+    const goal = await goalFixture({
+      displayName: "Quantum",
+      title: "Quantum physics",
+      userId: user.id,
+    });
 
     await Promise.all([
       planFixture({ goalId: goal.id }),
@@ -536,7 +542,7 @@ describe(getTodayView, () => {
     mockSession(user.id);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
-      goal: { id: goal.id, kind: "learn", title: "Quantum physics" },
+      goal: { displayName: "Quantum", id: goal.id, kind: "learn", title: "Quantum physics" },
       status: "preparing",
       userId: user.id,
     });
@@ -553,7 +559,7 @@ describe(getTodayView, () => {
     });
 
     await expect(getTodayView({})).resolves.toStrictEqual({
-      goal: { id: goal.id, kind: "exam", title: "ENEM 2026" },
+      goal: { displayName: "ENEM 2026", id: goal.id, kind: "exam", title: "ENEM 2026" },
       status: "preparing",
       userId: user.id,
     });

@@ -6,6 +6,7 @@ import { readExamPicks } from "../../exams/choices/exam-choices";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
+import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
@@ -41,6 +42,7 @@ import { hasStudiedOn } from "./_utils/studied-on-day";
 import { type TodayNoticeKind, pickTodayNotice } from "./today-notice";
 
 type TodayGoal = {
+  displayName: string;
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
   dateEstimated: boolean;
   /** From the session's learner-local day; null without a date or after it passed. */
@@ -112,7 +114,11 @@ export type TodayViewResult =
   /** No goal yet: the apps open onboarding, or first offer the suggested goal when there's one. */
   | { status: "noGoal"; suggestedGoal: SuggestedGoalView | null; userId: string }
   | { status: "notFound" }
-  | { goal: Pick<TodayGoal, "id" | "kind" | "title">; status: "preparing"; userId: string }
+  | {
+      goal: Pick<TodayGoal, "id" | "kind" | "title" | "displayName">;
+      status: "preparing";
+      userId: string;
+    }
   | { status: "ready"; today: TodayView }
   | { status: "unauthorized" };
 
@@ -227,7 +233,11 @@ async function readAdmittedToday({
   const day = await readStudyDay({ goal: owned.goal, now: new Date(), timeZone, userId });
 
   if (!day) {
-    return { goal: { id, kind, title }, status: "preparing", userId };
+    return {
+      goal: { displayName: resolveGoalDisplayName(owned.goal), id, kind, title },
+      status: "preparing",
+      userId,
+    };
   }
 
   const mockFunding = await loadDayMockFunding({
@@ -301,6 +311,7 @@ async function readAdmittedToday({
       goal: {
         dateEstimated: dateKind.estimated,
         daysLeft: getDaysLeft({ localDate: studySession.localDate, targetDate }),
+        displayName: resolveGoalDisplayName(owned.goal),
         id,
         kind,
         targetDate,

@@ -2,22 +2,43 @@
 
 First, discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. When delegating multiple sub-agents, split them into multiple providers (if available) based on remaining quota.
 
-Resolve the latest Claude Opus and GPT Sol, Terra and Astra from the live catalog (currently Opus 5.5, GPT-6.1-Sol, GPT-6.1-Terra, GPT-6-Astra); map effort names to supported equivalents. Existing approval and verification rules still apply.
+Always use the latest version of each model, resolved from the live catalog. Never pin a version in these instructions or in a brief: write "the latest Opus", not a version number. Map effort names to each provider's supported equivalents. Existing approval and verification rules still apply.
 
-- **Design:** UI and UX work, including UI elements, layouts, and interactions, is design work. Use Opus with xhigh reasoning unless asked otherwise.
-- **Copywriting:** Prefer Opus with xhigh reasoning.
-- **Marketing:** Prefer Opus with xhigh reasoning for marketing, landing pages, motion videos, and animation.
-- **Computer use:** Prefer GPT Terra through Codex with medium reasoning.
-- **Code review:** Use the model family that didn't write the change, at xhigh reasoning ([cross-model review](../../AGENTS.md#cross-model-review)).
-- **Small code changes:** Use GPT Sol with xhigh reasoning.
-- **Design debate:** Opus and GPT Sol, both at xhigh reasoning, debate the approach until they agree ([protocol](#design-debate)). For a very complex architecture decision, pair Opus with GPT Astra instead. Use xhigh, not max, which costs far more. When only one family is available, two fresh agents of it debate, and the handoff says so. Opus may then implement an architecture change at high effort.
-- **Large tasks:** Split independent work across subagents and providers to avoid exhausting one provider. Among providers meeting the task's model requirements, prefer those with the most remaining capacity and assign non-overlapping edits.
-- **Spread the load:** Give each new subagent, review or helper to the eligible provider with the most remaining capacity at that moment, so usage grows a little on every provider instead of draining one or two. A provider past about 70% of its window takes no new work while another eligible one has room.
+## Pick the model
+
+Claude and OpenAI models pair by tier: Haiku and Luna, Sonnet and Terra, Opus and Sol, Fable and Astra. Where a row names both families, pick the one with more remaining capacity ([spread the load](#spread-the-load)).
+
+| Task                                                                | Model and reasoning                                                                                                                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Design: UI, UX, layouts, interactions, motion                       | Fable at high; xhigh for a major new feature or a big redesign                                                                                                    |
+| Writing: copy, docs, marketing, prompts                             | Fable at medium or Opus at high; Terra at xhigh when neither is available                                                                                         |
+| Everyday engineering and debugging, including multi-PR feature work | Opus or Sol at high                                                                                                                                               |
+| Well-scoped coding: bug fixes, feature iteration, spec-driven work  | Opus or Sol at high                                                                                                                                               |
+| Major refactors, migrations, architecture planning                  | Fable or Astra at xhigh                                                                                                                                           |
+| Code review                                                         | The other family's top model at high: Astra reviews a Claude model's work, Fable reviews a GPT model's ([cross-model review](../../AGENTS.md#cross-model-review)) |
+| Investigating a problem, filing an issue or a feature request       | Opus at medium                                                                                                                                                    |
+| Computer use: driving a browser or device, persona walks            | Terra at medium                                                                                                                                                   |
+| Searching files, reading logs, summarizing                          | Sonnet or Terra at medium                                                                                                                                         |
+| Classification, routing, tagging, high-volume extraction            | Haiku or Luna at medium                                                                                                                                           |
+| Unsure                                                              | Opus at medium                                                                                                                                                    |
+
+- **Claude for design and writing:** Design and writing stay on Claude models (Fable or Opus) even when an OpenAI provider has more room. If no Claude model is available, use Sol at the same effort, track the pending work, and have Fable review it at high as soon as Claude is back.
+- **Fable and Astra fallback:** When a family's top model isn't available, use the next one down at one effort level higher: Fable at medium becomes Opus at high, Fable at high becomes Opus at xhigh, and Astra falls back to Sol the same way. Work at xhigh never falls back to max: Fable at xhigh becomes Astra at xhigh for architecture and Opus at xhigh for a redesign, and Astra at xhigh becomes Fable at xhigh.
+- **No low or max:** Use low or max reasoning only when the user asks for it. Low misses too much for what it saves, and max costs far more than xhigh for little gain. Past high, the next model up at a lower effort usually beats one more effort level.
+- **Check medium coding and design:** Coding or design work done at medium reasoning gets checked by another model before it counts. For code, the [cross-model review](../../AGENTS.md#cross-model-review) is that check. Other medium work (investigations, issues, computer use, searching, summarizing) needs no extra check, since the lead reads what it reports.
+- **Escalate in order:** When a model's work falls short, first give it a way to check itself (a test, a build, a script that calls the endpoint), then raise its effort one level, and only then move to the next model up, at a lower effort than the one that fell short.
+- **Keep the lead's context lean:** The lead's context is resent on every turn, so verbose reading (file searches, logs, long outputs) goes to a cheaper subagent that returns a short summary, and the lead keeps its context for decisions and edits.
+- **Switch models at natural breaks:** A model can't reuse another's prompt cache, so its first turn on a long conversation pays to cache all of it. Hand a new model a short written brief, not the whole history.
+- **Design debate:** Only a big new feature or an architecture decision gets one, never a bug fix, a small change or a minor choice ([when](../../AGENTS.md#agent-orchestration)). Fable and Astra debate it at xhigh until they agree ([protocol](#design-debate)). When only one family is available, two fresh agents of it debate, and the handoff says so.
+
+## Spread the load
+
+- **Large tasks:** Split independent work across subagents and providers to avoid exhausting one provider. Among providers meeting the task's model requirements, prefer those with the most remaining capacity and assign non-overlapping edits. Every slice lands on the task's one branch, and the lead opens the task's one PR ([finishing a task](../../AGENTS.md#finishing-a-task)).
+- **Each new agent:** Give each new subagent, review or helper to the eligible provider with the most remaining capacity at that moment, so usage grows a little on every provider instead of draining one or two. A provider past about 70% of its window takes no new work while another eligible one has room.
 - **Nested delegation:** These rules apply at every level. A subagent that splits work delegates to the providers with the most remaining capacity instead of fanning out on its own provider.
 - **Usage limits:** Recheck quotas periodically, at task boundaries, and when a provider is limited. If its reset is less than 15 minutes away, waiting is acceptable; otherwise transfer unfinished work to an eligible provider with quota. Include the brief, decisions, changed files, verification, and open issues in the handoff; stop the original task to avoid duplicate work. Keep checking so available providers take over work blocked by longer resets.
 - **Lane health:** A lane's failure notice doesn't always reach its lead. After a machine-wide failure (a full disk, a reboot, a provider outage), or when a lane has been quiet for about an hour, read each lane's status yourself, and resume a failed lane where it ran so it keeps its context and worktree.
 - **Waiting inside the turn:** A lane that waits on a build or a review waits inside its turn, with a background command it then waits on. Wait with the harness's wait for that command, which returns when it ends, not a sleep or polling loop over its log. Nothing wakes a lane whose turn has ended, so it stops until its lead notices.
-- **Opus fallback:** If no Opus provider is available, use GPT Sol for design at the prescribed effort. Track the pending design review and have Opus review at xhigh effort as soon as it becomes available again.
 
 ## Design debate
 

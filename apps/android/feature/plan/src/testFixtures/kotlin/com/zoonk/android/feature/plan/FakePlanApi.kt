@@ -120,6 +120,12 @@ class FakePlanApi : PlanApi {
         statuses += status
     }
 
+    override suspend fun rename(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        displayName: String,
+    ) = Unit
+
     override suspend fun change(
         session: AuthenticatedSession,
         goalId: UUID,

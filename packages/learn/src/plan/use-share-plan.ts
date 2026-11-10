@@ -20,7 +20,7 @@ export function useSharePlan() {
 
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: goal.title, url });
+        await navigator.share({ title: goal.displayName, url });
         return;
       } catch (error) {
         if (isAbort(error)) {

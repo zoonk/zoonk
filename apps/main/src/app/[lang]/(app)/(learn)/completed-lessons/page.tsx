@@ -77,7 +77,7 @@ async function CompletedLessonsBody({ searchParams }: Pick<Props, "searchParams"
 
   return (
     <CompletedLessonsClient
-      goalTitle={goal.title}
+      goalTitle={goal.displayName}
       lessons={result.lessons}
       moreHref={
         canShowMore ? `/completed-lessons?shown=${shown + COMPLETED_LESSON_PAGE_SIZE}` : null

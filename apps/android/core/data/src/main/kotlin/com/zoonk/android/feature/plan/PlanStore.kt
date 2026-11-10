@@ -101,6 +101,12 @@ interface PlanApi {
         status: GoalUpdateInput.Status,
     )
 
+    suspend fun rename(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        displayName: String,
+    )
+
     suspend fun change(
         session: AuthenticatedSession,
         goalId: UUID,
@@ -220,6 +226,14 @@ class LivePlanApi(
         status: GoalUpdateInput.Status,
     ) {
         perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(status = status)) }
+    }
+
+    override suspend fun rename(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        displayName: String,
+    ) {
+        perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(displayName = displayName)) }
     }
 
     override suspend fun change(
@@ -353,6 +367,12 @@ class PlanStore(
         goalId: UUID,
         status: GoalUpdateInput.Status,
     ): MutationResult<Unit> = cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.setStatus(it, goalId, status) }
+
+    suspend fun rename(
+        goalId: UUID,
+        displayName: String,
+    ): MutationResult<Unit> =
+        cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.rename(it, goalId, displayName) }
 
     /** A learner's edit, from their tap. */
     suspend fun change(

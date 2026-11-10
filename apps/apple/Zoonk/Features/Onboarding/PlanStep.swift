@@ -645,7 +645,7 @@ private struct PlanReveal: View {
   private func heroSections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 20) {
-        RevealHero(title: goal.title, buddy: learner.summary.value?.buddy ?? BuddyLook())
+        RevealHero(title: goal.displayName, buddy: learner.summary.value?.buddy ?? BuddyLook())
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
       }
       .listRowBackground(Color.clear)
@@ -807,7 +807,7 @@ private struct PlanReveal: View {
       kind: LearnerGoal.Kind(rawValue: view.goal.kind.rawValue) ?? .learn,
       status: .active,
       targetDate: plan.schedule.targetDate,
-      title: view.goal.title)
+      displayName: view.goal.displayName, title: view.goal.title)
   }
 
 }

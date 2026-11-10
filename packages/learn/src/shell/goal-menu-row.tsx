@@ -18,7 +18,7 @@ export type WaitingGoal = {
   kind: GoalKind;
   locked: boolean;
   targetLanguage: string | null;
-  title: string;
+  displayName: string;
 };
 
 export function WaitingOption({
@@ -37,7 +37,7 @@ export function WaitingOption({
     <>
       <GoalMark goal={goal} />
       <span className="flex min-w-0 flex-col">
-        <span>{goal.title}</span>
+        <span>{goal.displayName}</span>
         <span className="text-muted-foreground font-mono text-[0.71875rem]">
           {goal.locked ? t("Starts with Plus") : t("Ready to start")}
         </span>

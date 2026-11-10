@@ -11,6 +11,7 @@ import {
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { getActiveGoalLimit } from "../../../entitlements/limits";
+import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getRequestInstant } from "../../../learner/facts/request-instant";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -55,7 +56,22 @@ export async function findDraftGoalId(
 
 /** A stored understanding is read back through its contract, so an old shape can't leak out. */
 export function parseStoredUnderstanding(value: unknown): GoalUnderstandingView | null {
-  return goalUnderstandingViewSchema.safeParse(value).data ?? null;
+  const parsed = goalUnderstandingViewSchema.safeParse(value).data;
+
+  if (!parsed || parsed.status !== "goals") {
+    return parsed ?? null;
+  }
+
+  return {
+    ...parsed,
+    goals: parsed.goals.map((goal) => ({
+      ...goal,
+      draft: {
+        ...goal.draft,
+        displayName: goal.draft.displayName ?? defaultDisplayName(goal.draft),
+      },
+    })),
+  };
 }
 
 /** On read, not when the card is saved: a card's date can become today overnight, and its aim's choices follow the level. */

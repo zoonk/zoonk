@@ -199,6 +199,7 @@ msgstr "Ukończono {percent}%"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -1013,6 +1014,7 @@ msgstr "Okulary"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1026,6 +1028,7 @@ msgstr "Anuluj"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -4509,9 +4512,9 @@ msgid "Archive this goal"
 msgstr "Przenieś ten cel do archiwum"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
-msgstr "Wznowić cel: {goal}?"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
+msgstr "Wznowić realizację celu: {goal}?"
 
 #: src/journey/goal-actions.tsx
 msgctxt "3y9DGg"
@@ -4519,9 +4522,9 @@ msgid "Resume"
 msgstr "Wznów"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
-msgstr "Przenieść do archiwum: {goal}?"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
+msgstr "Zarchiwizować cel: {goal}?"
 
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
@@ -4534,9 +4537,9 @@ msgid "Archive"
 msgstr "Przenieś do archiwum"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "Cel wstrzymany: {goal}"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "Twój cel jest wstrzymany: {goal}"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -4687,6 +4690,12 @@ msgstr "Zobacz cały kurs"
 msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "Udostępnij plan"
+
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "Zmień nazwę celu"
 
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
@@ -5202,6 +5211,17 @@ msgstr "Podejdź do pierwszego egzaminu próbnego"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "Podejmij pierwsze wyzwanie tygodnia"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "Wybierz nazwę, po której rozpoznasz cel. Twój plan nauki się nie zmieni."
+
+#. A learning goal's name, not a person's name
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "goalDisplayName"
+msgid "Name"
+msgstr "Nazwa"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"
@@ -14160,8 +14180,8 @@ msgid "Practice anytime"
 msgstr "Ćwicz, kiedy chcesz"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
 msgstr "Przygotowujemy twój plan: {goal}"
 
 #: src/today/today-preparing.tsx

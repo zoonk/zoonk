@@ -264,9 +264,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
     page.getByRole("main").getByRole("button", { name: "Get today's lessons" }),
   ).toBeVisible();
 
-  const newSwitcher = page.getByRole("button", {
-    name: /^Understand quantum physics.*Switch goal$/u,
-  });
+  const newSwitcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
 
   await expect(newSwitcher).toBeVisible();
   await expect(page.locator("html")).not.toHaveAttribute("data-saw-previous");
@@ -307,7 +305,7 @@ test("a goal a link filled in doesn't fill the box again once it's made, on Back
   await page.goForward();
   await expect(page).toHaveURL(GOAL_URL);
 
-  const switcher = page.getByRole("button", { name: /^Understand quantum physics.*Switch goal$/u });
+  const switcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
   await expectHydrated(switcher);
   await switcher.click();
   await page.getByRole("menuitem", { name: "Start a new goal" }).click();

@@ -68,7 +68,7 @@ struct PlanPathRows: View {
     IconLabeledContent {
       planFinishText(context)
     } title: {
-      Text(context.goal.title)
+      Text(context.goal.displayName)
     } icon: {
       Image(systemName: "flag")
     }

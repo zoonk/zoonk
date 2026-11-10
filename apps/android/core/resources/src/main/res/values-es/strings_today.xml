@@ -8,7 +8,7 @@
   "today_behind_kept": "3fb3728879e38c402e86896a6000f2a6d6a78623ff25471acfe036b7d6731eb2",
   "today_building_plan": "18c6d34f36eb9c4f3818c49cedd01472b8bac024971cc51a5215fac97eb8d9e4",
   "today_building_plan_detail": "2e6bd5b79fc5bb9433152a02f26e1a0629c74cc06e9219bbdc586c3d7b56b17d",
-  "today_building_plan_goal": "05419c0cd3601c342f2a35a965020f126f365f5f212ea73b842fb8d62b56cb6e",
+  "today_building_plan_goal": "72880af68cd0bdf34230a3ea08b20605266bdf637e808435c3cd4a89dce874f8",
   "today_catch_up_before_exam": "aa08f67dabe40c9680cf8077402fd9af648e4caaf043e9aaae0b6a4fc550100e",
   "today_catch_up_next_days": "9968f73950992eacc8e0eda55825ddab915e8fc0a5098e880a14e82ed4bf4015",
   "today_catch_up_today": "e298441dcd228281e5737854d69c2c57b0a88831bbebabda8e36e565192ca5f8",
@@ -42,7 +42,7 @@
   "today_exam_tomorrow": "cfdd0a4f462c7746bfc58445dd2dc1930bc621234ec20beb60d7c8dea69b165f",
   "today_finished": "d323b6b953ef8e8f69eebd111514d1d5081dfd0746571042489d09481d4f80fb",
   "today_finished_detail": "53921199ed6fdfccfb79be75fc627a08932e0ca194e9fe4f358c03c5cfa94785",
-  "today_finished_goal": "e29063bdbd6e8550931385c55f82198a6df7298873229dcc8d6b255c2dc35075",
+  "today_finished_goal": "9ba0579e736d0430ab4393f8b9f6645f22639af30759e0dd66f8bf6c6e37d50d",
   "today_fresh_start_new_phase": "3d5b7fabe5a2d696cd29e75a9c796f968915756f4d2f51b2f6e59c8644ae3b02",
   "today_fresh_start_new_week": "d0d746f1180d9d99525dd6b6f107874b5e8730fcd01fe52317538ba24f6bdafe",
   "today_fresh_start_welcome_back": "3602b4fcded2257cccdc43f850fbea9fd29f2fd53c5d3430acc5edf33ffc98bc",
@@ -99,7 +99,7 @@
   "today_past_date_exam": "3252e07580266eff899712b654fc48c6715f73b21dbd0be394b2dac84f62adb9",
   "today_paused": "75c3f32e5ab34b9a758bbbd729c651f9aace62bd50b63ed48bbb6f5477623481",
   "today_paused_detail": "e1cfb7e00545f56a316fd7a61d45b3d10f368faa62a0c596c2cc19d008f5908d",
-  "today_paused_goal": "48933d8f702ebc798982abae1f7458887530d53c4662552eb67e654a9ad20ded",
+  "today_paused_goal": "97179377ebfcdf2bbfc9fa4417a5de0b4299e597157c2cef7f588f46cd70eb24",
   "today_paused_this_goal": "8ef02272aeabd96ea235ce682864c90493e916528e7a3004795ce6f607e457e9",
   "today_plan_apply": "ac78a60db62160f4ef157c3cbaa3f9a4310a188f3033ce39391205971b27dc51",
   "today_plan_keep_mine": "7cdcc097e1db8c81ef70a3253c4637156780ab50cfb2b7bbaa1498a8014c17be",
@@ -133,7 +133,7 @@
   "today_see_your_plan": "d64c8ec9078c66a75f70f7f2dd0a6eb170980a9544f61522b52f40ff1a317608",
   "today_setting_up": "8a5a534148de63328fe02ea932520285fb7b78c239d0565b82d9488ce6d6e704",
   "today_setting_up_detail": "4b21831994efae0a518bec198d3a77ad08e29ed90262a419df58a3f40f96102a",
-  "today_setting_up_goal": "7b810154722f2ec3d22b47b471de4a0f98590473969514f368f8faad80417dcc",
+  "today_setting_up_goal": "63b5989afcad886fb2c364e343d9d470f33b6a0980456493ea589ecb0f9c12af",
   "today_show_less": "9a9671c34a725fd15d4d9ec18cd4dbe3c6b4fc8377f3fd32ba5d5afc11fe1c32",
   "today_start_new_goal": "b4e8be091f3523ec484261195de6b245416b9915b2cead7c5fe512727a3dc893",
   "today_start_session": "c2984348141df7065c214de4e545179733a99bf4413a0286c534c3370efb271d",
@@ -319,12 +319,12 @@
     <string name="today_not_now">Ahora no</string>
     <string name="today_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <string name="today_finished">Completado</string>
-    <!-- %1$s is the goal's title. -->
-    <string name="today_finished_goal">Completaste %1$s.</string>
+    <!-- %1$s is the goal's short name, like "CGU" or "Italian". -->
+    <string name="today_finished_goal">Completaste tu objetivo de %1$s.</string>
     <string name="today_finished_detail">Crea un objetivo nuevo o elige otro arriba.</string>
     <string name="today_start_new_goal">Crear un nuevo objetivo</string>
     <string name="today_paused">En pausa</string>
-    <string name="today_paused_goal">El objetivo %1$s está en pausa.</string>
+    <string name="today_paused_goal">Tu objetivo de %1$s está en pausa.</string>
     <string name="today_paused_this_goal">Este objetivo está en pausa.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">No habrá nada planeado hasta que reanudes tu objetivo.</string>
@@ -333,11 +333,11 @@
     <string name="today_resume_effect">Tu plan se reanuda a partir de hoy, empezando por las lecciones programadas para los días en que hiciste una pausa.</string>
     <string name="today_resume_goal_limit">Con el plan gratis puedes seguir un objetivo a la vez. Pausa tu otro objetivo para reanudar este u obtén Plus para seguir más objetivos.</string>
     <string name="today_setting_up">Configuración en curso</string>
-    <string name="today_setting_up_goal">Necesitamos algunas respuestas más para tu plan de %1$s.</string>
+    <string name="today_setting_up_goal">Faltan algunas respuestas para completar tu plan de %1$s.</string>
     <string name="today_setting_up_detail">Lo creamos con lo que nos cuentas.</string>
     <string name="today_continue_setting_up">Seguir con la configuración</string>
     <string name="today_building_plan">Preparando tu plan</string>
-    <string name="today_building_plan_goal">Preparando tu plan para %1$s</string>
+    <string name="today_building_plan_goal">Preparando tu plan de %1$s</string>
     <string name="today_building_plan_detail">Suele tardar uno o dos minutos. Tu primer día se abrirá aquí en cuanto esté listo.</string>
     <string name="today_quick_explanation">Explicación rápida</string>
     <string name="today_continue_explanation">Continuar la explicación</string>

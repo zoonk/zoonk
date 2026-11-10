@@ -1,6 +1,9 @@
 "use client";
 
-import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
+import {
+  renameGoalAction,
+  setGoalStatusAction,
+} from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { retryGenerationAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { claimCourseCertificateAction } from "@/components/learn/certificate-actions";
 import { SessionCertificates } from "@/components/learn/session-ceremony";
@@ -142,6 +145,7 @@ function useGoalStatus({
   const router = useRouter();
 
   return {
+    onRename: (displayName) => renameGoalAction(goalId, displayName),
     onSetStatus: async (next) => {
       const outcome = await setGoalStatusAction(goalId, next);
 

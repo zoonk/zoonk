@@ -28,7 +28,7 @@ export async function TodayOnboardingLeft({
   goal,
   left,
 }: {
-  goal: { id: string; title: string };
+  goal: { displayName: string; id: string; title: string };
   left: OnboardingLeft;
 }) {
   const t = await getExtracted();
@@ -45,7 +45,7 @@ export async function TodayOnboardingLeft({
         clause={t("Look it over before you start.")}
         date={null}
         icon={<MapIcon />}
-        sentence={t("Your plan for {goal} is ready.", { goal: goal.title })}
+        sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
         state={t("Plan ready")}
         title={t("Today")}
       />
@@ -62,7 +62,7 @@ export async function TodayOnboardingLeft({
       clause={t("It's built from what you tell us.")}
       date={null}
       icon={<ListChecksIcon />}
-      sentence={t("Your plan for {goal} needs a few more answers.", { goal: goal.title })}
+      sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}
       state={t("Setting up")}
       title={t("Today")}
     />

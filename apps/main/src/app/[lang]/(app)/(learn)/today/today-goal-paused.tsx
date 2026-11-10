@@ -40,7 +40,7 @@ export async function TodayGoalPaused() {
         clause={t("Start a new goal, or pick another one above.")}
         date={date}
         icon={<FlagIcon />}
-        sentence={t("You finished {goal}.", { goal: goal.title })}
+        sentence={t("You finished your {goal} goal.", { goal: goal.displayName })}
         state={t("Finished")}
         title={t("Today")}
       />
@@ -51,7 +51,7 @@ export async function TodayGoalPaused() {
     <TodayAtRest
       actions={
         <>
-          {goal && <ResumeGoalButton goalId={goal.id} goalTitle={goal.title} key={goal.id} />}
+          {goal && <ResumeGoalButton goalId={goal.id} goalTitle={goal.displayName} key={goal.id} />}
           <Link
             className={buttonVariants({ size: "lg", variant: goal ? "outline" : "default" })}
             href="/start"
@@ -64,7 +64,11 @@ export async function TodayGoalPaused() {
       date={date}
       detail={<ResumeEffect preview={resume} />}
       icon={<PauseIcon />}
-      sentence={goal ? t("{goal} is paused.", { goal: goal.title }) : t("This goal is paused.")}
+      sentence={
+        goal
+          ? t("Your {goal} goal is paused.", { goal: goal.displayName })
+          : t("This goal is paused.")
+      }
       state={t("Paused")}
       title={t("Today")}
     />

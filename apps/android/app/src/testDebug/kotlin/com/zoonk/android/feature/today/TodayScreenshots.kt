@@ -504,6 +504,7 @@ class TodayScreenshots {
                     put("kind", "exam")
                     put("targetDate", "2026-12-08")
                     put("title", "ENEM 2026")
+                    put("displayName", "ENEM")
                 }
             val progress =
                 buildJsonObject {
