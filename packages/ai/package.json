@@ -147,6 +147,7 @@
     "./tasks/plans/edit-intent": "./src/tasks/plans/plan-edit-intent.ts",
     "./tasks/plans/routine-fit": "./src/tasks/plans/plan-routine-fit.ts",
     "./tasks/plans/topic-skill-names": "./src/tasks/plans/topic-skill-names.ts",
+    "./tasks/tutor/learner-needs": "./src/tasks/tutor/learner-needs.ts",
     "./tasks/tutor/goal-tutor": "./src/tasks/tutor/goal-tutor.ts",
     "./tasks/tutor/goal-tutor-cards": "./src/tasks/tutor/goal-tutor-cards.ts",
     "./tasks/tutor/goal-tutor-lookup": "./src/tasks/tutor/goal-tutor-lookup.ts",

@@ -10,6 +10,7 @@ import { SEARCH_DEADLINE_MS } from "./goal-tutor-web-search";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
+vi.mock("./learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
 vi.mock("./goal-tutor.prompt.md", () => ({ default: "Tutor every goal." }));
 vi.mock("./goal-tutor-exam.prompt.md", () => ({ default: "Read the exam's notice." }));
 vi.mock("./goal-tutor-chapter.prompt.md", () => ({ default: "Read the chapter." }));

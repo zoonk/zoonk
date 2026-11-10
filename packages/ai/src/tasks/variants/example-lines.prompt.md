@@ -36,3 +36,5 @@ A forced, generic or repeated sentence is worse than none. A screen's `line` is 
 - Don't repeat a screen's own example, and don't start with "For example".
 - No praise, no promises of results, no questions.
 - Write in `LANGUAGE`.
+
+{{#plainWords}}- Use plain, literal words: no idioms, metaphors or figures of speech.{{/plainWords}}

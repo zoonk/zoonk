@@ -34,7 +34,7 @@ import {
 } from "../../profile/questions/_utils/profile-question-state";
 import { toOnboardingGoalView } from "./_utils/onboarding-goal-view";
 import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
-import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
+import { getGoalSize, getTimeQuestionDefaults } from "./_utils/recommended-minutes";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingDateProblem,
@@ -287,21 +287,21 @@ export async function getOnboarding({
     : (view.targetDate ?? notice.examDate);
 
   // The time a day the course's page had picked stays the learner's until they change it.
-  const recommendedMinutes =
-    courseStart?.dailyMinutes ??
-    getRecommendedMinutes({
-      size: getGoalSize({
-        hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
-        isClassTest: isClassTest(details) || notice.fromMaterial,
-        kind: goal.kind,
-        purpose: details.purpose,
-        targetDate,
-        targetPosition: details.targetPosition,
-        today,
-      }),
+  const { recommendedMinutes, startsOnRecommended } = getTimeQuestionDefaults({
+    courseMinutes: courseStart?.dailyMinutes,
+    learningNeeds: profileState.profile?.learningNeeds ?? [],
+    size: getGoalSize({
+      hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
+      isClassTest: isClassTest(details) || notice.fromMaterial,
+      kind: goal.kind,
+      purpose: details.purpose,
       targetDate,
+      targetPosition: details.targetPosition,
       today,
-    });
+    }),
+    targetDate,
+    today,
+  });
 
   return {
     onboarding: {
@@ -324,6 +324,7 @@ export async function getOnboarding({
       profile: toProfileQuestionsView({ locale, state: profileState }),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
+      startsOnRecommended,
       steps,
       timeChoices: [...new Set([...DAILY_TIME_CHOICES, recommendedMinutes])]
         .toSorted((a, b) => a - b)

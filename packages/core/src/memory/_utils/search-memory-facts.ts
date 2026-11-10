@@ -7,6 +7,7 @@ import { toTextSearch, toTextSearchSql } from "../../library/identity/_utils/tex
  * `user_id` index already bounds the rows.
  */
 export async function searchMemoryFactIds({
+  candidateIds,
   categories,
   includeSensitive = true,
   language,
@@ -15,6 +16,7 @@ export async function searchMemoryFactIds({
   terms,
   userId,
 }: {
+  candidateIds?: readonly string[];
   categories: readonly MemoryCategory[];
   includeSensitive?: boolean;
   language: string;
@@ -25,7 +27,7 @@ export async function searchMemoryFactIds({
 }): Promise<string[]> {
   const search = toTextSearch({ language, terms });
 
-  if (!search || categories.length === 0) {
+  if (!search || categories.length === 0 || candidateIds?.length === 0) {
     return [];
   }
 
@@ -37,6 +39,7 @@ export async function searchMemoryFactIds({
   const rows = await prisma.$queryRaw<{ id: string }[]>`
     SELECT m.id FROM memory_facts m
     WHERE m.user_id = ${userId}::uuid
+      AND (${candidateIds === undefined}::boolean OR m.id::text = ANY(${[...(candidateIds ?? [])]}::text[]))
       AND m.status = 'active'
       AND (m.expires_at IS NULL OR m.expires_at > ${now})
       AND m.category::text = ANY(${[...categories]}::text[])

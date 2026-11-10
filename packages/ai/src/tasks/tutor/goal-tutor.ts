@@ -27,6 +27,8 @@ import { shouldSearchFirst } from "./goal-tutor-search";
 import subjectScreenPrompt from "./goal-tutor-subject.prompt.md";
 import { SEARCH_DEADLINE_MS, createSearchWebTool } from "./goal-tutor-web-search";
 import systemPrompt from "./goal-tutor.prompt.md";
+import { type LearnerNeeds, getLearnerNeedsPrompt } from "./learner-needs";
+import learnerNeedsPrompt from "./learner-needs.prompt.md";
 
 /**
  * Luna matched Gemini 3.8 Flash on the goal-tutor eval at a twentieth of the cost (7 Oct 2026),
@@ -56,6 +58,7 @@ type GoalTutorInput = {
   contextSnapshot: PlanScopeContext;
   /** Only when memory is on. */
   learnerMemory?: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   /** Never sent to a web search, and never in the model's context. */
   learnerNames?: readonly string[];
   /** The buddy links only what it's given, copied as it reads it. */
@@ -164,23 +167,28 @@ function getPageGuide({
 
 function getSystemPrompt({
   contextSnapshot,
+  learnerNeeds,
   links,
-}: Pick<GoalTutorInput, "contextSnapshot" | "links">): string {
+}: Pick<GoalTutorInput, "contextSnapshot" | "learnerNeeds" | "links">): string {
   const template = contextSnapshot.goal.kind === "exam" ? examSystemPrompt : systemPrompt;
   const goalPrompt = selectTutorLanguage({ language: contextSnapshot.language, template });
   const withPages = `${goalPrompt}\n${getPageGuide({ contextSnapshot, links })}`;
   const { screen } = contextSnapshot;
 
-  if (!screen) {
-    return withPages;
-  }
+  const screenPrompt = screen
+    ? selectPromptVariants({
+        template: SCREEN_PROMPTS[screen.scope.kind],
+        variants: getLessonScreenVariants(screen),
+      })
+    : "";
 
-  const screenPrompt = selectPromptVariants({
-    template: SCREEN_PROMPTS[screen.scope.kind],
-    variants: getLessonScreenVariants(screen),
-  });
-
-  return `${withPages}\n${screenPrompt}`;
+  return [
+    withPages,
+    screenPrompt,
+    getLearnerNeedsPrompt({ needs: learnerNeeds, template: learnerNeedsPrompt }),
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /**
