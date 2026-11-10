@@ -16,6 +16,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.GoalError
+import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
@@ -400,6 +401,11 @@ class StartGoalViewModel(
         if (read != null) create(explanation(draft, read.question), onCreated)
     }
 
+    /** A refusal for the goals the plan follows lasts until a draft read after it has room again. */
+    fun readRoom(activeGoalsLeft: Long?) {
+        if (activeGoalsLeft != 0L && (creationError as? GoalError.Limit)?.reason == GoalLimitReason.ActiveGoals) creationError = null
+    }
+
     fun isOpeningExplanation(draft: OnboardingDraft) = isCreating || store.wasSentHere(draft.id.toString())
 
     fun create(
@@ -416,7 +422,10 @@ class StartGoalViewModel(
                 }
 
                 is WriteOutcome.Refused -> {
-                    creationError = GoalError.Limit(outcome.refusal.goalLimitReason())
+                    val reason = outcome.refusal.goalLimitReason()
+                    creationError = GoalError.Limit(reason)
+                    // The draft's room was read before this refusal; read it again so the card counts the goals followed now.
+                    if (reason == GoalLimitReason.ActiveGoals) draftId?.let { store.drafts[it].refresh() }
                 }
 
                 WriteOutcome.Failed -> {

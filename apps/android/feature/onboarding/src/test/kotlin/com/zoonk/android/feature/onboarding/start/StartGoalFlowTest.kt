@@ -12,16 +12,21 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.failedDraft
+import com.zoonk.android.feature.onboarding.goalsUnderstanding
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.readingDraft
+import com.zoonk.android.feature.onboarding.understoodDraft
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -29,6 +34,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -45,11 +52,12 @@ class StartGoalFlowTest {
 
     private val api = FakeOnboardingApi()
     private lateinit var store: OnboardingStore
+    private lateinit var cache: AppCache
     private var sessionKey by mutableStateOf<String?>("local-a")
 
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
             ZoonkTheme {
@@ -118,4 +126,38 @@ class StartGoalFlowTest {
 
         assertEquals(1, api.readsAgain)
     }
+
+    @Test
+    fun aRefusalForTheGoalsFollowedHoldsUntilARereadDraftHasRoom() {
+        fun card(left: Int) = understoodDraft(understanding = twoGoals(), activeGoalsLeft = left)
+        api.draft = card(left = 1)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+
+        api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
+        api.draft = card(left = 0)
+        rule.onNodeWithText("Looks right").performClick()
+
+        rule.onNodeWithText("Looks right").assertDoesNotExist()
+        rule.onNodeWithText("See Plus").assertIsDisplayed()
+        assertEquals(listOf(listOf("Pass the bar exam")), api.created.map { input -> input.goals.map { it.title } })
+
+        api.refusal = null
+        api.draft = card(left = 1)
+        cache.invalidate(setOf(DataDomain.Goals))
+
+        rule.onNodeWithText("Looks right").assertIsDisplayed()
+    }
 }
+
+private fun twoGoals() =
+    goalsUnderstanding().replace(
+        "]}",
+        """,{"cutoff":null,"examDates":[],"draft":{"kind":"learn","language":"en","prompt":"learn statistics","title":"Learn statistics","details":{}}}]}""",
+    )
+
+private fun activeGoalsLimit() =
+    buildJsonObject {
+        put("period", "total")
+        put("resource", "activeGoals")
+        put("tier", "free")
+    }

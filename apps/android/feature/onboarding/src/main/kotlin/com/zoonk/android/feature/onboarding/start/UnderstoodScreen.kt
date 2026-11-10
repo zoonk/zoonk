@@ -80,7 +80,7 @@ import java.time.LocalTime
 internal fun ColumnScope.UnderstoodScreen(
     goal: String,
     understanding: GoalUnderstandingOneOf,
-    activeGoalLimit: Long?,
+    activeGoalsLeft: Long?,
     timeZone: String,
     material: List<String>,
     isCreating: Boolean,
@@ -103,9 +103,13 @@ internal fun ColumnScope.UnderstoodScreen(
             rows.materialRow(material),
             rows.scheduleRow(understanding.schedule, minutesSaid(understanding.goals.firstOrNull())),
         )
-    val plusLimit = listOfNotNull((error as? GoalError.Limit)?.reason, goalLimit).firstOrNull { it.isPlusLimit }
-    val startable = understanding.startableGoals(activeGoalLimit)
+    val startable = understanding.startableGoals(activeGoalsLeft)
     val locked = understanding.goals.drop(startable.size)
+    // The draft counts the goals the plan can still follow; the up-front read of that cap may be older.
+    val plusLimit =
+        GoalLimitReason.ActiveGoals.takeIf { activeGoalsLeft == 0L }
+            ?: listOfNotNull((error as? GoalError.Limit)?.reason, goalLimit.takeIf { it != GoalLimitReason.ActiveGoals })
+                .firstOrNull { it.isPlusLimit }
 
     if (rewriting) {
         RewriteWords(words = goal, disabled = isCreating, onCancel = { rewriting = false }, onRewrite = onRewrite)
@@ -145,7 +149,9 @@ internal fun ColumnScope.UnderstoodScreen(
         }
     }
 
-    if (locked.isNotEmpty()) LockedGoals(locked, rows, timeZone, onSeePlus.takeIf { plusLimit == null })
+    if (locked.isNotEmpty()) {
+        LockedGoals(locked, rows, timeZone, waiting = startable.isNotEmpty(), onSeePlus.takeIf { plusLimit == null })
+    }
 
     if (plusLimit != null) {
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
@@ -167,12 +173,16 @@ internal fun ColumnScope.UnderstoodScreen(
     }
 }
 
-/** Read as the card read them, with no fixes: they start later from the goal switcher, as they are. */
+/**
+ * Read as the card read them, with no fixes: they start later from the goal switcher, as they are. They wait in the
+ * learner's goals only when a goal on the card starts ([waiting]); otherwise the plan's limit below explains them.
+ */
 @Composable
 private fun LockedGoals(
     goals: List<UnderstoodGoal>,
     rows: UnderstoodRows,
     timeZone: String,
+    waiting: Boolean,
     onSeePlus: (() -> Unit)?,
 ) {
     goals.forEach { goal ->
@@ -192,6 +202,7 @@ private fun LockedGoals(
             }
         }
     }
+    if (!waiting) return
     PlusNotice(
         onSeePlus = onSeePlus,
         description =

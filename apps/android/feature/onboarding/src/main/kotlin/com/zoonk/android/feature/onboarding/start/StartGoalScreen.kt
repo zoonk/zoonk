@@ -353,6 +353,7 @@ private fun ColumnScope.DraftContent(
     LaunchedEffect(draft.id, draft.status) {
         vm.settle(draft, explanation = { read, question -> explanationInput(read, question, language) }, onCreated = actions.toExplanation)
     }
+    LaunchedEffect(draft.activeGoalsLeft) { vm.readRoom(draft.activeGoalsLeft) }
 
     val back = { vm.backToEntry(draft.prompt) }
     val limit = vm.draftLimit
@@ -398,7 +399,7 @@ private fun ColumnScope.DraftContent(
             UnderstoodScreen(
                 goal = draft.prompt,
                 understanding = understanding.value,
-                activeGoalLimit = draft.activeGoalLimit,
+                activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
                 material = vm.flow.attached.map { it.title },
                 isCreating = vm.isCreating,
@@ -409,7 +410,7 @@ private fun ColumnScope.DraftContent(
                     vm.confirm(
                         understoodGoalsInput(
                             understanding.value,
-                            draft.activeGoalLimit,
+                            draft.activeGoalsLeft,
                             draft.timeZone,
                             flow.intent.takeIf { flow.attached.isNotEmpty() },
                             flow.attached.map { it.id },
