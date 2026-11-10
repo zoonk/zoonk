@@ -13,6 +13,46 @@ const SHARED_EXPECTATIONS = `
 
 export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   {
+    expectations:
+      "Write one non-null sentence using at least one supplied fact naturally. Connect a concrete situation from software work, journalism, soccer, news or a named fictional show to the screen's multiplication rule. Use correct arithmetic. Do not invent biographical details.",
+    id: "en-founder-first-lesson",
+    userInput: {
+      facts: [
+        "Watches sci-fi and anime, especially Star Trek, Fringe and Dragon Ball",
+        "Plays soccer",
+        "Reads news and politics",
+        "Works as: software engineer",
+        "Studied journalism",
+      ],
+      goal: "Understand mathematics from the beginning",
+      language: "en",
+      screens: [
+        {
+          idea: "Several equal-sized groups in the learner's work or interests, counted by multiplication.",
+          text: "Multiplication counts equal groups: 4 groups of 3 objects contain 12 objects.",
+        },
+      ],
+    },
+  },
+  {
+    expectations:
+      "Write a concrete, non-null discount example using software work, with correct numbers. Use literal language, without idioms, metaphors or figures of speech.",
+    id: "en-plain-words-example",
+    userInput: {
+      facts: ["Works as: software engineer"],
+      goal: null,
+      language: "en",
+      plainWords: true,
+      screens: [
+        {
+          idea: "A discount on software used for work.",
+          text: "A 25% discount removes a quarter of the original price.",
+        },
+      ],
+    },
+  },
+
+  {
     expectations: `
       - MUST be in Brazilian Portuguese
       - The learner shares the rent with two friends: a line splitting a rent in reais three ways fits, with the money written the Brazilian way (R$ 1.200, R$ 400) and correct math

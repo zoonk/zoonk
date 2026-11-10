@@ -9,6 +9,7 @@ import { type LessonScopeContext } from "./lesson-question-context";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
+vi.mock("../tutor/learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
 vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor in {{LEARNER_LANGUAGE}}." }));
 
 vi.mock("./lesson-question-lesson.prompt.md", () => ({

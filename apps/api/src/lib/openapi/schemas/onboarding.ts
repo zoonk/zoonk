@@ -163,6 +163,12 @@ export const onboardingResponseSchema = z
         description:
           "The daily minutes the time question picks first: the time a day picked on a course's page when the goal started there, otherwise from how big the goal is and how soon its or its exam's date is. Only a starting pick; the plan says what that time covers",
       }),
+    startsOnRecommended: z
+      .boolean()
+      .meta({
+        description:
+          "Whether the time question opens on recommendedMinutes instead of the plan's suggestion, which keeps its suggested mark and coverage.",
+      }),
     steps: z
       .array(onboardingStepSchema)
       .meta({

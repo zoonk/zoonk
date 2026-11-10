@@ -251,6 +251,7 @@ export type OnboardingView = {
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
+  startsOnRecommended: boolean;
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
   /** The daily times the time question offers, `recommendedMinutes` among them. */
