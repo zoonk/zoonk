@@ -109,6 +109,32 @@ class LessonClockTest {
             )
         }
 
+    @Test fun anIgnoredResumeGoesAgainWhenItsRestartFails() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            val nextClock = UUID.randomUUID()
+            api.clockId = nextClock
+            api.clockResponse = {
+                LessonClockResult(if (it.state == RUNNING) LessonClockResult.Status.IGNORED else LessonClockResult.Status.UPDATED)
+            }
+            player.leave()
+            advanceUntilIdle()
+            api.startFailures = 1
+            player.resume()
+            advanceUntilIdle()
+            player.resume()
+            advanceUntilIdle()
+            player.leave()
+            advanceUntilIdle()
+
+            assertEquals(listOf(null, RUN_ID, RUN_ID), api.startRunIds)
+            assertEquals(
+                listOf(update(1, PAUSED), update(2, RUNNING), update(2, RUNNING), update(1, PAUSED).copy(clockId = nextClock)),
+                api.clockUpdates.map { it.second },
+            )
+        }
+
     @Test fun ignoredRunningDoesNotRestartAfterLeavingAgain() =
         runTest(dispatcher) {
             val player = player()

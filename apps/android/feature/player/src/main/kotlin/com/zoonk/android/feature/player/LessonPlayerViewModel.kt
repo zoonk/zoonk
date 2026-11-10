@@ -381,13 +381,13 @@ class LessonPlayerViewModel(
                     }
                 }
             if (clock.value?.input != input) return@launch
-            clock.value = LessonClock(input, if (result is MutationResult.Failed) ClockSend.Failed else ClockSend.Sent)
-            if (input.state == LessonClockInput.State.RUNNING &&
-                result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
-                sessions.current == session
-            ) {
-                start(input.runId.toString())
-            }
+            // The server dropped this clock, so running counts only once Start gives a new one.
+            val restarts =
+                input.state == LessonClockInput.State.RUNNING &&
+                    result is MutationResult.Done && result.value?.status == LessonClockResult.Status.IGNORED &&
+                    sessions.current == session
+            val delivered = if (restarts) start(input.runId.toString()) is StartOutcome.Started else result !is MutationResult.Failed
+            clock.update { if (it?.input == input) LessonClock(input, if (delivered) ClockSend.Sent else ClockSend.Failed) else it }
         }
     }
 
