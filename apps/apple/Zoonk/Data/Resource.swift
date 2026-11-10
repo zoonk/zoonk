@@ -40,7 +40,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   private var isInvalidated = false
   /// Keeps a persistent failure (a 5xx, an undecodable response) from refetching on every redraw.
   @ObservationIgnored private var hasSettledOnFailure = false
-  private var loadedAt: ContinuousClock.Instant?
+  @ObservationIgnored private var loadedAt: ContinuousClock.Instant?
   @ObservationIgnored private var owner: AuthenticatedSession?
   @ObservationIgnored private var request: (id: Int, task: Task<Void, Never>)?
   @ObservationIgnored private var requestCount = 0
@@ -88,10 +88,10 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     return value
   }
 
-  /// Editors must revalidate stale content before deriving an answer from it.
+  /// Editors must revalidate invalidated content before deriving an answer from it.
   var freshState: LoadState<Value> {
     let state = state
-    guard state.hasContent, isStale else {
+    guard state.hasContent, isInvalidated else {
       return state
     }
 

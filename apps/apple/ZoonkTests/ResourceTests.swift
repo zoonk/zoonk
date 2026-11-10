@@ -51,7 +51,7 @@ final class ResourceTests: XCTestCase {
 
     XCTAssertEqual(resource.state, .loaded(1))
     XCTAssertTrue(resource.isRefreshing)
-    XCTAssertEqual(resource.freshState, .loading)
+    XCTAssertEqual(resource.freshState, .loaded(1))
 
     requests.resolve(1, with: .success(2))
     await revalidation.value
@@ -159,11 +159,10 @@ final class ResourceTests: XCTestCase {
   }
 
   func testAnUnchangedRevalidationMakesTheEditorReady() async {
-    let clock = TestClock()
     let resource = makeResource(
-      requests: Requests(results: [.success(1), .success(1)]), clock: clock)
+      requests: Requests(results: [.success(1), .success(1)]))
     await resource.load()
-    clock.advance(by: AppCache.defaultMaxAge + .seconds(1))
+    resource.invalidate()
     XCTAssertEqual(resource.freshState, .loading)
 
     let redraw = ObservationFlag()
@@ -176,6 +175,19 @@ final class ResourceTests: XCTestCase {
 
     XCTAssertTrue(redraw.isSet)
     XCTAssertEqual(resource.freshState, .loaded(1))
+  }
+
+  func testContentAgingWhileAnEditorShowsItKeepsTheEditor() async {
+    let clock = TestClock()
+    let requests = Requests(results: [.success(1)])
+    let resource = makeResource(requests: requests, clock: clock)
+    resource.beginViewing()
+    defer { resource.endViewing() }
+    await resource.load()
+
+    clock.advance(by: AppCache.defaultMaxAge + .seconds(1))
+    XCTAssertEqual(resource.freshState, .loaded(1))
+    XCTAssertEqual(requests.count, 1)
   }
 
   func testAFailureStaysUntilSomethingAsksAgain() async {
