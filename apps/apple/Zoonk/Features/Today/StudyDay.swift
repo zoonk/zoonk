@@ -134,7 +134,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   /// Mirrors main's `getFoldedBlocks`: the blocks "+N more" holds while the queue is folded.
   var foldedBlocks: [StudyBlock] {
-    nextBlock.map { Array(queue(next: $0).after.dropFirst(Self.upcomingRows)) } ?? []
+    Array(queue(next: nextBlock).after.dropFirst(Self.upcomingRows))
   }
 
   func foldedMinutes(showing blocks: [StudyBlock]) -> Double {
