@@ -138,7 +138,7 @@ export function useLessonPlayerActions({
   writeExampleLines,
 }: ActionsInput) {
   const lessonRun = useLessonRun({ adapters, dispatch, lesson });
-  const { ensureRun, resendHeld } = lessonRun;
+  const { ensureRun, resendUnsaved } = lessonRun;
 
   const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
     ...lessonRun,
@@ -214,7 +214,7 @@ export function useLessonPlayerActions({
       check,
       continue: () => {
         void ensureRun();
-        void resendHeld();
+        void resendUnsaved();
         writeExampleLines();
         dispatch({ type: "continue" });
       },
@@ -250,7 +250,7 @@ export function useLessonPlayerActions({
       startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, resendHeld, state.steps, submitSpokenAnswer, writeExampleLines],
+    [check, dispatch, ensureRun, resendUnsaved, state.steps, submitSpokenAnswer, writeExampleLines],
   );
 
   return { actions, reopen: lessonRun.reopen };

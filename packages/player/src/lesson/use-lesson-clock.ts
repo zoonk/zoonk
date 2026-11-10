@@ -56,7 +56,16 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
         });
     }
 
-    return { move, runClock };
+    /** Sends the latest change again under its sequence when it didn't get through. */
+    function resend() {
+      const state = clockRef.current?.transition.state;
+
+      if (state) {
+        move(state);
+      }
+    }
+
+    return { move, resend, runClock };
   }, [adapters]);
 
   useEffect(() => {
@@ -77,5 +86,5 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
     onLeave: () => actions.move("paused"),
   });
 
-  return actions.runClock;
+  return { resendClock: actions.resend, runClock: actions.runClock };
 }

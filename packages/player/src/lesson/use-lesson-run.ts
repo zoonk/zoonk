@@ -26,7 +26,7 @@ export function useLessonRun({
   const pendingRef = useRef(new Set<Promise<unknown>>());
   const screensRef = useRef(new Map<string, ScreenQueue>());
   const heldRef = useRef(new Map<string, HeldAnswer>());
-  const runClock = useLessonClock(adapters);
+  const { resendClock, runClock } = useLessonClock(adapters);
 
   const startRun = useCallback(
     async (input?: { runId: string }) => {
@@ -103,7 +103,7 @@ export function useLessonRun({
     [getQueue, keepPending],
   );
 
-  const { hold, reopen, resendHeld, resendKept } = useHeldAnswers({
+  const { hold, reopen, resendKept, resendUnsaved } = useHeldAnswers({
     adapters,
     dispatch,
     ensureRun,
@@ -111,6 +111,7 @@ export function useLessonRun({
     heldRef,
     keepPending,
     lesson,
+    resendClock,
   });
 
   const flushChecks = useCallback(async (): Promise<boolean> => {
@@ -118,5 +119,5 @@ export function useLessonRun({
     return resendKept();
   }, [resendKept]);
 
-  return { ensureRun, flushChecks, hold, keepGrade, reopen, resendHeld, startRun };
+  return { ensureRun, flushChecks, hold, keepGrade, reopen, resendUnsaved, startRun };
 }

@@ -316,6 +316,45 @@ describe("lesson clock", () => {
     ]);
   });
 
+  it.each([
+    { moment: "answer", steps: [teachingStep("check")], take: answerRight },
+    {
+      moment: "step",
+      steps: [teachingStep("explanation"), teachingStep("check")],
+      take: () => page.getByRole("button", { name: /^Next/u }).click(),
+    },
+  ])(
+    "sends a change that didn't get through again at the learner's next $moment",
+    async ({ steps, take }) => {
+      const lesson = buildLesson(steps);
+      const clockId = crypto.randomUUID();
+      const runId = crypto.randomUUID();
+      const updateLessonClock = clockServer([true, false]);
+
+      renderLessonPlayer({
+        adapters: buildAdapters(lesson, {
+          startLesson: () => Promise.resolve(startedRun({ clockId, runId })),
+          updateLessonClock,
+        }),
+        lesson,
+      });
+
+      setVisibility("hidden");
+      await expect.poll(() => transitions(updateLessonClock)).toHaveLength(1);
+      setVisibility("visible");
+      await expect.poll(() => transitions(updateLessonClock)).toHaveLength(2);
+      await take();
+
+      await expect
+        .poll(() => transitions(updateLessonClock))
+        .toStrictEqual([
+          { clockId, runId, sequence: 1, state: "paused" },
+          { clockId, runId, sequence: 2, state: "running" },
+          { clockId, runId, sequence: 2, state: "running" },
+        ]);
+    },
+  );
+
   it("counts again from the first change on the clock a new start gives", async () => {
     const lesson = buildLesson([teachingStep("check"), teachingStep("explanation")]);
     const runId = crypto.randomUUID();
