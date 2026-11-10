@@ -62,6 +62,7 @@
   "tutor_offer_essay_plus": "debce20f96916c5e9ec33b373ed84866af58c433ed4d966708faecf445a3a71e",
   "tutor_offer_essay_weekly": "afe4c4b9c3557ff44d84613840c2fc86e30a2d8fbc76648a4aaef1c09100fbc8",
   "tutor_offer_goal": "c82a4788b6b89c5c791aa41114d56888b4c6190184bee9780a435d7f0ea97972",
+  "tutor_offer_goal_limit": "9fdbf1054d316ef18bb4a6dff8d72d584e0c2540efa21d990319afd1a3932d9a",
   "tutor_offer_logbook": "5b36606af035780324d145030b8066834a30aa827bca337f05c3ee1ae304325b",
   "tutor_offer_logbook_description": "a76b928f37b9fec9299e05041e5605d7c9fa1fba0622da0f61adc487ef8a6216",
   "tutor_offer_manage": "587d8bf1ee0119583d5f904d0b4b254430264531692400ec25cc0bde9805f6a7",
@@ -73,7 +74,6 @@
   "tutor_offer_mock_by_subject": "0ee62fc543fcde3ac1dd062c0c655dafc7d60acb4ddb66c6decc41b7198d73fe",
   "tutor_offer_mock_description": "e2b4f342c2543b6e849c3f431f58354ed3cf51d15e5c16f78b21d1a517afadcc",
   "tutor_offer_mock_plus": "0f681818809cad7a6ee9f10bdb3766e075b4a20f8aa8c74355926f3d7444385c",
-  "tutor_offer_one_goal": "395399c8191cecf4407a1146560a277e5777b45e7f8b83f20d673f91dee26523",
   "tutor_offer_open": "46fd49386d6876f7a523aaa5144da41847a4003e2a9a054778c5542d00b17106",
   "tutor_offer_plus": "1b738ea655764b735872237944b7d3d67f29798ddf55c0543640f47bcf8de177",
   "tutor_offer_plus_description": "2f55b3194dd3810b6b6236cd1316cd63d3c08db0b89ef76b1240930d946f09d0",
@@ -213,7 +213,8 @@
     <string name="tutor_offer_start_goal">Crear un nuevo objetivo</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
-    <string name="tutor_offer_one_goal">Con el plan gratis puedes seguir un objetivo a la vez: pausa tu objetivo actual desde su menú o sigue más de uno con Plus.</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">Para crear otro objetivo ahora necesitas Plus. Mientras tanto, sigue avanzando con tus objetivos actuales.</string>
     <string name="tutor_offer_catalog_course">Un curso ya disponible en el catálogo</string>
     <string name="tutor_offer_chapter_test">Prueba: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

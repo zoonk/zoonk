@@ -96,7 +96,8 @@
     <string name="tutor_offer_start_goal">Start a new goal</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
-    <string name="tutor_offer_one_goal">The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus.</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">Starting another goal right now comes with Plus. Until then, keep going with your current goals.</string>
     <string name="tutor_offer_catalog_course">A ready course in the catalog</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

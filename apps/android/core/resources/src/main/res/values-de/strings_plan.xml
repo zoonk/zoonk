@@ -301,7 +301,7 @@
   "plan_get_recommendation": "a6c3d93dd50083109106bbe84182ccd1bf7d4229f8c20c6028ce65aa2e3aba3a",
   "plan_go_to_today": "d6a62283d93aeff8d3ba9d28390281e7fe6d6c1498f2484b1cbdb0176956624a",
   "plan_goal_date": "b446fe7ede82a727c514a3c58637afe97d9793532cbb0a8f58fac837ebe95cbc",
-  "plan_goal_limit_reached": "cab1c598e2eb82c9c111326ec2f56e28a3dd74255ed087e23f29dfd85d41fcb2",
+  "plan_goal_limit_reached": "8c76193fb986a03bb456e4a75c2a285b4d9940e41dbe9c4e514d7da1575c8195",
   "plan_goal_paused": "5c1f2ed785917c36368a00cdf1b86bde2cc24d1a02dc27e51e8a2429b01bcf76",
   "plan_going_deeper": "ccbc15320f0aa6f91b10820d28a901211029624fb95e0791b0b1ddb3bed61465",
   "plan_how_is_it_going": "4d96893452c575e376dc9f3d191ce8aeac20b499279d01826b1aa2d1ac127985",
@@ -642,7 +642,8 @@
     <string name="plan_resume_effect">Dein Plan geht heute weiter. Du beginnst mit den Lektionen, die für die Tage deiner Pause geplant waren.</string>
     <string name="plan_resume">Fortsetzen</string>
     <string name="plan_cancel">Abbrechen</string>
-    <string name="plan_goal_limit_reached">Im Free-Tarif kannst du jeweils ein Ziel verfolgen. Pausiere dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="plan_goal_limit_reached">Du verfolgst bereits so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen.</string>
     <string name="plan_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d von %2$d Phase abgeschlossen</item>

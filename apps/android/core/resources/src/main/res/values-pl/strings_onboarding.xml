@@ -130,13 +130,13 @@
   "onboarding_level_test_description": "25a58865d3c55a6065646162a0af50db7acebf7b158cb6568fa692e6c48b1be1",
   "onboarding_level_title": "5655fca8ae915b03f5cca84703172fba0e479b345106853be92e6eec4a5d81eb",
   "onboarding_library_course_fits": "417182bd32f68544f10dd388d3c134692ceb84415e0b1a390ddfab96ffd27442",
+  "onboarding_limit_active_goals": "3125e7ac8db1be5bc95946d883c6897f495a230c69cace05e14313c45faf5b58",
   "onboarding_limit_daily_explanations": "4697fe035a84a6742f3b48501030f78d8444967bd975e4ea9bdc8f4ddbb801c1",
   "onboarding_limit_daily_goals": "e5480a6135d498b2045843bc4d434885c94d349587a26474cc25e16bc997218e",
   "onboarding_limit_guest": "d4b339ea7cbab77d180295a0fac8ef470c1154ecb723e123db2903965b27595e",
   "onboarding_limit_guest_blocked": "9d3e58241d0fcebb3b4755b06b31d67acf3344da51ac14a375adcca10a9e3478",
   "onboarding_limit_monthly_explanations": "ae11cbf95603939e043bc7ea151a589d84111d3c5d114b44ee9ec7a870350bf0",
   "onboarding_limit_monthly_goals": "736b236f572a9159ab32609260b7eb1a17060d82262a6350d09575307b827fc9",
-  "onboarding_limit_one_active_goal": "7a592e3cb455082e2853314672a89d294923fb8885f0ae50bd3c8da7f0616dba",
   "onboarding_limit_sign_up_required": "e7f6916eaf4fcd643603e1afd5b82cb05d456f669833daa4569bed8670d64fac",
   "onboarding_limit_slow_down": "184a72b2dd5386d9c3c56c4f386cdff0fbab088c679073fb3433d1fffba75844",
   "onboarding_link": "1c68d531c8439e4a2ce5935e6123b1e79b8547d76f7dd1c7c9b340639aeec477",
@@ -202,7 +202,7 @@
   "onboarding_plan_so_far": "ce2ef0eb9fffc06dd88c40adb1ad804f9eba1001694cb18fd0d212f63ec55f5b",
   "onboarding_plan_stopped": "c5538c137f78a92698f0fd1c51d965a31e9ca7e3b8d8e034e34dbe85fa0fd963",
   "onboarding_plus_more_goals": "b2bffaffbd409e9e0cb927ddcc81a15e33acc4a33db763664ef5afa92b536245",
-  "onboarding_plus_more_goals_up_front": "813ef818eed3dd15316da91dcd6b35636029999f414550db1dadb105cb71e4f0",
+  "onboarding_plus_more_goals_up_front": "f4a26fe736f0bbff113e0136de74e8da45b5a80c0c6b0f5bee25ca1b28345fc7",
   "onboarding_position_description": "cae0e398514831c5a7886062a38a8bde5ca0a28ba8285a4270fdeef718659a47",
   "onboarding_position_label": "82bf55a79e88d23706bd91f9f6515dd92241b2424ffc2d21f6ddf5dd8f51e420",
   "onboarding_position_title": "b38568dfcee75cbc4389b79fd238146bf9d85675b46c4c34769b36533585c86d",
@@ -402,8 +402,8 @@
   "onboarding_understanding_title": "26e0642bf586ad795e747933d4357465659a4005e336d27140b6ef008db39205",
   "onboarding_understood_description": "0f229bc90d9f09d8a535de3731c08980c6fd74cd325f688a8f97500878b31739",
   "onboarding_understood_description_shared": "b3f910710712fb14fa2372d79f303afc825caa5f644daacac667b21c3fff2257",
-  "onboarding_understood_locked_goal": "e173979bfd4b573bb66e96b3a217bbed6d5d86a1eb369fc571ab9fa2848e0121",
-  "onboarding_understood_locked_goals": "f433ea6c50e7423f4fd759dcb417b408d4924663c36ecb0d2fb4553d3c44fbdf",
+  "onboarding_understood_locked_goal": "2c2cc57f0091c1b5e4d6e112153fbff5520c20ba257572065e0096d2f617d83e",
+  "onboarding_understood_locked_goals": "89589f711981ba564af8f65ec70ea80a64587785d17362ddee6e85ca5aae4160",
   "onboarding_understood_title": "f6d3dc4996b840ab8699176fef1fe9af033791072dab5597d68c97caf3ad708d",
   "onboarding_upload_file": "f4bb786254e79716490ce972383f37e717480a3e90b0d083a2f3221c4f5cfd37",
   "onboarding_use_this_date": "916f22f3959c1a1a05d48ba07200df04086557ce1d19b6c469ea8d7c54044125",
@@ -448,7 +448,8 @@
     <string name="onboarding_limit_guest_blocked">Kontrola bezpieczeństwa nie pozwala rozpocząć nauki bez konta. Załóż bezpłatne konto, aby kontynuować.</string>
     <string name="onboarding_limit_monthly_explanations">W pakiecie Free nie możesz w tym miesiącu zadać więcej nowych pytań. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, aby kontynuować już teraz.</string>
     <string name="onboarding_limit_monthly_goals">W pakiecie Free nie możesz w tym miesiącu rozpocząć więcej nowych celów. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, aby kontynuować już teraz.</string>
-    <string name="onboarding_limit_one_active_goal">W pakiecie Free możesz pracować nad jednym celem naraz. Aby rozpocząć ten cel, wstrzymaj obecny cel w menu swojego Planu lub przejdź na Plus.</string>
+    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_limit_active_goals">Masz już tyle aktywnych celów, na ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden ze swoich celów w menu na stronie Plan lub przejdź na Plus.</string>
     <string name="onboarding_limit_sign_up_required">Załóż bezpłatne konto, by kontynuować.</string>
     <string name="onboarding_limit_slow_down">Rozpoczynasz wiele celów w krótkim czasie. Spróbuj ponownie za kilka minut.</string>
     <string name="onboarding_read_limit_guest">Bez konta możesz wysłać kilka nowych celów dziennie. Załóż bezpłatne konto, żeby kontynuować.</string>
@@ -468,7 +469,8 @@
     </plurals>
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Więcej celów naraz z pakietem Plus</string>
-    <string name="onboarding_plus_more_goals_up_front">W pakiecie Free możesz pracować nad jednym celem naraz. Aby zacząć kolejny, wstrzymaj obecny cel w menu na stronie Plan. Szybkie pytania możesz zadawać w każdej chwili.</string>
+    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
+    <string name="onboarding_plus_more_goals_up_front">Masz już tyle aktywnych celów, na ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden z nich w menu na stronie Plan. Krótkie pytania możesz zadawać w każdej chwili.</string>
     <string name="onboarding_go_to_plan">Przejdź do swojego planu</string>
     <string name="onboarding_see_plus">Zobacz Plus</string>
     <string name="onboarding_create_account">Utwórz bezpłatne konto</string>
@@ -483,10 +485,10 @@
     <string name="onboarding_understood_description">Wszystko możesz później zmienić.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Twój dzienny czas nauki dzielimy między te cele. Wszystko możesz później zmienić.</string>
-    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
-    <string name="onboarding_understood_locked_goal">Z pakietem Plus możesz realizować więcej niż jeden cel naraz. Na razie ten cel czeka na liście twoich celów.</string>
+    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_understood_locked_goal">Z pakietem Plus możesz realizować więcej celów jednocześnie. Na razie ten cel czeka na liście twoich celów.</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Z pakietem Plus możesz realizować więcej niż jeden cel naraz. Na razie te cele czekają na liście twoich celów.</string>
+    <string name="onboarding_understood_locked_goals">Z pakietem Plus możesz realizować więcej celów jednocześnie. Na razie te cele czekają na liście twoich celów.</string>
     <string name="onboarding_looks_right">Potwierdź</string>
     <string name="onboarding_fix_something">Popraw coś</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -507,7 +509,7 @@
     <string name="onboarding_row_language">Język</string>
     <string name="onboarding_row_you_speak">Języki, którymi mówisz</string>
     <string name="onboarding_row_course">Kurs</string>
-    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <!-- Where the course is taught. %1$s is an institution's name, kept as a label because its article varies. -->
     <string name="onboarding_row_where_note">Gdzie: %1$s</string>
     <string name="onboarding_row_where">Gdzie</string>
     <!-- For someone changing careers. -->
@@ -516,7 +518,7 @@
     <string name="onboarding_row_level_aiming">Poziom, do którego dążysz</string>
     <string name="onboarding_row_target_score">Docelowy wynik</string>
     <string name="onboarding_row_last_cutoff">Ostatni próg punktowy</string>
-    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <!-- A score on an exam's scale, like "712 out of 1,000". -->
     <string name="onboarding_row_cutoff_score">%1$s z %2$s</string>
     <string name="onboarding_row_reason">Powód</string>
     <string name="onboarding_row_what_you_do">Czym zajmujesz się teraz</string>
@@ -631,7 +633,7 @@
     <string name="onboarding_placement_mock_about">Około %1$s w formacie egzaminu.</string>
     <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
     <string name="onboarding_placement_mock_range">Od %1$s do %2$s w formacie egzaminu. Ty wybierasz czas.</string>
-    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
+    <!-- The name of Zoonk's paid plan, on a chip beside what needs it. -->
     <string name="onboarding_placement_plus">Plus</string>
     <string name="onboarding_placement_plus_description">Dostępne w pakiecie Plus</string>
     <string name="onboarding_placement_start">Zacznij</string>
@@ -773,7 +775,7 @@
         <item quantity="many">%d umiejętności, które już znasz</item>
         <item quantity="other">%d umiejętności, które już znasz</item>
     </plurals>
-    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <!-- A new plan's chapter whose lessons are still being written. -->
     <string name="onboarding_reveal_more_lessons">Więcej lekcji</string>
     <string name="onboarding_reveal_usual_structure">Ten plan opiera się na typowej strukturze egzaminu, a my kończymy czytać jego oficjalne dokumenty. Jeśli będą potrzebne zmiany w planie, zdecydujesz o nich w zakładce Dziś.</string>
     <!-- Phases of an exam plan, named by what the learner does in them. -->
@@ -781,7 +783,7 @@
     <string name="onboarding_reveal_phase_gaps">Uzupełnianie braków</string>
     <string name="onboarding_reveal_phase_practice">Praktyka</string>
     <string name="onboarding_reveal_phase_final_stretch">Ostatnia prosta</string>
-    <!-- %1$d is the phase\'s place in the plan. -->
+    <!-- %1$d is the phase's place in the plan. -->
     <string name="onboarding_reveal_phase_number">Etap %1$d</string>
     <!-- Phases of a plan whose exam is days away. -->
     <string name="onboarding_reveal_phase_map_and_gaps">Zakres egzaminu i braki w wiedzy</string>
@@ -794,7 +796,7 @@
     <string name="onboarding_reveal_today">Dziś</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
     <string name="onboarding_reveal_phase_day">dzień %1$d z %2$d</string>
-    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d z %2$d</string>
     <string name="onboarding_reveal_phase_place">etap %1$d z %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
@@ -806,7 +808,7 @@
     <string name="onboarding_reveal_free_week_over_title">Twój darmowy tydzień przygotowań do egzaminu się skończył</string>
     <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">Powtórki i poprawianie błędów pozostają bezpłatne. Plus daje dostęp do nowych lekcji, reszty planu i egzaminów próbnych.</string>
-    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s dziennie to za mało, by zrealizować twój cel.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Przy %1$s nauki dziennie przerabiasz wszystkie tematy egzaminu, a te najczęściej spotykane dokładniej.</string>
     <string name="onboarding_reveal_covers_exam_lighter">Przy %1$s nauki dziennie przerabiasz wszystkie tematy egzaminu, choć niektóre mniej dokładnie.</string>
@@ -857,7 +859,7 @@
         <item quantity="many">%d tematów, wszystkie w twoim planie</item>
         <item quantity="other">%d tematów, wszystkie w twoim planie</item>
     </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
     <plurals name="onboarding_reveal_topics_dont_fit">
         <item quantity="one">Na %1$d z %2$d tematu brakuje czasu przy %3$s nauki dziennie</item>
         <item quantity="few">Na %1$d z %2$d tematów brakuje czasu przy %3$s nauki dziennie</item>
@@ -872,7 +874,7 @@
         <item quantity="other">%1$d z %2$d tematów w twoim planie</item>
     </plurals>
     <string name="onboarding_reveal_weights">Udział poszczególnych obszarów</string>
-    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
     <string name="onboarding_reveal_estimated_material_area">~ Wartość szacunkowa: twoje materiały nie określają wagi tego obszaru.</string>
     <string name="onboarding_reveal_estimated_material_areas">~ Wartości szacunkowe: twoje materiały nie określają wag tych obszarów.</string>

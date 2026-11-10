@@ -301,7 +301,7 @@
   "plan_get_recommendation": "5561bedfeea6335f356dba7f32fa89012798d8ab168371706bcb17e52cde5f59",
   "plan_go_to_today": "abf2646e09fb844fc1de46656d22c60abc476e11b0797016ddfa6fb423ba59dd",
   "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
-  "plan_goal_limit_reached": "4fd3e62f75fb6175c1cc180430323b3e42ccc997c3285e35d556723df908cb37",
+  "plan_goal_limit_reached": "2e118b22988d4f772e50a3febd72089684e95a745553e136ca3c66a0d567cff7",
   "plan_goal_paused": "99542c7d01448c522c5572809a8674ec293b594e8600da7156dc1c5312811d46",
   "plan_going_deeper": "b0f8eb4a8769cc8021251fd56031685a48aeccf4c370a2e497fd718c0200e78d",
   "plan_how_is_it_going": "bc25967a18e3fe41f4895f68907465b3c6071174a85f8a33632852d1b8614b59",
@@ -645,7 +645,8 @@
     <string name="plan_resume_effect">Seu plano recomeça hoje, com as aulas planejadas para os dias em que você ficou em pausa.</string>
     <string name="plan_resume">Retomar</string>
     <string name="plan_cancel">Cancelar</string>
-    <string name="plan_goal_limit_reached">O plano Grátis acompanha um objetivo por vez. Pause seu outro objetivo para retomar este ou assine o Plus para acompanhar mais.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="plan_goal_limit_reached">Você já tem o máximo de objetivos ativos que o plano Grátis permite. Pause outro objetivo para retomar esse ou assine o Plus para ter mais objetivos ativos.</string>
     <string name="plan_save_failed">Não foi possível salvar. Tente de novo.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d de %2$d fase concluída</item>

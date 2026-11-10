@@ -124,7 +124,7 @@
   "today_rest_welcome_back": "accc35917bc621d2b94795a322675e41e8fa0ae392b08582ff58f539ac3880e1",
   "today_resume_effect": "05aef9964c6ae48f51af66c44073a1097569307c244ace52b20a98f4b28f87de",
   "today_resume_goal": "303cbb431e60126e808fcce4f280eea725a643f8c617954f7a344cba2a19bbd8",
-  "today_resume_goal_limit": "445da898fafbee6106f25888d764ea6e2ee06719e701dd4c85cf746b507659f9",
+  "today_resume_goal_limit": "093911590edf4c154bd4359190528e304e63f55c97e235bc4a4d3715a08c8da6",
   "today_save_failed": "5ad9213e7f58485c60d91ab901ffa5abc8b40c6fbfd2141730ff68d1ff093a0d",
   "today_see_day_challenge": "683107ca0e41f535d221198954012d8cc0461f6a47b153d705313e36a0915700",
   "today_see_day_mock": "4cb7beaa9f26cc127486d200ca09f18439b18f4657ece5a22e996fc16ea06a05",
@@ -332,7 +332,8 @@
     <string name="today_resume_goal">Reprendre %1$s</string>
     <string name="today_new_goal">Nouvel objectif</string>
     <string name="today_resume_effect">Ton plan reprend aujourd’hui, en commençant par les leçons prévues pendant ta pause.</string>
-    <string name="today_resume_goal_limit">La formule gratuite permet de suivre un objectif à la fois. Mets ton autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="today_resume_goal_limit">Tu suis déjà autant d’objectifs que le permet la formule gratuite. Mets un autre objectif en pause pour reprendre celui-ci ou passe à Plus pour en suivre davantage.</string>
     <string name="today_setting_up">Configuration en cours</string>
     <string name="today_setting_up_goal">Il nous faut encore quelques réponses pour préparer ton plan pour %1$s.</string>
     <string name="today_setting_up_detail">Il est préparé à partir de ce que tu nous dis.</string>

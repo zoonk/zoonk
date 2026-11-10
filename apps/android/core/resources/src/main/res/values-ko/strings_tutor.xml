@@ -62,6 +62,7 @@
   "tutor_offer_essay_plus": "91672936cdfd76700264369b2f74b460b42304dfd74dff015d956c5135d93ede",
   "tutor_offer_essay_weekly": "d36af3f84a68f7d687fb1e9b97a73ea903981a14a070f8c31311ea9083f5e6f1",
   "tutor_offer_goal": "bc4682eac036a3c3b1b71a87eb6e153023aba0210004251061bfaa4a9751e89d",
+  "tutor_offer_goal_limit": "460cb5da697ad5b2900ca72118f82506836fe25ee0c8d198ea5011aae54fb78b",
   "tutor_offer_logbook": "1b6e3c0845a0387d0298a167ce69a072aee4504985fd5ace83c4c7f3b1ba92f1",
   "tutor_offer_logbook_description": "536831fd6c7b9539585300282bd7e7c9d56bce412666538a67b2fab15a7f4132",
   "tutor_offer_manage": "08663edebad949480acce71052bbceb65c354aea61acd804c4f9313012893a35",
@@ -73,7 +74,6 @@
   "tutor_offer_mock_by_subject": "abe2f180d8560a3eaa09b7d22c964b72b64938f2abd75514fcbab6c466909be2",
   "tutor_offer_mock_description": "3b2e986f648dec4f18ea870113e12d68bd8a73badaceac73a5b713a075014fbe",
   "tutor_offer_mock_plus": "08668f647d032a99421f900e3f2cc645b8a38dde449953e261ca36db4d442067",
-  "tutor_offer_one_goal": "1bd177404e3d6f589dcf4a0571271b7e95b9072d2f134b531ae4c3de19c21d9d",
   "tutor_offer_open": "33009d04ef63a1c594ef87c2554a4f9b09d806197d4791e52f85b9cbb237afbc",
   "tutor_offer_plus": "61aefd4fe7b8cb843843e54f01faee57ba5ddb3b099e6c4d60f366b7e96e0389",
   "tutor_offer_plus_description": "89ba742e26e6f5244df17f29d4118269289f2e149db8b0446e187fb3ddc16e61",
@@ -213,7 +213,8 @@
     <string name="tutor_offer_start_goal">새 목표 시작하기</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
-    <string name="tutor_offer_one_goal">무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 현재 목표를 메뉴에서 일시 중지하거나 Plus로 여러 목표를 함께 진행하세요.</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">지금 목표를 하나 더 시작하려면 Plus가 필요해요. 그전까지는 진행 중인 목표를 이어 가세요.</string>
     <string name="tutor_offer_catalog_course">목록에서 바로 시작할 수 있는 코스</string>
     <string name="tutor_offer_chapter_test">테스트: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

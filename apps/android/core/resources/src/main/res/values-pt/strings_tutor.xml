@@ -62,6 +62,7 @@
   "tutor_offer_essay_plus": "68f5b7fcdf307f919d48a2209929c3d6756f9529fed35b81ff970911971c9c82",
   "tutor_offer_essay_weekly": "b0ac1418301cb66f6fdf41f4186ca5adef693ac40d6853d7ac5590d0248a78f1",
   "tutor_offer_goal": "86d9b5fc1e1b42347f13bee15f79edc40f17e3e5bdcc26504adf6ef7bd71fe47",
+  "tutor_offer_goal_limit": "18fe0d679a3700b9623aed92d523075db3f380e7f6389656b62a2323244ca8ff",
   "tutor_offer_logbook": "5d8334e623e93f7c46f612e3db40fbd0f2123def71dd1b03f7144b651aa46049",
   "tutor_offer_logbook_description": "9fdcea8287e586b460d7e915bdb6896001889ccfef6d68252e8107f80c896256",
   "tutor_offer_manage": "2a8d52085f59490101751a021f437eb7cada2637961986799e0ac8adb52c9804",
@@ -73,7 +74,6 @@
   "tutor_offer_mock_by_subject": "7d46b4a773e9e4acdccd35a14b5358fd8750d2f7681e0167999a5319ed54a352",
   "tutor_offer_mock_description": "76d73fa3a00af807f112c19235058fce4e69c9a527f616ca450cacf68c63fb72",
   "tutor_offer_mock_plus": "de293dfbfb48eb10f4c2c93499fc965ae5f1b1f6509014e32a43e046afefdd58",
-  "tutor_offer_one_goal": "67c06335d8c1b1999a09b14528ee8f5dcc932ed5eb4798dfc124ec412dd99a19",
   "tutor_offer_open": "5ca46ef0a06138f1ea5b8e1c21f61ad184db71ede97987d74b9b43ca6ca6a125",
   "tutor_offer_plus": "78cc36e951dbea1112708bd0f4caa2a2a01001ec65458916fc9231110d95d981",
   "tutor_offer_plus_description": "bae8890098902f37f42784c18656a219ff53473794c638288653f3c24cf5a1b4",
@@ -213,7 +213,8 @@
     <string name="tutor_offer_start_goal">Começar um novo objetivo</string>
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
-    <string name="tutor_offer_one_goal">No plano Grátis, você acompanha um objetivo por vez: pause seu objetivo atual pelo menu dele ou acompanhe mais de um com o Plus.</string>
+    <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="tutor_offer_goal_limit">Para começar outro objetivo agora, você precisa do Plus. Até lá, continue com seus objetivos atuais.</string>
     <string name="tutor_offer_catalog_course">Um curso pronto no catálogo</string>
     <string name="tutor_offer_chapter_test">Teste: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

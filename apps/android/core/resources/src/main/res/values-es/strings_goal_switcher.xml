@@ -29,7 +29,7 @@
     <string name="goal_switcher_finished">Completado</string>
     <string name="goal_switcher_paused">En pausa</string>
     <string name="goal_switcher_failed">No pudimos cambiar de objetivo. Inténtalo de nuevo.</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
+    <!-- Under a goal the learner typed with their goals that their plan didn't start, because the free plan follows only so many goals at the same time (not a cap on new goals per day or month). Plus is the name of Zoonk's paid plan, not the word "more". -->
     <string name="goal_switcher_starts_with_plus">Puedes crearlo con Plus</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Ya puedes crearlo</string>

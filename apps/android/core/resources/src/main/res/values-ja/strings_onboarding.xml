@@ -130,13 +130,13 @@
   "onboarding_level_test_description": "df3fd3ea198c082f988d741e433d7e791c2371240ddce49bf9c264aeb526a688",
   "onboarding_level_title": "18f8afa27f7b1ed56da77f92b0d9612ec712807f34217858c39b53880b89cb45",
   "onboarding_library_course_fits": "d30ab4b1a9d76e89b368e264fa33ee6716d73d50974f4224e2d2f87758fcbf58",
+  "onboarding_limit_active_goals": "27a5daf9e484fb297cde67973f20467553bb430831ad57b53fc80f4e57fd858c",
   "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
   "onboarding_limit_guest_blocked": "fd33f4ba4430cd629a269b7be9e0d0ebe7ddbee397257cf702ed6cd860b08ca0",
   "onboarding_limit_monthly_explanations": "ddb33b219c6de18a63c48f1bbeb2d135c92ba917d16dc80a26effa933d63d9b7",
   "onboarding_limit_monthly_goals": "6d69741c7e9fe04eb0c022e8b91bf5251bda41fc804126d9b5519c0e03e55e50",
-  "onboarding_limit_one_active_goal": "6cfa17cf09a5810c1be3e16f72c3b77063c23a853c48c614f0afa7569ed5ba9a",
   "onboarding_limit_sign_up_required": "536e537ec53aeb02218c5fb948c96ea6db3fb5d9ea544aaf37db0b78ca13555e",
   "onboarding_limit_slow_down": "cba1214a3e0949628fe8191364915e699b9c622d9cb2c86c34f9dec0437661ac",
   "onboarding_link": "7af7a55c2708e902e1d6ad526b56bf0197fa38a01fe02c95af404cdff437ed75",
@@ -202,7 +202,7 @@
   "onboarding_plan_so_far": "47d56d3b06b5eb573bb143aff2c5421dbdc55831f055a9037e522193d8297260",
   "onboarding_plan_stopped": "0d4bf8ba8790edd2b5dbab6b8bf2ed297183524b7c1366fb798a23ec5498131a",
   "onboarding_plus_more_goals": "0c5cd8b3de7f6f49dac3085af0dff6cf4a8855c9fabbfcc4bf469ffad873e4cf",
-  "onboarding_plus_more_goals_up_front": "e4c3b7afe3e69e31e5085f16f85b41f4ffbeef71093ec41c05555252df9d57c7",
+  "onboarding_plus_more_goals_up_front": "e0cacca1790e35cd7c3f08411d0523e0820394bf61c3c2f2d9b4272116a3f5ed",
   "onboarding_position_description": "a89f60e1c4847bcc789d4b07bc118b7ffca672106d529e575f6184013a7472bf",
   "onboarding_position_label": "a2ac4f32049092bd5cf914d43b6afa68f6e8fda9390c207c216d46d51ed7d44f",
   "onboarding_position_title": "d90efc5c11709a576d63601ba657eae865c7dd367101aaec52acec40d11af826",
@@ -402,8 +402,8 @@
   "onboarding_understanding_title": "82d2ec7ee65659994f0df07c4596ec58939145a8f559e008df5f6f3cf1b1188a",
   "onboarding_understood_description": "c95ed50831f3f2f786221223932d5ec46773d70b6cf6eb300cb2ee29fa273501",
   "onboarding_understood_description_shared": "8add3c711bf1633097f5869d819be71bf2d3e5002166f63d3d7f268cccee2706",
-  "onboarding_understood_locked_goal": "02663f737453a154e75ee6a60f25100fb7fef2cc8947ac949fe599bbc5cab9d5",
-  "onboarding_understood_locked_goals": "fa3c822f69a3752b13390cf6e43f47d45a00ca0432a342c772e8c9b903eeab73",
+  "onboarding_understood_locked_goal": "472a78caab6a067f3c9d70919e071f96af0351c50c17d4510e8fbcda366003c8",
+  "onboarding_understood_locked_goals": "e545837a0879aed62ed001c43ba68f856babad23257301b3facb741a28202a0f",
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
   "onboarding_use_this_date": "7d10133f3b9330e094e66f7a2e383305527debe0836854a589a4d5b62e7fa7b3",
@@ -448,7 +448,8 @@
     <string name="onboarding_limit_guest_blocked">セキュリティチェックにより、アカウントなしでは始められません。無料アカウントを作成して続けてください。</string>
     <string name="onboarding_limit_monthly_explanations">今月の新しい質問の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <string name="onboarding_limit_monthly_goals">今月始めた新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
-    <string name="onboarding_limit_one_active_goal">無料プランで同時に取り組める目標は1つです。この目標を始めるには、学習計画のメニューから今の目標を一時停止するか、Plusに登録してください。</string>
+    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_limit_active_goals">無料プランで同時に進められる目標数の上限に達しています。別の目標を始めるには、学習計画のメニューからいずれかの目標を一時停止するか、Plusに登録してください。</string>
     <string name="onboarding_limit_sign_up_required">続けるには、無料アカウントを作成してください。</string>
     <string name="onboarding_limit_slow_down">短時間にいくつも目標を始めています。数分後にもう一度試してください。</string>
     <string name="onboarding_read_limit_guest">アカウントなしで送信できる新しい目標は1日に数件です。続けるには、無料アカウントを作成してください。</string>
@@ -465,7 +466,8 @@
     </plurals>
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Plusなら複数の目標に同時に取り組めます</string>
-    <string name="onboarding_plus_more_goals_up_front">無料プランでは、一度に取り組める目標は1つです。別の目標を始めるには、学習計画のメニューから今の目標を一時停止してください。ちょっとした質問はいつでもできます。</string>
+    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
+    <string name="onboarding_plus_more_goals_up_front">無料プランで同時に進められる目標数の上限に達しています。別の目標を始めるには、学習計画のメニューからいずれかの目標を一時停止してください。ちょっとした質問はいつでもできます。</string>
     <string name="onboarding_go_to_plan">学習計画を見る</string>
     <string name="onboarding_see_plus">Plusを見る</string>
     <string name="onboarding_create_account">無料アカウントを作成する</string>
@@ -480,10 +482,10 @@
     <string name="onboarding_understood_description">内容はすべて後から変更できます。</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">1日の学習時間をこれらの目標に振り分けます。あとですべて変更できます。</string>
-    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
-    <string name="onboarding_understood_locked_goal">Plusに登録すると、複数の目標に同時に取り組めます。それまでは、この目標は目標一覧に残ります。</string>
+    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_understood_locked_goal">Plusなら、同時に進められる目標が増えます。この目標は、始められるようになるまで目標一覧に残ります。</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Plusに登録すると、複数の目標に同時に取り組めます。それまでは、これらの目標は目標一覧に残ります。</string>
+    <string name="onboarding_understood_locked_goals">Plusなら、同時に進められる目標が増えます。これらの目標は、始められるようになるまで目標一覧に残ります。</string>
     <string name="onboarding_looks_right">この内容で進める</string>
     <string name="onboarding_fix_something">内容を修正する</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -504,7 +506,7 @@
     <string name="onboarding_row_language">言語</string>
     <string name="onboarding_row_you_speak">話せる言語</string>
     <string name="onboarding_row_course">コース</string>
-    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <!-- Where the course is taught. %1$s is an institution's name, kept as a label because its article varies. -->
     <string name="onboarding_row_where_note">教育機関：%1$s</string>
     <string name="onboarding_row_where">場所</string>
     <!-- For someone changing careers. -->
@@ -513,7 +515,7 @@
     <string name="onboarding_row_level_aiming">目標レベル</string>
     <string name="onboarding_row_target_score">目標スコア</string>
     <string name="onboarding_row_last_cutoff">前回の合格ライン</string>
-    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <!-- A score on an exam's scale, like "712 out of 1,000". -->
     <string name="onboarding_row_cutoff_score">%1$s / %2$s</string>
     <string name="onboarding_row_reason">理由</string>
     <string name="onboarding_row_what_you_do">現在の仕事や立場</string>
@@ -622,7 +624,7 @@
     <string name="onboarding_placement_mock_about">試験と同じ形式で、所要時間は約%1$sです。</string>
     <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
     <string name="onboarding_placement_mock_range">試験と同じ形式で、%1$sから%2$sの間で時間を選べます。</string>
-    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
+    <!-- The name of Zoonk's paid plan, on a chip beside what needs it. -->
     <string name="onboarding_placement_plus">Plus</string>
     <string name="onboarding_placement_plus_description">Plusで利用できます</string>
     <string name="onboarding_placement_start">始める</string>
@@ -746,7 +748,7 @@
     <plurals name="onboarding_reveal_known_skills">
         <item quantity="other">すでに身についているスキル%d個</item>
     </plurals>
-    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <!-- A new plan's chapter whose lessons are still being written. -->
     <string name="onboarding_reveal_more_lessons">ほかのレッスン</string>
     <string name="onboarding_reveal_usual_structure">公式資料の読み込みが終わるまでは、試験の通常の構成に沿った学習計画になっています。資料の内容で学習計画が変わる場合は、「今日」で変更するかどうかを決められます。</string>
     <!-- Phases of an exam plan, named by what the learner does in them. -->
@@ -754,7 +756,7 @@
     <string name="onboarding_reveal_phase_gaps">知識の穴を埋める</string>
     <string name="onboarding_reveal_phase_practice">演習</string>
     <string name="onboarding_reveal_phase_final_stretch">仕上げ</string>
-    <!-- %1$d is the phase\'s place in the plan. -->
+    <!-- %1$d is the phase's place in the plan. -->
     <string name="onboarding_reveal_phase_number">フェーズ%1$d</string>
     <!-- Phases of a plan whose exam is days away. -->
     <string name="onboarding_reveal_phase_map_and_gaps">出題範囲と苦手分野の確認</string>
@@ -767,7 +769,7 @@
     <string name="onboarding_reveal_today">今日</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
     <string name="onboarding_reveal_phase_day">%1$d日目（全%2$d日）</string>
-    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
     <string name="onboarding_reveal_phase_place">フェーズ%1$d（全%2$dフェーズ）</string>
     <!-- %1$s is a date, such as "November 8". -->
@@ -779,7 +781,7 @@
     <string name="onboarding_reveal_free_week_over_title">試験対策の無料期間（1週間）が終了しました</string>
     <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">復習や間違えたところの学び直しは、引き続き無料です。Plusでは新しいレッスン、学習計画の続き、模試を利用できます。</string>
-    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">1日%1$sでは、目標の内容を学ぶ時間が足りません。</string>
     <string name="onboarding_reveal_covers_exam_deeper">1日%1$sの学習で、試験のすべてのトピックを学び、よく出るトピックはより深く学びます。</string>
     <string name="onboarding_reveal_covers_exam_lighter">1日%1$sの学習で、試験のすべてのトピックを学びますが、一部は深く掘り下げません。</string>
@@ -812,7 +814,7 @@
     <plurals name="onboarding_reveal_topics_all_planned">
         <item quantity="other">トピック%d個すべてが学習計画に入っています</item>
     </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
     <plurals name="onboarding_reveal_topics_dont_fit">
         <item quantity="other">トピック%1$d個（全%2$d個中）が1日%3$sでは計画に入りきりません</item>
     </plurals>
@@ -821,7 +823,7 @@
         <item quantity="other">トピック%1$d個（全%2$d個中）が学習計画に入っています</item>
     </plurals>
     <string name="onboarding_reveal_weights">分野ごとの割合</string>
-    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
     <string name="onboarding_reveal_estimated_material_area">~ 推定値：資料にはこの分野の比重が記載されていません。</string>
     <string name="onboarding_reveal_estimated_material_areas">~ 推定値：資料にはこれらの分野の比重が記載されていません。</string>

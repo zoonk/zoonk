@@ -130,13 +130,13 @@
   "onboarding_level_test_description": "ef32fbc19146f4399dc30872bf6dc55ca5398f60fa31f7eb07b8e4e181a82428",
   "onboarding_level_title": "bca6c18b18ea9f42ee0a603c68803d4447da021f8dffc464c779b72041a56262",
   "onboarding_library_course_fits": "4c82a773cbfce551ba11567b80f673d8830e246698d8a2ea25512741b59e5d80",
+  "onboarding_limit_active_goals": "0612fbf28f10b88a61a4f81f4e4ba65ec95d3a14282ca8227f459c7020faef07",
   "onboarding_limit_daily_explanations": "c6f6a1a9b5c19d3bab182303238ed448d8211f21f26b5b809ccc7fd6a1aaedeb",
   "onboarding_limit_daily_goals": "27c2b8c2d1f629666da6dcd438aa73620eee9d0a3a96921a403821362e999182",
   "onboarding_limit_guest": "606bf0abec1818007ca7d552499db1b8629256186f22984ef2ca6573c0f920a0",
   "onboarding_limit_guest_blocked": "b4f9481635973e6d8dbaef615f30cb460a16d6060709b642fa456b7aaa7ac8e7",
   "onboarding_limit_monthly_explanations": "f8ed57081c4f742b8c74dc9afe984357a73bc615f6dfc3645d7c6cc95a8767db",
   "onboarding_limit_monthly_goals": "55d853fd17271708e169321941e13aa2008bc0f994ecfb6e40c8bc89b4e52d0c",
-  "onboarding_limit_one_active_goal": "3d4e11d5a12253cd493ccf5eb34c6a82ea5ddbb7accdb4e7f7254c02c9ebeca4",
   "onboarding_limit_sign_up_required": "daa945d6ba31308c3e683363b0b6d5490e4aca083d7c8da92de7e565359df87a",
   "onboarding_limit_slow_down": "d9904fa5a20a3e21ef803d47a468d932fc5f1e40ed6e52dd1542cb98291b8520",
   "onboarding_link": "4185a0e212af9da8a10502ac3f0f5d325547dd89e70aaec31a9257e56f177826",
@@ -202,7 +202,7 @@
   "onboarding_plan_so_far": "fa363d8876049adb3d950c8f10ff75aab6b5354ceaa9f7f861f660194397d163",
   "onboarding_plan_stopped": "60f5b4c490f8e06ce105a1206a0a7cfbde407aff65ed3c89888f1e6a4ac8328d",
   "onboarding_plus_more_goals": "e9dc17c35280cd70b55b11f538d47a6f00a758162b5422b4738929ebe90775b6",
-  "onboarding_plus_more_goals_up_front": "cd7ee8116de287e2fc1fa77df9f1f6995302187e3158d0d523bbd95f9d1699c3",
+  "onboarding_plus_more_goals_up_front": "7916c5d37aab8cc66b457fb0c5008b8cb8ef45e6fcae8fed861b9a10b9c0b66c",
   "onboarding_position_description": "38192a8a619add218a7e142e2201ead130adb6d6dbabe436719d89cbc1d9a8c5",
   "onboarding_position_label": "be01c3b89afc65546162a88bca4e9221bf6211a02fefb9e304f6ab9ae2988aec",
   "onboarding_position_title": "4316ce4d23af82ef6b085bdbd260f24bcd1e1fd401c3136390273480b38068d1",
@@ -402,8 +402,8 @@
   "onboarding_understanding_title": "7a443eac87fdb4132426e7789491dacc00626511aa968361860e9a62d6e9e5ce",
   "onboarding_understood_description": "1e46c5f0c3159604f95781af70b30a52f70d65b8386f913c492e2d1289ea0a5b",
   "onboarding_understood_description_shared": "8e97611806e8c6d2c317f08aecf89e60d53051599370296eb5271647144be2cb",
-  "onboarding_understood_locked_goal": "1cafb54f2148864f5913254bf9ec14740b65633e85c5beb3c13c9bd8f2b82057",
-  "onboarding_understood_locked_goals": "aec8975e0884fb0102ac5e812e14b17f404b90ea6bf139c49489ef73436c88ac",
+  "onboarding_understood_locked_goal": "1d7a882435f55b4f7287fe6992d32acf14bcafdd6895aa1536b8730b5fa7c82e",
+  "onboarding_understood_locked_goals": "134e46ed4069d67992af6ac5009b775745e3818335b3af51a83e12ad8ac57052",
   "onboarding_understood_title": "90a292c49ee6b99ee0b658bdc5f500482ffc010b49f74fce10f835af49a790f1",
   "onboarding_upload_file": "2bc2c500d0c0ccac3b411d6192fa6225dc7f0c4eba31b0fbd7b713b2f73bb6ea",
   "onboarding_use_this_date": "9b759ece8f7f4875dca78eb1211091a6b26911e6478af7d06ad65d7532f612ad",
@@ -448,7 +448,8 @@
     <string name="onboarding_limit_guest_blocked">Güvenlik kontrolü hesap olmadan başlamanı engelledi. Devam etmek için ücretsiz bir hesap oluştur.</string>
     <string name="onboarding_limit_monthly_explanations">Ücretsiz pakette aylık yeni soru sınırına ulaştın. Gelecek ay tekrar dene ya da hemen devam etmek için Plus’a geç.</string>
     <string name="onboarding_limit_monthly_goals">Ücretsiz pakette aylık yeni hedef başlatma sınırına ulaştın. Gelecek ay tekrar dene ya da hemen devam etmek için Plus’a geç.</string>
-    <string name="onboarding_limit_one_active_goal">Ücretsiz pakette aynı anda tek bir hedefi takip edebilirsin. Bu hedefe başlamak için Plan sayfandaki menüden mevcut hedefini duraklat ya da Plus’a geç.</string>
+    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_limit_active_goals">Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat ya da Plus’a geç.</string>
     <string name="onboarding_limit_sign_up_required">Devam etmek için ücretsiz bir hesap oluştur.</string>
     <string name="onboarding_limit_slow_down">Peş peşe hedefler başlatıyorsun. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_read_limit_guest">Hesap oluşturmadan günde birkaç yeni hedef gönderebilirsin. Devam etmek için ücretsiz hesap oluştur.</string>
@@ -466,7 +467,8 @@
     </plurals>
     <!-- Plus notice before typing, for a free learner who already follows a goal. -->
     <string name="onboarding_plus_more_goals">Plus ile aynı anda daha fazla hedef</string>
-    <string name="onboarding_plus_more_goals_up_front">Ücretsiz pakette aynı anda tek bir hedef üzerinde çalışabilirsin. Yeni bir hedefe başlamak için Plan sayfandaki menüden mevcut hedefini duraklat. Kısa sorularını istediğin zaman sorabilirsin.</string>
+    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
+    <string name="onboarding_plus_more_goals_up_front">Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat. Kısa sorularını istediğin zaman sorabilirsin.</string>
     <string name="onboarding_go_to_plan">Planına git</string>
     <string name="onboarding_see_plus">Plus’ı incele</string>
     <string name="onboarding_create_account">Ücretsiz hesap oluştur</string>
@@ -481,10 +483,10 @@
     <string name="onboarding_understood_description">Tüm bunları daha sonra değiştirebilirsin.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Günlük çalışma süren bu hedefler arasında paylaşılır. Bunların hepsini daha sonra değiştirebilirsin.</string>
-    <!-- Under the goals the learner typed past the one the free plan follows; "this goal" is the one shown just above. Plus is the name of Zoonk's paid plan. -->
-    <string name="onboarding_understood_locked_goal">Aynı anda birden fazla hedefi Plus ile takip edebilirsin. Bu hedef o zamana kadar hedeflerin arasında seni bekler.</string>
+    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="onboarding_understood_locked_goal">Plus ile aynı anda daha fazla hedefi takip edebilirsin. O zamana kadar bu hedef, hedef listende bekleyecek.</string>
     <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Aynı anda birden fazla hedefi Plus ile takip edebilirsin. Bu hedefler o zamana kadar hedeflerin arasında seni bekler.</string>
+    <string name="onboarding_understood_locked_goals">Plus ile aynı anda daha fazla hedefi takip edebilirsin. O zamana kadar bu hedefler, hedef listende bekleyecek.</string>
     <string name="onboarding_looks_right">Onayla</string>
     <string name="onboarding_fix_something">Düzeltme yap</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -505,7 +507,7 @@
     <string name="onboarding_row_language">Dil</string>
     <string name="onboarding_row_you_speak">Konuştuğun diller</string>
     <string name="onboarding_row_course">Kurs</string>
-    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <!-- Where the course is taught. %1$s is an institution's name, kept as a label because its article varies. -->
     <string name="onboarding_row_where_note">Nerede: %1$s</string>
     <string name="onboarding_row_where">Yer</string>
     <!-- For someone changing careers. -->
@@ -514,7 +516,7 @@
     <string name="onboarding_row_level_aiming">Hedeflediğin seviye</string>
     <string name="onboarding_row_target_score">Hedef puan</string>
     <string name="onboarding_row_last_cutoff">Son taban puanı</string>
-    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <!-- A score on an exam's scale, like "712 out of 1,000". -->
     <string name="onboarding_row_cutoff_score">%1$s / %2$s</string>
     <string name="onboarding_row_reason">Neden</string>
     <string name="onboarding_row_what_you_do">Şu an yaptığın iş</string>
@@ -625,7 +627,7 @@
     <string name="onboarding_placement_mock_about">Sınav formatında, yaklaşık %1$s sürer.</string>
     <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
     <string name="onboarding_placement_mock_range">Sınav formatında, %1$s ile %2$s arasında sürer. Süreyi sen seç.</string>
-    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
+    <!-- The name of Zoonk's paid plan, on a chip beside what needs it. -->
     <string name="onboarding_placement_plus">Plus</string>
     <string name="onboarding_placement_plus_description">Plus ile kullanılabilir</string>
     <string name="onboarding_placement_start">Başla</string>
@@ -755,7 +757,7 @@
         <item quantity="one">Zaten bildiğin %d beceri</item>
         <item quantity="other">Zaten bildiğin %d beceri</item>
     </plurals>
-    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <!-- A new plan's chapter whose lessons are still being written. -->
     <string name="onboarding_reveal_more_lessons">Diğer dersler</string>
     <string name="onboarding_reveal_usual_structure">Resmî belgeleri okumayı bitirene kadar bu plan sınavın her zamanki yapısını temel alır. Belgeler planında değişiklik gerektirirse kararı Bugün sayfasında sen verirsin.</string>
     <!-- Phases of an exam plan, named by what the learner does in them. -->
@@ -763,7 +765,7 @@
     <string name="onboarding_reveal_phase_gaps">Eksikleri tamamlama</string>
     <string name="onboarding_reveal_phase_practice">Alıştırma</string>
     <string name="onboarding_reveal_phase_final_stretch">Son düzlük</string>
-    <!-- %1$d is the phase\'s place in the plan. -->
+    <!-- %1$d is the phase's place in the plan. -->
     <string name="onboarding_reveal_phase_number">%1$d. aşama</string>
     <!-- Phases of a plan whose exam is days away. -->
     <string name="onboarding_reveal_phase_map_and_gaps">Sınavın kapsamı ve eksiklerin</string>
@@ -776,7 +778,7 @@
     <string name="onboarding_reveal_today">Bugün</string>
     <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
     <string name="onboarding_reveal_phase_day">%1$d. gün / %2$d gün</string>
-    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
     <string name="onboarding_reveal_phase_place">%1$d. aşama / %2$d aşama</string>
     <!-- %1$s is a date, such as "November 8". -->
@@ -788,7 +790,7 @@
     <string name="onboarding_reveal_free_week_over_title">Ücretsiz sınava hazırlık haftan bitti</string>
     <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
     <string name="onboarding_reveal_free_week_over_body">Tekrar yapmak ve yanlışlarını düzeltmek her zaman ücretsiz. Plus ile yeni derslere, planının geri kalanına ve deneme sınavlarına erişebilirsin.</string>
-    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">Günde %1$s çalışmak, hedefine ulaşmak için yeterli değil.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Günde %1$s ayırarak sınavın tüm konularını, en çok sorulanları ise daha ayrıntılı çalışırsın.</string>
     <string name="onboarding_reveal_covers_exam_lighter">Günde %1$s ayırarak sınavın tüm konularını çalışırsın, bazılarını daha az ayrıntılı ele alırsın.</string>
@@ -827,7 +829,7 @@
         <item quantity="one">%d konu, hepsi planında</item>
         <item quantity="other">%d konu, hepsi planında</item>
     </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
     <plurals name="onboarding_reveal_topics_dont_fit">
         <item quantity="one">%1$d / %2$d konu, günlük %3$s çalışma süresine sığmıyor</item>
         <item quantity="other">%1$d / %2$d konu, günlük %3$s çalışma süresine sığmıyor</item>
@@ -838,7 +840,7 @@
         <item quantity="other">%1$d / %2$d konu planında</item>
     </plurals>
     <string name="onboarding_reveal_weights">Alanlara göre ağırlık</string>
-    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
     <string name="onboarding_reveal_estimated_material_area">~ Tahmini: Materyalinde bu alanın ağırlığı belirtilmiyor.</string>
     <string name="onboarding_reveal_estimated_material_areas">~ Tahmini: Materyalinde bu alanların ağırlıkları belirtilmiyor.</string>

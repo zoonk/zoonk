@@ -42,7 +42,8 @@
     <string name="plan_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
     <string name="plan_resume">Resume</string>
     <string name="plan_cancel">Cancel</string>
-    <string name="plan_goal_limit_reached">The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.</string>
+    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
+    <string name="plan_goal_limit_reached">You\'re following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.</string>
     <string name="plan_save_failed">That didn\'t save. Try again.</string>
 
     <plurals name="plan_phases_done">
