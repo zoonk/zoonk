@@ -19,6 +19,7 @@ import com.zoonk.api.apis.MilestonesApi
 import com.zoonk.api.apis.MistakesApi
 import com.zoonk.api.apis.OnboardingApi
 import com.zoonk.api.apis.PlansApi
+import com.zoonk.api.apis.ProfileApi
 import com.zoonk.api.apis.ProgressApi
 import com.zoonk.api.apis.SessionsApi
 import com.zoonk.api.apis.SourcesApi
@@ -80,6 +81,7 @@ class ApiServices(
     val onboarding: OnboardingApi by lazy { retrofit.create() }
     val plans: PlansApi by lazy { retrofit.create() }
     val progress: ProgressApi by lazy { retrofit.create() }
+    val profile: ProfileApi by lazy { retrofit.create() }
     val sessions: SessionsApi by lazy { retrofit.create() }
     val sources: SourcesApi by lazy { retrofit.create() }
     val studySessions: StudySessionsApi by lazy { retrofit.create() }

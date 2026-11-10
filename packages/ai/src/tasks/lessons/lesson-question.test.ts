@@ -1,14 +1,16 @@
-import { generateText } from "ai";
+import { generateText, streamText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import {
   type GenerateLessonQuestionAnswerParams,
   generateLessonQuestionAnswer,
+  streamLessonQuestionAnswer,
 } from "./lesson-question";
 import { type LessonScopeContext } from "./lesson-question-context";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
+vi.mock("../tutor/learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
 vi.mock("./lesson-question.prompt.md", () => ({ default: "Tutor in {{LEARNER_LANGUAGE}}." }));
 
 vi.mock("./lesson-question-lesson.prompt.md", () => ({
@@ -26,7 +28,7 @@ vi.mock("./lesson-question-mock.prompt.md", () => ({ default: "Mock rules." }));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
-  return { ...actual, generateText: vi.fn() };
+  return { ...actual, generateText: vi.fn(), streamText: vi.fn() };
 });
 
 type Snapshot = GenerateLessonQuestionAnswerParams["contextSnapshot"];
@@ -99,6 +101,41 @@ describe(generateLessonQuestionAnswer, () => {
       ...createGenerateTextResult(null, "openai/gpt-6-luna"),
       text: "Because.",
     });
+  });
+
+  it("keeps needs out of the recorded prompt version", async () => {
+    const input = { contextSnapshot: lessonSnapshot("step"), priorTurns: [], question: "Why?" };
+    const ordinary = await generateLessonQuestionAnswer(input);
+
+    const personal = await generateLessonQuestionAnswer({
+      ...input,
+      learnerNeeds: { note: null, variants: ["adhd"] },
+    });
+
+    expect(personal.systemPrompt).not.toBe(ordinary.systemPrompt);
+    expect(personal.provenance.promptVersion).toBe(ordinary.provenance.promptVersion);
+  });
+
+  it("keeps needs out of the streamed answer's prompt version", async () => {
+    const result = createGenerateTextResult(null, "openai/gpt-6-luna");
+
+    vi.mocked(streamText).mockReturnValue({
+      finalStep: Promise.resolve(result.finalStep),
+      steps: Promise.resolve(result.steps),
+    } as never);
+
+    const input = { contextSnapshot: lessonSnapshot("step"), priorTurns: [], question: "Why?" };
+    const ordinary = streamLessonQuestionAnswer(input);
+
+    const personal = streamLessonQuestionAnswer({
+      ...input,
+      learnerNeeds: { note: null, variants: ["adhd"] },
+    });
+
+    const [first, second] = await Promise.all([ordinary.provenance, personal.provenance]);
+    expect(second.promptVersion).toBe(first.promptVersion);
+    const calls = vi.mocked(streamText).mock.calls;
+    expect(calls[0]?.[0].instructions).not.toBe(calls[1]?.[0].instructions);
   });
 
   it("sends each scope only its own rules after the shared ones", async () => {

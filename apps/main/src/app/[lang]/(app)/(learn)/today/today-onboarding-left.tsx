@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
+import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ListChecksIcon, MapIcon } from "lucide-react";
@@ -17,7 +18,7 @@ export async function readOnboardingLeft(goalId: string): Promise<OnboardingLeft
 
   const { planReadiness, planRevealed, steps } = result.onboarding;
 
-  if (steps.some((step) => step !== "plan")) {
+  if (hasOnboardingQuestions(steps)) {
     return "questions";
   }
 

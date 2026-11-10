@@ -184,7 +184,7 @@ private struct TodayPreparing: View {
 
   var body: some View {
     let setup = onboarding.onboarding(goalID: goalID)
-    let answersLeft = setup.value?.steps.contains { $0.rawValue != "plan" } == true
+    let answersLeft = setup.value?.steps.hasSetupQuestions == true
     // A made plan is shown once before its first day, so Today leads there instead of opening it.
     let revealLeft = setup.value.map { $0.planReadiness.ready && !$0.planRevealed } == true
 

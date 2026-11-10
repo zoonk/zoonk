@@ -98,3 +98,10 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver3)
 }
+
+val nativeProfileFixtures = rootProject.file("../../packages/core/src/profile/questions/profile-native-fixtures.json")
+
+tasks.withType<Test>().configureEach {
+    inputs.file(nativeProfileFixtures)
+    systemProperty("zoonk.profileFixtures", nativeProfileFixtures.absolutePath)
+}

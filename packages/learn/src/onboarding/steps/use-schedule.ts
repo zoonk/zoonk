@@ -71,6 +71,7 @@ function useFoundTime({
   days,
   paused,
   planMade,
+  startsOnRecommended,
   weekend,
 }: {
   aim: string | null;
@@ -79,6 +80,7 @@ function useFoundTime({
   days: number[];
   paused: boolean;
   planMade: boolean;
+  startsOnRecommended: boolean;
   weekend: number | null;
 }) {
   const week = toFindWeek({ days, weekend });
@@ -98,7 +100,8 @@ function useFoundTime({
     covering,
     dated: last ? last.targetDate !== null : dated,
     failed: hasStopped(covering.status),
-    first: covering.first,
+    /** The suggestion the screen started on: none when core starts it on the recommended time. */
+    first: startsOnRecommended ? null : covering.first,
     found,
     last,
   };
@@ -114,6 +117,7 @@ export function useSchedule({
   paused,
   planMade,
   recommendedMinutes,
+  startsOnRecommended,
   together,
 }: {
   actions: ScheduleActions;
@@ -126,6 +130,8 @@ export function useSchedule({
   paused: boolean;
   planMade: boolean;
   recommendedMinutes: number;
+  /** The learner asked for shorter days: the screen opens on the recommended time, and the plan's suggestion still shows what it covers. */
+  startsOnRecommended: boolean;
   together: GoalsTogether;
 }) {
   const [picked, setPicked] = useState(draft?.picked ?? null);
@@ -140,6 +146,7 @@ export function useSchedule({
     days: week.days,
     paused,
     planMade,
+    startsOnRecommended,
     weekend: week.weekend,
   });
 
@@ -151,7 +158,7 @@ export function useSchedule({
     first: found.first,
     found: found.found ?? found.last,
     picked,
-    settled: !dated || found.failed,
+    settled: !dated || found.failed || startsOnRecommended,
   });
 
   const asked = toStudyWeek({

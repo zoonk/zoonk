@@ -25,6 +25,7 @@ export async function loadMemoryExport(userId: string): Promise<MemoryExport> {
       ...toMemoryFactView(fact),
       deletedAt: fact.deletedAt,
       lastUsedAt: fact.lastUsedAt,
+      profileAnswer: fact.profileAnswer,
       status: fact.status,
       supersededById: fact.supersededById,
     })),

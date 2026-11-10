@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
 export function readDetail(details: unknown, key: string): string | null {
@@ -14,6 +14,7 @@ export function readDetail(details: unknown, key: string): string | null {
  */
 export async function findOnboardingGoalIds(
   goal: Pick<Goal, "details" | "id" | "userId">,
+  client: Pick<TransactionClient, "goal"> = prisma,
 ): Promise<string[]> {
   const onboardingId = readDetail(goal.details, "onboardingId");
 
@@ -21,7 +22,7 @@ export async function findOnboardingGoalIds(
     return [goal.id];
   }
 
-  const goals = await prisma.goal.findMany({
+  const goals = await client.goal.findMany({
     orderBy: { createdAt: "asc" },
     select: { id: true, replacesGoalId: true, status: true },
     where: { details: { equals: onboardingId, path: ["onboardingId"] }, userId: goal.userId },

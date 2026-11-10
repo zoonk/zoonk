@@ -32,8 +32,7 @@ describe("learning profile request facts", () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
 
     const profile = await learningProfileFixture({
-      instructions: "Use concrete examples",
-      interests: ["music"],
+      learningNeeds: ["examplesFirst"],
       memoryEnabled: false,
       soundsEnabled: false,
       userId: owner.id,

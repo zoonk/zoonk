@@ -1,5 +1,6 @@
 import {
   MemoryCategory,
+  type MemoryFact,
   type MemoryFactStatus,
   type MemoryInsightKind,
   MemoryInsightStatus,
@@ -19,14 +20,16 @@ export const memoryCategorySchema = z
     id: "MemoryCategory",
   });
 
-const MEMORY_SOURCE_KINDS = ["onboarding", "chat", "session", "call"] as const;
+const MEMORY_SOURCE_KINDS = ["onboarding", "chat", "session", "call", "profile"] as const;
 
 export const memorySourceSchema = z
   .object({
     id: z
       .string()
       .nullable()
-      .meta({ description: "The goal, tutor question, study session or call id" }),
+      .meta({
+        description: "The goal, tutor question, study session, call or profile question id",
+      }),
     kind: z.enum(MEMORY_SOURCE_KINDS),
   })
   .meta({ id: "MemorySource" });
@@ -134,6 +137,7 @@ export type MemoryExport = {
   exportedAt: Date;
   enabled: boolean;
   facts: (MemoryFactView & {
+    profileAnswer: MemoryFact["profileAnswer"];
     status: MemoryFactStatus;
     supersededById: string | null;
     lastUsedAt: Date | null;

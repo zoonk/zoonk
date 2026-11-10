@@ -1034,6 +1034,7 @@ msgstr "Anuluj"
 #: src/plan/exam-choice-picks.tsx
 #: src/plan/plan-date.tsx
 #: src/plan/plan-tool-sheet.tsx
+#: src/profile-questions/about-you-question-screen.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Zapisz"
@@ -2837,6 +2838,7 @@ msgid "See, correct or delete what your buddy remembers about you."
 msgstr "Zobacz, popraw lub usuń to, co twój kumpel o tobie pamięta."
 
 #: src/conversation/tutor-feature-offers.tsx
+#: src/profile-questions/about-you-screen.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
 msgstr "Pamięć"
@@ -9724,6 +9726,16 @@ msgid "Your answers are kept"
 msgstr "Zachowamy twoje odpowiedzi"
 
 #: src/onboarding/start-over-menu.tsx
+msgctxt "9IcKHz"
+msgid "Don't ask me these again"
+msgstr "Nie zadawaj mi już tych pytań"
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "cVuuNj"
+msgid "You can still answer them anytime in Settings › About you."
+msgstr "Zawsze możesz na nie odpowiedzieć w sekcji Ustawienia › O tobie."
+
+#: src/onboarding/start-over-menu.tsx
 msgctxt "4prk89"
 msgid "Start over"
 msgstr "Zacznij od nowa"
@@ -9742,6 +9754,17 @@ msgstr "Zacząć od nowa?"
 msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Usuniemy twoje odpowiedzi dotyczące tego celu i trzeba będzie ponownie wpisać cel."
+
+#: src/onboarding/start-over-menu.tsx
+msgctxt "Y_OSFo"
+msgid "Skip the rest of the questions about you"
+msgstr "Pomiń pozostałe pytania o ciebie"
+
+#. Skips every remaining question about the learner in this setup.
+#: src/onboarding/start-over-menu.tsx
+msgctxt "kIHftM"
+msgid "Skip all"
+msgstr "Pomiń wszystkie"
 
 #: src/onboarding/steps-flow.tsx
 msgctxt "9RSqMB"
@@ -10183,9 +10206,26 @@ msgid "Your plan will be waiting when you finish."
 msgstr "Gdy skończysz lekcję, twój plan będzie na ciebie czekać."
 
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/profile-step.tsx
 msgctxt "z2snrT"
 msgid "Start lesson 1"
 msgstr "Zacznij lekcję 1"
+
+#: src/onboarding/steps/profile-step.tsx
+msgctxt "5o1SSN"
+msgid "Lesson 1 is ready."
+msgstr "Lekcja 1 jest gotowa."
+
+#: src/onboarding/steps/profile-step.tsx
+msgctxt "js17JZ"
+msgid "Save and start lesson 1"
+msgstr "Zapisz i rozpocznij lekcję 1"
+
+#. Which of the questions about the learner this is, such as 4 of 10.
+#: src/onboarding/steps/profile-step.tsx
+msgctxt "1sbd7k"
+msgid "About you · {current, number} of {total, number}"
+msgstr "O tobie · {current, number} z {total, number}"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "LCLlDB"
@@ -10504,6 +10544,7 @@ msgstr "Np. analityk danych, pielęgniarka"
 
 #: src/onboarding/steps/role-step.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/profile-questions/about-you-screen.tsx
 msgctxt "bFPvIH"
 msgid "What you do now"
 msgstr "Czym zajmujesz się teraz"
@@ -12535,6 +12576,346 @@ msgstr "Od teraz ćwiczenia z pisania co tydzień."
 msgctxt "9HOF1s"
 msgid "When to practice {parts}"
 msgstr "Kiedy ćwiczyć: {parts}"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "BV0cQk"
+msgid "Your day"
+msgstr "Twój dzień"
+
+#. A group of questions about the learner's hobbies and interests.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "jw9Bdh"
+msgid "For fun"
+msgstr "Zainteresowania"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "MtgfzO"
+msgid "How you learn"
+msgstr "Sposób nauki"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "yz1Dho"
+msgid "Apps and tools"
+msgstr "Aplikacje i narzędzia"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "OjkF5k"
+msgid "What you've studied"
+msgstr "Dotychczasowa nauka"
+
+#. What the learner likes to watch.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "aboutYouWatch"
+msgid "Watch"
+msgstr "Oglądanie"
+
+#. What the learner likes to listen to.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "aboutYouListen"
+msgid "Listen"
+msgstr "Słuchanie"
+
+#. What the learner likes to play.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "aboutYouPlay"
+msgid "Play"
+msgstr "Granie"
+
+#. What the learner likes to read.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "aboutYouRead"
+msgid "Read"
+msgstr "Czytanie"
+
+#. What the learner likes to do for fun.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "aboutYouDo"
+msgid "Do"
+msgstr "Czas wolny"
+
+#. Health conditions or disabilities the learner chose to save.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "S8kqP9"
+msgid "Conditions"
+msgstr "Zdrowie i niepełnosprawności"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "hguHsn"
+msgid "What helps you learn"
+msgstr "Co pomaga ci w nauce"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "LveDpT"
+msgid "Not shared"
+msgstr "Nie podano"
+
+#. Invites the learner to fill in an empty answer.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Dodaj"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "v3Sw1m"
+msgid "Not answered"
+msgstr "Brak odpowiedzi"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "hH9Oht"
+msgid "{count, plural, one {# saved} other {# saved}}"
+msgstr "{count, plural, other {Zapisano #}}"
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "AYPOzn"
+msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
+msgstr "Pamięć jest wyłączona, więc Zoonk nie korzysta z informacji o twoim dniu ani o tym, co robisz w wolnym czasie. Aby je zmienić, włącz ją w sekcji Pamięć."
+
+#. An option that declines a question: none of the listed options apply.
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "hqA0RV"
+msgid "None of these"
+msgstr "Żadna z tych opcji"
+
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "7BKHN3"
+msgid "Nothing to add"
+msgstr "Nie mam nic do dodania"
+
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "IhuLNc"
+msgid "Nothing in particular"
+msgstr "Nic szczególnego"
+
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "Tc5eNs"
+msgid "I'd rather not say"
+msgstr "Wolę nie mówić"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "v-y6lE"
+msgid "Others (optional)"
+msgstr "Inne (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "x3ANHr"
+msgid "E.g., Photoshop, Python, SAP"
+msgstr "Np. Photoshop, Python, SAP"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "5Ttkrg"
+msgid "Favorite shows, films, teams or channels (optional)"
+msgstr "Ulubione seriale, filmy, drużyny lub kanały (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "uL1Shr"
+msgid "E.g., Star Trek, Flamengo"
+msgstr "Np. Star Trek, Flamengo"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "YRYwsW"
+msgid "Favorite artists or podcasts (optional)"
+msgstr "Ulubieni artyści lub podcasty (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "B1opZE"
+msgid "E.g., Coldplay, Radiolab"
+msgstr "Np. Coldplay, Radiolab"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "kY8drg"
+msgid "Favorite games (optional)"
+msgstr "Ulubione gry (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "qwBPYt"
+msgid "E.g., Catan, Valorant"
+msgstr "Np. Catan, Valorant"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "QgQvmG"
+msgid "Favorite books, writers or sites (optional)"
+msgstr "Ulubione książki, autorzy lub strony (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "mFZrP0"
+msgid "E.g., Dune, The Economist"
+msgstr "Np. Dune, The Economist"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "C-CYSP"
+msgid "Anything else you're into? (optional)"
+msgstr "Co jeszcze cię interesuje? (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "DXGCS2"
+msgid "E.g., baking bread, cars, astronomy"
+msgstr "Np. pieczenie chleba, samochody, astronomia"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "3o2Lj7"
+msgid "From your earlier answer"
+msgstr "Z twojej wcześniejszej odpowiedzi"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "6LTpuU"
+msgid "Your job (optional)"
+msgstr "Twój zawód (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "Mmnh-h"
+msgid "E.g., software engineer, nurse"
+msgstr "Np. inżynier oprogramowania, pielęgniarka"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "AFk1dv"
+msgid "Which field?"
+msgstr "Jaka dziedzina?"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "bM-cZh"
+msgid "{field}: course or subject (optional)"
+msgstr "{field}: kurs lub przedmiot (opcjonalnie)"
+
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "BznyT3"
+msgid "E.g., journalism"
+msgstr "Np. dziennikarstwo"
+
+#: src/profile-questions/profile-chips.tsx
+msgctxt "toYiVg"
+msgid "Pick up to 3."
+msgstr "Wybierz do 3 opcji."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "XnRQI7"
+msgid "What do you do now?"
+msgstr "Czym się teraz zajmujesz?"
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "lxu-IX"
+msgid "Which apps and tools do you use most?"
+msgstr "Z jakich aplikacji i narzędzi korzystasz najczęściej?"
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "McuAl7"
+msgid "What have you studied?"
+msgstr "Jakie masz wykształcenie?"
+
+#. Shows, films, sports or videos. Translate as a natural question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "E0pIiz"
+msgid "What do you like to watch?"
+msgstr "Co lubisz oglądać?"
+
+#. Music, podcasts or audiobooks. Translate as a natural question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "z9VRcp"
+msgid "What do you like to listen to?"
+msgstr "Czego lubisz słuchać?"
+
+#. Sports and games, not instruments: music has its own option elsewhere. Translate as a natural question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "CwvMxc"
+msgid "What do you like to play?"
+msgstr "W co lubisz grać?"
+
+#. Books, news, comics or sites. Translate as a natural question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "XiCqV0"
+msgid "What do you like to read?"
+msgstr "Co lubisz czytać?"
+
+#. Hobbies and things the learner does for fun. Translate as a natural question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "VHCQNy"
+msgid "What do you like to do?"
+msgstr "Co lubisz robić?"
+
+#. Asks about health conditions or disabilities that affect learning.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "tbsHp9"
+msgid "Do any of these apply to you?"
+msgstr "Czy coś z tej listy cię dotyczy?"
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "W7cEaa"
+msgid "What helps you learn?"
+msgstr "Co pomaga ci w nauce?"
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "jA1Ffb"
+msgid "We'll use situations from your day in your examples."
+msgstr "W przykładach wykorzystamy sytuacje z twojego codziennego życia."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "Ol21xB"
+msgid "Pick up to 3. We'll use them in your examples."
+msgstr "Wybierz do 3 opcji. Wykorzystamy je w przykładach."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "6E7bGb"
+msgid "Past or present, finished or not. It can be different from your work."
+msgstr "Uwzględnij też trwającą lub nieukończoną naukę. Nie musi mieć związku z twoją pracą."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "htoNlH"
+msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
+msgstr "Opcjonalnie. Na następnym ekranie podpowiemy, co często pomaga. Niczego nie zapiszemy bez twojej zgody."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "iAG-dQ"
+msgid "Optional. Nothing here is saved unless you choose to."
+msgstr "Opcjonalnie. Niczego nie zapiszemy bez twojej zgody."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "310Na4"
+msgid "Pick anything that helps. No label or diagnosis needed."
+msgstr "Wybierz wszystko, co ci pomaga. Nie musisz mieć diagnozy ani nazywać swoich trudności."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "vHNPYm"
+msgid "Pick up to 3. We'll use them for examples in your lessons."
+msgstr "Wybierz do 3 opcji. Wykorzystamy je w przykładach na lekcjach."
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "4gqzob"
+msgid "Save this to my profile"
+msgstr "Chcę zapisać to w moim profilu"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "rMR6gV"
+msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
+msgstr "Zoonk korzysta z tych informacji, by dopasowywać się do twoich potrzeb teraz i w przyszłości. Nigdy ich nie udostępnia ani nie używa w przykładach na lekcjach. Możesz je w każdej chwili usunąć w Ustawieniach."
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "_UlXsX"
+msgid "What should we know?"
+msgstr "Co powinniśmy wiedzieć?"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "9q8VFC"
+msgid "Something else that helps"
+msgstr "Dodaj coś innego, co ci pomaga"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "tYICNi"
+msgid "What helps you, in your words (optional)"
+msgstr "Opisz własnymi słowami, co ci pomaga (opcjonalnie)"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "dcwrhI"
+msgid "E.g., I understand diagrams better than text"
+msgstr "Np. lepiej rozumiem schematy niż tekst"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "Wl4TYP"
+msgid "We'll remember this for your buddy. You can delete it in Memory."
+msgstr "Zapamiętamy to dla twojego kumpla. Możesz to usunąć w Pamięci."
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "opT2q1"
+msgid "We checked what often helps with what you picked. Change anything you like."
+msgstr "Zaznaczyliśmy opcje, które często pomagają przy wskazanych trudnościach. Możesz dowolnie zmienić wybór."
 
 #: src/questions/choice-questions-run.tsx
 msgctxt "-HTKTB"

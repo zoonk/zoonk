@@ -1,6 +1,7 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { languageAimViewSchema, languageReasonViewSchema } from "@zoonk/core/language/aims/schemas";
 import { daySplitSchema, planReadinessSchema } from "@zoonk/core/plans/time-advice-contract";
+import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
@@ -10,9 +11,10 @@ import { z } from "zod";
 import { goalSchema } from "./goals";
 import { playableLibraryLessonResponseSchema } from "./library-lessons";
 import { noSittingSchema } from "./notice-dates";
+import { profileQuestionsResponseSchema } from "./profile-questions";
 
 const onboardingStepSchema = z
-  .enum([...ONBOARDING_QUESTIONS, "buddy", "placement", "plan"])
+  .enum([...ONBOARDING_QUESTIONS, ...PROFILE_QUESTIONS, "buddy", "placement", "plan"])
   .meta({ id: "OnboardingStep" });
 
 const dateProblemSchema = z
@@ -146,6 +148,7 @@ export const onboardingResponseSchema = z
         description:
           "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state",
       }),
+    profile: profileQuestionsResponseSchema,
     quickTestMinutes: z
       .int()
       .positive()
@@ -159,6 +162,12 @@ export const onboardingResponseSchema = z
       .meta({
         description:
           "The daily minutes the time question picks first: the time a day picked on a course's page when the goal started there, otherwise from how big the goal is and how soon its or its exam's date is. Only a starting pick; the plan says what that time covers",
+      }),
+    startsOnRecommended: z
+      .boolean()
+      .meta({
+        description:
+          "Whether the time question opens on recommendedMinutes instead of the plan's suggestion, which keeps its suggested mark and coverage.",
       }),
     steps: z
       .array(onboardingStepSchema)

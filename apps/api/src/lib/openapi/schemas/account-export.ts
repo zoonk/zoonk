@@ -1,3 +1,5 @@
+import { profileQuestionSchema } from "@zoonk/core/profile/questions/contract";
+import { LearnerConditionKind, LearningNeed } from "@zoonk/db/enums";
 import { z } from "zod";
 import { learningProfileSchema } from "./learning-profile";
 import { memoryExportSchema } from "./memory";
@@ -22,6 +24,15 @@ export const accountDataExportSchema = z
         description:
           "Conversations with the buddy (per lesson, chapter, goal or mock, with each question and answer) and the example lines lessons wrote from memory",
       }),
+    conditions: z
+      .array(
+        z.object({
+          condition: z.enum(LearnerConditionKind).meta({ description: "Consented condition" }),
+          createdAt: z.iso.datetime().meta({ description: "When the condition was saved" }),
+          note: z.string().nullable().meta({ description: "The learner's own words for other" }),
+        }),
+      )
+      .meta({ description: "Every consented condition, including its note" }),
     exportedAt: z.iso.datetime(),
     feedback: z
       .object({ messages: rowsSchema })
@@ -46,8 +57,23 @@ export const accountDataExportSchema = z
         skills: rowsSchema,
       })
       .meta({ description: "Skill states, the mistakes notebook, milestones and certificates" }),
+    learningNeeds: z.array(z.enum(LearningNeed)).meta({ description: "Saved learning supports" }),
     memory: memoryExportSchema,
     profile: learningProfileSchema,
+    profileAnswers: z
+      .array(
+        z.object({
+          answeredAt: z.iso
+            .datetime()
+            .meta({ description: "When this answer or consent was saved" }),
+          outcome: z
+            .enum(["answered", "declined"])
+            .meta({ description: "Saved answer or explicit decline" }),
+          question: profileQuestionSchema,
+          version: z.int().meta({ description: "Question version answered" }),
+        }),
+      )
+      .meta({ description: "Every profile question status record" }),
     progress: z
       .object({
         daily: rowsSchema,

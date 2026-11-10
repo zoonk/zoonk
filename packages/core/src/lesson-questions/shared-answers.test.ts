@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { findMemoryForTask } from "../memory/get-memory-for-task";
@@ -124,6 +126,102 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
     mockSession(null);
   });
+
+  it.each([
+    { hasShared: false, profile: "needs" },
+    { hasShared: true, profile: "needs" },
+    { hasShared: false, profile: "a support note" },
+    { hasShared: true, profile: "a support note" },
+  ] as const)(
+    "keeps a learner with $profile private when a shared row exists: $hasShared",
+    async ({ hasShared, profile }) => {
+      const [shared, personal, general] = await Promise.all([
+        sharedLesson(),
+        userFixture(),
+        userFixture(),
+      ]);
+
+      await (profile === "needs"
+        ? learningProfileFixture({
+            learningNeeds: ["stepByStep"],
+            memoryEnabled: false,
+            userId: personal.id,
+          })
+        : memoryFactFixture({
+            category: "learning",
+            sensitive: true,
+            sourceRef: { id: "learningSupport", kind: "profile" },
+            statement: "Use diagrams for me",
+            userId: personal.id,
+          }));
+
+      if (hasShared) {
+        const asked = await askOnScreen({
+          question: WORDS.simpler,
+          shared,
+          suggestion: "simpler",
+          userId: general.id,
+        });
+
+        await answerQuestion({ questionId: asked.id, text: "A general explanation." });
+      }
+
+      const asked = await askOnScreen({
+        question: WORDS.simpler,
+        shared,
+        suggestion: "simpler",
+        userId: personal.id,
+      });
+
+      const counted = await countDatabaseRows(
+        () => answerQuestion({ questionId: asked.id, text: "1. A private explanation." }),
+        "tutor_shared_answers",
+      );
+
+      const claim = counted.result;
+      expect(counted.rows).toBe(0);
+
+      expect(claim).toMatchObject({
+        learnerNeeds: { note: null, variants: profile === "needs" ? ["stepByStep"] : [] },
+        shareAnswer: false,
+      });
+
+      await expect(
+        prisma.lessonQuestion.findUniqueOrThrow({ where: { id: asked.id } }),
+      ).resolves.toMatchObject({ sharedAnswerId: null });
+
+      const rows = await prisma.tutorSharedAnswer.findMany({ where: { stepId: shared.step.id } });
+
+      expect(rows.map((row) => row.answer)).toStrictEqual(
+        hasShared ? ["A general explanation."] : [],
+      );
+
+      const reader = await userFixture();
+
+      const second = await askOnScreen({
+        question: WORDS.simpler,
+        shared,
+        suggestion: "simpler",
+        userId: reader.id,
+      });
+
+      const claimed = await claimLessonQuestionAnswer({ questionId: second.id });
+      expect(claimed.status).toBe(hasShared ? "shared" : "ready");
+
+      if (claimed.status === "ready") {
+        await completeLessonQuestionAnswer({
+          ...answerRun("A general explanation."),
+          questionId: second.id,
+          revision: claimed.claim.revision,
+          shareAnswer: claimed.claim.shareAnswer,
+        });
+      }
+
+      await expect(
+        prisma.tutorSharedAnswer.findMany({ where: { stepId: shared.step.id } }),
+      ).resolves.toMatchObject([{ answer: "A general explanation." }]);
+    },
+  );
 
   it("writes a suggestion's answer once, without memory, for everyone who taps it on the screen", async () => {
     const [shared, first, second] = await Promise.all([

@@ -360,6 +360,146 @@
         }
       }
     },
+    "/me/profile-questions": {
+      "get": {
+        "description": "Returns all questions with localized options and the learner's saved answers. Does not write or start AI work.",
+        "operationId": "getCurrentUserProfileQuestions",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get the learner's optional profile questions",
+        "tags": [
+          "Profile"
+        ],
+        "responses": {
+          "200": {
+            "description": "Localized questions and saved answers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileQuestions"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/profile-questions/answers": {
+      "post": {
+        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Typed memory facts start sensitive until a follow-up checks them.",
+        "operationId": "answerCurrentUserProfileQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Replace one optional profile answer",
+        "tags": [
+          "Profile"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileAnswerInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved question",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileAnswerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "MEMORY_OFF: biography questions cannot be saved with memory off",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid answer, or CONSENT_REQUIRED for conditions without consent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/app-attest/challenges": {
       "post": {
         "description": "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers. The Android app also asks for one before creating or redeeming a restore key (`POST /v1/sessions/current/restore-keys`, `POST /v1/sessions/restore-key`), as its WebAuthn challenge.",
@@ -24716,6 +24856,560 @@
         "additionalProperties": false,
         "minProperties": 1
       },
+      "ProfileAnswerInput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "job": {
+                    "default": null,
+                    "description": "Current job, at most 80 characters",
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "status": {
+                    "default": null,
+                    "description": "The learner's current work or study status",
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "work",
+                      "student",
+                      "workAndStudy",
+                      "neither"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "work"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "excel",
+                        "googleSheets",
+                        "word",
+                        "powerPoint",
+                        "canva",
+                        "figma",
+                        "notion",
+                        "vsCode"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "tools"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "studies": {
+                    "default": [],
+                    "description": "Up to three distinct fields",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "field": {
+                          "type": "string",
+                          "enum": [
+                            "computing",
+                            "business",
+                            "health",
+                            "engineering",
+                            "media",
+                            "humanities",
+                            "socialSciences",
+                            "naturalSciences",
+                            "education",
+                            "law",
+                            "other"
+                          ],
+                          "description": "Field studied, past or present"
+                        },
+                        "subject": {
+                          "default": null,
+                          "description": "Course or subject; required for other",
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 80
+                        }
+                      },
+                      "required": [
+                        "field"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "studies"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "sports",
+                        "sciFi",
+                        "comedy",
+                        "drama",
+                        "anime",
+                        "documentaries",
+                        "crime",
+                        "reality",
+                        "novelas",
+                        "kDramas"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "watch"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "pop",
+                        "rock",
+                        "hipHop",
+                        "electronic",
+                        "rnb",
+                        "classicalJazz",
+                        "podcasts",
+                        "audiobooks",
+                        "sertanejo",
+                        "funk",
+                        "reggaeton",
+                        "kPop"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "listen"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "soccer",
+                        "basketball",
+                        "volleyball",
+                        "tennis",
+                        "videoGames",
+                        "boardGames",
+                        "chess",
+                        "mobileGames",
+                        "futsal",
+                        "padel"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "play"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "newsPolitics",
+                        "fiction",
+                        "science",
+                        "history",
+                        "business",
+                        "tech",
+                        "comics",
+                        "selfImprovement"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "read"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "cook",
+                        "workOut",
+                        "outdoors",
+                        "travel",
+                        "drawPaint",
+                        "playMusic",
+                        "fixBuild",
+                        "pets"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "activities"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "conditions": {
+                    "default": [],
+                    "description": "The consented set, replacing every previously saved condition",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "condition": {
+                          "type": "string",
+                          "enum": [
+                            "adhd",
+                            "autism",
+                            "dyslexia",
+                            "dyscalculia",
+                            "blindOrLowVision",
+                            "colorBlind",
+                            "deafOrHardOfHearing",
+                            "speech",
+                            "motor",
+                            "anxiety",
+                            "other"
+                          ],
+                          "description": "Condition the learner consents to save"
+                        },
+                        "note": {
+                          "default": null,
+                          "description": "Own words for other; omitted for every other condition",
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 120
+                        }
+                      },
+                      "required": [
+                        "condition"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "consented": {
+                    "default": false,
+                    "description": "Explicit consent to store these conditions under this question version",
+                    "type": "boolean"
+                  },
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "conditions"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "needs": {
+                    "default": [],
+                    "description": "Learning supports, replacing the saved set",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "stepByStep",
+                        "plainWords",
+                        "shortAnswers",
+                        "examplesFirst",
+                        "shorterDays"
+                      ]
+                    }
+                  },
+                  "note": {
+                    "default": null,
+                    "description": "Own words for the tutor, up to 300 characters; stored only with memory enabled",
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "soundEffects": {
+                    "description": "Whether reward sound effects are enabled; omission leaves the setting unchanged",
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "learningSupport"
+                ]
+              }
+            },
+            "required": [
+              "answer",
+              "question"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "description": "A complete replacement for one optional profile answer",
+        "type": "object"
+      },
       "AppAttestKeyRequest": {
         "type": "object",
         "properties": {
@@ -29428,6 +30122,584 @@
               "question"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "job": {
+                    "default": null,
+                    "description": "Current job, at most 80 characters",
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "status": {
+                    "default": null,
+                    "description": "The learner's current work or study status",
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "work",
+                      "student",
+                      "workAndStudy",
+                      "neither"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "work"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "excel",
+                        "googleSheets",
+                        "word",
+                        "powerPoint",
+                        "canva",
+                        "figma",
+                        "notion",
+                        "vsCode"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "tools"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "studies": {
+                    "default": [],
+                    "description": "Up to three distinct fields",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "field": {
+                          "type": "string",
+                          "enum": [
+                            "computing",
+                            "business",
+                            "health",
+                            "engineering",
+                            "media",
+                            "humanities",
+                            "socialSciences",
+                            "naturalSciences",
+                            "education",
+                            "law",
+                            "other"
+                          ],
+                          "description": "Field studied, past or present"
+                        },
+                        "subject": {
+                          "default": null,
+                          "description": "Course or subject; required for other",
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 80
+                        }
+                      },
+                      "required": [
+                        "field"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "studies"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "sports",
+                        "sciFi",
+                        "comedy",
+                        "drama",
+                        "anime",
+                        "documentaries",
+                        "crime",
+                        "reality",
+                        "novelas",
+                        "kDramas"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "watch"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "pop",
+                        "rock",
+                        "hipHop",
+                        "electronic",
+                        "rnb",
+                        "classicalJazz",
+                        "podcasts",
+                        "audiobooks",
+                        "sertanejo",
+                        "funk",
+                        "reggaeton",
+                        "kPop"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "listen"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "soccer",
+                        "basketball",
+                        "volleyball",
+                        "tennis",
+                        "videoGames",
+                        "boardGames",
+                        "chess",
+                        "mobileGames",
+                        "futsal",
+                        "padel"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "play"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "newsPolitics",
+                        "fiction",
+                        "science",
+                        "history",
+                        "business",
+                        "tech",
+                        "comics",
+                        "selfImprovement"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "read"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "favorites": {
+                    "default": "",
+                    "description": "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "picks": {
+                    "default": [],
+                    "description": "Up to three distinct option ids",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "cook",
+                        "workOut",
+                        "outdoors",
+                        "travel",
+                        "drawPaint",
+                        "playMusic",
+                        "fixBuild",
+                        "pets"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "activities"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "conditions": {
+                    "default": [],
+                    "description": "The consented set, replacing every previously saved condition",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "condition": {
+                          "type": "string",
+                          "enum": [
+                            "adhd",
+                            "autism",
+                            "dyslexia",
+                            "dyscalculia",
+                            "blindOrLowVision",
+                            "colorBlind",
+                            "deafOrHardOfHearing",
+                            "speech",
+                            "motor",
+                            "anxiety",
+                            "other"
+                          ],
+                          "description": "Condition the learner consents to save"
+                        },
+                        "note": {
+                          "default": null,
+                          "description": "Own words for other; omitted for every other condition",
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 120
+                        }
+                      },
+                      "required": [
+                        "condition"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "consented": {
+                    "default": false,
+                    "description": "Explicit consent to store these conditions under this question version",
+                    "type": "boolean"
+                  },
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "conditions"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "answer": {
+                "default": null,
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "declined": {
+                    "default": false,
+                    "description": "Declines this question and removes its saved answer",
+                    "type": "boolean"
+                  },
+                  "needs": {
+                    "default": [],
+                    "description": "Learning supports, replacing the saved set",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "stepByStep",
+                        "plainWords",
+                        "shortAnswers",
+                        "examplesFirst",
+                        "shorterDays"
+                      ]
+                    }
+                  },
+                  "note": {
+                    "default": null,
+                    "description": "Own words for the tutor, up to 300 characters; stored only with memory enabled",
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "soundEffects": {
+                    "description": "Whether reward sound effects are enabled; omission leaves the setting unchanged",
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "learningSupport"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "forever": {
+                "default": false,
+                "description": "Declines every unanswered profile question permanently instead of skipping this onboarding",
+                "type": "boolean"
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "skipProfile"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
           }
         ],
         "type": "object"
@@ -30199,6 +31471,49 @@
             "additionalProperties": false,
             "description": "Conversations with the buddy (per lesson, chapter, goal or mock, with each question and answer) and the example lines lessons wrote from memory"
           },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "condition": {
+                  "type": "string",
+                  "enum": [
+                    "adhd",
+                    "autism",
+                    "dyslexia",
+                    "dyscalculia",
+                    "blindOrLowVision",
+                    "colorBlind",
+                    "deafOrHardOfHearing",
+                    "speech",
+                    "motor",
+                    "anxiety",
+                    "other"
+                  ],
+                  "description": "Consented condition"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "description": "When the condition was saved"
+                },
+                "note": {
+                  "nullable": true,
+                  "description": "The learner's own words for other",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "condition",
+                "createdAt",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Every consented condition, including its note"
+          },
           "exportedAt": {
             "type": "string",
             "format": "date-time",
@@ -30319,11 +31634,64 @@
             "additionalProperties": false,
             "description": "Skill states, the mistakes notebook, milestones and certificates"
           },
+          "learningNeeds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "stepByStep",
+                "plainWords",
+                "shortAnswers",
+                "examplesFirst",
+                "shorterDays"
+              ]
+            },
+            "description": "Saved learning supports"
+          },
           "memory": {
             "$ref": "#/components/schemas/MemoryExport"
           },
           "profile": {
             "$ref": "#/components/schemas/LearningProfile"
+          },
+          "profileAnswers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "answeredAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "description": "When this answer or consent was saved"
+                },
+                "outcome": {
+                  "type": "string",
+                  "enum": [
+                    "answered",
+                    "declined"
+                  ],
+                  "description": "Saved answer or explicit decline"
+                },
+                "question": {
+                  "$ref": "#/components/schemas/ProfileQuestion"
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Question version answered"
+                }
+              },
+              "required": [
+                "answeredAt",
+                "outcome",
+                "question",
+                "version"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Every profile question status record"
           },
           "progress": {
             "type": "object",
@@ -30443,13 +31811,16 @@
           "account",
           "answers",
           "buddy",
+          "conditions",
           "exportedAt",
           "feedback",
           "goals",
           "language",
           "learnerModel",
+          "learningNeeds",
           "memory",
           "profile",
+          "profileAnswers",
           "progress",
           "start",
           "study",
@@ -30541,6 +31912,12 @@
                   "format": "date-time",
                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                 },
+                "profileAnswer": {
+                  "nullable": true,
+                  "description": "Structured profile answer; cleared when its fact is reworded",
+                  "type": "object",
+                  "additionalProperties": {}
+                },
                 "status": {
                   "type": "string",
                   "enum": [
@@ -30570,6 +31947,7 @@
                 "updatedAt",
                 "deletedAt",
                 "lastUsedAt",
+                "profileAnswer",
                 "status",
                 "supersededById"
               ],
@@ -30635,7 +32013,7 @@
         "properties": {
           "id": {
             "nullable": true,
-            "description": "The goal, tutor question, study session or call id",
+            "description": "The goal, tutor question, study session, call or profile question id",
             "type": "string"
           },
           "kind": {
@@ -30644,7 +32022,8 @@
               "onboarding",
               "chat",
               "session",
-              "call"
+              "call",
+              "profile"
             ]
           }
         },
@@ -30745,6 +32124,22 @@
         "additionalProperties": false,
         "description": "The chosen buddy, or Zu with round glasses by default"
       },
+      "ProfileQuestion": {
+        "type": "string",
+        "enum": [
+          "work",
+          "tools",
+          "studies",
+          "watch",
+          "listen",
+          "play",
+          "read",
+          "activities",
+          "conditions",
+          "learningSupport"
+        ],
+        "description": "The optional question about the learner"
+      },
       "UsernameSuggestionResponse": {
         "type": "object",
         "properties": {
@@ -30756,6 +32151,144 @@
         },
         "required": [
           "username"
+        ],
+        "additionalProperties": false
+      },
+      "ProfileQuestions": {
+        "type": "object",
+        "properties": {
+          "memoryEnabled": {
+            "type": "boolean",
+            "description": "Whether biography answers may be edited and written to memory"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileQuestionView"
+            },
+            "description": "All ten optional profile questions in screen order"
+          }
+        },
+        "required": [
+          "memoryEnabled",
+          "questions"
+        ],
+        "additionalProperties": false
+      },
+      "ProfileQuestionView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ProfileQuestion"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "nullable": true,
+                  "description": "Optional description in the request locale",
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Stable option id, accepted by the answer input"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Option label in the request locale"
+                }
+              },
+              "required": [
+                "description",
+                "id",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Selectable options in order, with locale extras first"
+          },
+          "saved": {
+            "type": "object",
+            "properties": {
+              "picks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Saved option, status, condition or need ids; noSoundEffects represents disabled sounds"
+              },
+              "studies": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string",
+                      "description": "Study field id"
+                    },
+                    "subject": {
+                      "nullable": true,
+                      "description": "Optional own words naming the course or subject",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "subject"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Saved studies; empty for other questions"
+              },
+              "text": {
+                "type": "string",
+                "description": "Saved favorites, job, condition note or support note"
+              }
+            },
+            "required": [
+              "picks",
+              "studies",
+              "text"
+            ],
+            "additionalProperties": false,
+            "description": "Prefill even when a question's version has changed; deleted memory parts stay empty"
+          },
+          "status": {
+            "nullable": true,
+            "description": "Saved outcome; null until answered or declined",
+            "type": "string",
+            "enum": [
+              "answered",
+              "declined"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "The current version of this question"
+          }
+        },
+        "required": [
+          "id",
+          "options",
+          "saved",
+          "status",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "ProfileAnswerResponse": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "$ref": "#/components/schemas/ProfileQuestionView"
+          }
+        },
+        "required": [
+          "question"
         ],
         "additionalProperties": false
       },
@@ -88244,6 +89777,9 @@
             "type": "boolean",
             "description": "The learner pressed the plan reveal's action (`POST /goals/{goalId}/plan-reveal/views`). While false, `GET /me/onboarding-resume` brings the goal back and Today answers `preparing`, and a reveal the learner's own tap opened plays its moment once; a reveal opened at launch, again or by Back shows its end state"
           },
+          "profile": {
+            "$ref": "#/components/schemas/ProfileQuestions"
+          },
           "quickTestMinutes": {
             "type": "integer",
             "minimum": 0,
@@ -88257,6 +89793,10 @@
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
             "description": "The daily minutes the time question picks first: the time a day picked on a course's page when the goal started there, otherwise from how big the goal is and how soon its or its exam's date is. Only a starting pick; the plan says what that time covers"
+          },
+          "startsOnRecommended": {
+            "type": "boolean",
+            "description": "Whether the time question opens on recommendedMinutes instead of the plan's suggestion, which keeps its suggested mark and coverage."
           },
           "steps": {
             "type": "array",
@@ -88358,8 +89898,10 @@
           "libraryCourse",
           "planReadiness",
           "planRevealed",
+          "profile",
           "quickTestMinutes",
           "recommendedMinutes",
+          "startsOnRecommended",
           "steps",
           "timeChoices",
           "warmUp"
@@ -88418,6 +89960,16 @@
           "examChoice",
           "level",
           "schedule",
+          "work",
+          "tools",
+          "studies",
+          "watch",
+          "listen",
+          "play",
+          "read",
+          "activities",
+          "conditions",
+          "learningSupport",
           "buddy",
           "placement",
           "plan"

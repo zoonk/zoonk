@@ -316,6 +316,14 @@ msgstr "Profilo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr "Su di te"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
@@ -1302,6 +1310,11 @@ msgstr "Salva"
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Salvato."
+
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "JXl2gz"
+msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
+msgstr "Quello che ci racconti qui ci aiuta a personalizzare gli esempi e il tuo compagno di studio. Tutto è facoltativo."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx

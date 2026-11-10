@@ -15,6 +15,7 @@ filter:
   operations:
     - acknowledgeTodayPlanChange
     - adaptPlanFromMock
+    - answerCurrentUserProfileQuestion
     - answerLanguageLevelTest
     - answerLanguageLevelTestOutLoud
     - answerMemoryInsight
@@ -120,6 +121,7 @@ filter:
     - getCurrentUserLevel
     - getCurrentUserMemory
     - getCurrentUserMistakePractice
+    - getCurrentUserProfileQuestions
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine

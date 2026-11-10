@@ -1,15 +1,16 @@
-import { generateText } from "ai";
+import { generateText, streamText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { TEST_TUTOR_LINKS } from "../_test-utils/tutor-links";
 import { type PlanScopeContext } from "../lessons/lesson-question-context";
-import { generateGoalTutorAnswer } from "./goal-tutor";
+import { generateGoalTutorAnswer, streamGoalTutorAnswer } from "./goal-tutor";
 import { LOOKUP_DEADLINE_MS } from "./goal-tutor-lookup";
 import { formatGoalTutorPageGuide } from "./goal-tutor-pages";
 import { SEARCH_DEADLINE_MS } from "./goal-tutor-web-search";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
+vi.mock("./learner-needs.prompt.md", () => ({ default: "Learner needs rules." }));
 vi.mock("./goal-tutor.prompt.md", () => ({ default: "Tutor every goal." }));
 vi.mock("./goal-tutor-exam.prompt.md", () => ({ default: "Read the exam's notice." }));
 vi.mock("./goal-tutor-chapter.prompt.md", () => ({ default: "Read the chapter." }));
@@ -35,7 +36,7 @@ vi.mock("../../gateway", () => ({
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
-  return { ...actual, generateText: vi.fn() };
+  return { ...actual, generateText: vi.fn(), streamText: vi.fn() };
 });
 
 const PAGES = `## The app's pages\n\n${formatGoalTutorPageGuide({ pages: TEST_TUTOR_LINKS.pages, selectedGoal: false })}\n`;
@@ -107,6 +108,61 @@ async function readPagesPrompt(selectedGoal?: true) {
 describe(generateGoalTutorAnswer, () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("keeps needs out of the recorded prompt version", async () => {
+    vi.mocked(generateText).mockResolvedValue(answer("Because."));
+
+    const input = {
+      contextSnapshot: planContext("learn"),
+      links: TEST_TUTOR_LINKS,
+      lookUp: vi.fn(),
+      offerAppTool: vi.fn(),
+      priorTurns: [],
+      proposePlanChange: vi.fn(),
+      question: "Why?",
+    };
+
+    const ordinary = await generateGoalTutorAnswer(input);
+
+    const personal = await generateGoalTutorAnswer({
+      ...input,
+      learnerNeeds: { note: null, variants: ["adhd"] },
+    });
+
+    expect(personal.systemPrompt).not.toBe(ordinary.systemPrompt);
+    expect(personal.provenance.promptVersion).toBe(ordinary.provenance.promptVersion);
+  });
+
+  it("keeps needs out of the streamed answer's prompt version", async () => {
+    const result = answer("Because.");
+
+    vi.mocked(streamText).mockReturnValue({
+      finalStep: Promise.resolve(result.finalStep),
+      steps: Promise.resolve(result.steps),
+    } as never);
+
+    const input = {
+      contextSnapshot: planContext("learn"),
+      links: TEST_TUTOR_LINKS,
+      lookUp: vi.fn(),
+      offerAppTool: vi.fn(),
+      priorTurns: [],
+      proposePlanChange: vi.fn(),
+      question: "Why?",
+    };
+
+    const ordinary = streamGoalTutorAnswer(input);
+
+    const personal = streamGoalTutorAnswer({
+      ...input,
+      learnerNeeds: { note: null, variants: ["adhd"] },
+    });
+
+    const [first, second] = await Promise.all([ordinary.provenance, personal.provenance]);
+    expect(second.promptVersion).toBe(first.promptVersion);
+    const calls = vi.mocked(streamText).mock.calls;
+    expect(calls[0]?.[0].instructions).not.toBe(calls[1]?.[0].instructions);
   });
 
   it("adds the exam's instructions only for an exam goal", async () => {

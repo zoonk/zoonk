@@ -316,6 +316,14 @@ msgstr "프로필"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr "내 소개"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
@@ -1302,6 +1310,11 @@ msgstr "저장"
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "저장했어요."
+
+#: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
+msgctxt "JXl2gz"
+msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
+msgstr "여기서 알려 주신 내용이 예시와 짝꿍에 반영돼요. 모든 항목은 선택 사항이에요."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx

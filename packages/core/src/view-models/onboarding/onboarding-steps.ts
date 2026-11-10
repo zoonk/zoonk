@@ -1,9 +1,10 @@
-import { type Goal } from "@zoonk/db";
+import { type Goal, type ProfileQuestion } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type CourseStart, readCourseStart } from "../../goals/course-start-details";
 import { readLanguageAim } from "../../language/aims/language-aims";
 import { isPlacementSkipped } from "../../learner/placement/placement-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { isProfileQuestion } from "../../profile/questions/profile-question-contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingDateProblem,
@@ -197,10 +198,12 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
 export function getOnboardingSteps({
   goal,
   profile,
+  profileSteps = [],
 }: {
   /** A learn goal that replaced another continues that finished goal at its course's next level. */
   goal: StepGoal & { replacesGoalId: string | null };
   profile: StepProfile;
+  profileSteps?: ProfileQuestion[];
 }): OnboardingStep[] {
   if (goal.kind === "explain") {
     return [];
@@ -216,6 +219,7 @@ export function getOnboardingSteps({
 
   return [
     ...questions.filter((question) => question !== "schedule"),
+    ...profileSteps,
     ...(picksBuddy({ answered, profile }) ? (["buddy"] as const) : []),
     ...(isPlacementAhead(goal.details) ? (["placement"] as const) : []),
     ...questions.filter((question) => question === "schedule"),
@@ -224,7 +228,7 @@ export function getOnboardingSteps({
 }
 
 export function hasOnboardingQuestions(steps: readonly OnboardingStep[]): boolean {
-  return steps.some((step) => step !== "plan");
+  return steps.some((step) => step !== "plan" && !isProfileQuestion(step));
 }
 
 /** Every plan is shown once: until the learner presses the reveal's action, setup isn't over. */
@@ -245,6 +249,7 @@ export function isGoalSetupLeft(
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
       },
       profile: { hasBuddy: true, hasEarlierGoals: true },
+      profileSteps: [],
     }),
   );
 }

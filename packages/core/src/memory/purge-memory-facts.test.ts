@@ -14,12 +14,22 @@ describe(purgeMemoryFacts, () => {
   it("purges facts deleted or expired more than 30 days ago with the facts they replaced", async () => {
     const user = await userFixture();
 
-    const [oldDeleted, oldExpired, recentDeleted, recentExpired, active] = await Promise.all([
+    const [
+      oldDeleted,
+      oldExpired,
+      recentDeleted,
+      recentExpired,
+      active,
+      oldProfile,
+      recentProfile,
+    ] = await Promise.all([
       memoryFactFixture({ deletedAt: daysAgo(31), status: "deleted", userId: user.id }),
       memoryFactFixture({ expiresAt: daysAgo(31), statement: "Has an exam", userId: user.id }),
       memoryFactFixture({ deletedAt: daysAgo(29), status: "deleted", userId: user.id }),
       memoryFactFixture({ expiresAt: daysAgo(2), userId: user.id }),
       memoryFactFixture({ userId: user.id }),
+      memoryFactFixture({ deletedAt: daysAgo(31), status: "superseded", userId: user.id }),
+      memoryFactFixture({ deletedAt: daysAgo(29), status: "superseded", userId: user.id }),
     ]);
 
     const replacedByExpired = await memoryFactFixture({
@@ -50,10 +60,17 @@ describe(purgeMemoryFacts, () => {
     });
 
     expect(remaining.map((fact) => fact.id).toSorted()).toStrictEqual(
-      [recentDeleted.id, recentExpired.id, active.id, replacedByActive.id].toSorted(),
+      [
+        recentDeleted.id,
+        recentExpired.id,
+        active.id,
+        replacedByActive.id,
+        recentProfile.id,
+      ].toSorted(),
     );
 
     expect(remaining.map((fact) => fact.id)).not.toContain(oldDeleted.id);
+    expect(remaining.map((fact) => fact.id)).not.toContain(oldProfile.id);
     expect(remaining.map((fact) => fact.id)).not.toContain(replacedByExpired.id);
     expect(remaining.map((fact) => fact.id)).not.toContain(replacedEarlier.id);
   });

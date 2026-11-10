@@ -12,6 +12,7 @@ import { getLanguageProgressView } from "@zoonk/core/view-models/language/progre
 import { getLanguageUnitsView } from "@zoonk/core/view-models/language/units";
 import { getFieldMapView } from "@zoonk/core/view-models/map/get";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
+import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
@@ -88,7 +89,7 @@ async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" |
   const onboarding = await getOnboarding({ goalId });
   const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
 
-  return steps.some((step) => step !== "plan") ? "setup" : "building";
+  return hasOnboardingQuestions(steps) ? "setup" : "building";
 }
 
 async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {

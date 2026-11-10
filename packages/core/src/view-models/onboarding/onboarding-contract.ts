@@ -1,3 +1,4 @@
+import { type ProfileQuestion } from "@zoonk/db/enums";
 import { z } from "zod";
 import {
   type ExamChoiceView,
@@ -16,6 +17,8 @@ import { type GoalWarmUp } from "../../library/warm-ups/warm-up-contract";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { type PlanReadiness } from "../../plans/time-advice-contract";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
+import { profileOnboardingAnswerSchemas } from "../../profile/questions/profile-onboarding-contract";
+import { type ProfileQuestionsView } from "../../profile/questions/profile-question-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
 import { scheduleAnswerSchema, timeZoneSchema } from "./schedule-answer-schema";
 
@@ -194,7 +197,7 @@ export const ONBOARDING_QUESTIONS = [
 export type OnboardingQuestion = (typeof ONBOARDING_QUESTIONS)[number];
 
 /** Buddy choice follows goal questions because it belongs to the learner profile. */
-export type OnboardingStep = OnboardingQuestion | "buddy" | "placement" | "plan";
+export type OnboardingStep = OnboardingQuestion | ProfileQuestion | "buddy" | "placement" | "plan";
 
 export type OnboardingLibraryCourse = {
   brandSlug: string;
@@ -220,6 +223,7 @@ export type OnboardingFirstLesson = {
 };
 
 export type OnboardingView = {
+  profile: ProfileQuestionsView;
   /** "passed" and "today" bring the `targetDate` screen back even when answered; "noSitting" until the learner answers it. */
   dateProblem: OnboardingDateProblem | null;
   /** Studies only selected options; empty when the exam offers no choices. `subject` is the saved pick or the option the learner's stated position or answers name, which is taken without asking. */
@@ -247,6 +251,7 @@ export type OnboardingView = {
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
+  startsOnRecommended: boolean;
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
   /** The daily times the time question offers, `recommendedMinutes` among them. */
@@ -334,6 +339,19 @@ export const onboardingAnswerInputSchema = z
       .object({
         buddy: learningProfileUpdateSchema.shape.buddy.unwrap(),
         question: z.literal("buddy"),
+      })
+      .strict(),
+    ...profileOnboardingAnswerSchemas,
+    z
+      .object({
+        forever: z
+          .boolean()
+          .default(false)
+          .meta({
+            description:
+              "Declines every unanswered profile question permanently instead of skipping this onboarding",
+          }),
+        question: z.literal("skipProfile"),
       })
       .strict(),
   ])

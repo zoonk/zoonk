@@ -1,5 +1,6 @@
 "use client";
 
+import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
 import {
   type OnboardingAnswerInput,
   type OnboardingStep,
@@ -16,7 +17,13 @@ import { usePoll } from "../_utils/use-poll";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
-import { type FlowState, applyAnswer, openStep } from "./_utils/answered-step";
+import {
+  type FlowState,
+  applyAnswer,
+  getAnsweredScreens,
+  isStepScreen,
+  openStep,
+} from "./_utils/answered-step";
 import { getSetupProgress } from "./_utils/setup-progress";
 import {
   type AnswerOutcome,
@@ -33,33 +40,12 @@ import { FirstLessonReadContext } from "./onboarding-host";
 import { OnboardingRailProvider } from "./onboarding-rail";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
 import { PlanReceipt } from "./plan-receipt";
-import { StartOverMenu } from "./start-over-menu";
+import { StepsBarEnd } from "./start-over-menu";
 import { PlanStartNoticeProvider } from "./steps/plan-start-notice";
+import { useProfileStepState } from "./steps/profile-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
 import { getFirstLesson, isRunStopped } from "./steps/wait-run";
-
-const STEP_SCREENS = new Set<string>([
-  "purpose",
-  "role",
-  "reason",
-  "target",
-  "targetDate",
-  "followUps",
-  "examChoice",
-  "level",
-  "schedule",
-  "buddy",
-  "placement",
-]);
-
-function isStepScreen(step: unknown): step is OnboardingStep {
-  return typeof step === "string" && STEP_SCREENS.has(step);
-}
-
-function getAnsweredScreens(view: OnboardingView): OnboardingStep[] {
-  const answered = view.goal.details.answered;
-  return Array.isArray(answered) ? answered.filter((step) => isStepScreen(step)) : [];
-}
+import { useFocusTitleOnNewScreen } from "./use-focus-title";
 
 type DayTooShort = Omit<Extract<AnswerOutcome, { status: "dayTooShort" }>, "status">;
 
@@ -303,14 +289,24 @@ export function StepsFlow({
   };
 
   const isPlan = state.current === "plan";
-  const showDots = isStepScreen(state.current);
+  const isProfile = isProfileQuestion(state.current);
+  const showDots = isStepScreen(state.current) || isProfile;
   const progress = getSetupProgress(state);
+  const profile = useProfileStepState(state);
+  useFocusTitleOnNewScreen(state.current);
 
   return (
     <StepsFlowFrame actions={actions} generation={generation} setState={setState} state={state}>
       <OnboardingFrame
         bar={{
-          end: isPlan ? null : <StartOverMenu disabled={isPending} onStartOver={startOver} />,
+          end: isPlan ? null : (
+            <StepsBarEnd
+              disabled={isPending}
+              onSkipProfile={(forever) => void answer({ forever, question: "skipProfile" })}
+              profile={isProfile}
+              onStartOver={startOver}
+            />
+          ),
           middle: progress && (
             <StepDots
               className={BAR_MIDDLE_CLASS}
@@ -341,6 +337,7 @@ export function StepsFlow({
               isPending && sending !== null && (sending.open || sending.step === state.current)
             }
             plan={{ initialPlan: pagePlan, planActions }}
+            profile={profile}
             routes={routes}
             run={generation}
             schedule={{ draft: scheduleDraft, onChangeDate: changeDate }}

@@ -7,6 +7,7 @@ import { lessonQuestionResourceOmit } from "./question-resource";
 import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
 import { getTutorModel } from "./tutor-model";
+import { getTutorNeeds } from "./tutor-needs";
 
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
@@ -200,7 +201,18 @@ export async function claimAnswerInTransaction({
 
   const priorTurns = await getPriorTurns({ question, transaction });
 
-  const sharedKey = getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
+
+  const { needs: learnerNeeds, personal } = await getTutorNeeds({
+    client: transaction,
+    task: contextSnapshot.scope.kind === "plan" ? "goal" : "lesson",
+    userId,
+  });
+
+  const sharedKey = personal
+    ? null
+    : getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+
   const claimWhere = getClaimWhere({ now, question, userId });
 
   const shared = sharedKey
@@ -211,7 +223,6 @@ export async function claimAnswerInTransaction({
     return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
   }
 
-  const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
   const shareAnswer = sharedKey !== null;
 
   const claimed = await transaction.lessonQuestion.updateMany({
@@ -238,6 +249,7 @@ export async function claimAnswerInTransaction({
     claim: {
       contextSnapshot,
       goalId: question.goalId,
+      learnerNeeds,
       priorTurns,
       question: question.question,
       questionId: question.id,

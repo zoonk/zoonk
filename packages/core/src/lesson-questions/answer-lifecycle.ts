@@ -169,7 +169,8 @@ export async function claimLessonQuestionAnswer(input: { questionId: string }) {
     return claimed;
   }
 
-  const { contextSnapshot, goalId, priorTurns, question, questionId, revision } = claimed.claim;
+  const { contextSnapshot, goalId, learnerNeeds, priorTurns, question, questionId, revision } =
+    claimed.claim;
 
   const [tutor, learnerNames] = await Promise.all([
     claimTutorAnswer({ question: claimed.claim, subject: access.subject, userId }),
@@ -189,6 +190,7 @@ export async function claimLessonQuestionAnswer(input: { questionId: string }) {
       learnerMemory,
       /** Only use these names to exclude them from outgoing web searches. */
       learnerNames,
+      learnerNeeds,
       priorTurns,
       question,
       questionId,

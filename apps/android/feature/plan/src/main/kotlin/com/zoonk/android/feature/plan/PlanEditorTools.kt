@@ -43,6 +43,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.PlanTool
@@ -311,7 +312,7 @@ internal fun ColumnScope.ToolChoiceForm(
                     SectionLabel(stringResource(R.string.plan_tool_device))
                     FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         PlanTool.System.entries.forEach { option ->
-                            PlanChip(
+                            SelectionChip(
                                 text = systemName(option.value),
                                 selected = option == system,
                                 onClick = { onDraft(draft.copy(system = option)) },

@@ -6,6 +6,12 @@ import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-ta
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import {
+  type LearnerNeeds,
+  getLearnerNeedsLines,
+  getLearnerNeedsPrompt,
+} from "../tutor/learner-needs";
+import learnerNeedsPrompt from "../tutor/learner-needs.prompt.md";
 import beyondLessonPrompt from "./lesson-question-beyond.prompt.md";
 import chapterPrompt from "./lesson-question-chapter.prompt.md";
 import {
@@ -41,7 +47,10 @@ const SCOPE_PROMPTS = {
   step: lessonScopePrompt,
 } satisfies Record<LessonTutorContextSnapshot["scope"]["kind"], string>;
 
-function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
+function getSystemPrompt(
+  contextSnapshot: LessonTutorContextSnapshot,
+  learnerNeeds?: LearnerNeeds,
+): string {
   const scopePrompt = selectPromptVariants({
     template: SCOPE_PROMPTS[contextSnapshot.scope.kind],
     variants: getLessonScreenVariants(contextSnapshot),
@@ -50,7 +59,16 @@ function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
   const learnerLanguage =
     "language" in contextSnapshot ? contextSnapshot.language : contextSnapshot.course.language;
 
-  return fillPromptLanguages({ learnerLanguage, template: `${systemPrompt}\n${scopePrompt}` });
+  return fillPromptLanguages({
+    learnerLanguage,
+    template: [
+      systemPrompt,
+      scopePrompt,
+      getLearnerNeedsPrompt({ needs: learnerNeeds, template: learnerNeedsPrompt }),
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  });
 }
 
 export type LessonQuestionAnswerCompletion = {
@@ -68,6 +86,7 @@ type StreamLessonQuestionAnswerParams = {
   contextSnapshot: LessonTutorContextSnapshot;
   /** Only when memory is on. */
   learnerMemory?: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
 };
@@ -76,6 +95,7 @@ export type GenerateLessonQuestionAnswerParams = {
   analytics?: AiGenerationContext;
   contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory?: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   model?: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -103,10 +123,12 @@ function createLearnerMemoryLines(learnerMemory: readonly string[]): string[] {
 function createCurrentQuestionMessage({
   contextSnapshot,
   learnerMemory,
+  learnerNeeds,
   question,
 }: {
   contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   question: string;
 }) {
   return {
@@ -115,6 +137,7 @@ function createCurrentQuestionMessage({
       JSON.stringify(contextSnapshot),
       "</CURRENT_CONTEXT>",
       ...createLearnerMemoryLines(learnerMemory),
+      ...getLearnerNeedsLines(learnerNeeds),
       "<LEARNER_QUESTION>",
       question,
       "</LEARNER_QUESTION>",
@@ -126,23 +149,26 @@ function createCurrentQuestionMessage({
 function createLessonQuestionMessages({
   contextSnapshot,
   learnerMemory,
+  learnerNeeds,
   priorTurns,
   question,
 }: {
   contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
 }) {
   return [
     ...toHistoryMessages(priorTurns),
-    createCurrentQuestionMessage({ contextSnapshot, learnerMemory, question }),
+    createCurrentQuestionMessage({ contextSnapshot, learnerMemory, learnerNeeds, question }),
   ];
 }
 
 function createLessonQuestionGenerationOptions({
   contextSnapshot,
   learnerMemory = [],
+  learnerNeeds,
   model,
   priorTurns,
   question,
@@ -151,6 +177,7 @@ function createLessonQuestionGenerationOptions({
 }: {
   contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory?: readonly string[];
+  learnerNeeds?: LearnerNeeds;
   model: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -158,10 +185,11 @@ function createLessonQuestionGenerationOptions({
   useFallback: boolean;
 }) {
   return {
-    instructions: getSystemPrompt(contextSnapshot),
+    instructions: getSystemPrompt(contextSnapshot, learnerNeeds),
     messages: createLessonQuestionMessages({
       contextSnapshot,
       learnerMemory,
+      learnerNeeds,
       priorTurns,
       question,
     }),
@@ -186,6 +214,7 @@ export async function generateLessonQuestionAnswer({
   analytics,
   contextSnapshot,
   learnerMemory,
+  learnerNeeds,
   model = LESSON_QUESTION_MODEL,
   priorTurns,
   question,
@@ -195,6 +224,7 @@ export async function generateLessonQuestionAnswer({
   const generationOptions = createLessonQuestionGenerationOptions({
     contextSnapshot,
     learnerMemory,
+    learnerNeeds,
     model,
     priorTurns,
     question,
@@ -205,7 +235,7 @@ export async function generateLessonQuestionAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: { contentScope: "personal", ...analytics },
     generate: () => generateText(generationOptions),
-    systemPrompt: generationOptions.instructions,
+    systemPrompt: `${getSystemPrompt(contextSnapshot)}\n${learnerNeedsPrompt}`,
     task: LESSON_QUESTION_TASK,
   });
 
@@ -230,6 +260,7 @@ export function streamLessonQuestionAnswer({
   analytics,
   contextSnapshot,
   learnerMemory,
+  learnerNeeds,
   priorTurns,
   question,
 }: StreamLessonQuestionAnswerParams): {
@@ -243,6 +274,7 @@ export function streamLessonQuestionAnswer({
         ...createLessonQuestionGenerationOptions({
           contextSnapshot,
           learnerMemory,
+          learnerNeeds,
           model: LESSON_QUESTION_MODEL,
           priorTurns,
           question,
@@ -250,7 +282,7 @@ export function streamLessonQuestionAnswer({
         }),
         onError: suppressLessonQuestionProviderError,
       }),
-    systemPrompt: getSystemPrompt(contextSnapshot),
+    systemPrompt: `${getSystemPrompt(contextSnapshot)}\n${learnerNeedsPrompt}`,
     task: LESSON_QUESTION_TASK,
   });
 

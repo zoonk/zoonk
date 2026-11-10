@@ -74,6 +74,9 @@ test.describe("Onboarding from a typed goal", () => {
 
     await page.getByRole("button", { name: "No date" }).click();
 
+    await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Skip all" }).click();
+
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
@@ -124,7 +127,16 @@ test.describe("Onboarding from a typed goal", () => {
             .map((event) => event.data.question),
         ),
       ])
-      .toEqual(["purpose", "level", "role", "targetDate", "buddy", "placement", "schedule"]);
+      .toEqual([
+        "purpose",
+        "level",
+        "role",
+        "targetDate",
+        "work",
+        "buddy",
+        "placement",
+        "schedule",
+      ]);
 
     expect(events).toContainEqual(
       expect.objectContaining({
@@ -224,6 +236,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await page.getByRole("button", { name: "No date" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip all" }).click();
   await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();

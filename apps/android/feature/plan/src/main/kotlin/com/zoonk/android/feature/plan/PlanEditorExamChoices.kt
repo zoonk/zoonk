@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -72,7 +73,7 @@ private fun ExamChoiceOptions(
                     ?.subjects ?: choice.subjects
             FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 choice.options.forEach { option ->
-                    PlanChip(
+                    SelectionChip(
                         text = option.shortName ?: option.name,
                         selected = option.name in shown,
                         onClick = { if (option.name !in shown) edits.chooseExamOption(choice.group, listOf(option.name)) {} },
@@ -115,7 +116,7 @@ fun ExamChoicePicks(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             choice.options.forEach { option ->
                 val picked = option.name in draft
-                PlanChip(
+                SelectionChip(
                     text = option.shortName ?: option.name,
                     selected = picked,
                     onClick = { draft = choice.toggled(draft, option.name) },

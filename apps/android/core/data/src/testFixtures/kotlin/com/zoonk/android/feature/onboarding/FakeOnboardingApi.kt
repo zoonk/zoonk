@@ -110,6 +110,7 @@ fun setupView(
     targetLanguage: String? = null,
     examChoices: String = "[]",
     planReady: Boolean = true,
+    startsOnRecommended: Boolean = false,
     firstLesson: String = "null",
     warmUp: String = "null",
     planRevealed: Boolean = false,
@@ -118,7 +119,7 @@ fun setupView(
     ApiJson.decodeFromString(
         """
         {"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
-         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"steps":[${steps.joinToString(
+         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],

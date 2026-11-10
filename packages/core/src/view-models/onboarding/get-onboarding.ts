@@ -1,15 +1,9 @@
+import { prisma } from "@zoonk/db";
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
-import { getNoSitting } from "../../exams/_utils/notice-day";
-import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
-import { listExamChoiceViews } from "../../exams/choices/exam-choice-views";
-import { toChosenStructure } from "../../exams/choices/exam-choices";
-import { loadExamPicks } from "../../exams/choices/load-exam-choices";
-import { findNamedChoices } from "../../exams/choices/named-exam-choices";
-import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
@@ -17,16 +11,23 @@ import { readGoalOpening } from "../../goals/goal-opening";
 import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readLearningProfile } from "../../learner/facts/learning-profile";
+import { readProfileQuestionState } from "../../learner/facts/profile-questions";
 import { readActiveSubscription } from "../../learner/facts/subscription";
-import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { readWarmUpState } from "../../library/warm-ups/claim-warm-up";
 import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
 import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
+import {
+  getStateProfileSteps,
+  toProfileQuestionsView,
+} from "../../profile/questions/_utils/profile-question-state";
+import { findExamNotice } from "./_utils/onboarding-exam-notice";
+import { toOnboardingGoalView } from "./_utils/onboarding-goal-view";
 import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
-import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
+import { getGoalSize, getTimeQuestionDefaults } from "./_utils/recommended-minutes";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingDateProblem,
@@ -35,7 +36,6 @@ import {
   type OnboardingView,
 } from "./onboarding-contract";
 import {
-  getAnsweredQuestions,
   getFollowUpQuestions,
   getOnboardingSteps,
   isClassTest,
@@ -46,101 +46,6 @@ import {
 export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
-
-/** Before a POST saves it, an option the learner's stated position or answers name already counts as picked, so only a choice nothing names is asked. */
-async function findExamNotice({
-  details,
-  goal,
-  goalDate,
-  today,
-}: {
-  details: Record<string, unknown>;
-  goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
-  goalDate: string | null;
-  today: string;
-}): Promise<{
-  choices: OnboardingView["examChoices"];
-  examDate: string | null;
-  examDays: OnboardingView["examDays"];
-  fromMaterial: boolean;
-  hasUnpickedChoice: boolean;
-  noSitting: NoSitting | null;
-  subjects: OnboardingView["examSubjects"];
-}> {
-  if (!goal.examBlueprintId) {
-    return {
-      choices: [],
-      examDate: null,
-      examDays: null,
-      fromMaterial: false,
-      hasUnpickedChoice: false,
-      noSitting: null,
-      subjects: [],
-    };
-  }
-
-  const [blueprint, saved] = await Promise.all([
-    prisma.examBlueprint.findUnique({
-      select: { edition: true, examDate: true, ownerId: true, structure: true },
-      where: { id: goal.examBlueprintId },
-    }),
-    loadExamPicks(goal.id),
-  ]);
-
-  const stored = examStructureSchema.safeParse(blueprint?.structure).data;
-
-  const picks = stored
-    ? {
-        ...saved,
-        examChoices: [
-          ...saved.examChoices,
-          ...findNamedChoices({ goal, picks: saved, structure: stored }),
-        ],
-      }
-    : saved;
-
-  const structure = stored && toChosenStructure({ picks, structure: stored });
-
-  // Written papers are not subjects the learner can declare already known.
-  const subjects = structure
-    ? structure.subjects.filter((subject) => !isWrittenSubject({ structure, subject }))
-    : [];
-
-  const views = stored ? listExamChoiceViews({ picks, structure: stored }) : [];
-
-  return {
-    choices: views,
-    examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
-    examDays:
-      blueprint && !blueprint.ownerId
-        ? getNextSittingDays({ edition: blueprint.edition, today })
-        : null,
-    fromMaterial: Boolean(blueprint?.ownerId),
-    hasUnpickedChoice: views.some((choice) => choice.subjects.length === 0),
-    noSitting: getNoSitting({ blueprint, details, goalDate, today }),
-    subjects: subjects.map((subject) => ({
-      name: subject.name,
-      shortName: subject.shortName ?? null,
-    })),
-  };
-}
-
-/** After both the exam's day and the learner's, so the sitting offered can still be planned for. */
-function getNextSittingDays({
-  edition,
-  today,
-}: {
-  edition: unknown;
-  today: string;
-}): OnboardingView["examDays"] {
-  const examDay = getExamCalendarDay({ edition, now: new Date() }).today;
-  const from = examDay > today ? examDay : today;
-  const found = getPlanExamDays({ details: {}, edition, goalDate: null, today: from });
-
-  return found.days.length > 0
-    ? { days: found.days.map((day) => day.date), estimated: found.estimated }
-    : null;
-}
 
 function getDateProblem({
   goalDate,
@@ -206,7 +111,13 @@ async function findLibraryCourse({
 }
 
 /** Requires ownership; uncached so every answer immediately changes the remaining screens. */
-export async function getOnboarding({ goalId }: { goalId: string }): Promise<OnboardingResult> {
+export async function getOnboarding({
+  goalId,
+  locale = "en",
+}: {
+  goalId: string;
+  locale?: SupportedLocale;
+}): Promise<OnboardingResult> {
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
@@ -221,15 +132,16 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp] =
+  const [profile, activeGoalId, goalIds, notice, planReadiness, firstLesson, warmUp, profileState] =
     await Promise.all([
-      findLearningProfileView(userId),
+      findLearningProfileView(userId, readLearningProfile(userId)),
       findActiveGoalId(userId),
       findOnboardingGoalIds(goal),
       findExamNotice({ details, goal, goalDate, today }),
       readPlanReadiness({ goalId: goal.id, userId }),
       readGoalOpening({ lessonId: goal.openingLessonId, userId }),
       readWarmUpState(goal.warmUpId),
+      readProfileQuestionState(userId),
     ]);
 
   const [earlierGoals, [view]] = await Promise.all([
@@ -254,6 +166,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       targetDate: view.targetDate,
     },
     profile: { hasBuddy: profile.buddy.picked, hasEarlierGoals: earlierGoals > 0 },
+    profileSteps: getStateProfileSteps({ goal, state: profileState }),
   });
 
   const courseStart = readCourseStart(details);
@@ -272,21 +185,21 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     : (view.targetDate ?? notice.examDate);
 
   // The time a day the course's page had picked stays the learner's until they change it.
-  const recommendedMinutes =
-    courseStart?.dailyMinutes ??
-    getRecommendedMinutes({
-      size: getGoalSize({
-        hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
-        isClassTest: isClassTest(details) || notice.fromMaterial,
-        kind: goal.kind,
-        purpose: details.purpose,
-        targetDate,
-        targetPosition: details.targetPosition,
-        today,
-      }),
+  const { recommendedMinutes, startsOnRecommended } = getTimeQuestionDefaults({
+    courseMinutes: courseStart?.dailyMinutes,
+    learningNeeds: profileState.profile?.learningNeeds ?? [],
+    size: getGoalSize({
+      hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
+      isClassTest: isClassTest(details) || notice.fromMaterial,
+      kind: goal.kind,
+      purpose: details.purpose,
       targetDate,
+      targetPosition: details.targetPosition,
       today,
-    });
+    }),
+    targetDate,
+    today,
+  });
 
   return {
     onboarding: {
@@ -297,16 +210,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       firstLesson,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
-      goal:
-        goal.kind !== "language" && getAnsweredQuestions(details).includes("reason")
-          ? {
-              ...view,
-              details: {
-                ...view.details,
-                answered: getAnsweredQuestions(details).filter((question) => question !== "reason"),
-              },
-            }
-          : view,
+      goal: toOnboardingGoalView({ kind: goal.kind, view }),
       goalIds,
       languageAim:
         goal.kind === "language"
@@ -315,8 +219,10 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       libraryCourse,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       planRevealed: !isPlanRevealOwed(goal),
+      profile: toProfileQuestionsView({ locale, state: profileState }),
       quickTestMinutes: getQuickTestMinutes(goal.kind),
       recommendedMinutes,
+      startsOnRecommended,
       steps,
       timeChoices: [...new Set([...DAILY_TIME_CHOICES, recommendedMinutes])]
         .toSorted((a, b) => a - b)
