@@ -34,12 +34,12 @@ import { CourseStartScreen } from "./course-start-screen";
 type Props = PageProps<"/[lang]/start/course/[courseId]">;
 
 const LIMIT_REASONS = new Set<string>([
+  "activeGoals",
   "dailyExplanations",
   "dailyGoals",
   "guest",
   "monthlyExplanations",
   "monthlyGoals",
-  "oneActiveGoal",
   "signUpRequired",
   "slowDown",
 ]);

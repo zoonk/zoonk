@@ -204,8 +204,13 @@ function GoalStartFlow({
 
   useFocusTitleOnNewScreen(getScreenKey(state));
 
+  const takeDraft = (draft: OnboardingDraftView) => {
+    creation.clearActiveGoalsError(draft);
+    setState((current) => toDraftState({ current, draft }));
+  };
+
   const savedDraft = useFollowSavedDraft({
-    follow: (draft) => setState((current) => toDraftState({ current, draft })),
+    follow: takeDraft,
     initialDraft,
     shown: state.kind === "draft" ? state.draft : null,
   });
@@ -213,7 +218,7 @@ function GoalStartFlow({
   const showDraft = (draft: OnboardingDraftView) => {
     navigation.showDraft(draft.id);
     savedDraft.markOwn();
-    setState((current) => toDraftState({ current, draft }));
+    takeDraft(draft);
   };
 
   const draftActions = useDraftActions({

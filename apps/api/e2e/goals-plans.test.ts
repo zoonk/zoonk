@@ -227,7 +227,10 @@ test.describe("Goals and plans API", () => {
   });
 
   test("creates goals that share the day's time and lists them with the main goal first", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({ baseURL, prefix: "goals-create" });
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "goals-create",
+    });
 
     const created = await readBody({
       response: await apiContext.post("/v1/goals", {
@@ -256,22 +259,24 @@ test.describe("Goals and plans API", () => {
       research: [],
     });
 
-    const second = await apiContext.post("/v1/goals", {
-      data: {
-        dailyMinutes: 30,
-        goals: [{ kind: "learn", language: "pt", prompt: "Astronomia", title: "Astronomia" }],
-      },
-    });
-
-    expect(second.status()).toBe(429);
-    await expect(second.json()).resolves.toMatchObject({ error: { code: "GOAL_LIMIT_REACHED" } });
-
     const list = await readBody({
       response: await apiContext.get("/v1/goals"),
       schema: goalListResponseSchema,
     });
 
     expect(list).toMatchObject({ activeGoalId: created.goals[0]?.id, dailyMinutes: 30 });
+
+    await Promise.all([goalFixture({ userId: user.id }), goalFixture({ userId: user.id })]);
+
+    const fourth = await apiContext.post("/v1/goals", {
+      data: {
+        dailyMinutes: 30,
+        goals: [{ kind: "learn", language: "pt", prompt: "Astronomia", title: "Astronomia" }],
+      },
+    });
+
+    expect(fourth.status()).toBe(429);
+    await expect(fourth.json()).resolves.toMatchObject({ error: { code: "GOAL_LIMIT_REACHED" } });
 
     const invalid = await apiContext.post("/v1/goals", { data: { dailyMinutes: 1, goals: [] } });
     expect(invalid.status()).toBe(400);

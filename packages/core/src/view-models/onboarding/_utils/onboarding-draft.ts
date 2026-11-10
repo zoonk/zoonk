@@ -8,8 +8,8 @@ import {
   type AnalyticsPlatform,
 } from "../../../analytics/shared-properties";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
+import { countActiveGoalsLeft } from "../../../entitlements/_utils/active-goals-left";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
-import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getRequestInstant } from "../../../learner/facts/request-instant";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -78,7 +78,7 @@ function withPlannableDates({
   };
 }
 
-/** The lock follows the learner's plan as it is now, so subscribing unlocks the rest of the card. */
+/** The lock follows the learner's plan and goals as they are now, so subscribing or pausing a goal unlocks more of the card. */
 export async function toDraftView({
   draft,
   goalId,
@@ -93,8 +93,13 @@ export async function toDraftView({
   const today = toIsoDate(getDateInTimeZone({ date: now, timeZone: draft.timeZone }));
   const understanding = stored && withPlannableDates({ today, understanding: stored });
 
+  const activeGoalsLeft = await countActiveGoalsLeft({
+    tier: viewer?.tier ?? "guest",
+    userId: draft.userId,
+  });
+
   return {
-    activeGoalLimit: getActiveGoalLimit(viewer?.tier ?? "guest"),
+    activeGoalsLeft,
     generationId: draft.runId,
     goalId,
     id: draft.id,

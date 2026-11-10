@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
-import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -18,10 +19,56 @@ const ENGLISH = {
 
 const STATISTICS = { kind: "learn", subject: "Statistics", title: "Learn statistics" };
 
-const LOCKED_NOTE = /Following more than one goal at a time comes with Plus/u;
+const LOCKED_NOTE = /Following more goals at once comes with Plus/u;
+
+const FULL = "You're following as many goals as the free plan allows.";
+
+/** Each followed goal from an earlier card, the first one shown on the tabs. */
+async function createLearnerFollowing(count: number) {
+  const user = await createE2EUser(getBaseURL());
+
+  const followed = await Promise.all(
+    Array.from({ length: count }, (_, index) =>
+      goalFixture({ title: `Followed goal ${index + 1}`, userId: user.id }),
+    ),
+  );
+
+  await Promise.all([
+    ...followed.map((goal) => planFixture({ goalId: goal.id })),
+    learningProfileFixture({ activeGoalId: followed[0]?.id ?? null, userId: user.id }),
+  ]);
+
+  return { followed, user };
+}
+
+async function openCard({ browser, user }: { browser: Browser; user: E2EUser }) {
+  const words = `learn english and statistics, 30 min a day ${randomUUID().slice(0, 8)}`;
+
+  await goalUnderstandingFixture({
+    goal: words,
+    result: {
+      dailyMinutes: 30,
+      followUps: [],
+      goals: [
+        { ...ENGLISH, kind: "language", ownLevel: "basic" },
+        { ...STATISTICS, kind: "learn", ownLevel: "none" },
+      ],
+      route: "goals",
+    },
+    userId: user.id,
+  });
+
+  const page = await openAs(browser, user);
+  await page.goto("/start");
+  await page.getByRole("textbox", { name: "I want to" }).fill(words);
+  await page.getByRole("button", { name: "Build my plan" }).click();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+
+  return { page, words };
+}
 
 async function createLearnerWithWaitingGoal() {
-  const user = await createE2EUser(getBaseURL());
+  const { user } = await createLearnerFollowing(2);
   const prompt = `learn english and statistics ${randomUUID().slice(0, 8)}`;
 
   const draft = await prisma.onboardingDraft.create({
@@ -54,38 +101,22 @@ async function createLearnerWithWaitingGoal() {
 
   await Promise.all([
     planFixture({ goalId: english.id }),
-    learningProfileFixture({ activeGoalId: english.id, userId: user.id }),
+    prisma.userLearningProfile.update({
+      data: { activeGoalId: english.id },
+      where: { userId: user.id },
+    }),
   ]);
 
   return { draft, user };
 }
 
-test.describe("Goals typed together beyond the free plan's one goal", () => {
-  test("the card shows the second goal locked and starts only the first, with the whole day", async ({
-    noProgressUser,
-    userWithoutProgress: page,
+test.describe("Goals typed together beyond the goals the free plan follows at once", () => {
+  test("with room for one more goal, the card starts the first goal with the whole day and locks the second", async ({
+    browser,
   }) => {
-    const words = `learn english and statistics, 30 min a day ${randomUUID().slice(0, 8)}`;
+    const { user } = await createLearnerFollowing(2);
+    const { page, words } = await openCard({ browser, user });
 
-    await goalUnderstandingFixture({
-      goal: words,
-      result: {
-        dailyMinutes: 30,
-        followUps: [],
-        goals: [
-          { ...ENGLISH, kind: "language", ownLevel: "basic" },
-          { ...STATISTICS, kind: "learn", ownLevel: "none" },
-        ],
-        route: "goals",
-      },
-      userId: noProgressUser.id,
-    });
-
-    await page.goto("/start");
-    await page.getByRole("textbox", { name: "I want to" }).fill(words);
-    await page.getByRole("button", { name: "Build my plan" }).click();
-
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
     await expect(page.getByText(STATISTICS.title, { exact: true })).toBeVisible();
     await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
     await expect(page.getByText(/These goals share your daily time/u)).toHaveCount(0);
@@ -99,9 +130,27 @@ test.describe("Goals typed together beyond the free plan's one goal", () => {
         where: { prompt: words },
       }),
     ).resolves.toStrictEqual([{ dailyMinutes: 30, title: ENGLISH.title }]);
+
+    await page.context().close();
   });
 
-  test("the waiting goal sits in the goal switcher, locked on Free and started from there with Plus", async ({
+  test("following as many goals as the free plan allows, the card shows the plan's limit instead of confirming", async ({
+    browser,
+  }) => {
+    const { user } = await createLearnerFollowing(3);
+    const { page } = await openCard({ browser, user });
+
+    await expect(page.getByText(STATISTICS.title, { exact: true })).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
+    await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
+    await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
+
+    await page.context().close();
+  });
+
+  test("the waiting goal sits in the goal switcher, locked while the free plan is full and started from there with Plus", async ({
     browser,
   }) => {
     const { draft, user } = await createLearnerWithWaitingGoal();

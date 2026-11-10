@@ -204,7 +204,7 @@ describe(startGoalUnderstanding, () => {
 
     expect(result).toStrictEqual({
       draft: {
-        activeGoalLimit: 1,
+        activeGoalsLeft: 3,
         generationId: null,
         goalId: null,
         id: expect.any(String),

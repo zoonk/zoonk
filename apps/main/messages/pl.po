@@ -991,10 +991,11 @@ msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "Lekcje, powtórki i ćwiczenia na każdy dzień, by osiągnąć cel."
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "W pakiecie Free możesz realizować jeden cel naraz. Wstrzymaj drugi cel, aby wznowić ten, lub przejdź na Plus, by realizować więcej celów."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "Masz już tyle aktywnych celów, na ile pozwala bezpłatny pakiet. Wstrzymaj inny cel, żeby wrócić do tego, lub przejdź na Plus, by realizować więcej celów naraz."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
@@ -3113,11 +3114,11 @@ msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
 msgstr "Zacznij za darmo. <rest>Przejdź na Plus, gdy chcesz mieć wszystko.</rest>"
 
-#. “Free” and “Plus” are the names of the two subscription tiers.
+#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "xrpz7X"
-msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "Pakiet Free obejmuje jeden cel naraz. Plus obejmuje każdy cel aż do wielkiego dnia."
+msgctxt "brY8f_"
+msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
+msgstr "Pakiet Free pomaga realizować {goals, plural, one {jeden cel} other {do # celów}} naraz. Plus pomaga realizować każdy cel aż do wielkiego dnia."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"

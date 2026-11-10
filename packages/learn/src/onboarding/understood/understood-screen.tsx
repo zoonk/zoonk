@@ -120,6 +120,27 @@ function GoalCard({
   );
 }
 
+/** The draft's own room decides whether the goals followed are full: an up-front notice can be older. */
+function findPlusLimit({
+  draft,
+  error,
+  goalLimit,
+}: {
+  draft: UnderstandingDraft;
+  error: GoalError | null;
+  goalLimit: GoalLimitReason | null;
+}): GoalLimitReason | null {
+  if (error?.limit && isPlusGoalLimit(error.limit)) {
+    return error.limit;
+  }
+
+  if (draft.goals.length === 0) {
+    return "activeGoals";
+  }
+
+  return goalLimit && goalLimit !== "activeGoals" && isPlusGoalLimit(goalLimit) ? goalLimit : null;
+}
+
 function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   const rowsFor = useUnderstoodRows();
   const rows = rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates });
@@ -165,7 +186,7 @@ export function UnderstoodScreen({
   const fixButtonRef = useRef<HTMLButtonElement>(null);
   const schedule = scheduleRow(draft.schedule, draft.minutesSaid);
   const firstGoalRows = [materialRow(material), schedule].filter((row) => row !== null);
-  const plusLimit = [error?.limit, goalLimit].find((reason) => reason && isPlusGoalLimit(reason));
+  const plusLimit = findPlusLimit({ draft, error, goalLimit });
 
   const edit = (next: FieldEdit | null) => {
     setEdited(next ? null : editing);
@@ -216,12 +237,17 @@ export function UnderstoodScreen({
             <LockedGoalCard goal={understood} key={index} />
           ))}
 
-          <PlusNotice cta={!plusLimit}>
-            {t(
-              "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}",
-              { count: draft.lockedGoals.length },
-            )}
-          </PlusNotice>
+          {draft.goals.length > 0 && (
+            <PlusNotice cta={!plusLimit}>
+              {t({
+                description:
+                  "Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.",
+                message:
+                  "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}",
+                values: { count: draft.lockedGoals.length },
+              })}
+            </PlusNotice>
+          )}
         </div>
       )}
 

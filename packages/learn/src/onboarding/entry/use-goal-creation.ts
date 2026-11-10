@@ -1,5 +1,6 @@
 "use client";
 
+import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -66,5 +67,12 @@ export function useGoalCreation() {
       });
     });
 
-  return { clearError: () => setError(null), create, error, isCreating };
+  /** A draft read after a refusal for the goals followed, with room, answers that refusal. */
+  const clearActiveGoalsError = (draft: OnboardingDraftView) => {
+    if (draft.activeGoalsLeft !== 0) {
+      setError((current) => (current?.limit === "activeGoals" ? null : current));
+    }
+  };
+
+  return { clearActiveGoalsError, clearError: () => setError(null), create, error, isCreating };
 }
