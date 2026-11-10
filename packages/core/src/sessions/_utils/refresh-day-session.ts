@@ -134,7 +134,7 @@ export async function planRestOfDayWithPlan({
   return {
     blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
     plan: await dayPlan,
-    plannedMinutes: getSessionUsedMinutes(kept) + plannedMinutes,
+    plannedMinutes: Math.ceil(getSessionUsedMinutes(kept) + plannedMinutes),
   };
 }
 
