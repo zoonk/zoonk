@@ -44,7 +44,6 @@ export async function TodayOnboardingLeft({
           </Link>
         }
         clause={t("Look it over before you start.")}
-        date={null}
         icon={<MapIcon />}
         sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
         state={t("Plan ready")}
@@ -61,7 +60,6 @@ export async function TodayOnboardingLeft({
         </Link>
       }
       clause={t("It's built from what you tell us.")}
-      date={null}
       icon={<ListChecksIcon />}
       sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}
       state={t("Setting up")}

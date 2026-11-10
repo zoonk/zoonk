@@ -59,9 +59,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
@@ -70,7 +67,6 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 
 /** Today's tab: the day's session, or what stands in for it (no goal, a paused goal, a plan being built). */
 @Composable
@@ -213,14 +209,6 @@ private fun TodayRead(
     }
 }
 
-/** Main's date line reads the goal's time zone; with none known it shows no date rather than one that may be off by a day. */
-@Composable
-internal fun localDayLine(summary: LearnerSummary?): String? {
-    val zone = summary?.timeZone ?: return null
-    val today = java.time.LocalDate.now(ZoneId.of(zone))
-    return formatDate(today, currentLocale(), DateStyle.WeekdayDayShort, today)
-}
-
 @Composable
 private fun WelcomeBack(
     suggestion: SuggestedGoal,
@@ -228,7 +216,7 @@ private fun WelcomeBack(
     padding: PaddingValues,
 ) {
     TodayPage(padding) {
-        TodayPageHeader(date = null, state = null, title = stringResource(R.string.today_welcome_back))
+        TodayPageHeader(state = null, title = stringResource(R.string.today_welcome_back))
         TodayStatusLine(
             icon = R.drawable.ic_explore,
             sentence = stringResource(R.string.today_suggested_goal_question, suggestion.title),
@@ -276,7 +264,7 @@ private fun FirstGoal(
         modifier = Modifier.padding(padding),
     ) { examplesBeside ->
         TodayPage(PaddingValues()) {
-            TodayPageHeader(date = localDayLine(summary), state = null, title = stringResource(R.string.today_title))
+            TodayPageHeader(state = null, title = stringResource(R.string.today_title))
             if (explanation != null) ExplanationContinue(explanation, navigator)
             GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
             if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = start)
@@ -313,12 +301,10 @@ private fun GoalAtRest(
     padding: PaddingValues,
 ) {
     val goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId }
-    val date = localDayLine(summary)
 
     if (goal?.status == LearnerSummaryGoal.Status.COMPLETED) {
         TodayAtRest(
             padding = padding,
-            date = date,
             state = stringResource(R.string.today_finished),
             icon = R.drawable.ic_flag,
             sentence = stringResource(R.string.today_finished_goal, goal.displayName),
@@ -331,7 +317,6 @@ private fun GoalAtRest(
 
     TodayAtRest(
         padding = padding,
-        date = date,
         state = stringResource(R.string.today_paused),
         icon = R.drawable.ic_pause,
         sentence =
@@ -384,7 +369,6 @@ private fun Preparing(
     if (setup.value?.planRevealed == false && setup.value?.planReadiness?.ready == true) {
         TodayAtRest(
             padding = padding,
-            date = null,
             state = stringResource(R.string.onboarding_plan_ready),
             icon = R.drawable.ic_check,
             sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
@@ -401,7 +385,6 @@ private fun Preparing(
     if (setup.value?.questionsLeft == true) {
         TodayAtRest(
             padding = padding,
-            date = null,
             state = stringResource(R.string.today_setting_up),
             icon = R.drawable.ic_checklist,
             sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
@@ -427,7 +410,7 @@ private fun Preparing(
     val poll = pollWhile(active = setup.value?.questionsLeft == false, read = app.today.today, context = read.goalId)
 
     TodayPage(padding) {
-        TodayPageHeader(date = stringResource(R.string.today_building_plan), state = null, title = stringResource(R.string.today_title))
+        TodayPageHeader(state = stringResource(R.string.today_building_plan), title = stringResource(R.string.today_title))
         if (poll.stalled) PlanWaitStalled(poll.restart) else TodayPlanWait(read.displayName)
     }
 }
@@ -475,7 +458,6 @@ private fun TodayPlanWait(goalTitle: String) {
 @Composable
 private fun TodayAtRest(
     padding: PaddingValues,
-    date: String?,
     state: String,
     @DrawableRes icon: Int,
     sentence: String,
@@ -485,7 +467,7 @@ private fun TodayAtRest(
     actions: @Composable () -> Unit,
 ) {
     TodayPage(padding) {
-        TodayPageHeader(date = date, state = state, title = stringResource(R.string.today_title))
+        TodayPageHeader(state = state, title = stringResource(R.string.today_title))
         TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
         detail()
         TodayActions(actions)

@@ -290,12 +290,8 @@ struct TodayDayView: View {
     }
   }
 
-  private var dayLine: Text {
+  private var dayLine: Text? {
     var parts: [String] = []
-
-    if let date = studyDate(view.session.localDate) {
-      parts.append(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
-    }
 
     if let daysLeft = view.goal.daysLeft {
       parts.append(
@@ -321,7 +317,7 @@ struct TodayDayView: View {
       }
     }
 
-    return Text(parts.joinedFacts())
+    return parts.isEmpty ? nil : Text(parts.joinedFacts())
   }
 
   private func open(_ block: StudyBlock, next: Bool) {

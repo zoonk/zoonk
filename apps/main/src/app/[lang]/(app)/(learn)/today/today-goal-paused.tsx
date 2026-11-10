@@ -1,4 +1,3 @@
-import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
@@ -8,7 +7,6 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { FlagIcon, PauseIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { ResumeGoalButton } from "./resume-goal-button";
-import { getLocalDay } from "./today-local-day";
 
 async function loadResumePreview(goal: { id: string; status: string } | undefined) {
   if (goal?.status !== "paused") {
@@ -21,12 +19,8 @@ async function loadResumePreview(goal: { id: string; status: string } | undefine
 
 export async function TodayGoalPaused() {
   const t = await getExtracted();
-  const locale = await getAppLocale();
   const list = await listCurrentUserGoals();
   const goal = list?.goals.find((item) => item.id === list.activeGoalId);
-
-  // The date line formats with next-intl, so it's read on its own, before the preview.
-  const date = await getLocalDay({ locale, timeZone: goal?.timezone ?? null });
   const resume = await loadResumePreview(goal);
 
   if (goal?.status === "completed") {
@@ -38,7 +32,6 @@ export async function TodayGoalPaused() {
           </Link>
         }
         clause={t("Start a new goal, or pick another one above.")}
-        date={date}
         icon={<FlagIcon />}
         sentence={t("You finished your {goal} goal.", { goal: goal.displayName })}
         state={t("Finished")}
@@ -61,7 +54,6 @@ export async function TodayGoalPaused() {
         </>
       }
       clause={t("Nothing is planned until you resume it.")}
-      date={date}
       detail={<ResumeEffect preview={resume} />}
       icon={<PauseIcon />}
       sentence={
