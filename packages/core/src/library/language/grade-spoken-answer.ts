@@ -15,40 +15,52 @@ import {
 } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { findClosingAnswer } from "../../lesson-player/_utils/answer-recording";
+import { findPlayableStepRow, getAnswerSkillId } from "../../lesson-player/_utils/lesson-rows";
+import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
+import { gradeSpokenMistake } from "../../mistakes/grade-spoken-mistake";
+import { type MistakeReplay } from "../../mistakes/mistake-replay";
 import { getSession } from "../../users/get-session";
-import { libraryRowsVisibleTo } from "../_utils/library-visibility";
-import { parseStepContent } from "../steps/contract/step-contract";
-import {
-  type SpokenAudio,
-  hearSpokenSentence,
-  isValidSpokenAudio,
-} from "./_utils/hear-spoken-sentence";
-import { loadPracticeWords } from "./_utils/practice-words";
-import { getSpokenAnswerExplanation } from "./_utils/spoken-answer-explanation";
+import { SPOKEN_EVIDENCE_SCORE, gradeSpokenRecording } from "./_utils/grade-spoken-recording";
+import { type SpokenAudio, isValidSpokenAudio } from "./_utils/hear-spoken-sentence";
 import { type GradeSpokenAnswerResult, type SpokenAnswerFields } from "./spoken-answer-contract";
-import { pickWordsToExplain } from "./spoken-answer-match";
-
-const SPOKEN_EVIDENCE_SCORE = 0.8;
 
 async function findSpokenStep({ stepId, userId }: { stepId: string; userId: string }) {
-  const step = await prisma.step.findFirst({
-    include: { lesson: { select: { language: true, level: true } } },
-    where: { id: stepId, kind: "spokenAnswer", lesson: libraryRowsVisibleTo(userId) },
-  });
+  const row = await findPlayableStepRow({ stepId, userId });
 
-  if (!step) {
+  if (!row || row.kind !== "spokenAnswer") {
     return null;
   }
 
-  const content = parseStepContent("spokenAnswer", step.content);
+  const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
+
+  if (step?.kind !== "spokenAnswer") {
+    return null;
+  }
+
+  const { content } = step;
+
+  const replay: MistakeReplay = {
+    kind: "lesson",
+    lesson: {
+      language: row.lesson.language,
+      lessonId: row.lessonId,
+      level: row.lesson.level,
+      step,
+      targetLanguage: row.lesson.targetLanguage,
+    },
+  };
 
   return {
     content,
     id: step.id,
-    learnerLanguage: step.lesson.language,
-    lessonId: step.lessonId,
-    level: step.lesson.level,
-    skillId: step.skillId,
+    learnerLanguage: row.lesson.language,
+    lessonId: row.lessonId,
+    level: row.lesson.level,
+    replay,
+    skillId: getAnswerSkillId({
+      lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
+      stepSkillId: step.skillId,
+    }),
     targetLanguage: content.language,
     targetText: content.targetText,
   };
@@ -90,6 +102,10 @@ export async function gradeSpokenAnswer({
   fields: SpokenAnswerFields;
   stepId: string;
 }): Promise<GradeSpokenAnswerResult> {
+  if (fields.mistakeId) {
+    return gradeSpokenMistake({ audio, fields, stepId });
+  }
+
   const receivedAt = new Date();
   const session = await getSession();
 
@@ -115,41 +131,22 @@ export async function gradeSpokenAnswer({
     return usage;
   }
 
-  const { match, transcript } = await hearSpokenSentence({
-    audio,
-    expected: step.targetText,
-    language: step.targetLanguage,
-    userId,
-  });
+  const [grade, studySessionId] = await Promise.all([
+    gradeSpokenRecording({ audio, step, userId }),
+    findOwnStudySessionId({ studySessionId: fields.studySessionId, userId }),
+  ]);
 
-  if (!match.normalizedHeard) {
+  if (!grade) {
     return { status: "noSpeech" };
   }
 
-  const wordsToPractice = await loadPracticeWords({
-    learnerLanguage: step.learnerLanguage,
-    targetLanguage: step.targetLanguage,
-    words: match.isCorrect ? [] : pickWordsToExplain(match.words),
-  });
-
-  const [explanation, studySessionId] = await Promise.all([
-    match.isCorrect
-      ? null
-      : getSpokenAnswerExplanation({
-          heard: transcript,
-          normalizedHeard: match.normalizedHeard,
-          step,
-          userId,
-          words: wordsToPractice,
-        }),
-    findOwnStudySessionId({ studySessionId: fields.studySessionId, userId }),
-  ]);
+  const { explanation, transcript, wordsToPractice } = grade;
 
   const question = `${step.content.prompt}\n${step.targetText}`;
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: fields.timeZone });
 
   const evidence = await loadLanguageStepEvidence({
-    isCorrect: match.score >= SPOKEN_EVIDENCE_SCORE,
+    isCorrect: grade.score >= SPOKEN_EVIDENCE_SCORE,
     lesson: { level: step.level, targetLanguage: step.targetLanguage },
     step: { kind: "spokenAnswer", wordId: null },
     userId,
@@ -158,7 +155,7 @@ export async function gradeSpokenAnswer({
   const outcome = await recordAnswerOnce({
     answer: {
       answer: { kind: "spoken", transcript },
-      graded: { durationMs: fields.durationMs, isCorrect: match.isCorrect, score: match.score },
+      graded: { durationMs: fields.durationMs, isCorrect: grade.isCorrect, score: grade.score },
       language: step.learnerLanguage,
       mistake: {
         questionText: question,
@@ -168,6 +165,7 @@ export async function gradeSpokenAnswer({
           explanation,
           format: "spoken",
           question,
+          replay: step.replay,
         },
       },
       purpose: "learning",
@@ -181,7 +179,7 @@ export async function gradeSpokenAnswer({
     refuse: (client: TransactionClient) =>
       findClosingAnswer({
         client,
-        isCorrect: match.isCorrect,
+        isCorrect: grade.isCorrect,
         lessonId: step.lessonId,
         stepId: step.id,
         until: receivedAt,
@@ -222,10 +220,10 @@ export async function gradeSpokenAnswer({
     grade: {
       attemptId,
       explanation,
-      isCorrect: match.isCorrect,
-      score: match.score,
+      isCorrect: grade.isCorrect,
+      score: grade.score,
       transcript,
-      words: match.words,
+      words: grade.words,
       wordsToPractice,
     },
     status: "graded",

@@ -82,7 +82,8 @@ internal class FakeMistakesApi(
     var answer: suspend (MistakePracticeAnswerInput) -> MistakePracticeFeedback = { practiceFeedback() },
     var finish: suspend (MistakePracticeFinishInput) -> MistakePracticeCompletion = { completion() },
 ) : MistakesApi {
-    val answers = mutableListOf<MistakePracticeAnswerInput>()
+    val rawAnswers = mutableListOf<MistakePracticeAnswerInput>()
+    val answers get() = rawAnswers.map { (it as MistakePracticeAnswerInput.MistakePracticeAnswerInputAnyOfValue).value }
     val finishes = mutableListOf<MistakePracticeFinishInput>()
 
     override suspend fun practice(
@@ -96,9 +97,21 @@ internal class FakeMistakesApi(
         mistakeId: UUID,
         input: MistakePracticeAnswerInput,
     ): MistakePracticeFeedback {
-        answers += input
+        rawAnswers += input
         return answer(input)
     }
+
+    override suspend fun speak(
+        session: AuthenticatedSession,
+        mistakeId: UUID,
+        stepId: UUID,
+        recording: com.zoonk.android.feature.audio.VoiceRecording,
+        attemptId: UUID,
+        goalId: UUID?,
+        answerIds: List<UUID>,
+        timeZone: String,
+        practiceDurationMs: Long,
+    ): com.zoonk.api.models.SpokenAnswerGrade = error("No spoken fixture")
 
     override suspend fun finish(
         session: AuthenticatedSession,
@@ -113,7 +126,8 @@ internal fun practiceViewModel(
     cache: AppCache,
     api: FakeMistakesApi,
     clock: () -> Long = { 0L },
-) = MistakePracticeViewModel(PracticeKey(goalId = null, skillId = null), MistakesStore(api, cache) { "UTC" }, clock)
+    saved: androidx.lifecycle.SavedStateHandle = androidx.lifecycle.SavedStateHandle(),
+) = MistakePracticeViewModel(PracticeKey(goalId = null, skillId = null), MistakesStore(api, cache) { "UTC" }, saved, clock)
 
 internal fun MistakePracticeViewModel.started() =
     runBlocking { practice.load() }.let {

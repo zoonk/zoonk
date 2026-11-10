@@ -363,6 +363,13 @@ struct LessonPlayerState: Equatable, Sendable {
     return (before ?? explanations.first { $0.0 > questionIndex })?.1
   }
 
+  mutating func startReplayChecking() { phase = .checking }
+
+  mutating func showReplayResult(_ stepId: String, result: LessonStepResult) {
+    results[stepId] = result
+    phase = .feedback
+  }
+
   mutating func select(_ answer: LessonAnswer?, for stepId: String) {
     guard phase == .playing else {
       return

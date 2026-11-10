@@ -122,14 +122,20 @@ internal class LiveTutorApi(
                     }
 
                     is TutorThreadKey.Step -> {
-                        clients.lessons.getLessonQuestionThread(key.lessonId.id, cursor = page, stepId = key.stepId.id)
+                        clients.lessons.getLessonQuestionThread(
+                            key.lessonId.id,
+                            cursor = page,
+                            stepId = key.stepId.id,
+                            mistakeId = key.mistakeId?.id,
+                        )
                     }
 
                     is TutorThreadKey.Item -> {
                         clients.studySessions.getItemQuestionThread(
-                            key.itemId.id,
-                            StudySessionsApi.ContextKindGetItemQuestionThread.ITEM,
-                            page,
+                            itemId = key.itemId.id,
+                            contextKind = StudySessionsApi.ContextKindGetItemQuestionThread.ITEM,
+                            cursor = page,
+                            mistakeId = key.mistakeId?.id,
                         )
                     }
                 }
@@ -354,19 +360,35 @@ private val TutorScope.context: LessonQuestionContextInput
 
             is TutorScope.Step -> {
                 LessonQuestionContextInput.LessonQuestionContextInputOneOf1Value(
-                    LessonQuestionContextInputOneOf1(LessonQuestionContextInputOneOf1.Kind.STEP, stepId.id, stepNumber.toLong()),
+                    LessonQuestionContextInputOneOf1(
+                        LessonQuestionContextInputOneOf1.Kind.STEP,
+                        stepId.id,
+                        stepNumber.toLong(),
+                        mistakeId = mistakeId?.id,
+                    ),
                 )
             }
 
             is TutorScope.Answer -> {
                 LessonQuestionContextInput.LessonQuestionContextInputOneOf2Value(
-                    LessonQuestionContextInputOneOf2(answer, LessonQuestionContextInputOneOf2.Kind.ANSWER, stepId.id, stepNumber.toLong()),
+                    LessonQuestionContextInputOneOf2(
+                        answer,
+                        LessonQuestionContextInputOneOf2.Kind.ANSWER,
+                        stepId.id,
+                        stepNumber.toLong(),
+                        mistakeId = mistakeId?.id,
+                    ),
                 )
             }
 
             is TutorScope.Item -> {
                 LessonQuestionContextInput.LessonQuestionContextInputOneOf4Value(
-                    LessonQuestionContextInputOneOf4(answered, LessonQuestionContextInputOneOf4.Kind.ITEM, blockId?.id),
+                    LessonQuestionContextInputOneOf4(
+                        answered,
+                        LessonQuestionContextInputOneOf4.Kind.ITEM,
+                        blockId?.id,
+                        mistakeId = mistakeId?.id,
+                    ),
                 )
             }
         }

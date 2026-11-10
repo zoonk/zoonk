@@ -34,6 +34,7 @@ sealed interface TutorScope {
         val lessonId: String,
         val stepId: String,
         val stepNumber: Int,
+        val mistakeId: String? = null,
     ) : TutorScope
 
     /** The learner's checked answer on a step; it shares the step's conversation. */
@@ -42,6 +43,7 @@ sealed interface TutorScope {
         val stepId: String,
         val stepNumber: Int,
         val answer: LessonStepAnswer,
+        val mistakeId: String? = null,
     ) : TutorScope
 
     /**
@@ -52,6 +54,7 @@ sealed interface TutorScope {
         val itemId: String,
         val blockId: String?,
         val answered: Boolean,
+        val mistakeId: String? = null,
     ) : TutorScope
 }
 
@@ -103,10 +106,12 @@ sealed interface TutorThreadKey {
     data class Step(
         val lessonId: String,
         val stepId: String,
+        val mistakeId: String? = null,
     ) : TutorThreadKey
 
     data class Item(
         val itemId: String,
+        val mistakeId: String? = null,
     ) : TutorThreadKey
 }
 
@@ -118,7 +123,7 @@ val TutorScope.thread: TutorThreadKey
             is TutorScope.Chapter -> TutorThreadKey.Chapter(chapterId)
             is TutorScope.Mock -> TutorThreadKey.Mock(blockId)
             is TutorScope.Lesson -> TutorThreadKey.Lesson(lessonId)
-            is TutorScope.Step -> TutorThreadKey.Step(lessonId, stepId)
-            is TutorScope.Answer -> TutorThreadKey.Step(lessonId, stepId)
-            is TutorScope.Item -> TutorThreadKey.Item(itemId)
+            is TutorScope.Step -> TutorThreadKey.Step(lessonId, stepId, mistakeId)
+            is TutorScope.Answer -> TutorThreadKey.Step(lessonId, stepId, mistakeId)
+            is TutorScope.Item -> TutorThreadKey.Item(itemId, mistakeId)
         }

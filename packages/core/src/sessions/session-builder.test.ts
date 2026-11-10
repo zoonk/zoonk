@@ -59,15 +59,6 @@ const baseInput: SessionBuildInput = {
   capsules: [capsule("a"), capsule("b"), capsule("c")],
   checkpoints: [],
   dailyMinutes: 45,
-  drills: [
-    {
-      itemIds: ["m1", "m2"],
-      kind: "retry",
-      lessonId: null,
-      mistakeId: "mistake-1",
-      timeLimitSeconds: null,
-    },
-  ],
   examTrialEnded: false,
   freshStart: null,
   lessons: [lesson("l1", 14), lesson("l2", 10), lesson("l3", 10)],
@@ -93,7 +84,7 @@ describe(buildSessionBlocks, () => {
     ...baseInput,
     capsules: [],
     checkpoints: [boss],
-    drills: [],
+
     lastSessionChallenges: new Map([["plan-boss", false]]),
     lessons: [lesson("l1", 15)],
     planItems: [
@@ -166,7 +157,7 @@ describe(buildSessionBlocks, () => {
       capsules: [],
       checkpoints: [boss],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [lesson("l1", 4)],
       planItems: [
         { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
@@ -209,7 +200,7 @@ describe(buildSessionBlocks, () => {
       capsules: [],
       checkpoints: [boss, { ...boss, phase: 2, planItemId: "second" }],
       dailyMinutes: 20,
-      drills: [],
+
       lessons: [],
       practice: [],
     });
@@ -244,7 +235,7 @@ describe(buildSessionBlocks, () => {
         { ...boss, minutes: 20, phase: 2, planItemId: "first-duel" },
       ],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: [],
     });
@@ -274,9 +265,19 @@ describe(buildSessionBlocks, () => {
     expect(blocks[1]?.canDo).toBe("You'll do l1");
     expect(blocks[1]?.payload.planItemId).toBe("plan-l1");
 
-    expect(blocks[3]?.payload.drills).toStrictEqual(baseInput.drills);
+    expect(blocks[3]?.payload.drills).toStrictEqual([]);
 
-    expect(blocks[3]?.payload.itemIds).toStrictEqual(["p0", "p1", "p2", "p3", "p4", "p5", "p6"]);
+    expect(blocks[3]?.payload.itemIds).toStrictEqual([
+      "p0",
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "p5",
+      "p6",
+      "p7",
+      "p8",
+    ]);
   });
 
   it("opens the first week's sessions with a few placement questions, even without capsules", () => {
@@ -349,7 +350,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       checkpoints: [boss],
-      drills: [],
+
       lessons,
       planItems: order.map((id, position) => ({
         id,
@@ -372,7 +373,7 @@ describe(buildSessionBlocks, () => {
       capsules: [],
       checkpoints: [boss],
       dailyMinutes: 20,
-      drills: [],
+
       lessons,
       planItems: order.map((id, position) => ({
         id,
@@ -463,7 +464,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [capsule("a")],
       dailyMinutes: 25,
-      drills: [],
+
       fullReviewSkillIds: skills,
       practice: pool,
     };
@@ -498,16 +499,14 @@ describe(buildSessionBlocks, () => {
     ]);
   });
 
-  it("keeps reviews and mistake fixes free when a free exam trial has ended", () => {
+  it("keeps reviews free when a free exam trial has ended", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
       checkpoints: [boss],
       examTrialEnded: true,
     });
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
-    expect(blocks[1]?.payload.itemIds).toStrictEqual([]);
-    expect(blocks[1]?.payload.drills).toHaveLength(1);
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
   });
 
   it("still offers the next lesson when it's longer than the day's room", () => {
@@ -515,7 +514,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 10,
-      drills: [],
+
       lessons: [lesson("long", 12)],
     });
 
@@ -527,7 +526,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: Array.from({ length: 10 }, (_, index) => lesson(`l${index}`, 3)),
       practice: [],
       practiceShare: 0.5,
@@ -542,7 +541,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: Array.from({ length: 30 }, (_, index) => ({
         itemId: `p${index}`,
@@ -564,7 +563,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [lesson("l1", 3)],
       practice: Array.from({ length: 30 }, (_, index) => ({
         itemId: `p${index}`,
@@ -583,7 +582,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: Array.from({ length: 12 }, (_, index) => capsule(`c${index}`)),
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: [],
       writingMinutes: 18,
@@ -594,7 +593,7 @@ describe(buildSessionBlocks, () => {
     expect(blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBeLessThanOrEqual(12);
   });
 
-  it("splits a long day's practice into short blocks, mistakes first, and never a set", () => {
+  it("splits a long day's practice into short blocks without splitting a set", () => {
     const sets = Array.from({ length: 4 }, (_set, set) =>
       Array.from({ length: 3 }, (_item, index) => ({
         itemId: `set${set}-q${index}`,
@@ -622,10 +621,10 @@ describe(buildSessionBlocks, () => {
 
     expect(blocks.every((block) => block.kind === "practice")).toBe(true);
     expect(blocks.every((block) => block.estimatedMinutes <= 15)).toBe(true);
-    expect(blocks[0]?.payload.drills).toHaveLength(1);
+    expect(blocks[0]?.payload.drills).toStrictEqual([]);
     expect(blocks.slice(1).every((block) => block.payload.drills.length === 0)).toBe(true);
-    expect(sizes.reduce((sum, size) => sum + size, 0)).toBe(80);
-    expect(plannedMinutes).toBe(120);
+    expect(sizes.reduce((sum, size) => sum + size, 0)).toBe(79);
+    expect(plannedMinutes).toBe(119);
 
     expect(
       blocks.every((block) => {
@@ -649,7 +648,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 30,
-      drills: [],
+
       lessons: [],
       practice: [
         "s1",
@@ -687,7 +686,7 @@ describe(buildSessionBlocks, () => {
       ...baseInput,
       capsules: [],
       dailyMinutes: 15,
-      drills: [],
+
       lessons: [],
       practice: ["s0", "s0", "s0", "s1", "s2", "s2", "s2", "s2", "s1", "s1"].map(
         (skillId, index) => ({ itemId: `q${index}`, skillId }),
@@ -708,7 +707,7 @@ describe(buildSessionBlocks, () => {
     const withSet = {
       ...baseInput,
       capsules: [],
-      drills: [],
+
       lessons: [],
       practice: [practice[0], ...passage, practice[1], practice[2]].filter(
         (item) => item !== undefined,
@@ -745,7 +744,7 @@ describe("a long day's practice in three-question sets", () => {
         ...baseInput,
         capsules: [],
         dailyMinutes,
-        drills: [],
+
         lessons: [],
         practice: sets,
         practiceShare: 0.6,
@@ -806,7 +805,7 @@ describe("filling ordinary study days", () => {
     ...baseInput,
     capsules: [],
     dailyMinutes: 100,
-    drills: [],
+
     lessons: [],
     practice: [],
   };

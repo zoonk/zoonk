@@ -51,6 +51,7 @@ data class Question(
     val placement: Boolean = false,
     val drill: Drill? = null,
     val mistakeId: String? = null,
+    val tutorAvailable: Boolean = true,
     val capsuleKey: String? = null,
     val timeMachine: TimeMachine? = null,
     val answered: AnsweredMark? = null,

@@ -247,3 +247,54 @@ final class GradedRunTests: XCTestCase {
     XCTAssertEqual(GradedRunStage(answered: 0, asked: 0, total: 0), .waiting)
   }
 }
+
+extension MistakePracticeStateTests {
+  func testLessonReplayKeepsTheOriginalContextAndOptionsInAMixedRun() throws {
+    let replay = try mistakeReplayFixture()
+    guard case .check(let check) = replay.step.content else {
+      return XCTFail("Expected the original check")
+    }
+    XCTAssertEqual(check.context, "The original passage")
+    XCTAssertEqual(check.options.map(\.id), ["right", "wrong"])
+    var lesson = makeEntry("lesson", questions: [])
+    lesson.lesson = replay
+    var state = MistakePracticeState(entries: [
+      makeEntry("bank", questions: ["bank-question"]), lesson,
+    ])
+    XCTAssertEqual(state.steps.count, 2)
+    answer(&state, .choice(0), grade: makeGrade(isCorrect: true))
+    state.next()
+    XCTAssertEqual(state.step?.entry.lesson?.step.id, replay.step.id)
+    XCTAssertNil(state.step?.question)
+  }
+
+  func testUncheckedReplayDoesNotCountAMissOrAddAnAnswerId() throws {
+    var entry = makeEntry("lesson", questions: [])
+    entry.lesson = try mistakeReplayFixture()
+    var state = MistakePracticeState(entries: [entry])
+    var grade = makeGrade(isCorrect: false, stillOpen: true)
+    grade.answerId = nil
+    var result = LessonStepResult(
+      isCorrect: false, answerText: nil, correctAnswer: nil, feedback: "Compare your answer")
+    result.checked = false
+    grade.lessonResult = result
+    state.checkingLesson()
+    state.answeredLesson(grade, mistakeId: entry.mistakeId)
+    XCTAssertTrue(state.answerIds.isEmpty)
+    XCTAssertTrue(state.fixedIds.isEmpty)
+    XCTAssertEqual(state.segments, [.read])
+    state.next()
+    XCTAssertEqual(state.phase, .ending)
+  }
+}
+
+private func mistakeReplayFixture() throws -> MistakeLessonReplay {
+  let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+    .appendingPathComponent(
+      "../../android/core/data/src/testFixtures/resources/fixtures/mistake-practice-lesson-entry.json"
+    )
+  let entry = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
+  let lesson = try XCTUnwrap(entry?["lesson"])
+  return try JSONDecoder().decode(
+    MistakeLessonReplay.self, from: JSONSerialization.data(withJSONObject: lesson))
+}

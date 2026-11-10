@@ -96,24 +96,24 @@ model LessonWord {
 }
 
 model LessonSentence {
-  lessonId               String   @map("lesson_id") @db.Uuid
-  lesson                 Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  sentenceId             String   @map("sentence_id") @db.Uuid
-  sentence               Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-  position               Int      @db.SmallInt
+  lessonId               String    @map("lesson_id") @db.Uuid
+  lesson                 Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sentenceId             String    @map("sentence_id") @db.Uuid
+  sentence               Sentence  @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  position               Int       @db.SmallInt
   translation            String
-  otherSentenceOrders    String[] @default([]) @map("other_sentence_orders")
-  otherTranslationOrders String[] @default([]) @map("other_translation_orders")
+  otherSentenceOrders    String[]  @default([]) @map("other_sentence_orders")
+  otherTranslationOrders String[]  @default([]) @map("other_translation_orders")
   /// The default also marks sentences saved by a writer deployed before order generation.
   ordersOwedAt           DateTime? @default(now()) @map("orders_owed_at")
   explanation            String
-  distractors            String[] @default([])
-  translationDistractors String[] @default([]) @map("translation_distractors")
+  distractors            String[]  @default([])
+  translationDistractors String[]  @default([]) @map("translation_distractors")
   model                  String
-  promptVersion          String   @map("prompt_version")
-  runId                  String   @map("run_id")
-  generatedAt            DateTime @default(now()) @map("generated_at")
-  createdAt              DateTime @default(now()) @map("created_at")
+  promptVersion          String    @map("prompt_version")
+  runId                  String    @map("run_id")
+  generatedAt            DateTime  @default(now()) @map("generated_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
 
   @@id([lessonId, sentenceId])
   @@index([sentenceId])

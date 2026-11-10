@@ -3,11 +3,12 @@ import Foundation
 struct MistakePracticeStep: Equatable {
   let entry: MistakePracticeEntry
   let isFirstOfEntry: Bool
-  let question: PracticeQuestion
+  let question: PracticeQuestion?
 
   /// The question the mistake was made on: the notebook keeps a lesson's question with its context
   /// before it, and a bank question as it's asked. Its drill note says the last answer.
   var isMistakeQuestion: Bool {
+    guard let question else { return true }
     let saved = Self.squash(entry.snapshotQuestion)
     return saved == Self.squash(question.question)
       || (question.context.map { saved == Self.squash("\($0) \(question.question)") } ?? false)
@@ -26,6 +27,8 @@ enum MistakePracticePhase: Equatable {
   case ending
   case feedback(answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)
   case idea
+  case lessonChecking
+  case lessonFeedback
 
   var failed: SentAnswer? {
     if case .answerFailed(let sent) = self { sent } else { nil }
@@ -46,7 +49,10 @@ struct MistakePracticeState: Equatable {
 
   init(entries: [MistakePracticeEntry]) {
     steps = entries.flatMap { entry in
-      entry.questions.enumerated().map { position, question in
+      if entry.lesson != nil {
+        return [MistakePracticeStep(entry: entry, isFirstOfEntry: true, question: nil)]
+      }
+      return entry.questions.enumerated().map { position, question in
         MistakePracticeStep(entry: entry, isFirstOfEntry: position == 0, question: question)
       }
     }
@@ -95,8 +101,29 @@ struct MistakePracticeState: Equatable {
     guard case .checking(let sent) = phase else { return }
     let (answer, sender) = (sent.answer, sent.sender)
 
+    record(
+      grade, mistakeId: mistakeId,
+      verdict: sender != .timer && answer.isDontKnow ? .read : (grade.isCorrect ? .right : .wrong))
+    phase = .feedback(answer: answer, grade: grade, sender: sender)
+  }
+
+  mutating func checkingLesson() { phase = .lessonChecking }
+
+  mutating func lessonFailed() { phase = .answering }
+
+  mutating func answeredLesson(_ grade: MistakePracticeGrade, mistakeId: String) {
+    record(
+      grade, mistakeId: mistakeId,
+      verdict: grade.notSure || grade.lessonResult?.checked == false
+        ? .read : (grade.isCorrect ? .right : .wrong))
+    phase = .lessonFeedback
+  }
+
+  private mutating func record(
+    _ grade: MistakePracticeGrade, mistakeId: String, verdict: TaskSegment
+  ) {
     saveFailures = 0
-    answerIds.append(grade.answerId)
+    if let answerId = grade.answerId { answerIds.append(answerId) }
 
     var fixed = fixedIds
     for id in grade.fixedMistakeIds where !fixed.contains(id) { fixed.append(id) }
@@ -108,10 +135,7 @@ struct MistakePracticeState: Equatable {
     fixedIds = fixed
 
     reached = reached.merged(with: grade.reached)
-    // An explicit "not sure" is neutral; the clock running out stays a miss.
-    verdicts.append(
-      sender != .timer && answer.isDontKnow ? .read : (grade.isCorrect ? .right : .wrong))
-    phase = .feedback(answer: answer, grade: grade, sender: sender)
+    verdicts.append(verdict)
   }
 
   mutating func next() {

@@ -11,6 +11,7 @@ import { type LessonStepAnswer } from "../../lesson-player/contract";
 import { gradeStepAnswer } from "../../lesson-player/grade-step-answer";
 import { isAnswerableStep } from "../../lesson-player/lesson-run";
 import { type PlayableLibraryStep } from "../../lesson-player/playable-lesson";
+import { loadMistakeReplay } from "../../mistakes/mistake-replay";
 import { type LessonScopeContextInput } from "../contract";
 import { type LibraryQuestionLesson } from "./question-access";
 
@@ -63,9 +64,11 @@ function getRequestedSteps({
 /** Model-graded answers must use the recorded verdict the learner actually saw. */
 async function getRecordedAnswer({
   answer,
+  mistakeId,
   step,
   userId,
 }: {
+  mistakeId?: string;
   answer: Extract<LessonStepAnswer, { kind: "spokenAnswer" | "typedAnswer" }>;
   step: PlayableLibraryStep;
   userId: string;
@@ -73,7 +76,12 @@ async function getRecordedAnswer({
   const attempt = await prisma.attempt.findFirst({
     orderBy: { answeredAt: "desc" },
     select: { isCorrect: true },
-    where: { stepId: step.id, userId },
+    where: {
+      userId,
+      ...(mistakeId
+        ? { answer: { equals: mistakeId, path: ["practiceMistakeId"] } }
+        : { stepId: step.id }),
+    },
   });
 
   if (!attempt) {
@@ -96,16 +104,18 @@ async function getRecordedAnswer({
 async function getAnswerContext({
   answer,
   language,
+  mistakeId,
   step,
   userId,
 }: {
   answer: LessonStepAnswer;
+  mistakeId?: string;
   language: string;
   step: PlayableLibraryStep;
   userId: string;
 }): Promise<SnapshotAnswer | null> {
   if (answer.kind === "typedAnswer" || answer.kind === "spokenAnswer") {
-    return getRecordedAnswer({ answer, step, userId });
+    return getRecordedAnswer({ answer, mistakeId, step, userId });
   }
 
   const graded = gradeStepAnswer({ answer, language, step });
@@ -177,6 +187,63 @@ function getLessonPlace(
   };
 }
 
+async function buildMistakeContext({
+  context,
+  lesson,
+  userId,
+}: {
+  context: Exclude<LessonScopeContextInput, { kind: "lesson" }>;
+  lesson: LibraryQuestionLesson;
+  userId: string;
+}) {
+  const mistake = await prisma.mistake.findFirst({ where: { id: context.mistakeId, userId } });
+  const replay = mistake ? await loadMistakeReplay({ mistake, userId }) : null;
+
+  if (
+    !mistake ||
+    replay?.kind !== "lesson" ||
+    replay.lesson.lessonId !== lesson.id ||
+    replay.lesson.step.id !== context.stepId
+  ) {
+    return { status: "invalidContext" as const };
+  }
+
+  const { step } = replay.lesson;
+
+  const answer =
+    context.kind === "answer"
+      ? await getAnswerContext({
+          answer: context.answer,
+          language: replay.lesson.language,
+          mistakeId: mistake.id,
+          step,
+          userId,
+        })
+      : null;
+
+  if (context.kind === "answer" && !answer) {
+    return { status: "invalidContext" as const };
+  }
+
+  const screen = toStepContext({ step, stepNumber: context.stepNumber });
+
+  const contextSnapshot: LessonScopeContext = {
+    ...getLessonPlace(lesson),
+    answer,
+    lessonSteps: [screen],
+    scope: { kind: context.kind },
+    step: screen,
+    version: 1,
+  };
+
+  return {
+    contextSnapshot,
+    status: "ready" as const,
+    stepId: mistake.stepId,
+    stepNumber: context.stepNumber,
+  };
+}
+
 export async function buildLibraryQuestionContextSnapshot({
   context,
   lesson,
@@ -186,6 +253,9 @@ export async function buildLibraryQuestionContextSnapshot({
   lesson: LibraryQuestionLesson;
   userId: string;
 }) {
+  if (context.kind !== "lesson" && context.mistakeId) {
+    return buildMistakeContext({ context, lesson, userId });
+  }
   // Use the learner's opened version even when a background check has replaced it.
   const version = await findOpenedVersion({
     lessonId: lesson.id,

@@ -5,8 +5,10 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { postToApp } from "@/lib/http/post-to-app";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
+import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { type MistakePracticeFeedback, MistakePracticeRun } from "@zoonk/learn/mistakes/practice";
+import { LessonPracticeStep } from "@zoonk/player/lesson/practice";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type ComponentProps } from "react";
 import { finishMistakePracticeAction } from "./practice-actions";
@@ -50,6 +52,31 @@ export function MistakePracticeClient({
             timeZone: getLocalTimeZone(),
           });
         },
+        record: async ({
+          audio,
+          durationMs,
+          stepId,
+          mistakeId,
+          attemptId,
+          runAnswerIds,
+          practiceDurationMs,
+        }) => {
+          const outcome = await requestSpokenGrade({
+            audio,
+            durationMs,
+            practice: { answerIds: runAnswerIds, attemptId, goalId, mistakeId, practiceDurationMs },
+            stepId,
+            studySessionId: null,
+          });
+
+          if (outcome.status !== "graded") {
+            return outcome;
+          }
+
+          return outcome.grade.practice
+            ? { feedback: outcome.grade.practice, grade: outcome.grade, status: "graded" }
+            : { status: "failed" };
+        },
       }}
       backHref="/mistakes"
       buddy={tutor.buddy}
@@ -59,6 +86,7 @@ export function MistakePracticeClient({
       renderCeremony={(moments, onClose) => (
         <SessionCeremony buddy={tutor.buddy} moments={moments} onClose={onClose} />
       )}
+      renderLesson={(props) => <LessonPracticeStep {...props} />}
       trueFalseLabels={trueFalseLabels}
       tutor={questionTutor}
     />

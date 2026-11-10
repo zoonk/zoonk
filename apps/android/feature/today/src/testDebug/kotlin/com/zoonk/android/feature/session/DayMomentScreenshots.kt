@@ -19,7 +19,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.MistakePatternPracticeResultReachedLevel
+import com.zoonk.api.models.MistakePracticeFeedbackReachedLevel
 import com.zoonk.api.models.StudyMission
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -91,7 +91,7 @@ class DayMomentScreenshots {
     }
 
     private companion object {
-        val level = MistakePatternPracticeResultReachedLevel(MistakePatternPracticeResultReachedLevel.Color.YELLOW, 4)
+        val level = MistakePracticeFeedbackReachedLevel(MistakePracticeFeedbackReachedLevel.Color.YELLOW, 4)
 
         fun mission(
             kind: StudyMission.Kind,

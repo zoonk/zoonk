@@ -11,7 +11,7 @@ import {
 import { fillRemainingLessonTime } from "./_utils/fill-session-time";
 import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
 import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
-import { type PracticeTopic, buildPracticeBlocks, countDrilled } from "./_utils/practice-blocks";
+import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-blocks";
 import {
   getLessonMinutes,
   getNewLessons,
@@ -23,7 +23,6 @@ import { MIN_BLOCK_MINUTES, PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "./b
 import {
   type BlockCapsule,
   type BlockCheckpoint,
-  type BlockDrill,
   type BlockPayload,
   toBlockPayload,
 } from "./block-payload";
@@ -70,8 +69,6 @@ export type SessionBuildInput = {
   /** Whether the learner started each phase challenge of their last session (`getSessionChallenges`). */
   lastSessionChallenges?: ReadonlyMap<string, boolean>;
   dailyMinutes: number;
-  /** Oldest open mistakes from earlier days only. */
-  drills: BlockDrill[];
   /** A free exam plan past its first days: reviews and fixes stay, new work waits for Plus. */
   examTrialEnded: boolean;
   /** First-week placement opens before capsules. */
@@ -188,7 +185,6 @@ function getPracticeMinutes({
 }): number {
   const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
   const practice = input.examTrialEnded ? [] : input.practice;
-  const drilled = countDrilled(input.drills);
   const opened = input.openedPractice;
 
   // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
@@ -196,7 +192,7 @@ function getPracticeMinutes({
     ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
     : remaining * share;
 
-  return Math.min(target, (practice.length + drilled) * PRACTICE_MINUTES_PER_QUESTION);
+  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION);
 }
 
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {
@@ -290,7 +286,6 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   const fullReviewMinutes =
     countFullReviewQuestions({
-      drilled: countDrilled(input.drills),
       fullReviewSkillIds: input.fullReviewSkillIds,
       practice: input.practice,
       reviewedSkillIds: review?.payload.skillIds ?? [],
@@ -340,7 +335,6 @@ export function buildSessionBlocks(day: SessionBuildInput): {
         : buildCheckpointBlock(entry.checkpoint),
     ),
     ...buildPracticeBlocks({
-      drills: input.drills,
       fullReviewSkillIds: input.fullReviewSkillIds,
       minutes: Math.max(0, remaining - learnMinutes - (input.writingMinutes ?? 0)),
       netScored: input.netScored,

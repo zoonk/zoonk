@@ -9236,6 +9236,15 @@
           },
           {
             "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "in": "query",
             "name": "stepId",
             "schema": {
               "description": "Return questions and answer explanations for this step only; pagination uses the same filter",
@@ -9485,6 +9494,15 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
             "description": "Opaque cursor returned in nextCursor"
+          },
+          {
+            "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           {
             "in": "query",
@@ -9752,6 +9770,15 @@
           },
           {
             "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "in": "query",
             "name": "stepId",
             "schema": {
               "description": "Return questions and answer explanations for this step only; pagination uses the same filter",
@@ -10016,6 +10043,15 @@
           },
           {
             "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "in": "query",
             "name": "stepId",
             "schema": {
               "description": "Return questions and answer explanations for this step only; pagination uses the same filter",
@@ -10265,6 +10301,15 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
             "description": "Opaque cursor returned in nextCursor"
+          },
+          {
+            "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           {
             "in": "query",
@@ -10590,6 +10635,15 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
             "description": "Opaque cursor returned in nextCursor"
+          },
+          {
+            "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           {
             "in": "query",
@@ -18792,6 +18846,17 @@
           },
           {
             "in": "query",
+            "name": "includeAllFormats",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "in": "query",
             "name": "skillId",
             "schema": {
               "description": "Only this skill's mistakes (\"Practice this skill\"), within the goal's",
@@ -25678,11 +25743,36 @@
       "SpokenAnswerRequest": {
         "type": "object",
         "properties": {
+          "answerIds": {
+            "description": "For notebook practice, a JSON array of the run's earlier answer IDs",
+            "type": "string",
+            "maxLength": 4096
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "durationMs": {
             "type": "integer",
             "minimum": 0,
             "maximum": 60000,
             "description": "How long the learner spoke, in milliseconds"
+          },
+          "goalId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "mistakeId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "practiceDurationMs": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
           },
           "studySessionId": {
             "description": "Today's study session, if any",
@@ -27652,6 +27742,11 @@
                   "step"
                 ]
               },
+              "mistakeId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
               "stepId": {
                 "type": "string",
                 "format": "uuid",
@@ -27681,6 +27776,11 @@
                 "enum": [
                   "answer"
                 ]
+              },
+              "mistakeId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
               "stepId": {
                 "type": "string",
@@ -27736,6 +27836,11 @@
                 "enum": [
                   "item"
                 ]
+              },
+              "mistakeId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               }
             },
             "required": [
@@ -29325,63 +29430,229 @@
         "additionalProperties": false
       },
       "MistakePracticeAnswerInput": {
-        "type": "object",
-        "properties": {
-          "answer": {
-            "$ref": "#/components/schemas/ChoiceAnswer"
-          },
-          "durationMs": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Milliseconds from showing the question to the answer; anything over an hour counts as an hour"
-          },
-          "itemId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "attemptId": {
-            "description": "Your id for this answer: sent again with it (a retry), it's recorded once",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "run": {
-            "description": "The run this answer is part of. The answer then counts the run toward today, as finishing it with every answer so far does, so a run left halfway still counts without a finish after each answer",
+        "anyOf": [
+          {
             "type": "object",
             "properties": {
-              "answerIds": {
-                "maxItems": 49,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                "description": "The run's earlier answers, as their answers returned them"
+              "answer": {
+                "$ref": "#/components/schemas/QuestionAnswer"
               },
-              "goalId": {
-                "description": "The goal the run practiced, when scoped",
+              "durationMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds from showing the question to the answer; anything over an hour counts as an hour"
+              },
+              "itemId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "timeZone": {
+                "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+                "type": "string"
+              },
+              "attemptId": {
+                "description": "Your id for this answer: sent again with it (a retry), it's recorded once",
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "run": {
+                "description": "The run this answer is part of. The answer then counts the run toward today, as finishing it with every answer so far does, so a run left halfway still counts without a finish after each answer",
+                "type": "object",
+                "properties": {
+                  "answerIds": {
+                    "maxItems": 49,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "description": "The run's earlier answers, as their answers returned them"
+                  },
+                  "goalId": {
+                    "description": "The goal the run practiced, when scoped",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "answerIds"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "answer",
+              "durationMs",
+              "itemId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "durationMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds from showing the question to the answer; anything over an hour counts as an hour"
+              },
+              "attemptId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "run": {
+                "description": "The run this answer is part of. The answer then counts the run toward today, as finishing it with every answer so far does, so a run left halfway still counts without a finish after each answer",
+                "type": "object",
+                "properties": {
+                  "answerIds": {
+                    "maxItems": 49,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "description": "The run's earlier answers, as their answers returned them"
+                  },
+                  "goalId": {
+                    "description": "The goal the run practiced, when scoped",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "answerIds"
+                ],
+                "additionalProperties": false
+              },
+              "timeZone": {
+                "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+                "type": "string"
+              },
+              "answer": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/LessonStepAnswer"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "dontKnow": {
+                        "type": "boolean",
+                        "enum": [
+                          true
+                        ]
+                      }
+                    },
+                    "required": [
+                      "dontKnow"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "stepId": {
                 "type": "string",
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               }
             },
             "required": [
-              "answerIds"
+              "durationMs",
+              "attemptId",
+              "answer",
+              "stepId"
             ],
             "additionalProperties": false
+          }
+        ]
+      },
+      "QuestionAnswer": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/ChoiceAnswer"
           },
-          "timeZone": {
-            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
-            "type": "string"
+          {
+            "$ref": "#/components/schemas/MatchAnswer"
+          },
+          {
+            "$ref": "#/components/schemas/NumberAnswer"
+          },
+          {
+            "$ref": "#/components/schemas/TypedAnswer"
+          },
+          {
+            "$ref": "#/components/schemas/OrderAnswer"
+          }
+        ]
+      },
+      "MatchAnswer": {
+        "type": "object",
+        "properties": {
+          "matches": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "For each left entry, the index of the right entry it was matched to"
           }
         },
         "required": [
-          "answer",
-          "durationMs",
-          "itemId"
+          "matches"
+        ],
+        "additionalProperties": false
+      },
+      "NumberAnswer": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "number",
+            "description": "A math question's answer, as a plain number without its unit"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "additionalProperties": false
+      },
+      "TypedAnswer": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "A typed question's answer: a word, a number or a short phrase"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "OrderAnswer": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "An ordering question's answer: the indexes of its shown steps (`options`), in the order the learner put them"
+          }
+        },
+        "required": [
+          "order"
         ],
         "additionalProperties": false
       },
@@ -31018,23 +31289,7 @@
         "type": "object",
         "properties": {
           "answer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ChoiceAnswer"
-              },
-              {
-                "$ref": "#/components/schemas/MatchAnswer"
-              },
-              {
-                "$ref": "#/components/schemas/NumberAnswer"
-              },
-              {
-                "$ref": "#/components/schemas/TypedAnswer"
-              },
-              {
-                "$ref": "#/components/schemas/OrderAnswer"
-              }
-            ]
+            "$ref": "#/components/schemas/QuestionAnswer"
           },
           "durationMs": {
             "type": "integer",
@@ -31056,69 +31311,6 @@
           "answer",
           "durationMs",
           "itemId"
-        ],
-        "additionalProperties": false
-      },
-      "MatchAnswer": {
-        "type": "object",
-        "properties": {
-          "matches": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9007199254740991
-            },
-            "description": "For each left entry, the index of the right entry it was matched to"
-          }
-        },
-        "required": [
-          "matches"
-        ],
-        "additionalProperties": false
-      },
-      "NumberAnswer": {
-        "type": "object",
-        "properties": {
-          "number": {
-            "type": "number",
-            "description": "A math question's answer, as a plain number without its unit"
-          }
-        },
-        "required": [
-          "number"
-        ],
-        "additionalProperties": false
-      },
-      "TypedAnswer": {
-        "type": "object",
-        "properties": {
-          "text": {
-            "type": "string",
-            "maxLength": 500,
-            "description": "A typed question's answer: a word, a number or a short phrase"
-          }
-        },
-        "required": [
-          "text"
-        ],
-        "additionalProperties": false
-      },
-      "OrderAnswer": {
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9007199254740991
-            },
-            "description": "An ordering question's answer: the indexes of its shown steps (`options`), in the order the learner put them"
-          }
-        },
-        "required": [
-          "order"
         ],
         "additionalProperties": false
       },
@@ -39956,6 +40148,13 @@
             "type": "boolean",
             "description": "Every word was heard as expected"
           },
+          "practice": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MistakePracticeFeedback"
+              }
+            ]
+          },
           "score": {
             "type": "number",
             "minimum": 0,
@@ -39987,6 +40186,780 @@
           "transcript",
           "words",
           "wordsToPractice"
+        ],
+        "additionalProperties": false
+      },
+      "MistakePracticeFeedback": {
+        "type": "object",
+        "properties": {
+          "answerId": {
+            "nullable": true,
+            "description": "The answer's id: send the run's answer ids when it finishes",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "correctAnswer": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionAnswer"
+              }
+            ]
+          },
+          "explanation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fixed": {
+            "type": "boolean",
+            "description": "This answer fixed the practiced notebook entry"
+          },
+          "fixedMistakeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "Every notebook entry fixed by this answer; deduplicate these for the run correction count"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          },
+          "lessonResult": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonStepCheckResult"
+              }
+            ]
+          },
+          "mistakeStatus": {
+            "type": "string",
+            "enum": [
+              "open",
+              "fixed"
+            ],
+            "description": "Fixed once answered right on a later day"
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own"
+          },
+          "trap": {
+            "nullable": true,
+            "description": "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
+            "type": "string"
+          },
+          "workedSteps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "answerId",
+          "correctAnswer",
+          "explanation",
+          "fixed",
+          "fixedMistakeIds",
+          "isCorrect",
+          "lessonResult",
+          "mistakeStatus",
+          "reached",
+          "trap",
+          "workedSteps"
+        ],
+        "additionalProperties": false
+      },
+      "LessonStepCheckResult": {
+        "type": "object",
+        "properties": {
+          "checked": {
+            "type": "boolean",
+            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
+          },
+          "correctAnswer": {
+            "nullable": true,
+            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+            "type": "string"
+          },
+          "corrections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "right": {
+                  "type": "string",
+                  "description": "The same words written correctly"
+                },
+                "wrong": {
+                  "type": "string",
+                  "description": "The learner's words as they wrote them"
+                }
+              },
+              "required": [
+                "right",
+                "wrong"
+              ],
+              "additionalProperties": false
+            },
+            "description": "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise."
+          },
+          "expected": {
+            "nullable": true,
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActivityExpected"
+              }
+            ]
+          },
+          "feedback": {
+            "nullable": true,
+            "description": "Why: the chosen option's reason, the grader's feedback or the check's explanation",
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          },
+          "keyPoints": {
+            "nullable": true,
+            "description": "Each key point of a typed answer and whether the answer stated it, judged by meaning",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "met": {
+                  "type": "boolean"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "met",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextReviewAt": {
+            "nullable": true,
+            "description": "When the skill behind the screen comes back for review",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "savedMistake": {
+            "type": "boolean",
+            "description": "A wrong answer went to the mistakes notebook"
+          },
+          "score": {
+            "nullable": true,
+            "description": "Partial credit from 0 to 1 for typed and spoken answers and challenges",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "spelling": {
+            "nullable": true,
+            "description": "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "checked",
+          "correctAnswer",
+          "corrections",
+          "expected",
+          "feedback",
+          "isCorrect",
+          "keyPoints",
+          "nextReviewAt",
+          "savedMistake",
+          "score",
+          "spelling"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpected": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityExpectedChoice"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedInteraction"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedNumeric"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "choice": "#/components/schemas/ActivityExpectedChoice",
+            "interaction": "#/components/schemas/ActivityExpectedInteraction",
+            "numeric": "#/components/schemas/ActivityExpectedNumeric"
+          }
+        }
+      },
+      "ActivityExpectedChoice": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "choice"
+            ]
+          },
+          "optionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "optionId"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedInteraction": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "$ref": "#/components/schemas/ActivityExpectedAnswer"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "interaction"
+            ]
+          }
+        },
+        "required": [
+          "answer",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedAnswer": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityExpectedAssignment"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedCurveShift"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedFormula"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedGrid"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedLinks"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedMolecule"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedOrder"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedOutput"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedPitchClasses"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRegex"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRhythm"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRows"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedSelection"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "assignment": "#/components/schemas/ActivityExpectedAssignment",
+            "curveShift": "#/components/schemas/ActivityExpectedCurveShift",
+            "formula": "#/components/schemas/ActivityExpectedFormula",
+            "grid": "#/components/schemas/ActivityExpectedGrid",
+            "links": "#/components/schemas/ActivityExpectedLinks",
+            "molecule": "#/components/schemas/ActivityExpectedMolecule",
+            "order": "#/components/schemas/ActivityExpectedOrder",
+            "output": "#/components/schemas/ActivityExpectedOutput",
+            "pitchClasses": "#/components/schemas/ActivityExpectedPitchClasses",
+            "regex": "#/components/schemas/ActivityExpectedRegex",
+            "rhythm": "#/components/schemas/ActivityExpectedRhythm",
+            "rows": "#/components/schemas/ActivityExpectedRows",
+            "selection": "#/components/schemas/ActivityExpectedSelection"
+          }
+        }
+      },
+      "ActivityExpectedAssignment": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "assignment"
+            ]
+          },
+          "pairs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "What goes in each slot the canvas names (a numbered part, a blank, an item), by its key"
+          }
+        },
+        "required": [
+          "kind",
+          "pairs"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedCurveShift": {
+        "type": "object",
+        "properties": {
+          "curve": {
+            "type": "string",
+            "description": "The id of the line that moves"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "down",
+              "left",
+              "right",
+              "up"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "curveShift"
+            ]
+          }
+        },
+        "required": [
+          "curve",
+          "direction",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedFormula": {
+        "type": "object",
+        "properties": {
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "inputs": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "number"
+                  },
+                  "description": "Each variable's value"
+                },
+                "output": {
+                  "type": "number",
+                  "description": "What the formula gives for those inputs"
+                }
+              },
+              "required": [
+                "inputs",
+                "output"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Inputs a right formula turns into these outputs"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "formula"
+            ]
+          },
+          "tolerance": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "absolute",
+                  "relative"
+                ]
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "examples",
+          "kind",
+          "tolerance"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedGrid": {
+        "type": "object",
+        "properties": {
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "grid"
+            ]
+          }
+        },
+        "required": [
+          "cells",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedLinks": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "links"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "links"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedMolecule": {
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "How many atoms of each element the molecule has"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "molecule"
+            ]
+          }
+        },
+        "required": [
+          "elements",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedOrder": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Every item's id, in order"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "order"
+            ]
+          }
+        },
+        "required": [
+          "ids",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedOutput": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "output"
+            ]
+          },
+          "output": {
+            "type": "string",
+            "description": "What the program prints"
+          }
+        },
+        "required": [
+          "kind",
+          "output"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedPitchClasses": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pitchClasses"
+            ]
+          },
+          "pitchClasses": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The notes to play, as pitch classes from 0 (C) to 11 (B)"
+          }
+        },
+        "required": [
+          "kind",
+          "pitchClasses"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRegex": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "regex"
+            ]
+          },
+          "shouldMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shouldNotMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "shouldMatch",
+          "shouldNotMatch"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRhythm": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rhythm"
+            ]
+          },
+          "tapTimesMs": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "When each tap falls"
+          },
+          "toleranceMs": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "tapTimesMs",
+          "toleranceMs"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRows": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rows"
+            ]
+          },
+          "orderMatters": {
+            "type": "boolean"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "nullable": true,
+                    "enum": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "columns",
+          "kind",
+          "orderMatters",
+          "rows"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedSelection": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The ids to select, in any order"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "selection"
+            ]
+          }
+        },
+        "required": [
+          "ids",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedNumeric": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "numeric"
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
         ],
         "additionalProperties": false
       },
@@ -73394,516 +74367,6 @@
         ],
         "additionalProperties": false
       },
-      "ActivityExpectedChoice": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "choice"
-            ]
-          },
-          "optionId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "optionId"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedInteraction": {
-        "type": "object",
-        "properties": {
-          "answer": {
-            "$ref": "#/components/schemas/ActivityExpectedAnswer"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "interaction"
-            ]
-          }
-        },
-        "required": [
-          "answer",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedAnswer": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ActivityExpectedAssignment"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedCurveShift"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedFormula"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedGrid"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedLinks"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedMolecule"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedOrder"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedOutput"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedPitchClasses"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedRegex"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedRhythm"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedRows"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedSelection"
-          }
-        ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "assignment": "#/components/schemas/ActivityExpectedAssignment",
-            "curveShift": "#/components/schemas/ActivityExpectedCurveShift",
-            "formula": "#/components/schemas/ActivityExpectedFormula",
-            "grid": "#/components/schemas/ActivityExpectedGrid",
-            "links": "#/components/schemas/ActivityExpectedLinks",
-            "molecule": "#/components/schemas/ActivityExpectedMolecule",
-            "order": "#/components/schemas/ActivityExpectedOrder",
-            "output": "#/components/schemas/ActivityExpectedOutput",
-            "pitchClasses": "#/components/schemas/ActivityExpectedPitchClasses",
-            "regex": "#/components/schemas/ActivityExpectedRegex",
-            "rhythm": "#/components/schemas/ActivityExpectedRhythm",
-            "rows": "#/components/schemas/ActivityExpectedRows",
-            "selection": "#/components/schemas/ActivityExpectedSelection"
-          }
-        }
-      },
-      "ActivityExpectedAssignment": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "assignment"
-            ]
-          },
-          "pairs": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "What goes in each slot the canvas names (a numbered part, a blank, an item), by its key"
-          }
-        },
-        "required": [
-          "kind",
-          "pairs"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedCurveShift": {
-        "type": "object",
-        "properties": {
-          "curve": {
-            "type": "string",
-            "description": "The id of the line that moves"
-          },
-          "direction": {
-            "type": "string",
-            "enum": [
-              "down",
-              "left",
-              "right",
-              "up"
-            ]
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "curveShift"
-            ]
-          }
-        },
-        "required": [
-          "curve",
-          "direction",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedFormula": {
-        "type": "object",
-        "properties": {
-          "examples": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "inputs": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "number"
-                  },
-                  "description": "Each variable's value"
-                },
-                "output": {
-                  "type": "number",
-                  "description": "What the formula gives for those inputs"
-                }
-              },
-              "required": [
-                "inputs",
-                "output"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Inputs a right formula turns into these outputs"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "formula"
-            ]
-          },
-          "tolerance": {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "absolute",
-                  "relative"
-                ]
-              },
-              "value": {
-                "type": "number",
-                "minimum": 0
-              }
-            },
-            "required": [
-              "kind",
-              "value"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "required": [
-          "examples",
-          "kind",
-          "tolerance"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedGrid": {
-        "type": "object",
-        "properties": {
-          "cells": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "grid"
-            ]
-          }
-        },
-        "required": [
-          "cells",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedLinks": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "links"
-            ]
-          },
-          "links": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "from": {
-                  "type": "string"
-                },
-                "to": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "from",
-                "to"
-              ],
-              "additionalProperties": false
-            }
-          }
-        },
-        "required": [
-          "kind",
-          "links"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedMolecule": {
-        "type": "object",
-        "properties": {
-          "elements": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "number"
-            },
-            "description": "How many atoms of each element the molecule has"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "molecule"
-            ]
-          }
-        },
-        "required": [
-          "elements",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedOrder": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Every item's id, in order"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "order"
-            ]
-          }
-        },
-        "required": [
-          "ids",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedOutput": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "output"
-            ]
-          },
-          "output": {
-            "type": "string",
-            "description": "What the program prints"
-          }
-        },
-        "required": [
-          "kind",
-          "output"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedPitchClasses": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "pitchClasses"
-            ]
-          },
-          "pitchClasses": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "description": "The notes to play, as pitch classes from 0 (C) to 11 (B)"
-          }
-        },
-        "required": [
-          "kind",
-          "pitchClasses"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedRegex": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "regex"
-            ]
-          },
-          "shouldMatch": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "shouldNotMatch": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "kind",
-          "shouldMatch",
-          "shouldNotMatch"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedRhythm": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "rhythm"
-            ]
-          },
-          "tapTimesMs": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "description": "When each tap falls"
-          },
-          "toleranceMs": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "kind",
-          "tapTimesMs",
-          "toleranceMs"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedRows": {
-        "type": "object",
-        "properties": {
-          "columns": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "rows"
-            ]
-          },
-          "orderMatters": {
-            "type": "boolean"
-          },
-          "rows": {
-            "type": "array",
-            "items": {
-              "type": "array",
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "nullable": true,
-                    "enum": [
-                      null
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "required": [
-          "columns",
-          "kind",
-          "orderMatters",
-          "rows"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedSelection": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The ids to select, in any order"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "selection"
-            ]
-          }
-        },
-        "required": [
-          "ids",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
-      "ActivityExpectedNumeric": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "numeric"
-            ]
-          },
-          "value": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "kind",
-          "value"
-        ],
-        "additionalProperties": false
-      },
       "LessonTutorSuggestion": {
         "type": "object",
         "properties": {
@@ -75796,28 +76259,6 @@
         "additionalProperties": false,
         "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `nextReviewAt` is null and `savedMistake` false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
       },
-      "ActivityExpected": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ActivityExpectedChoice"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedInteraction"
-          },
-          {
-            "$ref": "#/components/schemas/ActivityExpectedNumeric"
-          }
-        ],
-        "type": "object",
-        "discriminator": {
-          "propertyName": "kind",
-          "mapping": {
-            "choice": "#/components/schemas/ActivityExpectedChoice",
-            "interaction": "#/components/schemas/ActivityExpectedInteraction",
-            "numeric": "#/components/schemas/ActivityExpectedNumeric"
-          }
-        }
-      },
       "LibraryLessonRetryable": {
         "type": "object",
         "properties": {
@@ -75854,117 +76295,6 @@
           "explanation",
           "explanationId",
           "reused"
-        ],
-        "additionalProperties": false
-      },
-      "LessonStepCheckResult": {
-        "type": "object",
-        "properties": {
-          "checked": {
-            "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
-          },
-          "correctAnswer": {
-            "nullable": true,
-            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
-            "type": "string"
-          },
-          "corrections": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "right": {
-                  "type": "string",
-                  "description": "The same words written correctly"
-                },
-                "wrong": {
-                  "type": "string",
-                  "description": "The learner's words as they wrote them"
-                }
-              },
-              "required": [
-                "right",
-                "wrong"
-              ],
-              "additionalProperties": false
-            },
-            "description": "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise."
-          },
-          "expected": {
-            "nullable": true,
-            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ActivityExpected"
-              }
-            ]
-          },
-          "feedback": {
-            "nullable": true,
-            "description": "Why: the chosen option's reason, the grader's feedback or the check's explanation",
-            "type": "string"
-          },
-          "isCorrect": {
-            "type": "boolean"
-          },
-          "keyPoints": {
-            "nullable": true,
-            "description": "Each key point of a typed answer and whether the answer stated it, judged by meaning",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "met": {
-                  "type": "boolean"
-                },
-                "text": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "met",
-                "text"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "nextReviewAt": {
-            "nullable": true,
-            "description": "When the skill behind the screen comes back for review",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "savedMistake": {
-            "type": "boolean",
-            "description": "A wrong answer went to the mistakes notebook"
-          },
-          "score": {
-            "nullable": true,
-            "description": "Partial credit from 0 to 1 for typed and spoken answers and challenges",
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "spelling": {
-            "nullable": true,
-            "description": "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "checked",
-          "correctAnswer",
-          "corrections",
-          "expected",
-          "feedback",
-          "isCorrect",
-          "keyPoints",
-          "nextReviewAt",
-          "savedMistake",
-          "score",
-          "spelling"
         ],
         "additionalProperties": false
       },
@@ -85813,6 +86143,44 @@
                 "drill": {
                   "$ref": "#/components/schemas/MistakeDrill"
                 },
+                "lesson": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "lessonId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "level": {
+                      "type": "string",
+                      "enum": [
+                        "overview",
+                        "beginner",
+                        "intermediate",
+                        "advanced"
+                      ]
+                    },
+                    "step": {
+                      "$ref": "#/components/schemas/PlayableLibraryStep"
+                    },
+                    "targetLanguage": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "lessonId",
+                    "level",
+                    "step",
+                    "targetLanguage"
+                  ],
+                  "additionalProperties": false
+                },
                 "mistakeId": {
                   "type": "string",
                   "format": "uuid",
@@ -85821,177 +86189,163 @@
                 "questions": {
                   "type": "array",
                   "items": {
-                    "oneOf": [
-                      {
+                    "type": "object",
+                    "properties": {
+                      "context": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "entry": {
+                        "nullable": true,
+                        "description": "A math problem's answer box; null for other questions",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/QuestionEntry"
+                          }
+                        ]
+                      },
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "multipleChoice",
+                          "trueFalse",
+                          "matchPairs",
+                          "numeric",
+                          "order",
+                          "typed"
+                        ],
+                        "description": "numeric: a math problem, answered with a number. Its numbers are drawn for this block, so they stay the same on every visit and change in the next block that asks it. order: put `options` in order, answered with `order`. typed: a short answer (a word, a number, a term), answered with `text`"
+                      },
+                      "image": {
+                        "nullable": true,
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/QuestionImage"
+                          }
+                        ]
+                      },
+                      "itemId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "left": {
+                        "nullable": true,
+                        "description": "Match pairs: the left column",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "options": {
+                        "nullable": true,
+                        "description": "Multiple choice: the options. Order: the steps, shuffled",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "question": {
+                        "type": "string"
+                      },
+                      "right": {
+                        "nullable": true,
+                        "description": "Match pairs: the right column",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "select": {
+                        "nullable": true,
+                        "description": "Multiple choice: how many options to pick; null otherwise",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/QuestionSelect"
+                          }
+                        ]
+                      },
+                      "set": {
+                        "nullable": true,
+                        "description": "The passage, case, chart or recording the question shares with the set's other questions, which the block asks back to back; null for a question on its own",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/ItemSet"
+                          }
+                        ]
+                      },
+                      "skillId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "unit": {
+                        "nullable": true,
+                        "description": "A math problem's unit, shown next to the answer field",
                         "type": "object",
                         "properties": {
-                          "context": {
-                            "nullable": true,
-                            "description": "A situation shown before the question",
-                            "type": "string"
-                          },
-                          "image": {
-                            "nullable": true,
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/QuestionImage"
-                              }
-                            ]
-                          },
-                          "itemId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                            "description": "Answer with this item ID"
-                          },
-                          "skillId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                            "description": "Skill ID"
-                          },
-                          "visual": {
-                            "nullable": true,
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/LessonVisual"
-                              }
-                            ]
-                          },
-                          "format": {
+                          "position": {
                             "type": "string",
                             "enum": [
-                              "multipleChoice"
-                            ]
+                              "prefix",
+                              "suffix"
+                            ],
+                            "description": "Where the unit goes: before the number for money (R$ 45)"
                           },
-                          "options": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            },
-                            "description": "Answer with the chosen option's index, or indexes"
-                          },
-                          "question": {
+                          "symbol": {
                             "type": "string"
-                          },
-                          "select": {
-                            "$ref": "#/components/schemas/QuestionSelect"
-                          },
-                          "set": {
-                            "nullable": true,
-                            "description": "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/ItemSet"
-                              }
-                            ]
                           }
                         },
                         "required": [
-                          "context",
-                          "image",
-                          "itemId",
-                          "skillId",
-                          "visual",
-                          "format",
-                          "options",
-                          "question",
-                          "select",
-                          "set"
+                          "position",
+                          "symbol"
                         ],
                         "additionalProperties": false
                       },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "context": {
-                            "nullable": true,
-                            "description": "A situation shown before the question",
-                            "type": "string"
-                          },
-                          "image": {
-                            "nullable": true,
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/QuestionImage"
-                              }
-                            ]
-                          },
-                          "itemId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                            "description": "Answer with this item ID"
-                          },
-                          "skillId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-                            "description": "Skill ID"
-                          },
-                          "visual": {
-                            "nullable": true,
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/LessonVisual"
-                              }
-                            ]
-                          },
-                          "format": {
-                            "type": "string",
-                            "enum": [
-                              "trueFalse"
-                            ]
-                          },
-                          "options": {
-                            "type": "string",
-                            "nullable": true,
-                            "enum": [
-                              null
-                            ]
-                          },
-                          "question": {
-                            "type": "string",
-                            "description": "The statement to judge true or false"
-                          },
-                          "set": {
-                            "nullable": true,
-                            "description": "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/ItemSet"
-                              }
-                            ]
+                      "visual": {
+                        "nullable": true,
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/LessonVisual"
                           }
-                        },
-                        "required": [
-                          "context",
-                          "image",
-                          "itemId",
-                          "skillId",
-                          "visual",
-                          "format",
-                          "options",
-                          "question",
-                          "set"
-                        ],
-                        "additionalProperties": false
+                        ]
                       }
+                    },
+                    "required": [
+                      "context",
+                      "entry",
+                      "format",
+                      "image",
+                      "itemId",
+                      "left",
+                      "options",
+                      "question",
+                      "right",
+                      "select",
+                      "set",
+                      "skillId",
+                      "unit",
+                      "visual"
                     ],
-                    "type": "object"
+                    "additionalProperties": false
                   },
                   "description": "The question to answer: the mistake's own while it can be asked"
                 },
                 "snapshot": {
                   "$ref": "#/components/schemas/MistakeSnapshot"
+                },
+                "tutorAvailable": {
+                  "type": "boolean"
                 }
               },
               "required": [
                 "cause",
                 "drill",
+                "lesson",
                 "mistakeId",
                 "questions",
-                "snapshot"
+                "snapshot",
+                "tutorAvailable"
               ],
               "additionalProperties": false
             }
@@ -86566,159 +86920,6 @@
           "open",
           "fixed"
         ]
-      },
-      "MistakePracticeFeedback": {
-        "type": "object",
-        "properties": {
-          "answerId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-            "description": "The answer's id: send the run's answer ids when it finishes"
-          },
-          "correctAnswer": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "selectedIndex": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "selectedIndex"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "selectedIndexes": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    }
-                  }
-                },
-                "required": [
-                  "selectedIndexes"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "isTrue": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "isTrue"
-                ],
-                "additionalProperties": false
-              }
-            ]
-          },
-          "explanation": {
-            "nullable": true,
-            "type": "string"
-          },
-          "fixed": {
-            "type": "boolean",
-            "description": "This answer fixed the practiced notebook entry"
-          },
-          "fixedMistakeIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "description": "Every notebook entry fixed by this answer; deduplicate these for the run correction count"
-          },
-          "isCorrect": {
-            "type": "boolean"
-          },
-          "mistakeStatus": {
-            "description": "Fixed once answered right on a later day",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MistakeStatus"
-              }
-            ]
-          },
-          "reached": {
-            "type": "object",
-            "properties": {
-              "energy": {
-                "nullable": true,
-                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "level": {
-                "nullable": true,
-                "description": "The belt level its Brain Power reached, the day's bonus included",
-                "type": "object",
-                "properties": {
-                  "color": {
-                    "type": "string",
-                    "enum": [
-                      "white",
-                      "yellow",
-                      "orange",
-                      "green",
-                      "blue",
-                      "purple",
-                      "brown",
-                      "red",
-                      "gray",
-                      "black"
-                    ]
-                  },
-                  "level": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "color",
-                  "level"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "energy",
-              "level"
-            ],
-            "additionalProperties": false,
-            "description": "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own"
-          },
-          "trap": {
-            "nullable": true,
-            "description": "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
-            "type": "string"
-          }
-        },
-        "required": [
-          "answerId",
-          "correctAnswer",
-          "explanation",
-          "fixed",
-          "fixedMistakeIds",
-          "isCorrect",
-          "mistakeStatus",
-          "reached",
-          "trap"
-        ],
-        "additionalProperties": false
       },
       "MockOptions": {
         "type": "object",

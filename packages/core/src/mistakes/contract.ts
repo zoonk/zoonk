@@ -2,6 +2,8 @@ import { type MistakeCause, type MistakeStatus } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract";
+import { lessonStepAnswerSchema } from "../lesson-player/contract";
+import { studyAnswerInputSchema } from "../sessions/contract";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
@@ -40,6 +42,10 @@ export type MistakeListInput = z.infer<typeof mistakeListInputSchema>;
 export const mistakePracticeInputSchema = z
   .object({
     goalId: uuidSchema().optional().meta({ description: "Only mistakes on this goal's skills" }),
+    includeAllFormats: z
+      .enum(["true", "false"])
+      .transform((value) => value === "true")
+      .optional(),
     skillId: uuidSchema()
       .optional()
       .meta({
@@ -54,8 +60,8 @@ export type MistakePracticeInput = z.infer<typeof mistakePracticeInputSchema>;
 /** A run's questions and answers alike: each answer re-sends the run's earlier ones. */
 export const MAX_PRACTICE_ANSWERS = 50;
 
-export const mistakePracticeAnswerInputSchema = itemAnswerInputSchema
-  .extend({
+const mistakePracticeAnswerCommon = z
+  .object({
     attemptId: uuidSchema()
       .optional()
       .describe("Your id for this answer: sent again with it (a retry), it's recorded once"),
@@ -77,7 +83,21 @@ export const mistakePracticeAnswerInputSchema = itemAnswerInputSchema
       }),
     timeZone: answerTimeZoneSchema,
   })
-  .strict()
+  .strict();
+
+export const mistakePracticeAnswerInputSchema = z
+  .union([
+    studyAnswerInputSchema.extend(mistakePracticeAnswerCommon.shape).strict(),
+    itemAnswerInputSchema
+      .omit({ answer: true, itemId: true })
+      .extend({
+        ...mistakePracticeAnswerCommon.shape,
+        answer: z.union([lessonStepAnswerSchema, z.object({ dontKnow: z.literal(true) }).strict()]),
+        attemptId: uuidSchema(),
+        stepId: uuidSchema(),
+      })
+      .strict(),
+  ])
   .meta({ id: "MistakePracticeAnswerInput" });
 
 export type MistakePracticeAnswerInput = z.infer<typeof mistakePracticeAnswerInputSchema>;

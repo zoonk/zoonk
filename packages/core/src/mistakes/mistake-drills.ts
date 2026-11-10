@@ -19,13 +19,10 @@ export type DrillView = {
   timeLimitSeconds: number | null;
 };
 
-export type DrillItemCandidate = { hasMisconceptions: boolean; id: string; seen: boolean };
-
 export type MistakeDrill = {
   itemIds: string[];
   kind: MistakeDrillKind;
   lessonId: string | null;
-  /** Per question, never a whole-drill limit. */
   timeLimitSeconds: number | null;
 };
 
@@ -35,15 +32,6 @@ const DRILL_KINDS: Readonly<Record<MistakeCause, MistakeDrillKind>> = {
   misread: "readCarefully",
   time: "timed",
   trap: "spotTheTrap",
-};
-
-const EXTRA_QUESTIONS: Readonly<Record<MistakeDrillKind, number>> = {
-  noGuessing: 1,
-  readCarefully: 1,
-  reteach: 2,
-  retry: 1,
-  spotTheTrap: 2,
-  timed: 2,
 };
 
 const TIMED_DRILL_SECONDS = 45;
@@ -59,11 +47,6 @@ export function getDrillTimeLimitSeconds(kind: MistakeDrillKind): number | null 
   return kind === "timed" ? TIMED_DRILL_SECONDS : null;
 }
 
-/** A timed mistake is proven only under its own clock, so no other question's answer fixes it. */
-export function isFixedByItsSkill(cause: MistakeCause | null): boolean {
-  return getDrillTimeLimitSeconds(getDrillKind(cause)) === null;
-}
-
 /** The exact deadline is already late, not only durations exceeding it. */
 export function isPastTimeLimit({
   durationMs,
@@ -75,121 +58,7 @@ export function isPastTimeLimit({
   return timeLimitSeconds !== null && durationMs >= timeLimitSeconds * MS_PER_SECOND;
 }
 
-function rankCandidate({
-  candidate,
-  kind,
-}: {
-  candidate: DrillItemCandidate;
-  kind: MistakeDrillKind;
-}): number {
-  const seenRank = candidate.seen ? 1 : 0;
-  const trapRank = kind === "spotTheTrap" && !candidate.hasMisconceptions ? 2 : 0;
-
-  return seenRank + trapRank;
-}
-
-/** Unseen questions come first; trap drills prioritize misconception-bearing options. */
-export function selectMistakeDrill({
-  candidates,
-  cause,
-  lessonId,
-  originalItemId,
-}: {
-  candidates: readonly DrillItemCandidate[];
-  cause: MistakeCause | null;
-  lessonId: string | null;
-  originalItemId: string | null;
-}): MistakeDrill {
-  const kind = getDrillKind(cause);
-  const original = candidates.find((candidate) => candidate.id === originalItemId);
-
-  const extras = candidates
-    .filter((candidate) => candidate.id !== originalItemId)
-    .toSorted(
-      (a, b) => rankCandidate({ candidate: a, kind }) - rankCandidate({ candidate: b, kind }),
-    )
-    .slice(0, EXTRA_QUESTIONS[kind]);
-
-  return {
-    itemIds: [original, ...extras]
-      .filter((candidate) => candidate !== undefined)
-      .map(({ id }) => id),
-    kind,
-    lessonId: kind === "reteach" ? lessonId : null,
-    timeLimitSeconds: getDrillTimeLimitSeconds(kind),
-  };
-}
-
-/**
- * One question per mistake, none twice. A mistake's own question is kept for it. One with no question
- * of its own takes a free one on its skill, unless the run already asks a question on a skill whose
- * right answer fixes it too (`coveringSkillIds`, as `answerMistakePractice` decides). A lesson's idea
- * shows before its first question only.
- */
-export function selectPracticeRun<
-  TMistake extends Pick<
-    Parameters<typeof selectMistakeDrill>[0],
-    "cause" | "lessonId" | "originalItemId"
-  > & {
-    candidates: readonly (DrillItemCandidate & { skillId: string })[];
-    coveringSkillIds: readonly string[];
-  },
->(mistakes: readonly TMistake[]): (TMistake & { drill: MistakeDrill })[] {
-  const owned = new Set(mistakes.map((mistake) => mistake.originalItemId));
-  const asked = new Set<string>();
-  const askedSkillIds = new Set<string>();
-  const taught = new Set<string>();
-
-  return mistakes.flatMap((mistake) => {
-    const own = mistake.candidates.find(({ id }) => id === mistake.originalItemId);
-
-    if (!own && mistake.coveringSkillIds.some((skillId) => askedSkillIds.has(skillId))) {
-      return [];
-    }
-
-    const drill = selectMistakeDrill({
-      ...mistake,
-      candidates: mistake.candidates.filter(
-        ({ id }) => !asked.has(id) && (id === mistake.originalItemId || !owned.has(id)),
-      ),
-    });
-
-    const [itemId] = drill.itemIds;
-    const question = mistake.candidates.find(({ id }) => id === itemId);
-
-    if (!itemId || !question) {
-      return [];
-    }
-
-    const lessonId = drill.lessonId && taught.has(drill.lessonId) ? null : drill.lessonId;
-
-    asked.add(itemId);
-    askedSkillIds.add(question.skillId);
-
-    if (lessonId) {
-      taught.add(lessonId);
-    }
-
-    return [{ ...mistake, drill: { ...drill, itemIds: [itemId], lessonId } }];
-  });
-}
-
 export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };
-
-export function isMistakeSkill({
-  itemSkillId,
-  mistakeSkillId,
-  ownerOf,
-}: {
-  itemSkillId: string;
-  mistakeSkillId: string | null;
-  ownerOf: ReadonlyMap<string, string>;
-}): boolean {
-  return (
-    mistakeSkillId !== null &&
-    (itemSkillId === mistakeSkillId || itemSkillId === ownerOf.get(mistakeSkillId))
-  );
-}
 
 /** Oldest first with one-per-skill breadth; excludes mistakes from the learner's current local day. */
 export function selectMistakesToPractice<TMistake extends PracticeCandidate>({

@@ -72,7 +72,7 @@ extension TutorScope {
       Text(
         "Ask about the lesson content…", tableName: "Tutor",
         comment: "Placeholder of the buddy's composer in a lesson")
-    case .item(_, _, let answered, _):
+    case .item(_, _, let answered, _, _):
       answered
         ? Text(
           "Ask about your answer…", tableName: "Tutor",
@@ -121,7 +121,7 @@ extension TutorScope {
   /// A few questions to start with, never a list.
   var suggestions: [TutorSuggestion] {
     switch self {
-    case .lesson(_, _, let suggestions), .step(_, _, _, _, let suggestions):
+    case .lesson(_, _, let suggestions), .step(_, _, _, _, let suggestions, _):
       return suggestions
     case .chapter:
       return [
@@ -170,7 +170,7 @@ extension TutorScope {
             localized: "Does my plan cover all of it?", table: "Tutor",
             comment: "A question to the buddy about a subject, sent with one tap")),
       ]
-    case .item(_, _, let answered, _):
+    case .item(_, _, let answered, _, _):
       return [
         answered
           ? TutorSuggestion(

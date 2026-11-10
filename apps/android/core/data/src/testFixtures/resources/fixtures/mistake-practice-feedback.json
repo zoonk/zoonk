@@ -7,5 +7,7 @@
   "isCorrect": true,
   "mistakeStatus": "open",
   "reached": { "energy": null, "level": null },
-  "trap": null
+  "trap": null,
+  "lessonResult": null,
+  "workedSteps": []
 }

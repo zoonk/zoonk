@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,12 +7,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
 import { getTodayStudySession } from "./_test-utils/open-today";
-import {
-  SESSION_NOW,
-  daysAgo,
-  dueSkillFixture,
-  sessionGoalFixture,
-} from "./_test-utils/session-goal";
+import { SESSION_NOW, dueSkillFixture, sessionGoalFixture } from "./_test-utils/session-goal";
 import { addExtraStudyBlock } from "./add-extra-study-block";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudySession } from "./get-study-session";
@@ -29,12 +23,6 @@ async function setup() {
   const [firstSkill] = fixture.skills;
 
   await Promise.all([
-    mistakeFixture({
-      createdAt: daysAgo(1),
-      itemId: fixture.items[0]?.id,
-      skillId: firstSkill?.id,
-      userId: user.id,
-    }),
     prisma.planItem.update({ data: { status: "done" }, where: { id: fixture.planItems[0]?.id } }),
     dueSkillFixture({ skillId: firstSkill?.id ?? "", userId: user.id }),
   ]);
@@ -79,7 +67,7 @@ describe("session outcomes sent from the server", () => {
 
   it("sends Session Started once, each Block Completed once and Session Completed, with the goal", async () => {
     const { lessons, session, user } = await setup();
-    const [review, learn, practice] = session.blocks;
+    const [review, learn] = session.blocks;
     const flush = runDeferredWork();
 
     await playQuestions({ blockId: review?.id ?? "", sessionId: session.id });
@@ -95,9 +83,7 @@ describe("session outcomes sent from the server", () => {
     });
 
     await finishStudyBlock({ blockId: learn?.id ?? "", input: {}, sessionId: session.id });
-    await playQuestions({ blockId: practice?.id ?? "", sessionId: session.id });
-
-    await finishStudyBlock({ blockId: practice?.id ?? "", input: {}, sessionId: session.id });
+    await finishStudyBlock({ blockId: learn?.id ?? "", input: {}, sessionId: session.id });
     await stopStudySession({ input: {}, sessionId: session.id });
     await flush();
 
@@ -107,7 +93,7 @@ describe("session outcomes sent from the server", () => {
       {
         distinctId: user.id,
         name: "Session Started",
-        properties: { blocks: 3, planned_minutes: session.minutes.planned, session_id: session.id },
+        properties: { blocks: 2, planned_minutes: session.minutes.planned, session_id: session.id },
         shared,
       },
     ]);
@@ -115,7 +101,6 @@ describe("session outcomes sent from the server", () => {
     expect(sentEvents("Block Completed").map((event) => event.properties)).toStrictEqual([
       { block_kind: "review", position: 0, seconds: expect.any(Number), session_id: session.id },
       { block_kind: "learn", position: 1, seconds: LESSON_SECONDS, session_id: session.id },
-      { block_kind: "practice", position: 2, seconds: expect.any(Number), session_id: session.id },
     ]);
 
     const ended = await getStudySession({ input: {}, sessionId: session.id });
@@ -133,7 +118,7 @@ describe("session outcomes sent from the server", () => {
         distinctId: user.id,
         name: "Session Completed",
         properties: {
-          blocks_completed: 3,
+          blocks_completed: 2,
           daily_goal_met: expect.any(Boolean),
           minutes: expect.any(Number),
           session_id: session.id,

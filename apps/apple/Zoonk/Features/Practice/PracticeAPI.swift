@@ -52,6 +52,13 @@ struct FocusTestQuestions: Equatable {
   var trueFalseLabels: PracticeTrueFalseLabels
 }
 
+struct MistakeLessonReplay: Equatable, Decodable {
+  let lessonId: String
+  let language: String
+  let targetLanguage: String?
+  let step: LessonStep
+}
+
 /// The original question first.
 struct MistakePracticeEntry: Equatable, Identifiable {
   var cause: Components.Schemas.MistakeCause?
@@ -60,6 +67,8 @@ struct MistakePracticeEntry: Equatable, Identifiable {
   var questions: [PracticeQuestion]
   var snapshotQuestion: String
   var snapshotAnswer: String?
+  var lesson: MistakeLessonReplay? = nil
+  var tutorAvailable = true
 
   var id: String { mistakeId }
 }
@@ -70,7 +79,7 @@ struct MistakePracticeSet: Equatable {
 }
 
 struct MistakePracticeGrade: Equatable {
-  var answerId: String
+  var answerId: String?
   var correctAnswer: PracticeAnswer?
   var explanation: String?
   var fixed: Bool
@@ -79,6 +88,9 @@ struct MistakePracticeGrade: Equatable {
   var isStillOpen: Bool
   var reached: PracticeReached
   var trap: String?
+  var lessonResult: LessonStepResult? = nil
+  var notSure = false
+  var workedSteps: [String] = []
 }
 
 struct NoticedPattern: Equatable, Sendable {
@@ -205,7 +217,9 @@ struct PracticeAPI: Sendable {
   {
     try await perform(token) { client in
       switch try await client.getCurrentUserMistakePractice(
-        query: .init(goalId: goalId, skillId: skillId, timeZone: timeZone))
+        query: .init(
+          goalId: goalId, includeAllFormats: ._true, skillId: skillId,
+          timeZone: timeZone))
       {
       case .ok(let response):
         let practice = try response.body.json
@@ -218,7 +232,9 @@ struct PracticeAPI: Sendable {
               mistakeId: entry.mistakeId,
               questions: try entry.questions.map { try PracticeJSON.recode($0) },
               snapshotQuestion: entry.snapshot.question,
-              snapshotAnswer: entry.snapshot.answer)
+              snapshotAnswer: entry.snapshot.answer,
+              lesson: try entry.lesson.map { try PracticeJSON.recode($0) },
+              tutorAvailable: entry.tutorAvailable)
           },
           trueFalseLabels: .init(practice.trueFalseLabels.value1))
       case .unauthorized: throw APIError.unauthorized
@@ -231,10 +247,11 @@ struct PracticeAPI: Sendable {
     token: String, mistakeId: String, itemId: String, answer: PracticeAnswer, durationMs: Int,
     attemptId: String, runAnswerIds: [String], goalId: String?
   ) async throws -> MistakePracticeGrade {
-    let body = Components.Schemas.MistakePracticeAnswerInput(
-      answer: try PracticeJSON.recode(answer), durationMs: min(durationMs, 3_600_000),
-      itemId: itemId,
-      attemptId: attemptId, run: .init(answerIds: runAnswerIds, goalId: goalId), timeZone: timeZone)
+    let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(
+      MistakeAnswerRequest(
+        answer: answer, durationMs: min(durationMs, 3_600_000), itemId: itemId,
+        stepId: nil, attemptId: attemptId, run: .init(answerIds: runAnswerIds, goalId: goalId),
+        timeZone: timeZone))
 
     return try await perform(token) { client in
       switch try await client.createMistakePracticeAnswer(
@@ -243,16 +260,27 @@ struct PracticeAPI: Sendable {
       case .ok(let response):
         let grade = try response.body.json
 
-        return MistakePracticeGrade(
-          answerId: grade.answerId,
-          correctAnswer: try? PracticeJSON.recode(grade.correctAnswer),
-          explanation: grade.explanation,
-          fixed: grade.fixed,
-          fixedMistakeIds: grade.fixedMistakeIds,
-          isCorrect: grade.isCorrect,
-          isStillOpen: grade.mistakeStatus.value1 == .open,
-          reached: try PracticeJSON.recode(grade.reached),
-          trap: grade.trap)
+        return try MistakePracticeGrade(grade)
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func answerLessonMistake(
+    token: String, mistakeId: String, stepId: String, answer: LessonAnswer?, durationMs: Int,
+    attemptId: String, runAnswerIds: [String], goalId: String?
+  ) async throws -> MistakePracticeGrade {
+    let request = MistakeAnswerRequest(
+      answer: LessonMistakeAnswer(answer), durationMs: min(durationMs, 3_600_000),
+      itemId: nil, stepId: stepId, attemptId: attemptId,
+      run: .init(answerIds: runAnswerIds, goalId: goalId), timeZone: timeZone)
+    let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(request)
+    return try await perform(token) { client in
+      switch try await client.createMistakePracticeAnswer(
+        path: .init(mistakeId: mistakeId), body: .json(body))
+      {
+      case .ok(let response): return try MistakePracticeGrade(response.body.json)
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
@@ -624,5 +652,45 @@ struct PracticeChoiceAnswer: Equatable, Codable {
 extension PracticeTrueFalseLabels {
   init(_ labels: Components.Schemas.TrueFalseLabels) {
     self = labels == .rightWrong ? .rightWrong : .trueFalse
+  }
+}
+
+private struct MistakeAnswerRequest<Answer: Encodable>: Encodable {
+  struct Run: Encodable {
+    let answerIds: [String]
+    let goalId: String?
+  }
+  let answer: Answer
+  let durationMs: Int
+  let itemId: String?
+  let stepId: String?
+  let attemptId: String
+  let run: Run
+  let timeZone: String
+}
+
+private struct LessonMistakeAnswer: Encodable {
+  let value: LessonAnswer?
+  init(_ value: LessonAnswer?) { self.value = value }
+  private enum CodingKeys: String, CodingKey { case dontKnow }
+  func encode(to encoder: any Encoder) throws {
+    if let value {
+      try value.encode(to: encoder)
+    } else {
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      try container.encode(true, forKey: .dontKnow)
+    }
+  }
+}
+
+extension MistakePracticeGrade {
+  init(_ grade: Components.Schemas.MistakePracticeFeedback) throws {
+    self.init(
+      answerId: grade.answerId, correctAnswer: try? PracticeJSON.recode(grade.correctAnswer),
+      explanation: grade.explanation, fixed: grade.fixed, fixedMistakeIds: grade.fixedMistakeIds,
+      isCorrect: grade.isCorrect, isStillOpen: grade.mistakeStatus == .open,
+      reached: try PracticeJSON.recode(grade.reached), trap: grade.trap,
+      lessonResult: grade.lessonResult.map { LessonStepResult($0.value1) },
+      workedSteps: grade.workedSteps)
   }
 }

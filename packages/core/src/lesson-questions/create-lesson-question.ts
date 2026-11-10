@@ -1,5 +1,5 @@
-import "server-only";
 import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
+import "server-only";
 import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
@@ -11,6 +11,7 @@ import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { getSession } from "../users/get-session";
 import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
+import { mistakeQuestionWhere } from "./_utils/mistake-scope";
 import {
   type LessonQuestionResourceSource,
   lessonQuestionResourceOmit,
@@ -127,6 +128,7 @@ async function persistLessonQuestion({
   userId: string;
 }) {
   const threadWhere = { ...getSubjectThreadColumn(subject), userId };
+  const mistakeId = "mistakeId" in input.context ? input.context.mistakeId : undefined;
 
   return writeLearnerChange<PersistedQuestionOutcome>({ userId }, async (transaction) => {
     await transaction.lessonQuestionThread.createMany({
@@ -151,7 +153,12 @@ async function persistLessonQuestion({
 
     const unfinishedQuestion = await transaction.lessonQuestion.findFirst({
       omit: lessonQuestionResourceOmit,
-      where: { libraryStepId: stepId, status: { not: "completed" }, threadId: thread.id },
+      where: {
+        ...mistakeQuestionWhere(mistakeId),
+        libraryStepId: stepId,
+        status: { not: "completed" },
+        threadId: thread.id,
+      },
     });
 
     if (unfinishedQuestion) {
@@ -162,7 +169,10 @@ async function persistLessonQuestion({
       transaction.lessonQuestion.create({
         data: {
           contextKind: input.context.kind,
-          contextSnapshot: toDatabaseLessonQuestionContextSnapshot(contextSnapshot),
+          contextSnapshot: {
+            ...toDatabaseLessonQuestionContextSnapshot(contextSnapshot),
+            ...(mistakeId && { mistakeId }),
+          },
           goalId,
           libraryStepId: stepId,
           question: asked.question,

@@ -13,11 +13,17 @@ export function getLessonQuestionContextInput({
   }
 
   if (context.kind === "step") {
-    return { kind: "step", stepId: context.step.id, stepNumber: context.stepIndex + 1 };
+    return {
+      kind: "step",
+      ...(context.mistakeId && { mistakeId: context.mistakeId }),
+      stepId: context.step.id,
+      stepNumber: context.stepIndex + 1,
+    };
   }
 
   if (context.kind === "answer") {
     return {
+      ...(context.mistakeId && { mistakeId: context.mistakeId }),
       answer: context.selectedAnswer,
       kind: "answer",
       stepId: context.step.id,
@@ -27,6 +33,7 @@ export function getLessonQuestionContextInput({
 
   if (context.kind === "item") {
     return {
+      ...(context.mistakeId && { mistakeId: context.mistakeId }),
       answered: context.answered,
       kind: "item",
       ...(context.blockId ? { blockId: context.blockId } : {}),

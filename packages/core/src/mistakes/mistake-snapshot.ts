@@ -2,6 +2,7 @@ import { lessonVisualSchema } from "@zoonk/ai/tasks/visuals/schema";
 import { z } from "zod";
 import { itemImageSchema } from "../library/items/item-image";
 import { itemSetViewSchema } from "../library/items/item-set-view";
+import { type MistakeReplay } from "./mistake-replay";
 
 /** Preserve snapshot text after content changes; true/false answers are stored as literals for apps to localize. */
 export const mistakeSnapshotSchema = z
@@ -30,15 +31,16 @@ export const mistakeSnapshotSchema = z
   .meta({ id: "MistakeSnapshot" });
 
 export type MistakeSnapshot = z.infer<typeof mistakeSnapshotSchema>;
+export type RecordedMistakeSnapshot = MistakeSnapshot & { replay?: MistakeReplay };
 
 /** Omits empty fields so adding stimulus support does not rewrite older snapshot shapes. */
 export function withMistakeStimulus({
   snapshot,
   stimulus,
 }: {
-  snapshot: MistakeSnapshot;
+  snapshot: RecordedMistakeSnapshot;
   stimulus: Pick<MistakeSnapshot, "context" | "image" | "set" | "visual">;
-}): MistakeSnapshot {
+}): RecordedMistakeSnapshot {
   return {
     ...snapshot,
     ...(stimulus.context ? { context: stimulus.context } : {}),

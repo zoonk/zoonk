@@ -1,8 +1,12 @@
+import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
+
 export type TutorItem = {
+  lesson?: { id: string; stepId: string; mistakeId: string; answer: LessonStepAnswer | null };
   answered: boolean;
   blockId: string | null;
   itemId: string;
   missed: boolean;
+  mistakeId?: string;
   position: number;
   text: string;
 };

@@ -13,7 +13,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useAppLocale } from "../_utils/locale";
 import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
-import { ANSWER_GROUP_CLASS, putAwayOnScreenKeyboard } from "./answer-field";
+import { ANSWER_GROUP_CLASS, focusAnswerOnPointer, putAwayOnScreenKeyboard } from "./answer-field";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
 
@@ -141,7 +141,6 @@ export function NumericAnswerField({
           aria-describedby={describedBy}
           aria-invalid={invalid || undefined}
           autoComplete="off"
-          autoFocus
           className="text-lg tabular-nums md:text-lg"
           enterKeyHint="done"
           id={inputId}
@@ -154,6 +153,7 @@ export function NumericAnswerField({
           }}
           onKeyDown={ignoreHeldEnter}
           readOnly={locked}
+          ref={focusAnswerOnPointer}
           spellCheck={false}
           value={text}
         />

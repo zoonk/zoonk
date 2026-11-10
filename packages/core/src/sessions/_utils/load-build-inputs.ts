@@ -26,7 +26,6 @@ import { findPlannedReview } from "./day-review";
 import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
 import { getExamPrepAccess } from "./exam-access";
-import { loadMistakeDrills } from "./load-mistake-drills";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
@@ -163,7 +162,6 @@ export async function loadSessionBuildInput(
     { lessons: planLessons, fillLessons },
     alphabet,
     { capsules: dueCapsules, claims },
-    dueDrills,
     boss,
     weekly,
     produce,
@@ -175,15 +173,6 @@ export async function loadSessionBuildInput(
       practiceLocked: access.trialEnded,
       readClaims: context.readClaims,
       review,
-    }),
-    loadMistakeDrills({
-      examBlueprintId: goal.examBlueprintId,
-      field,
-      listeningSkillIds,
-      skills: plan.skills,
-      timeZone,
-      today: localDate,
-      userId,
     }),
     dayLessons.then((loaded) =>
       loadDayBosses({
@@ -276,7 +265,7 @@ export async function loadSessionBuildInput(
     writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
   };
 
-  const work = { context, dueCapsules, dueDrills, isReviewDay, plan, practiceQuery };
+  const work = { context, dueCapsules, isReviewDay, plan, practiceQuery };
 
   return loadHeldDayInput({
     checkpoints,

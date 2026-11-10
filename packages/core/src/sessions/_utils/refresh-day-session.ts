@@ -79,7 +79,6 @@ function withoutKept({
         ...checkpoint,
         reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
       })),
-    drills: kinds.has("practice") ? [] : input.drills,
     fillLessons: input.fillLessons?.filter(isNewLesson),
     lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
     openedPractice: getOpenedPractice({ kept, session }),

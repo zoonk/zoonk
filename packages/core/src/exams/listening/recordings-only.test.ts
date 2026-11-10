@@ -249,7 +249,7 @@ describe("an exam's listening skills outside practice", () => {
     expect(capsule?.itemIds.filter((id) => heardItemIds.has(id))).toStrictEqual([]);
   });
 
-  it("drills a missed recording question alone, and leaves its recording out of the review meanwhile", async () => {
+  it("replays a missed recording question in the notebook while reviewing the whole recording", async () => {
     const { goal, heardId, user } = await listeningLearnerFixture();
     const [heard, missed] = await recordingFixture(heardId);
 
@@ -267,15 +267,24 @@ describe("an exam's listening skills outside practice", () => {
     const drills = blocks.flatMap((block) => block.payload.drills);
     const capsules = blocks.flatMap((block) => block.payload.capsules);
 
-    expect(drills.map((drill) => drill.itemIds)).toStrictEqual([[missed?.id]]);
-    expect(capsules.flatMap((capsule) => capsule.itemIds)).not.toContain(heard?.id);
+    expect(drills).toStrictEqual([]);
+    expect(capsules.flatMap((capsule) => capsule.itemIds)).toStrictEqual([heard?.id, missed?.id]);
+
+    const notebook = await getMistakePractice({ goalId: goal.id, timeZone: "UTC" });
+    const practice = notebook.status === "ready" ? notebook.practice : [];
+
+    expect(
+      practice.flatMap((entry) => entry.questions.map((question) => question.itemId)),
+    ).toStrictEqual([missed?.id]);
+
+    expect(practice[0]?.questions[0]?.set?.listening).toBeTruthy();
   });
 
-  it("never drills an old text mistake on it, so the day's drill goes to the next mistake", async () => {
+  it("keeps old text mistakes in the notebook without adding listening text to the day", async () => {
     const { goal, heardId, heardItemIds, items, readIds, user } = await listeningLearnerFixture();
     const readItem = items.find((item) => item.skillId === readIds[0]);
 
-    const [, readMistake] = await Promise.all([
+    const [textMistake, readMistake] = await Promise.all([
       mistakeFixture({
         createdAt: daysAgo(3),
         itemId: [...heardItemIds][0],
@@ -293,8 +302,19 @@ describe("an exam's listening skills outside practice", () => {
     const blocks = await openToday({ goalId: goal.id, userId: user.id });
     const drills = blocks.flatMap((block) => block.payload.drills);
 
-    expect(drills.map((drill) => drill.mistakeId)).toStrictEqual([readMistake.id]);
-    expect(drills.flatMap((drill) => drill.itemIds)).toContain(readItem?.id);
+    expect(drills).toStrictEqual([]);
+
+    expect(
+      blocks.flatMap((block) => block.itemIds).filter((id) => heardItemIds.has(id)),
+    ).toStrictEqual([]);
+
+    const notebook = await getMistakePractice({ goalId: goal.id, timeZone: "UTC" });
+    const practice = notebook.status === "ready" ? notebook.practice : [];
+
+    expect(practice.map((entry) => entry.mistakeId)).toStrictEqual([
+      textMistake.id,
+      readMistake.id,
+    ]);
   });
 
   it("stays out of its phase's challenge", async () => {
@@ -403,13 +423,13 @@ describe("an exam's listening skills outside practice", () => {
     { scope: "for its goal", scoped: true },
     { scope: "without a goal", scoped: false },
   ])(
-    "brings back only its missed recording questions in Practice mistakes $scope",
+    "replays the original text and recording questions in Practice mistakes $scope",
     async ({ scoped }) => {
       const { goal, heardId, heardItemIds, items, readIds, user } = await listeningLearnerFixture();
       const [, missed] = await recordingFixture(heardId);
       const readItem = items.find((item) => item.skillId === readIds[0]);
 
-      const [, recordingMistake, readMistake] = await Promise.all([
+      const [textMistake, recordingMistake, readMistake] = await Promise.all([
         mistakeFixture({
           createdAt: daysAgo(4),
           itemId: [...heardItemIds][0],
@@ -439,13 +459,23 @@ describe("an exam's listening skills outside practice", () => {
 
       const practice = result.status === "ready" ? result.practice : [];
 
-      expect(practice.map((entry) => entry.mistakeId)).toStrictEqual([
-        recordingMistake.id,
-        readMistake.id,
+      expect(practice.map((entry) => entry.mistakeId).toSorted()).toStrictEqual(
+        [textMistake.id, recordingMistake.id, readMistake.id].toSorted(),
+      );
+
+      const recording = practice.find((entry) => entry.mistakeId === recordingMistake.id);
+      const text = practice.find((entry) => entry.mistakeId === textMistake.id);
+      const reading = practice.find((entry) => entry.mistakeId === readMistake.id);
+
+      expect(recording?.questions.map((question) => question.itemId)).toStrictEqual([missed?.id]);
+      expect(recording?.questions[0]?.set?.listening).toBeTruthy();
+
+      expect(text?.questions.map((question) => question.itemId)).toStrictEqual([
+        textMistake.itemId,
       ]);
 
-      expect(practice[0]?.questions.map((question) => question.itemId)).toStrictEqual([missed?.id]);
-      expect(practice[0]?.questions[0]?.set?.listening).toBeTruthy();
+      expect(text?.questions[0]?.set).toBeNull();
+      expect(reading?.questions.map((question) => question.itemId)).toStrictEqual([readItem?.id]);
     },
   );
 

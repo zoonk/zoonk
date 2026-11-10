@@ -6,7 +6,7 @@ struct LessonVerdictView: View {
   let step: LessonStep
   let answer: LessonAnswer?
   let result: LessonStepResult
-  let store: LessonPlayerStore
+  var store: LessonPlayerStore? = nil
   let willReturn: Bool
   var hyperdriveStreak: Int?
 
@@ -51,7 +51,7 @@ struct LessonVerdictView: View {
       if case .spokenAnswer(let content, _) = step.content {
         if let heard = result.heard {
           LessonSpokenWordsView(heard: heard, language: content.language)
-        } else if store.state?.answers[step.id] == nil, let transcript = result.answerText {
+        } else if answer == nil, let transcript = result.answerText {
           // A recording restored from an earlier sitting keeps only its words.
           LabeledText(
             label: Text(
@@ -90,7 +90,8 @@ struct LessonVerdictView: View {
           .typeStyle(.body)
       }
 
-      if case .typedAnswer = step.content, !result.isCorrect, result.checked, !result.isSampleAnswer
+      if case .typedAnswer = step.content, !result.isCorrect, result.checked,
+        !result.isSampleAnswer, let store
       {
         LessonExplainAnswerView(step: step, store: store)
       }

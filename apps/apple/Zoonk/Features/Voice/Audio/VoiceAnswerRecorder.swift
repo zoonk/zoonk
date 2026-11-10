@@ -14,6 +14,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   /// A microphone that's off hands over to the screen's other way to answer instead of showing how
   /// to turn it on.
   var onBlocked: (() -> Void)?
+  var onCheckingChanged: ((Bool) -> Void)?
 
   private enum Issue: Equatable {
     case noSpeech
@@ -37,6 +38,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
         status
       }
       .announcesStatus(announcement)
+      .onChange(of: checking) { _, value in onCheckingChanged?(value) }
       .onDisappear {
         recorder.cancel()
         grading?.cancel()
@@ -152,11 +154,13 @@ extension VoiceServices {
   func gradeSpokenStep(
     stepId: String,
     studySessionId: String?,
-    recording: VoiceRecording
+    recording: VoiceRecording,
+    mistake: SpokenMistakeTarget? = nil
   ) async -> GradeOutcome<Components.Schemas.SpokenAnswerGrade> {
-    await grade(invalidating: [.learnerModel]) { [api] token in
+    await grade(invalidating: [.learnerModel, .userProgress, .userSession]) { [api] token in
       try await api.answerSpokenStep(
-        stepId: stepId, studySessionId: studySessionId, recording: recording, token: token)
+        stepId: stepId, studySessionId: studySessionId, recording: recording, token: token,
+        mistake: mistake)
     }
   }
 

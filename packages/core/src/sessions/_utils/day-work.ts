@@ -1,5 +1,5 @@
 import "server-only";
-import { type BlockCapsule, type BlockDrill } from "../block-payload";
+import { type BlockCapsule } from "../block-payload";
 import {
   type PlannedCheckpoint,
   type SessionBuildInput,
@@ -12,29 +12,12 @@ import { type SessionDayContext, loadSessionPlacement } from "./session-placemen
 
 export type DayPracticeQuery = Omit<Parameters<typeof loadPracticeItems>[0], "excludeItemIds">;
 
-export type DayWork = Pick<
-  SessionBuildInput,
-  "capsules" | "drills" | "placementItemIds" | "practice"
->;
-
-/** Checkpoint questions must stay out of drills; a correct checkpoint answer fixes their mistake too. */
-function withoutCheckpointItems({
-  checkpointItems,
-  drills,
-}: {
-  checkpointItems: ReadonlySet<string>;
-  drills: readonly BlockDrill[];
-}): BlockDrill[] {
-  return drills
-    .map((drill) => ({ ...drill, itemIds: drill.itemIds.filter((id) => !checkpointItems.has(id)) }))
-    .filter((drill) => drill.itemIds.length > 0);
-}
+export type DayWork = Pick<SessionBuildInput, "capsules" | "placementItemIds" | "practice">;
 
 export async function loadDayWork({
   checkpointItems,
   context,
   dueCapsules,
-  dueDrills,
   isReviewDay,
   plan,
   practiceQuery,
@@ -42,13 +25,11 @@ export async function loadDayWork({
   checkpointItems: ReadonlySet<string>;
   context: SessionDayContext;
   dueCapsules: readonly BlockCapsule[];
-  dueDrills: readonly BlockDrill[];
   isReviewDay: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
   practiceQuery: DayPracticeQuery;
 }): Promise<DayWork> {
-  const drills = withoutCheckpointItems({ checkpointItems, drills: dueDrills });
-  const reserved = new Set([...drills.flatMap((drill) => drill.itemIds), ...checkpointItems]);
+  const reserved = new Set(checkpointItems);
 
   const capsules = await loadDayCapsules({
     capsules: dueCapsules,
@@ -65,7 +46,7 @@ export async function loadDayWork({
     excludeItemIds: new Set([...used, ...placementItemIds]),
   });
 
-  return { capsules, drills, placementItemIds, practice };
+  return { capsules, placementItemIds, practice };
 }
 
 /** Only a checkpoint the day holds keeps its questions from the rest of the day. */

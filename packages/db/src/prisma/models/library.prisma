@@ -120,61 +120,61 @@ model ChapterSkill {
 }
 
 model Lesson {
-  id                String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  language          String                 @db.VarChar(10)
-  targetLanguage    String?                @map("target_language") @db.VarChar(10)
+  id                     String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language               String                 @db.VarChar(10)
+  targetLanguage         String?                @map("target_language") @db.VarChar(10)
   /// Claimed by one generation workflow at a time.
-  identityKey       String                 @map("identity_key")
-  slug              String
-  title             String
-  normalizedTitle   String                 @map("normalized_title")
-  description       String
-  canDo             String?                @map("can_do")
-  level             CourseLevel
-  estimatedMinutes  Int                    @map("estimated_minutes") @db.SmallInt
-  homeChapterId     String?                @map("home_chapter_id") @db.Uuid
-  homeChapter       Chapter?               @relation(fields: [homeChapterId], references: [id], onDelete: SetNull)
-  visibility        LibraryVisibility      @default(public)
+  identityKey            String                 @map("identity_key")
+  slug                   String
+  title                  String
+  normalizedTitle        String                 @map("normalized_title")
+  description            String
+  canDo                  String?                @map("can_do")
+  level                  CourseLevel
+  estimatedMinutes       Int                    @map("estimated_minutes") @db.SmallInt
+  homeChapterId          String?                @map("home_chapter_id") @db.Uuid
+  homeChapter            Chapter?               @relation(fields: [homeChapterId], references: [id], onDelete: SetNull)
+  visibility             LibraryVisibility      @default(public)
   /// Private content is deleted with its owner.
-  ownerId           String?                @map("owner_id") @db.Uuid
-  owner             User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  spec              Json?
-  specStatus        GenerationStatus       @default(pending) @map("spec_status")
-  specRunId         String?                @map("spec_run_id")
-  contentStatus     GenerationStatus       @default(pending) @map("content_status")
+  ownerId                String?                @map("owner_id") @db.Uuid
+  owner                  User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  spec                   Json?
+  specStatus             GenerationStatus       @default(pending) @map("spec_status")
+  specRunId              String?                @map("spec_run_id")
+  contentStatus          GenerationStatus       @default(pending) @map("content_status")
   /// Claim held by the running content generation, so one workflow writes the steps.
-  contentRunId      String?                @map("content_run_id")
+  contentRunId           String?                @map("content_run_id")
   /// Oldest first. The next draft is told what held them back; publishing clears them.
-  heldBackDrafts    Json                   @default("[]") @map("held_back_drafts")
+  heldBackDrafts         Json                   @default("[]") @map("held_back_drafts")
   /// Set when the last allowed draft was held back: nothing writes it again and plans move on.
-  setAsideAt        DateTime?              @map("set_aside_at")
+  setAsideAt             DateTime?              @map("set_aside_at")
   /// Runs that started writing the orders, claimed before each one pays for its model call.
-  sentenceOrdersAttempts Int               @default(0) @map("sentence_orders_attempts") @db.SmallInt
+  sentenceOrdersAttempts Int                    @default(0) @map("sentence_orders_attempts") @db.SmallInt
   /// Public on SEO pages.
-  summary           Json?
+  summary                Json?
   /// The map of the version staged on its steps (`Step.staged`), until it replaces `summary`.
-  stagedSummary     Json?                  @map("staged_summary")
+  stagedSummary          Json?                  @map("staged_summary")
   /// They belong to the lesson, not the goal that first asked, so every reuse gets them.
-  relatedQuestions  String[]               @default([]) @map("related_questions")
-  goFurtherCourseId String?                @map("go_further_course_id") @db.Uuid
-  goFurtherCourse   Course?                @relation(fields: [goFurtherCourseId], references: [id], onDelete: SetNull)
-  model             String
-  promptVersion     String                 @map("prompt_version")
-  runId             String                 @map("run_id")
-  generatedAt       DateTime               @default(now()) @map("generated_at")
-  createdAt         DateTime               @default(now()) @map("created_at")
-  updatedAt         DateTime               @default(now()) @updatedAt @map("updated_at")
-  chapters          ChapterLesson[]
-  steps             Step[]
-  skills            LessonSkill[]
-  planItems         PlanItem[]
-  openingGoals      Goal[]
-  studyBlocks       StudySessionBlock[]
-  words             LessonWord[]
-  sentences         LessonSentence[]
-  questionThreads   LessonQuestionThread[]
-  reviewFlags       ContentReviewFlag[]
-  anonymousPaces    AnonymousLessonPace[]
+  relatedQuestions       String[]               @default([]) @map("related_questions")
+  goFurtherCourseId      String?                @map("go_further_course_id") @db.Uuid
+  goFurtherCourse        Course?                @relation(fields: [goFurtherCourseId], references: [id], onDelete: SetNull)
+  model                  String
+  promptVersion          String                 @map("prompt_version")
+  runId                  String                 @map("run_id")
+  generatedAt            DateTime               @default(now()) @map("generated_at")
+  createdAt              DateTime               @default(now()) @map("created_at")
+  updatedAt              DateTime               @default(now()) @updatedAt @map("updated_at")
+  chapters               ChapterLesson[]
+  steps                  Step[]
+  skills                 LessonSkill[]
+  planItems              PlanItem[]
+  openingGoals           Goal[]
+  studyBlocks            StudySessionBlock[]
+  words                  LessonWord[]
+  sentences              LessonSentence[]
+  questionThreads        LessonQuestionThread[]
+  reviewFlags            ContentReviewFlag[]
+  anonymousPaces         AnonymousLessonPace[]
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@unique([homeChapterId, slug], name: "homeChapterSlug")

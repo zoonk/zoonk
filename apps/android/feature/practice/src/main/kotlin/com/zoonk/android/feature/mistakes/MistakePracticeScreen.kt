@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -66,7 +67,10 @@ fun MistakePracticeScreen(
         return
     }
     val key = PracticeKey(learner.activeGoalId, route.skillId?.let { runCatching { UUID.fromString(it) }.getOrNull() })
-    val viewModel = viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") { MistakePracticeViewModel(key, app.mistakes) }
+    val viewModel =
+        viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") {
+            MistakePracticeViewModel(key, app.mistakes, saved = createSavedStateHandle())
+        }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val closed by viewModel.closed.collectAsStateWithLifecycle()
 
@@ -133,7 +137,14 @@ internal fun PracticeRun(
     }
 
     val questions = state.read.questions
-    val question = questions.getOrNull(run.index)
+    val task = state.read.tasks.getOrNull(run.index)
+    val question = (task as? MistakePracticeTask.Bank)?.question
+    if (task is MistakePracticeTask.Lesson) {
+        key(run.index) {
+            MistakeLessonQuestion(state, task, viewModel, app, navigator)
+        }
+        return
+    }
     var saved by rememberDraft()
     val draft = saved.answerFor(run.index, question)
 
@@ -145,7 +156,7 @@ internal fun PracticeRun(
         onClose = viewModel::leave,
         mainAction = answerAction(questions, question, run, draft, viewModel),
         report = runReportTarget("mistake-practice", question, run),
-        progress = { RunSegments(questions, run) },
+        progress = { MistakeSegments(state) },
         actions = {
             question?.let {
                 AnswerActions(
@@ -166,7 +177,13 @@ internal fun PracticeRun(
             key(run.index) {
                 RunQuestion(
                     questions = questions,
-                    run = run,
+                    run =
+                        run.copy(
+                            index =
+                                state.read.tasks
+                                    .take(run.index)
+                                    .count { task -> task is MistakePracticeTask.Bank },
+                        ),
                     question = it,
                     controls = viewModel,
                     words = state.read.words,

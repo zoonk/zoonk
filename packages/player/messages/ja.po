@@ -3381,6 +3381,7 @@ msgid "Check"
 msgstr "答え合わせ"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "確定する"
@@ -3407,11 +3408,13 @@ msgid "See the answer"
 msgstr "答えを見る"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "zDR51u"
 msgid "See how it went"
 msgstr "結果を見る"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "始める"

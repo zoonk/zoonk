@@ -114,7 +114,6 @@ const blockPayloadSchema = z.object({
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;
 export type BlockCapsule = z.infer<typeof capsuleSchema>;
 export type BlockCheckpoint = z.infer<typeof checkpointSchema>;
-export type BlockDrill = z.infer<typeof drillSchema>;
 
 const EMPTY_BLOCK_PAYLOAD: BlockPayload = blockPayloadSchema.parse({});
 

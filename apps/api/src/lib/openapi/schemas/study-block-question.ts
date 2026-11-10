@@ -9,7 +9,7 @@ import {
   questionVisualSchema,
 } from "./common";
 import { itemSetSchema } from "./item-set";
-import { mistakeDrillSchema } from "./mistakes";
+import { mistakeDrillSchema } from "./mistake-drill";
 
 const idSchema = uuidSchema();
 

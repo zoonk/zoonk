@@ -4,7 +4,7 @@ import { type Item } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";
 import { type ItemImage, toItemImage } from "../../library/items/item-image";
-import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
+import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { type BankItem } from "./choice-items";
 
 type TypedContent = Extract<ParsedItemContent, { format: "typed" }>;
@@ -96,5 +96,6 @@ export function toTypedSnapshot({
     format: item.format,
     misconception: null,
     question: item.content.question,
+    replay: { item, kind: "item" },
   };
 }

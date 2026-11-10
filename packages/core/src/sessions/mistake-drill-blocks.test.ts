@@ -9,16 +9,10 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getTodayStudySession } from "./_test-utils/open-today";
-import {
-  SESSION_NOW,
-  daysAgo,
-  dueSkillFixture,
-  sessionGoalFixture,
-} from "./_test-utils/session-goal";
+import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
+import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
 import { toStudyBlockView } from "./_utils/session-view";
 import { answerStudyQuestion } from "./answer-study-question";
-import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 
 async function drillBlockFixture(drill: Record<string, unknown>) {
@@ -30,7 +24,14 @@ async function drillBlockFixture(drill: Record<string, unknown>) {
   ]);
 
   const [mistake, session] = await Promise.all([
-    mistakeFixture({ createdAt: daysAgo(2), itemId: item.id, skillId: skill.id, userId: user.id }),
+    mistakeFixture({
+      createdAt: daysAgo(2),
+      itemId: item.id,
+      skillId: skill.id,
+      snapshot: gradeChoiceAnswer({ answer: { selectedIndex: 1 }, item: parseChoiceItem(item)! })
+        .snapshot,
+      userId: user.id,
+    }),
     studySessionFixture({ goalId: goal.id, status: "active", userId: user.id }),
   ]);
 
@@ -97,96 +98,6 @@ describe("mistake drills in today's session", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-  });
-
-  it("builds a content gap's drill with the lesson to go over first", async () => {
-    const user = await userFixture();
-    const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 2, userId: user.id });
-    const [skill] = fixture.skills;
-    const [lesson] = fixture.lessons;
-
-    await Promise.all([
-      mistakeFixture({
-        cause: "gap",
-        createdAt: daysAgo(1),
-        itemId: fixture.items[0]?.id,
-        skillId: skill?.id,
-        userId: user.id,
-      }),
-      prisma.planItem.update({ data: { status: "done" }, where: { id: fixture.planItems[0]?.id } }),
-      dueSkillFixture({ skillId: skill?.id ?? "", userId: user.id }),
-    ]);
-
-    mockSession(user.id);
-    const today = await getTodayStudySession({ goalId: fixture.goal.id });
-
-    const blockId =
-      today.status === "ready"
-        ? today.session.blocks.find((block) => block.kind === "practice")?.id
-        : undefined;
-
-    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
-
-    expect(readBlockPayload(block).drills[0]).toMatchObject({
-      kind: "reteach",
-      lessonId: lesson?.id,
-      timeLimitSeconds: null,
-    });
-
-    const detail = await getStudyBlock({ blockId: block.id, sessionId: block.sessionId });
-
-    const drilled =
-      detail.status === "ready" ? detail.detail.questions.filter((question) => question.drill) : [];
-
-    expect(drilled.length).toBeGreaterThan(0);
-
-    expect(drilled[0]?.drill).toStrictEqual({
-      kind: "reteach",
-      lesson: { id: lesson?.id, ideas: [], title: lesson?.title },
-      timeLimitSeconds: null,
-    });
-  });
-
-  it("drills a lesson's mistake on a finer skill with the questions of the plan's skill it's held for", async () => {
-    const user = await userFixture();
-
-    const [fixture, planSkill] = await Promise.all([
-      sessionGoalFixture({ challengesDone: true, itemsPerSkill: 0, lessons: 2, userId: user.id }),
-      skillFixture({ name: "Plan skill" }),
-    ]);
-
-    const [finer] = fixture.skills;
-    const [lesson] = fixture.lessons;
-
-    const [bank, mistake] = await Promise.all([
-      Promise.all(
-        Array.from({ length: 3 }, () =>
-          itemFixture({ content: choiceItemContent(), skillId: planSkill.id }),
-        ),
-      ),
-      mistakeFixture({ cause: "gap", createdAt: daysAgo(1), skillId: finer?.id, userId: user.id }),
-      prisma.planItem.update({
-        data: { completedAt: daysAgo(1), skillId: planSkill.id, status: "done" },
-        where: { id: fixture.planItems[0]?.id },
-      }),
-    ]);
-
-    mockSession(user.id);
-    const today = await getTodayStudySession({ goalId: fixture.goal.id });
-
-    const blocks = await prisma.studySessionBlock.findMany({
-      where: { sessionId: today.status === "ready" ? today.session.id : "" },
-    });
-
-    const drills = blocks.flatMap((block) => readBlockPayload(block).drills);
-    const bankIds = new Set(bank.map((item) => item.id));
-
-    expect(drills).toMatchObject([
-      { kind: "reteach", lessonId: lesson?.id, mistakeId: mistake.id },
-    ]);
-
-    expect(drills[0]?.itemIds.length).toBeGreaterThan(0);
-    expect(drills[0]?.itemIds.every((itemId) => bankIds.has(itemId))).toBe(true);
   });
 
   it("reads a drill without a kind as a plain retry", async () => {

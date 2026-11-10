@@ -8,7 +8,7 @@ import { z } from "zod";
 
 /** Only documents the multipart form: the route reads its fields with `spokenAnswerFieldsSchema`. */
 export const spokenAnswerRequestSchema = spokenAnswerFieldsSchema
-  .extend({
+  .safeExtend({
     audio: z
       .file()
       .meta({

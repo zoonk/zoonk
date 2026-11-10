@@ -17,13 +17,19 @@ type AnsweredQuestion = { itemId: string } | { stepId: string };
 export async function claimModelGrade({
   question,
   userId,
+  id,
 }: {
+  id?: string;
   question: AnsweredQuestion;
   userId: string;
 }): Promise<boolean> {
   const questionId = "stepId" in question ? question.stepId : question.itemId;
 
   return writeLearnerChange({ userId }, async (tx) => {
+    if (id && (await tx.modelGrade.findUnique({ where: { id } }))) {
+      return unchanged(true);
+    }
+
     const graded = await tx.modelGrade.count({
       where: { createdAt: { gte: new Date(Date.now() - MS_PER_DAY) }, questionId, userId },
     });
@@ -35,7 +41,7 @@ export async function claimModelGrade({
       return unchanged(false);
     }
 
-    await tx.modelGrade.create({ data: { questionId, userId } });
+    await tx.modelGrade.create({ data: { id, questionId, userId } });
     return true;
   });
 }

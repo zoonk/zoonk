@@ -1,27 +1,11 @@
 import "server-only";
-import {
-  loadLearnerListeningSkillIds,
-  loadListeningSkillIds,
-} from "../../exams/listening/listening-skills";
 import { getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 
 /** What a run on this goal may ask and fix, or null when the goal isn't the learner's. */
-export async function resolvePracticeScope({
-  goalId,
-  userId,
-}: {
-  goalId: string | undefined;
-  userId: string;
-}) {
-  // Unscoped practice must respect listening-only skills from any of the learner's goals.
+export async function resolvePracticeScope({ goalId }: { goalId: string | undefined }) {
   if (!goalId) {
-    return {
-      goal: null,
-      listeningSkillIds: await loadLearnerListeningSkillIds(userId),
-      ownerOf: new Map<string, string>(),
-      skillIds: null,
-    };
+    return { goal: null, skillIds: null };
   }
 
   const owned = await findOwnedGoal(goalId);
@@ -30,12 +14,9 @@ export async function resolvePracticeScope({
     return null;
   }
 
-  const [plan, listeningSkillIds] = await Promise.all([
-    loadGoalPlan(goalId),
-    loadListeningSkillIds(goalId),
-  ]);
+  const plan = await loadGoalPlan(goalId);
 
   const ownerOf = getSkillOwners(plan.skills);
 
-  return { goal: owned.goal, listeningSkillIds, ownerOf, skillIds: [...ownerOf.keys()] };
+  return { goal: owned.goal, skillIds: [...ownerOf.keys()] };
 }

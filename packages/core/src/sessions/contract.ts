@@ -97,13 +97,15 @@ const orderAnswerSchema = z
 
 export const studyAnswerInputSchema = z
   .object({
-    answer: z.union([
-      itemAnswerInputSchema.shape.answer,
-      matchAnswerSchema,
-      numberAnswerSchema,
-      typedAnswerSchema,
-      orderAnswerSchema,
-    ]),
+    answer: z
+      .union([
+        itemAnswerInputSchema.shape.answer,
+        matchAnswerSchema,
+        numberAnswerSchema,
+        typedAnswerSchema,
+        orderAnswerSchema,
+      ])
+      .meta({ id: "QuestionAnswer" }),
     durationMs: itemAnswerInputSchema.shape.durationMs,
     itemId: uuidSchema(),
     timeZone: answerTimeZoneSchema,

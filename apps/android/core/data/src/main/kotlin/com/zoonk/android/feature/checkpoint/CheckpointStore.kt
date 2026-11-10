@@ -10,9 +10,9 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.models.Checkpoint
+import com.zoonk.api.models.QuestionAnswer
 import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyAnswerInput
-import com.zoonk.api.models.StudyAnswerInputAnswer
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudySessionTimeZone
 import java.util.UUID
@@ -83,7 +83,7 @@ class CheckpointStore(
             api.answer(
                 session,
                 checkpoint,
-                StudyAnswerInput(answer.recode<Answer, StudyAnswerInputAnswer>(), durationMs, UUID.fromString(itemId), timeZone()),
+                StudyAnswerInput(answer.recode<Answer, QuestionAnswer>(), durationMs, UUID.fromString(itemId), timeZone()),
             )
         }
 

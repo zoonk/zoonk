@@ -140,6 +140,16 @@ async function recordCheck({
               explanation: verdict.feedback,
               format: answeredKind,
               question: questionText,
+              replay: {
+                kind: "lesson",
+                lesson: {
+                  language: row.lesson.language,
+                  lessonId: row.lessonId,
+                  level: row.lesson.level,
+                  step,
+                  targetLanguage: row.lesson.targetLanguage,
+                },
+              },
             },
           }
         : null,
