@@ -113,6 +113,7 @@ class FakeLessonPlayerApi(
     var startFailures = 0
     var checkFailures = 0
     var completeFailures = 0
+    var completeGate: CompletableDeferred<Unit>? = null
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var gate: CompletableDeferred<Unit>? = null
     var lessonGate: CompletableDeferred<Unit>? = null
@@ -216,6 +217,7 @@ class FakeLessonPlayerApi(
         runId: String,
         skippedWritingStepIds: List<String>,
     ): LibraryLessonCompletion {
+        completeGate?.await()
         if (completeFailures > 0) {
             completeFailures--
             throw ApiException(ApiError.Network)

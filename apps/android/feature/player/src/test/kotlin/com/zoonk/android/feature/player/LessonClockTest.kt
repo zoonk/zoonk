@@ -302,6 +302,90 @@ class LessonClockTest {
             assertEquals(listOf(RUN_ID), api.completions)
         }
 
+    @Test fun finishingWaitsForTheClockARestartGives() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            player.dispatch(LessonAction.Continue)
+            player.leave()
+            advanceUntilIdle()
+            val nextClock = UUID.randomUUID()
+            val freshPause = CompletableDeferred<Unit>()
+            api.clockId = nextClock
+            api.startGate = CompletableDeferred()
+            api.clockResponse = {
+                if (it.clockId == nextClock) freshPause.await()
+                LessonClockResult(LessonClockResult.Status.IGNORED)
+            }
+            player.resume()
+            advanceUntilIdle()
+            assertEquals(listOf(null, RUN_ID), api.startRunIds)
+            player.dispatch(LessonAction.Continue)
+            advanceUntilIdle()
+            player.leave()
+            advanceUntilIdle()
+            assertTrue(api.completions.isEmpty())
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertTrue(api.completions.isEmpty())
+
+            freshPause.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf(RUN_ID), api.completions)
+            assertEquals(
+                listOf(update(1, PAUSED), update(2, RUNNING), update(3, PAUSED), update(1, PAUSED).copy(clockId = nextClock)),
+                api.clockUpdates.map { it.second },
+            )
+        }
+
+    @Test fun aFinishedLessonSendsNothingMoreOnItsClock() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            player.dispatch(LessonAction.Continue)
+            player.dispatch(LessonAction.Continue)
+            advanceUntilIdle()
+            assertEquals(listOf(RUN_ID), api.completions)
+            api.clockResponse = { LessonClockResult(LessonClockResult.Status.IGNORED) }
+
+            player.leave()
+            player.resume()
+            player.resendUnsaved()
+            advanceUntilIdle()
+
+            assertTrue(api.clockUpdates.isEmpty())
+            assertEquals(listOf(null), api.startRunIds)
+        }
+
+    @Test fun aRestartAnsweredAfterTheLessonFinishedLeavesItsClockClosed() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            player.dispatch(LessonAction.Continue)
+            api.completeGate = CompletableDeferred()
+            player.dispatch(LessonAction.Continue)
+            advanceUntilIdle()
+            api.clockId = UUID.randomUUID()
+            api.clockResponse = { LessonClockResult(LessonClockResult.Status.IGNORED) }
+            api.startGate = CompletableDeferred()
+            player.leave()
+            player.resume()
+            advanceUntilIdle()
+            assertEquals(listOf(null, RUN_ID), api.startRunIds)
+            api.completeGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(listOf(RUN_ID), api.completions)
+
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            player.leave()
+            advanceUntilIdle()
+
+            assertEquals(listOf(update(1, PAUSED), update(2, RUNNING)), api.clockUpdates.map { it.second })
+        }
+
     @Test fun lateRepliesDoNotChangeTheNextSequence() =
         runTest(dispatcher) {
             val player = player()
