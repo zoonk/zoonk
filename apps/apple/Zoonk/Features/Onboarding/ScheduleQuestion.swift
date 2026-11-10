@@ -257,8 +257,8 @@ struct ScheduleQuestion: View {
     let findFailed = found.status == .failed
 
     let minutes = ScheduleTime.shownMinutes(
-      fallback: view.recommendedMinutes, first: found.first, found: lastFound, picked: picked,
-      settled: !dated || findFailed)
+      fallback: view.recommendedMinutes, startsOnRecommended: view.startsOnRecommended,
+      first: found.first, found: lastFound, picked: picked, settled: !dated || findFailed)
 
     let adviceKey = AdviceKey(
       week: ScheduleTime.studyWeek(
@@ -306,7 +306,8 @@ struct ScheduleQuestion: View {
   private func isStale(_ shown: Shown) -> Bool {
     !days.isEmpty
       && ScheduleTime.waitsForSuggestion(
-        failed: found.status == .failed, first: found.first, found: shown.found, picked: picked)
+        startsOnRecommended: view.startsOnRecommended, failed: found.status == .failed,
+        first: found.first, found: shown.found, picked: picked)
   }
 
   private var refusalWords: String? {
@@ -330,7 +331,8 @@ struct ScheduleQuestion: View {
           get: { minutes },
           set: {
             picked = ScheduleTime.pickedMinutes(
-              first: found.first, found: shown.lastFound, minutes: $0)
+              startsOnRecommended: view.startsOnRecommended, first: found.first,
+              found: shown.lastFound, minutes: $0)
           })
       ) {
         ForEach(
@@ -462,7 +464,9 @@ struct ScheduleQuestion: View {
         advised.restart()
       }
     } onUseOffer: { minutes in
-      picked = ScheduleTime.pickedMinutes(first: found.first, found: shown.found, minutes: minutes)
+      picked = ScheduleTime.pickedMinutes(
+        startsOnRecommended: view.startsOnRecommended, first: found.first, found: shown.found,
+        minutes: minutes)
     }
   }
 
