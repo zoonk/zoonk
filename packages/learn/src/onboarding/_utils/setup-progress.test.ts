@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSetupProgress } from "./setup-progress";
+import { getProfileProgress, getSetupProgress } from "./setup-progress";
 
 describe(getSetupProgress, () => {
   it("keeps the total when a beginner skips placement", () => {
@@ -69,5 +69,45 @@ describe(getSetupProgress, () => {
         view: { steps: ["targetDate", "schedule", "plan"] },
       }),
     ).toStrictEqual({ current: 1, total: 4 });
+  });
+});
+
+describe("profile steps", () => {
+  const steps = ["work", "tools", "conditions", "learningSupport", "schedule", "plan"] as const;
+
+  it("share one dot", () => {
+    expect(
+      getSetupProgress({ current: "tools", history: ["level", "work"], view: { steps } }),
+    ).toStrictEqual({ current: 1, total: 3 });
+
+    expect(
+      getSetupProgress({
+        current: "schedule",
+        history: ["level", "work", "tools", "conditions", "learningSupport"],
+        view: { steps: ["schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 2, total: 3 });
+  });
+
+  it("count this run's profile screens", () => {
+    expect(
+      getProfileProgress({
+        current: "tools",
+        history: ["level", "work"],
+        view: { steps: steps.slice(1) },
+      }),
+    ).toStrictEqual({ current: 2, total: 4 });
+
+    expect(
+      getProfileProgress({
+        current: "conditions",
+        history: ["level"],
+        view: { steps: ["conditions", "learningSupport", "schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 1, total: 2 });
+
+    expect(
+      getProfileProgress({ current: "schedule", history: [], view: { steps } }),
+    ).toBeNull();
   });
 });

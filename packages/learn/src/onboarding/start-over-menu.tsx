@@ -28,13 +28,14 @@ const MENU_TRIGGER_CLASS = "-mr-3 lg:-mr-2.5 [&_svg:not([class*='size-'])]:size-
 
 const MENU_ROW_CLASS = "flex-col items-start gap-0.5 py-2";
 
-function OnboardingBarMenu({
-  disabled,
-  onStartOver,
-}: {
+type MenuProps = {
   disabled: boolean;
+  /** Shown only on the questions about the learner. */
+  onDeclineProfile?: () => void;
   onStartOver: () => void;
-}) {
+};
+
+function OnboardingBarMenu({ disabled, onDeclineProfile, onStartOver }: MenuProps) {
   const t = useExtracted();
   const host = useOnboardingHost();
 
@@ -70,6 +71,19 @@ function OnboardingBarMenu({
           <span className="text-muted-foreground text-xs">{t("Your answers are kept")}</span>
         </DropdownMenuItem>
 
+        {onDeclineProfile && (
+          <DropdownMenuItem
+            className={MENU_ROW_CLASS}
+            disabled={disabled}
+            onClick={onDeclineProfile}
+          >
+            {t("Don't ask me these again")}
+            <span className="text-muted-foreground text-xs">
+              {t("You can still answer them anytime in Settings › About you.")}
+            </span>
+          </DropdownMenuItem>
+        )}
+
         <DropdownMenuItem className={MENU_ROW_CLASS} disabled={disabled} onClick={onStartOver}>
           {t("Start over")}
           <span className="text-muted-foreground text-xs">{t("Clears your answers")}</span>
@@ -79,19 +93,13 @@ function OnboardingBarMenu({
   );
 }
 
-export function StartOverMenu({
-  disabled,
-  onStartOver,
-}: {
-  disabled: boolean;
-  onStartOver: () => void;
-}) {
+function StartOverMenu({ onStartOver, ...menu }: MenuProps) {
   const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
 
   return (
     <AlertDialog onOpenChange={setConfirming} open={confirming}>
-      <OnboardingBarMenu disabled={disabled} onStartOver={() => setConfirming(true)} />
+      <OnboardingBarMenu {...menu} onStartOver={() => setConfirming(true)} />
 
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -122,5 +130,49 @@ export function StartOverMenuSkeleton() {
     <ButtonSkeleton className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost">
       <EllipsisIcon aria-hidden="true" />
     </ButtonSkeleton>
+  );
+}
+
+function SkipProfileButton({ disabled, onSkip }: { disabled: boolean; onSkip: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <Button
+      aria-label={t("Skip the rest of the questions about you")}
+      disabled={disabled}
+      onClick={onSkip}
+      size="sm"
+      variant="ghost"
+    >
+      {t({
+        description: "Skips every remaining question about the learner in this setup.",
+        message: "Skip all",
+      })}
+    </Button>
+  );
+}
+
+/** On the questions about the learner, Skip all comes first and the menu can decline them all. */
+export function StepsBarEnd({
+  disabled,
+  onSkipProfile,
+  onStartOver,
+  profile,
+}: {
+  disabled: boolean;
+  onSkipProfile: (forever: boolean) => void;
+  onStartOver: () => void;
+  /** Whether the screen is one of the questions about the learner. */
+  profile: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      {profile && <SkipProfileButton disabled={disabled} onSkip={() => onSkipProfile(false)} />}
+      <StartOverMenu
+        disabled={disabled}
+        onDeclineProfile={profile ? () => onSkipProfile(true) : undefined}
+        onStartOver={onStartOver}
+      />
+    </div>
   );
 }

@@ -41,3 +41,26 @@ export function applyAnswer({
 
   return { current, history: seen === -1 ? history : history.slice(0, seen), view };
 }
+
+const STEP_SCREENS = new Set<string>([
+  "purpose",
+  "role",
+  "reason",
+  "target",
+  "targetDate",
+  "followUps",
+  "examChoice",
+  "level",
+  "schedule",
+  "buddy",
+  "placement",
+]);
+
+export function isStepScreen(step: unknown): step is OnboardingStep {
+  return typeof step === "string" && STEP_SCREENS.has(step);
+}
+
+export function getAnsweredScreens(view: OnboardingView): OnboardingStep[] {
+  const answered = view.goal.details.answered;
+  return Array.isArray(answered) ? answered.filter((step) => isStepScreen(step)) : [];
+}

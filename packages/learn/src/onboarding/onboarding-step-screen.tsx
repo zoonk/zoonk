@@ -1,5 +1,6 @@
 "use client";
 
+import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
 import {
   type OnboardingAnswerInput,
   type OnboardingStep,
@@ -21,6 +22,7 @@ import { ExamChoiceStep } from "./steps/exam-choice-step";
 import { readLevelChoice } from "./steps/level-choices";
 import { PlacementStep } from "./steps/placement-step";
 import { PlanReveal } from "./steps/plan-reveal";
+import { ProfileStepScreen, type ProfileStepState } from "./steps/profile-step";
 import {
   type ExamTarget,
   FollowUpsStep,
@@ -164,6 +166,7 @@ function StepScreen({
   onViewChange,
   pending,
   plan,
+  profile,
   routes,
   run,
   schedule,
@@ -174,13 +177,14 @@ function StepScreen({
   actions: OnboardingActions;
   buddy: LearnBuddy | null;
   isGuest: boolean;
-  onAnswer: (input: OnboardingAnswerInput) => void;
+  onAnswer: (input: OnboardingAnswerInput) => Promise<boolean>;
   onPlacementDone: () => Promise<boolean>;
   onPlacementFinishFailed: (failed: boolean) => void;
   /** A change made on a screen without answering it, such as the aim, read back. */
   onViewChange: (view: OnboardingView) => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
+  profile: ProfileStepState;
   routes: OnboardingRoutes;
   schedule: { draft: ScheduleDraft | null; onChangeDate: (draft: ScheduleDraft) => void };
   run: GenerationRun | null;
@@ -207,6 +211,22 @@ function StepScreen({
 
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
+  }
+
+  if (isProfileQuestion(step)) {
+    return (
+      <ProfileStepScreen
+        {...profile}
+        key={step}
+        lessonHref={
+          wait.firstLesson?.status === "ready" ? routes.lesson(wait.firstLesson.id) : null
+        }
+        onAnswer={onAnswer}
+        pending={pending}
+        step={step}
+        view={view}
+      />
+    );
   }
 
   switch (step) {

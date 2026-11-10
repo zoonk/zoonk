@@ -81,6 +81,8 @@
     "./listening/player": "./src/listening/listening-player.tsx",
     "./listening/stimulus": "./src/listening/listening-stimulus.tsx",
     "./logbook": "./src/week/logbook-screen.tsx",
+    "./about-you": "./src/profile-questions/about-you-screen.tsx",
+    "./about-you/question": "./src/profile-questions/about-you-question-screen.tsx",
     "./memory": "./src/memory/memory-screen.tsx",
     "./memory-updated": "./src/memory/memory-updated.tsx",
     "./messages": "./src/messages.ts",

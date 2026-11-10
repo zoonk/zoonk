@@ -1,6 +1,7 @@
 "use client";
 
 import { type MemoryFactView } from "@zoonk/core/memory/contract";
+import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "@zoonk/core/memory/memory-limits";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -21,6 +22,8 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { LearnLink } from "../learn-link";
+import { aboutYouQuestionHref } from "../profile-questions/about-you-screen";
 import { MemoryFactSource } from "./memory-labels";
 
 function EditFactDialog({
@@ -93,17 +96,39 @@ function EditFactDialog({
   );
 }
 
+/** A fact from About you is changed there, where its answer lives; with memory off only the list opens. */
+function getAboutYouHref({
+  fact,
+  memoryEnabled,
+}: {
+  fact: MemoryFactView;
+  memoryEnabled: boolean;
+}): string | null {
+  const question = fact.source?.kind === "profile" ? fact.source.id : null;
+
+  if (!question || !isProfileQuestion(question)) {
+    return null;
+  }
+
+  return memoryEnabled || question === "learningSupport"
+    ? aboutYouQuestionHref(question)
+    : "/settings/about-you";
+}
+
 export function MemoryFactRow({
   fact,
+  memoryEnabled,
   onDelete,
   onEdit,
 }: {
   fact: MemoryFactView;
+  memoryEnabled: boolean;
   onDelete: () => void;
   onEdit: (statement: string) => void;
 }) {
   const t = useExtracted();
   const [isEditing, setIsEditing] = useState(false);
+  const aboutYouHref = getAboutYouHref({ fact, memoryEnabled });
 
   return (
     <li className="flex items-start gap-3 py-2.75" data-slot="memory-fact">
@@ -129,10 +154,17 @@ export function MemoryFactRow({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem onClick={() => setIsEditing(true)}>
-            <PencilIcon aria-hidden="true" />
-            {t("Edit")}
-          </DropdownMenuItem>
+          {aboutYouHref ? (
+            <DropdownMenuItem render={<LearnLink href={aboutYouHref} />}>
+              <PencilIcon aria-hidden="true" />
+              {t("Edit")}
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onClick={() => setIsEditing(true)}>
+              <PencilIcon aria-hidden="true" />
+              {t("Edit")}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={onDelete} variant="destructive">
             <Trash2Icon aria-hidden="true" />
             {t("Delete")}
