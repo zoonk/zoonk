@@ -1881,7 +1881,7 @@
     },
     "/challenges/{planItemId}/starts": {
       "post": {
-        "description": "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons and phase challenges in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
+        "description": "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
         "operationId": "startChallenge",
         "security": [
           {
@@ -23650,7 +23650,7 @@
     },
     "/study-sessions/{sessionId}/blocks/{blockId}/starts": {
       "post": {
-        "description": "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Starts or resumes a block. A phase challenge waits for earlier lessons in the same session to be completed or skipped, as its `waitReason` says. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "createStudyBlockStart",
         "security": [
           {
@@ -35648,7 +35648,7 @@
           "status"
         ],
         "additionalProperties": false,
-        "description": "Earlier lessons or an earlier phase challenge of the session come first: go back to Today"
+        "description": "Earlier lessons of the session come first (`lessons`): go back to Today. `challenge` is retained for older clients and is never returned"
       },
       "LanguageCheckpointCallPlusRequired": {
         "type": "object",
@@ -73190,7 +73190,7 @@
           },
           "waitReason": {
             "nullable": true,
-            "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+            "description": "Why a phase challenge waits: earlier lessons in this session are still pending or active (`lessons`). The `challenge` value is retained for older clients and is never returned. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
             "type": "string",
             "enum": [
               "lessons",
@@ -89406,7 +89406,7 @@
                 },
                 "waitReason": {
                   "nullable": true,
-                  "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+                  "description": "Why a phase challenge waits: earlier lessons in this session are still pending or active (`lessons`). The `challenge` value is retained for older clients and is never returned. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
                   "type": "string",
                   "enum": [
                     "lessons",

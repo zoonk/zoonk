@@ -123,7 +123,7 @@ export const studyBlockSchema = z
       .nullable()
       .meta({
         description:
-          "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+          "Why a phase challenge waits: earlier lessons in this session are still pending or active (`lessons`). The `challenge` value is retained for older clients and is never returned. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
       }),
     weakest: z
       .boolean()
