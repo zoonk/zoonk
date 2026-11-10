@@ -42,7 +42,7 @@ test("questions about the learner lead to the plan, and a skipped one comes back
   await page.getByRole("button", { exact: true, name: "Skip" }).click();
   await expect(page.getByRole("heading", { name: "What have you studied?" })).toBeVisible();
 
-  await page.getByRole("button", { name: "Skip the rest of the questions about you" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip all" }).click();
 
   await expect(
     page.getByRole("heading", { name: "How much time can you study each day?" }),

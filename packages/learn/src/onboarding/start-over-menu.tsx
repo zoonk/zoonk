@@ -19,7 +19,7 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { LearnLink } from "../learn-link";
 import { goBackToApp } from "../shell/app-history";
 import { useOnboardingHost } from "./onboarding-host";
@@ -135,20 +135,26 @@ export function StartOverMenuSkeleton() {
 
 function SkipProfileButton({ disabled, onSkip }: { disabled: boolean; onSkip: () => void }) {
   const t = useExtracted();
+  const descriptionId = useId();
 
   return (
-    <Button
-      aria-label={t("Skip the rest of the questions about you")}
-      disabled={disabled}
-      onClick={onSkip}
-      size="sm"
-      variant="ghost"
-    >
-      {t({
-        description: "Skips every remaining question about the learner in this setup.",
-        message: "Skip all",
-      })}
-    </Button>
+    <>
+      <Button
+        aria-describedby={descriptionId}
+        disabled={disabled}
+        onClick={onSkip}
+        size="sm"
+        variant="ghost"
+      >
+        {t({
+          description: "Skips every remaining question about the learner in this setup.",
+          message: "Skip all",
+        })}
+      </Button>
+      <span className="sr-only" id={descriptionId}>
+        {t("Skip the rest of the questions about you")}
+      </span>
+    </>
   );
 }
 
