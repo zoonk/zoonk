@@ -659,6 +659,7 @@
     "./view-models/onboarding/revise-draft": "./src/view-models/onboarding/revise-onboarding-draft.ts",
     "./view-models/onboarding/start-understanding": "./src/view-models/onboarding/start-goal-understanding.ts",
     "./view-models/onboarding/understanding-run": "./src/view-models/onboarding/goal-understanding-run.ts",
+    "./view-models/onboarding/steps": "./src/view-models/onboarding/onboarding-steps.ts",
     "./view-models/onboarding/view-schemas": "./src/view-models/onboarding/onboarding-view-schemas.ts",
     "./view-models/plan/get": "./src/view-models/plan/get-plan-view.ts",
     "./view-models/progress/get": "./src/view-models/progress/get-progress-view.ts",

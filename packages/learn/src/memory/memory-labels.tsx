@@ -44,6 +44,7 @@ function useFactSourceName(fact: MemoryFactView): string {
 
   switch (fact.source?.kind) {
     case undefined:
+    case "profile":
       return t("You told us");
     case "chat":
       return t("From a chat");

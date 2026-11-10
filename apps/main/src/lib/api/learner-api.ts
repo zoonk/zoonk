@@ -1,5 +1,6 @@
 import "server-only";
 import { getApiDeploymentHeaders } from "@zoonk/core/security/api-deployment";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { API_URL } from "@zoonk/utils/url";
 import { headers } from "next/headers";
@@ -13,9 +14,11 @@ export type LearnerApiResponse =
 /** Forwards the learner's cookie and browser, so the API acts as them and counts the work as web. */
 export async function postAsLearner({
   body,
+  locale,
   path,
 }: {
   body?: unknown;
+  locale?: SupportedLocale;
   path: string;
 }): Promise<LearnerApiResponse> {
   const requestHeaders = await headers();
@@ -25,6 +28,8 @@ export async function postAsLearner({
       body: body === undefined ? undefined : JSON.stringify(body),
       headers: {
         ...(await getApiDeploymentHeaders()),
+        // What the API writes for the learner, such as profile statements, is in this language.
+        ...(locale && { "Accept-Language": locale }),
         "Content-Type": "application/json",
         Cookie: requestHeaders.get("cookie") ?? "",
         Origin: API_ORIGIN,

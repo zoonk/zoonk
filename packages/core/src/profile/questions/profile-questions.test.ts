@@ -649,7 +649,7 @@ describe("profile onboarding", () => {
       throw new Error(view.status);
     }
 
-    expect(view.onboarding.steps).not.toContain("tools");
+    expect(view.onboarding.steps).toContain("tools");
 
     expect(
       view.onboarding.profile.questions.find((question) => question.id === "tools")?.status,

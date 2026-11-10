@@ -16,6 +16,7 @@ import {
   PROFILE_QUESTION_VERSIONS,
   type ProfileAnswerInput,
   type ProfileQuestionView,
+  getProfileSteps,
   profileAnswerInputSchema,
 } from "../profile-question-contract";
 
@@ -223,4 +224,18 @@ export function toProfileQuestionsView({
       toProfileQuestionView({ locale, question, state }),
     ),
   };
+}
+
+export function getStateProfileSteps({
+  goal,
+  state,
+}: {
+  goal: Parameters<typeof getProfileSteps>[0]["goal"];
+  state: ProfileQuestionState;
+}) {
+  return getProfileSteps({
+    answered: Object.fromEntries(state.answers.map((answer) => [answer.question, answer.version])),
+    goal,
+    memoryEnabled: state.profile?.memoryEnabled ?? true,
+  });
 }

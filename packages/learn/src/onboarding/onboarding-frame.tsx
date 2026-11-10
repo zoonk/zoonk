@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type ReactNode } from "react";
+import { type ReactNode, useLayoutEffect } from "react";
 import { PageEyebrow } from "../_components/page";
 import { toLabelCase } from "../_utils/label-case";
 import { OnboardingBarRow } from "./onboarding-bar";
@@ -287,4 +287,13 @@ export function OnboardingSecondaryButton({
       {...props}
     />
   );
+}
+
+/** The window keeps the scroll of a long screen, so the next one would open past its title. */
+export function OnboardingScreenTop() {
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  return null;
 }
