@@ -259,6 +259,7 @@ function StepScreen({
           readWarmUp={actions.readWarmUp}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
+          startsOnRecommended={view.startsOnRecommended}
           together={{
             count: view.goalIds.length,
             place: Math.max(0, view.goalIds.indexOf(view.goal.id)),

@@ -183,15 +183,7 @@ function ExamFullCourse({ schedule }: { schedule: Schedule }) {
   );
 }
 
-function ScheduleWeek({
-  recommendedMinutes,
-  schedule,
-}: {
-  recommendedMinutes: number;
-  schedule: Schedule;
-}) {
-  const { minutes, week } = schedule;
-
+function ScheduleWeek({ minutes, week }: { minutes: number; week: Schedule["week"] }) {
   return (
     <div className="flex flex-col gap-3">
       <OnboardingQuestionShown step="schedule" />
@@ -200,7 +192,7 @@ function ScheduleWeek({
       {week.studiesOnWeekends && (
         <WeekendMinutes
           checked={week.weekendOn}
-          minutes={week.weekendPicked ?? minutes ?? recommendedMinutes}
+          minutes={week.weekendPicked ?? minutes}
           onChange={week.setWeekendPicked}
           onCheckedChange={week.setWeekendOn}
         />
@@ -228,6 +220,7 @@ export function ScheduleStep({
   readWarmUp,
   recommendedMinutes,
   run,
+  startsOnRecommended,
   together,
 }: ScheduleActions & {
   dated: boolean;
@@ -246,6 +239,7 @@ export function ScheduleStep({
   readWarmUp: OnboardingActions["readWarmUp"];
   recommendedMinutes: number;
   run: GenerationRun | null;
+  startsOnRecommended: boolean;
   together: GoalsTogether;
 }) {
   const t = useExtracted();
@@ -262,6 +256,7 @@ export function ScheduleStep({
     paused: isRunStopped(run),
     planMade: isPlanMade(run),
     recommendedMinutes,
+    startsOnRecommended,
     together,
   });
 
@@ -306,7 +301,7 @@ export function ScheduleStep({
           readEnd={schedule.readAimEnd}
         />
         {/* The days decide the time, and what the time covers arrives last, so nothing above it moves. */}
-        <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
+        <ScheduleWeek minutes={schedule.minutes ?? recommendedMinutes} week={schedule.week} />
         <ScheduleTime
           aim={aim}
           exam={exam}
