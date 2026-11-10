@@ -10,12 +10,14 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
 import com.zoonk.android.data.withBearer
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
@@ -23,10 +25,16 @@ import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapGeneration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import java.io.IOException
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.cancellation.CancellationException
 
 interface MindMapApi {
@@ -101,18 +109,17 @@ class LiveMindMapApi(
 }
 
 sealed interface MindMapCreated {
-    data object Ready : MindMapCreated
+    /** Started, joined, already drawn, locked for Plus or without a map: the reads, read again, say which. */
+    data object Read : MindMapCreated
 
-    data object Generating : MindMapCreated
-
-    /** Maps are for chapters the learner finished. */
-    data object Unavailable : MindMapCreated
-
+    /** [subject]: what ran out, the maps, the lessons the map would write first, or the day's AI help. */
     data class Refused(
         val limit: Limit,
+        val subject: LimitSubject,
     ) : MindMapCreated
 
-    data object Failed : MindMapCreated
+    /** The request, or the reads after it, didn't come through. */
+    data object Unreachable : MindMapCreated
 }
 
 /** A goal's mind maps, and making one: a model call, so only from a learner's tap. */
@@ -120,38 +127,67 @@ class MindMapStore(
     private val api: MindMapApi,
     private val cache: AppCache,
 ) {
+    private val readsStarted = AtomicLong()
+    private val watchers = CopyOnWriteArrayList<ReadWatcher>()
+
     val list: KeyedResources<UUID, GoalMindMaps> =
-        cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId -> session?.let { api.list(it, goalId) } }
-
-    val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
-        cache.keyed(Audience.SignedIn, DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
-
-    /**
-     * Null when the session changed meanwhile. A map being drawn shows as drawing in the reads kept
-     * of it, so a screen opened again follows it; one already drawn is read again.
-     */
-    suspend fun create(key: ChapterKey): MindMapCreated? =
-        when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
-            is MutationResult.Done -> {
-                if (result.value.status == MindMapGeneration.Status.READY) {
-                    list[key.goalId].invalidate()
-                    chapter[key].invalidate()
-                    MindMapCreated.Ready
-                } else {
-                    drawing(key)
-                    MindMapCreated.Generating
-                }
-            }
-
-            is MutationResult.Failed -> {
-                Limit.of(result)?.let(MindMapCreated::Refused)
-                    ?: if (result.status == UNPROCESSABLE) MindMapCreated.Unavailable else MindMapCreated.Failed
-            }
-
-            MutationResult.Obsolete -> {
-                null
+        cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId ->
+            session?.let {
+                read(goalId, { maps -> maps.chapters.map { it.chapterId } }) { api.list(it, goalId) }
             }
         }
+
+    val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
+        cache.keyed(Audience.SignedIn, DOMAINS) { session, key ->
+            session?.let { read(key.goalId, { listOf(key.chapterId) }) { api.chapter(it, key) } }
+        }
+
+    /** The number of the last read started: what a screen notes now gives way to any read started later. */
+    fun readMark(): Long = readsStarted.get()
+
+    /**
+     * Tells [arrived] of each read of [goalId]'s maps that comes through: the chapters it read and the
+     * number it started with. Returns what stops it.
+     */
+    fun watchReads(
+        goalId: UUID,
+        arrived: (chapterIds: List<UUID>, started: Long) -> Unit,
+    ): () -> Unit {
+        val watcher = ReadWatcher(goalId, arrived)
+        watchers += watcher
+        return { watchers -= watcher }
+    }
+
+    private suspend fun <T> read(
+        goalId: UUID,
+        chapters: (T) -> List<UUID>,
+        fetch: suspend () -> T,
+    ): T {
+        val started = readsStarted.incrementAndGet()
+        return fetch().also { value -> watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapters(value), started) } }
+    }
+
+    /** Null when the session changed meanwhile. The reads say what came of it; nothing is written into them. */
+    suspend fun create(key: ChapterKey): MindMapCreated? =
+        when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
+            is MutationResult.Done -> readAgain(key)
+            is MutationResult.Failed -> refused(result, key)
+            MutationResult.Obsolete -> null
+        }
+
+    private suspend fun refused(
+        result: MutationResult.Failed,
+        key: ChapterKey,
+    ): MindMapCreated {
+        val limit = Limit.of(result)
+        return when {
+            result.code == PLUS_REQUIRED || result.status == UNPROCESSABLE -> readAgain(key)
+            limit != null -> MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
+            else -> MindMapCreated.Unreachable
+        }
+    }
+
+    private suspend fun readAgain(key: ChapterKey) = if (refresh(key)) MindMapCreated.Read else MindMapCreated.Unreachable
 
     /** Null when it couldn't be read; the poll counts those. */
     suspend fun status(
@@ -167,31 +203,39 @@ class MindMapStore(
         }
 
     /**
-     * Reads the map again wherever a read of it is kept (the others when next shown) and says whether
-     * those reads now show [status]; false when one couldn't be read, which the poll counts as a miss.
+     * Whether the reads kept of the map show [status], reading them again first when they don't;
+     * false when they still don't or a read didn't come through, which the poll counts as a miss.
      */
-    suspend fun reread(
+    suspend fun agrees(
+        key: ChapterKey,
+        status: MindMapShown,
+    ): Boolean = shows(key, status) || (refresh(key) && shows(key, status))
+
+    private fun shows(
         key: ChapterKey,
         status: MindMapShown,
     ): Boolean {
-        val list = list[key.goalId]
-        val chapter = chapter[key]
-        listOf(list, chapter).forEach { if (it.state.value.hasContent) it.refresh() else it.invalidate() }
-
         val listed =
-            list.state.value.value
+            list[key.goalId]
+                .state.value.value
                 ?.chapters
                 ?.firstOrNull { it.chapterId == key.chapterId }
-        val read = chapter.state.value.value
+        val read = chapter[key].state.value.value
         return listOfNotNull(listed?.status?.shown, read?.status?.shown).all { it == status }
     }
 
-    private fun drawing(key: ChapterKey) {
-        list[key.goalId].update { maps -> maps.copy(chapters = maps.chapters.map { it.drawingIf(key.chapterId) }) }
-        chapter[key].update { it.copy(status = ChapterMindMap.Status.GENERATING) }
-    }
+    /** Reads the map again wherever a read of it is kept (the others load fresh when shown); false when one didn't come through. */
+    private suspend fun refresh(key: ChapterKey): Boolean = listOf(list[key.goalId], chapter[key]).map { it.reread() }.all { it }
 
-    private fun GoalMindMap.drawingIf(id: UUID) = if (chapterId == id) copy(status = GoalMindMap.Status.GENERATING) else this
+    private suspend fun Resource<*>.reread(): Boolean {
+        if (!state.value.hasContent) {
+            invalidate()
+            return true
+        }
+        val before = revision
+        refresh()
+        return revision != before
+    }
 
     suspend fun picture(
         session: AuthenticatedSession,
@@ -206,7 +250,27 @@ class MindMapStore(
         }
 
     private companion object {
-        val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress)
+        // Buying Plus unlocks the chapters past the free week.
+        val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSubscription)
         const val UNPROCESSABLE = 422
+        const val PLUS_REQUIRED = "PLUS_REQUIRED"
     }
 }
+
+/** Main's wording for what ran out: lessons for the lessons a map writes first, help for the day's AI spend. */
+private val String?.limitSubject: LimitSubject
+    get() =
+        when (this) {
+            "lessonStart", "generatedLessons" -> LimitSubject.Lessons
+            "aiSpend" -> LimitSubject.Help
+            else -> LimitSubject.MindMaps
+        }
+
+private class ReadWatcher(
+    val goalId: UUID,
+    val arrived: (chapterIds: List<UUID>, started: Long) -> Unit,
+)
+
+/** A refusal's `details.limit.resource`: what ran out. */
+private fun JsonElement?.ranOut(): String? =
+    (((this as? JsonObject)?.get("limit") as? JsonObject)?.get("resource") as? JsonPrimitive)?.contentOrNull

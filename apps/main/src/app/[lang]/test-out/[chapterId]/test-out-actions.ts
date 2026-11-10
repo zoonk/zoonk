@@ -28,6 +28,7 @@ export async function submitTestOutAction(
     certificates: outcome.certificates,
     changeId: outcome.changeId,
     correct: outcome.correct,
+    finishedChapter: outcome.finishedChapter,
     passed: outcome.passed,
     reached: outcome.reached,
     skippedLessons: outcome.lessonsSkipped,

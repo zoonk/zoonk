@@ -5,7 +5,7 @@ import { activityAnswerSchema } from "../library/activities/activity-answer-sche
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
 import { MAX_STEP_ID_LENGTH } from "../library/steps/contract/content-schemas";
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
-import { studyBlockCompletionSchema } from "../sessions/completion-contract";
+import { finishedChapterSchema, studyBlockCompletionSchema } from "../sessions/completion-contract";
 import {
   openStudyBlockInputSchema,
   studyBlockOpeningSchema,
@@ -254,6 +254,7 @@ export const libraryLessonCompletionSchema = z
     brainPower: z.int(),
     correctCount: z.int().min(0),
     energyDelta: z.number(),
+    finishedChapter: finishedChapterSchema,
     incorrectCount: z.int().min(0),
     isFirstCompletion: z
       .boolean()

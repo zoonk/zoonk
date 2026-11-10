@@ -150,9 +150,12 @@ import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
+import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.LearnerSummaryBuddy
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+
+typealias FinishedChapterSlot = @Composable (FinishedChapter) -> Unit
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */
 interface LessonPlayerExits {
@@ -234,6 +237,7 @@ fun LessonPlayer(
     ceremony: MomentCeremony? = null,
     tutor: LessonTutor? = null,
     certificatesMoment: CertificatesMoment? = null,
+    finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
 ) {
     val screen = remember(state) { state?.screen() }
@@ -472,6 +476,7 @@ fun LessonPlayer(
                             buddy,
                             ceremony,
                             certificatesMoment,
+                            finishedChapter,
                             offer,
                             help,
                             touches,
@@ -582,6 +587,7 @@ private fun Content(
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
     certificatesMoment: CertificatesMoment?,
+    finishedChapter: FinishedChapterSlot?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
@@ -600,7 +606,7 @@ private fun Content(
         state.phase == LessonPhase.Completed -> {
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
-                if (ownEnd == null) LessonCompletionView(state, ending, buddy, onReportSaveFailure) else ownEnd.body(state)
+                if (ownEnd == null) LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure) else ownEnd.body(state)
             }
         }
 

@@ -6,14 +6,7 @@ import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { CoverageBar } from "../_components/coverage-bar";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
-import { KindDot } from "../_components/kind-tile";
-import {
-  ListGroup,
-  ListRowContent,
-  ListRowLeading,
-  ListRowLink,
-  ListRowTitle,
-} from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useFormatPlanDate } from "../plan/plan-date-text";
@@ -199,12 +192,10 @@ function SubjectDetails({
 
 export function SubjectAside({
   ask,
-  mindMapsHref,
   questionsSource,
   subject,
 }: {
   ask?: React.ReactNode;
-  mindMapsHref: string | null;
   questionsSource: SyllabusView["questionsSource"];
   subject: SyllabusSubject;
 }) {
@@ -230,25 +221,13 @@ export function SubjectAside({
         <SubjectDetails questionsSource={questionsSource} subject={subject} />
       </DetailAsideSection>
 
-      {(mindMapsHref || ask) && (
+      {ask && (
         <DetailAsideSection
-          className={cn(!mindMapsHref && "hidden min-[72rem]:flex")}
+          className="hidden min-[72rem]:flex"
           title={t("Also")}
           titleId="subject-also-title"
         >
-          <ListGroup>
-            {mindMapsHref && (
-              <ListRowLink href={mindMapsHref}>
-                <ListRowLeading>
-                  <KindDot kind="mindMap" />
-                </ListRowLeading>
-                <ListRowContent>
-                  <ListRowTitle>{t("Mind maps")}</ListRowTitle>
-                </ListRowContent>
-              </ListRowLink>
-            )}
-            {ask && <div className="hidden min-[72rem]:block">{ask}</div>}
-          </ListGroup>
+          <ListGroup>{ask}</ListGroup>
         </DetailAsideSection>
       )}
     </>

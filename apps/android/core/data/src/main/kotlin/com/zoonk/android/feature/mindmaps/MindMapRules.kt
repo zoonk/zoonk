@@ -2,46 +2,75 @@ package com.zoonk.android.feature.mindmaps
 
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.ChapterMindMap
+import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
+import com.zoonk.api.models.MindMapGeneration
 import java.text.Normalizer
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
-/** What a map's tile or card says, from the server's status and what this screen asked for. */
-enum class MindMapShown { Unavailable, Available, Generating, Ready, Failed, Refused, Unreachable }
+/** What a map's row says, from the server's status and what this screen asked for. */
+enum class MindMapShown {
+    Unavailable,
+    Available,
+    WritingLessons,
+    Drawing,
+    Ready,
+    Failed,
+    PlusRequired,
+    Refused,
+    Unreachable,
+    ;
 
-/** What a screen did about one map: its request's answer, and whether following it got stuck. */
+    val onItsWay: Boolean get() = this == WritingLessons || this == Drawing
+
+    /** How often a row on its way asks again: writing lessons takes minutes, drawing half a minute. */
+    val pollEvery: Duration get() = if (this == WritingLessons) 15.seconds else 4.seconds
+}
+
+/**
+ * What a tap or a poll got that the map's reads can't say: a request on its way ([pending]), a
+ * refusal ([limit], worded by [subject]) or a server out of reach ([unreachable]). A refusal or a
+ * lost connection lasts until a read of the map started after it ([since]) comes through, even one
+ * that reads the same, as after buying Plus.
+ */
 data class MindMapLocal(
-    val shown: MindMapShown? = null,
-    val limit: Limit? = null,
     val pending: Boolean = false,
-    val stuck: Boolean = false,
+    val limit: Limit? = null,
+    val subject: LimitSubject = LimitSubject.MindMaps,
+    val unreachable: Boolean = false,
+    val since: Long = 0,
 )
 
 /**
- * Main's `useMindMapRequest`: the server's ready wins; a poll that got stuck says it couldn't reach
- * the server; a map this screen saw finish shows as still drawing until the server's read says so.
+ * The reads decide, but for a refusal or a lost connection no newer read has replaced yet; a drawn
+ * map or a Plus lock leaves nothing for either to be about.
  */
 fun shownMindMap(
     server: MindMapShown,
     local: MindMapLocal?,
 ): MindMapShown =
     when {
-        server == MindMapShown.Ready -> MindMapShown.Ready
-        local?.stuck == true -> MindMapShown.Unreachable
-        local?.shown == MindMapShown.Ready -> MindMapShown.Generating
-        else -> local?.shown ?: server
+        server == MindMapShown.Ready || server == MindMapShown.PlusRequired -> server
+        local?.unreachable == true -> MindMapShown.Unreachable
+        local?.limit != null -> MindMapShown.Refused
+        else -> server
     }
 
 val GoalMindMap.Status.shown: MindMapShown
     get() =
         when (this) {
             GoalMindMap.Status.AVAILABLE -> MindMapShown.Available
-            GoalMindMap.Status.GENERATING -> MindMapShown.Generating
+            GoalMindMap.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
+            GoalMindMap.Status.DRAWING -> MindMapShown.Drawing
             GoalMindMap.Status.READY -> MindMapShown.Ready
             GoalMindMap.Status.FAILED -> MindMapShown.Failed
+            GoalMindMap.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
         }
 
 val ChapterMindMap.Status.shown: MindMapShown
@@ -49,9 +78,31 @@ val ChapterMindMap.Status.shown: MindMapShown
         when (this) {
             ChapterMindMap.Status.UNAVAILABLE -> MindMapShown.Unavailable
             ChapterMindMap.Status.AVAILABLE -> MindMapShown.Available
-            ChapterMindMap.Status.GENERATING -> MindMapShown.Generating
+            ChapterMindMap.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
+            ChapterMindMap.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMap.Status.READY -> MindMapShown.Ready
             ChapterMindMap.Status.FAILED -> MindMapShown.Failed
+            ChapterMindMap.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
+        }
+
+val ChapterMindMapStatus.Status.shown: MindMapShown
+    get() =
+        when (this) {
+            ChapterMindMapStatus.Status.UNAVAILABLE -> MindMapShown.Unavailable
+            ChapterMindMapStatus.Status.AVAILABLE -> MindMapShown.Available
+            ChapterMindMapStatus.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
+            ChapterMindMapStatus.Status.DRAWING -> MindMapShown.Drawing
+            ChapterMindMapStatus.Status.READY -> MindMapShown.Ready
+            ChapterMindMapStatus.Status.FAILED -> MindMapShown.Failed
+            ChapterMindMapStatus.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
+        }
+
+val MindMapGeneration.Status.shown: MindMapShown
+    get() =
+        when (this) {
+            MindMapGeneration.Status.READY -> MindMapShown.Ready
+            MindMapGeneration.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
+            MindMapGeneration.Status.DRAWING -> MindMapShown.Drawing
         }
 
 /** Main's `getReachedCap`: the learner's plan has no [kind] left now, and until when. */

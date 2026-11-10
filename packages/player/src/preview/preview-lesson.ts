@@ -75,6 +75,7 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
           certificates: [],
           correctCount: 1,
           energyDelta: 1,
+          finishedChapter: null,
           incorrectCount: 0,
           isFirstCompletion: true,
           nextReviewAt: null,

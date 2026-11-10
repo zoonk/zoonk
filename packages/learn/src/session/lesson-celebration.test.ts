@@ -13,6 +13,7 @@ function lessonCompletion(
     certificates: [],
     correctCount: 1,
     energyDelta: 0.2,
+    finishedChapter: null,
     incorrectCount: 0,
     isFirstCompletion: true,
     nextReviewAt: null,

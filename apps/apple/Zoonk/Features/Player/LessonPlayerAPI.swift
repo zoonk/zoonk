@@ -295,6 +295,7 @@ struct LessonPlayerAPI: Sendable {
           isFirstCompletion: completion.isFirstCompletion,
           nextReviewAt: completion.nextReviewAt,
           day: block?.day ?? DayResult(completion), block: block,
+          finishedChapter: completion.finishedChapter?.value1,
           planReveal: completion.planReveal.map {
             PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
           }))

@@ -107,6 +107,7 @@ class TestOutScreenshots {
                         reached = MistakePatternPracticeResultReached(energy = 64, level = null),
                         changeId = UUID.randomUUID().takeIf { passed },
                         correct = if (passed) 3 else 1,
+                        finishedChapter = null,
                         lessonsSkipped = if (passed) 4 else 0,
                         passed = passed,
                         total = 3,

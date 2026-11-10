@@ -84,3 +84,39 @@ export async function claimAssistInWrite({
 
   return decision.status === "allowed";
 }
+
+/**
+ * Claims several uses inside the caller's learner write, stopping at the first refusal, which the
+ * caller answers by rolling its write back. They're charged only if that write commits; the caller
+ * expires the allowance tag once it does.
+ */
+export async function claimUsagesInWrite({
+  claims,
+  transaction,
+  viewer,
+}: {
+  claims: readonly UsageClaim[];
+  transaction: TransactionClient;
+  viewer: EntitlementViewer;
+}): Promise<UsageDecision> {
+  await lockUsageForViewer({ transaction, userId: viewer.userId });
+
+  const now = new Date();
+
+  for (const { generated = false, ...claim } of claims) {
+    // oxlint-disable-next-line no-await-in-loop -- Each claim counts the ones before it.
+    const { decision } = await claimUsageInTransaction({
+      ...claim,
+      generated,
+      now,
+      transaction,
+      viewer,
+    });
+
+    if (decision.status !== "allowed") {
+      return decision;
+    }
+  }
+
+  return { status: "allowed" };
+}

@@ -8,7 +8,6 @@ import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { type AreaPracticeOutcome, type ChapterHrefs, ChapterScreen } from "@zoonk/learn/chapter";
-import { type MindMapLimit } from "@zoonk/learn/mind-maps";
 import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
@@ -22,13 +21,13 @@ export function ChapterScreenClient({
   back,
   chapter,
   mindMap,
-  mindMapCap,
+  plus,
   tutor,
 }: {
   back: ChapterBack | null;
   chapter: ChapterView;
   mindMap: ChapterMindMapView | null;
-  mindMapCap: MindMapLimit | null;
+  plus: boolean;
   tutor: TutorViewer;
 }) {
   const go = useGoToStudyDestination();
@@ -67,7 +66,7 @@ export function ChapterScreenClient({
       ask={<MainAskTutor {...tutor} size="bar" target={target} />}
       chapter={chapter}
       hrefs={back ? { ...CHAPTER_HREFS, back: back.href, backLabel: back.label } : CHAPTER_HREFS}
-      mindMap={mindMap && { actions: mindMapActions, cap: mindMapCap, view: mindMap }}
+      mindMap={mindMap && { actions: mindMapActions, plus, view: mindMap }}
       renderLessonText={(text) => <LessonRichText text={text} />}
     />
   );

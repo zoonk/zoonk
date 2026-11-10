@@ -174,8 +174,877 @@
         }
       }
     },
+    "%lld lessons get written first and count toward your free lessons." : {
+      "comment" : "A free learner's map of a chapter whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektion und rechnen sie auf deine kostenlosen Lektionen an."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektionen und rechnen sie auf deine kostenlosen Lektionen an."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson gets written first and counts toward your free lessons."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons get written first and count toward your free lessons."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se prepara %lld lección y cuenta para tu límite de lecciones gratis."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se preparan %lld lecciones y cuentan para tu límite de lecciones gratis."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On prépare d’abord %lld leçon, qui est décomptée de tes leçons gratuites."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On prépare d’abord %lld leçons, qui sont décomptées de tes leçons gratuites."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezione e la conteggiamo tra le tue lezioni gratuite."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezioni e le conteggiamo tra le tue lezioni gratuite."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "まず%lldレッスンを作成します。作成分は無料レッスンの利用数に含まれます。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨 %lld개를 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcję i wliczymy ją do twojej puli bezpłatnych lekcji."
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcje i wliczymy je do twojej puli bezpłatnych lekcji."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcji i wliczymy je do twojej puli bezpłatnych lekcji."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula é criada primeiro e conta para o seu limite de aulas grátis."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas são criadas primeiro e contam para o seu limite de aulas grátis."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Önce %lld ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons get written first, so it takes a few minutes." : {
+      "comment" : "A Plus learner's map of a chapter whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektion. Das dauert ein paar Minuten."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Wir erstellen zuerst %lld Lektionen. Das dauert ein paar Minuten."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson gets written first, so it takes a few minutes."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons get written first, so it takes a few minutes."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se prepara %lld lección, lo que toma unos minutos."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Primero se preparan %lld lecciones, lo que toma unos minutos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On prépare d’abord %lld leçon, ce qui prend quelques minutes."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On prépare d’abord %lld leçons, ce qui prend quelques minutes."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezione, quindi ci vogliono alcuni minuti."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Prima prepariamo %lld lezioni, quindi ci vogliono alcuni minuti."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "まず%lldレッスンを作成するため、数分かかります。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨 %lld개를 먼저 만들어야 해서 몇 분 걸려요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcje, więc zajmie to kilka minut."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcję, więc zajmie to kilka minut."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Najpierw przygotujemy %lld lekcji, więc zajmie to kilka minut."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula é criada primeiro, o que leva alguns minutos."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas são criadas primeiro, o que leva alguns minutos."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Önce %lld ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons to write" : {
+      "comment" : "A chapter on the mind maps page whose lessons a map would write first",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Noch %lld Lektion zu erstellen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Noch %lld Lektionen zu erstellen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson to write"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons to write"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección por preparar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones por preparar"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon à préparer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons à préparer"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezione da preparare"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezioni da preparare"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lldレッスンの作成が必要"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "만들 레슨 %lld개"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcje do przygotowania"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcja do przygotowania"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcji do przygotowania"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula para criar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas para criar"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hazırlanacak %lld ders"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld maps" : {
+      "comment" : "How many chapters' mind maps are ready",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Mindmap"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Mindmaps"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld map"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld maps"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mapa"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mapas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld carte mentale"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cartes mentales"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mappa"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mappe"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld枚のマインドマップ"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "마인드맵 %lld개"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld map"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mapa"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mapy"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mapa"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mapas"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld harita"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "0 maps" : {
+      "comment" : "No chapter's mind map is ready yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 Mindmaps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 mapas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 carte mentale"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 mappe"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップ0件"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마인드맵 0개"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 map"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 mapas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 harita"
+          }
+        }
+      }
+    },
+    "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan." : {
+      "comment" : "What the mind maps page is, under its title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Wichtigste aus einem Kapitel in einem Bild. Für jedes Kapitel, das du abschließt, bekommst du eine Mindmap; für jedes andere Kapitel in deinem Plan kannst du eine erstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las ideas principales de un capítulo en una imagen. Cada capítulo que completes tendrá su mapa; puedes crear uno para cualquier otro capítulo de tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les idées principales d’un chapitre en une image. Chaque chapitre que tu termines a sa carte mentale ; tu peux en créer une pour n’importe quel autre chapitre de ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le idee principali di un capitolo in un’immagine. Ogni capitolo che completi ha la sua mappa; puoi crearne una per qualsiasi altro capitolo del tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "章のポイントを1枚の図にまとめます。学習を終えた章ごとに作成されます。学習計画にあるほかの章でも作成できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챕터의 핵심 내용을 한 장의 그림으로 정리해요. 완료한 챕터마다 마인드맵이 만들어지고, 계획에 있는 다른 챕터의 마인드맵도 만들 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Główne zagadnienia rozdziału na jednym obrazku. Każdy ukończony rozdział ma swoją mapę. Możesz ją też stworzyć dla dowolnego innego rozdziału w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As principais ideias de um capítulo em uma imagem. Cada capítulo que você conclui ganha um mapa mental; você pode criar um para qualquer outro capítulo do seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir ünitenin ana kavramları tek bir görselde. Tamamladığın her ünite için bir zihin haritası hazırlanır; planındaki diğer üniteler için de oluşturabilirsin."
+          }
+        }
+      }
+    },
+    "About half a minute. You can leave; it'll be here." : {
+      "comment" : "Under a map being drawn",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa eine halbe Minute. Du kannst die Seite verlassen; du findest die Mindmap später hier."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente medio minuto. Puedes salir; estará aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ trente secondes. Tu peux quitter la page ; tu retrouveras la carte ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circa mezzo minuto. Puoi uscire: la ritroverai qui."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30秒ほどかかります。画面を離れても、後でここから確認できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30초 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Około pół minuty. Możesz wyjść, a mapa będzie tu czekać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de meio minuto. Pode sair; o mapa vai estar aqui."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık yarım dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
+          }
+        }
+      }
+    },
     "As text" : {
-      "comment" : "Shows the map's outline in words",
+      "comment" : "Shows the map's outline in words; on the mind maps page, a map whose picture failed, so it opens as its outline",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -292,61 +1161,61 @@
         }
       }
     },
-    "Chapters you finished" : {
-      "comment" : "Heading of the chapters with mind maps",
+    "Chapter finished" : {
+      "comment" : "Over the map of the chapter the learner just finished",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine abgeschlossenen Kapitel"
+            "value" : "Kapitel abgeschlossen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capítulos que completaste"
+            "value" : "Capítulo completado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chapitres terminés"
+            "value" : "Chapitre terminé"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capitoli completati"
+            "value" : "Capitolo completato"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習を終えた章"
+            "value" : "章の学習が完了"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "완료한 챕터"
+            "value" : "챕터 완료"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukończone rozdziały"
+            "value" : "Rozdział ukończony"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capítulos que você concluiu"
+            "value" : "Capítulo concluído"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tamamladığın üniteler"
+            "value" : "Ünite tamamlandı"
           }
         }
       }
@@ -469,120 +1338,120 @@
         }
       }
     },
-    "Drawing…" : {
+    "Create your free account to continue." : {
+      "comment" : "A guest must create an account to make a map",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle dein kostenloses Konto, um weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tu cuenta gratis para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée ton compte gratuit pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea il tuo account gratuito per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続けるには、無料アカウントを作成してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속 이용하려면 무료 계정을 만드세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Załóż bezpłatne konto, by kontynuować."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie sua conta grátis para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam etmek için ücretsiz bir hesap oluştur."
+          }
+        }
+      }
+    },
+    "Drawing the mind map…" : {
       "comment" : "A map being drawn",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir zeichnen…"
+            "value" : "Wir zeichnen die Mindmap…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dibujando…"
+            "value" : "Dibujando el mapa mental…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dessin en cours…"
+            "value" : "Création de la carte mentale…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo disegnando…"
+            "value" : "Stiamo disegnando la mappa mentale…"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "描いています…"
+            "value" : "マインドマップを作成しています…"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "그리고 있어요…"
+            "value" : "마인드맵을 그리고 있어요…"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rysujemy…"
+            "value" : "Rysujemy mapę myśli…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desenhando…"
+            "value" : "Desenhando o mapa mental…"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çiziyoruz…"
-          }
-        }
-      }
-    },
-    "Finish a chapter to make its mind map: its main ideas in one picture." : {
-      "comment" : "Explains how a chapter gets a mind map",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schließe ein Kapitel ab, um seine Mindmap zu erstellen: die wichtigsten Ideen auf einen Blick."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa un capítulo para crear su mapa mental: sus ideas principales en una imagen."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termine un chapitre pour créer sa carte mentale : ses idées principales en une image."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa un capitolo per crearne la mappa mentale: le idee principali in un’immagine."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "章の学習を終えると、要点を1枚の図にまとめたマインドマップを作成できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챕터를 끝내면 핵심 내용을 한 장의 그림에 담은 마인드맵을 만들 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ukończ rozdział, by utworzyć jego mapę myśli: najważniejsze informacje na jednym obrazku."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conclua um capítulo para criar seu mapa mental: as ideias principais em uma imagem."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir üniteyi bitir, ana fikirlerini tek bir görselde toplayan zihin haritasını oluştur."
+            "value" : "Zihin haritasını çiziyoruz…"
           }
         }
       }
@@ -652,7 +1521,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesmal konnte sie nicht erstellt werden."
+            "value" : "Die Mindmap konnte dieses Mal nicht erstellt werden."
           }
         },
         "es" : {
@@ -664,7 +1533,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de la créer cette fois."
+            "value" : "La carte mentale n’a pas pu être créée cette fois-ci."
           }
         },
         "it" : {
@@ -700,7 +1569,243 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu sefer oluşturulamadı."
+            "value" : "Bu kez oluşturulamadı."
+          }
+        }
+      }
+    },
+    "Its main ideas in one picture" : {
+      "comment" : "What a chapter's mind map is",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Wichtigste aus dem Kapitel in einem Bild"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sus ideas principales en una imagen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ses idées principales en une image"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le idee principali del capitolo in un’immagine"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この章のポイントを1枚の図に"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "핵심 내용을 한 장의 그림으로"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Główne zagadnienia rozdziału na jednym obrazku"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As principais ideias do capítulo em uma imagem"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ana kavramları tek bir görselde"
+          }
+        }
+      }
+    },
+    "Its picture had mistakes, so here's the mind map as text." : {
+      "comment" : "A map whose picture failed its check, shown as its outline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Bild hatte Fehler. Deshalb findest du die Mindmap hier als Text."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La imagen tenía errores, así que aquí tienes el mapa mental en texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’immagine conteneva errori, quindi ecco la mappa mentale in versione testuale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図に間違いがあったため、マインドマップをテキストで表示しています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그림에 잘못된 부분이 있어 마인드맵을 글로 보여 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na obrazku były błędy, więc pokazujemy mapę myśli w formie tekstu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A imagem tinha erros, então aqui está o mapa mental em texto."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
+          }
+        }
+      }
+    },
+    "Making a map for one of these writes its lessons first, so it takes a few minutes." : {
+      "comment" : "Under the mind maps page's title, for a Plus learner with chapters whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für eine Mindmap zu einem dieser Kapitel erstellen wir zuerst die Lektionen. Das dauert ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para crear un mapa de uno de estos capítulos, primero preparamos sus lecciones, así que tarda unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour créer une carte mentale sur l’un de ces chapitres, on prépare d’abord ses leçons, ce qui prend quelques minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per creare una mappa di uno di questi capitoli, prepariamo prima le lezioni: ci vuole quindi qualche minuto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下の章のマップを作成するときは、先にレッスンを作成するため、数分かかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 챕터의 마인드맵을 만들 때는 레슨을 먼저 만들어서 몇 분 정도 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby utworzyć mapę jednego z tych rozdziałów, najpierw przygotowujemy jego lekcje, więc zajmuje to kilka minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para fazer um mapa de um desses capítulos, a gente cria as aulas dele primeiro, então leva alguns minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünitelerden birinin haritasını oluştururken önce derslerini hazırlıyoruz, bu yüzden birkaç dakika sürüyor."
+          }
+        }
+      }
+    },
+    "Making a map for one of these writes its lessons first, which counts toward your free lessons." : {
+      "comment" : "Under the mind maps page's title, for a free learner with chapters whose lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für eine Mindmap zu einem dieser Kapitel erstellen wir zuerst die Lektionen. Sie werden auf deine kostenlosen Lektionen angerechnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para crear un mapa de uno de estos capítulos, primero preparamos sus lecciones, que se descuentan de tus lecciones gratis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour créer une carte mentale sur l’un de ces chapitres, on prépare d’abord ses leçons, qui sont décomptées de tes leçons gratuites."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per creare una mappa di uno di questi capitoli, prepariamo prima le lezioni, che vengono scalate dal numero di lezioni gratuite a tua disposizione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下の章のマップを作成するときは、先にレッスンを作成し、その分だけ無料レッスンの枠を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 챕터의 마인드맵을 만들 때는 레슨을 먼저 만들고, 이 레슨도 무료 레슨 수에 포함돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby utworzyć mapę jednego z tych rozdziałów, najpierw przygotowujemy jego lekcje, które wliczają się do twojego limitu bezpłatnych lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para fazer um mapa de um desses capítulos, a gente cria as aulas dele primeiro, e elas contam para o seu limite de aulas grátis."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünitelerden birinin haritasını oluştururken önce derslerini hazırlıyoruz ve bu dersler ücretsiz ders hakkından düşülüyor."
           }
         }
       }
@@ -829,6 +1934,65 @@
         }
       }
     },
+    "Mind map ready" : {
+      "comment" : "A finished chapter's map, drawn and ready to open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindmap fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa mental listo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte mentale prête"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappa mentale pronta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マインドマップができました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마인드맵 준비 완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa myśli gotowa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa mental pronto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zihin haritası hazır"
+          }
+        }
+      }
+    },
     "Mind maps" : {
       "comment" : "Title of the mind maps page",
       "localizations" : {
@@ -947,6 +2111,478 @@
         }
       }
     },
+    "Open" : {
+      "comment" : "Opens the chapter's mind map",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "열기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aç"
+          }
+        }
+      }
+    },
+    "Take a short break, then try again." : {
+      "comment" : "Fair use asks the learner to wait a moment before another map",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach eine kurze Pause und versuch es dann noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descansa un momento y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais une courte pause, puis réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai una breve pausa, poi riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少し休んでから、もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠깐 쉬었다가 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrób krótką przerwę i spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça uma pausa rápida e tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa bir ara ver, sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "That's all the new lessons for this month. They open again next month, or get Plus to keep going now." : {
+      "comment" : "A free learner's map needs new lessons, and they started this month's",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für diesen Monat hast du alle neuen Lektionen ausgeschöpft. Nächsten Monat sind wieder neue verfügbar. Mit Plus kannst du sofort weitermachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llegaste al límite de lecciones nuevas de este mes. El próximo mes podrás tomar más o puedes obtener Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de nouvelles leçons pour ce mois. Tu pourras en suivre d’autres le mois prochain ou passer à Plus pour continuer dès maintenant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di nuove lezioni per questo mese. Potrai seguirne altre il mese prossimo, oppure passa a Plus per continuare subito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月の新しいレッスンはここまでです。来月また受けられます。Plusに登録すると、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달의 새 레슨은 여기까지예요. 다음 달에 다시 이용할 수 있고, Plus를 구독하면 지금 계속 학습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie nowe lekcje na ten miesiąc. Kolejne będą dostępne w przyszłym miesiącu. Przejdź na Plus, by uczyć się dalej już teraz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essas são todas as aulas novas deste mês. Mais aulas estarão disponíveis no mês que vem, ou assine o Plus para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki yeni ders hakkını kullandın. Gelecek ay yeni dersler açılacak. Hemen devam etmek istersen Plus’a geç."
+          }
+        }
+      }
+    },
+    "That's all the new lessons for today. They open again tomorrow, or get Plus to keep going now." : {
+      "comment" : "A free learner's map needs new lessons, and they started today's",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für heute hast du alle neuen Lektionen ausgeschöpft. Morgen sind wieder neue verfügbar. Mit Plus kannst du sofort weitermachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llegaste al límite de lecciones nuevas de hoy. Mañana podrás tomar más o puedes obtener Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de nouvelles leçons pour aujourd’hui. Tu pourras en suivre d’autres demain ou passer à Plus pour continuer dès maintenant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di nuove lezioni per oggi. Potrai seguirne altre domani, oppure passa a Plus per continuare subito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日の新しいレッスンはここまでです。明日また受けられます。Plusに登録すると、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘의 새 레슨은 여기까지예요. 내일 다시 이용할 수 있고, Plus를 구독하면 지금 계속 학습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie nowe lekcje na dziś. Kolejne będą dostępne jutro. Przejdź na Plus, by uczyć się dalej już teraz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essas são todas as aulas novas de hoje. Mais aulas estarão disponíveis amanhã, ou assine o Plus para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü yeni ders hakkını kullandın. Yarın yeni dersler açılacak. Hemen devam etmek istersen Plus’a geç."
+          }
+        }
+      }
+    },
+    "That's all the new lessons for today. They open again tomorrow." : {
+      "comment" : "A Plus learner's map needs new lessons, and they started today's",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für heute hast du alle neuen Lektionen ausgeschöpft. Morgen sind wieder neue verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llegaste al límite de lecciones nuevas de hoy. Mañana podrás tomar más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de nouvelles leçons pour aujourd’hui. Tu pourras en suivre d’autres demain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di nuove lezioni per oggi. Potrai seguirne altre domani."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日の新しいレッスンはここまでです。明日また受けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘의 새 레슨은 여기까지예요. 내일 다시 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie nowe lekcje na dziś. Kolejne będą dostępne jutro."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essas são todas as aulas novas de hoje. Mais aulas estarão disponíveis amanhã."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü yeni ders hakkını kullandın. Yarın yeni dersler açılacak."
+          }
+        }
+      }
+    },
+    "That's all the new mind maps for this month. You can make more next month, or get Plus to keep going now." : {
+      "comment" : "A free learner made this month's maps",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das waren alle neuen Mindmaps für diesen Monat. Nächsten Monat kannst du weitere erstellen. Mit Plus kannst du sofort weitermachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llegaste al límite de mapas mentales nuevos de este mes. El próximo mes podrás crear más o puedes obtener Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de nouvelles cartes mentales pour ce mois. Tu pourras en créer d’autres le mois prochain ou passer à Plus pour continuer dès maintenant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di nuove mappe mentali per questo mese. Potrai crearne altre il mese prossimo, oppure passa a Plus per continuare subito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月作れるマインドマップはここまでです。来月また作れます。Plusに登録すると、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달에 만들 수 있는 마인드맵을 모두 만들었어요. 다음 달에 더 만들 수 있고, Plus를 구독하면 지금 계속 만들 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie nowe mapy myśli na ten miesiąc. Kolejne możesz tworzyć w przyszłym miesiącu. Przejdź na Plus, by tworzyć je dalej już teraz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de novos mapas mentais deste mês. Pode criar mais no mês que vem ou assinar o Plus para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki zihin haritası oluşturma hakkını kullandın. Gelecek ay daha fazlasını oluşturabilirsin. Hemen devam etmek istersen Plus’a geç."
+          }
+        }
+      }
+    },
+    "That's all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now." : {
+      "comment" : "A free learner made today's maps",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen. Mit Plus kannst du sofort weitermachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llegaste al límite de mapas mentales nuevos de hoy. Mañana podrás crear más o puedes obtener Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de nouvelles cartes mentales pour aujourd’hui. Tu pourras en créer d’autres demain ou passer à Plus pour continuer dès maintenant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di nuove mappe mentali per oggi. Potrai crearne altre domani, oppure passa a Plus per continuare subito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日作れるマインドマップはここまでです。明日また作れます。Plusに登録すると、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 만들 수 있는 마인드맵을 모두 만들었어요. 내일 더 만들 수 있고, Plus를 구독하면 지금 계속 만들 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie nowe mapy myśli na dziś. Jutro możesz tworzyć kolejne. Przejdź na Plus, by tworzyć więcej już teraz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de novos mapas mentais de hoje. Pode criar mais amanhã ou assinar o Plus para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin. Hemen devam etmek istersen Plus’a geç."
+          }
+        }
+      }
+    },
+    "That's all the new mind maps for today. You can make more tomorrow." : {
+      "comment" : "A Plus learner made today's maps",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llegaste al límite de mapas mentales nuevos de hoy. Mañana podrás crear más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de nouvelles cartes mentales pour aujourd’hui. Tu pourras en créer d’autres demain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di nuove mappe mentali per oggi. Potrai crearne altre domani."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日作れるマインドマップはここまでです。明日また作れます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 만들 수 있는 마인드맵을 모두 만들었어요. 내일 더 만들 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie nowe mapy myśli na dziś. Jutro możesz tworzyć kolejne."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por hoje, você já criou todos os mapas mentais disponíveis. Amanhã você pode criar mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü zihin haritası oluşturma hakkını kullandın. Yarın daha fazlasını oluşturabilirsin."
+          }
+        }
+      }
+    },
     "The mind map couldn't be made this time." : {
       "comment" : "Shown when a chapter has no map to show",
       "localizations" : {
@@ -1002,6 +2638,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zihin haritası bu sefer oluşturulamadı."
+          }
+        }
+      }
+    },
+    "This takes a few minutes. You can leave; it'll be here." : {
+      "comment" : "Under a map whose chapter's lessons are written first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das dauert ein paar Minuten. Du kannst die Seite verlassen; du findest die Mindmap später hier."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto tarda unos minutos. Puedes salir; estará aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça prend quelques minutes. Tu peux quitter la page ; tu retrouveras la carte ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci vuole qualche minuto. Puoi uscire: la ritroverai qui."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数分かかります。画面を離れても、後でここから確認できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "몇 분 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To potrwa kilka minut. Możesz wyjść, a mapa będzie tu czekać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso leva alguns minutos. Pode sair; o mapa vai estar aqui."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak."
           }
         }
       }
@@ -1124,61 +2819,297 @@
         }
       }
     },
-    "Your plan made all its mind maps for now." : {
-      "comment" : "A map refused by the learner's plan limit",
+    "We couldn't reach the server. Check your connection." : {
+      "comment" : "Asking for a map didn't reach the server",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast vorerst alle Mindmaps erstellt, die dein Tarif erlaubt."
+            "value" : "Wir konnten den Server nicht erreichen. Prüfe deine Verbindung."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya alcanzaste el límite de mapas mentales de tu plan por ahora."
+            "value" : "No pudimos conectarnos con el servidor. Revisa tu conexión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint la limite de cartes mentales de ta formule pour le moment."
+            "value" : "Impossible de joindre le serveur. Vérifie ta connexion."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per ora hai raggiunto il limite di mappe mentali della tua formula."
+            "value" : "Non siamo riusciti a contattare il server. Controlla la connessione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在のプランで作成できるマインドマップの上限に達しました。"
+            "value" : "サーバーに接続できませんでした。インターネット接続を確認してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "현재 요금제로 만들 수 있는 마인드맵을 모두 만들었어요."
+            "value" : "서버에 연결하지 못했어요. 인터넷 연결을 확인해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na razie osiągnięto limit map myśli w twoim pakiecie."
+            "value" : "Nie udało nam się połączyć z serwerem. Sprawdź połączenie z internetem."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano atingiu o limite de mapas mentais por enquanto."
+            "value" : "Não foi possível conectar ao servidor. Confira sua conexão."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Şimdilik paketinin zihin haritası sınırına ulaştın."
+            "value" : "Sunucuya ulaşamadık. Bağlantını kontrol et."
+          }
+        }
+      }
+    },
+    "Writing the lessons, then the mind map…" : {
+      "comment" : "A map whose chapter's lessons are written first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen zuerst die Lektionen, dann die Mindmap…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando las lecciones y después el mapa mental…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation des leçons, puis de la carte mentale…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando le lezioni, poi la mappa mentale…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン、マインドマップの順に作成しています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨, 마인드맵 순서로 만들고 있어요…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy lekcje, a potem mapę myśli…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando as aulas e depois o mapa mental…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önce dersleri, sonra zihin haritasını hazırlıyoruz…"
+          }
+        }
+      }
+    },
+    "You've made the mind map you can try without an account. Create a free account to make more." : {
+      "comment" : "A guest made the one map they can without an account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die Mindmap erstellt, die du ohne Konto ausprobieren kannst. Erstell ein kostenloses Konto, um weitere zu erstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya creaste el mapa mental que puedes probar sin una cuenta. Crea una cuenta gratis para hacer más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as créé la carte mentale que tu peux essayer sans compte. Crée un compte gratuit pour en créer d’autres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai creato la mappa mentale di prova disponibile senza un account. Crea un account gratuito per crearne altre."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントなしで作れるマインドマップはここまでです。無料アカウントを作成すると、もっと作れます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정 없이 체험할 수 있는 마인드맵을 만들었어요. 더 만들려면 무료 계정을 만드세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utworzono już mapę myśli dostępną na próbę bez konta. Załóż bezpłatne konto, by tworzyć kolejne."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já criou o mapa mental que pode experimentar sem uma conta. Crie uma conta grátis para fazer mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesap açmadan deneyebileceğin zihin haritasını oluşturdun. Daha fazlası için ücretsiz bir hesap oluştur."
+          }
+        }
+      }
+    },
+    "You've taken the lessons you can try without an account. Create a free account to keep going." : {
+      "comment" : "A guest's map needs new lessons, and they used the ones they can try",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast alle Lektionen ausprobiert, die ohne Konto verfügbar sind. Erstell ein kostenloses Konto, um weiterzulernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya tomaste las lecciones que puedes probar sin una cuenta. Crea una cuenta gratis para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as suivi toutes les leçons que tu peux essayer sans compte. Crée un compte gratuit pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai seguito tutte le lezioni che puoi provare senza un account. Crea un account gratuito per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントなしで試せるレッスンはここまでです。無料アカウントを作成すると、学習を続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정 없이 체험할 수 있는 레슨을 모두 이용했어요. 계속 학습하려면 무료 계정을 만드세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To już wszystkie lekcje, które możesz wypróbować bez konta. Załóż bezpłatne konto, by uczyć się dalej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já fez todas as aulas que pode experimentar sem uma conta. Crie uma conta grátis para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesap açmadan ders deneme hakkını kullandın. Devam etmek için ücretsiz bir hesap oluştur."
+          }
+        }
+      }
+    },
+    "Your plan's chapters show here once they're ready, each with its mind map." : {
+      "comment" : "Why the mind maps page has no chapters yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kapitel deines Plans erscheinen hier, sobald sie erstellt sind, jeweils mit ihrer Mindmap."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los capítulos de tu plan aparecerán aquí cuando estén listos, cada uno con su mapa mental."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les chapitres de ton plan s’affichent ici dès qu’ils sont prêts, chacun avec sa carte mentale."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I capitoli del tuo piano appariranno qui appena saranno pronti, ciascuno con la sua mappa mentale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画の章は、準備ができるとそれぞれのマインドマップと一緒にここに表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획에 있는 챕터가 준비되면 마인드맵과 함께 여기에 표시돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gdy rozdziały z twojego planu będą gotowe, pojawią się tutaj wraz ze swoimi mapami myśli."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os capítulos do seu plano vão aparecer aqui quando estiverem prontos, cada um com seu mapa mental."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planındaki üniteler hazır oldukça zihin haritalarıyla birlikte burada görünür."
           }
         }
       }

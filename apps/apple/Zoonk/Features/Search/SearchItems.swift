@@ -179,7 +179,7 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
   }
 
   if places.mindMaps {
-    items.append(place(.mindMaps, route: .mindMaps))
+    items.append(place(.mindMaps, route: .mindMaps()))
   }
 
   items += [

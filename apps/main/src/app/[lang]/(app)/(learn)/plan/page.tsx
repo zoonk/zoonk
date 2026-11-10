@@ -5,7 +5,7 @@ import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "@zoonk/core/cache-tags";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
-import { hasGoalMindMaps } from "@zoonk/core/mind-maps/has-any";
+import { hasMindMapsPage } from "@zoonk/core/mind-maps/contract";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { getSession } from "@zoonk/core/users/session";
 import { getLanguageProgressView } from "@zoonk/core/view-models/language/progress";
@@ -108,7 +108,7 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
 
 async function JourneyContent() {
   // The locale comes from the root param: a prefetch warms its caches with `params` still pending.
-  const [readAt, result, progress, language, units, syllabus, hasMindMaps, buddy, locale, goals] =
+  const [readAt, result, progress, language, units, syllabus, buddy, locale, goals] =
     await Promise.all([
       getReadAt(),
       getPlanTabView(),
@@ -116,7 +116,6 @@ async function JourneyContent() {
       getLanguageProgressView(),
       getLanguageUnitsView(),
       getSyllabusView(),
-      hasGoalMindMaps(),
       getLearnerBuddy(),
       lang(),
       listCurrentUserGoals(),
@@ -180,7 +179,7 @@ async function JourneyContent() {
       goal={{ displayName: goal.displayName, kind: goal.kind }}
       goalId={goal.id}
       goalStatus={goalStatus}
-      hasMindMaps={hasMindMaps}
+      hasMindMaps={hasMindMapsPage(goal.kind)}
       language={language.status === "ready" ? language.progress : null}
       next={
         end?.next

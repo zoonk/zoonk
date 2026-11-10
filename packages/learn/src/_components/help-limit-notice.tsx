@@ -21,7 +21,10 @@ export type LessonLimit =
   | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
   | SignUpRequired;
 
-export type MindMapLimit = LessonLimit;
+/** `resource` says what ran out: the maps, the lessons a map writes first, or the day's AI spend. */
+export type MindMapLimit = LessonLimit & {
+  resource?: "aiSpend" | "generatedLessons" | "lessonStart" | "mindMap";
+};
 
 export type OutlineLimit = LessonLimit;
 
@@ -176,6 +179,20 @@ function useMindMapLimitMessage(limit: MindMapLimit): string {
       );
 }
 
+function useMindMapRefusalMessage(limit: MindMapLimit): string {
+  const helpMessage = useHelpLimitMessage(limit);
+  const lessonMessage = useLessonLimitMessage(limit);
+  const mapMessage = useMindMapLimitMessage(limit);
+
+  if (limit.resource === "aiSpend") {
+    return helpMessage;
+  }
+
+  return limit.resource === "lessonStart" || limit.resource === "generatedLessons"
+    ? lessonMessage
+    : mapMessage;
+}
+
 function useOutlineLimitMessage(limit: OutlineLimit): string {
   const t = useExtracted();
   const signUpRequired = useSignUpRequiredMessage();
@@ -237,7 +254,7 @@ export function MindMapLimitNotice({
   limit,
   ...props
 }: LimitNoticeProps & { limit: MindMapLimit }) {
-  return <LimitNoticeBody {...props} limit={limit} message={useMindMapLimitMessage(limit)} />;
+  return <LimitNoticeBody {...props} limit={limit} message={useMindMapRefusalMessage(limit)} />;
 }
 
 export function OutlineLimitNotice({

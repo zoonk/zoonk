@@ -92,6 +92,7 @@ class TestOutViewModelTest {
                 reached = MistakePatternPracticeResultReached(energy = null, level = null),
                 changeId = UUID.fromString(CHANGE),
                 correct = 3,
+                finishedChapter = null,
                 lessonsSkipped = 4,
                 passed = true,
                 total = 3,

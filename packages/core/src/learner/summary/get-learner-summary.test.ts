@@ -8,10 +8,7 @@ import {
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -544,20 +541,7 @@ describe(getLearnerSummary, () => {
   });
 
   it("finds the active goal's places", async () => {
-    const { goal } = await learnerWithGoal({ kind: "exam" });
-
-    const [plan, finished, started, lesson] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      libraryChapterFixture(),
-      libraryChapterFixture(),
-      libraryLessonFixture({ contentStatus: "completed" }),
-    ]);
-
-    await Promise.all([
-      chapterLessonFixture({ chapterId: finished.id, lessonId: lesson.id }),
-      planItemFixture({ chapterId: finished.id, planId: plan.id, position: 0, status: "done" }),
-      planItemFixture({ chapterId: started.id, planId: plan.id, position: 1, status: "todo" }),
-    ]);
+    await learnerWithGoal({ kind: "exam" });
 
     const summary = await getLearnerSummary();
 
@@ -597,22 +581,17 @@ describe(getLearnerSummary, () => {
     ]);
   });
 
-  it("lists mind maps only once a chapter is finished", async () => {
-    const { goal } = await learnerWithGoal();
+  it("lists mind maps from the first day of a goal with chapters, never a language's or an explanation's", async () => {
+    const kinds = ["learn", "exam", "language", "explain"] as const;
 
-    const [plan, chapter] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      libraryChapterFixture(),
-    ]);
+    const places = await kinds.reduce<Promise<(boolean | undefined)[]>>(async (previous, kind) => {
+      const listed = await previous;
+      await learnerWithGoal({ kind });
+      const summary = await getLearnerSummary();
+      return [...listed, summary?.places.mindMaps];
+    }, Promise.resolve([]));
 
-    await Promise.all([
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 0, status: "done" }),
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 1, status: "todo" }),
-    ]);
-
-    const summary = await getLearnerSummary();
-
-    expect(summary?.places.mindMaps).toBe(false);
+    expect(places).toStrictEqual([true, true, false, false]);
   });
 
   it("reads a language day with outside-session picks and its speaking paper without writing", async () => {

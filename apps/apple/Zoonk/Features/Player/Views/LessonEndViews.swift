@@ -18,6 +18,7 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        finishedChapter
 
         if let lesson, let summary = lesson.summary {
           LessonMapSection(title: lesson.title, summary: summary)
@@ -33,6 +34,7 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        finishedChapter
         planRevealRow
         guestEndingView
       }
@@ -204,6 +206,13 @@ struct LessonCompletionView: View {
       break
     default:
       router.open(.goalSetup(goalId: lead.goalID))
+    }
+  }
+
+  @ViewBuilder
+  private var finishedChapter: some View {
+    if completion.status == .saved, let chapter = completion.summary?.finishedChapter {
+      FinishedChapterSection(chapter: chapter)
     }
   }
 

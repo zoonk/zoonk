@@ -1,5 +1,6 @@
 import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
@@ -300,15 +301,17 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
 export default function SessionPage({ searchParams }: Props) {
   return (
     <MainLearnProvider>
-      <Suspense
-        fallback={
-          <SessionMain>
-            <SessionEntryFallback />
-          </SessionMain>
-        }
-      >
-        <SessionContent searchParams={searchParams} />
-      </Suspense>
+      <MainFinishedChapterMaps>
+        <Suspense
+          fallback={
+            <SessionMain>
+              <SessionEntryFallback />
+            </SessionMain>
+          }
+        >
+          <SessionContent searchParams={searchParams} />
+        </Suspense>
+      </MainFinishedChapterMaps>
     </MainLearnProvider>
   );
 }

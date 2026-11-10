@@ -7,6 +7,7 @@ import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/ta
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
+import { type FinishedChapter } from "../../sessions/completion-contract";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -33,6 +34,7 @@ const PERCENT = 100;
 type ChapterTestOutOutcome = ProgressCelebration & {
   changeId: string | null;
   correct: number;
+  finishedChapter: FinishedChapter | null;
   lessonsSkipped: number;
   passed: boolean;
   total: number;
@@ -159,6 +161,7 @@ function toReadyResult({
       ...celebration,
       changeId: said.changeId,
       correct: said.correct,
+      finishedChapter: said.finishedChapter,
       lessonsSkipped: said.lessonsSkipped,
       passed: said.passed,
       total: said.total,
@@ -248,6 +251,7 @@ async function submitOwnedTestOut({
 
   const testedOut = score.passed
     ? await markPlanItemsTestedOut({
+        finishesChapters: true,
         goalId,
         items: plan.items,
         knownSkillIds: new Set(score.knownSkillIds),
@@ -256,6 +260,7 @@ async function submitOwnedTestOut({
       })
     : await refreshGoalPlan({ goalId }).then(() => ({
         changeId: null,
+        finishedChapters: [],
         lessonsSkipped: 0,
         planVersion: null,
       }));
@@ -263,6 +268,10 @@ async function submitOwnedTestOut({
   const said = {
     changeId: testedOut.changeId,
     correct: score.correct,
+    finishedChapter:
+      testedOut.finishedChapters.find(
+        (chapter) => chapter.chapterId === chapterId && chapter.goalId === goalId,
+      ) ?? null,
     lessonsSkipped: testedOut.lessonsSkipped,
     passed: score.passed,
     planVersion: testedOut.planVersion,

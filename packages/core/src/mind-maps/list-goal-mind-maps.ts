@@ -1,8 +1,13 @@
 import "server-only";
+import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
-import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
-import { loadMindMapChapters, loadUpNextChapter } from "./_utils/load-mind-map-chapters";
-import { getMindMapStatus, toMindMapImage, toMindMapOutline } from "./_utils/mind-map-view";
+import {
+  type ChapterNumbering,
+  loadChapterNumbering,
+} from "../view-models/syllabus/_utils/chapter-numbers";
+import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
+import { toChapterMindMapView } from "./_utils/mind-map-view";
 import { type GoalMindMapView, type GoalMindMapsView } from "./mind-map-contract";
 
 export type GoalMindMapsResult =
@@ -10,12 +15,28 @@ export type GoalMindMapsResult =
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
 function isListed(
-  status: ReturnType<typeof getMindMapStatus>,
-): status is GoalMindMapView["status"] {
-  return status !== "unavailable";
+  view: ReturnType<typeof toChapterMindMapView>,
+): view is Omit<GoalMindMapView, "subject"> {
+  return view.status !== "unavailable";
 }
 
-/** Read-only saved-plan list, defaulting to the active goal; excludes finished chapters with no written lessons. */
+type ListedRow = { number: ReturnType<ChapterNumbering>; planPosition: number };
+
+/** As the syllabus numbers chapters, each subject's or the course's by number; the rest last. */
+function toSyllabusPlace({ number, planPosition }: ListedRow): [number, number] {
+  return number.syllabusOrder === null
+    ? [Number.MAX_SAFE_INTEGER, planPosition]
+    : [number.syllabusOrder, number.position];
+}
+
+function compareBySyllabus(first: ListedRow, second: ListedRow): number {
+  const [firstSubject, firstChapter] = toSyllabusPlace(first);
+  const [secondSubject, secondChapter] = toSyllabusPlace(second);
+
+  return firstSubject - secondSubject || firstChapter - secondChapter;
+}
+
+/** Read-only saved-plan list, defaulting to the active goal: every chapter that can have a map. */
 export async function listGoalMindMaps(
   input: { goalId?: string } = {},
 ): Promise<GoalMindMapsResult> {
@@ -28,49 +49,35 @@ export async function listGoalMindMaps(
   }
 
   const { goal } = resolved;
-  const now = new Date();
 
-  const [facts, numbering, upNext] = await Promise.all([
-    loadMindMapChapters({ goal }),
+  const [facts, numbering, now] = await Promise.all([
+    loadMindMapChapters({ goal, readViewer: readEntitlementViewer }),
     loadChapterNumbering(goal),
-    loadUpNextChapter(goal),
+    getRequestInstant(),
   ]);
 
-  const nextTitle = facts.find((chapter) => chapter.chapterId === upNext?.chapterId)?.title;
-
-  const chapters = facts.flatMap((chapter) => {
-    const status = getMindMapStatus({ ...chapter, now });
-
-    if (!isListed(status)) {
-      return [];
-    }
-
+  const listed = facts.flatMap((chapter) => {
     const number = numbering({ chapterId: chapter.chapterId, planPosition: chapter.position });
+    const view = toChapterMindMapView({ facts: chapter, now, position: number.position });
 
-    return [
-      {
-        chapterId: chapter.chapterId,
-        image: status === "ready" ? toMindMapImage(chapter.row) : null,
-        outline: status === "ready" ? toMindMapOutline(chapter.row?.structure) : null,
-        position: number.position,
-        status,
-        subject: number.subject,
-        title: chapter.title,
-      },
-    ];
+    return isListed(view)
+      ? [
+          {
+            number,
+            planPosition: chapter.position,
+            view: {
+              ...view,
+              subject: number.subject && { key: number.subject.key, name: number.subject.name },
+            },
+          },
+        ]
+      : [];
   });
 
-  const nextChapter =
-    upNext && nextTitle !== undefined && upNext.lessonsLeft > 0
-      ? { ...upNext, title: nextTitle }
-      : null;
+  const chapters = listed.toSorted(compareBySyllabus).map((row) => row.view);
 
   return {
-    mindMaps: {
-      chapters,
-      goal: { displayName: goal.displayName, id: goal.id, title: goal.title },
-      nextChapter,
-    },
+    mindMaps: { chapters, goal: { displayName: goal.displayName, id: goal.id, title: goal.title } },
     status: "ready",
   };
 }

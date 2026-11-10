@@ -120,7 +120,7 @@ export async function getChapterView({
         level: chapter.level,
         position: number.position,
         state: area.state,
-        subject: number.subject,
+        subject: number.subject && { key: number.subject.key, name: number.subject.shortName },
         title: chapter.title,
       },
       counts: area.counts,

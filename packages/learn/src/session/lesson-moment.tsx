@@ -1,5 +1,6 @@
 "use client";
 
+import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
@@ -10,6 +11,7 @@ import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { useStudyTimeFact } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
@@ -25,6 +27,7 @@ type LessonMomentCompletion = {
   result:
     | (ProgressCelebration & {
         brainPower: number;
+        finishedChapter: FinishedChapter | null;
         nextReviewAt: string | null;
         seconds: number;
         studyBlock: StudyMomentView | null;
@@ -118,6 +121,8 @@ function OutsideSession({
             reached={result.reached}
           />
         )}
+
+        <FinishedChapterMoment chapter={result?.finishedChapter ?? null} />
       </TaskBody>
 
       <TaskActionBar>

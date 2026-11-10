@@ -1,11 +1,15 @@
 "use client";
 
-import { type GoalMindMapView, type GoalMindMapsView } from "@zoonk/core/mind-maps/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import {
+  type ChapterMindMapView,
+  type GoalMindMapView,
+  type GoalMindMapsView,
+} from "@zoonk/core/mind-maps/contract";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
-import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
+import { FreeWeekOverNotice } from "../_components/free-week-over";
+import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
   PageEyebrow,
   PageSection,
@@ -13,18 +17,13 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
+import { useServedState } from "../_utils/use-served-state";
 import { LearnPageBar } from "../shell/learn-bar";
 import { type MindMapActions } from "./mind-map-actions";
-import { MapTile } from "./mind-map-tiles";
+import { MindMapRow } from "./mind-map-row";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
 export type { MindMapActions, MindMapRequestOutcome } from "./mind-map-actions";
-
-export type MindMapsHrefs = { back: string; chapter: (chapterId: string) => string; today: string };
-
-export type NextMindMap = { chapterId: string; lessonsLeft: number; title: string };
 
 type MapGroup = { key: string; maps: GoalMindMapView[]; name: string | null };
 
@@ -38,16 +37,28 @@ function groupBySubject(chapters: readonly GoalMindMapView[]): MapGroup[] {
   }));
 }
 
+function withMap(chapters: readonly GoalMindMapView[], next: ChapterMindMapView) {
+  return chapters.flatMap((chapter): GoalMindMapView[] => {
+    const { status } = next;
+
+    if (chapter.chapterId !== next.chapterId) {
+      return [chapter];
+    }
+
+    return status === "unavailable" ? [] : [{ ...chapter, ...next, status }];
+  });
+}
+
 function MapSection({
   actions,
-  capped,
   group,
-  hrefs,
+  onViewChange,
+  plus,
 }: {
   actions: MindMapActions;
-  capped: boolean;
   group: MapGroup;
-  hrefs: MindMapsHrefs;
+  onViewChange: (view: ChapterMindMapView) => void;
+  plus: boolean;
 }) {
   const t = useExtracted();
   const titleId = `mind-maps-${group.key || "chapters"}`;
@@ -55,78 +66,56 @@ function MapSection({
   return (
     <PageSection aria-labelledby={titleId} className="scroll-mt-24" id={group.key || undefined}>
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{group.name ?? t("Chapters you finished")}</PageSectionTitle>
+        <PageSectionTitle id={titleId}>{group.name ?? t("Chapters")}</PageSectionTitle>
         <PageSectionDetail>
           {t("{count, plural, one {# chapter} other {# chapters}}", { count: group.maps.length })}
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] sm:gap-x-4">
+      <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
         {group.maps.map((mindMap) => (
-          <MapTile
-            actions={actions}
-            capped={capped}
-            hrefs={hrefs}
-            key={mindMap.chapterId}
-            mindMap={mindMap}
-          />
+          <li key={mindMap.chapterId}>
+            <MindMapRow
+              actions={actions}
+              onViewChange={onViewChange}
+              place="library"
+              plus={plus}
+              view={mindMap}
+            />
+          </li>
         ))}
       </ul>
     </PageSection>
   );
 }
 
-function EmptyMaps({ hrefs, next }: { hrefs: MindMapsHrefs; next: NextMindMap | null }) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col items-start gap-3" data-slot="mind-maps-empty">
-      <div className="flex flex-col gap-1">
-        <p className="text-[0.9375rem] font-medium">{t("No mind maps yet")}</p>
-        <p className="text-muted-foreground text-[0.8125rem] text-pretty">
-          {t("Finish a chapter to make its mind map: its main ideas in one picture.")}
-        </p>
-        {next && (
-          <p className="text-[0.8125rem] text-pretty">
-            {t(
-              "{count, plural, one {Your first one comes after {chapter}: # lesson left.} other {Your first one comes after {chapter}: # lessons left.}}",
-              { chapter: next.title, count: next.lessonsLeft },
-            )}
-          </p>
-        )}
-      </div>
-      <LearnLink
-        className={buttonVariants({ size: "sm", variant: "outline" })}
-        href={next ? hrefs.chapter(next.chapterId) : hrefs.today}
-      >
-        {next ? t("Continue") : t("Keep studying")}
-      </LearnLink>
-    </div>
-  );
-}
-
 export function MindMapsScreen({
   actions,
-  cap = null,
-  hrefs,
+  backHref,
   mindMaps,
-  next = null,
+  plus,
 }: {
   actions: MindMapActions;
-  cap?: MindMapLimit | null;
-  hrefs: MindMapsHrefs;
+  backHref: string;
   mindMaps: GoalMindMapsView;
-  next?: NextMindMap | null;
+  plus: boolean;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const groups = groupBySubject(mindMaps.chapters);
-  const drawn = mindMaps.chapters.filter((chapter) => chapter.status === "ready").length;
-  const capped = cap !== null && drawn < mindMaps.chapters.length;
+  const [chapters, setChapters] = useServedState(mindMaps.chapters);
+  const groups = groupBySubject(chapters);
+  const ready = chapters.filter((chapter) => chapter.status === "ready").length;
+
+  const locked = chapters.some((chapter) => chapter.status === "plusRequired");
+
+  const writesLessons = chapters.some(
+    (chapter) =>
+      chapter.lessonsToWrite > 0 &&
+      (chapter.status === "available" || chapter.status === "writingLessons"),
+  );
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
+      bar={<LearnPageBar back={{ href: backHref }} root title={t("Mind maps")} />}
       data-slot="mind-maps"
     >
       <DetailAside>
@@ -134,27 +123,44 @@ export function MindMapsScreen({
           <DetailHeroText>
             <PageEyebrow>{mindMaps.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
-            {mindMaps.chapters.length > 0 && (
-              <DetailFacts>
-                {t("{count, plural, =0 {# maps} one {# map} other {# maps}}", { count: drawn })}
-              </DetailFacts>
-            )}
+            <DetailFacts>
+              {t("{count, plural, =0 {# maps} one {# map} other {# maps}}", { count: ready })}
+            </DetailFacts>
           </DetailHeroText>
         </DetailHero>
-        {capped && cap && (
-          <MindMapLimitNotice limit={cap} linkComponent={LearnLink} routes={routes} />
-        )}
+
+        <p className="text-muted-foreground max-w-prose text-sm text-pretty">
+          {t(
+            "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.",
+          )}
+          {writesLessons && " "}
+          {writesLessons &&
+            (plus
+              ? t({
+                  description:
+                    '"These" are the chapters listed below whose lessons aren\'t written yet.',
+                  message:
+                    "Making a map for one of these writes its lessons first, so it takes a few minutes.",
+                })
+              : t({
+                  description:
+                    '"These" are the chapters listed below whose lessons aren\'t written yet.',
+                  message:
+                    "Making a map for one of these writes its lessons first, which counts toward your free lessons.",
+                }))}
+        </p>
+
+        {locked && <FreeWeekOverNotice className="max-w-prose" />}
       </DetailAside>
 
       <DetailContent>
-        {groups.length === 0 && <EmptyMaps hrefs={hrefs} next={next} />}
         {groups.map((group) => (
           <MapSection
             actions={actions}
-            capped={capped}
             group={group}
-            hrefs={hrefs}
             key={group.key}
+            onViewChange={(next) => setChapters((current) => withMap(current, next))}
+            plus={plus}
           />
         ))}
       </DetailContent>

@@ -11,6 +11,8 @@ import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { getChapterMindMapToken } from "../mind-maps/chapter-mind-map-input";
+import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
@@ -19,6 +21,7 @@ import {
   endFollowUpStep,
   listFollowUpsStep,
   requestLessonWritingStep,
+  requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
 import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
 
@@ -76,6 +79,15 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
           [writing],
           getLessonContentHookToken(writing.lessonId),
         );
+      }
+
+      return;
+    }
+    case "makeChapterMindMap": {
+      const making = await requestOwedMindMapStep({ ...followUp.input, userId });
+
+      if (making) {
+        await startOnce(chapterMindMapWorkflow, [making], getChapterMindMapToken(making.chapterId));
       }
 
       return;
