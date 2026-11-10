@@ -202,6 +202,28 @@ export function listDayStretch<
   return result;
 }
 
+/** A challenge waits for every unfinished lesson before it, so only the lessons a day of these minutes could hold can bring one into it. */
+export function listFittingLessons({
+  items,
+  lessons,
+  minutes,
+}: {
+  items: readonly ChallengeReachItem[];
+  lessons: readonly StretchLesson[];
+  minutes: number;
+}): Set<string> {
+  return new Set(
+    listDayStretch({ budget: minutes, checkpoints: [], items, lessons, overflow: true }).flatMap(
+      (entry) => {
+        const item =
+          entry.kind === "lesson" ? findStretchItem({ entry: entry.lesson, items }) : undefined;
+
+        return item ? [item.id ?? item.key ?? ""] : [];
+      },
+    ),
+  );
+}
+
 export function orderDayBlocks<
   Block extends {
     kind: StudyBlockKind;

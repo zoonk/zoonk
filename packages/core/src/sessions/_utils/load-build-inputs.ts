@@ -23,6 +23,7 @@ import {
   getPlanTestSkillIds,
 } from "./day-plan-facts";
 import { findPlannedReview } from "./day-review";
+import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
 import { getExamPrepAccess } from "./exam-access";
 import { loadMistakeDrills } from "./load-mistake-drills";
@@ -150,6 +151,14 @@ export async function loadSessionBuildInput(
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal, timeZone, today: localDate });
   const review = toReviewInput({ context, field, netScored, plan });
 
+  const dayLessons = loadDayPlanLessons({
+    dayMinutes,
+    fillItems,
+    keptLessonIds,
+    learnItems,
+    paceFactor: parsePlanSettings(plan.settings).pace?.factor,
+  });
+
   const [
     { lessons: planLessons, fillLessons },
     alphabet,
@@ -159,13 +168,7 @@ export async function loadSessionBuildInput(
     weekly,
     produce,
   ] = await Promise.all([
-    loadDayPlanLessons({
-      dayMinutes,
-      fillItems,
-      keptLessonIds,
-      learnItems,
-      paceFactor: parsePlanSettings(plan.settings).pace?.factor,
-    }),
+    dayLessons,
     loadAlphabetIntro({ goal, userId }),
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
@@ -182,16 +185,18 @@ export async function loadSessionBuildInput(
       today: localDate,
       userId,
     }),
-    loadDayBosses({
-      access,
-      ahead: new Set(
-        [...learnItems, ...fillItems].flatMap((item) =>
-          item.lessonId ? [item.id ?? item.key ?? ""] : [],
-        ),
-      ),
-      context,
-      plan,
-    }),
+    dayLessons.then((loaded) =>
+      loadDayBosses({
+        access,
+        ahead: listFittingLessons({
+          items: plan.items,
+          lessons: [...loaded.lessons, ...loaded.fillLessons],
+          minutes: dayMinutes,
+        }),
+        context,
+        plan,
+      }),
+    ),
     loadSessionWeeklyChallenge({
       goal,
       includesMockExams: access.includesMockExams,

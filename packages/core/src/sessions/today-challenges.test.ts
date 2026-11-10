@@ -489,6 +489,35 @@ describe("the Plan and the challenge screen read today from Today", () => {
     );
   });
 
+  it("promises a challenge that spare time reaches through a lesson planned for a later day", async () => {
+    const user = await userFixture();
+    const tomorrow = new Date(SESSION_TODAY.getTime() + DAY_MS);
+
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
+      goal: { dailyMinutes: 30 },
+      itemsPerSkill: 10,
+      userId: user.id,
+    });
+
+    const boss = await checkpointItemFixture({
+      kind: "boss",
+      phase: 0,
+      planId: plan.id,
+      position: 3,
+      scheduledFor: tomorrow,
+    });
+
+    await Promise.all([
+      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]!.id } }),
+      prisma.planItem.update({ data: { scheduledFor: tomorrow }, where: { id: planItems[2]!.id } }),
+      sizeChallenge({ id: boss.id, minutes: 8, skillId: skills[1]!.id }),
+    ]);
+
+    await expect(readToday({ goal, planId: plan.id })).resolves.toStrictEqual(
+      todayHolding({ afterLessons: [boss.id], held: [boss.id] }),
+    );
+  });
+
   it("promises a language challenge that follows a pending alphabet lesson", async () => {
     const user = await userFixture();
 

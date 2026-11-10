@@ -63,9 +63,14 @@ describe("a phase challenge's questions in the day", () => {
   afterEach(() => vi.useRealTimers());
 
   it("stay with the day's review, fixes and practice when the challenge doesn't fit", async () => {
-    const { blocks, mistakeItemId } = await buildPhaseEndDay(60);
+    const { blocks, mistakeItemId } = await buildPhaseEndDay(20);
 
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "practice"]);
+    expect(blocks.map((block) => block.kind)).toStrictEqual([
+      "review",
+      "learn",
+      "learn",
+      "practice",
+    ]);
 
     expect(
       blocks.flatMap((block) => block.payload.drills.flatMap((drill) => drill.itemIds)),
