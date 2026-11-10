@@ -87,11 +87,11 @@ async function saveSettings({
 export async function answerProfileQuestion({
   input: unparsed,
   locale,
-  from = "settings",
+  onboardingGoalId,
 }: {
   input: ProfileAnswerInput;
   locale: SupportedLocale;
-  from?: "onboarding" | "settings";
+  onboardingGoalId?: string;
 }): Promise<ProfileAnswerResult> {
   const session = await getSession();
 
@@ -198,7 +198,13 @@ export async function answerProfileQuestion({
   if (saved.changed) {
     after(() =>
       trackLearnerEvents({
-        events: [toProfileQuestionSavedEvent({ from, input: submitted })],
+        events: [
+          toProfileQuestionSavedEvent({
+            from: onboardingGoalId ? "onboarding" : "settings",
+            input: submitted,
+          }),
+        ],
+        goalId: onboardingGoalId,
         locale,
         userId,
       }),

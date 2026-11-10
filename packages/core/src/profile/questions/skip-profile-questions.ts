@@ -1,6 +1,7 @@
 import "server-only";
 import { type ProfileQuestion } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type SupportedLocale } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
@@ -19,10 +20,12 @@ import {
 
 export async function skipProfileQuestions({
   goalId,
+  locale,
   questions,
   forever = false,
 }: {
   goalId: string;
+  locale?: SupportedLocale;
   questions: ProfileQuestion[];
   forever?: boolean;
 }): Promise<{ status: "saved" } | { status: "notFound" | "unauthorized" }> {
@@ -133,6 +136,7 @@ export async function skipProfileQuestions({
               }),
             ),
         goalId,
+        locale,
         userId,
       }),
     );

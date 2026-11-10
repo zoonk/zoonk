@@ -27,6 +27,7 @@ export async function answerProfileOnboardingQuestion({
     const result = await skipProfileQuestions({
       forever: input.forever,
       goalId,
+      locale,
       questions: [...PROFILE_QUESTIONS],
     });
 
@@ -35,11 +36,11 @@ export async function answerProfileOnboardingQuestion({
 
   const result =
     input.answer === null
-      ? await skipProfileQuestions({ goalId, questions: [input.question] })
+      ? await skipProfileQuestions({ goalId, locale, questions: [input.question] })
       : await answerProfileQuestion({
-          from: "onboarding",
           input: profileAnswerInputSchema.parse(input),
           locale,
+          onboardingGoalId: goalId,
         });
 
   if (result.status === "saved" && "changed" in result && result.changed) {

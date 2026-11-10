@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
@@ -171,6 +171,72 @@ describe("profile write analytics", () => {
         }),
       }),
     ]);
+  });
+
+  it("attributes answers, declines and skips to the onboarding goal and request locale", async () => {
+    const user = await learner();
+
+    const [active, onboarding] = await Promise.all([
+      goalFixture({ kind: "language", language: "es", userId: user.id }),
+      goalFixture({ kind: "learn", language: "fr", planRevealedAt: null, userId: user.id }),
+    ]);
+
+    const [activePlan, onboardingPlan] = await Promise.all([
+      planFixture({
+        goalId: active.id,
+        phases: [
+          { name: "Earlier", summary: "Earlier phase" },
+          { name: "Current", summary: "Current phase" },
+        ],
+      }),
+      planFixture({ goalId: onboarding.id }),
+    ]);
+
+    await Promise.all([
+      learningProfileFixture({ activeGoalId: active.id, userId: user.id }),
+      planItemFixture({ phase: 0, planId: activePlan.id, position: 0, status: "done" }),
+      planItemFixture({ phase: 1, planId: activePlan.id, position: 1 }),
+      planItemFixture({ phase: 0, planId: onboardingPlan.id, position: 0 }),
+    ]);
+
+    const flush = runDeferredWork();
+
+    await answerOnboardingQuestion({
+      goalId: onboarding.id,
+      input: profileAnswerInputSchema.parse({ answer: { picks: ["anime"] }, question: "watch" }),
+      locale: "pt",
+    });
+
+    await answerOnboardingQuestion({
+      goalId: onboarding.id,
+      input: profileAnswerInputSchema.parse({ answer: { declined: true }, question: "watch" }),
+      locale: "pt",
+    });
+
+    await answerOnboardingQuestion({
+      goalId: onboarding.id,
+      input: { answer: null, question: "listen" },
+      locale: "pt",
+    });
+
+    await answerOnboardingQuestion({
+      goalId: onboarding.id,
+      input: { forever: false, question: "skipProfile" },
+      locale: "pt",
+    });
+
+    await flush();
+
+    const profileEvents = [
+      ...events("Profile Question Saved"),
+      ...events("Profile Questions Skipped"),
+    ];
+
+    expect(profileEvents).toHaveLength(4);
+
+    for (const event of profileEvents) {
+      expect(event.shared).toMatchObject({ goal_kind: "learn", locale: "pt", plan_phase: 0 });
+    }
   });
 
   it("tracks a single skip once without counting it as Skip all", async () => {
