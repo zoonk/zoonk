@@ -16,7 +16,7 @@ import { usePlanStatusText } from "../plan/plan-status-label";
 import { useShortDayRange, useShortFocusName } from "../plan/use-short-plan";
 import { useTodayScreen } from "./today-context";
 import { DayTime } from "./today-day-progress";
-import { isWelcomeBackDay, useDayState, useTodayDate } from "./use-today-copy";
+import { isWelcomeBackDay, useDayState } from "./use-today-copy";
 
 /**
  * Drawn in the gap before a part: a part that wraps starts a new line, whose clipped edge hides its
@@ -36,7 +36,7 @@ export function TodayEyebrowPart({
 
 export function TodayEyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <PageEyebrow className="flex flex-wrap items-center gap-x-5 overflow-hidden">
+    <PageEyebrow className="flex flex-wrap items-center gap-x-5 overflow-hidden empty:hidden">
       {children}
     </PageEyebrow>
   );
@@ -165,7 +165,6 @@ function MockFundingLine() {
 
 export function TodayHeading({ className }: { className?: string }) {
   const t = useExtracted();
-  const date = useTodayDate();
   const state = useDayState();
   const endsDay = state === "done" || state === "rest";
 
@@ -173,7 +172,6 @@ export function TodayHeading({ className }: { className?: string }) {
     <PageHeader className={className}>
       <PageHeaderContent className="w-full">
         <TodayEyebrow>
-          <span>{date}</span>
           <DaysLeft />
           <ShortPlanPart />
           <ExamDayPart />

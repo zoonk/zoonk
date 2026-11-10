@@ -102,7 +102,6 @@ private struct TodayStartGoal: View {
       }
     }
     .loads(onboarding.resume, refreshable: false)
-    .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
   }
 
   @ViewBuilder

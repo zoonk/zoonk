@@ -408,7 +408,7 @@ private fun ActionButton(
 @Composable
 internal fun TodayPlaceholder(padding: PaddingValues) {
     TodayPage(padding) {
-        TodayPageHeader(date = null, state = null, title = stringResource(R.string.today_title))
+        TodayPageHeader(state = null, title = stringResource(R.string.today_title))
         Box(Modifier.fillMaxWidth().padding(top = 32.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
     }
 }
