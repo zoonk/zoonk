@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,6 +48,7 @@ import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.language.LanguageUnitScreen
 import com.zoonk.android.feature.mindmaps.ChapterMindMapRow
+import com.zoonk.android.feature.mindmaps.chapterMindMapShown
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -129,12 +132,21 @@ fun ChapterScreen(
                     navigator = navigator,
                     menu = { ReportProblemMenu(report, inPage = true) },
                     ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
-                    mindMap = { ChapterMindMapRow(key, app, navigator::open, it) },
+                    mindMap = { ChapterMapSlot(chapterMindMapShown(key, app)) { ChapterMindMapRow(key, app, navigator::open, it) } },
                 )
             }
         }
     }
 }
+
+/**
+ * The chapter's map row, and whether it shows one. A narrow page puts the row under the hero; with
+ * the sidebar beside it, the row sits in "For reference" there instead.
+ */
+internal class ChapterMapSlot(
+    val shown: Boolean,
+    val row: @Composable (Modifier) -> Unit,
+)
 
 @Composable
 internal fun ChapterContent(
@@ -143,7 +155,7 @@ internal fun ChapterContent(
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
-    mindMap: @Composable (Modifier) -> Unit = {},
+    mindMap: @Composable () -> ChapterMapSlot? = { null },
 ) {
     val resource = store.chapter[key]
     val state by resource.collectShown()
@@ -168,7 +180,7 @@ internal fun ChapterContent(
                 practice = practiceState,
                 menu = menu,
                 ask = ask,
-                mindMap = mindMap,
+                mindMap = mindMap(),
                 actions =
                     ChapterActions(
                         back = back,
@@ -236,8 +248,9 @@ internal fun ChapterPage(
     actions: ChapterActions,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
-    mindMap: @Composable (Modifier) -> Unit = {},
+    mindMap: ChapterMapSlot? = null,
 ) {
+    val shownMap = mindMap?.takeIf { it.shown }
     val lessons = remember(chapter.lessons) { chapter.lessons.map { it.listed() } }
 
     DetailPage(
@@ -248,10 +261,12 @@ internal fun ChapterPage(
         aside = {
             ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
-            ChapterReference(chapter)
+            ChapterReference(chapter, shownMap)
         },
     ) { asideBeside ->
-        item(key = "mind-map", contentType = "mind-map") { mindMap(Modifier.padding(top = SECTION_GAP)) }
+        if (shownMap != null && !asideBeside) {
+            item(key = "mind-map", contentType = "mind-map") { shownMap.row(Modifier.padding(top = SECTION_GAP)) }
+        }
 
         if (lessons.isNotEmpty()) {
             item(key = "lessons", contentType = "lessons") {
@@ -264,7 +279,7 @@ internal fun ChapterPage(
                 key = "practice",
                 contentType = "practice",
             ) { ChapterPractice(chapter, practice, actions, Modifier.padding(top = SECTION_GAP)) }
-            item(key = "reference", contentType = "reference") { ChapterReference(chapter, Modifier.padding(top = SECTION_GAP)) }
+            item(key = "reference", contentType = "reference") { ChapterReference(chapter, null, Modifier.padding(top = SECTION_GAP)) }
         }
     }
 }
@@ -401,13 +416,18 @@ private fun practiceMessage(outcome: PracticeOutcome?): String? =
         is PracticeOutcome.Opened, null -> null
     }
 
-/** What the chapter leaves for reference once its lessons are done: its skills and their summaries. */
+/**
+ * What the chapter leaves to look back at: its map, when the sidebar holds it, and its skills and
+ * their summaries.
+ */
 @Composable
 private fun ChapterReference(
     chapter: GoalChapter,
+    mindMap: ChapterMapSlot?,
     modifier: Modifier = Modifier,
 ) {
-    if (chapter.skills.isEmpty() && chapter.summaries.isEmpty()) return
+    val hasSummary = chapter.skills.isNotEmpty() || chapter.summaries.isNotEmpty()
+    if (mindMap == null && !hasSummary) return
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -416,6 +436,9 @@ private fun ChapterReference(
             stringResource(R.string.goalcontent_for_reference),
             Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 12.dp),
         )
+        mindMap?.row?.invoke(Modifier)
+        if (!hasSummary) return@Column
+        if (mindMap != null) Spacer(Modifier.height(12.dp))
         DisclosureRow(
             stringResource(R.string.goalcontent_chapter_summary),
             expanded = expanded,

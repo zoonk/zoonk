@@ -105,6 +105,17 @@ fun ChapterMindMapRow(
     ConnectedMindMapRow(map.facts, key.goalId, MindMapPlace.Chapter, host, navigate, modifier)
 }
 
+/** Whether [ChapterMindMapRow] shows a row, for a page that places the row by its layout. */
+@Composable
+fun chapterMindMapShown(
+    key: ChapterKey,
+    app: AppContainer,
+): Boolean {
+    if (mindMapsHost(app) == null) return false
+    val read by app.mindMaps.chapter[key].collectShown()
+    return read.value?.let { it.status != ChapterMindMap.Status.UNAVAILABLE } == true
+}
+
 /**
  * Main's finish moment, after the day's moment: "Chapter finished" over the finished chapter's map
  * row. The map is owed when the chapter's lessons are written, so it opens drawing; Continue never

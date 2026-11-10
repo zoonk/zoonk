@@ -449,14 +449,29 @@ struct MindMapRowSection<Header: View>: View {
   var body: some View {
     if map.value?.status != .unavailable {
       Section {
-        if loadsMap {
-          row.loads(map, refreshable: false)
-        } else {
-          row
-        }
+        MindMapRowContent(
+          goalId: goalId, map: map, place: place, placeholder: placeholder, loadsMap: loadsMap)
       } header: {
         header
       }
+    }
+  }
+}
+
+/// The row inside a section of its own or one it shares, as the chapter page's "For reference"
+/// beside a wide page.
+struct MindMapRowContent: View {
+  let goalId: String
+  let map: Resource<ChapterMindMap>
+  let place: MindMapRow.Place
+  let placeholder: Text
+  var loadsMap = false
+
+  var body: some View {
+    if loadsMap {
+      row.loads(map, refreshable: false)
+    } else {
+      row
     }
   }
 

@@ -117,16 +117,17 @@ private struct ChapterContent: View {
   let map: Resource<ChapterMindMap>
 
   var body: some View {
+    // Beside the lessons, the map sits with what the chapter leaves for reference, as on the web's
+    // sidebar; on one pane it comes right under the header, where it's seen first.
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
         header
-        mindMapSection
         lessonsSection
       }
     } secondary: {
       ZoonkList {
         practiceSection
-        referenceSection
+        referenceSection(withMap: true)
       }
     } single: {
       ZoonkList {
@@ -134,7 +135,7 @@ private struct ChapterContent: View {
         mindMapSection
         lessonsSection
         practiceSection
-        referenceSection
+        referenceSection(withMap: false)
       }
     }
     .onDisappear {
@@ -283,9 +284,11 @@ private struct ChapterContent: View {
   }
 
   @ViewBuilder
-  private var referenceSection: some View {
-    if !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
-      ChapterReferenceSection(chapter: chapter)
+  private func referenceSection(withMap: Bool) -> some View {
+    let shownMap = withMap && map.value?.status != .unavailable ? map : nil
+
+    if shownMap != nil || !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
+      ChapterReferenceSection(goalId: goal.id, chapter: chapter, map: shownMap)
     }
   }
 
@@ -390,34 +393,50 @@ struct LessonRow: View {
 }
 
 private struct ChapterReferenceSection: View {
+  let goalId: String
   let chapter: GoalChapter
+  /// Set where the section holds the map too.
+  let map: Resource<ChapterMindMap>?
 
   var body: some View {
     Section {
-      DisclosureGroup {
-        ForEach(chapter.skills) { skill in
-          LabeledContent {
-            skillState(skill)
-          } label: {
-            Text(skill.name)
-          }
-        }
+      if let map {
+        MindMapRowContent(
+          goalId: goalId, map: map, place: .chapter,
+          placeholder: Text(
+            "Mind map", tableName: "MindMaps", comment: "A chapter's mind map, on its page"))
+      }
 
-        LessonSummaries(summaries: chapter.summaries)
-      } label: {
-        Label {
-          Text(
-            "Chapter summary", tableName: "Plan",
-            comment: "Folds a chapter's skills and summaries")
-        } icon: {
-          Image(systemName: "list.bullet.clipboard")
-        }
+      if !chapter.skills.isEmpty || !chapter.summaries.isEmpty {
+        summary
       }
     } header: {
       SectionTitle(
         Text(
           "For reference", tableName: "Plan",
-          comment: "Section of a chapter with its summaries, to look back at"))
+          comment: "Section of a chapter with its mind map and summaries, to look back at"))
+    }
+  }
+
+  private var summary: some View {
+    DisclosureGroup {
+      ForEach(chapter.skills) { skill in
+        LabeledContent {
+          skillState(skill)
+        } label: {
+          Text(skill.name)
+        }
+      }
+
+      LessonSummaries(summaries: chapter.summaries)
+    } label: {
+      Label {
+        Text(
+          "Chapter summary", tableName: "Plan",
+          comment: "Folds a chapter's skills and summaries")
+      } icon: {
+        Image(systemName: "list.bullet.clipboard")
+      }
     }
   }
 

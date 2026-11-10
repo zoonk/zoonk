@@ -191,18 +191,19 @@ class GoalContentScreenshots {
                     ChapterActions({}, {}, {}, {}),
                     menu,
                     ask,
-                ) { modifier ->
-                    MindMapRow(
-                        map,
-                        MindMapPlace.Chapter,
-                        MindMapShown.Ready,
-                        null,
-                        null,
-                        plus = false,
-                        MindMapRowActions({}, {}),
-                        modifier,
-                    )
-                }
+                    ChapterMapSlot(shown = true) { modifier ->
+                        MindMapRow(
+                            map,
+                            MindMapPlace.Chapter,
+                            MindMapShown.Ready,
+                            null,
+                            null,
+                            plus = false,
+                            MindMapRowActions({}, {}),
+                            modifier,
+                        )
+                    },
+                )
             }
         }
 
