@@ -105,11 +105,11 @@ fun DrillIdeas(
                 Row(Modifier.padding(vertical = 11.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
                         text = (index + 1).toString(),
-                        modifier = Modifier.widthIn(min = 16.dp).clearAndSetSemantics {},
+                        modifier = Modifier.alignByBaseline().widthIn(min = 16.dp).clearAndSetSemantics {},
                         color = MaterialTheme.zoonk.faint,
                         style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono),
                     )
-                    Text(text = idea, style = MaterialTheme.typography.bodyLarge)
+                    Text(text = idea, modifier = Modifier.alignByBaseline(), style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }
