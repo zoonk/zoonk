@@ -48,10 +48,25 @@ final class ScheduleTimeTests: XCTestCase {
     first: TimeToCover?,
     found: TimeToCover?,
     picked: Int? = nil,
-    settled: Bool = false
+    settled: Bool = false,
+    startsOnRecommended: Bool = false
   ) -> Int? {
     ScheduleTime.shownMinutes(
-      fallback: 60, first: first, found: found, picked: picked, settled: settled)
+      fallback: 60, startsOnRecommended: startsOnRecommended, first: first, found: found,
+      picked: picked, settled: settled)
+  }
+
+  func testAShorterDayOpensOnTheRecommendedTimeUntilTheLearnerPicksOne() {
+    XCTAssertEqual(shown(first: nil, found: nil, startsOnRecommended: true), 60)
+    XCTAssertEqual(shown(first: found(), found: found(), startsOnRecommended: true), 60)
+    XCTAssertEqual(
+      shown(first: found(), found: found(), picked: 35, startsOnRecommended: true), 35)
+    XCTAssertEqual(
+      ScheduleTime.pickedMinutes(
+        startsOnRecommended: true, first: found(), found: found(), minutes: 35), 35)
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(
+        startsOnRecommended: true, failed: false, first: found(), found: nil, picked: nil))
   }
 
   func testShowsNoTimeWhileTheFirstTimeADatedGoalNeedsIsWorkedOut() {
@@ -82,12 +97,18 @@ final class ScheduleTimeTests: XCTestCase {
   }
 
   func testPickingTheSuggestionBackFollowsItAgain() {
-    XCTAssertNil(ScheduleTime.pickedMinutes(first: found(), found: found(), minutes: 35))
-    XCTAssertEqual(ScheduleTime.pickedMinutes(first: found(), found: found(), minutes: 30), 30)
+    XCTAssertNil(
+      ScheduleTime.pickedMinutes(
+        startsOnRecommended: false, first: found(), found: found(), minutes: 35))
+    XCTAssertEqual(
+      ScheduleTime.pickedMinutes(
+        startsOnRecommended: false, first: found(), found: found(), minutes: 30), 30)
   }
 
   func testKeepsTheSuggestionAsTheLearnersOwnOnAScreenThatStartedWithoutOne() {
-    XCTAssertEqual(ScheduleTime.pickedMinutes(first: noSuggestion, found: found(), minutes: 35), 35)
+    XCTAssertEqual(
+      ScheduleTime.pickedMinutes(
+        startsOnRecommended: false, first: noSuggestion, found: found(), minutes: 35), 35)
   }
 
   func testAsksAboutEveryTimeButTheSuggestedOne() {
@@ -115,16 +136,21 @@ final class ScheduleTimeTests: XCTestCase {
     let first = everythingAt(35)
 
     XCTAssertTrue(
-      ScheduleTime.waitsForSuggestion(failed: false, first: first, found: nil, picked: nil))
-    XCTAssertFalse(
-      ScheduleTime.waitsForSuggestion(failed: false, first: first, found: nil, picked: 60))
-    XCTAssertFalse(
-      ScheduleTime.waitsForSuggestion(failed: true, first: first, found: nil, picked: nil))
-    XCTAssertFalse(
-      ScheduleTime.waitsForSuggestion(failed: false, first: first, found: first, picked: nil))
+      ScheduleTime.waitsForSuggestion(
+        startsOnRecommended: false, failed: false, first: first, found: nil, picked: nil))
     XCTAssertFalse(
       ScheduleTime.waitsForSuggestion(
-        failed: false, first: found(suggested: nil), found: nil, picked: nil))
+        startsOnRecommended: false, failed: false, first: first, found: nil, picked: 60))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(
+        startsOnRecommended: false, failed: true, first: first, found: nil, picked: nil))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(
+        startsOnRecommended: false, failed: false, first: first, found: first, picked: nil))
+    XCTAssertFalse(
+      ScheduleTime.waitsForSuggestion(
+        startsOnRecommended: false, failed: false, first: found(suggested: nil), found: nil,
+        picked: nil))
   }
 
   func testWaitsToSaveWhileTheScreenWorksOutATimeTheLearnerDidntPick() {
