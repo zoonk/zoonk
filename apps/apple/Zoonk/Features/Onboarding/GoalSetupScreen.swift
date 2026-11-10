@@ -386,8 +386,9 @@ private struct GoalSteps: View {
       },
       memoryEnabled: memoryEnabled)
 
+    // Only a question met for the first time takes these: one the learner answered keeps their answer.
     switch question {
-    case .work where draft.text.isEmpty:
+    case .work where saved.status == nil && draft.text.isEmpty:
       if let role = currentRole {
         draft.text = role
         context.jobFromEarlierAnswer = true
@@ -395,7 +396,7 @@ private struct GoalSteps: View {
     case .conditions:
       let next = view.steps.firstIndex(of: step).map { view.steps.dropFirst($0 + 1).first }
       context.supportIsNext = next == .learningSupport
-    case .learningSupport where history.last == .conditions:
+    case .learningSupport where revisiting == nil && history.last == .conditions:
       context.prechecked = draft.precheck(for: conditionPicks)
     default:
       break

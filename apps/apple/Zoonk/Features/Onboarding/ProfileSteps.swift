@@ -517,6 +517,12 @@ struct ProfileStep: View {
     _draft = State(initialValue: draft)
   }
 
+  private func keepConditions() {
+    if question.id == .conditions {
+      onPickConditions(draft.picks)
+    }
+  }
+
   var body: some View {
     let hasAnswer = !draft.isEmpty && draft.isComplete
 
@@ -530,6 +536,10 @@ struct ProfileStep: View {
               .foregroundStyle(.mutedForeground)
 
             Button {
+              if hasAnswer {
+                keepConditions()
+              }
+
               onStartLesson(hasAnswer ? draft.input : nil)
             } label: {
               (hasAnswer
@@ -551,10 +561,7 @@ struct ProfileStep: View {
       }
 
       StepButtons(canContinue: hasAnswer) {
-        if question.id == .conditions {
-          onPickConditions(draft.picks)
-        }
-
+        keepConditions()
         onAnswer(draft.input)
       } onSkip: {
         if question.id == .conditions {

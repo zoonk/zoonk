@@ -225,8 +225,10 @@ final class OnboardingStore {
       return resource
     }
 
-    // Only this flow's answers change it, and each answer's response is the new value.
-    let resource: Resource<GoalOnboarding> = cache.resource(audience: .signedIn) { [api] session in
+    // Read again each time setup opens: Settings › About you and the Memory switch change which
+    // questions it asks, and this flow's own answers carry the new value in their response.
+    let resource: Resource<GoalOnboarding> = cache.resource(audience: .signedIn, maxAge: .zero) {
+      [api] session in
       guard let session else {
         return nil
       }
