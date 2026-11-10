@@ -372,6 +372,77 @@
       "answer": {
         "answer": {
           "declined": false,
+          "favorites": "",
+          "picks": [
+            "novelas"
+          ]
+        },
+        "question": "watch"
+      },
+      "view": {
+        "id": "watch",
+        "options": [
+          {
+            "description": null,
+            "id": "sports",
+            "label": "Sports"
+          },
+          {
+            "description": null,
+            "id": "sciFi",
+            "label": "Sci-fi & fantasy"
+          },
+          {
+            "description": null,
+            "id": "comedy",
+            "label": "Comedy"
+          },
+          {
+            "description": null,
+            "id": "drama",
+            "label": "Drama"
+          },
+          {
+            "description": null,
+            "id": "anime",
+            "label": "Anime"
+          },
+          {
+            "description": null,
+            "id": "documentaries",
+            "label": "Documentaries"
+          },
+          {
+            "description": null,
+            "id": "crime",
+            "label": "Crime & mystery"
+          },
+          {
+            "description": null,
+            "id": "reality",
+            "label": "Reality shows"
+          },
+          {
+            "description": null,
+            "id": "novelas",
+            "label": "Novelas"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "novelas"
+          ],
+          "studies": [],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
           "favorites": "Radiolab",
           "picks": []
         },

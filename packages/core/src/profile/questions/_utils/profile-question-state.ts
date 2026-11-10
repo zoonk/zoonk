@@ -156,19 +156,25 @@ export function toProfileQuestionView({
 }): ProfileQuestionView {
   const input = savedProfileAnswer({ question, state });
   const content = PROFILE_CONTENT[locale];
+  const saved = toSavedView(input);
 
-  const ids = [
+  const ids = new Set([
     ...(content.extras[question] ?? []),
     ...PROFILE_OPTION_IDS[question].filter((id) => !LOCALE_EXTRA_IDS.has(id)),
-  ];
+    ...saved.picks,
+  ]);
 
   return {
     id: question,
-    options: ids.flatMap((id) => {
-      const option = content.options[question][id];
+    options: [...ids].flatMap((id) => {
+      const definingContent = LOCALE_EXTRA_IDS.has(id)
+        ? Object.values(PROFILE_CONTENT).find((item) => item.extras[question]?.includes(id))
+        : content;
+
+      const option = definingContent?.options[question][id];
       return option ? [{ description: option.description, id, label: option.label }] : [];
     }),
-    saved: toSavedView(input),
+    saved,
     status: state.answers.find((answer) => answer.question === question)?.outcome ?? null,
     version: PROFILE_QUESTION_VERSIONS[question],
   };

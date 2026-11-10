@@ -526,6 +526,34 @@ describe("profile question capabilities", () => {
     ).toHaveLength(3);
   });
 
+  it.each([
+    { labels: ["Novelas"], picks: ["novelas"], question: "watch", unselected: "kDramas" },
+    {
+      labels: ["Funk", "Sertanejo"],
+      picks: ["funk", "sertanejo"],
+      question: "listen",
+      unselected: "reggaeton",
+    },
+  ])(
+    "keeps saved Portuguese $question options selectable in English",
+    async ({ labels, picks, question, unselected }) => {
+      await learner();
+      await save({ answer: { picks }, question }, "pt");
+      const view = await getProfileQuestions({ locale: "en" });
+      const saved = view?.questions.find((item) => item.id === question);
+
+      expect(saved?.status).toBe("answered");
+      expect(saved?.saved.picks).toStrictEqual(picks);
+
+      expect(
+        saved?.saved.picks.map((id) => saved.options.find((option) => option.id === id)?.label),
+      ).toStrictEqual(labels);
+
+      expect(saved?.options.some((option) => option.id === unselected)).toBe(false);
+      expect(new Set(saved?.options.map((option) => option.id)).size).toBe(saved?.options.length);
+    },
+  );
+
   it("exports structured facts, status records, needs and consented conditions", async () => {
     await learner();
     await save(watch);
