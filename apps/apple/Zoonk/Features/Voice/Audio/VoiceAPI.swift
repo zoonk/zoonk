@@ -14,7 +14,8 @@ struct VoiceAPI: Sendable {
     stepId: String,
     studySessionId: String?,
     recording: VoiceRecording,
-    token: String
+    token: String,
+    mistake: SpokenMistakeTarget? = nil
   ) async throws -> Refusable<Components.Schemas.SpokenAnswerGrade> {
     try await clients.perform(token: token) { client in
       var parts: [Components.Schemas.SpokenAnswerRequest] = [
@@ -25,6 +26,22 @@ struct VoiceAPI: Sendable {
 
       if let studySessionId {
         parts.insert(.studySessionId(.init(payload: .init(body: HTTPBody(studySessionId)))), at: 0)
+      }
+
+      if let mistake {
+        parts.append(.mistakeId(.init(payload: .init(body: HTTPBody(mistake.mistakeId)))))
+        parts.append(.attemptId(.init(payload: .init(body: HTTPBody(mistake.attemptId)))))
+        parts.append(
+          .answerIds(
+            .init(payload: .init(body: HTTPBody(try JSONEncoder().encode(mistake.answerIds))))))
+        if let duration = mistake.practiceDurationMs {
+          parts.append(
+            .practiceDurationMs(
+              .init(payload: .init(body: HTTPBody(String(min(duration, 3_600_000)))))))
+        }
+        if let goalId = mistake.goalId {
+          parts.append(.goalId(.init(payload: .init(body: HTTPBody(goalId)))))
+        }
       }
 
       let output = try await client.createSpokenAnswer(

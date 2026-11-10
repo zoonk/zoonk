@@ -57,6 +57,8 @@ export type LessonPlayerSlots = {
 };
 
 type LessonPlayerConfig = {
+  showWritingAlternatives?: boolean;
+  canRecordSpokenAnswer?: boolean;
   adapters: LessonPlayerAdapters;
   buddy?: LearnBuddy | null;
   challengeTeam: ChallengeTeam | null;

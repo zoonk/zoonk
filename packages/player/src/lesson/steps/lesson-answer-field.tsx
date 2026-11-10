@@ -1,6 +1,7 @@
 "use client";
 
 import { MAX_TYPED_ANSWER_LENGTH } from "@zoonk/core/lesson-player/contract";
+import { focusAnswerOnPointer, usesOnScreenKeyboard } from "@zoonk/learn/answer-field";
 import { Input } from "@zoonk/ui/components/input";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { useExtracted } from "next-intl";
@@ -27,10 +28,6 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
   );
 }
 
-function typesOnScreen(): boolean {
-  return !globalThis.matchMedia("(pointer: fine)").matches;
-}
-
 export function LessonAnswerField({
   autoFocusOnPointer = false,
   isLocked,
@@ -54,10 +51,8 @@ export function LessonAnswerField({
   const isGraded = state.phase === "feedback";
 
   useEffect(() => {
-    if (autoFocusOnPointer && !typesOnScreen()) {
-      fieldRef.current
-        ?.querySelector<HTMLElement>("input, textarea")
-        ?.focus({ preventScroll: true });
+    if (autoFocusOnPointer) {
+      focusAnswerOnPointer(fieldRef.current?.querySelector<HTMLElement>("input, textarea") ?? null);
     }
   }, [autoFocusOnPointer]);
 
@@ -66,7 +61,7 @@ export function LessonAnswerField({
   useEffect(() => {
     const isTyping = fieldRef.current?.contains(document.activeElement);
 
-    if (isTyping && (isGraded || (isChecking && typesOnScreen()))) {
+    if (isTyping && (isGraded || (isChecking && usesOnScreenKeyboard()))) {
       focusLessonAfterTurn();
     }
   }, [isChecking, isGraded]);
@@ -80,7 +75,7 @@ export function LessonAnswerField({
 
     if (!screen.primary || screen.primary.disabled) {
       // "Done" with nothing to check still puts the keyboard away.
-      if (typesOnScreen()) {
+      if (usesOnScreenKeyboard()) {
         focusLessonAfterTurn();
       }
 

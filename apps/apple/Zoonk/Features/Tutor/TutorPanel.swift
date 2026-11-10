@@ -75,7 +75,7 @@ struct TutorPanel: View {
   }
 
   private func quoteLine(_ question: String) -> String {
-    if case .item(_, _, true, _) = scope {
+    if case .item(_, _, true, _, _) = scope {
       return String(
         localized: "About your answer to “\(question)”", table: "Tutor",
         comment: "The checked practice question the panel is about")
@@ -103,6 +103,7 @@ struct TutorAskButton: View {
 
   let scope: TutorScope
   var quote: String?
+  var iconOnly = false
 
   @State private var isPresented = false
 
@@ -124,7 +125,9 @@ struct TutorAskButton: View {
     Group {
       // Beside a question's Check it's the buddy's face alone, so the bar keeps room for its
       // actions, until a miss, as main's bar does.
-      if case .item(_, _, _, missed: false) = scope {
+      if iconOnly {
+        button.labelStyle(.iconOnly)
+      } else if case .item(_, _, _, missed: false, mistakeId: _) = scope {
         button.labelStyle(.iconOnly)
       } else {
         button

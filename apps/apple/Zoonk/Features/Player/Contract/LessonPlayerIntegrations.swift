@@ -132,6 +132,15 @@ struct SpokenHeard: Hashable, Sendable {
   let wordsToPractice: [PracticeWord]
 }
 
+struct SpokenMistakeTarget: Sendable {
+  let mistakeId: String
+  let attemptId: String
+  let goalId: String?
+  let answerIds: [String]
+  let questionStartedAt: Date
+  var practiceDurationMs: Int? = nil
+}
+
 struct SpokenAnswerContext {
   let lessonId: String
   let stepId: String
@@ -145,6 +154,9 @@ struct SpokenAnswerContext {
   let onGraded: @MainActor (SpokenAnswerVerdict) -> Void
   /// The microphone is off for the app: the screen offers typing instead.
   let onBlocked: @MainActor () -> Void
+  var mistake: SpokenMistakeTarget? = nil
+  var onPracticeGraded: (@MainActor (Components.Schemas.MistakePracticeFeedback) -> Void)? = nil
+  var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
 }
 
 /// Records spoken answers. Without a recorder (`input` nil), spoken screens take a typed answer,

@@ -493,10 +493,10 @@ internal fun RunAskButton(
     navigator: AppNavigator,
 ) {
     val checked = run.phase as? RunPhase.Checked
-    if (question.placement || (question.drill?.timeLimitSeconds != null && checked == null)) return
+    if (!question.tutorAvailable || question.placement || (question.drill?.timeLimitSeconds != null && checked == null)) return
 
     TutorAskButton(
-        TutorScope.Item(question.itemId, blockId, answered = checked != null),
+        TutorScope.Item(question.itemId, blockId, answered = checked != null, mistakeId = question.mistakeId),
         app,
         navigator,
         worded = checked?.feedback?.isCorrect == false,

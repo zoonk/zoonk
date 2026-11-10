@@ -200,11 +200,13 @@ private func readThread(
     case .notFound: throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented: throw APIError.unavailable
     }
-  case .lesson(let lessonId, _, _), .step(let lessonId, _, _, _, _):
-    let stepId: String? = if case .step(_, let id, _, _, _) = scope { id } else { nil }
+  case .lesson(let lessonId, _, _), .step(let lessonId, _, _, _, _, _):
+    let stepId: String? = if case .step(_, let id, _, _, _, _) = scope { id } else { nil }
     let output = try await client.getLessonQuestionThread(
       path: .init(lessonId: lessonId),
-      query: .init(contextKind: stepId == nil ? .lesson : nil, cursor: cursor, stepId: stepId))
+      query: .init(
+        contextKind: stepId == nil ? .lesson : nil, cursor: cursor, mistakeId: scope.mistakeId,
+        stepId: stepId))
 
     switch output {
     case .ok(let response): return try response.body.json?.value1
@@ -212,9 +214,9 @@ private func readThread(
     case .notFound: throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented: throw APIError.unavailable
     }
-  case .item(let itemId, _, _, _):
+  case .item(let itemId, _, _, _, _):
     let output = try await client.getItemQuestionThread(
-      path: .init(itemId: itemId), query: .init(cursor: cursor))
+      path: .init(itemId: itemId), query: .init(cursor: cursor, mistakeId: scope.mistakeId))
 
     switch output {
     case .ok(let response): return try response.body.json?.value1
@@ -243,10 +245,10 @@ private func createQuestion(
   case .mock(let blockId):
     return try createdQuestion(
       try await client.createMockQuestion(path: .init(blockId: blockId), body: .json(request)))
-  case .lesson(let lessonId, _, _), .step(let lessonId, _, _, _, _):
+  case .lesson(let lessonId, _, _), .step(let lessonId, _, _, _, _, _):
     return try createdQuestion(
       try await client.createLessonQuestion(path: .init(lessonId: lessonId), body: .json(request)))
-  case .item(let itemId, _, _, _):
+  case .item(let itemId, _, _, _, _):
     return try createdQuestion(
       try await client.createItemQuestion(path: .init(itemId: itemId), body: .json(request)))
   }
@@ -396,12 +398,15 @@ extension TutorScope {
       .case4(.init(kind: .mock))
     case .lesson(_, let stepIds, _):
       .case1(.init(kind: .lesson, stepIds: stepIds))
-    case .step(_, let stepId, let stepNumber, let answer?, _):
-      .case3(.init(answer: answer, kind: .answer, stepId: stepId, stepNumber: stepNumber))
-    case .step(_, let stepId, let stepNumber, nil, _):
-      .case2(.init(kind: .step, stepId: stepId, stepNumber: stepNumber))
-    case .item(_, let blockId, let answered, _):
-      .case5(.init(answered: answered, blockId: blockId, kind: .item))
+    case .step(_, let stepId, let stepNumber, let answer?, _, let mistakeId):
+      .case3(
+        .init(
+          answer: answer, kind: .answer, mistakeId: mistakeId, stepId: stepId,
+          stepNumber: stepNumber))
+    case .step(_, let stepId, let stepNumber, nil, _, let mistakeId):
+      .case2(.init(kind: .step, mistakeId: mistakeId, stepId: stepId, stepNumber: stepNumber))
+    case .item(_, let blockId, let answered, _, let mistakeId):
+      .case5(.init(answered: answered, blockId: blockId, kind: .item, mistakeId: mistakeId))
     }
   }
 }

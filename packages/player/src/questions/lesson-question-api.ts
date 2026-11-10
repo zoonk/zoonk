@@ -75,6 +75,7 @@ function questionsUrl({
   connection,
   contextKind,
   cursor,
+  mistakeId,
   stepId,
   target,
 }: { connection: LessonQuestionConnection; target: TutorTarget } & GetLessonQuestionThreadInput) {
@@ -86,6 +87,10 @@ function questionsUrl({
 
   if (stepId) {
     url.searchParams.set("stepId", stepId);
+  }
+
+  if (mistakeId) {
+    url.searchParams.set("mistakeId", mistakeId);
   }
 
   if (contextKind) {
@@ -113,6 +118,7 @@ export async function getLessonQuestionThreadRequest({
   connection,
   contextKind,
   cursor,
+  mistakeId,
   stepId,
   target,
 }: {
@@ -122,7 +128,7 @@ export async function getLessonQuestionThreadRequest({
   LessonQuestionApiResult<LessonQuestionThreadResource | null>
 > {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(questionsUrl({ connection, contextKind, cursor, stepId, target }), {
+    fetch(questionsUrl({ connection, contextKind, cursor, mistakeId, stepId, target }), {
       cache: "no-store",
       headers: await connection.getHeaders(),
     }),

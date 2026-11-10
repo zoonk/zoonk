@@ -1,6 +1,7 @@
-import { type Item, type ItemFormat } from "@zoonk/db";
+import { type ItemFormat } from "@zoonk/db";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
 import {
+  type BankItem as ChoiceBankItem,
   type ChoiceItem,
   getChoiceCorrectAnswer,
   gradeChoiceAnswer,
@@ -26,7 +27,9 @@ import {
   toTypedSnapshot,
 } from "../../learner/_utils/typed-items";
 import { choiceAnswerSchema } from "../../learner/contract";
-import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
+import { type ItemSetView } from "../../library/items/item-set-view";
+import { toItemSetView } from "../../library/items/item-sets";
+import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { type QuestionAnswer, studyAnswerInputSchema } from "../contract";
 import { type MatchItem, gradeMatch, parseMatchItem, toMatchQuestion } from "./match-items";
 import { type OrderItem, gradeOrder, parseOrderItem, toOrderQuestion } from "./order-items";
@@ -61,12 +64,14 @@ export function getPracticeItemFilter({ typed }: { typed: boolean }) {
   };
 }
 
-export type SessionItem = ChoiceItem | MatchItem | MathItem | OrderItem | TypedItem;
+export type SessionItem = (ChoiceItem | MatchItem | MathItem | OrderItem | TypedItem) & {
+  set?: ItemSetView | null;
+};
 
-type BankItem = Pick<Item, "content" | "format" | "id" | "language" | "skillId">;
+type BankItem = ChoiceBankItem;
 
 /** Reads a bank item as a question a session can ask, or null for other formats. */
-export function parseSessionItem(item: BankItem): SessionItem | null {
+function parseSessionItemContent(item: BankItem): SessionItem | null {
   switch (item.format) {
     case "matchPairs":
       return parseMatchItem(item);
@@ -85,6 +90,16 @@ export function parseSessionItem(item: BankItem): SessionItem | null {
     default:
       throw new Error("Unknown item format.");
   }
+}
+
+export function parseSessionItem(item: BankItem): SessionItem | null {
+  const parsed = parseSessionItemContent(item);
+
+  const set = item.set
+    ? toItemSetView({ item: { set: item.set, setPosition: item.setPosition ?? null } })
+    : null;
+
+  return parsed ? { ...parsed, set } : null;
 }
 
 export function hasTraps(item: SessionItem): boolean {
@@ -256,7 +271,11 @@ export function describeEarlierAnswer({
 export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
   /** Correction evidence belongs to persistence, while the public answer remains strict. */
   const input = isJsonObject(answer)
-    ? Object.fromEntries(Object.entries(answer).filter(([key]) => key !== "fixedMistakeIds"))
+    ? Object.fromEntries(
+        Object.entries(answer).filter(
+          ([key]) => key !== "fixedMistakeIds" && key !== "practiceMistakeId",
+        ),
+      )
     : answer;
 
   const parsed = studyAnswerInputSchema.shape.answer.safeParse(input);

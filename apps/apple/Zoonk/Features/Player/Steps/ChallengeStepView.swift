@@ -5,7 +5,8 @@ struct ChallengeStepView: View {
   let step: LessonStep
   let content: ChallengeContent
   let state: LessonPlayerState
-  let store: LessonPlayerStore
+  let select: @MainActor (LessonAnswer?) -> Void
+  var team: [String] = []
   let part: LessonStepPart
 
   @Environment(\.legibilityWeight) private var legibilityWeight
@@ -32,7 +33,7 @@ struct ChallengeStepView: View {
         isChecked: false,
         isLocked: state.phase != .playing
       ) { choiceId in
-        store.select(.challenge(choiceIds: confirmed + [choiceId]))
+        select(.challenge(choiceIds: confirmed + [choiceId]))
       }
     case (.ended(let ending, _, let decisions), .turn):
       if let result = state.currentResult {
@@ -542,9 +543,8 @@ struct ChallengeStepView: View {
   private func name(for slotId: String) -> String {
     let people = content.team.filter { !$0.ai }
 
-    if let index = people.firstIndex(where: { $0.id == slotId }), index < store.challengeTeam.count
-    {
-      return store.challengeTeam[index]
+    if let index = people.firstIndex(where: { $0.id == slotId }), index < team.count {
+      return team[index]
     }
 
     return content.team.first { $0.id == slotId }?.role ?? slotId

@@ -8,11 +8,13 @@ export type TypedVerdict = { feedback: string | null; isCorrect: boolean };
 /** May call a model, without claiming small AI help; after its daily per-question cap only accepted answers count. */
 export async function gradeTypedItemAnswer({
   item,
+  claimId,
   practicedLanguage,
   text,
   userId,
 }: {
   item: TypedItem;
+  claimId?: string;
   practicedLanguage: string | null;
   text: string;
   userId: string;
@@ -21,7 +23,7 @@ export async function gradeTypedItemAnswer({
     return { feedback: null, isCorrect: false };
   }
 
-  if (!(await claimModelGrade({ question: { itemId: item.id }, userId }))) {
+  if (!(await claimModelGrade({ id: claimId, question: { itemId: item.id }, userId }))) {
     return { feedback: null, isCorrect: matchesAcceptedAnswer({ item, text }) };
   }
 

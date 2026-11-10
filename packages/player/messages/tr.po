@@ -3381,6 +3381,7 @@ msgid "Check"
 msgstr "Kontrol et"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Onayla"
@@ -3407,11 +3408,13 @@ msgid "See the answer"
 msgstr "Cevabı gör"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "zDR51u"
 msgid "See how it went"
 msgstr "Sonucunu gör"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Başla"

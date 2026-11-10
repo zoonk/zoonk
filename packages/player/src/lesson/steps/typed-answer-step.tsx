@@ -12,7 +12,7 @@ import { splitQuestionData } from "../_utils/lesson-aside";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { isNumberAnswer } from "../_utils/number-answer";
 import { ExplainFirstButton } from "../controls/explain-first-button";
-import { useLessonPlayer } from "../lesson-player-context";
+import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
@@ -46,6 +46,7 @@ export function TypedAnswerStepView({
   const spoken = useSpokenText();
   const text = answer?.kind === "typedAnswer" ? answer.text : "";
   const { actions, screen } = useLessonPlayer();
+  const { showWritingAlternatives = true } = useLessonPlayerConfig();
   const isNumber = isNumberAnswer(step.content.acceptedAnswers);
   const isExplanation = !isNumber && (step.content.acceptedAnswers ?? []).length === 0;
   const { data, question } = splitQuestionData(step.content.question);
@@ -77,7 +78,7 @@ export function TypedAnswerStepView({
 
       <div className="flex flex-col gap-3.5 empty:hidden">
         <ExplainFirstButton />
-        {!isLocked && !isNumber && (
+        {!isLocked && !isNumber && showWritingAlternatives && (
           <>
             {!screen.canExplainFirst && (
               <Button

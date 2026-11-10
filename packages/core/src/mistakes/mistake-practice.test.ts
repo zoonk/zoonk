@@ -17,6 +17,8 @@ import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
+import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { MAX_PRACTICE_ANSWERS } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
@@ -40,28 +42,6 @@ async function setup() {
   return { extra, lesson, original, skill, user };
 }
 
-async function withoutOwnQuestion() {
-  const { extra, original, skill, user } = await setup();
-
-  const practiced = await mistakeFixture({
-    createdAt: YESTERDAY,
-    skillId: skill.id,
-    userId: user.id,
-  });
-
-  const covered = await mistakeFixture({
-    createdAt: YESTERDAY,
-    skillId: skill.id,
-    userId: user.id,
-  });
-
-  return { covered, extra, original, practiced, skill, user };
-}
-
-function fixedIds(result: Awaited<ReturnType<typeof answerMistakePractice>>) {
-  return result.status === "ready" ? result.feedback.fixedMistakeIds.toSorted() : null;
-}
-
 describe(getMistakePractice, () => {
   it("keeps the saved context and visual beside a practice after the live question changes", async () => {
     const { original, skill, user } = await setup();
@@ -76,12 +56,32 @@ describe(getMistakePractice, () => {
       title: "Shadow measurements",
     };
 
+    const parsed = parseChoiceItem(original);
+
+    if (!parsed || parsed.format !== "multipleChoice") {
+      throw new Error("The original must be a choice question");
+    }
+
+    const replay = {
+      item: {
+        ...parsed,
+        content: { ...parsed.content, context, question: "What is the tree's height?", visual },
+      },
+      kind: "item" as const,
+    };
+
     await mistakeFixture({
       cause: "gap",
       createdAt: YESTERDAY,
       itemId: original.id,
       skillId: skill.id,
-      snapshot: { answer: "Wrong answer", context, question: "What is the tree's height?", visual },
+      snapshot: {
+        answer: "Wrong answer",
+        context,
+        question: "What is the tree's height?",
+        replay,
+        visual,
+      },
       userId: user.id,
     });
 
@@ -92,7 +92,7 @@ describe(getMistakePractice, () => {
       visual,
     });
 
-    expect(result.status === "ready" && result.practice[0]?.questions[0]?.context).toBeNull();
+    expect(result.status === "ready" && result.practice[0]?.questions[0]?.context).toBe(context);
   });
 
   it("builds a drill per mistake from earlier days, with its own question", async () => {
@@ -136,26 +136,6 @@ describe(getMistakePractice, () => {
     ).toStrictEqual([original.id]);
 
     expect(JSON.stringify(result)).not.toContain("isCorrect");
-  });
-
-  it("drills a mistake with its skill's other questions once a fix retires the original", async () => {
-    const { extra, original, skill, user } = await setup();
-
-    await Promise.all([
-      prisma.item.update({ data: { retiredAt: new Date() }, where: { id: original.id } }),
-      mistakeFixture({
-        createdAt: YESTERDAY,
-        itemId: original.id,
-        skillId: skill.id,
-        userId: user.id,
-      }),
-    ]);
-
-    const result = await getMistakePractice({ timeZone: "UTC" });
-
-    expect(
-      result.status === "ready" && result.practice[0]?.questions.map((question) => question.itemId),
-    ).toStrictEqual([extra.id]);
   });
 
   it("shows the picture of a question about a figure, with the writer's alt text", async () => {
@@ -332,41 +312,6 @@ describe(getMistakePractice, () => {
     expect(outsideGoal.status === "ready" && outsideGoal.practice).toStrictEqual([]);
   });
 
-  it("practices a miss on a finer skill a goal lesson teaches, with its goal skill's questions", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-
-    const { goal, planItems } = await learnerGoalFixture({ phases: [1], userId: user.id });
-    const [finer, lesson] = await Promise.all([skillFixture(), libraryLessonFixture()]);
-
-    await Promise.all([
-      lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
-      prisma.planItem.update({ data: { lessonId: lesson.id }, where: { id: planItems[0]?.id } }),
-    ]);
-
-    const miss = await mistakeFixture({
-      cause: "gap",
-      createdAt: YESTERDAY,
-      skillId: finer.id,
-      userId: user.id,
-    });
-
-    const result = await getMistakePractice({ goalId: goal.id, timeZone: "UTC" });
-
-    expect(
-      result.status === "ready" && result.practice.map((entry) => entry.mistakeId),
-    ).toStrictEqual([miss.id]);
-
-    const question = result.status === "ready" ? result.practice[0]?.questions[0] : undefined;
-
-    const answered = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: question?.itemId ?? "" },
-      mistakeId: miss.id,
-    });
-
-    expect(answered.status === "ready" && answered.feedback.mistakeStatus).toBe("fixed");
-  });
-
   it("brings every ready mistake with its own question, past the old limit of five", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     mockSession(user.id);
@@ -420,87 +365,6 @@ describe(getMistakePractice, () => {
     const result = await getMistakePractice({ timeZone: "UTC" });
 
     expect(result.status === "ready" && result.practice).toHaveLength(MAX_PRACTICE_ANSWERS);
-  });
-
-  it("asks a skill's only question once when several mistakes have no question of their own", async () => {
-    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
-    mockSession(user.id);
-
-    const only = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-
-    await Promise.all(
-      Array.from({ length: 3 }, () =>
-        mistakeFixture({
-          cause: "misread",
-          createdAt: YESTERDAY,
-          skillId: skill.id,
-          userId: user.id,
-        }),
-      ),
-    );
-
-    const result = await getMistakePractice({ timeZone: "UTC" });
-    const practice = result.status === "ready" ? result.practice : [];
-
-    expect(
-      practice.flatMap((entry) => entry.questions.map((question) => question.itemId)),
-    ).toStrictEqual([only.id]);
-  });
-
-  it("never asks a goal skill's question twice for misses on the finer skills its lesson teaches", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-
-    const { goal, planItems } = await learnerGoalFixture({ phases: [1], userId: user.id });
-
-    const [first, second, lesson] = await Promise.all([
-      skillFixture(),
-      skillFixture(),
-      libraryLessonFixture(),
-    ]);
-
-    await Promise.all([
-      lessonSkillFixture({ lessonId: lesson.id, skillId: first.id }),
-      lessonSkillFixture({ lessonId: lesson.id, skillId: second.id }),
-      prisma.planItem.update({ data: { lessonId: lesson.id }, where: { id: planItems[0]?.id } }),
-    ]);
-
-    await Promise.all(
-      [first.id, second.id, first.id, second.id].map((skillId) =>
-        mistakeFixture({ cause: "misread", createdAt: YESTERDAY, skillId, userId: user.id }),
-      ),
-    );
-
-    const result = await getMistakePractice({ goalId: goal.id, timeZone: "UTC" });
-    const practice = result.status === "ready" ? result.practice : [];
-    const asked = practice.flatMap((entry) => entry.questions.map((question) => question.itemId));
-
-    expect(asked.length).toBeGreaterThan(0);
-    expect(new Set(asked).size).toBe(asked.length);
-  });
-
-  it("goes over a lesson's idea once when several of its mistakes are in the run", async () => {
-    const { extra, lesson, original, skill, user } = await setup();
-
-    await Promise.all(
-      [original.id, extra.id].map((itemId) =>
-        mistakeFixture({
-          cause: "gap",
-          createdAt: YESTERDAY,
-          itemId,
-          skillId: skill.id,
-          userId: user.id,
-        }),
-      ),
-    );
-
-    const result = await getMistakePractice({ timeZone: "UTC" });
-    const practice = result.status === "ready" ? result.practice : [];
-
-    expect(practice.map((entry) => entry.drill.lesson?.id ?? null)).toStrictEqual([
-      lesson.id,
-      null,
-    ]);
   });
 
   it("times each question of a drill for a mistake made by running out of time", async () => {
@@ -564,17 +428,17 @@ describe(answerMistakePractice, () => {
   });
 
   it("announces a fix only for the answer that fixed the notebook entry", async () => {
-    const { original, extra, skill, user } = await setup();
+    const { extra, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
       createdAt: YESTERDAY,
-      itemId: original.id,
+      itemId: extra.id,
       skillId: skill.id,
       userId: user.id,
     });
 
     const first = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
+      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
       mistakeId: mistake.id,
     });
 
@@ -587,18 +451,18 @@ describe(answerMistakePractice, () => {
     expect(next).toMatchObject({ feedback: { fixed: false, mistakeStatus: "fixed" } });
   });
 
-  it("returns a previously fixed drill entry to the notebook when the learner does not know another question", async () => {
-    const { original, extra, skill, user } = await setup();
+  it("records a new next-day entry when a fixed question is missed again", async () => {
+    const { extra, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
       createdAt: YESTERDAY,
-      itemId: original.id,
+      itemId: extra.id,
       skillId: skill.id,
       userId: user.id,
     });
 
     await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
+      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
       mistakeId: mistake.id,
     });
 
@@ -607,44 +471,17 @@ describe(answerMistakePractice, () => {
       mistakeId: mistake.id,
     });
 
-    expect(result).toMatchObject({ feedback: { fixed: false, mistakeStatus: "open", trap: null } });
+    expect(result).toMatchObject({
+      feedback: { fixed: false, mistakeStatus: "fixed", trap: null },
+    });
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
-    ).resolves.toMatchObject({ cause: "gap", fixedAt: null, status: "open" });
-  });
+    ).resolves.toMatchObject({ status: "fixed" });
 
-  it("reports every notebook entry fixed by an overlapping drill question", async () => {
-    const { original, extra, skill, user } = await setup();
-
-    const [first, other] = await Promise.all([
-      mistakeFixture({
-        createdAt: YESTERDAY,
-        itemId: original.id,
-        skillId: skill.id,
-        userId: user.id,
-      }),
-      mistakeFixture({
-        createdAt: YESTERDAY,
-        itemId: extra.id,
-        skillId: skill.id,
-        userId: user.id,
-      }),
-    ]);
-
-    await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
-      mistakeId: first.id,
-    });
-
-    const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
-      mistakeId: first.id,
-    });
-
-    expect(result).toMatchObject({
-      feedback: { fixed: false, fixedMistakeIds: [other.id], mistakeStatus: "fixed" },
-    });
+    await expect(
+      prisma.mistake.findMany({ where: { itemId: extra.id, status: "open", userId: user.id } }),
+    ).resolves.toMatchObject([{ cause: "gap", fixedAt: null }]);
   });
 
   it("fixes a mistake answered right on a later day", async () => {
@@ -675,9 +512,11 @@ describe(answerMistakePractice, () => {
         fixed: true,
         fixedMistakeIds: [mistake.id],
         isCorrect: true,
+        lessonResult: null,
         mistakeStatus: "fixed",
         reached: { energy: null, level: null },
         trap: null,
+        workedSteps: [],
       },
       status: "ready",
     });
@@ -687,275 +526,15 @@ describe(answerMistakePractice, () => {
     ).resolves.toMatchObject({ status: "fixed" });
   });
 
-  it("fixes the drilled mistake through another question on its skill", async () => {
-    const { extra, original, skill, user } = await setup();
-
-    const mistake = await mistakeFixture({
-      createdAt: YESTERDAY,
-      itemId: original.id,
-      skillId: skill.id,
-      userId: user.id,
-    });
-
-    const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
-      mistakeId: mistake.id,
-    });
-
-    expect(result.status === "ready" && result.feedback.mistakeStatus).toBe("fixed");
-  });
-
-  describe("mistakes with no question of their own", () => {
-    it("are all fixed by one right answer on their skill, and a retry says the same", async () => {
-      const { covered, extra, practiced } = await withoutOwnQuestion();
-      const attemptId = "01a1c0be-0000-7000-8000-000000000001";
-      const input = { answer: { selectedIndex: 0 }, attemptId, durationMs: 9000, itemId: extra.id };
-
-      const first = await answerMistakePractice({ input, mistakeId: practiced.id });
-      const retry = await answerMistakePractice({ input, mistakeId: practiced.id });
-
-      expect(fixedIds(first)).toStrictEqual([covered.id, practiced.id].toSorted());
-      expect(fixedIds(retry)).toStrictEqual([covered.id, practiced.id].toSorted());
-    });
-
-    it("all stay open after a wrong answer or an honest don't-know", async () => {
-      const { covered, extra, practiced } = await withoutOwnQuestion();
-
-      await answerMistakePractice({
-        input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: extra.id },
-        mistakeId: practiced.id,
-      });
-
-      await answerMistakePractice({
-        input: { answer: { dontKnow: true }, durationMs: 9000, itemId: extra.id },
-        mistakeId: practiced.id,
-      });
-
-      await expect(
-        prisma.mistake.findUniqueOrThrow({ where: { id: covered.id } }),
-      ).resolves.toMatchObject({ status: "open" });
-    });
-
-    it("count a retired question as no question of their own", async () => {
-      const { covered, extra, original, practiced, skill, user } = await withoutOwnQuestion();
-
-      const [retired] = await Promise.all([
-        mistakeFixture({
-          createdAt: YESTERDAY,
-          itemId: original.id,
-          skillId: skill.id,
-          userId: user.id,
-        }),
-        prisma.item.update({ data: { retiredAt: new Date() }, where: { id: original.id } }),
-      ]);
-
-      const result = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
-        mistakeId: practiced.id,
-      });
-
-      expect(fixedIds(result)).toStrictEqual([covered.id, practiced.id, retired.id].toSorted());
-    });
-
-    it("leave out a mistake with its own question, one from today and another skill's", async () => {
-      const { covered, extra, original, practiced, skill, user } = await withoutOwnQuestion();
-      const otherSkill = await skillFixture();
-
-      const [withOwn, today, elsewhere] = await Promise.all([
-        mistakeFixture({
-          createdAt: YESTERDAY,
-          itemId: original.id,
-          skillId: skill.id,
-          userId: user.id,
-        }),
-        mistakeFixture({ skillId: skill.id, userId: user.id }),
-        mistakeFixture({ createdAt: YESTERDAY, skillId: otherSkill.id, userId: user.id }),
-      ]);
-
-      const result = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
-        mistakeId: practiced.id,
-      });
-
-      expect(fixedIds(result)).toStrictEqual([covered.id, practiced.id].toSorted());
-
-      await expect(
-        prisma.mistake.findMany({
-          select: { status: true },
-          where: { id: { in: [withOwn.id, today.id, elsewhere.id] } },
-        }),
-      ).resolves.toStrictEqual([{ status: "open" }, { status: "open" }, { status: "open" }]);
-    });
-
-    it("are fixed by a question on the goal skill their lesson's plan item counts for", async () => {
-      const user = await userFixture();
-      mockSession(user.id);
-
-      const { goal, planItems, skills } = await learnerGoalFixture({
-        phases: [1],
-        userId: user.id,
-      });
-
-      const [goalSkill] = skills as [(typeof skills)[number]];
-
-      const [first, second] = await Promise.all([skillFixture(), skillFixture()]);
-      const lessonId = planItems[0]?.lessonId ?? "";
-
-      await Promise.all([
-        lessonSkillFixture({ lessonId, skillId: first.id }),
-        lessonSkillFixture({ lessonId, skillId: second.id }),
-      ]);
-
-      const practiced = await mistakeFixture({
-        createdAt: YESTERDAY,
-        skillId: first.id,
-        userId: user.id,
-      });
-
-      const covered = await mistakeFixture({
-        createdAt: YESTERDAY,
-        skillId: second.id,
-        userId: user.id,
-      });
-
-      const item = await prisma.item.findFirstOrThrow({ where: { skillId: goalSkill.id } });
-
-      const result = await answerMistakePractice({
-        input: {
-          answer: { selectedIndex: 0 },
-          durationMs: 9000,
-          itemId: item.id,
-          run: { answerIds: [], goalId: goal.id },
-          timeZone: "UTC",
-        },
-        mistakeId: practiced.id,
-      });
-
-      expect(fixedIds(result)).toStrictEqual([covered.id, practiced.id].toSorted());
-    });
-
-    it("stay open when the question is on another goal skill their lesson also teaches", async () => {
-      const user = await userFixture();
-      mockSession(user.id);
-
-      const { goal, planItems, skills } = await learnerGoalFixture({
-        phases: [2],
-        userId: user.id,
-      });
-
-      const [answered, other] = skills as [(typeof skills)[number], (typeof skills)[number]];
-      const planItem = planItems.find(({ skillId }) => skillId === answered.id);
-
-      await lessonSkillFixture({ lessonId: planItem?.lessonId ?? "", skillId: other.id });
-
-      const practiced = await mistakeFixture({
-        createdAt: YESTERDAY,
-        skillId: answered.id,
-        userId: user.id,
-      });
-
-      const onOtherSkill = await mistakeFixture({
-        createdAt: YESTERDAY,
-        skillId: other.id,
-        userId: user.id,
-      });
-
-      const item = await prisma.item.findFirstOrThrow({ where: { skillId: answered.id } });
-
-      const result = await answerMistakePractice({
-        input: {
-          answer: { selectedIndex: 0 },
-          durationMs: 9000,
-          itemId: item.id,
-          run: { answerIds: [], goalId: goal.id },
-          timeZone: "UTC",
-        },
-        mistakeId: practiced.id,
-      });
-
-      expect(fixedIds(result)).toStrictEqual([practiced.id]);
-
-      await expect(
-        prisma.mistake.findUniqueOrThrow({ where: { id: onOtherSkill.id } }),
-      ).resolves.toMatchObject({ status: "open" });
-    });
-
-    it("sit out a run that asks a mistake's own question on their skill from outside the bank", async () => {
-      const { practiced, skill, user } = await withoutOwnQuestion();
-
-      const outside = await itemFixture({
-        content: choiceItemContent(),
-        field: "healthcare",
-        skillId: skill.id,
-      });
-
-      const withOwn = await mistakeFixture({
-        createdAt: new Date(YESTERDAY.getTime() - 86_400_000),
-        itemId: outside.id,
-        skillId: skill.id,
-        userId: user.id,
-      });
-
-      const result = await getMistakePractice({});
-      const practice = result.status === "ready" ? result.practice : [];
-
-      expect(practice.map(({ mistakeId }) => mistakeId)).toStrictEqual([withOwn.id]);
-
-      const answer = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: outside.id },
-        mistakeId: withOwn.id,
-      });
-
-      expect(fixedIds(answer)).toContain(practiced.id);
-    });
-
-    it("leave a timed mistake to its own question, under its clock", async () => {
-      const { extra, original, skill, user } = await setup();
-
-      const withOwn = await mistakeFixture({
-        createdAt: new Date(YESTERDAY.getTime() - 86_400_000),
-        itemId: original.id,
-        skillId: skill.id,
-        userId: user.id,
-      });
-
-      const timed = await mistakeFixture({
-        cause: "time",
-        createdAt: YESTERDAY,
-        skillId: skill.id,
-        userId: user.id,
-      });
-
-      const result = await getMistakePractice({});
-      const practice = result.status === "ready" ? result.practice : [];
-
-      expect(
-        practice.map(({ drill, mistakeId, questions }) => [
-          mistakeId,
-          questions.map(({ itemId }) => itemId),
-          drill.timeLimitSeconds,
-        ]),
-      ).toStrictEqual([
-        [withOwn.id, [original.id], null],
-        [timed.id, [extra.id], 45],
-      ]);
-
-      const quick = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
-        mistakeId: withOwn.id,
-      });
-
-      expect(fixedIds(quick)).toStrictEqual([withOwn.id]);
-    });
-  });
-
   it("owes an ambiguous cause's naming by the classifier", async () => {
-    const { extra, original, skill, user } = await setup();
+    const { extra, skill, user } = await setup();
 
-    const mistake = await mistakeFixture({
+    await mistakeFixture({
       createdAt: YESTERDAY,
-      itemId: original.id,
+      fixedAt: YESTERDAY,
+      itemId: extra.id,
       skillId: skill.id,
+      status: "fixed",
       userId: user.id,
     });
 
@@ -994,18 +573,31 @@ describe(answerMistakePractice, () => {
       userPrompt: "",
     });
 
-    const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: extra.id },
-      mistakeId: mistake.id,
+    const parsed = parseChoiceItem(extra);
+    expect(parsed).not.toBeNull();
+
+    if (!parsed) {
+      throw new Error("The original must be playable");
+    }
+
+    const graded = gradeChoiceAnswer({ answer: { selectedIndex: 1 }, item: parsed });
+
+    const result = await recordLearnerAnswer({
+      answer: { selectedIndex: 1 },
+      graded: { durationMs: 9000, isCorrect: false },
+      itemId: extra.id,
+      language: "en",
+      mistake: { questionText: graded.snapshot.question, snapshot: graded.snapshot },
+      purpose: "learning",
+      skillId: skill.id,
+      timeZone: "UTC",
+      userId: user.id,
     });
 
-    expect(result.status === "ready" && result.feedback).toMatchObject({
-      isCorrect: false,
-      mistakeStatus: "open",
-    });
+    expect(result.mistake).toMatchObject({ status: "open" });
 
     const added = await prisma.mistake.findFirstOrThrow({
-      where: { itemId: extra.id, userId: user.id },
+      where: { itemId: extra.id, status: "open", userId: user.id },
     });
 
     const [owed] = await listFollowUps(user.id);
@@ -1028,18 +620,18 @@ describe(answerMistakePractice, () => {
   });
 
   it("counts an answer that takes a timed drill's whole time box as wrong, run out of time", async () => {
-    const { extra, original, skill, user } = await setup();
+    const { extra, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
       cause: "time",
       createdAt: YESTERDAY,
-      itemId: original.id,
+      itemId: extra.id,
       skillId: skill.id,
       userId: user.id,
     });
 
     const late = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 45_000, itemId: original.id },
+      input: { answer: { selectedIndex: 0 }, durationMs: 45_000, itemId: extra.id },
       mistakeId: mistake.id,
     });
 
@@ -1059,19 +651,19 @@ describe(answerMistakePractice, () => {
   });
 
   it("names only the trap matching a wrong answer in a trap drill", async () => {
-    const { extra, original, skill, user } = await setup();
+    const { extra, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
       cause: "trap",
       createdAt: YESTERDAY,
-      itemId: original.id,
+      itemId: extra.id,
       skillId: skill.id,
       userId: user.id,
     });
 
     const [right, wrong] = await Promise.all([
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
+        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
         mistakeId: mistake.id,
       }),
       answerMistakePractice({
@@ -1085,7 +677,7 @@ describe(answerMistakePractice, () => {
   });
 
   it("does not borrow a different wrong option's trap during practice", async () => {
-    const { original, skill, user } = await setup();
+    const { skill, user } = await setup();
     const content = choiceItemContent();
 
     const unmatched = await itemFixture({
@@ -1102,7 +694,7 @@ describe(answerMistakePractice, () => {
     const mistake = await mistakeFixture({
       cause: "trap",
       createdAt: YESTERDAY,
-      itemId: original.id,
+      itemId: unmatched.id,
       skillId: skill.id,
       userId: user.id,
     });

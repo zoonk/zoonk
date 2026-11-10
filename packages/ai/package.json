@@ -124,6 +124,7 @@
     "./tasks/material/cite": "./src/tasks/material/cite-material.ts",
     "./tasks/quality/lesson-check": "./src/tasks/quality/lesson-quality-check.ts",
     "./tasks/variants/example-lines": "./src/tasks/variants/example-lines.ts",
+    "./tasks/variants/step-variant-key": "./src/tasks/variants/step-variant-key.ts",
     "./tasks/variants/step-variant": "./src/tasks/variants/step-variant.ts",
     "./tasks/visuals/schema": "./src/tasks/visuals/visual-schema.ts",
     "./tasks/warm-up/check-warm-up-cards": "./src/tasks/warm-up/check-warm-up-cards.ts",

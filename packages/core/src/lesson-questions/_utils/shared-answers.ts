@@ -1,10 +1,14 @@
-import "server-only";
 import { type LessonQuestion, type TransactionClient } from "@zoonk/db";
+import "server-only";
 import { type LessonScreenSuggestion } from "../contract";
+import { getQuestionMistakeId } from "./mistake-scope";
 
 export type SharedAnswerKey = { stepId: string; suggestion: LessonScreenSuggestion };
 
-type SharedQuestion = Pick<LessonQuestion, "contextKind" | "libraryStepId" | "suggestion">;
+type SharedQuestion = Pick<
+  LessonQuestion,
+  "contextKind" | "contextSnapshot" | "libraryStepId" | "suggestion"
+>;
 
 /** Only first-turn screen suggestions can share answers; typed learner text and follow-ups must remain private. */
 export function getSharedAnswerKey({
@@ -15,6 +19,7 @@ export function getSharedAnswerKey({
   question: SharedQuestion;
 }): SharedAnswerKey | null {
   if (
+    getQuestionMistakeId(question.contextSnapshot) !== undefined ||
     question.contextKind !== "step" ||
     !question.libraryStepId ||
     !question.suggestion ||

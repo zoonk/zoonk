@@ -191,6 +191,7 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     const { goal, items, skills } = await sessionGoalFixture({
       challengesDone: true,
+      lessons: 4,
       userId: user.id,
     });
 

@@ -25,11 +25,21 @@ import { QuestionBlockHeader } from "../session/question-block/question-block-he
 import { type LessonHref } from "./drill/drill-types";
 import { type PracticeEntry, getPracticeSegments } from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
-import { PracticeStepActions, PracticeStepView } from "./practice-step";
+import {
+  type LessonPracticeRenderer,
+  PracticeStepActions,
+  PracticeStepView,
+} from "./practice-step";
 import { getPracticeTutorItem } from "./practice-tutor-item";
 import { type MistakePracticeActions, useMistakePractice } from "./use-mistake-practice";
 
-export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-practice-state";
+export type { PracticeRecordingOutcome } from "./use-mistake-practice";
+export type { LessonPracticeRenderer } from "./practice-step";
+export type {
+  PracticeAnswer,
+  MistakePracticeFeedback,
+  MistakePracticeSummary,
+} from "./mistake-practice-state";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
@@ -96,7 +106,11 @@ function QuestionMenu({ run }: { run: Run }) {
       label={t("Question options")}
       screen="mistake-practice"
       size="task"
-      target={{ contentId: run.step.question.itemId, contentKind: "item" }}
+      target={
+        run.step.lesson
+          ? { contentId: run.step.lesson.step.id, contentKind: "step" }
+          : { contentId: run.step.question?.itemId ?? "", contentKind: "item" }
+      }
     />
   );
 }
@@ -107,6 +121,7 @@ function PracticeBody({
   buddy,
   lessonHref,
   renderCeremony,
+  renderLesson,
   run,
   trueFalseLabels,
 }: {
@@ -115,6 +130,7 @@ function PracticeBody({
   buddy?: LearnBuddy | null;
   lessonHref: LessonHref | null;
   renderCeremony?: MomentCeremony;
+  renderLesson: LessonPracticeRenderer;
   run: Run;
   trueFalseLabels: TrueFalseLabels;
 }) {
@@ -146,6 +162,7 @@ function PracticeBody({
       <TaskBody>
         <PracticeStepView
           lessonHref={lessonHref}
+          renderLesson={renderLesson}
           run={run}
           step={run.step}
           trueFalseLabels={trueFalseLabels}
@@ -173,6 +190,7 @@ export function MistakePracticeRun({
   lessonHref,
   practice,
   renderCeremony,
+  renderLesson,
   trueFalseLabels,
   tutor = null,
 }: {
@@ -182,6 +200,7 @@ export function MistakePracticeRun({
   lessonHref: LessonHref | null;
   practice: PracticeEntry[];
   renderCeremony?: MomentCeremony;
+  renderLesson: LessonPracticeRenderer;
   trueFalseLabels: TrueFalseLabels;
   tutor?: QuestionTutor | null;
 }) {
@@ -213,6 +232,7 @@ export function MistakePracticeRun({
         buddy={buddy}
         lessonHref={lessonHref}
         renderCeremony={renderCeremony}
+        renderLesson={renderLesson}
         run={run}
         trueFalseLabels={trueFalseLabels}
       />

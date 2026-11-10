@@ -9,6 +9,7 @@ import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { WRITTEN_SCREEN_SCHEMAS } from "../lesson-writer/written-lesson-schema";
+import { NO_INSTALL_TOOL_KEY } from "./step-variant-key";
 import noInstallPrompt from "./step-variant-no-install.prompt.md";
 import toolPrompt from "./step-variant-tool.prompt.md";
 import basePrompt from "./step-variant.prompt.md";
@@ -21,9 +22,6 @@ import basePrompt from "./step-variant.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "low";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6.1-terra"] as const;
-
-/** For learners who install nothing: device steps become examples they read on the screen. */
-export const NO_INSTALL_TOOL_KEY = "no-install";
 
 const toolSystemPrompt = `${basePrompt}\n${toolPrompt}`;
 const noInstallSystemPrompt = `${basePrompt}\n${noInstallPrompt}`;

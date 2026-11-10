@@ -6,7 +6,7 @@ import {
 
 type LessonQuestionAnswerInput = Extract<LessonQuestionContextInput, { kind: "answer" }>["answer"];
 
-export type LessonQuestionContext =
+export type LessonQuestionContext = (
   | { kind: "lesson" }
   | { answered: boolean; blockId: string | null; itemId: string; kind: "item" }
   | { kind: LessonQuestionScreenKind }
@@ -16,7 +16,8 @@ export type LessonQuestionContext =
       selectedAnswer: LessonQuestionAnswerInput;
       step: { id: string };
       stepIndex: number;
-    };
+    }
+) & { mistakeId?: string };
 
 export function isAboutCheckedAnswer(
   context: LessonQuestionContext | LessonQuestionContextSummary,

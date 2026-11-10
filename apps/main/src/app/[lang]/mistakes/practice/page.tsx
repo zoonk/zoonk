@@ -57,7 +57,7 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
     return null;
   }
 
-  const result = await getMistakePractice({ goalId: goal.id, skillId });
+  const result = await getMistakePractice({ goalId: goal.id, includeAllFormats: true, skillId });
 
   if (result.status !== "ready") {
     return (

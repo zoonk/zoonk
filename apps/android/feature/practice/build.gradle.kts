@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(project(":feature:account"))
+    implementation(project(":feature:activities"))
     implementation(project(":feature:conversation"))
     implementation(project(":feature:exam"))
     implementation(project(":feature:plan"))

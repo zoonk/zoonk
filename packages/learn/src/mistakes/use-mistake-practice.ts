@@ -7,11 +7,15 @@ import {
   type MistakePracticeAnswer,
   type MistakePracticeFeedback,
   type MistakePracticeSummary,
+  type PracticeAnswer,
   type PracticeEntry,
   type SentPracticeAnswer,
   createPracticeState,
   practiceReducer,
 } from "./mistake-practice-state";
+import { type RecordMistakeAction, usePracticeRecording } from "./use-practice-recording";
+
+export type { PracticeRecordingOutcome } from "./use-practice-recording";
 
 const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
@@ -21,6 +25,7 @@ const NOT_SURE: ChoiceAnswer = { dontKnow: true };
  * it once more at the end.
  */
 export type MistakePracticeActions = {
+  record?: RecordMistakeAction;
   answer: (answer: MistakePracticeAnswer) => Promise<MistakePracticeFeedback>;
   finish: (run: { answerIds: string[] }) => Promise<MistakePracticeSummary | null>;
 };
@@ -36,7 +41,17 @@ export function useMistakePractice({
   const { steps } = state;
   const step = steps[state.index];
   const shownAt = useRef(0);
-  const attempt = useRef<{ id: string; index: number } | null>(null);
+
+  const recording = usePracticeRecording({
+    answerIds: state.answerIds,
+    dispatch,
+    elapsedMs: () => Date.now() - shownAt.current,
+    index: state.index,
+    record: actions.record,
+    step,
+  });
+
+  const attempt = useRef<{ answer: string; id: string; index: number } | null>(null);
 
   useEffect(() => {
     shownAt.current = Date.now();
@@ -63,8 +78,15 @@ export function useMistakePractice({
       return;
     }
 
-    if (attempt.current?.index !== state.index) {
-      attempt.current = { id: crypto.randomUUID(), index: state.index };
+    if (
+      attempt.current?.index !== state.index ||
+      attempt.current.answer !== JSON.stringify(answer)
+    ) {
+      attempt.current = {
+        answer: JSON.stringify(answer),
+        id: crypto.randomUUID(),
+        index: state.index,
+      };
     }
 
     const feedback = await actions
@@ -72,7 +94,7 @@ export function useMistakePractice({
         answer,
         attemptId: attempt.current.id,
         durationMs,
-        itemId: step.question.itemId,
+        ...(step.lesson ? { stepId: step.lesson.step.id } : { itemId: step.question?.itemId }),
         mistakeId: step.entry.mistakeId,
         runAnswerIds: state.answerIds,
       })
@@ -86,7 +108,7 @@ export function useMistakePractice({
     dispatch({ feedback, mistakeId: step.entry.mistakeId, type: "answered" });
   };
 
-  const check = (answer: ChoiceAnswer, sender: AnswerSender) => {
+  const check = (answer: PracticeAnswer, sender: AnswerSender) => {
     const limitMs = (step?.entry.drill.timeLimitSeconds ?? 0) * MS_PER_SECOND;
     const elapsedMs = Date.now() - shownAt.current;
 
@@ -105,20 +127,29 @@ export function useMistakePractice({
   };
 
   return {
-    check: (answer: ChoiceAnswer) => check(answer, "check"),
+    check: (answer: PracticeAnswer) => check(answer, "check"),
     end: () => dispatch({ type: "end" }),
     next: () => {
+      recording.reset();
       shownAt.current = Date.now();
       dispatch({ type: "next" });
     },
     notSure: () => check(NOT_SURE, "notSure"),
+    record: recording.record,
+    recordIssue: recording.recordIssue,
     retry: () => {
       if (state.phase.kind === "answerFailed") {
         dispatch({ type: "retry" });
-        void send(state.phase);
+
+        if (!recording.retry()) {
+          void send(state.phase);
+        }
       }
     },
-    select: (answer: ChoiceAnswer | null) => dispatch({ answer, type: "select" }),
+    select: (answer: PracticeAnswer | null) => {
+      recording.reset();
+      dispatch({ answer, type: "select" });
+    },
     start: () => {
       shownAt.current = Date.now();
       dispatch({ type: "start" });

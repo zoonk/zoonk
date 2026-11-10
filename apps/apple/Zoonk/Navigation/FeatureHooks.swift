@@ -30,7 +30,7 @@ extension PracticeHooks {
           TutorAskButton(
             scope: .item(
               itemId: target.itemId, blockId: target.blockId, answered: target.answered,
-              missed: target.missed),
+              missed: target.missed, mistakeId: target.mistakeId),
             quote: target.question))
       },
       checkpointCall: PracticeCheckpointCall(

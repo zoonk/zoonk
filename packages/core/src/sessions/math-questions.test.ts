@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -17,7 +16,6 @@ import {
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
-  daysAgo,
   dueSkillFixture,
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
@@ -247,38 +245,6 @@ describe("math problems in sessions", () => {
       misconception: "Computes the discount instead of the price paid",
       question: question?.question,
     });
-  });
-
-  it("drills a math mistake with the problem itself", async () => {
-    const user = await userFixture();
-
-    const { goal, planItems, skills } = await sessionGoalFixture({
-      challengesDone: true,
-      itemsPerSkill: 0,
-      lessons: 2,
-      userId: user.id,
-    });
-
-    const skillId = skills[0]?.id ?? "";
-    const item = await mathItemFixture(skillId);
-
-    await Promise.all([
-      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
-      mistakeFixture({ createdAt: daysAgo(1), itemId: item.id, skillId, userId: user.id }),
-    ]);
-
-    mockSession(user.id);
-    const today = await getTodayStudySession({ goalId: goal.id });
-    const session = today.status === "ready" ? today.session : null;
-    const drill = session?.blocks.find((block) => block.kind === "practice");
-
-    const questions = await loadQuestions({
-      blockId: drill?.id ?? "",
-      sessionId: session?.id ?? "",
-    });
-
-    expect(questions).toMatchObject([{ format: "numeric", itemId: item.id }]);
-    expect(questions[0]?.mistakeId).toBeTruthy();
   });
 
   it("asks math problems in a boss and shows their worked steps once the duel ends", async () => {

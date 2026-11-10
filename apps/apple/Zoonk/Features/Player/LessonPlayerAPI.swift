@@ -533,7 +533,7 @@ struct LessonPlayerAPI: Sendable {
 
 /// A live check's result and a saved answer's restored one share these fields, so both read into
 /// the player's result the same way.
-private protocol CheckResultPayload {
+protocol CheckResultPayload {
   var checked: Bool { get }
   var correctAnswer: String? { get }
   var feedback: String? { get }
@@ -547,27 +547,27 @@ private protocol CheckResultPayload {
 }
 
 extension Components.Schemas.LessonStepCheckResult: CheckResultPayload {
-  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+  var resultCorrections: [LessonStepResult.Correction] {
     corrections.map { .init(wrong: $0.wrong, right: $0.right) }
   }
 
-  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? {
     keyPoints?.map { .init(text: $0.text, met: $0.met) }
   }
 }
 
 extension Components.Schemas.LessonRunAnswerResult: CheckResultPayload {
-  fileprivate var resultCorrections: [LessonStepResult.Correction] {
+  var resultCorrections: [LessonStepResult.Correction] {
     corrections.map { .init(wrong: $0.wrong, right: $0.right) }
   }
 
-  fileprivate var resultKeyPoints: [LessonStepResult.KeyPoint]? {
+  var resultKeyPoints: [LessonStepResult.KeyPoint]? {
     keyPoints?.map { .init(text: $0.text, met: $0.met) }
   }
 }
 
 extension LessonStepResult {
-  fileprivate init(_ payload: some CheckResultPayload, answerText: String? = nil) {
+  init(_ payload: some CheckResultPayload, answerText: String? = nil) {
     self.init(
       isCorrect: payload.isCorrect, answerText: answerText, correctAnswer: payload.correctAnswer,
       feedback: payload.feedback)

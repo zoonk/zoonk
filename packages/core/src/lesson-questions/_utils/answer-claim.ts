@@ -1,8 +1,9 @@
-import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
+import "server-only";
 import { type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
 import { aboutCheckedAnswerWhere, findAboutCheckedAnswer } from "./about-checked-answer";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
+import { getQuestionMistakeId, mistakeQuestionWhere } from "./mistake-scope";
 import { lessonQuestionResourceOmit } from "./question-resource";
 import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
@@ -40,8 +41,11 @@ function toPriorTurns(
     );
 }
 
-function sameStepWhere(question: { libraryStepId: string | null }) {
-  return { libraryStepId: question.libraryStepId };
+function sameStepWhere(question: { contextSnapshot: unknown; libraryStepId: string | null }) {
+  return {
+    ...mistakeQuestionWhere(getQuestionMistakeId(question.contextSnapshot)),
+    libraryStepId: question.libraryStepId,
+  };
 }
 
 /** Exclude earlier checked-answer turns while giving hints; restore them only after the question is checked again. */
@@ -49,7 +53,13 @@ async function getPriorTurns({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
+  question: {
+    contextSnapshot: unknown;
+    createdAt: Date;
+    id: string;
+    libraryStepId: string | null;
+    threadId: string;
+  };
   transaction: TransactionClient;
 }) {
   const { createdAt } = question;
@@ -80,7 +90,13 @@ async function hasBlockingQuestion({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
+  question: {
+    contextSnapshot: unknown;
+    createdAt: Date;
+    id: string;
+    libraryStepId: string | null;
+    threadId: string;
+  };
   transaction: TransactionClient;
 }) {
   const [earlierUnfinishedQuestion, otherRunningQuestion] = await Promise.all([

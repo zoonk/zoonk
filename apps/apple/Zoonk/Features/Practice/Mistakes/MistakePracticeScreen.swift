@@ -78,16 +78,28 @@ struct MistakePracticeScreen: View {
         certificates: summary?.certificates ?? [], ceremony: summary?.ceremony?.value1)
     default:
       if let step = state.step {
-        PracticeTaskLayout(segments: state.segments, index: state.index) {
-          stepStimulus(step)
-        } response: {
-          stepResponse(step)
-        } actions: {
-          stepActions(step)
+        if let lesson = step.entry.lesson {
+          MistakeLessonQuestionView(
+            replay: lesson, entry: step.entry, segments: state.segments, index: state.index,
+            goalId: goalId, answerIds: state.answerIds,
+            checking: { state.checkingLesson() }, failed: { state.lessonFailed() },
+            answered: { state.answeredLesson($0, mistakeId: step.entry.mistakeId) },
+            next: next
+          )
+          .id(state.index)
+          .environment(\.practiceFocus, focuses)
+        } else {
+          PracticeTaskLayout(segments: state.segments, index: state.index) {
+            stepStimulus(step)
+          } response: {
+            stepResponse(step)
+          } actions: {
+            stepActions(step)
+          }
+          .announcesStatus(feedback)
+          .environment(\.practiceFocus, focuses)
+          .onChange(of: state.phase) { _, phase in followPress(to: phase) }
         }
-        .announcesStatus(feedback)
-        .environment(\.practiceFocus, focuses)
-        .onChange(of: state.phase) { _, phase in followPress(to: phase) }
       }
     }
   }
@@ -117,7 +129,7 @@ struct MistakePracticeScreen: View {
         .id("clock-\(state.index)")
       }
 
-      asked(step).stimulus
+      if let question = step.question { asked(question, step: step).stimulus }
     }
   }
 
@@ -126,7 +138,7 @@ struct MistakePracticeScreen: View {
     let drill = step.entry.drill
 
     if state.phase != .idea || drill.lesson == nil {
-      asked(step).response
+      if let question = step.question { asked(question, step: step).response }
 
       if let graded {
         PracticeFeedbackPanel(
@@ -134,7 +146,8 @@ struct MistakePracticeScreen: View {
             isCorrect: graded.grade.isCorrect,
             notSure: graded.answer.isDontKnow && graded.sender != .timer
           ),
-          explanation: graded.grade.explanation
+          explanation: graded.grade.explanation,
+          workedSteps: graded.grade.isCorrect ? [] : graded.grade.workedSteps
         ) {
           DrillAnswerNotes(
             drill: drill, notSure: graded.answer.isDontKnow, timedOut: graded.sender == .timer,
@@ -171,9 +184,11 @@ struct MistakePracticeScreen: View {
     if case .checking(let sent) = state.phase { sent.sender } else { nil }
   }
 
-  private func asked(_ step: MistakePracticeStep) -> PracticeQuestionView {
+  private func asked(_ question: PracticeQuestion, step: MistakePracticeStep)
+    -> PracticeQuestionView
+  {
     PracticeQuestionView(
-      question: step.question,
+      question: question,
       labels: labels,
       result: graded.map {
         PracticeItemResult(
@@ -248,18 +263,18 @@ struct MistakePracticeScreen: View {
 
         ask(step, answered: false, missed: false)
       }
-    case .ending, .ended:
+    case .ending, .ended, .lessonChecking, .lessonFeedback:
       EmptyView()
     }
   }
 
   @ViewBuilder
   private func ask(_ step: MistakePracticeStep, answered: Bool, missed: Bool) -> some View {
-    if let askButton = hooks.askButton {
+    if step.entry.tutorAvailable, let question = step.question, let askButton = hooks.askButton {
       askButton(
         PracticeAskTarget(
-          itemId: step.question.itemId, question: step.question.question, blockId: nil,
-          answered: answered, missed: missed))
+          itemId: question.itemId, question: question.question, blockId: nil,
+          answered: answered, missed: missed, mistakeId: step.entry.mistakeId))
     }
   }
 
@@ -278,7 +293,7 @@ struct MistakePracticeScreen: View {
           "End practice. What you answered counts.", table: "Practice",
           comment: "VoiceOver label: ends mistake practice early.")
       ) { Task { await end() } }
-      .disabled(checking != nil)
+      .disabled(checking != nil || state.phase == .lessonChecking)
     }
   }
 
@@ -339,7 +354,7 @@ struct MistakePracticeScreen: View {
   /// Each answer comes with the run's earlier answers, so saving it counts the run so far. Its
   /// attempt id is kept for the question, so sending it again after a failure is recorded once.
   private func send(_ sent: SentAnswer) async {
-    guard let step = state.step, state.acceptsAnswer else { return }
+    guard let step = state.step, let question = step.question, state.acceptsAnswer else { return }
 
     state.check(sent)
 
@@ -356,7 +371,7 @@ struct MistakePracticeScreen: View {
       { identity in
         try await practice.api.answerMistake(
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
-          itemId: step.question.itemId,
+          itemId: question.itemId,
           answer: sent.answer, durationMs: sent.durationMs,
           attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId)
       })

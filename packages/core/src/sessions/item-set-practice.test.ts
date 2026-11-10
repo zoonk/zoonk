@@ -140,13 +140,33 @@ describe("question sets in practice", () => {
     expect(new Set(readBlockPayload(block).itemIds)).toStrictEqual(new Set(alone));
   });
 
-  it("brings a passage question's mistake back in today's drill with its passage", async () => {
+  it("reads a saved passage question drill with its original passage", async () => {
     const { goal, passage, setItems, skillId, user } = await passageFixture();
 
-    await mistakeFixture({ createdAt: daysAgo(2), itemId: setItems[2], skillId, userId: user.id });
+    const mistake = await mistakeFixture({
+      createdAt: daysAgo(2),
+      itemId: setItems[2],
+      skillId,
+      userId: user.id,
+    });
 
     const block = await loadPracticeBlock({ goalId: goal.id, userId: user.id });
-    const payload = readBlockPayload(block);
+
+    const payload = {
+      ...readBlockPayload(block),
+      drills: [
+        {
+          itemIds: [setItems[2] ?? ""],
+          kind: "retry" as const,
+          lessonId: null,
+          mistakeId: mistake.id,
+          timeLimitSeconds: null,
+        },
+      ],
+      itemIds: readBlockPayload(block).itemIds.filter((id) => !setItems.includes(id)),
+    };
+
+    await prisma.studySessionBlock.update({ data: { payload }, where: { id: block.id } });
 
     expect(payload.drills[0]?.itemIds[0]).toBe(setItems[2]);
     expect(payload.itemIds).not.toContain(setItems[0]);

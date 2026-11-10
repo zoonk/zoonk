@@ -4,7 +4,6 @@ import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type LearnerAnswer } from "../../learner/record-learner-answer";
 import { type applyDrillRules } from "../../mistakes/drill-answer";
 import { bringBackMissedLessons } from "../../plans/bring-back-missed-lessons";
-import { type BlockDrill } from "../block-payload";
 import { type StudyAnswerInput } from "../contract";
 import { recordSessionAttempt } from "./record-session-attempt";
 import { refreshAfterPlacementAnswer } from "./refresh-plan";
@@ -15,7 +14,6 @@ type StudyAnswerRecord = {
   block: StudySessionBlock;
   /** A net-scored statement left blank: no notebook entry, since it isn't a mistake. */
   blank: boolean;
-  drill: BlockDrill | undefined;
   drilled: ReturnType<typeof applyDrillRules>;
   format: ItemFormat;
   graded: GradedSessionAnswer;
@@ -34,7 +32,6 @@ type StudyAnswerRecord = {
 export async function recordStudyAnswer({
   blank,
   block,
-  drill,
   drilled,
   format,
   graded,
@@ -55,7 +52,6 @@ export async function recordStudyAnswer({
     itemId: item.id,
     language: item.language,
     mistake: getAnswerMistake({ blank, drilled, graded }),
-    practicedMistakeId: drill?.mistakeId ?? null,
     purpose: placement ? "diagnostic" : "learning",
     skillId: item.skillId,
     studySessionId: sessionId,

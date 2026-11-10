@@ -106,7 +106,6 @@ describe(getTodayStudySession, () => {
       ["review", null],
       ["learn", lessons[1]?.id],
       ["learn", lessons[2]?.id],
-      ["practice", null],
     ]);
 
     expect(session.blocks[0]?.capsules).toMatchObject([
@@ -114,7 +113,7 @@ describe(getTodayStudySession, () => {
     ]);
 
     expect(session.blocks[1]).toMatchObject({ canDo: "You'll do thing 2", status: "pending" });
-    expect(session.blocks[3]?.questions).toBeGreaterThan(0);
+    expect(session.blocks.every((block) => !block.mistakesOnly)).toBe(true);
     expect(session.nextBlockId).toBe(session.blocks[0]?.id);
 
     expect(session.missions.map((mission) => [mission.kind, mission.status])).toStrictEqual([
@@ -383,7 +382,7 @@ describe(getTodayStudySession, () => {
     ]);
   });
 
-  it("keeps reviews and fixes free once a free exam plan's first week is over", async () => {
+  it("keeps reviews free once a free exam plan's first week is over", async () => {
     const user = await userFixture();
 
     const { goal, items, planItems, skills } = await sessionGoalFixture({
@@ -413,7 +412,7 @@ describe(getTodayStudySession, () => {
 
     expect(
       result.status === "ready" && result.session.blocks.map((block) => block.kind),
-    ).toStrictEqual(["review", "practice"]);
+    ).toStrictEqual(["review"]);
   });
 
   it("reviews every skill that would fade before the exam once the final stretch starts", async () => {

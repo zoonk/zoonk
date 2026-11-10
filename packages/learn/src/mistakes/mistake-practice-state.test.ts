@@ -17,20 +17,26 @@ function entry(
   return {
     cause: null,
     drill: { kind: "retry", lesson: null, timeLimitSeconds: null, ...drill },
+    lesson: null,
     mistakeId,
     questions: Array.from({ length: questions }, (_, index) => ({
       context: null,
+      entry: null,
       format: "multipleChoice" as const,
       image: null,
       itemId: `${mistakeId}-${index}`,
+      left: null,
       options: ["Right", "Wrong"],
       question: `Question ${index}?`,
+      right: null,
       select: 1 as const,
       set: null,
       skillId: "skill",
+      unit: null,
       visual: null,
     })),
     snapshot: { answer: "Wrong", question: "Question 0?" },
+    tutorAvailable: true,
   };
 }
 
@@ -44,9 +50,11 @@ function graded(answerId: string, fixed = false) {
     fixed,
     fixedMistakeIds: [],
     isCorrect: true,
+    lessonResult: null,
     mistakeStatus: fixed ? ("fixed" as const) : ("open" as const),
     reached: NOTHING_REACHED,
     trap: null,
+    workedSteps: [],
   };
 }
 
@@ -350,10 +358,17 @@ describe(isMistakeQuestion, () => {
   const mistake = entry("lesson");
 
   function stepOn(question: { context: string | null; question: string }, saved: string) {
+    const original = mistake.questions[0]!;
+
+    if (original.format !== "multipleChoice") {
+      throw new Error("Expected the choice fixture");
+    }
+
     return {
       entry: { ...mistake, snapshot: { ...mistake.snapshot, question: saved } },
       firstOfEntry: true,
-      question: { ...mistake.questions[0]!, ...question },
+      lesson: null,
+      question: { ...original, ...question },
     };
   }
 

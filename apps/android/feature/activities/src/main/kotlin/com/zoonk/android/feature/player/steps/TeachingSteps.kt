@@ -537,6 +537,7 @@ internal fun TypedAnswerView(
     actions: StepActions,
     part: StepPart,
     marking: LessonMarking?,
+    writingOptions: Boolean,
 ) {
     val typed = content.content
     val isNumber = isNumberAnswer(typed.acceptedAnswers)
@@ -557,7 +558,7 @@ internal fun TypedAnswerView(
 
         if (part.showsTurn) AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
-        if (part.showsTurn && !locked) {
+        if (part.showsTurn && !locked && writingOptions) {
             Column {
                 ExplainFirstButton(screen, actions)
                 if (!isNumber) {

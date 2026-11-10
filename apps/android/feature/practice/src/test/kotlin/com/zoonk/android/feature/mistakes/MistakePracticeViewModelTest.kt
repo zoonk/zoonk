@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mistakes
 
+import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -7,12 +8,16 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.player.model.LessonAnswer
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.segments
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.api.models.LessonStepCheckResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +36,8 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID
+import com.zoonk.api.models.MistakePracticeAnswerInput.MistakePracticeAnswerInputAnyOf1Value as LessonInput
+import com.zoonk.api.models.MistakePracticeAnswerInput.MistakePracticeAnswerInputAnyOfValue as BankInput
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MistakePracticeViewModelTest {
@@ -51,8 +58,9 @@ class MistakePracticeViewModelTest {
 
     private fun TestScope.viewModel(
         api: FakeMistakesApi,
+        saved: SavedStateHandle = SavedStateHandle(),
         clock: () -> Long = { 0L },
-    ) = practiceViewModel(AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)), api, clock)
+    ) = practiceViewModel(AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)), api, clock, saved)
 
     private suspend fun TestScope.started(viewModel: MistakePracticeViewModel): PracticeState {
         viewModel.practice.load()
@@ -72,7 +80,10 @@ class MistakePracticeViewModelTest {
     fun eachAnswerCarriesTheRunsEarlierOnesAndTheEndCountsThemAll() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)
-            api.answer = { practiceFeedback(answerId = if (it.itemId.toString() == FIRST) FIRST_ANSWER else SECOND_ANSWER) }
+            api.answer = {
+                val itemId = (it as BankInput).value.itemId.toString()
+                practiceFeedback(answerId = if (itemId == FIRST) FIRST_ANSWER else SECOND_ANSWER)
+            }
             val viewModel = viewModel(api)
             val read = started(viewModel).read
 
@@ -357,6 +368,87 @@ class MistakePracticeViewModelTest {
         assertEquals(Drill.Kind.Retry, read.questions[1].drill?.kind)
         assertEquals(TrueFalseWords.TrueFalse, read.words)
     }
+
+    @Test
+    fun originalLessonReplayKeepsItsContextAndSendsItsOwnAnswerOnRetry() =
+        runTest(dispatcher) {
+            val read = practice(fixture("mistake-practice-lesson-entry"))
+            val api = FakeMistakesApi(read)
+            var attempts = 0
+            api.answer = {
+                attempts += 1
+                if (attempts == 1) throw ApiException(ApiError.Unavailable)
+                practiceFeedback()
+            }
+            val saved = SavedStateHandle()
+            val viewModel = viewModel(api, saved = saved)
+            val started = started(viewModel)
+            val task = started.read.tasks.single() as MistakePracticeTask.Lesson
+            val check = task.step.content as StepContent.Check
+            assertEquals("The original passage", check.content.context)
+            assertEquals(listOf("right", "wrong"), check.content.options.map { it.id })
+            viewModel.selectLesson(LessonAnswer.Check("right"))
+            viewModel.checkLesson()
+            advanceUntilIdle()
+            val resumed = viewModel(api, saved = saved)
+            started(resumed)
+            assertEquals(
+                LessonAnswer.Check("right"),
+                resumed.now.lesson
+                    ?.answers
+                    ?.get(task.step.id),
+            )
+            resumed.retryLesson()
+            advanceUntilIdle()
+            assertEquals(api.rawAnswers[0], api.rawAnswers[1])
+            val input = (api.rawAnswers.singleOrNull() ?: api.rawAnswers[0]) as LessonInput
+            assertEquals(task.step.id, input.value.stepId.toString())
+        }
+
+    @Test
+    fun uncheckedLessonFeedbackLeavesTheRunWithoutAScoredAnswer() =
+        runTest(dispatcher) {
+            val read = practice(fixture("mistake-practice-lesson-entry"))
+            val api = FakeMistakesApi(read)
+            api.answer = {
+                practiceFeedback(isCorrect = false).copy(
+                    answerId = null,
+                    lessonResult =
+                        LessonStepCheckResult(
+                            checked = false,
+                            correctAnswer = "Sample",
+                            corrections = emptyList(),
+                            expected = null,
+                            feedback = "Compare",
+                            isCorrect = false,
+                            keyPoints = null,
+                            nextReviewAt = null,
+                            savedMistake = false,
+                            score = null,
+                            spelling = null,
+                        ),
+                )
+            }
+            val viewModel = viewModel(api)
+            val task = started(viewModel).read.tasks.single() as MistakePracticeTask.Lesson
+            viewModel.selectLesson(LessonAnswer.Check("wrong"))
+            viewModel.checkLesson()
+            advanceUntilIdle()
+            assertEquals(emptyList<UUID>(), viewModel.now.answerIds)
+            assertEquals(emptySet<String>(), viewModel.now.fixedIds)
+            assertEquals(
+                true,
+                viewModel.now.run.answers[0]
+                    ?.blank,
+            )
+            assertEquals(
+                false,
+                viewModel.now.lesson
+                    ?.results
+                    ?.get(task.step.id)
+                    ?.checked,
+            )
+        }
 
     private companion object {
         const val FIRST = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"

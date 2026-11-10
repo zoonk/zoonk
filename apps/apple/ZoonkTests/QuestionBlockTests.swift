@@ -277,7 +277,7 @@ final class PracticeModelTests: XCTestCase {
   }
 
   func testAnswersReachTheGeneratedInputs() throws {
-    let input: Components.Schemas.StudyAnswerInput.AnswerPayload = try PracticeJSON.recode(
+    let input: Components.Schemas.QuestionAnswer = try PracticeJSON.recode(
       PracticeAnswer.number(2.5))
     XCTAssertEqual(input.value3?.number, 2.5)
 

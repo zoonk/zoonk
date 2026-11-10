@@ -5,7 +5,10 @@ import { type ItemImage, toItemImage } from "../../library/items/item-image";
 import { type ItemSetView } from "../../library/items/item-set-view";
 import { toItemSetView } from "../../library/items/item-sets";
 import { gradeOptionPicks } from "../../library/items/option-picks";
-import { type MistakeSnapshot, withMistakeStimulus } from "../../mistakes/mistake-snapshot";
+import {
+  type RecordedMistakeSnapshot as MistakeSnapshot,
+  withMistakeStimulus,
+} from "../../mistakes/mistake-snapshot";
 import { type ChoiceAnswer } from "../contract";
 
 export const GRADABLE_ITEM_FORMATS = [
@@ -205,7 +208,7 @@ export function gradeChoiceAnswer({ answer, item }: { answer: ChoiceAnswer; item
   return {
     ...graded,
     snapshot: withMistakeStimulus({
-      snapshot: graded.snapshot,
+      snapshot: { ...graded.snapshot, replay: { item, kind: "item" } },
       stimulus: {
         context: item.content.context,
         image: item.image,

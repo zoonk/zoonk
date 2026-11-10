@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -45,14 +45,18 @@ async function netScoredPracticeDay() {
     ),
   );
 
-  await Promise.all([
-    prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
-    mistakeFixture({ createdAt: daysAgo(2), itemId: blank?.id, skillId, userId: user.id }),
-  ]);
+  await prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } });
+
+  await learnerSkillFixture({
+    due: new Date("2026-10-05T00:00:00Z"),
+    lastReviewedAt: daysAgo(3),
+    reps: 2,
+    skillId,
+    userId: user.id,
+  });
 
   await layOutPlanFixture(plan.id);
   mockSession(user.id);
-
   return { goal, ids: { blank: blank?.id, wrong: wrong?.id } };
 }
 
