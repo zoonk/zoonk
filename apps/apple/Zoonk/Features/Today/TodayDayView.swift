@@ -35,36 +35,45 @@ struct TodayDayView: View {
   }
 
   var body: some View {
-    PaneSplit(primaryShare: 0.55) {
-      ZoonkList {
-        header(actionInHeader: false)
-        // It asks for a decision, so it leads the day where the day has room beside it.
-        notice
-        day(showsAction: true)
-      }
-    } secondary: {
-      ZoonkList {
-        aside
-        TodayPracticeSection(view: view, language: language)
-      }
-    } single: {
-      // Main's tablet column heads the day with its action.
-      let actionInHeader = horizontalSizeClass == .regular
+    ScrollViewReader { scroller in
+      PaneSplit(primaryShare: 0.55) {
+        ZoonkList {
+          header(actionInHeader: false)
+          // It asks for a decision, so it leads the day where the day has room beside it.
+          notice
+          day(showsAction: true)
+        }
+      } secondary: {
+        ZoonkList {
+          aside
+          TodayPracticeSection(view: view, language: language)
+        }
+      } single: {
+        // Main's tablet column heads the day with its action.
+        let actionInHeader = horizontalSizeClass == .regular
 
-      ZoonkList {
-        header(actionInHeader: actionInHeader)
-        day(showsAction: !actionInHeader)
-        notice
+        ZoonkList {
+          header(actionInHeader: actionInHeader)
+          day(showsAction: !actionInHeader)
+          notice
 
-        // Main's tablet column: missions beside the week, preparation beside practice.
-        if actionInHeader {
-          BlockGridSection {
+          // Main's tablet column: missions beside the week, preparation beside practice.
+          if actionInHeader {
+            BlockGridSection {
+              aside
+              TodayPracticeSection(view: view, language: language)
+            }
+          } else {
             aside
             TodayPracticeSection(view: view, language: language)
           }
-        } else {
-          aside
-          TodayPracticeSection(view: view, language: language)
+        }
+      }
+      // A new visit folds the day's later blocks out from under a learner who'd scrolled down them,
+      // which the list alone leaves scrolled past them.
+      .onChange(of: disclosures.showsMore) {
+        if !disclosures.showsMore {
+          scroller.scrollTo(TodaySessionSection.moreFold, anchor: nil)
         }
       }
     }
@@ -414,6 +423,8 @@ struct TodayDayView: View {
   /// answered stays only while they're here.
   private func startVisit() {
     shownNotice = view.notice
+    disclosures.showsDone = false
+    disclosures.showsMore = false
     examChoice = nil
     examChoiceDraft = []
     answeredUpload = nil

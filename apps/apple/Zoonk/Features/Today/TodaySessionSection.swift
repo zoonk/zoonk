@@ -22,9 +22,10 @@ struct TodaySessionSection: View {
   var showsAction = true
   let prepare: () -> Void
 
-  /// Done blocks shown before folding them into one row, and upcoming ones before "+N more".
-  private let doneRows = 2
-  private let upcomingRows = 6
+  static let moreFold = "TodaySessionSection.moreFold"
+
+  /// Done blocks shown before folding them into one row.
+  private let doneRows = 1
 
   private var session: StudyDay { view.session }
 
@@ -49,10 +50,6 @@ struct TodaySessionSection: View {
 
       queue
 
-      ForEach(Array(session.plusLessons.enumerated()), id: \.offset) { _, lesson in
-        PlusLessonRow(title: lesson.title)
-      }
-
       if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
         status
       }
@@ -75,10 +72,10 @@ struct TodaySessionSection: View {
     let done = session.blocks.filter(\.isFinished)
     let (before, upcoming) = session.queue(next: next)
     let foldsDone = next != nil && done.count > doneRows
-    let markedUpTo = upcoming.lastIndex { countsTowardMission($0) }.map { $0 + 1 } ?? 0
     let coming = next == nil ? nil : session.comingLessons
-    let upcomingCount = upcoming.count + (coming == nil ? 0 : 1)
-    let foldedFrom = max(upcomingRows, markedUpTo)
+    let timedRows = upcoming.count + (coming == nil ? 0 : 1)
+    let upcomingCount = timedRows + session.plusLessons.count
+    let foldedFrom = next == nil ? upcomingCount : StudyDay.upcomingRows
     let shownUpcoming = disclosures.showsMore ? upcomingCount : foldedFrom
 
     if foldsDone {
@@ -134,11 +131,22 @@ struct TodaySessionSection: View {
       .disabled(busy != nil && busy != .prepare)
     }
 
-    if upcomingCount > shownUpcoming || (disclosures.showsMore && upcomingCount > upcomingRows) {
+    ForEach(
+      Array(session.plusLessons.prefix(max(0, shownUpcoming - timedRows)).enumerated()),
+      id: \.offset
+    ) { _, lesson in
+      PlusLessonRow(title: lesson.title)
+    }
+
+    if upcomingCount > foldedFrom {
       FoldRow(
         isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedFrom,
-        minutes: session.foldedMinutes(
-          showing: before + [next].compactMap { $0 } + upcoming.prefix(foldedFrom)))
+        minutes: timedRows > foldedFrom
+          ? session.foldedMinutes(
+            showing: before + [next].compactMap { $0 } + upcoming.prefix(foldedFrom))
+          : nil
+      )
+      .id(Self.moreFold)
     }
   }
 
