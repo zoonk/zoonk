@@ -223,7 +223,7 @@ struct TrueFalseStatementCard: View {
       .typeStyle(.section)
       .foregroundStyle(result == nil ? Color(.foreground) : .mutedForeground)
       .padding(20)
-      .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
       .panel()
       .offset(x: offset)
       .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
