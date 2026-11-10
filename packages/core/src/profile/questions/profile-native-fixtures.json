@@ -904,6 +904,61 @@
         "status": "declined",
         "version": 1
       }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "needs": [],
+          "note": "Use diagrams for me",
+          "soundEffects": false
+        },
+        "question": "learningSupport"
+      },
+      "view": {
+        "id": "learningSupport",
+        "options": [
+          {
+            "description": "Your buddy breaks explanations into small steps.",
+            "id": "stepByStep",
+            "label": "Step by step"
+          },
+          {
+            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "id": "plainWords",
+            "label": "Plain, literal words"
+          },
+          {
+            "description": "Your buddy keeps answers short, one idea at a time.",
+            "id": "shortAnswers",
+            "label": "Short answers"
+          },
+          {
+            "description": "Your buddy shows a worked example before the rule.",
+            "id": "examplesFirst",
+            "label": "Examples first"
+          },
+          {
+            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "id": "shorterDays",
+            "label": "Shorter study days"
+          },
+          {
+            "description": "Turns off sounds for right answers and finishing.",
+            "id": "noSoundEffects",
+            "label": "No sound effects"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "noSoundEffects"
+          ],
+          "studies": [],
+          "text": "Use diagrams for me"
+        },
+        "status": "declined",
+        "version": 1
+      }
     }
   ]
 }

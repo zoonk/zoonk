@@ -1,6 +1,7 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { updateMemorySettings } from "../../memory/update-memory-settings";
 import { answerProfileQuestion } from "./answer-profile-question";
 import { getProfileQuestions } from "./get-profile-questions";
 import { normalizeProfileAnswer } from "./profile-answer-normalization";
@@ -89,6 +90,36 @@ describe("profile answers as native clients read them back", () => {
         view: view?.questions.find((question) => question.id === input.question),
       });
     }
+
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const support = profileAnswerInputSchema.parse({
+      answer: { note: "Use diagrams for me", soundEffects: false },
+      question: "learningSupport",
+    });
+
+    await answerProfileQuestion({ input: support, locale: "en" });
+    await updateMemorySettings({ enabled: false });
+
+    await answerProfileQuestion({
+      input: profileAnswerInputSchema.parse({
+        answer: { declined: true, soundEffects: false },
+        question: "learningSupport",
+      }),
+      locale: "en",
+    });
+
+    await updateMemorySettings({ enabled: true });
+    const profile = await getProfileQuestions({ locale: "en" });
+    const view = profile?.questions.find((question) => question.id === "learningSupport");
+
+    expect(view).toMatchObject({
+      saved: { picks: ["noSoundEffects"], studies: [], text: "Use diagrams for me" },
+      status: "declined",
+    });
+
+    fixtures.push({ answer: normalizeProfileAnswer(support), view });
 
     await expect(`${JSON.stringify({ fixtures }, null, 2)}\n`).toMatchFileSnapshot(
       "profile-native-fixtures.json",

@@ -142,7 +142,9 @@ data class ProfileDraft(
                 picks = if (question.id == ProfileQuestion.STUDIES) question.saved.studies.map { it.field } else question.saved.picks,
                 text = question.saved.text.ifEmpty { profileJobPrefill(role).takeIf { question.id == ProfileQuestion.WORK }.orEmpty() },
                 subjects = question.saved.studies.associate { it.field to it.subject.orEmpty() },
-                declined = question.status == ProfileQuestionView.Status.DECLINED,
+                declined =
+                    question.status == ProfileQuestionView.Status.DECLINED &&
+                        question.saved.picks.isEmpty() && question.saved.text.isEmpty() && question.saved.studies.isEmpty(),
                 declineChoice = if (question.id in listOf(ProfileQuestion.WORK, ProfileQuestion.CONDITIONS)) "prefer" else "none",
                 consented = question.id == ProfileQuestion.CONDITIONS && question.saved.picks.isNotEmpty(),
             )

@@ -71,10 +71,13 @@ struct ProfileDraft: Equatable {
     }
 
     decline =
-      switch (view.status, view.id) {
-      case (.declined, .work), (.declined, .conditions): .ratherNotSay
-      case (.declined, _): .noneOfThese
-      default: nil
+      if view.status == .declined && picks.isEmpty && text.isEmpty {
+        switch view.id {
+        case .work, .conditions: .ratherNotSay
+        default: .noneOfThese
+        }
+      } else {
+        nil
       }
   }
 
