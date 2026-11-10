@@ -106,8 +106,6 @@ describe("profile steps", () => {
       }),
     ).toStrictEqual({ current: 1, total: 2 });
 
-    expect(
-      getProfileProgress({ current: "schedule", history: [], view: { steps } }),
-    ).toBeNull();
+    expect(getProfileProgress({ current: "schedule", history: [], view: { steps } })).toBeNull();
   });
 });

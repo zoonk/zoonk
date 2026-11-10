@@ -1,8 +1,8 @@
 "use client";
 
 import { type MemoryFactView } from "@zoonk/core/memory/contract";
-import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "@zoonk/core/memory/memory-limits";
+import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,

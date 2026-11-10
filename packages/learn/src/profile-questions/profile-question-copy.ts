@@ -36,7 +36,8 @@ export function useProfileQuestionTitle(question: ProfileQuestion): string {
       });
     case "activities":
       return t({
-        description: "Hobbies and things the learner does for fun. Translate as a natural question.",
+        description:
+          "Hobbies and things the learner does for fun. Translate as a natural question.",
         message: "What do you like to do?",
       });
     case "conditions":

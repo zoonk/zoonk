@@ -75,7 +75,8 @@ async function StepsContent({ params }: Props) {
     );
   }
 
-  const [result, session] = await Promise.all([getOnboarding({ goalId, locale: getSupportedLocaleFromLanguage(lang) }),
+  const [result, session] = await Promise.all([
+    getOnboarding({ goalId, locale: getSupportedLocaleFromLanguage(lang) }),
     getSession(),
   ]);
 

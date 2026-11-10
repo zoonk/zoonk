@@ -9,8 +9,8 @@ import { LearnBackLink } from "@zoonk/learn/bar";
 import { Page } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProtectedSection } from "../../../_components/protected-section";
 import { AboutYouQuestion } from "./about-you-question";
@@ -65,7 +65,12 @@ export default async function AboutYouQuestionPage(props: Props) {
 
   return (
     <Page className="max-w-form">
-      <LearnBackLink className="-ml-2 self-start" crumb href="/settings/about-you" label={t("About you")} />
+      <LearnBackLink
+        className="-ml-2 self-start"
+        crumb
+        href="/settings/about-you"
+        label={t("About you")}
+      />
 
       <Suspense fallback={<QuestionSkeleton />}>
         <QuestionContent {...props} />

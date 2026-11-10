@@ -15,9 +15,7 @@ import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profil
 import { type ProfileExclusive } from "./profile-draft";
 
 function changedRow(previous: readonly string[], next: readonly string[]): string | undefined {
-  return (
-    next.find((id) => !previous.includes(id)) ?? previous.find((id) => !next.includes(id))
-  );
+  return next.find((id) => !previous.includes(id)) ?? previous.find((id) => !next.includes(id));
 }
 
 function ConsentBox({

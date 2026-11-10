@@ -39,9 +39,7 @@ describe(postAsLearner, () => {
 
     expect(fetcher).toHaveBeenCalledWith(
       expect.any(String),
-      expect.objectContaining({
-        headers: expect.objectContaining({ "Accept-Language": "pt" }),
-      }),
+      expect.objectContaining({ headers: expect.objectContaining({ "Accept-Language": "pt" }) }),
     );
   });
 });

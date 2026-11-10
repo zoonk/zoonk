@@ -149,7 +149,9 @@ export function StudiesBody(props: BodyProps & { label: string }) {
   const setSubject = (field: string, subject: string) =>
     props.onChange({
       ...draft,
-      studies: draft.studies.map((study) => (study.field === field ? { ...study, subject } : study)),
+      studies: draft.studies.map((study) =>
+        study.field === field ? { ...study, subject } : study,
+      ),
     });
 
   return (

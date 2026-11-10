@@ -58,13 +58,7 @@ function initialDraft({
  * Saving first keeps the lesson's link as the way in: once the answer is saved, the same click
  * goes through.
  */
-function LessonOffer({
-  answer,
-  href,
-}: {
-  answer: (() => Promise<boolean>) | null;
-  href: string;
-}) {
+function LessonOffer({ answer, href }: { answer: (() => Promise<boolean>) | null; href: string }) {
   const t = useExtracted();
   const link = useRef<HTMLAnchorElement>(null);
   const saved = useRef(false);
@@ -73,7 +67,10 @@ function LessonOffer({
     <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
       <p className="text-muted-foreground text-sm">{t("Lesson 1 is ready.")}</p>
       <LearnLink
-        className={cn(buttonVariants({ variant: "link" }), "inline-flex min-h-11 items-center gap-1")}
+        className={cn(
+          buttonVariants({ variant: "link" }),
+          "inline-flex min-h-11 items-center gap-1",
+        )}
         href={href}
         lessonWritten
         onClick={(event) => {
@@ -148,9 +145,7 @@ function ProfileStep({
     <StepForm
       canContinue={input !== null}
       description={description}
-      notice={
-        lessonHref && <LessonOffer answer={input ? send : null} href={lessonHref} />
-      }
+      notice={lessonHref && <LessonOffer answer={input ? send : null} href={lessonHref} />}
       onContinue={() => void send()}
       onSkip={() => {
         onConditions([]);

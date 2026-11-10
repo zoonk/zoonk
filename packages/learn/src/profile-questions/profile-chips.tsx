@@ -7,7 +7,11 @@ import { useExtracted } from "next-intl";
 
 type ChipOption = { id: string; label: string; pressed: boolean };
 
-export function ProfileChip({ label, onToggle, pressed }: Omit<ChipOption, "id"> & { onToggle: () => void }) {
+export function ProfileChip({
+  label,
+  onToggle,
+  pressed,
+}: Omit<ChipOption, "id"> & { onToggle: () => void }) {
   return (
     <Toggle
       className="aria-pressed:text-foreground h-auto min-h-11 rounded-lg px-3.5 py-2 text-left text-[0.9375rem] whitespace-normal"
