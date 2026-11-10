@@ -45,6 +45,7 @@ import { PlanStartNoticeProvider } from "./steps/plan-start-notice";
 import { useProfileStepState } from "./steps/profile-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
 import { getFirstLesson, isRunStopped } from "./steps/wait-run";
+import { useFocusTitleOnNewScreen } from "./use-focus-title";
 
 type DayTooShort = Omit<Extract<AnswerOutcome, { status: "dayTooShort" }>, "status">;
 
@@ -292,6 +293,7 @@ export function StepsFlow({
   const showDots = isStepScreen(state.current) || isProfile;
   const progress = getSetupProgress(state);
   const profile = useProfileStepState(state);
+  useFocusTitleOnNewScreen(state.current);
 
   return (
     <StepsFlowFrame actions={actions} generation={generation} setState={setState} state={state}>

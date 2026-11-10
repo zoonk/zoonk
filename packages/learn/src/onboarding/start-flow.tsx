@@ -1,8 +1,7 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
-import { isFocusLost } from "../_utils/is-focus-lost";
+import { useEffect, useEffectEvent, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
@@ -31,6 +30,7 @@ import {
 import { OnboardingFrame } from "./onboarding-frame";
 import { useOnboardingSection } from "./onboarding-host";
 import { OnboardingRailProvider } from "./onboarding-rail";
+import { useFocusTitleOnNewScreen } from "./use-focus-title";
 
 type StartState =
   | { error: GoalError | null; kind: "entry"; words: string }
@@ -146,28 +146,6 @@ function useFollowHandedOffGoal({
     void followHandedOff(controller.signal);
     return () => controller.abort();
   }, []);
-}
-
-function useFocusTitleOnNewScreen(screen: string) {
-  const lastFocusedScreen = useRef(screen);
-
-  useLayoutEffect(() => {
-    if (lastFocusedScreen.current === screen) {
-      return;
-    }
-
-    lastFocusedScreen.current = screen;
-
-    if (!isFocusLost(document.activeElement)) {
-      return;
-    }
-
-    const title = [
-      ...document.querySelectorAll<HTMLElement>('[data-slot="onboarding-title"]'),
-    ].find((heading) => heading.checkVisibility());
-
-    title?.focus({ preventScroll: true });
-  }, [screen]);
 }
 
 type GoalStartFlowProps = {

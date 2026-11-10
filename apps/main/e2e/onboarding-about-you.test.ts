@@ -33,11 +33,11 @@ test("questions about the learner lead to the plan, and a skipped one comes back
   await expectHydrated(work);
   await work.click();
   await page.getByLabel("Your job (optional)").fill("nurse");
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Continue" }).press("Enter");
 
   await expect(
     page.getByRole("heading", { name: "Which apps and tools do you use most?" }),
-  ).toBeVisible();
+  ).toBeFocused();
 
   await page.getByRole("button", { exact: true, name: "Skip" }).click();
   await expect(page.getByRole("heading", { name: "What have you studied?" })).toBeVisible();
