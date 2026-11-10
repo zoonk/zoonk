@@ -20,11 +20,7 @@ import {
   NoticeCardContent,
   NoticeCardDescription,
 } from "../_components/notice-card";
-import {
-  PageSection,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { LearnLink } from "../learn-link";
 import { type ProfileQuestion } from "./profile-draft";
 
@@ -69,15 +65,35 @@ function QuestionName({ question }: { question: ProfileQuestion }) {
     case "studies":
       return t("What you've studied");
     case "watch":
-      return t({ description: "What the learner likes to watch.", message: "Watch" });
+      return t({
+        description: "What the learner likes to watch.",
+        id: "aboutYouWatch",
+        message: "Watch",
+      });
     case "listen":
-      return t({ description: "What the learner likes to listen to.", message: "Listen" });
+      return t({
+        description: "What the learner likes to listen to.",
+        id: "aboutYouListen",
+        message: "Listen",
+      });
     case "play":
-      return t({ description: "What the learner likes to play.", message: "Play" });
+      return t({
+        description: "What the learner likes to play.",
+        id: "aboutYouPlay",
+        message: "Play",
+      });
     case "read":
-      return t({ description: "What the learner likes to read.", message: "Read" });
+      return t({
+        description: "What the learner likes to read.",
+        id: "aboutYouRead",
+        message: "Read",
+      });
     case "activities":
-      return t({ description: "What the learner likes to do for fun.", message: "Do" });
+      return t({
+        description: "What the learner likes to do for fun.",
+        id: "aboutYouDo",
+        message: "Do",
+      });
     case "conditions":
       return t({
         description: "Health conditions or disabilities the learner chose to save.",
@@ -115,7 +131,9 @@ function useSavedSummary(question: ProfileQuestionView): string {
     case "work":
       return text || labelsOf(question, picks).join(", ");
     case "studies":
-      return studies.map((study) => study.subject ?? labelsOf(question, [study.field])[0]).join(", ");
+      return studies
+        .map((study) => study.subject ?? labelsOf(question, [study.field])[0])
+        .join(", ");
     case "learningSupport":
       return labelsOf(question, picks).join(", ") || text;
     case "tools":
