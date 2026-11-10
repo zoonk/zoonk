@@ -5,19 +5,22 @@ export async function mergeProfileAnswers({ guestUserId, transaction, userId }: 
   const guestAnswers = await transaction.profileAnswer.findMany({ where: { userId: guestUserId } });
   const accountQuestions = new Set(accountAnswers.map((answer) => answer.question));
 
-  await transaction.memoryFact.deleteMany({
-    where: {
-      AND: [
-        { sourceRef: { equals: "profile", path: ["kind"] } },
-        {
-          OR: [...accountQuestions].map((question) => ({
-            sourceRef: { equals: question, path: ["id"] },
-          })),
-        },
-      ],
-      userId: guestUserId,
-    },
-  });
+  // Prisma reads an empty `OR` here as matching every guest profile fact, not none.
+  if (accountQuestions.size > 0) {
+    await transaction.memoryFact.deleteMany({
+      where: {
+        AND: [
+          { sourceRef: { equals: "profile", path: ["kind"] } },
+          {
+            OR: [...accountQuestions].map((question) => ({
+              sourceRef: { equals: question, path: ["id"] },
+            })),
+          },
+        ],
+        userId: guestUserId,
+      },
+    });
+  }
 
   if (accountQuestions.has("conditions")) {
     await transaction.learnerCondition.deleteMany({ where: { userId: guestUserId } });

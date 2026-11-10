@@ -146,4 +146,18 @@ describe("guest profile linking", () => {
       }),
     ).resolves.toMatchObject({ outcome: "answered" });
   });
+
+  it("moves the guest's profile facts to an account that never answered a question", async () => {
+    const [userId, guestUserId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    await Promise.all([answer(guestUserId, "watch"), fact(guestUserId, "watch", "Watches anime")]);
+    await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+    await expect(
+      prisma.memoryFact.findMany({ select: { statement: true }, where: { userId } }),
+    ).resolves.toStrictEqual([{ statement: "Watches anime" }]);
+  });
 });
