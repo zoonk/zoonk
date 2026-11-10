@@ -13,7 +13,6 @@ import {
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { followsCourse } from "../../goals/_utils/follows-course";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getGoalLanguageFlag } from "../../goals/_utils/goal-language-flag";
 import {
   type PlanPhaseFacts,
@@ -75,7 +74,7 @@ function toSummaryGoals({
         courseId: followsCourse(goal) ? goal.primaryCourseId : null,
         courseLevel: next?.nextLevel ?? null,
         dailyMinutes: goal.dailyMinutes,
-        displayName: resolveGoalDisplayName(goal),
+        displayName: goal.displayName,
         id: goal.id,
         isActive: goal.id === activeGoalId,
         isSettingUp: isGoalSetupLeft(goal),

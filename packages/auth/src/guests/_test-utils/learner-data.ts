@@ -42,6 +42,7 @@ export function createGoal(userId: string) {
   return prisma.goal.create({
     data: {
       dailyMinutes: DAILY_MINUTES,
+      displayName: "Photosynthesis",
       kind: "learn",
       language: "en",
       prompt: "Learn photosynthesis",

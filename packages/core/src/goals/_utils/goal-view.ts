@@ -7,7 +7,6 @@ import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type GoalView } from "../goal-contract";
-import { resolveGoalDisplayName } from "./goal-display-name";
 import { getGoalLanguageFlag } from "./goal-language-flag";
 import {
   type PlanPhaseFacts,
@@ -123,7 +122,7 @@ function toGoalView({
     createdAt: goal.createdAt.toISOString(),
     dailyMinutes: goal.dailyMinutes,
     details: isJsonObject(goal.details) ? goal.details : {},
-    displayName: resolveGoalDisplayName(goal),
+    displayName: goal.displayName,
     examBlueprintId: goal.examBlueprintId,
     id: goal.id,
     isActive: goal.id === activeGoalId,

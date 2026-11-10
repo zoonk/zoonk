@@ -1,6 +1,5 @@
 import "server-only";
 import { type GoalKind } from "@zoonk/db";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { type PlanView } from "../../plans/plan-view-contract";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
@@ -40,12 +39,7 @@ export async function getPlanTabView(input: { goalId?: string } = {}): Promise<P
   return {
     status: "ready",
     view: {
-      goal: {
-        displayName: resolveGoalDisplayName(goal),
-        id: goal.id,
-        kind: goal.kind,
-        title: goal.title,
-      },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       plan: result.plan,
     },
   };

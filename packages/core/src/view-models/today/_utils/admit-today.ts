@@ -1,4 +1,3 @@
-import { resolveGoalDisplayName } from "../../../goals/_utils/goal-display-name";
 import { hasStudyGoal } from "../../../goals/_utils/study-goal";
 import { getCurrentSuggestedGoal } from "../../../goals/suggestions/get-current-suggested-goal";
 import { type OwnedGoal } from "../../../learner/_utils/owned-goal";
@@ -73,7 +72,7 @@ export async function admitToday(
   // yet, and is shown once before its first day.
   if (!built || isGoalSetupLeft(owned.goal) || (!revealing && isPlanRevealOwed(owned.goal))) {
     return {
-      goal: { displayName: resolveGoalDisplayName(owned.goal), id, kind, title },
+      goal: { displayName: owned.goal.displayName, id, kind, title },
       status: "preparing",
       userId,
     };

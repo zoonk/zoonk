@@ -1,5 +1,4 @@
 import "server-only";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { readStudyDay } from "../../sessions/_utils/read-study-day";
 import { admitToday } from "./_utils/admit-today";
@@ -39,12 +38,7 @@ export async function getPlanRevealToday(
 
   if (!day) {
     return {
-      goal: {
-        displayName: resolveGoalDisplayName(goal),
-        id: goal.id,
-        kind: goal.kind,
-        title: goal.title,
-      },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       status: "preparing",
       userId,
     };

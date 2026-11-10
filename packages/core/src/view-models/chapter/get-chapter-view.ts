@@ -4,7 +4,6 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { resolveGoalDisplayName } from "../../goals/_utils/goal-display-name";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
@@ -125,12 +124,7 @@ export async function getChapterView({
         title: chapter.title,
       },
       counts: area.counts,
-      goal: {
-        displayName: resolveGoalDisplayName(goal),
-        id: goal.id,
-        kind: goal.kind,
-        title: goal.title,
-      },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       lessons: lessonStates,
       mistakes: { open: openMistakes },
       skills: area.skills,
