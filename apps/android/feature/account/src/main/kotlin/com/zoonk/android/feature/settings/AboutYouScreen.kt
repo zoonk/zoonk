@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -181,6 +182,7 @@ fun ProfileQuestionScreen(
                 val question = shown.value.questions.find { it.id.value == id }
                 if (question != null) {
                     val editor = viewModel(key = id) { ProfileQuestionViewModel(app.profileQuestions, question, createSavedStateHandle()) }
+                    LaunchedEffect(question) { editor.read(question) }
                     PageHeader(
                         profileQuestionTitle(question.id),
                         profileQuestionDescription(question.id),
@@ -196,7 +198,7 @@ fun ProfileQuestionScreen(
                             question,
                             editor.draft,
                             editor::change,
-                            enabled = canEdit && !editor.saving,
+                            enabled = canEdit && !editor.saving && editor.source == question,
                             memoryEnabled = shown.value.memoryEnabled,
                         )
                         if (editor.failed) {
@@ -216,7 +218,7 @@ fun ProfileQuestionScreen(
                             onClick = { editor.save(question.id, shown.value.memoryEnabled) { navigator.back() } },
                             busy = editor.saving,
                             enabled =
-                                canEdit && valid && consent && !editor.saving,
+                                canEdit && valid && consent && !editor.saving && editor.source == question,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(stringResource(R.string.settings_save))
@@ -258,16 +260,25 @@ internal class ProfileQuestionViewModel(
     question: ProfileQuestionView,
     handle: SavedStateHandle,
 ) : ViewModel() {
-    private var saved by handle.saved { ProfileDraft.from(question).takeUnless { question.id == ProfileQuestion.CONDITIONS } }
+    private var saved by handle.saved<ProfileDraft?> { null }
     var draft by mutableStateOf(saved ?: ProfileDraft.from(question))
         private set
+    var source by mutableStateOf(question)
+        private set
+    private var edited = saved != null
     private val privateConditions = question.id == ProfileQuestion.CONDITIONS
     var saving by mutableStateOf(false)
         private set
     var failed by mutableStateOf(false)
         private set
 
+    fun read(question: ProfileQuestionView) {
+        if (!edited) draft = ProfileDraft.from(question)
+        source = question
+    }
+
     fun change(value: ProfileDraft) {
+        edited = true
         draft = value
         if (!privateConditions) saved = value
     }

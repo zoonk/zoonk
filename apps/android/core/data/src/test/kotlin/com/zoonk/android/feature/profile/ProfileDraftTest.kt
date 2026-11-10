@@ -44,6 +44,28 @@ class ProfileDraftTest {
     }
 
     @Test
+    fun emptyConditionsNeedAChoice() {
+        assertFalse(ProfileDraft().valid(ProfileQuestion.CONDITIONS))
+        assertTrue(ProfileDraft(declined = true).valid(ProfileQuestion.CONDITIONS))
+        assertTrue(ProfileDraft(picks = listOf("adhd")).valid(ProfileQuestion.CONDITIONS))
+    }
+
+    @Test
+    fun aRolePrefillFitsTheJobLimit() {
+        val question =
+            ProfileQuestionView(
+                ProfileQuestion.WORK,
+                emptyList(),
+                com.zoonk.api.models
+                    .ProfileQuestionViewSaved(emptyList(), emptyList(), ""),
+                null,
+                1,
+            )
+        val role = "  " + "a".repeat(200) + "  "
+        assertEquals("a".repeat(80), ProfileDraft.from(question, role).text)
+    }
+
+    @Test
     fun unconsentedConditionsNeverEnterEitherRequest() {
         val draft = ProfileDraft(picks = listOf("adhd", "other"), text = "Private note")
         val expected = ApiJson.parseToJsonElement("""{"question":"conditions","answer":{"declined":true}}""")

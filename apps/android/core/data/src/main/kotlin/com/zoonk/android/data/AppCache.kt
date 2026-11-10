@@ -17,15 +17,16 @@ class AppCache(
     private val resources = mutableListOf<WeakReference<Resource<*>>>()
     private val keyedReads = mutableListOf<WeakReference<KeyedResources<*, *>>>()
 
-    /** A fetch returning null shows [LoadState.Empty], as a value matching [isEmpty] does. */
+    /** A fetch returning null shows [LoadState.Empty], as a value matching [isEmpty] does. Set [keepStale] to false when an editor must wait for fresh data. */
     fun <T : Any> resource(
         audience: Audience,
         domains: Set<DataDomain> = emptySet(),
         maxAge: Duration = DEFAULT_MAX_AGE,
         isEmpty: (T) -> Boolean = { false },
+        keepStale: Boolean = true,
         fetch: suspend (AuthenticatedSession?) -> T?,
     ): Resource<T> {
-        val resource = Resource(audience, domains, maxAge, session, scope, timeSource, isEmpty, fetch)
+        val resource = Resource(audience, domains, maxAge, session, scope, timeSource, isEmpty, keepStale, fetch)
         resources.removeAll { it.get() == null }
         resources += WeakReference(resource)
         return resource

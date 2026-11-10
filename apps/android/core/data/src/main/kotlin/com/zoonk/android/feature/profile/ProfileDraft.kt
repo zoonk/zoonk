@@ -36,7 +36,7 @@ data class ProfileDraft(
             when (question) {
                 ProfileQuestion.WORK -> picks.isNotEmpty()
                 ProfileQuestion.STUDIES -> picks.isNotEmpty() && ("other" !in picks || !subjects["other"].isNullOrBlank())
-                ProfileQuestion.CONDITIONS -> "other" !in picks || text.isNotBlank()
+                ProfileQuestion.CONDITIONS -> picks.isNotEmpty() && ("other" !in picks || text.isNotBlank())
                 else -> picks.isNotEmpty() || (text.isNotBlank() && (question != ProfileQuestion.LEARNING_SUPPORT || memoryEnabled))
             }
 
@@ -140,7 +140,7 @@ data class ProfileDraft(
         ): ProfileDraft =
             ProfileDraft(
                 picks = if (question.id == ProfileQuestion.STUDIES) question.saved.studies.map { it.field } else question.saved.picks,
-                text = question.saved.text.ifEmpty { role.takeIf { question.id == ProfileQuestion.WORK }.orEmpty() },
+                text = question.saved.text.ifEmpty { profileJobPrefill(role).takeIf { question.id == ProfileQuestion.WORK }.orEmpty() },
                 subjects = question.saved.studies.associate { it.field to it.subject.orEmpty() },
                 declined = question.status == ProfileQuestionView.Status.DECLINED,
                 declineChoice = if (question.id in listOf(ProfileQuestion.WORK, ProfileQuestion.CONDITIONS)) "prefer" else "none",
@@ -148,6 +148,8 @@ data class ProfileDraft(
             )
     }
 }
+
+fun profileJobPrefill(role: String?): String? = role?.trim()?.take(80)?.ifEmpty { null }
 
 fun suggestedSupports(conditions: List<String>): List<String> =
     conditions

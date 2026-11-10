@@ -27,6 +27,28 @@ class ResourceTest {
         AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), clock)
 
     @Test
+    fun aReadThatCannotKeepStaleContentDropsInvalidatedDataAndDoesNotRestoreItAfterFailure() =
+        runTest {
+            var fail = false
+            val cache = cache(FakeSession(ana))
+            val resource =
+                cache.resource<String>(Audience.SignedIn, setOf(DataDomain.Memory), keepStale = false) {
+                    if (fail) throw java.io.IOException("offline")
+                    "old answer"
+                }
+            resource.load()
+            assertEquals(LoadState.Loaded("old answer"), resource.state.value)
+            fail = true
+            cache.invalidate(setOf(DataDomain.Memory))
+            assertEquals(LoadState.Idle, resource.state.value)
+            resource.load()
+            assertEquals(LoadState.Failed(ApiError.Network), resource.state.value)
+            resource.replace("fresh answer")
+            resource.refresh()
+            assertEquals(LoadState.Failed(ApiError.Network), resource.state.value)
+        }
+
+    @Test
     fun concurrentCallersShareOneRequest() =
         runTest {
             var fetches = 0

@@ -33,6 +33,7 @@ class Resource<T : Any> internal constructor(
     private val scope: CoroutineScope,
     private val timeSource: TimeSource,
     private val isEmpty: (T) -> Boolean,
+    private val keepStale: Boolean,
     private val fetch: suspend (AuthenticatedSession?) -> T?,
 ) {
     private val stored = MutableStateFlow<LoadState<T>>(LoadState.Idle)
@@ -90,7 +91,7 @@ class Resource<T : Any> internal constructor(
         isInvalidated = true
         if (request == null && stored.value == LoadState.Idle) return
         cancelRequest()
-        if (stored.value == LoadState.Failed(ApiError.NotFound)) {
+        if (!keepStale || stored.value == LoadState.Failed(ApiError.NotFound)) {
             stored.value = LoadState.Idle
             revision++
         }
@@ -145,7 +146,7 @@ class Resource<T : Any> internal constructor(
 
     private fun start(): Deferred<Unit> {
         val owner = owner
-        if (stored.value.hasContent) refreshing.value = true else stored.value = LoadState.Loading
+        if (keepStale && stored.value.hasContent) refreshing.value = true else stored.value = LoadState.Loading
         lateinit var deferred: Deferred<Unit>
         // Lazy, so a fetch that answers without suspending finds itself as the request.
         deferred =

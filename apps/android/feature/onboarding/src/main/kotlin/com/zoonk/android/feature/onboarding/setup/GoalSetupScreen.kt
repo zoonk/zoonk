@@ -418,7 +418,7 @@ private fun ColumnScope.QuestionStep(
         OnboardingStep.CONDITIONS,
         OnboardingStep.LEARNING_SUPPORT,
         -> {
-            ProfileStep(step, view, vm)
+            key(step) { ProfileStep(step, view, vm) }
         }
 
         OnboardingStep.PURPOSE -> {

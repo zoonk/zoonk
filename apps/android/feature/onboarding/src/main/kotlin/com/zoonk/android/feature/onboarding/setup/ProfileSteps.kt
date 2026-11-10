@@ -21,6 +21,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.profile.ProfileQuestionBody
+import com.zoonk.android.feature.profile.profileJobPrefill
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
@@ -42,7 +43,7 @@ internal fun ColumnScope.ProfileStep(
 ) {
     val id = step.profileQuestion ?: return
     val question = view.profile.questions.first { it.id == id }
-    val role = view.goal.details.text("role")
+    val role = profileJobPrefill(view.goal.details.text("role"))
     val draft = vm.profileDraft(question, role)
     val scope = rememberCoroutineScope()
     val memory = view.profile.memoryEnabled
