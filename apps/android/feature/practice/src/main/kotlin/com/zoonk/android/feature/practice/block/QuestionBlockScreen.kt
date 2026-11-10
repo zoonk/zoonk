@@ -18,8 +18,8 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
-import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
+import com.zoonk.android.feature.mindmaps.FinishedChapterMoment
 import com.zoonk.android.feature.player.SessionEndActions
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.AnswerActions
