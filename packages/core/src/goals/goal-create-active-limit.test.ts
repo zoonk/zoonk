@@ -13,7 +13,7 @@ import { type GoalDraft } from "./goal-contract";
 
 vi.mock("../plans/planner/build-plan", { spy: true });
 
-const FREE_LIMIT = { limit: 1, period: "total", resource: "activeGoals", tier: "free" };
+const FREE_LIMIT = { limit: 3, period: "total", resource: "activeGoals", tier: "free" };
 
 function draft(attrs: Partial<GoalDraft> = {}): GoalDraft {
   return {
@@ -25,11 +25,16 @@ function draft(attrs: Partial<GoalDraft> = {}): GoalDraft {
   };
 }
 
-async function setup({ plus = false } = {}) {
+/** `following` active goals besides the paused one the learner last opened. */
+async function setup({ following = 0, plus = false } = {}) {
   const user = await userFixture();
   const goal = await goalFixture({ status: "paused", userId: user.id });
   const plan = await planFixture({ goalId: goal.id });
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+  const followed = await Promise.all(
+    Array.from({ length: following }, () => goalFixture({ userId: user.id })),
+  );
 
   if (plus) {
     await prisma.subscription.create({
@@ -38,7 +43,7 @@ async function setup({ plus = false } = {}) {
   }
 
   mockSession(user.id);
-  return { goal, plan, user };
+  return { followed, goal, plan, user };
 }
 
 async function holdPlan(planId: string) {
@@ -86,8 +91,8 @@ describe("onboarding recounts active goals under the creation lock", () => {
     vi.mocked(buildPlan).mockClear();
   });
 
-  it("allows only one of two Free onboarding requests whose usage claims both passed", async () => {
-    const day = await setup();
+  it("allows only one of two Free onboarding requests for the last slot whose usage claims both passed", async () => {
+    const day = await setup({ following: 2 });
     const before = await versions(day);
     const holding = await holdPlan(day.plan.id);
 
@@ -116,7 +121,11 @@ describe("onboarding recounts active goals under the creation lock", () => {
 
     const created = results.flatMap((result) => (result.status === "created" ? result.goals : []));
     const active = await prisma.goal.findMany({ where: { status: "active", userId: day.user.id } });
-    expect(active.map((goal) => goal.id)).toStrictEqual(created.map((goal) => goal.id));
+
+    expect(active.map((goal) => goal.id).toSorted()).toStrictEqual(
+      [...day.followed, ...created].map((goal) => goal.id).toSorted(),
+    );
+
     await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(2);
 
     await expect(
@@ -126,8 +135,8 @@ describe("onboarding recounts active goals under the creation lock", () => {
     await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 2 });
   });
 
-  it("refuses creation if another goal activates after its claim but before it takes the lock", async () => {
-    const day = await setup();
+  it("refuses creation if another goal takes the last slot after its claim but before it takes the lock", async () => {
+    const day = await setup({ following: 2 });
     const before = await versions(day);
     const holding = await holdPlan(day.plan.id);
     const opening = createOnboardingGoals({ dailyMinutes: 15, goals: [draft()] });
@@ -154,7 +163,7 @@ describe("onboarding recounts active goals under the creation lock", () => {
 
     expect(buildPlan).not.toHaveBeenCalled();
 
-    await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(1);
+    await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(3);
     await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(1);
 
     await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 1 });

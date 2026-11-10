@@ -70,9 +70,9 @@ function toWaitingInput({
 }
 
 /**
- * The goals of a card past those the learner's plan followed ("ENEM and English" on Free starts
- * ENEM), kept on its draft to start without typing them again. One goes once it's started, and
- * all of them once every goal started from that card is archived.
+ * The goals of a card past those the learner's plan had room for (on Free with two goals followed,
+ * "ENEM and English" starts ENEM), kept on its draft to start without typing them again. One goes
+ * once it's started, and all of them once every goal started from that card is archived.
  */
 export async function findWaitingGoals({
   goals,
