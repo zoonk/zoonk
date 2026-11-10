@@ -69,7 +69,7 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       }
     }
 
-    /** Settles once no change is on its way, including one a restart sends on its new clock. */
+    /** Sends again a change that didn't get through, then settles once none is on its way, a restart's included. */
     async function flush() {
       resend();
 
@@ -79,7 +79,7 @@ export function useLessonClock(adapters: LessonPlayerAdapters) {
       }
     }
 
-    /** The run ended, so nothing it does from here on counts. */
+    /** The run ended, so its clock sends nothing more. */
     function close() {
       clockRef.current = null;
     }
