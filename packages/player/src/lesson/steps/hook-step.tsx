@@ -74,7 +74,7 @@ function HookScene({ step }: LessonStepViewProps<StepOf<"hook">>) {
   }
 
   return (
-    <PlayerReadScene className="gap-5 sm:gap-6">
+    <PlayerReadScene className="gap-5 sm:flex-1 sm:gap-6">
       <LessonBody>{step.content.text}</LessonBody>
       <LessonStepPicture className="order-first" hero priority step={step} />
       <LessonVisual visual={step.content.visual} />
