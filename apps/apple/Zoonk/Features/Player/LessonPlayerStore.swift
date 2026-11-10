@@ -32,6 +32,12 @@ final class LessonPlayerStore {
     case refused(LessonRunRefusal)
   }
 
+  private enum ClockSend: Equatable {
+    case sending(Task<Void, Never>)
+    case sent
+    case failed
+  }
+
   enum Explanation: Equatable {
     case loading
     case explained(String)
@@ -51,7 +57,7 @@ final class LessonPlayerStore {
   private let onOpened: @MainActor (StudyBlockOpening) -> Void
   private var starting: Task<Void, Never>?
   private var isVisible = true
-  private var clock: Components.Schemas.LessonClockInput?
+  private var clock: (input: Components.Schemas.LessonClockInput, send: ClockSend)?
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
   /// main's catalog answer, and a guest's lesson ends with "Build my plan". Opened anywhere else in
   /// the app, a guest's lesson ends as a learner's.
@@ -301,28 +307,45 @@ final class LessonPlayerStore {
   @discardableResult
   func setVisible(_ visible: Bool) -> Task<Void, Never>? {
     isVisible = visible
-    guard var clock, let identity, session.authenticatedSession == identity,
-      (clock.state == .running) != visible
-    else { return nil }
+    return sendClock()
+  }
 
-    clock.sequence += 1
-    clock.state = visible ? .running : .paused
-    self.clock = clock
-    let input = clock
+  @discardableResult
+  private func sendClock() -> Task<Void, Never>? {
+    guard var next = clock?.input, let identity, session.authenticatedSession == identity else {
+      return nil
+    }
+
+    if (next.state == .running) != isVisible {
+      next.sequence += 1
+      next.state = isVisible ? .running : .paused
+    } else if clock?.send != .failed {
+      return nil
+    }
+
+    let input = next
     let api = api
     let cache = cache
     let lessonId = lessonId
 
     // A pause must outlive the disappearing player; the request keeps only its original session.
-    return Task { [weak self] in
+    let send = Task { [weak self] in
       let updated = await cache.mutate { current in
         guard current == identity else { throw CancellationError() }
         return try await api.updateClock(id: lessonId, input: input, token: current.bearerToken)
       }
 
+      guard let self, self.clock?.input == input else { return }
+
+      if case .failed = updated {
+        self.clock?.send = .failed
+        return
+      }
+
+      self.clock?.send = .sent
+
       guard input.state == .running, case .done(let result) = updated,
-        result.status == .ignored, let self, self.isCurrent(identity),
-        self.clock == input
+        result.status == .ignored, self.isCurrent(identity)
       else { return }
 
       let studySessionId = self.studySessionId
@@ -331,19 +354,22 @@ final class LessonPlayerStore {
           id: lessonId, studySessionId: studySessionId, runId: input.runId, token: token)
       }
 
-      guard self.isCurrent(identity), self.clock?.clockId == input.clockId,
+      guard self.isCurrent(identity), self.clock?.input.clockId == input.clockId,
         case .done(.success(let run)) = restarted, run.runId == input.runId
       else { return }
 
       self.startClock(run)
     }
+
+    clock = (input, .sending(send))
+    return send
   }
 
   private func startClock(_ run: LessonRunStart) {
     clock = run.clockId.map {
-      .init(clockId: $0, runId: run.runId, sequence: 0, state: .running)
+      (.init(clockId: $0, runId: run.runId, sequence: 0, state: .running), .sent)
     }
-    setVisible(isVisible)
+    sendClock()
   }
 
   func activate() {
@@ -396,7 +422,7 @@ final class LessonPlayerStore {
       HeldLessonAnswers(learnerId: $0.user.id, lessonId: lesson.id, defaults: defaults)
     }
     held = heldOnDevice?.read() ?? []
-    sendHeldAnswers()
+    sendUnsaved()
     await heldAnswersSent()
 
     let started = await write(invalidating: opening == nil ? [] : [.userProgress, .userSession]) {
@@ -429,7 +455,7 @@ final class LessonPlayerStore {
         hold(answer(run.runId))
       }
       heldForRun = []
-      sendHeldAnswers()
+      sendUnsaved()
     case .failure(let refusal): self.state?.refuseRun(refusal)
     case .opened(let opening):
       onOpened(opening)
@@ -652,7 +678,7 @@ final class LessonPlayerStore {
   func continueLesson() {
     activate()
     writeExampleLinesOnce()
-    sendHeldAnswers()
+    sendUnsaved()
     state?.continueLesson()
     finishIfCompleted()
   }
@@ -763,7 +789,7 @@ final class LessonPlayerStore {
 
       self.state?.resolve(
         step.id, result: LessonStepResult(grade, attemptId: attemptId), counts: answer.isRecorded)
-      sendHeldAnswers()
+      sendUnsaved()
       finishIfCompleted()
       return
     }
@@ -791,7 +817,7 @@ final class LessonPlayerStore {
     case .done(.checked(var result)):
       result.answerText = answer.text
       self.state?.resolve(step.id, result: result)
-      sendHeldAnswers()
+      sendUnsaved()
     case .done(.failed), .done(.refused), .failed:
       self.state?.failChecking()
     case .obsolete:
@@ -811,17 +837,18 @@ final class LessonPlayerStore {
     }
 
     state?.resolve(stepId, result: result)
-    sendHeldAnswers()
+    sendUnsaved()
   }
 
   /// Each screen sends its held answers oldest first, so a miss lands before its retry, and stops at
   /// its first failure. Screens send at once, a screen already sending goes on to what was held
   /// since, and each save sends the screens that stopped again.
-  func sendHeldAnswers() {
+  func sendUnsaved() {
+    sendClock()
     for stepId in Set(held.map(\.stepId)) where saving[stepId] == nil {
       saving[stepId] = Task {
         while let next = held.first(where: { $0.stepId == stepId }), await record(next) {
-          sendHeldAnswers()
+          sendUnsaved()
         }
 
         saving[stepId] = nil
@@ -935,8 +962,10 @@ final class LessonPlayerStore {
       held.insert(other, at: later ?? held.endIndex)
     }
 
-    sendHeldAnswers()
+    sendUnsaved()
     await heldAnswersSent()
+    // The run's study time counts up to its clock's latest transition, so that lands first.
+    if case .sending(let send) = clock?.send { await send.value }
     guard isCurrent(identity) else { return }
 
     guard held.isEmpty else {
