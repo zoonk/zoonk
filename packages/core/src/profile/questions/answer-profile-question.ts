@@ -2,6 +2,8 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { type SupportedLocale } from "@zoonk/utils/locale";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getAllowanceCacheTag,
@@ -13,6 +15,7 @@ import {
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
+import { toProfileQuestionSavedEvent } from "./_utils/profile-question-event";
 import {
   getQuestionFacts,
   loadProfileQuestionState,
@@ -29,7 +32,7 @@ import {
 } from "./profile-question-contract";
 
 export type ProfileAnswerResult =
-  | { status: "saved"; question: ProfileQuestionView }
+  | { status: "saved"; changed: boolean; question: ProfileQuestionView }
   | { status: "unauthorized" | "invalid" | "memoryOff" | "consentRequired" };
 
 function comparable(input: ProfileAnswerInput, soundsEnabled: boolean, memoryEnabled: boolean) {
@@ -84,9 +87,11 @@ async function saveSettings({
 export async function answerProfileQuestion({
   input: unparsed,
   locale,
+  onboardingGoalId,
 }: {
   input: ProfileAnswerInput;
   locale: SupportedLocale;
+  onboardingGoalId?: string;
 }): Promise<ProfileAnswerResult> {
   const session = await getSession();
 
@@ -191,6 +196,20 @@ export async function answerProfileQuestion({
   }
 
   if (saved.changed) {
+    after(() =>
+      trackLearnerEvents({
+        events: [
+          toProfileQuestionSavedEvent({
+            from: onboardingGoalId ? "onboarding" : "settings",
+            input: submitted,
+          }),
+        ],
+        goalId: onboardingGoalId,
+        locale,
+        userId,
+      }),
+    );
+
     revalidateCacheTags([
       getMemoryCacheTag(userId),
       getLearningProfileCacheTag(userId),
@@ -200,5 +219,5 @@ export async function answerProfileQuestion({
     ]);
   }
 
-  return { question: saved.question, status: "saved" };
+  return { changed: saved.changed, question: saved.question, status: "saved" };
 }

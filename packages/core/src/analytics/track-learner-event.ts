@@ -8,7 +8,7 @@ import {
 } from "@zoonk/utils/usage-data";
 import { cookies } from "next/headers";
 import { findActiveGoalId, loadCurrentPhases } from "../goals/_utils/goal-view";
-import { type AnalyticsEvent } from "./events";
+import { type ServerAnalyticsEvent } from "./events";
 import { getRequestPlatform } from "./request-platform";
 import { trackServerEvent } from "./server";
 import {
@@ -18,7 +18,7 @@ import {
 } from "./shared-properties";
 
 type LearnerEventsInput = {
-  events: readonly AnalyticsEvent[];
+  events: readonly ServerAnalyticsEvent[];
   /** The goal the events are about; the learner's active goal when omitted. */
   goalId?: string | null;
   /** The interface language when the sender knows it; the goal's language otherwise. */

@@ -1,7 +1,8 @@
 import { type Goal } from "@zoonk/db";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { parseProfileAnswer, splitProfileFavorites } from "./profile-answer-normalization";
+import { parseProfileAnswer } from "./profile-answer-normalization";
+import { normalizeProfileFavorites, splitProfileFavorites } from "./profile-favorites";
 import {
   PROFILE_QUESTIONS,
   getProfileSteps,
@@ -61,6 +62,11 @@ describe("profile statements", () => {
         expect(result.every((item) => item.length > 0 && item.trim() === item)).toBe(true);
         expect(new Set(result.map((item) => item.toLowerCase())).size).toBe(result.length);
         expect(splitProfileFavorites(result.join(";"))).toStrictEqual(result);
+        const canonical = normalizeProfileFavorites(items.join(";"));
+        expect(normalizeProfileFavorites(canonical)).toBe(canonical);
+
+        const parsed = parseProfileAnswer({ answer: { favorites: canonical }, question: "watch" });
+        expect(Boolean(parsed)).toBe(canonical.length > 0 && canonical.length <= 120);
 
         const source = items
           .join(";")
@@ -137,13 +143,20 @@ describe("profile statements", () => {
     },
   );
 
-  it("keeps normalized favorites within the original input length", () => {
-    const favorites = Array.from({ length: 40 }, (_, index) => String(index)).join(",");
-    expect(favorites.length).toBeLessThanOrEqual(120);
+  it("limits the canonical favorites rather than the submitted separators", () => {
+    const items = Array.from({ length: 13 }, (_, index) => `ドラゴンボール${index}`);
+    expect(items.join("、").length).toBeLessThanOrEqual(120);
+    expect(items.join(", ").length).toBeGreaterThan(120);
 
-    expect(parseProfileAnswer({ answer: { favorites }, question: "watch" })).toMatchObject({
-      answer: { favorites },
-    });
+    expect(
+      parseProfileAnswer({ answer: { favorites: items.join("、") }, question: "watch" }),
+    ).toBeNull();
+
+    const repeated = Array.from({ length: 20 }, () => "Star Trek").join("; ");
+
+    expect(
+      parseProfileAnswer({ answer: { favorites: repeated }, question: "watch" }),
+    ).toMatchObject({ answer: { favorites: "Star Trek" } });
   });
 
   it.each([

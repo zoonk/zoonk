@@ -66,7 +66,7 @@ describe("profile question capabilities", () => {
 
     await expect(save(watch)).resolves.toMatchObject({
       question: {
-        saved: { picks: ["anime", "sciFi"], text: "Star Trek,Fringe" },
+        saved: { picks: ["anime", "sciFi"], text: "Star Trek, Fringe" },
         status: "answered",
       },
       status: "saved",
@@ -444,9 +444,10 @@ describe("profile question capabilities", () => {
     await expect(listFollowUps(user.id)).resolves.toHaveLength(2);
   });
 
-  it("accepts and round-trips favorites whose separators fit the 120-character input limit", async () => {
+  it("round-trips accepted Japanese favorites with canonical separators", async () => {
     await learner();
-    const favorites = Array.from({ length: 13 }, (_, index) => `ドラゴンボール${index}`).join("、");
+    const items = Array.from({ length: 11 }, (_, index) => `ドラゴンボール${index}`);
+    const favorites = items.join("、");
     expect(favorites.length).toBeLessThanOrEqual(120);
     const saved = await save({ answer: { favorites }, question: "watch" }, "ja");
 
@@ -454,6 +455,7 @@ describe("profile question capabilities", () => {
       throw new Error(saved.status);
     }
 
+    expect(saved.question.saved.text).toBe(items.join(", "));
     expect(saved.question.saved.text.length).toBeLessThanOrEqual(120);
 
     const repeat = await countDatabaseStatements(() =>
@@ -523,6 +525,34 @@ describe("profile question capabilities", () => {
       view?.questions.find((question) => question.id === "studies")?.saved.studies,
     ).toHaveLength(3);
   });
+
+  it.each([
+    { labels: ["Novelas"], picks: ["novelas"], question: "watch", unselected: "kDramas" },
+    {
+      labels: ["Funk", "Sertanejo"],
+      picks: ["funk", "sertanejo"],
+      question: "listen",
+      unselected: "reggaeton",
+    },
+  ])(
+    "keeps saved Portuguese $question options selectable in English",
+    async ({ labels, picks, question, unselected }) => {
+      await learner();
+      await save({ answer: { picks }, question }, "pt");
+      const view = await getProfileQuestions({ locale: "en" });
+      const saved = view?.questions.find((item) => item.id === question);
+
+      expect(saved?.status).toBe("answered");
+      expect(saved?.saved.picks).toStrictEqual(picks);
+
+      expect(
+        saved?.saved.picks.map((id) => saved.options.find((option) => option.id === id)?.label),
+      ).toStrictEqual(labels);
+
+      expect(saved?.options.some((option) => option.id === unselected)).toBe(false);
+      expect(new Set(saved?.options.map((option) => option.id)).size).toBe(saved?.options.length);
+    },
+  );
 
   it("exports structured facts, status records, needs and consented conditions", async () => {
     await learner();

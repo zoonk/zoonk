@@ -1,3 +1,4 @@
+import { type ProfileQuestion } from "@zoonk/db/enums";
 import { type BuddyKind } from "@zoonk/utils/buddy";
 import { type LessonScreenSuggestion } from "../lesson-questions/contract";
 import { type MissionKind } from "../sessions/missions/catalog";
@@ -256,6 +257,23 @@ export type AnalyticsEvent = {
     ? { name: Name; properties?: undefined }
     : { name: Name; properties: AnalyticsEvents[Name] };
 }[keyof AnalyticsEvents];
+
+type ProfileQuestionProperties = { from: "onboarding" | "settings" } & (
+  | { question: "conditions" }
+  | { question: "learningSupport"; outcome: "answered" | "declined" | "skipped" }
+  | ({ outcome: "answered" | "declined" | "skipped"; picks: number; typedText: boolean } & (
+      | { question: "work" }
+      | {
+          question: Exclude<ProfileQuestion, "work" | "conditions" | "learningSupport">;
+          options: string[];
+        }
+    ))
+);
+
+export type ServerAnalyticsEvent =
+  | AnalyticsEvent
+  | { name: "Profile Question Saved"; properties: ProfileQuestionProperties }
+  | { name: "Profile Questions Skipped"; properties: { remaining: number } };
 
 export type TrackEvent = (event: AnalyticsEvent, options?: TrackOptions) => void;
 

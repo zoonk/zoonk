@@ -1,4 +1,5 @@
 import { type SupportedLocale } from "@zoonk/utils/locale";
+import { trackOnboardingProgress } from "../../../analytics/track-onboarding-progress";
 import { answerProfileQuestion } from "../../../profile/questions/answer-profile-question";
 import {
   PROFILE_QUESTIONS,
@@ -26,6 +27,7 @@ export async function answerProfileOnboardingQuestion({
     const result = await skipProfileQuestions({
       forever: input.forever,
       goalId,
+      locale,
       questions: [...PROFILE_QUESTIONS],
     });
 
@@ -34,8 +36,21 @@ export async function answerProfileOnboardingQuestion({
 
   const result =
     input.answer === null
-      ? await skipProfileQuestions({ goalId, questions: [input.question] })
-      : await answerProfileQuestion({ input: profileAnswerInputSchema.parse(input), locale });
+      ? await skipProfileQuestions({ goalId, locale, questions: [input.question] })
+      : await answerProfileQuestion({
+          input: profileAnswerInputSchema.parse(input),
+          locale,
+          onboardingGoalId: goalId,
+        });
+
+  if (result.status === "saved" && "changed" in result && result.changed) {
+    trackOnboardingProgress({
+      at: Date.now(),
+      goalId,
+      question: input.question,
+      stage: "question_answered",
+    });
+  }
 
   return result.status === "saved" ? { movedTo: null, status: "saved" } : result;
 }

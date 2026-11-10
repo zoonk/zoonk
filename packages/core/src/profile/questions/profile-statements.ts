@@ -1,6 +1,6 @@
 import { type MemoryCategory } from "@zoonk/db/enums";
 import { type SupportedLocale } from "@zoonk/utils/locale";
-import { splitProfileFavorites } from "./profile-answer-normalization";
+import { splitProfileFavorites } from "./profile-favorites";
 import { PROFILE_CONTENT } from "./profile-options";
 import { type ProfileAnswerInput } from "./profile-question-contract";
 

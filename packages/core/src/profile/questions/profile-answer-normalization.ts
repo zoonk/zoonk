@@ -1,20 +1,5 @@
+import { normalizeProfileFavorites } from "./profile-favorites";
 import { type ProfileAnswerInput, profileAnswerInputSchema } from "./profile-question-contract";
-
-export function splitProfileFavorites(text: string): string[] {
-  const seen = new Set<string>();
-
-  return text.split(/[,;、，\r\n]/u).flatMap((item) => {
-    const trimmed = item.trim();
-    const key = trimmed.toLowerCase();
-
-    if (!trimmed || seen.has(key)) {
-      return [];
-    }
-
-    seen.add(key);
-    return [trimmed];
-  });
-}
 
 function uniqueIds<T extends string>(ids: T[]): T[] {
   return [...new Set(ids)].toSorted();
@@ -25,7 +10,7 @@ function normalizePicks<T extends { answer: { favorites: string; picks: string[]
     ...input,
     answer: {
       ...input.answer,
-      favorites: splitProfileFavorites(input.answer.favorites).join(","),
+      favorites: normalizeProfileFavorites(input.answer.favorites),
       picks: uniqueIds(input.answer.picks),
     },
   };

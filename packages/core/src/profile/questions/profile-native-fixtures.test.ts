@@ -31,6 +31,11 @@ const ANSWERS = [
     answer: { declined: false, favorites: "Star Trek, Fringe", picks: ["anime", "sciFi"] },
     question: "watch",
   },
+  {
+    answer: { declined: false, favorites: "", picks: ["novelas"] },
+    locale: "pt",
+    question: "watch",
+  },
   { answer: { declined: false, favorites: "Radiolab", picks: [] }, question: "listen" },
   { answer: { declined: false, favorites: "", picks: ["soccer"] }, question: "play" },
   { answer: { declined: true, favorites: "", picks: [] }, question: "read" },
@@ -77,9 +82,15 @@ describe("profile answers as native clients read them back", () => {
       // oxlint-disable-next-line no-await-in-loop -- one learner at a time: the session is global.
       const user = await userFixture();
       mockSession(user.id);
-      const parsed = profileAnswerInputSchema.parse(input);
+
+      const parsed = profileAnswerInputSchema.parse({
+        answer: input.answer,
+        question: input.question,
+      });
+
+      const locale = "locale" in input ? input.locale : "en";
       // oxlint-disable-next-line no-await-in-loop -- one learner at a time: the session is global.
-      await expect(answerProfileQuestion({ input: parsed, locale: "en" })).resolves.toMatchObject({
+      await expect(answerProfileQuestion({ input: parsed, locale })).resolves.toMatchObject({
         status: "saved",
       });
       // oxlint-disable-next-line no-await-in-loop -- one learner at a time: the session is global.

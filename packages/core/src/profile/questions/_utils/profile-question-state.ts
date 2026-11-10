@@ -8,6 +8,7 @@ import {
 import { isJsonObject } from "@zoonk/utils/json";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { normalizeProfileAnswer } from "../profile-answer-normalization";
+import { normalizeProfileFavorites } from "../profile-favorites";
 import { PROFILE_OPTION_IDS } from "../profile-option-ids";
 import { PROFILE_CONTENT } from "../profile-options";
 import {
@@ -130,7 +131,9 @@ function questionAnswer({
     case "watch":
       return {
         declined,
-        favorites: Array.isArray(first.favorites) ? first.favorites.join(",") : "",
+        favorites: Array.isArray(first.favorites)
+          ? normalizeProfileFavorites(first.favorites.join(","))
+          : "",
         picks: first.picks ?? [],
       };
     default:
@@ -153,19 +156,25 @@ export function toProfileQuestionView({
 }): ProfileQuestionView {
   const input = savedProfileAnswer({ question, state });
   const content = PROFILE_CONTENT[locale];
+  const saved = toSavedView(input);
 
-  const ids = [
+  const ids = new Set([
     ...(content.extras[question] ?? []),
     ...PROFILE_OPTION_IDS[question].filter((id) => !LOCALE_EXTRA_IDS.has(id)),
-  ];
+    ...saved.picks,
+  ]);
 
   return {
     id: question,
-    options: ids.flatMap((id) => {
-      const option = content.options[question][id];
+    options: [...ids].flatMap((id) => {
+      const definingContent = LOCALE_EXTRA_IDS.has(id)
+        ? Object.values(PROFILE_CONTENT).find((item) => item.extras[question]?.includes(id))
+        : content;
+
+      const option = definingContent?.options[question][id];
       return option ? [{ description: option.description, id, label: option.label }] : [];
     }),
-    saved: toSavedView(input),
+    saved,
     status: state.answers.find((answer) => answer.question === question)?.outcome ?? null,
     version: PROFILE_QUESTION_VERSIONS[question],
   };
