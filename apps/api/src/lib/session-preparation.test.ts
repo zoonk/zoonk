@@ -173,7 +173,13 @@ async function placedGuestFixture({
       skillId: basics.id,
       status: "testedOut",
     }),
-    planItemFixture({ planId: plan.id, position: 1, scheduledFor: today, skillId: next.id }),
+    planItemFixture({
+      minutes: goal.dailyMinutes,
+      planId: plan.id,
+      position: 1,
+      scheduledFor: today,
+      skillId: next.id,
+    }),
     withLaterCourse &&
       planItemFixture({
         planId: plan.id,
@@ -276,6 +282,7 @@ async function partlyWrittenTopicFixture({
       ...(standInDays > 0 && {
         facts: spanningFacts({ days: standInDays, skillId: topic.id, today }),
       }),
+      minutes: goal.dailyMinutes,
       planId: plan.id,
       position: 1,
       scheduledFor: new Date(today.getTime() + standInDays * 86_400_000),

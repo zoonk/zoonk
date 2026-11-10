@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "missions_after_challenge": "bfc1042240204f6267bfffaacc677bae3fd4b6783dabffa5e27c00f40719b9e9",
-  "missions_after_lessons": "8a546d2c9fa7679afc15e0f3038bc1a583e4da26db9c8c43e0d566ea38436a72",
+  "missions_after_lessons": "a69e57b6845145216049c49c091d3e1fe2a95c5ded4e65bd964abedb142a66cd",
   "missions_already_earned": "87f72e04144d99f31e9a78661e5a1056aa54559cca7681b8bf019c687a31f769",
   "missions_ask_anything": "24b9892e07f9c0f849cd9aa385f10bfbb3e0239bac7b59d97961c51428a7883b",
   "missions_ask_buddy": "6aed88771cfc2eb5f36dfb30e6022fdb1aa78061da65d27b0806bd35c1f5c2c3",
@@ -120,8 +119,7 @@
     <string name="missions_ask_buddy">%1$s etwas fragen</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$s üben</string>
-    <string name="missions_after_lessons">Nach den heutigen Lektionen</string>
-    <string name="missions_after_challenge">Nach der vorherigen Herausforderung</string>
+    <string name="missions_after_lessons">Nach den Lektionen dieser Phase</string>
     <string name="missions_from_notebook">Aus deinem Fehlerheft</string>
     <string name="missions_due_today">Heute fällig</string>
     <!-- %1$s is a language unit's title. -->

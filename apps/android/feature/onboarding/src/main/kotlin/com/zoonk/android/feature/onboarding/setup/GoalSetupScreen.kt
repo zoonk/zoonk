@@ -651,7 +651,7 @@ private fun MenuText(
     }
 }
 
-private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.title
+private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.displayName
 
 private fun Goal.levelChoice(): LevelChoice? {
     val level =

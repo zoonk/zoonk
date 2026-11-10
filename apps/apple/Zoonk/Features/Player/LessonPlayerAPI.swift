@@ -53,6 +53,7 @@ enum LessonStartOutcome: Sendable {
 struct LessonRunStart: Hashable, Sendable {
   let runId: String
   var sessionId: String? = nil
+  var clockId: String? = nil
   /// When this sitting's run started: earlier answers came from sittings before it.
   let startedAt: Date
   let answers: [LessonRunAnswer]
@@ -184,7 +185,7 @@ struct LessonPlayerAPI: Sendable {
 
       return .success(
         LessonRunStart(
-          runId: run.runId, sessionId: run.sessionId,
+          runId: run.runId, sessionId: run.sessionId, clockId: run.clockId,
           startedAt: run.startedAt,
           answers: run.answers.map {
             LessonRunAnswer(
@@ -206,6 +207,21 @@ struct LessonPlayerAPI: Sendable {
       return .failure(Self.refusal(try? response.body.json, status: 429))
     case .badRequest, .internalServerError, .undocumented:
       return .failure(.failed)
+    }
+  }
+
+  func updateClock(id: String, input: Components.Schemas.LessonClockInput, token: String)
+    async throws -> Components.Schemas.LessonClockResult
+  {
+    let output = try await clients.perform(token: token) {
+      try await $0.updateLibraryLessonClock(path: .init(lessonId: id), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response): return try response.body.json
+    case .unauthorized: throw APIError.unauthorized
+    case .notFound: throw APIError.notFound
+    case .badRequest, .internalServerError, .undocumented: throw APIError.network
     }
   }
 

@@ -852,6 +852,7 @@ describe("language level test", () => {
     const other = await prisma.goal.create({
       data: {
         dailyMinutes: 20,
+        displayName: "Physics",
         kind: "learn",
         language: "en",
         prompt: "physics",

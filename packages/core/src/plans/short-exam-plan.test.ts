@@ -259,7 +259,7 @@ describe("a class test days away", () => {
 
     expect(view.phases.map((phase) => phase.state)).toStrictEqual([
       "current",
-      "upcoming",
+      "leftOut",
       "upcoming",
     ]);
   });
@@ -340,7 +340,7 @@ describe("a class test days away", () => {
   });
 
   it("asks every topic of the material in the day before's mock, the ones its days left out too", async () => {
-    const { goal } = await setup({ dailyMinutes: 10, days: 3 });
+    const { goal } = await setup({ dailyMinutes: 5, days: 3 });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     const skillIds = parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId);
 
@@ -617,9 +617,15 @@ describe("a class test days away", () => {
     expect(produce?.estimatedMinutes).toBeLessThanOrEqual(10);
     expect(today.length).toBeGreaterThan(0);
 
+    expect(learn.length).toBeGreaterThan(0);
+
     expect(learn.map((block) => block.planItemId)).toStrictEqual(
-      expect.arrayContaining(today.map((item) => item.id)),
+      today.slice(0, learn.length).map((item) => item.id),
     );
+
+    expect(
+      session.session.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+    ).toBeLessThanOrEqual(30);
   });
 
   it("keeps the lessons day 1 left on the day before: the full review stays and they're offered", async () => {

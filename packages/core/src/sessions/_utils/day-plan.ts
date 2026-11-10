@@ -14,6 +14,7 @@ import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "./day-minutes";
+import { getSessionChallenges } from "./day-stretch";
 import { loadExamStructure } from "./exam-structure";
 import { loadIdleListeningSkillIds } from "./load-practice";
 import { getDayOutlines } from "./outlining-stand-ins";
@@ -22,13 +23,22 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { type SessionPlanItem } from "./session-plan-item";
 
-async function hasEarlierDay({ goalId, today }: { goalId: string; today: Date }) {
-  const earlier = await prisma.studySession.findFirst({
-    select: { id: true },
-    where: { goalId, localDate: { lt: today } },
+function loadPreviousSession({
+  goalId,
+  today,
+  userId,
+}: {
+  goalId: string;
+  today: Date;
+  userId: string;
+}) {
+  return prisma.studySession.findFirst({
+    orderBy: { localDate: "desc" },
+    select: {
+      blocks: { select: { payload: true, startedAt: true }, where: { kind: "checkpoint" } },
+    },
+    where: { goalId, localDate: { lt: today }, userId },
   });
-
-  return earlier !== null;
 }
 
 async function loadLastStudyDate({ today, userId }: { today: Date; userId: string }) {
@@ -65,7 +75,7 @@ export async function loadDayPlan({
   timeZone,
   userId,
 }: SessionDayContext & { selection?: SelectedDayPlan }) {
-  const [plan, goalPlan, tier, lastStudyDate, hadEarlierDay, listeningSkillIds, outlines] =
+  const [plan, goalPlan, tier, lastStudyDate, previousSession, listeningSkillIds, outlines] =
     await Promise.all([
       selection
         ? {
@@ -81,7 +91,7 @@ export async function loadDayPlan({
       loadGoalPlan(goal.id, selection?.source),
       getLearnerTier(userId, readSubscription),
       loadLastStudyDate({ today: localDate, userId }),
-      hasEarlierDay({ goalId: goal.id, today: localDate }),
+      loadPreviousSession({ goalId: goal.id, today: localDate, userId }),
       selection
         ? loadGoalListeningSkillIds({ blueprint, goal, graph: selection.state.graph })
         : loadListeningSkillIds(goal.id),
@@ -113,9 +123,10 @@ export async function loadDayPlan({
     goalPlan,
     graph,
     idleSkillIds,
-    isFirstDay: !hadEarlierDay,
+    isFirstDay: previousSession === null,
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
+    lastSessionChallenges: getSessionChallenges(previousSession?.blocks ?? []),
     lastStudyDate,
     listeningSkillIds,
     outlines,

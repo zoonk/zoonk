@@ -2021,7 +2021,7 @@
     },
     "/challenges/{planItemId}/starts": {
       "post": {
-        "description": "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons and phase challenges in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
+        "description": "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
         "operationId": "startChallenge",
         "security": [
           {
@@ -8224,6 +8224,100 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ChallengeTeam"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/library/lessons/{lessonId}/clock": {
+      "post": {
+        "description": "Pauses focused lesson time on hide, background or exit, and resumes it on return. Initial activation is part of Start. Use the runId and clockId returned by this player's latest lesson start, with a strictly increasing sequence starting at 1 for each visibility change. Retries reuse the same sequence. Replayed or out-of-order transitions, completed runs and clocks replaced by a later start or another block are ignored. No client timestamps or durations are accepted. A lesson outside an active study block has no clockId. Completion while paused counts only time already accrued.",
+        "operationId": "updateLibraryLessonClock",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Pause or resume a lesson clock",
+        "tags": [
+          "Library lessons"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lessonId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Lesson ID"
+            },
+            "required": true,
+            "description": "Lesson ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonClockInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "updated: applied to this interval; ignored: replayed, stale or no longer active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonClockResult"
                 }
               }
             }
@@ -23696,7 +23790,7 @@
     },
     "/study-sessions/{sessionId}/blocks/{blockId}/starts": {
       "post": {
-        "description": "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Starts or resumes a block. A phase challenge waits for earlier lessons in the same session to be completed or skipped, as its `waitReason` says. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. Starting a block prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "createStudyBlockStart",
         "security": [
           {
@@ -26107,6 +26201,43 @@
         ],
         "additionalProperties": false
       },
+      "LessonClockInput": {
+        "type": "object",
+        "properties": {
+          "clockId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The clockId returned by this player's latest lesson start"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Increase for every visibility transition in this clock, beginning at 1; retry with the same number"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "paused",
+              "running"
+            ]
+          }
+        },
+        "required": [
+          "clockId",
+          "runId",
+          "sequence",
+          "state"
+        ],
+        "additionalProperties": false
+      },
       "LibraryLessonCompletionInput": {
         "type": "object",
         "properties": {
@@ -28113,6 +28244,10 @@
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
           },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
           "examBlueprintId": {
             "type": "string",
             "format": "uuid",
@@ -28185,6 +28320,11 @@
               "$ref": "#/components/schemas/__schema0"
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
           },
           "status": {
             "description": "Pause, resume, archive or complete the goal",
@@ -29549,7 +29689,8 @@
               "field": {
                 "type": "string",
                 "enum": [
-                  "title"
+                  "title",
+                  "displayName"
                 ]
               },
               "goal": {
@@ -34428,7 +34569,7 @@
           },
           "date": {
             "nullable": true,
-            "description": "The day it's planned for",
+            "description": "A reached phase challenge's next capable day when it is upcoming, from the same estimate the Plan shows. Null before its preceding lessons finish or when today's day holds it. Weekly challenges and mocks keep their real calendar date.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -34625,7 +34766,7 @@
               "upcoming",
               "waiting"
             ],
-            "description": "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it: the next one has it); queued (a phase challenge whose lessons are done, after one still to win: it comes in the session after that one is won)"
+            "description": "upcoming before its preceding lessons finish, while a reached phase challenge with an established offer waits for a day with room, or before a weekly challenge or mock's calendar date; ready or started when offered; tried after a loss today; done once won; plusRequired while locked; waiting when reached but its offer is not yet established, or while its goal is paused. queued is retained for older clients and is never returned"
           },
           "timeZone": {
             "nullable": true,
@@ -34664,7 +34805,7 @@
           },
           "waitReason": {
             "nullable": true,
-            "description": "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) or an earlier phase challenge (`challenge`) are still pending or active. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+            "description": "Why it waits in today's day, the saved session or, before Start builds it, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
             "type": "string",
             "enum": [
               "lessons",
@@ -37050,7 +37191,7 @@
           "status"
         ],
         "additionalProperties": false,
-        "description": "Earlier lessons or an earlier phase challenge of the session come first: go back to Today"
+        "description": "Earlier lessons of the session come first (`lessons`): go back to Today. `challenge` is retained for older clients and is never returned"
       },
       "LanguageCheckpointCallPlusRequired": {
         "type": "object",
@@ -37354,6 +37495,9 @@
             "additionalProperties": {},
             "description": "What onboarding understood"
           },
+          "displayName": {
+            "type": "string"
+          },
           "examBlueprintId": {
             "nullable": true,
             "type": "string",
@@ -37488,6 +37632,7 @@
           "createdAt",
           "dailyMinutes",
           "details",
+          "displayName",
           "examBlueprintId",
           "id",
           "isActive",
@@ -39949,6 +40094,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -39968,6 +40116,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "targetDate",
               "targetLanguage",
@@ -44114,6 +44263,9 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "displayName": {
+            "type": "string"
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -44169,6 +44321,7 @@
           "courseId",
           "courseLevel",
           "dailyMinutes",
+          "displayName",
           "id",
           "isActive",
           "isSettingUp",
@@ -44184,6 +44337,9 @@
       "LearnerSummaryWaitingGoal": {
         "type": "object",
         "properties": {
+          "displayName": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -44201,6 +44357,7 @@
           }
         },
         "required": [
+          "displayName",
           "id",
           "input",
           "locked"
@@ -73801,6 +73958,22 @@
         ],
         "additionalProperties": false
       },
+      "LessonClockResult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "updated",
+              "ignored"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "additionalProperties": false
+      },
       "LibraryLessonCompletion": {
         "type": "object",
         "properties": {
@@ -73910,7 +74083,8 @@
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
               "goalTitle": {
-                "type": "string"
+                "type": "string",
+                "description": "The goal's name, as the learner sees it"
               },
               "planReady": {
                 "type": "boolean",
@@ -73971,7 +74145,14 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/StudyBlock"
-            }
+            },
+            "description": "The authoritative queue after completion. A completion may shorten or extend its unstarted lesson tail to fit today's time."
+          },
+          "deferredLessonsCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Lessons moved from the unstarted tail to a later study day by this completion. Persisted with the completion and replayed on retries; show a quiet completion-screen notice only when positive."
           },
           "finishedChapterId": {
             "nullable": true,
@@ -73984,6 +74165,9 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "minutes": {
+            "$ref": "#/components/schemas/StudySessionMinutes"
           },
           "next": {
             "nullable": true,
@@ -74317,8 +74501,10 @@
         "required": [
           "blockId",
           "blocks",
+          "deferredLessonsCount",
           "finishedChapterId",
           "goalId",
+          "minutes",
           "next",
           "sessionId",
           "brainPower",
@@ -74448,7 +74634,8 @@
           "estimatedMinutes": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration."
           },
           "extra": {
             "type": "boolean",
@@ -74563,7 +74750,7 @@
           },
           "waitReason": {
             "nullable": true,
-            "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+            "description": "Why a phase challenge waits: earlier lessons in this session are still pending or active (`lessons`). The `challenge` value is retained for older clients and is never returned. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
             "type": "string",
             "enum": [
               "lessons",
@@ -74733,6 +74920,40 @@
           }
         ],
         "type": "object"
+      },
+      "StudySessionMinutes": {
+        "type": "object",
+        "properties": {
+          "dailyGoal": {
+            "type": "number",
+            "minimum": 0,
+            "description": "The allocated daily study budget in exact minutes, which may be fractional."
+          },
+          "done": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Personal estimated minutes of completed blocks. Study statistics report elapsed time separately."
+          },
+          "left": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Clients display this value without rebuilding it from blocks."
+          },
+          "planned": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The day's total commitment, persisted at Start, including reserved lessons and accepted extra time."
+          }
+        },
+        "required": [
+          "dailyGoal",
+          "done",
+          "left",
+          "planned"
+        ],
+        "additionalProperties": false
       },
       "StudyQuestionAnswer": {
         "anyOf": [
@@ -75336,6 +75557,13 @@
               "additionalProperties": false
             },
             "description": "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`"
+          },
+          "clockId": {
+            "description": "This player's lesson clock interval. Send visibility transitions to POST /library/lessons/{lessonId}/clock with an increasing sequence. A new start replaces it; null outside an active study block.",
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "hyperdrive": {
             "type": "object",
@@ -78784,6 +79012,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -78803,6 +79034,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -78924,6 +79156,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -78950,6 +79185,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "targetDate",
@@ -80158,6 +80394,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -80177,6 +80416,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -80432,6 +80672,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -80451,6 +80694,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -80941,6 +81185,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -80960,6 +81207,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "kind",
               "title"
@@ -82577,7 +82825,7 @@
         "properties": {
           "challengeLeftOut": {
             "default": false,
-            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study (placement found it known, or the plan holds none of its lessons) has no challenge and is never marked",
+            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
             "type": "boolean"
           },
           "chapterCount": {
@@ -82688,6 +82936,7 @@
             "properties": {
               "date": {
                 "nullable": true,
+                "description": "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -82717,7 +82966,7 @@
                   "nextSession",
                   "queued"
                 ],
-                "description": "When it comes, as sessions offer challenges and its intro says: `date`, on its `date`; `nextSession`, the learner's next session has it (the first one reached, and any whose day came): say that instead of `date`; `queued`, its phase's lessons are done but a challenge before it comes first, one a session: say it comes after that one, not `date`. Always `date` once won, and past a free exam plan's first week (its sessions hold no challenges)"
+                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week."
               }
             },
             "required": [
@@ -85297,6 +85546,9 @@
           "goal": {
             "type": "object",
             "properties": {
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -85307,6 +85559,7 @@
               }
             },
             "required": [
+              "displayName",
               "id",
               "title"
             ],
@@ -89989,33 +90242,7 @@
             "description": "Learner-local calendar date"
           },
           "minutes": {
-            "type": "object",
-            "properties": {
-              "dailyGoal": {
-                "type": "number",
-                "minimum": 0,
-                "description": "The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example 15 min.",
-                "example": 15
-              },
-              "done": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`"
-              },
-              "planned": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks"
-              }
-            },
-            "required": [
-              "dailyGoal",
-              "done",
-              "planned"
-            ],
-            "additionalProperties": false
+            "$ref": "#/components/schemas/StudySessionMinutes"
           },
           "missions": {
             "type": "array",
@@ -90404,33 +90631,7 @@
             "description": "Learner-local calendar date"
           },
           "minutes": {
-            "type": "object",
-            "properties": {
-              "dailyGoal": {
-                "type": "number",
-                "minimum": 0,
-                "description": "The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example 15 min.",
-                "example": 15
-              },
-              "done": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`"
-              },
-              "planned": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks"
-              }
-            },
-            "required": [
-              "dailyGoal",
-              "done",
-              "planned"
-            ],
-            "additionalProperties": false
+            "$ref": "#/components/schemas/StudySessionMinutes"
           },
           "nextPosition": {
             "nullable": true,
@@ -90697,7 +90898,8 @@
                 "estimatedMinutes": {
                   "type": "integer",
                   "minimum": 0,
-                  "maximum": 9007199254740991
+                  "maximum": 9007199254740991,
+                  "description": "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration."
                 },
                 "extra": {
                   "type": "boolean",
@@ -90807,7 +91009,7 @@
                 },
                 "waitReason": {
                   "nullable": true,
-                  "description": "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+                  "description": "Why a phase challenge waits: earlier lessons in this session are still pending or active (`lessons`). The `challenge` value is retained for older clients and is never returned. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
                   "type": "string",
                   "enum": [
                     "lessons",
@@ -94543,6 +94745,9 @@
                 "minimum": 0,
                 "maximum": 9007199254740991
               },
+              "displayName": {
+                "type": "string"
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
@@ -94571,6 +94776,7 @@
             "required": [
               "dateEstimated",
               "daysLeft",
+              "displayName",
               "id",
               "kind",
               "targetDate",
@@ -95728,6 +95934,10 @@
               "$ref": "#/components/schemas/__schema1"
             },
             "description": "What onboarding understood: exam, date, target score, course or position, level, reason, purpose, role. At most 8000 characters as JSON"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
           },
           "examBlueprintId": {
             "type": "string",

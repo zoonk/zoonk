@@ -38,7 +38,7 @@ export async function getPlanRevealToday(
 
   if (!day) {
     return {
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       status: "preparing",
       userId,
     };

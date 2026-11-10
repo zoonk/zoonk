@@ -97,7 +97,7 @@ export const goalMindMapsSchema = z
     chapters: z
       .array(goalMindMapSchema)
       .meta({ description: "The chapters the learner finished, in plan order" }),
-    goal: z.object({ id: uuidSchema(), title: z.string() }),
+    goal: z.object({ displayName: z.string(), id: uuidSchema(), title: z.string() }),
     nextChapter: z
       .object({
         chapterId: uuidSchema(),

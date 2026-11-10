@@ -89,6 +89,20 @@ class LessonEndScreenshots {
     fun phoneSignedIn() = capture("lessonend-signed-in-phone", SIGNED_IN, LessonEnding(nextLessonId = NEXT_LESSON))
 
     @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
+    fun phoneDeferredLessons() = capture("lessonend-deferred-phone-pt", IN_SESSION, LessonEnding(inSession = true))
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h891dp-night-xxhdpi", fontScale = 2f)
+    fun phoneDeferredLessonsWithLargeTextInDark() =
+        capture("lessonend-deferred-phone-pt-dark-contrast-font200", IN_SESSION, LessonEnding(inSession = true), moreContrast = true)
+
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 2f)
+    fun bookDeferredLessonsWithLargeText() =
+        capture("lessonend-deferred-book-font200", IN_SESSION, LessonEnding(inSession = true), fold = true)
+
+    @Test
     @Config(qualifiers = PHONE)
     fun phoneGuest() = capture("lessonend-guest-phone", SIGNED_IN, LessonEnding(guest = true, fit = FIT))
 
@@ -131,6 +145,7 @@ class LessonEndScreenshots {
         json: String,
         ending: LessonEnding,
         fold: Boolean = false,
+        moreContrast: Boolean = false,
     ) {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
@@ -158,7 +173,7 @@ class LessonEndScreenshots {
             }
 
         compose.setContent {
-            ZoonkTheme {
+            ZoonkTheme(moreContrast = moreContrast) {
                 CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
                     LessonPlayer(
                         playable(steps),
@@ -209,7 +224,9 @@ private val IN_SESSION =
     SIGNED_IN.replace(
         """"studyBlock":null""",
         """
-        "studyBlock":{"blocks":[],"sessionId":"8d2d9ef0-2756-4b38-92ee-ff261737ce06","blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
+        "studyBlock":{"blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
+         "blocks":[],"sessionId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5c",
+         "minutes":{"dailyGoal":240,"left":220,"done":5,"planned":240},"deferredLessonsCount":2,
          "checkpoint":null,"comesBackOn":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
          "milestones":[],"missions":[{"done":1,"kind":"somethingNew","status":"done","total":1},{"done":0,"kind":"review","status":"todo","total":1}],
          "netScore":null,"nextBlockId":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},

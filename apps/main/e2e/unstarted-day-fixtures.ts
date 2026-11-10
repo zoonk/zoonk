@@ -47,7 +47,8 @@ export async function createUnstartedDay() {
   const lessons = written.map((playable) => playable.lesson);
 
   const goal = await goalFixture({
-    dailyMinutes: 45,
+    // Too short for the phase's challenge after today's two lessons, so it waits for another day.
+    dailyMinutes: 15,
     details: { placementDeclined: true },
     timezone: "UTC",
     title: `Unstarted day ${tag}`,

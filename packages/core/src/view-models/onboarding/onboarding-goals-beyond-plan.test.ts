@@ -7,6 +7,7 @@ import { describe, expect, it } from "vitest";
 import { mockAccountSession, mockGuestSession } from "../../_test-utils/mock-session";
 import { updateGoal } from "../../goals/update-goal";
 import { getLearnerSummary } from "../../learner/summary/get-learner-summary";
+import { parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
 import { type OnboardingDraftView } from "./onboarding-contract";
@@ -100,8 +101,34 @@ describe("goals typed together beyond the goals a plan follows at once", () => {
       status: "created",
     });
 
+    const stored = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
+    const understood = parseStoredUnderstanding(stored.understanding);
+
+    if (understood?.status !== "goals") {
+      throw new Error("Expected a stored card");
+    }
+
+    const oldUnderstanding = {
+      ...understood,
+      goals: understood.goals.map((goal) => ({
+        ...goal,
+        draft: Object.fromEntries(
+          Object.entries(goal.draft).filter(([key]) => key !== "displayName"),
+        ),
+      })),
+    };
+
+    await prisma.onboardingDraft.update({
+      data: { understanding: oldUnderstanding },
+      where: { id: draft.id },
+    });
+
     await expect(readWaitingGoals()).resolves.toMatchObject([
-      { input: { goals: [{ title: "Learn statistics" }] }, locked: true },
+      {
+        displayName: "Statistics",
+        input: { goals: [{ displayName: "Statistics", title: "Learn statistics" }] },
+        locked: true,
+      },
     ]);
 
     await subscribe(user.id);

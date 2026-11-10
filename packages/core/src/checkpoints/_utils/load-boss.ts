@@ -1,8 +1,10 @@
 import "server-only";
+import { type Goal } from "@zoonk/db";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { getItemKey } from "../../plans/planner/plan-items";
+import { type PlanGraphSkill, type PlanPhase } from "../../plans/planner/plan-state";
 import { type SessionPlanItem } from "../../sessions/_utils/session-plan-item";
 import { type PlannedCheckpoint, type PlannedLesson } from "../../sessions/session-builder";
 import { getBossQuestionSkills, getCheckpointMinutes } from "../checkpoint-minutes";
@@ -13,8 +15,8 @@ import {
   getPlannedQuestions,
   selectCheckpointItems,
 } from "../checkpoint-rules";
-import { type ChallengePlan, findSessionBosses } from "./boss-reached";
 import { loadBossRecordingItems } from "./boss-recordings";
+import { isChallengeReached } from "./challenge-reach";
 import { loadCheckpointCandidates } from "./checkpoint-candidates";
 import { loadResultReinforcement } from "./checkpoint-reinforcement";
 import { findLastCheckpointResult } from "./checkpoint-results";
@@ -22,7 +24,7 @@ import { arePhaseChallengesRequired } from "./phase-challenge-access";
 
 type SessionBoss = { checkpoint: PlannedCheckpoint | null; reinforcement: PlannedLesson[] };
 
-type SessionBosses = { checkpoints: PlannedCheckpoint[]; reinforcement: PlannedLesson[] };
+type SessionBosses = { checkpoints: PlannedCheckpoint[] };
 
 const NO_BOSS: SessionBoss = { checkpoint: null, reinforcement: [] };
 
@@ -74,7 +76,15 @@ export async function loadBossQuestions({
   };
 }
 
-type BossInput = ChallengePlan<SessionPlanItem> & {
+type BossInput = {
+  ahead?: ReadonlySet<string>;
+  goal: Pick<Goal, "kind" | "targetDate">;
+  graphSkills: readonly PlanGraphSkill[];
+  itemSkillIds: ReadonlyMap<string, readonly string[]>;
+  items: readonly SessionPlanItem[];
+  listeningSkillIds: ReadonlySet<string>;
+  phases: readonly PlanPhase[];
+  paceFactor?: number;
   examBlueprintId: string | null;
   readSubscription?: typeof findActiveSubscription;
   skills: readonly GoalSkillNode[];
@@ -86,22 +96,19 @@ export async function loadSessionBosses(input: BossInput): Promise<SessionBosses
   const { goal, readSubscription, userId } = input;
 
   if (!(await arePhaseChallengesRequired({ goalKind: goal.kind, readSubscription, userId }))) {
-    return { checkpoints: [], reinforcement: [] };
+    return { checkpoints: [] };
   }
 
-  const [first, ...later] = findSessionBosses({ plan: input, today: input.today });
-  const head = first ? await loadBoss({ ...input, boss: first }) : NO_BOSS;
-
-  if (!head.checkpoint) {
-    return { checkpoints: [], reinforcement: [] };
-  }
-
-  const rest = await Promise.all(later.map((boss) => loadBoss({ ...input, boss })));
-  const loaded = [head, ...rest];
+  const loaded = await Promise.all(
+    input.items
+      .filter((item) => isChallengeReached({ ahead: input.ahead, boss: item, items: input.items }))
+      .map((boss) => loadBoss({ ...input, boss })),
+  );
 
   return {
-    checkpoints: loaded.flatMap((entry) => (entry.checkpoint ? [entry.checkpoint] : [])),
-    reinforcement: loaded.flatMap((entry) => entry.reinforcement),
+    checkpoints: loaded.flatMap((entry) =>
+      entry.checkpoint ? [{ ...entry.checkpoint, reinforcement: entry.reinforcement }] : [],
+    ),
   };
 }
 
@@ -123,6 +130,8 @@ async function loadBoss({
   itemSkillIds,
   items,
   listeningSkillIds,
+  paceFactor,
+  phases,
   skills,
   today,
   userId,
@@ -138,9 +147,14 @@ async function loadBoss({
     graphSkills,
     itemSkillIds,
     items,
+    phases,
     skills,
     targetDate: goal.targetDate,
   });
+
+  if (skillIds.length === 0) {
+    return NO_BOSS;
+  }
 
   if (goal.kind === "language") {
     return {
@@ -189,6 +203,6 @@ async function loadBoss({
       timeLimitMinutes: null,
       title: boss.titleSnapshot,
     },
-    reinforcement: await loadResultReinforcement({ result, userId }),
+    reinforcement: await loadResultReinforcement({ paceFactor, result, userId }),
   };
 }

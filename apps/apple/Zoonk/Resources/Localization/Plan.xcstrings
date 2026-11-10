@@ -90,7 +90,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Stiamo configurando il tuo piano"
+            "value" : "%@ · Stiamo preparando il tuo piano"
           }
         },
         "ja" : {
@@ -1540,65 +1540,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şimdilik %@. Gün belli olunca seç."
-          }
-        }
-      }
-    },
-    "%@ is paused" : {
-      "comment" : "Title of the Plan's notice for a paused goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist pausiert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: en pausa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ est en pause"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ è in pausa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は一時停止中です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 일시 중지됨"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wstrzymano: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objetivo em pausa: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ duraklatıldı"
           }
         }
       }
@@ -9071,6 +9012,65 @@
         }
       }
     },
+    "~%@" : {
+      "comment" : "An estimated day or month, like '~Nov 20'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        }
+      }
+    },
     "~%lld days left" : {
       "comment" : "Plan subtitle: about how many days are left until the goal's estimated date",
       "localizations" : {
@@ -9551,6 +9551,65 @@
         }
       }
     },
+    "About %@" : {
+      "comment" : "An estimated day, read aloud; the argument is a day like 'Nov 20'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa am %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente el %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers le %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intorno al %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Około %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarı"
+          }
+        }
+      }
+    },
     "About the exam" : {
       "comment" : "Opens the exam's page",
       "localizations" : {
@@ -9606,6 +9665,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınav hakkında"
+          }
+        }
+      }
+    },
+    "aboutMonth" : {
+      "comment" : "An estimated month, read aloud; the argument is a month like 'May 2027'",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa im %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verso %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orientacyjnie: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarı"
           }
         }
       }
@@ -12116,65 +12241,6 @@
         }
       }
     },
-    "After the challenge before it" : {
-      "comment" : "When the phase's challenge comes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach der vorherigen Herausforderung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después del desafío anterior"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Après le défi précédent"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopo la sfida precedente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前のチャレンジの後"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이전 챌린지 이후"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po poprzednim wyzwaniu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois do desafio anterior"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önceki meydan okumadan sonra"
-          }
-        }
-      }
-    },
     "After the change: %@" : {
       "comment" : "Spoken line of a change's diff, as it'll be",
       "localizations" : {
@@ -13003,65 +13069,6 @@
         }
       }
     },
-    "Archive %@?" : {
-      "comment" : "Asks before archiving the goal named here",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ archivieren?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Archivar %@?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archiver %@ ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuoi archiviare %@?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」をアーカイブしますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@을(를) 보관할까요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zarchiwizować cel: %@?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arquivar %@?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ hedefi arşivlensin mi?"
-          }
-        }
-      }
-    },
     "Archive this goal" : {
       "comment" : "Archives the goal, after asking",
       "localizations" : {
@@ -13117,6 +13124,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu hedefi arşivle"
+          }
+        }
+      }
+    },
+    "Archive your %@ goal?" : {
+      "comment" : "Asks before archiving the goal named here",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ziel „%@“ archivieren?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Archivar tu objetivo de %@?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archiver ton objectif %@ ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuoi archiviare il tuo obiettivo %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標「%@」をアーカイブしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 목표를 보관할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zarchiwizować cel: %@?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arquivar seu objetivo de %@?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hedefini arşivlemek ister misin?"
           }
         }
       }
@@ -14675,6 +14741,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seç"
+          }
+        }
+      }
+    },
+    "Choose a name you recognize. Your study plan stays the same." : {
+      "comment" : "Explains that renaming a goal changes only its name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähl einen Namen, den du wiedererkennst. Dein Plan bleibt gleich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige un nombre que reconozcas. Tu plan de estudio no cambia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis un nom facile à reconnaître. Ton plan d’étude reste le même."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli un nome facile da riconoscere. Il tuo piano resta lo stesso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "わかりやすい名前を付けてください。学習計画は変わりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알아보기 쉬운 이름을 정하세요. 학습 계획은 그대로 유지돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz nazwę, po której rozpoznasz cel. Twój plan nauki się nie zmieni."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha um nome fácil de reconhecer. Seu plano de estudo continua o mesmo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefini kolayca tanıyacağın bir ad seç. Çalışma planın aynı kalır."
           }
         }
       }
@@ -20722,13 +20847,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektionen abgeschlossen · Herausforderung am %@"
+            "value" : "Lektionen abgeschlossen · Herausforderung %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lecciones completadas · desafío el %@"
+            "value" : "Lecciones completadas · desafío %@"
           }
         },
         "fr" : {
@@ -20740,7 +20865,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lezioni completate · sfida il %@"
+            "value" : "Lezioni completate · sfida %@"
           }
         },
         "ja" : {
@@ -20764,7 +20889,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aulas concluídas · desafio em %@"
+            "value" : "Aulas concluídas · desafio %@"
           }
         },
         "tr" : {
@@ -22321,13 +22446,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen weitere Lektionen · Herausforderung am %@"
+            "value" : "Wir erstellen weitere Lektionen · Herausforderung %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más lecciones en camino · desafío el %@"
+            "value" : "Más lecciones en camino · desafío %@"
           }
         },
         "fr" : {
@@ -22339,7 +22464,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando altre lezioni · sfida il %@"
+            "value" : "Stiamo preparando altre lezioni · sfida %@"
           }
         },
         "ja" : {
@@ -22363,7 +22488,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais aulas a caminho · desafio em %@"
+            "value" : "Mais aulas a caminho · desafio %@"
           }
         },
         "tr" : {
@@ -22606,6 +22731,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedef tarihini %@ olarak değiştir"
+          }
+        }
+      }
+    },
+    "Name" : {
+      "comment" : "Field holding the goal's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nazwa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ad"
           }
         }
       }
@@ -26386,6 +26570,65 @@
         }
       }
     },
+    "Rename goal" : {
+      "comment" : "Opens the dialog that renames the goal\nTitle of the dialog that renames the goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziel umbenennen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar el nombre del objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renommer l’objectif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rinomina obiettivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標の名前を変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 이름 바꾸기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień nazwę celu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renomear objetivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefin adını değiştir"
+          }
+        }
+      }
+    },
     "Report a problem" : {
       "comment" : "Opens the feedback form about the plan",
       "localizations" : {
@@ -26563,65 +26806,6 @@
         }
       }
     },
-    "Resume %@?" : {
-      "comment" : "Asks before resuming the paused goal named here",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ fortsetzen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Reanudar %@?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reprendre %@ ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuoi riprendere %@?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」を再開しますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@을(를) 다시 시작할까요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Czy wznowić cel: %@?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retomar %@?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ hedefine devam edilsin mi?"
-          }
-        }
-      }
-    },
     "Resume this goal" : {
       "comment" : "Resumes the paused goal",
       "localizations" : {
@@ -26677,6 +26861,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu hedefe devam et"
+          }
+        }
+      }
+    },
+    "Resume your %@ goal?" : {
+      "comment" : "Asks before resuming the paused goal named here",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ziel „%@“ fortsetzen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Reanudar tu objetivo de %@?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre ton objectif %@ ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuoi riprendere il tuo obiettivo %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標「%@」を再開しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 목표를 이어갈까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wznowić realizację celu: %@?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retomar seu objetivo de %@?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hedefine devam etmek ister misin?"
           }
         }
       }
@@ -30958,12 +31201,71 @@
       }
     },
     "until ~%@" : {
-      "comment" : "When a phase ends, about",
+      "comment" : "When a phase ends, about; the argument is a day like 'Nov 10'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bis ca. %@"
+            "value" : "bis ~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta el ~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusqu’au ~%@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino al ~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até ~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@ tarihine kadar"
+          }
+        }
+      }
+    },
+    "until about %@" : {
+      "comment" : "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis etwa %@"
           }
         },
         "es" : {
@@ -30975,13 +31277,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "jusqu’au %@ environ"
+            "value" : "jusqu’aux environs du %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fino al %@ circa"
+            "value" : "fino a circa il %@"
           }
         },
         "ja" : {
@@ -30999,13 +31301,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "do ~%@"
+            "value" : "mniej więcej do %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "até ~%@"
+            "value" : "até aproximadamente %@"
           }
         },
         "tr" : {
@@ -31374,6 +31676,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seçim yapana kadar %@ planının ve deneme sınavlarının dışında kalır."
+          }
+        }
+      }
+    },
+    "untilAboutMonth" : {
+      "comment" : "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis ~%@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "until ~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta ~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusque vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino a ~%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do ~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até ~%@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@ ayına kadar"
+          }
+        }
+      }
+    },
+    "untilAboutMonthSpoken" : {
+      "comment" : "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis etwa %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "until about %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hasta aproximadamente %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jusque vers %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fino a %@ circa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ごろまで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@쯤까지"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do około %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até por volta de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ civarına kadar"
           }
         }
       }
@@ -33504,6 +33938,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planındaki %@ hedef tarihi kaldırıldı. İstediğin zaman yeniden belirleyebilirsin."
+          }
+        }
+      }
+    },
+    "Your %@ goal is paused" : {
+      "comment" : "Title of the Plan's notice for a paused goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ziel „%@“ ist pausiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu objetivo de %@ está en pausa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton objectif %@ est en pause"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo obiettivo %@ è in pausa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標「%@」は一時停止中です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 목표가 일시 중지됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój cel jest wstrzymany: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu objetivo de %@ está pausado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hedefin duraklatıldı"
           }
         }
       }

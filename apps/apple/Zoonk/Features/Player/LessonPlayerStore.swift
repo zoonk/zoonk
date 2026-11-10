@@ -32,6 +32,12 @@ final class LessonPlayerStore {
     case refused(LessonRunRefusal)
   }
 
+  private enum ClockSend {
+    case sending
+    case sent
+    case failed
+  }
+
   enum Explanation: Equatable {
     case loading
     case explained(String)
@@ -50,6 +56,10 @@ final class LessonPlayerStore {
   private var workedHere: Set<String> = []
   private let onOpened: @MainActor (StudyBlockOpening) -> Void
   private var starting: Task<Void, Never>?
+  private var isVisible = true
+  private var clock: (input: Components.Schemas.LessonClockInput, send: ClockSend)?
+  /// Every clock change on its way, with the restart an ignored one waits for.
+  private var clockSends: [UUID: Task<Void, Never>] = [:]
   /// Opened from a public catalog page, where main asks the first question: answering it counts as
   /// main's catalog answer, and a guest's lesson ends with "Build my plan". Opened anywhere else in
   /// the app, a guest's lesson ends as a learner's.
@@ -221,6 +231,7 @@ final class LessonPlayerStore {
     if identity != self.identity {
       held = []
       heldOnDevice = nil
+      clock = nil
     }
 
     starting?.cancel()
@@ -295,6 +306,90 @@ final class LessonPlayerStore {
 
   func cancelStart() { starting?.cancel() }
 
+  @discardableResult
+  func setVisible(_ visible: Bool) -> Task<Void, Never>? {
+    isVisible = visible
+    return sendClock()
+  }
+
+  @discardableResult
+  private func sendClock() -> Task<Void, Never>? {
+    guard var next = clock?.input, let identity, session.authenticatedSession == identity else {
+      return nil
+    }
+
+    if (next.state == .running) != isVisible {
+      next.sequence += 1
+      next.state = isVisible ? .running : .paused
+    } else if clock?.send != .failed {
+      return nil
+    }
+
+    let input = next
+    let api = api
+    let cache = cache
+    let lessonId = lessonId
+
+    // A pause must outlive the disappearing player; the request keeps only its original session.
+    let key = UUID()
+    let send = Task { [weak self] in
+      defer { self?.clockSends[key] = nil }
+      let updated = await cache.mutate { current in
+        guard current == identity else { throw CancellationError() }
+        return try await api.updateClock(id: lessonId, input: input, token: current.bearerToken)
+      }
+
+      guard let self, self.clock?.input == input else { return }
+
+      // The server dropped this clock, so running counts only once Start gives a new one.
+      guard input.state == .running, case .done(let result) = updated,
+        result.status == .ignored, self.isCurrent(identity)
+      else {
+        if case .failed = updated {
+          self.clock?.send = .failed
+        } else {
+          self.clock?.send = .sent
+        }
+        return
+      }
+
+      let studySessionId = self.studySessionId
+      let restarted = await self.write { token in
+        try await api.startLesson(
+          id: lessonId, studySessionId: studySessionId, runId: input.runId, token: token)
+      }
+
+      guard self.isCurrent(identity), self.clock?.input.clockId == input.clockId else { return }
+
+      guard case .done(.success(let run)) = restarted, run.runId == input.runId else {
+        if self.clock?.input == input { self.clock?.send = .failed }
+        return
+      }
+
+      self.startClock(run)
+    }
+
+    clock = (input, .sending)
+    clockSends[key] = send
+    return send
+  }
+
+  /// Sends again a clock change that didn't get through, then waits until none is on its way, the
+  /// one a restart sends on its new clock included.
+  private func flushClock() async {
+    sendClock()
+    while let sending = clockSends.values.first {
+      await sending.value
+    }
+  }
+
+  private func startClock(_ run: LessonRunStart) {
+    clock = run.clockId.map {
+      (.init(clockId: $0, runId: run.runId, sequence: 0, state: .running), .sent)
+    }
+    sendClock()
+  }
+
   func activate() {
     // A restored lesson or deep link cannot owe preparation until a learner acts.
     activated = true
@@ -345,7 +440,7 @@ final class LessonPlayerStore {
       HeldLessonAnswers(learnerId: $0.user.id, lessonId: lesson.id, defaults: defaults)
     }
     held = heldOnDevice?.read() ?? []
-    sendHeldAnswers()
+    sendUnsaved()
     await heldAnswersSent()
 
     let started = await write(invalidating: opening == nil ? [] : [.userProgress, .userSession]) {
@@ -367,6 +462,7 @@ final class LessonPlayerStore {
 
     switch run {
     case .success(let run):
+      startClock(run)
       self.studySessionId = run.sessionId
       if opening != nil, let sessionId = run.sessionId { sessionStarted(sessionId) }
       self.state?.startRun(
@@ -377,7 +473,7 @@ final class LessonPlayerStore {
         hold(answer(run.runId))
       }
       heldForRun = []
-      sendHeldAnswers()
+      sendUnsaved()
     case .failure(let refusal): self.state?.refuseRun(refusal)
     case .opened(let opening):
       onOpened(opening)
@@ -600,7 +696,7 @@ final class LessonPlayerStore {
   func continueLesson() {
     activate()
     writeExampleLinesOnce()
-    sendHeldAnswers()
+    sendUnsaved()
     state?.continueLesson()
     finishIfCompleted()
   }
@@ -711,7 +807,7 @@ final class LessonPlayerStore {
 
       self.state?.resolve(
         step.id, result: LessonStepResult(grade, attemptId: attemptId), counts: answer.isRecorded)
-      sendHeldAnswers()
+      sendUnsaved()
       finishIfCompleted()
       return
     }
@@ -739,7 +835,7 @@ final class LessonPlayerStore {
     case .done(.checked(var result)):
       result.answerText = answer.text
       self.state?.resolve(step.id, result: result)
-      sendHeldAnswers()
+      sendUnsaved()
     case .done(.failed), .done(.refused), .failed:
       self.state?.failChecking()
     case .obsolete:
@@ -759,17 +855,18 @@ final class LessonPlayerStore {
     }
 
     state?.resolve(stepId, result: result)
-    sendHeldAnswers()
+    sendUnsaved()
   }
 
   /// Each screen sends its held answers oldest first, so a miss lands before its retry, and stops at
   /// its first failure. Screens send at once, a screen already sending goes on to what was held
   /// since, and each save sends the screens that stopped again.
-  func sendHeldAnswers() {
+  func sendUnsaved() {
+    sendClock()
     for stepId in Set(held.map(\.stepId)) where saving[stepId] == nil {
       saving[stepId] = Task {
         while let next = held.first(where: { $0.stepId == stepId }), await record(next) {
-          sendHeldAnswers()
+          sendUnsaved()
         }
 
         saving[stepId] = nil
@@ -883,8 +980,10 @@ final class LessonPlayerStore {
       held.insert(other, at: later ?? held.endIndex)
     }
 
-    sendHeldAnswers()
+    sendUnsaved()
     await heldAnswersSent()
+    // The run's study time counts up to its clock's latest transition, so that lands first.
+    await flushClock()
     guard isCurrent(identity) else { return }
 
     guard held.isEmpty else {
@@ -904,6 +1003,8 @@ final class LessonPlayerStore {
 
     switch completed {
     case .done(.completed(let summary)):
+      // The run ended, so its clock sends nothing more.
+      clock = nil
       state?.completionSaved(summary)
 
       if let studySessionId, let block = summary.block {
@@ -925,6 +1026,7 @@ final class LessonPlayerStore {
       guard isCurrent(identity) else { return }
 
       if case .done(.success(let run)) = restarted, run.runId == runId {
+        startClock(run)
         let steps: [LessonStep] =
           if case .ready(let lesson) = lessonResource.value { lesson.steps } else { [] }
         state?.resync(

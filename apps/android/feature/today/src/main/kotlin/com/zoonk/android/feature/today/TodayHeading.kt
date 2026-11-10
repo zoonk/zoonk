@@ -251,11 +251,11 @@ internal fun DayTime(
 ) {
     val locale = currentLocale()
     val studied = model.day.studiedToday()
-    val left = model.day.minutesLeft()
+    val left = model.day.minutes.left
 
     val text =
         when {
-            model.state == StudySession.State.WAITING -> {
+            model.state == StudySession.State.REST -> {
                 null
             }
 
@@ -269,12 +269,12 @@ internal fun DayTime(
                 }
             }
 
-            left == 0L -> {
+            left == 0.0 -> {
                 null
             }
 
             else -> {
-                stringResource(R.string.today_time_left, formatMinutes(left.toInt(), locale))
+                stringResource(R.string.today_time_left, formatMinutes(left, locale))
             }
         } ?: return
 

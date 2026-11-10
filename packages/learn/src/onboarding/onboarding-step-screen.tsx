@@ -40,7 +40,7 @@ import { getFirstLesson } from "./steps/wait-run";
 
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
-  return typeof subject === "string" && subject.trim() ? subject : view.goal.title;
+  return typeof subject === "string" && subject.trim() ? subject : view.goal.displayName;
 }
 
 function getNativeLanguage(view: OnboardingView): string {
@@ -301,7 +301,7 @@ function StepScreen({
           {...wait}
           actions={actions}
           buddy={buddy}
-          goal={{ kind: view.goal.kind, title: view.goal.title }}
+          goal={{ displayName: view.goal.displayName, kind: view.goal.kind }}
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
           isGuest={isGuest}

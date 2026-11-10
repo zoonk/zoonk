@@ -135,7 +135,7 @@ async function JourneyContent() {
 
   if (result.status !== "ready" || !result.view.plan.ready) {
     return activeGoal ? (
-      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.title} />
+      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.displayName} />
     ) : (
       <PlanNoGoal />
     );
@@ -177,7 +177,7 @@ async function JourneyContent() {
       buddy={buddy}
       certificates={end?.certificates ?? null}
       completedLessons={completedLessons}
-      goal={{ kind: goal.kind, title: goal.title }}
+      goal={{ displayName: goal.displayName, kind: goal.kind }}
       goalId={goal.id}
       goalStatus={goalStatus}
       hasMindMaps={hasMindMaps}

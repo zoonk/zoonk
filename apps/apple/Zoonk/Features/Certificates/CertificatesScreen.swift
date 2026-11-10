@@ -228,8 +228,8 @@ private struct UpNextRow: View {
   @ScaledMetric(relativeTo: .caption) private var meterWidth = 64.0
 
   var body: some View {
-    ListRow(Text(goal.title), description: description) {
-      GoalMark(title: goal.title, flag: goal.languageFlag.flatMap(flagEmoji))
+    ListRow(Text(goal.displayName), description: description) {
+      GoalMark(title: goal.displayName, flag: goal.languageFlag.flatMap(flagEmoji))
     } trailing: {
       if let progress = goal.progress {
         HStack(spacing: 8) {

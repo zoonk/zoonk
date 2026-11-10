@@ -123,33 +123,56 @@ describe("alphabet intro", () => {
     await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({ status: "skipped" });
   });
 
-  it("completes a started day whose last open lesson was the alphabet", async () => {
-    const [alphabet, { goal, user }] = await Promise.all([hiraganaLesson(), japaneseGoal()]);
+  it.each([
+    { endedAt: null, remaining: true, status: "active" },
+    { endedAt: expect.any(Date), remaining: false, status: "completed" },
+  ])(
+    "keeps a started day $status when plan lessons remain: $remaining",
+    async ({ endedAt, remaining, status }) => {
+      const [alphabet, { goal, lessons, user }] = await Promise.all([
+        hiraganaLesson(),
+        japaneseGoal(),
+      ]);
 
-    const session = await studySessionFixture({
-      goalId: goal.id,
-      startedAt: new Date(),
-      status: "active",
-      userId: user.id,
-    });
+      if (!remaining) {
+        await prisma.planItem.updateMany({
+          data: { status: "done" },
+          where: { plan: { goalId: goal.id } },
+        });
+      }
 
-    await Promise.all([
-      studySessionBlockFixture({
-        completedAt: new Date(),
-        position: 0,
-        sessionId: session.id,
-        status: "completed",
-      }),
-      studySessionBlockFixture({ lessonId: alphabet.id, position: 1, sessionId: session.id }),
-    ]);
+      const session = await studySessionFixture({
+        goalId: goal.id,
+        startedAt: new Date(),
+        status: "active",
+        userId: user.id,
+      });
 
-    await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({ status: "skipped" });
-    await runOwedSettlements(user.id);
+      await Promise.all([
+        studySessionBlockFixture({
+          completedAt: new Date(),
+          position: 0,
+          sessionId: session.id,
+          status: "completed",
+        }),
+        studySessionBlockFixture({ lessonId: alphabet.id, position: 1, sessionId: session.id }),
+      ]);
 
-    await expect(
-      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
-    ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
-  });
+      await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({ status: "skipped" });
+      await runOwedSettlements(user.id);
+
+      const settled = await prisma.studySession.findUniqueOrThrow({
+        include: { blocks: { orderBy: { position: "asc" } } },
+        where: { id: session.id },
+      });
+
+      expect(settled).toMatchObject({ endedAt, status });
+
+      expect(
+        settled.blocks.filter((block) => block.status === "pending").map((block) => block.lessonId),
+      ).toStrictEqual(remaining ? lessons.map((lesson) => lesson.id) : []);
+    },
+  );
 
   it("is done once the learner finished the lesson", async () => {
     const [alphabet, { goal, user }] = await Promise.all([hiraganaLesson(), japaneseGoal()]);

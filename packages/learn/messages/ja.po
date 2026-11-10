@@ -103,6 +103,7 @@ msgstr "学習済み"
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/journey-phase-events.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -198,6 +199,7 @@ msgstr "{percent}%完了"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -1012,6 +1014,7 @@ msgstr "メガネ"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1025,6 +1028,7 @@ msgstr "キャンセル"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -4510,9 +4514,9 @@ msgid "Archive this goal"
 msgstr "この目標をアーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
-msgstr "「{goal}」を再開しますか？"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
+msgstr "目標「{goal}」を再開しますか？"
 
 #: src/journey/goal-actions.tsx
 msgctxt "3y9DGg"
@@ -4520,9 +4524,9 @@ msgid "Resume"
 msgstr "再開する"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
-msgstr "「{goal}」をアーカイブしますか？"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
+msgstr "目標「{goal}」をアーカイブしますか？"
 
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
@@ -4535,9 +4539,9 @@ msgid "Archive"
 msgstr "アーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "「{goal}」は一時停止中です"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "目標「{goal}」は一時停止中です"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -4689,6 +4693,12 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "学習計画を共有する"
 
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "目標の名前を変更"
+
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4728,13 +4738,6 @@ msgstr "学習計画に含まれていません"
 msgctxt "J15Qzq"
 msgid "Won"
 msgstr "勝利"
-
-#: src/journey/journey-phase-events.tsx
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "lqBoRy"
-msgid "After the challenge before it"
-msgstr "前のチャレンジが終わった後"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -4911,11 +4914,6 @@ msgctxt "htY1di"
 msgid "Last week's recap"
 msgstr "先週の振り返り"
 
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "{date}まで"
-
 #. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
@@ -4927,6 +4925,23 @@ msgstr "{date}ごろまで"
 msgctxt "JzTTux"
 msgid "until about {date}"
 msgstr "{date}ごろまで"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDay"
+msgid "until ~{date}"
+msgstr "{date}ごろまで"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDaySpoken"
+msgid "until about {date}"
+msgstr "{date}ごろまで"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "oPz0RK"
+msgid "until {date}"
+msgstr "{date}まで"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4956,19 +4971,19 @@ msgid "Challenge left out"
 msgstr "チャレンジが計画に入りきりませんでした"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "nzBtDK"
-msgid "More lessons on the way · challenge {date}"
-msgstr "追加のレッスンを作成しています · チャレンジは{date}"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "FSd2Qh"
 msgid "More lessons on the way"
 msgstr "追加のレッスンを作成しています"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "EUjjJB"
-msgid "Lessons done · challenge {date}"
-msgstr "レッスン完了 · チャレンジは{date}"
+msgctxt "Kw3CDV"
+msgid "More lessons on the way · challenge <date></date>"
+msgstr "追加のレッスンを作成しています · チャレンジは<date></date>"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "QYw146"
+msgid "Lessons done · challenge <date></date>"
+msgstr "レッスン完了 · チャレンジは<date></date>"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
@@ -5198,6 +5213,17 @@ msgstr "初めての模試を受ける"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "初めての週間チャレンジに挑戦する"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "わかりやすい名前を付けてください。学習計画は変わりません。"
+
+#. A learning goal's name, not a person's name
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "goalDisplayName"
+msgid "Name"
+msgstr "目標名"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"
@@ -7538,20 +7564,14 @@ msgid ", choose a call"
 msgstr "、会話を選ぶ"
 
 #: src/missions/mission-copy.tsx
-msgctxt "J8WnXZ"
-msgid ", after today's lessons"
-msgstr "、今日のレッスンを終えたら"
+msgctxt "mQmNzY"
+msgid ", after this phase's lessons"
+msgstr "、このフェーズのレッスン終了後"
 
 #: src/missions/mission-copy.tsx
-msgctxt "EK1npa"
-msgid ", after the challenge before it"
-msgstr "、前のチャレンジを終えたら"
-
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "L_nv1C"
-msgid "After today's lessons"
-msgstr "今日のレッスンを終えたら"
+msgctxt "-d7MNH"
+msgid "After this phase's lessons"
+msgstr "このフェーズのレッスン終了後"
 
 #: src/missions/mission-copy.tsx
 msgctxt "teh3kP"
@@ -12940,6 +12960,7 @@ msgid "Shared text"
 msgstr "共通の文章"
 
 #: src/questions/item-set-stimulus.tsx
+#: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
 msgid "Show less"
 msgstr "折りたたむ"
@@ -13512,6 +13533,11 @@ msgstr "今日の学習"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "差し引き後のスコア {net}"
+
+#: src/session/study-moment.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, other {#レッスンを別の日に移して}}、今日の学習時間が{time}に収まるようにしました。"
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -14222,14 +14248,9 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "次のレッスンを開けませんでした。もう一度お試しください。"
 
 #: src/today/today-block-row.tsx
-msgctxt "hTNiZs"
-msgid "{phase} · after today's lessons"
-msgstr "{phase} · 今日のレッスンの後"
-
-#: src/today/today-block-row.tsx
-msgctxt "swGOPE"
-msgid "{phase} · after the challenge before it"
-msgstr "{phase} · 前のチャレンジの後"
+msgctxt "pPB2tF"
+msgid "{phase} · after this phase's lessons"
+msgstr "{phase}・このフェーズのレッスン終了後"
 
 #: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
@@ -14540,9 +14561,9 @@ msgid "Practice anytime"
 msgstr "いつでも練習"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
-msgstr "{goal}に向けた学習計画を作成しています"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
+msgstr "{goal}の学習計画を作成しています"
 
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"

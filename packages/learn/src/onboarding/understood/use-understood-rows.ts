@@ -28,7 +28,7 @@ export type EditableField =
       kind: "text";
       key: "institution" | "reason" | "role" | "targetCourse" | "targetPosition" | "targetScore";
     }
-  | { kind: "text"; key: "title" }
+  | { kind: "text"; key: "displayName" }
   | { kind: "time"; key: "studyTime" };
 
 export type UnderstoodRow = {
@@ -47,7 +47,7 @@ export type UnderstoodRow = {
   value: string;
 };
 
-type GoalFacts = Pick<GoalDraft, "kind" | "language" | "title"> & {
+type GoalFacts = Pick<GoalDraft, "kind" | "language" | "displayName"> & {
   details?: Record<string, unknown> | null;
   targetLanguage?: string | null;
 };
@@ -74,7 +74,7 @@ export function useLanguageRows() {
     });
 
     const rows: (UnderstoodRow | false)[] = [
-      !isSaidInTitle({ title: draft.title, value: language }) && {
+      !isSaidInTitle({ title: draft.displayName ?? "", value: language }) && {
         id: "targetLanguage",
         label: t("Language"),
         value: language,
@@ -152,7 +152,7 @@ export function useDetailRows() {
   ): UnderstoodRow[] => {
     const unsaid = (key: string) => {
       const value = readText(draft.details, key);
-      return value && !isSaidInTitle({ title: draft.title, value }) ? value : null;
+      return value && !isSaidInTitle({ title: draft.displayName ?? "", value }) ? value : null;
     };
 
     const course = unsaid("targetCourse");
@@ -226,10 +226,10 @@ export function useUnderstoodRows() {
 
     const rows: (UnderstoodRow | null | false)[] = [
       {
-        editable: { key: "title", kind: "text" },
-        id: "title",
+        editable: { key: "displayName", kind: "text" },
+        id: "displayName",
         label: t("Goal"),
-        value: draft.title,
+        value: draft.displayName ?? "",
       },
       dateRow({ draft, examDates }),
       ...languageRows(draft),

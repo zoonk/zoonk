@@ -30,7 +30,7 @@ function toUpNext(goals: GoalView[]): CertificateUpNext[] {
   return goals
     .filter((goal) => goal.status === "active" && CERTIFIED_GOAL_KINDS.has(goal.kind))
     .map((goal) => ({
-      goal: { kind: goal.kind, targetLanguage: goal.targetLanguage, title: goal.title },
+      goal: { displayName: goal.displayName, kind: goal.kind, targetLanguage: goal.targetLanguage },
       id: goal.id,
       progress:
         goal.kind === "language" || !goal.plan?.lessonsTotal

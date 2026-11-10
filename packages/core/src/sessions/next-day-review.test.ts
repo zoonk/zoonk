@@ -17,7 +17,7 @@ async function studiedYesterday({
   before?: (fixture: Awaited<ReturnType<typeof sessionGoalFixture>>) => Promise<unknown>;
 } = {}) {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, userId: user.id });
   const { goal, items, planItems, skills } = fixture;
   const [taughtSkill] = skills;
   const yesterday = daysAgo(1);

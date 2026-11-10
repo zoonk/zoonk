@@ -114,6 +114,7 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
         dailyMinutes: goal.dailyMinutes,
         draft: {
           details: buildNextDetails({ goal, level: nextLevel }),
+          displayName: course.title,
           kind: "learn",
           language: goal.language,
           primaryCourseId: course.courseId,

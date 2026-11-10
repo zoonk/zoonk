@@ -65,7 +65,7 @@ class CertificateStoreTest {
                 ),
             )
 
-        assertEquals(listOf("Python" to 0.25, "Spanish" to null), upNext.map { it.goal.title to it.progress })
+        assertEquals(listOf("Python" to 0.25, "Spanish" to null), upNext.map { it.goal.displayName to it.progress })
     }
 
     private fun TestScope.store(api: CertificatesApi): CertificateStore {
@@ -112,7 +112,7 @@ private fun goal(
         {"createdAt":"2026-11-03T00:00:00.000Z","dailyMinutes":20,"details":{},"examBlueprintId":null,
          "id":"${UUID.randomUUID()}","isActive":false,"kind":"$kind","language":"en","plan":${plan ?: "null"},
          "primaryCourseId":null,"prompt":"$title","status":"$status","studyDays":[1,2,3],"studyTime":null,
-         "targetDate":null,"targetLanguage":null,"timezone":null,"title":"$title"}
+         "targetDate":null,"targetLanguage":null,"timezone":null,"title":"$title","displayName":"$title"}
         """.trimIndent(),
     )
 }

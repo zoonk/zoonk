@@ -74,7 +74,7 @@ export async function loadChapterTestOut({
   userId,
 }: {
   chapterId: string;
-  goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "timezone">;
+  goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "targetLanguage" | "timezone">;
   /** Only GET callers supply request facts; generation preconditions read the plan fresh. */
   savedPlan?: Promise<SavedPlan | null>;
   userId: string;

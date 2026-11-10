@@ -335,7 +335,7 @@ describe(chooseExamOption, () => {
       undo: true,
     },
   ])(
-    "keeps the day to its own lessons once the lessons it waits on are written: $case",
+    "keeps newly written lessons and fills only from the current plan: $case",
     async ({ pickFirst, picks, started, undo }) => {
       await keepPaceOwn();
 
@@ -421,8 +421,18 @@ describe(chooseExamOption, () => {
       const todays = await loadDayLessonIds({ goalId: goal.id, today: TODAY });
       const lessonIds = day.blocks.flatMap((block) => block.lessonId ?? []);
 
-      expect(lessonIds.some((id) => written.includes(id))).toBe(true);
-      expect(lessonIds.filter((id) => !todays.has(id))).toStrictEqual([]);
+      const current = await prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" }, where: { status: "todo" } } },
+        where: { goalId: goal.id },
+      });
+
+      const todo = current.items.flatMap((item) => item.lessonId ?? []);
+      const fill = lessonIds.filter((id) => !todays.has(id));
+
+      expect(lessonIds).toStrictEqual(expect.arrayContaining(written));
+      expect(lessonIds.filter((id) => !todo.includes(id))).toStrictEqual([]);
+      expect(fill).toHaveLength(2);
+      expect(fill).toStrictEqual(todo.filter((id) => !todays.has(id)).slice(0, 2));
     },
   );
 

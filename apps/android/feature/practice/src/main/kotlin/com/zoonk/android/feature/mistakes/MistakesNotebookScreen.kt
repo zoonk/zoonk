@@ -123,7 +123,7 @@ fun MistakesNotebookScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 goal != null -> {
-                    Notebook(goal.id, goal.title, app.mistakesNotebook, navigator, read.nextChangeAt)
+                    Notebook(goal.id, goal.displayName, app.mistakesNotebook, navigator, read.nextChangeAt)
                 }
 
                 summary is LoadState.Failed -> {

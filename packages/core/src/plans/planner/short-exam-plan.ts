@@ -121,7 +121,7 @@ export function getShortExamEvents({
   }
 
   if (isOnlyDay) {
-    return shortMockMinutes && shortMockMinutes <= minutes * ONLY_DAY_MOCK_SHARE
+    return canShareMockDay({ isOnlyDay, minutes, shortMockMinutes }) && shortMockMinutes
       ? [mockEvent({ date, minutes: shortMockMinutes, replacesDay: false })]
       : [];
   }
@@ -141,4 +141,18 @@ export function getShortExamEvents({
     mockEvent({ date, minutes: shortMock, replacesDay: true }),
     ...(reviewMinutes >= MIN_REVIEW_MINUTES ? [reviewEvent({ date, minutes: reviewMinutes })] : []),
   ];
+}
+
+export function canShareMockDay({
+  isOnlyDay,
+  minutes,
+  shortMockMinutes,
+}: {
+  isOnlyDay: boolean;
+  minutes: number;
+  shortMockMinutes: number | null;
+}): boolean {
+  return (
+    isOnlyDay && shortMockMinutes !== null && shortMockMinutes <= minutes * ONLY_DAY_MOCK_SHARE
+  );
 }

@@ -38,6 +38,7 @@ describe("blueprint inputs while its writer waits", () => {
           await tx.goal.create({
             data: {
               dailyMinutes: 20,
+              displayName: "Test exam",
               id: arrivingId,
               kind: "exam",
               language: "en",

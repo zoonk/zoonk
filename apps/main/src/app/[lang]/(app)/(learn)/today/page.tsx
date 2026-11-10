@@ -187,7 +187,11 @@ async function TodayContent() {
   );
 }
 
-async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
+async function TodayPreparingState({
+  goal,
+}: {
+  goal: { displayName: string; id: string; title: string };
+}) {
   // A goal left halfway through its questions has no plan coming until they're answered, and a
   // made plan is shown once before its first day.
   const left = await readOnboardingLeft(goal.id);
@@ -196,7 +200,7 @@ async function TodayPreparingState({ goal }: { goal: { id: string; title: string
     return <TodayOnboardingLeft goal={goal} left={left} />;
   }
 
-  return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;
+  return <TodayPreparingClient goalId={goal.id} goalTitle={goal.displayName} />;
 }
 
 export default function TodayPage() {

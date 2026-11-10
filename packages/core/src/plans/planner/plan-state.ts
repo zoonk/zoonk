@@ -5,6 +5,7 @@ import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-acti
 import { challengeTeamSchema } from "../../library/challenges/challenge-team";
 import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "../plan-tools-contract";
+import { PACE_FAMILIES } from "./plan-pace";
 
 const PLAN_PHASE_KINDS = [
   "learn",
@@ -118,7 +119,11 @@ const planSettingsSchema = z.object({
   movedEvents: z.array(movedEventSchema).default([]),
   noticeDate: isoDateSchema.nullable().default(null),
   pace: z
-    .object({ factor: z.number().positive(), source: z.enum(PACE_SOURCES) })
+    .object({
+      factor: z.number().positive(),
+      family: z.enum(PACE_FAMILIES).optional(),
+      source: z.enum(PACE_SOURCES),
+    })
     .nullable()
     .default(null),
   pastBasicsAreas: z.array(z.string()).default([]),

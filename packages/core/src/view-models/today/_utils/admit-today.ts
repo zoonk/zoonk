@@ -71,7 +71,11 @@ export async function admitToday(
   // A plan is built while the questions are still answered, on a time the learner hasn't chosen
   // yet, and is shown once before its first day.
   if (!built || isGoalSetupLeft(owned.goal) || (!revealing && isPlanRevealOwed(owned.goal))) {
-    return { goal: { id, kind, title }, status: "preparing", userId };
+    return {
+      goal: { displayName: owned.goal.displayName, id, kind, title },
+      status: "preparing",
+      userId,
+    };
   }
 
   return { owned, status: "admitted" };

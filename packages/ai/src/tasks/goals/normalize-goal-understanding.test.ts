@@ -53,6 +53,23 @@ function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstandin
 }
 
 describe(normalizeGoalUnderstanding, () => {
+  it("trims display names without truncating or replacing an empty name with the summary", () => {
+    const longName = "Astronomy ".repeat(30).trim();
+
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [rawGoal({ displayName: `  ${longName}  ` }), rawGoal({ displayName: "   " })],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [{ displayName: longName }, { displayName: undefined }],
+      route: "goals",
+    });
+  });
+
   it("keeps the exam subjects a goal names and drops them from other goals", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,

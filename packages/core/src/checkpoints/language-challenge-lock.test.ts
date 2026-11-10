@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
@@ -76,6 +77,37 @@ describe("language challenges are Plus only", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
+
+  it.each([false, true])(
+    "dates a reached challenge after tomorrow's rest day (Plus: %s)",
+    async (plus) => {
+      const { boss, goal, plan, user } = await reachedLanguageChallenge({ final: true, plus });
+
+      await Promise.all([
+        prisma.plan.update({
+          data: {
+            settings: { startDate: "2026-09-01", weekdayMinutes: [45, 45, 45, 45, 0, 45, 45] },
+          },
+          where: { id: plan.id },
+        }),
+        studySessionFixture({
+          goalId: goal.id,
+          localDate: SESSION_TODAY,
+          status: "completed",
+          userId: user.id,
+        }),
+      ]);
+
+      const view = await getGoalPlan(goal.id);
+
+      expect(view.status === "ready" && view.plan.phases.at(-1)?.checkpoint).toMatchObject({
+        date: "2026-10-02",
+        locked: !plus,
+        planItemId: boss.id,
+        when: "date",
+      });
+    },
+  );
 
   it.each([false, true])(
     "locks the same call for Free and leaves lessons reachable (final: %s)",

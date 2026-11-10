@@ -9,6 +9,7 @@ import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
+import { useWaitLine } from "../missions/mission-copy";
 import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
@@ -20,35 +21,17 @@ import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
 import { useRowLabel } from "./use-row-label";
 import { useLessonBeingWritten } from "./use-today-copy";
 
-export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
-
-export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
-
 function useWaitLabel() {
   const t = useExtracted();
+  const waitLine = useWaitLine();
 
-  return (block: DayStep, wait: "challenge" | "lessons"): string => {
+  return (block: DayStep): string => {
     const phase = getChallengePhase(block);
-
-    if (wait === "lessons") {
-      return phase ? t("{phase} · after today's lessons", { phase }) : t("After today's lessons");
-    }
-
-    return phase
-      ? t("{phase} · after the challenge before it", { phase })
-      : t("After the challenge before it");
+    return phase ? t("{phase} · after this phase's lessons", { phase }) : waitLine();
   };
 }
 
-export function getRowClass({
-  finished,
-  fold,
-  isNext,
-}: {
-  finished: boolean;
-  fold: RowFold;
-  isNext: boolean;
-}): string {
+export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
     "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
@@ -56,8 +39,6 @@ export function getRowClass({
     isNext
       ? "bg-muted -mx-2.5 my-0.5 items-start rounded-[0.625rem] border-b-0 px-2.5 before:inset-x-0"
       : "before:-inset-x-2.5",
-    fold.hidden && fold.phone && "max-sm:hidden",
-    fold.hidden && fold.wide && "hidden",
   );
 }
 
@@ -102,15 +83,7 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
 const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
 
-function RowLines({
-  block,
-  isNext,
-  wait,
-}: {
-  block: DayStep;
-  isNext: boolean;
-  wait: "challenge" | "lessons" | null;
-}) {
+function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const detail = useBlockDetail();
@@ -120,7 +93,7 @@ function RowLines({
   const reviewDetail = block.weakest || block.fullReview ? detail(block) : null;
 
   const label = isBeingWritten(block) ? t("Being written for you…") : rowLabel(block);
-  const line = wait ? waitLabel(block, wait) : label;
+  const line = block.waitReason ? waitLabel(block) : label;
 
   return (
     <>
@@ -152,7 +125,7 @@ export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
     : opens.ref.position === step.position;
 }
 
-export function useCountsTowardMission() {
+function useCountsTowardMission() {
   const { missions } = useTodayScreen();
 
   return (step: DayStep): boolean =>
@@ -205,25 +178,22 @@ function RowTarget({
  */
 export function BlockRow({
   block,
-  fold = NO_FOLD,
   isNext,
   opens = true,
 }: {
   block: DayStep;
-  fold?: RowFold;
   isNext: boolean;
   opens?: boolean;
 }) {
   const finished = isFinished(block);
   const countsTowardMission = useCountsTowardMission()(block);
-  const wait = block.waitReason;
   const lessonAgainId = getLessonAgainId(block);
 
   return (
     <li
       aria-current={isNext ? "step" : undefined}
       className={cn(
-        getRowClass({ finished, fold, isNext }),
+        getRowClass({ finished, isNext }),
         lessonAgainId && "has-[a:hover]:before:bg-muted/70",
       )}
       data-slot={isNext ? "today-next" : undefined}
@@ -242,7 +212,7 @@ export function BlockRow({
             opens={opens}
           />
 
-          {!finished && <RowLines block={block} isNext={isNext} wait={wait} />}
+          {!finished && <RowLines block={block} isNext={isNext} />}
         </div>
 
         {!finished && (
@@ -287,7 +257,7 @@ export function PlanLessonRow({
     <li
       aria-current={isNext ? "step" : undefined}
       className={cn(
-        getRowClass({ finished: false, fold: NO_FOLD, isNext }),
+        getRowClass({ finished: false, isNext }),
         isNext && disabled && !busy && "opacity-50",
       )}
     >
@@ -323,13 +293,13 @@ export function PlanLessonRow({
  * Not part of the session: never the next block, no mission mark, and the day's segments, time and
  * action leave it out.
  */
-export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title: string }) {
+export function PlusLessonRow({ title }: { title: string }) {
   const { actions } = useTodayScreen();
 
   return (
     <li
       className={cn(
-        getRowClass({ finished: false, fold, isNext: false }),
+        getRowClass({ finished: false, isNext: false }),
         "has-[a:hover]:before:bg-muted/70",
       )}
     >
@@ -340,6 +310,7 @@ export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title
       <LearnLink
         className={cn(ROW_OPEN_CLASS, "flex-1 items-center gap-3 after:-inset-x-2.5")}
         href={actions.plusHref}
+        prefetch={false}
       >
         <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
         <PlusMark />

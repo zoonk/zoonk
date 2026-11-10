@@ -4,11 +4,10 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { withLessonDisplayMinutes } from "../_utils/lesson-display-minutes";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
 import { readMissionDocument } from "./catalog";
-import { asSavedMission, loadMissionDayViews } from "./mission-day-views";
+import { type DayProgressReader, asSavedMission, loadMissionDayViews } from "./mission-day-views";
 
 /** Read-only shared mission projection; never replaces a saved pick. */
 export async function getDayMissions({
@@ -16,6 +15,7 @@ export async function getDayMissions({
   displayBlocks,
   timeZone,
   client = prisma,
+  readProgress,
   through,
 }: {
   session: StudySessionRow;
@@ -23,6 +23,7 @@ export async function getDayMissions({
   displayBlocks?: StudySessionBlock[];
   timeZone: string;
   client?: TransactionClient;
+  readProgress?: DayProgressReader;
   through?: Date;
 }): Promise<Mission[]> {
   const document = readMissionDocument(storedSession.missions);
@@ -31,12 +32,12 @@ export async function getDayMissions({
     return [];
   }
 
-  const blocks =
-    displayBlocks ?? (await withLessonDisplayMinutes({ blocks: storedSession.blocks, client }));
+  const blocks = displayBlocks ?? storedSession.blocks;
 
   const missions = await loadMissionDayViews({
     client,
     picks: document.picks,
+    readProgress,
     session: { ...storedSession, blocks },
     through,
     timeZone,

@@ -138,7 +138,7 @@ export const onboardingDraftEditSchema = z
   .discriminatedUnion("field", [
     z
       .object({
-        field: z.literal("title"),
+        field: z.enum(["title", "displayName"]),
         goal: draftGoalSchema,
         value: goalDraftSchema.shape.title,
       })

@@ -218,7 +218,7 @@
   "onboarding_plan_look_over": "b74a39acfbb7d47ba063b571c7662ad719e3c1d3d81d2ddb2e2986cfe32616ba",
   "onboarding_plan_not_started": "41be047e213a1a6b1a1d0f853f753e4df9426c457bd90c70a83d2f407a39d3ac",
   "onboarding_plan_ready": "50afda0339e14afd30442265fdce0bf4544c453f66088d4651a18bafefafb29e",
-  "onboarding_plan_ready_goal": "e75a60d60ef39035a29568ac186336091d1228715044944856e6962d75cc4678",
+  "onboarding_plan_ready_goal": "4cdde6bf6e199f097695525ffe075f74ed9d97e7ea0b86615e5d1e754a85bca8",
   "onboarding_plan_so_far": "8176186c9167ae3ef30b5c30e287c9b70fc9efa627dca4b78b4fd8dbad6b12be",
   "onboarding_plan_stopped": "e3dc2807bdc1898f12c6e91592b21cee6e57eee36f1de9cf7b14eb83880ab3ca",
   "onboarding_plus_more_goals": "262a2821b30fe6c2882556dfea7051e6e997bcf65bb91f2ec25ad8a27904f683",
@@ -1075,7 +1075,7 @@
     <string name="onboarding_reveal_reading_line_fit">Intégration à ton plan…</string>
     <string name="onboarding_see_plan">Voir ton plan</string>
     <string name="onboarding_plan_ready">Plan prêt</string>
-    <string name="onboarding_plan_ready_goal">Ton plan pour %1$s est prêt.</string>
+    <string name="onboarding_plan_ready_goal">Ton plan %1$s est prêt.</string>
     <string name="onboarding_plan_look_over">Jette-y un œil avant de commencer.</string>
     <string name="onboarding_reveal_start_here">Commence ici</string>
     <string name="onboarding_reveal_up_next">À suivre</string>

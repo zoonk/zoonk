@@ -15,7 +15,7 @@ type Preparation = Extract<GoalPreparationResult, { status: "ready" }>["preparat
 
 /** Estimated exam scores require a completed mock. */
 export type ProgressView = {
-  goal: Pick<Goal, "id" | "kind" | "title"> & { targetDate: string | null };
+  goal: Pick<Goal, "id" | "kind" | "title"> & { displayName: string; targetDate: string | null };
   mistakes: { open: number };
   /** Null for a quick explanation: one answer, not a goal to prepare for. */
   preparation: Preparation | null;
@@ -56,6 +56,7 @@ export async function getProgressView(
   return {
     progress: {
       goal: {
+        displayName: goal.displayName,
         id: goal.id,
         kind: goal.kind,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,

@@ -100,6 +100,7 @@ private fun GoalDraftOutput.toGoalDraft() =
         language = language,
         prompt = prompt,
         title = title,
+        displayName = displayName,
         dailyMinutes = dailyMinutes,
         details = details,
         examBlueprintId = examBlueprintId,

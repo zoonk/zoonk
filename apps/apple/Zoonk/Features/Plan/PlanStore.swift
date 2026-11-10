@@ -151,6 +151,14 @@ final class PlanStore {
     }
   }
 
+  func rename(goalId: String, displayName: String) async -> MutationResult<Bool> {
+    await write { api, token in
+      try await api.rename(token: token, goalId: goalId, displayName: displayName)
+    } changed: {
+      $0
+    }
+  }
+
   func continueAtNextLevel(goalId: String) async -> MutationResult<Bool> {
     await write { api, token in
       try await api.continueAtNextLevel(token: token, goalId: goalId)

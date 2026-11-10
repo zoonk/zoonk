@@ -20,7 +20,7 @@ function noGoalError(suggestedGoal: SuggestedGoalView | null) {
   });
 }
 
-function planNotReadyError(goal: { id: string; kind: string; title: string }) {
+function planNotReadyError(goal: Extract<TodayViewResult, { status: "preparing" }>["goal"]) {
   return createErrorResponse({
     code: todayErrorCodes.planNotReady,
     details: { goal },

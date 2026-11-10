@@ -51,6 +51,7 @@ async function seed({ table, userId, value }: { table: Table; userId: string; va
       const goal = await prisma.goal.create({
         data: {
           dailyMinutes: value,
+          displayName: "Chemistry",
           kind: "learn",
           language: "en",
           prompt: "Learn chemistry",

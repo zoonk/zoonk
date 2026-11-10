@@ -26,7 +26,7 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 
 ## Placeholders
 
-- Buddy names and goal titles are the learner's choice, with unknown gender and number: use neutral wording around them.
+- Buddy names and goal names are the learner's choice, with unknown gender and number: use neutral wording around them. A goal's name is a short label, such as “CGU”, “Italiano” or “Física quântica”, so build the sentence around it the way the English does (“your {goal} plan”).
 - The learner's gender is unknown: prefer wording that doesn't mark it.
 - Duration placeholders such as `{time}` already include their unit.
 - Where the English shows the count, keep it (“#” in web messages; “%lld” or “%d” in Apple and Android ones, where “#” shows as is) inside the sentence of every plural form, “one” included: never a literal “1”, a spelled-out number, a “Label: #” rebuild, or words added to only one form. Word the forms alike, changing only what the count requires. Where the English words a form without the count (“No questions left”, “the first week”, “the closest one”), so does the translation.

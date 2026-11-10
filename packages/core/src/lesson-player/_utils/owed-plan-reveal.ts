@@ -13,7 +13,7 @@ export async function findOwedPlanReveal({
 }): Promise<LibraryLessonCompletion["planReveal"]> {
   const goal = await prisma.goal.findFirst({
     orderBy: { createdAt: "desc" },
-    select: { id: true, title: true },
+    select: { displayName: true, id: true },
     where: { openingLessonId: lessonId, planRevealedAt: null, status: "active", userId },
   });
 
@@ -22,5 +22,6 @@ export async function findOwedPlanReveal({
   }
 
   const readiness = await readPlanReadiness({ goalId: goal.id, userId });
-  return { goalId: goal.id, goalTitle: goal.title, planReady: readiness?.ready ?? false };
+
+  return { goalId: goal.id, goalTitle: goal.displayName, planReady: readiness?.ready ?? false };
 }

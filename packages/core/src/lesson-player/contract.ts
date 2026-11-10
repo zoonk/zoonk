@@ -194,6 +194,12 @@ export const libraryLessonRunSchema = z
         description:
           "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`",
       }),
+    clockId: uuidSchema()
+      .nullable()
+      .optional()
+      .describe(
+        "This player's lesson clock interval. Send visibility transitions to POST /library/lessons/{lessonId}/clock with an increasing sequence. A new start replaces it; null outside an active study block.",
+      ),
     hyperdrive: z
       .object({
         knownStepIds: z
@@ -261,7 +267,7 @@ export const libraryLessonCompletionSchema = z
     planReveal: z
       .object({
         goalId: uuidSchema(),
-        goalTitle: z.string(),
+        goalTitle: z.string().meta({ description: "The goal's name, as the learner sees it" }),
         planReady: z.boolean().meta({ description: "False while the plan is still being built" }),
       })
       .nullable()

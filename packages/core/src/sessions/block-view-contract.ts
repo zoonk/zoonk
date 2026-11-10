@@ -49,7 +49,14 @@ export const studyBlockSchema = z
       .meta({ description: "A chapter whose lesson is written just in time" }),
     checkpoint: studyCheckpointSchema.nullable(),
     estimatedBrainPower: z.number().int().min(0),
-    estimatedMinutes: z.number().int().min(0),
+    estimatedMinutes: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration.",
+      }),
     extra: z.boolean().meta({ description: 'A "10 more minutes" block after the day\'s session' }),
     fullReview: z
       .boolean()
@@ -116,7 +123,7 @@ export const studyBlockSchema = z
       .nullable()
       .meta({
         description:
-          "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+          "Why a phase challenge waits: earlier lessons in this session are still pending or active (`lessons`). The `challenge` value is retained for older clients and is never returned. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
       }),
     weakest: z
       .boolean()

@@ -3,7 +3,7 @@ import Foundation
 enum TodayContent: Equatable, Sendable {
   case day(TodayView)
   case noGoal(suggestedGoal: SuggestedGoal?)
-  case preparing(goalID: String, title: String)
+  case preparing(goalID: String, displayName: String)
   /// The goal is paused, completed or archived.
   case goalNotActive
 }
@@ -217,7 +217,7 @@ struct TodayProblem: Decodable, Sendable {
     struct Details: Decodable, Sendable {
       struct Goal: Decodable, Sendable {
         let id: String
-        let title: String
+        let displayName: String
       }
 
       let goal: Goal?

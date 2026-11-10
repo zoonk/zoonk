@@ -46,6 +46,36 @@ describe(createGoals, () => {
     vi.useRealTimers();
   });
 
+  it("persists the supplied label and defaults missing names without changing titles", async () => {
+    await useLearner({ plus: true });
+
+    const result = await createGoals({
+      dailyMinutes: 30,
+      goals: [draft({ displayName: "My project" }), draft({ details: { subject: "astronomy" } })],
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        { displayName: "My project", title: "Understand AI" },
+        { displayName: "Astronomy", title: "Understand AI" },
+      ],
+      status: "created",
+    });
+
+    if (result.status !== "created") {
+      throw new Error("Expected created goals");
+    }
+
+    const saved = await prisma.goal.findMany({
+      orderBy: { createdAt: "asc" },
+      where: { id: { in: result.goals.map((goal) => goal.id) } },
+    });
+
+    expect(saved.map((goal) => goal.displayName)).toStrictEqual(
+      expect.arrayContaining(["My project", "Astronomy"]),
+    );
+  });
+
   it("requires a signed-in learner", async () => {
     mockSession(null);
 

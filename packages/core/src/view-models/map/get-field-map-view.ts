@@ -87,7 +87,7 @@ export async function getFieldMapView(
       counts: countSkillStates(skills),
       course,
       courses: areaCourses.map(({ courseId, title }) => ({ courseId, title })),
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       next: map.finished ? buildStudyNext({ course, courses, goalKind: goal.kind }) : null,
       phases: map.phases,
       refresh: { emphasized: isRefreshGoal(goal.details), skills: listFadingSkills(skills) },

@@ -23,6 +23,7 @@ type UnderstoodExamDay = "booked" | "official";
 
 /** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
+  displayName?: string;
   examDay: UnderstoodExamDay | null;
   examMonth: number | null;
   examName: string | null;
@@ -60,6 +61,7 @@ export type RawGoalUnderstanding = {
 
 /** Fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
+  displayName?: string;
   examDay?: UnderstoodExamDay;
   /** 1 to 12, for an exam named without its day ("in March"). */
   examMonth?: number;
@@ -183,6 +185,7 @@ function normalizeGoal({
   }
 
   return {
+    displayName: cleanText(goal.displayName ?? null),
     examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
     examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
     examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,

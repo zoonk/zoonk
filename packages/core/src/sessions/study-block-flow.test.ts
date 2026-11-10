@@ -22,7 +22,7 @@ import { startStudyBlock } from "./start-study-block";
 
 async function setup() {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });
+  const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 2, userId: user.id });
   const [firstSkill] = fixture.skills;
 
   const mistake = await mistakeFixture({

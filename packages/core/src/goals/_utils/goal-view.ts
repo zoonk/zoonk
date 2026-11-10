@@ -122,6 +122,7 @@ function toGoalView({
     createdAt: goal.createdAt.toISOString(),
     dailyMinutes: goal.dailyMinutes,
     details: isJsonObject(goal.details) ? goal.details : {},
+    displayName: goal.displayName,
     examBlueprintId: goal.examBlueprintId,
     id: goal.id,
     isActive: goal.id === activeGoalId,

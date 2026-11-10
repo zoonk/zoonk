@@ -8,6 +8,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type GoalCreateInput, type GoalDraft } from "../goal-contract";
+import { defaultDisplayName } from "./goal-display-name";
 import { findActiveGoalLimit } from "./goal-status";
 
 function getWeekdayMinutes({
@@ -66,6 +67,7 @@ export async function insertGoalWithPlan(
     data: {
       dailyMinutes,
       details,
+      displayName: draft.displayName ?? defaultDisplayName(draft),
       examBlueprintId: draft.examBlueprintId ?? null,
       id,
       kind: draft.kind,

@@ -188,13 +188,14 @@ describe(completeLibraryLesson, () => {
     const { lesson, runId, user } = await playLesson();
 
     const goal = await goalFixture({
+      displayName: "Bird songs",
       openingLessonId: lesson.id,
       planRevealedAt: null,
       userId: user.id,
     });
 
     await expect(complete({ lessonId: lesson.id, runId })).resolves.toMatchObject({
-      completion: { planReveal: { goalId: goal.id, goalTitle: goal.title, planReady: false } },
+      completion: { planReveal: { goalId: goal.id, goalTitle: "Bird songs", planReady: false } },
       status: "completed",
     });
 

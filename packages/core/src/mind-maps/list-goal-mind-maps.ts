@@ -66,7 +66,11 @@ export async function listGoalMindMaps(
       : null;
 
   return {
-    mindMaps: { chapters, goal: { id: goal.id, title: goal.title }, nextChapter },
+    mindMaps: {
+      chapters,
+      goal: { displayName: goal.displayName, id: goal.id, title: goal.title },
+      nextChapter,
+    },
     status: "ready",
   };
 }

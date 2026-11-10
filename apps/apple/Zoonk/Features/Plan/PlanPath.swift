@@ -68,7 +68,7 @@ struct PlanPathRows: View {
     IconLabeledContent {
       planFinishText(context)
     } title: {
-      Text(context.goal.title)
+      Text(context.goal.displayName)
     } icon: {
       Image(systemName: "flag")
     }
@@ -291,7 +291,7 @@ private struct PlanPhaseRow: View {
     let writing = phase.chapters.contains { $0.writing }
     let challenge =
       phase.checkpoint.flatMap { $0.state == .upcoming && $0.when == .date ? $0.date : nil }
-      .map { PlanDate.text($0, today: context.plan.today) }
+      .map { PlanDate.estimate($0, today: context.plan.today) }
 
     if !writing && phase.lessonsDone < phase.lessonsTotal {
       guard
@@ -312,16 +312,26 @@ private struct PlanPhaseRow: View {
     switch (writing, challenge) {
     case (true, let date?):
       return Text(
-        "More lessons on the way\u{00A0}· challenge \(date)", tableName: "Plan",
-        comment: "The current phase's lessons are being written; its challenge's date")
+        "More lessons on the way\u{00A0}· challenge \(date.text)", tableName: "Plan",
+        comment: "The current phase's lessons are being written; its challenge's date"
+      )
+      .accessibilityLabel(
+        Text(
+          "More lessons on the way\u{00A0}· challenge \(date.spoken)", tableName: "Plan",
+          comment: "The current phase's lessons are being written; its challenge's date"))
     case (true, nil):
       return Text(
         "More lessons on the way", tableName: "Plan",
         comment: "The current phase's lessons are being written")
     case (false, let date?):
       return Text(
-        "Lessons done\u{00A0}· challenge \(date)", tableName: "Plan",
-        comment: "The current phase's lessons are done; its challenge's date")
+        "Lessons done\u{00A0}· challenge \(date.text)", tableName: "Plan",
+        comment: "The current phase's lessons are done; its challenge's date"
+      )
+      .accessibilityLabel(
+        Text(
+          "Lessons done\u{00A0}· challenge \(date.spoken)", tableName: "Plan",
+          comment: "The current phase's lessons are done; its challenge's date"))
     case (false, nil):
       return nil
     }
@@ -334,14 +344,44 @@ private struct PlanPhaseRow: View {
       return nil
     }
 
-    if (phase.kind == .learn || phase.kind == .afterExam) && phase.state == .upcoming {
+    let learns = phase.kind == .learn || phase.kind == .afterExam
+    let today = context.plan.today
+
+    if learns && phase.state == .upcoming {
+      let month = PlanDate.monthText(endDate, today: today)
+
       return Text(
-        "until ~\(PlanDate.monthText(endDate, today: context.plan.today))", tableName: "Plan",
-        comment: "When a phase ends, about")
+        LocalizedStringResource(
+          "untilAboutMonth", defaultValue: "until ~\(month)", table: "Plan",
+          comment:
+            "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day"
+        )
+      )
+      .accessibilityLabel(
+        Text(
+          LocalizedStringResource(
+            "untilAboutMonthSpoken", defaultValue: "until about \(month)", table: "Plan",
+            comment:
+              "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day"
+          )))
+    }
+
+    let day = PlanDate.text(endDate, today: today)
+
+    // The phase ends with its challenge, which has no booked day, only the plan's estimate.
+    if learns && phase.checkpoint?.state == .upcoming {
+      return Text(
+        "until ~\(day)", tableName: "Plan",
+        comment: "When a phase ends, about; the argument is a day like 'Nov 10'"
+      )
+      .accessibilityLabel(
+        Text(
+          "until about \(day)", tableName: "Plan",
+          comment: "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'"))
     }
 
     return Text(
-      "until \(PlanDate.text(endDate, today: context.plan.today))", tableName: "Plan",
+      "until \(day)", tableName: "Plan",
       comment: "When a phase ends; the argument is a date like 'May 5'")
   }
 }
@@ -473,17 +513,50 @@ private struct PlanCheckpointRow: View {
       return Text("Won", tableName: "Plan", comment: "A phase challenge the learner won")
     }
 
-    switch checkpoint.when {
+    return checkpoint.whenText(today: today)
+  }
+}
+
+extension PlanPhase.Checkpoint {
+  /// When it comes. Dated today, the next session is today's, which may already be under way.
+  func whenText(today: String) -> Text? {
+    switch when {
+    case .nextSession where date == today:
+      Text("Today", tableName: "Plan", comment: "When the phase's challenge comes")
     case .nextSession:
-      return Text(
-        "In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
-    case .queued:
-      return Text(
-        "After the challenge before it", tableName: "Plan",
-        comment: "When the phase's challenge comes")
-    case .date:
-      return checkpoint.date.map { Text(PlanDate.text($0, today: today)) }
+      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+    case .date, .queued:
+      date.map { PlanDate.estimateText($0, today: today) }
     }
+  }
+}
+
+extension PlanDate {
+  static func estimate(_ isoDate: String, today: String, month: Bool = false) -> (
+    text: String, spoken: String
+  ) {
+    let date = text(isoDate, today: today, month: month)
+
+    let spoken =
+      month
+      ? String(
+        localized: LocalizedStringResource(
+          "aboutMonth", defaultValue: "About \(date)", table: "Plan",
+          comment: "An estimated month, read aloud; the argument is a month like 'May 2027'"))
+      : String(
+        localized: "About \(date)", table: "Plan",
+        comment: "An estimated day, read aloud; the argument is a day like 'Nov 20'")
+
+    return (
+      String(
+        localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'"),
+      spoken
+    )
+  }
+
+  static func estimateText(_ isoDate: String, today: String, month: Bool = false) -> Text {
+    let date = estimate(isoDate, today: today, month: month)
+    return Text(verbatim: date.text).accessibilityLabel(Text(verbatim: date.spoken))
   }
 }
 

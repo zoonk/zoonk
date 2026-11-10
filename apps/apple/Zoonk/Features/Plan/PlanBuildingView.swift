@@ -38,7 +38,7 @@ struct PlanBuildingView: View {
       } header: {
         SectionTitle(
           Text(
-            "\(goal.title)\u{00A0}· Building your plan", tableName: "Plan",
+            "\(goal.displayName)\u{00A0}· Building your plan", tableName: "Plan",
             comment: "Eyebrow of the Plan while the goal's plan is being built"))
       } footer: {
         SectionFooter {

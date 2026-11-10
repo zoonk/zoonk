@@ -82,7 +82,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
         nextOffset: result.hasMore ? input.offset + input.limit : null,
         status: input.status ?? "open",
       }}
-      goalTitle={goal.title}
+      goalTitle={goal.displayName}
       hrefs={{
         back: "/today",
         lesson: "/learn",

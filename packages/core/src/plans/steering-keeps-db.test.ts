@@ -84,7 +84,7 @@ describe("asking to move the phase dates a run keeps", () => {
     await expect(
       getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
     ).resolves.toMatchObject({
-      challenge: { date: "2020-10-01", planItemId: boss.id, status: "upcoming" },
+      challenge: { date: null, planItemId: boss.id, status: "upcoming" },
       status: "ready",
     });
 

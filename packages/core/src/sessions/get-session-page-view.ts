@@ -2,10 +2,8 @@ import "server-only";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import {
-  type LessonGenerationState,
-  getLessonGenerationStates,
-} from "../library/generation/lesson-generation-state";
+import { readLessonStates } from "../learner/facts/lesson-states";
+import { type LessonGenerationState } from "../library/generation/lesson-generation-state";
 import { getSession } from "../users/get-session";
 import { withLessonScreens } from "./_utils/lesson-screens";
 import { readSavedDayView } from "./_utils/read-saved-day-view";
@@ -108,7 +106,7 @@ export async function getSessionPageView(
 
   const session = day.session;
 
-  const lessons = await getLessonGenerationStates([
+  const lessons = await readLessonStates([
     ...new Set(session.blocks.flatMap((block) => block.lessonId ?? [])),
   ]);
 

@@ -18,17 +18,30 @@ data class TodayQueue(
     val after: List<DayStep>,
 )
 
-fun DayView.queue(nextPosition: Long): TodayQueue {
-    val nextIndex = steps.indexOfFirst { it.position == nextPosition }
+/** Without a next block, every step still to do comes after the done ones. */
+val DayView.queue: TodayQueue
+    get() {
+        val nextIndex = steps.indexOfFirst { it.position == nextPosition }
 
-    return TodayQueue(
-        done = steps.filter(DayStep::isFinished),
-        before = steps.take(nextIndex.coerceAtLeast(0)).filterNot(DayStep::isFinished),
-        after = steps.drop(nextIndex + 1).filterNot(DayStep::isFinished),
-    )
-}
+        return TodayQueue(
+            done = steps.filter(DayStep::isFinished),
+            before = steps.take(nextIndex.coerceAtLeast(0)).filterNot(DayStep::isFinished),
+            after = steps.drop(nextIndex + 1).filterNot(DayStep::isFinished),
+        )
+    }
 
-fun DayView.minutesLeft(): Long = steps.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }
+/** How many rows follow the next one before "+N more" folds the rest. */
+internal const val UPCOMING_ROWS = 4
+
+/** The blocks "+N more" holds while the queue is folded. */
+internal val DayView.foldedSteps: List<DayStep>
+    get() = queue.after.drop(UPCOMING_ROWS)
+
+internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
+    (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
+
+internal val DayView.heldMinutes: Double
+    get() = if (lessonsComing || lessonsToPrepare) minutesAfter(steps) else 0.0
 
 fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null && !studiedToday && !started
 

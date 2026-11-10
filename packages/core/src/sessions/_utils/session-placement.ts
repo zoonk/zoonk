@@ -81,6 +81,7 @@ export async function loadSessionPlacement({
   plan: {
     finalStretchStart: Date | null;
     graph: PlanGraph;
+    listeningSkillIds: ReadonlySet<string>;
     settings: unknown;
     skills: GoalSkillNode[];
     structure: ExamStructure | null;
@@ -99,10 +100,12 @@ export async function loadSessionPlacement({
 
   return pickSessionPlacementItems({
     areaShares: structure ? getAreaShares({ graph, structure }) : null,
+    blueprint: context.blueprint,
     excludeItemIds: used,
     focusAreas: parsePlanSettings(plan.settings).focusAreas,
     goal: context.goal,
     limit: SESSION_PLACEMENT_QUESTIONS,
+    listeningSkillIds: plan.listeningSkillIds,
     quickFormat: getPlacementQuickFormat(structure),
     skills,
     userId: context.userId,

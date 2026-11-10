@@ -456,7 +456,7 @@ describe("more of one subject and less of another", () => {
   });
 
   it("says how many more lessons the subject asked for gets when that ends it later", async () => {
-    const { goal, plan } = await setup({ dailyMinutes: 22, mockMinutes: 30 });
+    const { goal, plan } = await setup({ dailyMinutes: 20, mockMinutes: 30 });
     const before = await readAreas(plan.id);
 
     const changed = await change(goal.id, [{ areas: ["Direito"], kind: "focusAreas", parts: [] }]);

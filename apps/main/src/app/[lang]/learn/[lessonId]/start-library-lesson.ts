@@ -38,6 +38,7 @@ function toStartOutcome({
     return run.success
       ? {
           answers: run.data.answers,
+          clockId: run.data.clockId ?? null,
           hyperdrive: run.data.hyperdrive,
           learnerId,
           optionalStepIds: run.data.optionalStepIds,

@@ -271,7 +271,10 @@ export async function restoreDaySession({
   await tx.studySession.update({
     data: {
       planVersion: plan?.version ?? null,
-      plannedMinutes: snapshot.plannedMinutes + sumMinutes(since) - sumMinutes(dropped),
+      plannedMinutes:
+        snapshot.plannedMinutes +
+        sumMinutes(since.filter((block) => readBlockPayload(block).extra)) -
+        sumMinutes(dropped),
       status,
     },
     where: { id: session.id },

@@ -188,7 +188,7 @@ describe("a class test days away", () => {
 
     expect(plan.phases.map((phase) => phase.kind)).toStrictEqual(["gaps"]);
     expect(lessons.length).toBeGreaterThan(0);
-    expect(lessons.every((item) => item.skillId !== "glycolysis")).toBe(true);
+    expect(lessons.findIndex((item) => item.skillId === "glycolysis")).toBeGreaterThan(0);
     expect(lessons[0]?.skillId).toBe("enzymes");
     expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual(["2026-09-30"]);
     expect(datesOf({ items: plan.items, kind: "review" })).toStrictEqual([]);

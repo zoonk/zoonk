@@ -1,6 +1,7 @@
 import { type Goal } from "@zoonk/db";
 import { findFreshMistakePattern } from "../../../language/patterns/find-fresh-pattern";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
+import { readDayMissionProgress } from "../../../learner/facts/day-mission-progress";
 import { findSavedDaySession } from "../../../sessions/_utils/saved-day-session";
 import { type DayView } from "../../../sessions/day-view";
 import { type Mission, isFullMeal } from "../../../sessions/missions";
@@ -74,7 +75,7 @@ export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: s
   }
 
   const [missions, earned] = await Promise.all([
-    getDayMissions({ session, timeZone }),
+    getDayMissions({ readProgress: readDayMissionProgress, session, timeZone }),
     hasDayMissionBonus({ now, session, timeZone }),
   ]);
 

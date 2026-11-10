@@ -102,7 +102,7 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
 /// A goal that can still earn a certificate.
 struct CertificateUpNext: Equatable, Identifiable, Sendable {
   let id: String
-  let title: String
+  let displayName: String
   /// A language goal's flag, as the API names it (`us`, `es-ct`); nil for other goals.
   var languageFlag: String?
   /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.

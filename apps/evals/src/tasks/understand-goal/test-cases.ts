@@ -18,6 +18,28 @@ function testCase(
 }
 
 export const TEST_CASES: UnderstandGoalCase[] = [
+  testCase("pt-display-names-distinguish-public-exams", {
+    expected: {
+      goals: [
+        { displayName: /^IBAMA$/iu, kind: "exam" },
+        { displayName: /^(?:Banco Central|BACEN|BCB)$/iu, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "Quero passar no concurso do IBAMA e no concurso do Banco Central",
+    language: "pt",
+  }),
+  testCase("en-display-names-distinguish-language-purpose", {
+    expected: {
+      goals: [
+        { displayName: /^German(?: for work)?$/u, kind: "language" },
+        { displayName: /^Japanese(?: for travel)?$/u, kind: "language" },
+      ],
+      route: "goals",
+    },
+    goal: "I want to learn German for work and Japanese for travel",
+    language: "en",
+  }),
   testCase("en-learn-named-version-kept", {
     expected: { goals: [{ kind: "learn", title: /4\.20/u }], route: "goals" },
     goal: "I'm on Docker Desktop 4.20 at work and want to use it better",

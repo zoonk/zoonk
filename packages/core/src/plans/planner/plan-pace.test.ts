@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { choosePace } from "./plan-pace";
+import { choosePace, getPaceFamily, keepSlowerPace } from "./plan-pace";
 
 describe(choosePace, () => {
   it("uses the learner's own pace once they finished enough lessons, more of it as they finish more", () => {
     const others = { course: { count: 100, ratio: 1.1 }, typical: { count: 900, ratio: 1 } };
 
     expect(choosePace({ ...others, own: { count: 5, ratio: 1.3 } })).toStrictEqual({
-      factor: 1.14,
+      factor: 1.2,
       source: "own",
     });
 
-    expect(choosePace({ ...others, own: { count: 180, ratio: 1.3 } }).factor).toBe(1.28);
+    expect(choosePace({ ...others, own: { count: 180, ratio: 1.3 } }).factor).toBe(1.29);
   });
 
-  it("doesn't halve a plan on a few quick lessons", () => {
+  it("blends five lessons equally with the prior", () => {
     const pace = choosePace({
       course: null,
       own: { count: 5, ratio: 0.5 },
@@ -21,7 +21,11 @@ describe(choosePace, () => {
     });
 
     expect(pace.source).toBe("own");
-    expect(pace.factor).toBeGreaterThan(0.9);
+    expect(pace.factor).toBe(0.76);
+
+    expect(choosePace({ course: null, own: { count: 5, ratio: 2 }, typical: null }).factor).toBe(
+      1.5,
+    );
   });
 
   it("falls back to others on the same lessons, then to everyone", () => {
@@ -47,5 +51,36 @@ describe(choosePace, () => {
     expect(choosePace({ course: null, own: { count: 9, ratio: 7 }, typical: null }).factor).toBe(
       2.5,
     );
+  });
+});
+
+describe(keepSlowerPace, () => {
+  it("keeps a slower calibration only within the same lesson family", () => {
+    const sampled = { factor: 1, source: "typical" as const };
+
+    expect(
+      keepSlowerPace({
+        family: "subject",
+        sampled,
+        saved: { factor: 2, family: "subject", source: "own" },
+      }),
+    ).toStrictEqual({ factor: 2, family: "subject", source: "own" });
+
+    expect(
+      keepSlowerPace({
+        family: "language",
+        sampled,
+        saved: { factor: 2, family: "subject", source: "own" },
+      }),
+    ).toStrictEqual({ ...sampled, family: "language" });
+
+    expect(
+      keepSlowerPace({ family: "subject", sampled, saved: { factor: 2, source: "own" } }),
+    ).toStrictEqual({ ...sampled, family: "subject" });
+  });
+
+  it("classifies lessons by their target-language scope", () => {
+    expect(getPaceFamily(null)).toBe("subject");
+    expect(getPaceFamily("es")).toBe("language");
   });
 });

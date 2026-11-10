@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -118,9 +118,7 @@ fun TodayDay(
     viewModel.noticeEvent(read)?.let { TrackShown(it) }
     val scope = rememberCoroutineScope()
     var pulled by remember { mutableStateOf(false) }
-    var doneOpen by rememberSaveable { mutableStateOf(false) }
-    var moreOpen by rememberSaveable { mutableStateOf(false) }
-    val folds = TodayFolds(doneOpen, moreOpen, toggleDone = { doneOpen = !doneOpen }, toggleMore = { moreOpen = !moreOpen })
+    val list = rememberLazyListState()
     val actions =
         remember(viewModel, navigator, model, switching) {
             val idle = { !switching }
@@ -179,6 +177,7 @@ fun TodayDay(
             Column(Modifier.fillMaxSize()) {
                 LazyColumn(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
+                    state = list,
                     horizontalAlignment = if (beside) Alignment.Start else Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
                 ) {
@@ -188,7 +187,7 @@ fun TodayDay(
                         }
                     }
 
-                    todaySession(model, viewModel, actions, folds, wide, buddyName)
+                    todaySession(model, viewModel, actions, list, wide, buddyName)
 
                     if (!beside) {
                         item(key = "aside", contentType = "aside") {

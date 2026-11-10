@@ -151,6 +151,11 @@ fun formatMinutes(
     locale: Locale,
 ): String = formatDuration(minutes * SECONDS_PER_MINUTE, locale)
 
+fun formatMinutes(
+    minutes: Double,
+    locale: Locale,
+): String = formatDuration((minutes * SECONDS_PER_MINUTE).roundToLong(), locale)
+
 /** Pass the device's clock setting, `android.text.format.DateFormat.is24HourFormat`. */
 fun formatTimeOfDay(
     time: LocalTime,

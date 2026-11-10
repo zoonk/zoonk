@@ -1,8 +1,8 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/completion-contract";
+import { sessionMinutesSchema } from "@zoonk/core/sessions/session-minutes";
 import { StudyFreshStart, StudySessionStatus } from "@zoonk/db";
-import { formatDuration } from "@zoonk/utils/duration";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
@@ -18,7 +18,6 @@ import { listeningTranscriptSchema } from "./item-set";
 import { studyBlockQuestionSchema } from "./study-block-question";
 import { weeklyStudyTimeSchema } from "./weekly-study-time";
 
-const EXAMPLE_FUNDED_DAILY_MINUTES = 14.875;
 const EXAMPLE_DAILY_MINUTES = 15;
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
@@ -84,31 +83,7 @@ export const studySessionResponseSchema = z
     lessonsComing: lessonsComingSchema,
     lessonsToPrepare: lessonsToPrepareSchema,
     localDate: logicalDateSchema,
-    minutes: z.object({
-      dailyGoal: z
-        .number()
-        .nonnegative()
-        .meta({
-          description: `The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example ${formatDuration({ locale: "en", totalSeconds: EXAMPLE_FUNDED_DAILY_MINUTES * 60 })}.`,
-          examples: [EXAMPLE_DAILY_MINUTES],
-        }),
-      done: z
-        .number()
-        .int()
-        .min(0)
-        .meta({
-          description:
-            "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`",
-        }),
-      planned: z
-        .number()
-        .int()
-        .min(0)
-        .meta({
-          description:
-            "The minutes of the day's blocks, from each block's estimate, finished ones included: what the day lists. Show it beside a list of the day's blocks (the plan reveal's Today, for one); `dailyGoal` is the day's budget, 0 on a rest day even when the day lists blocks",
-        }),
-    }),
+    minutes: sessionMinutesSchema,
     missions: z
       .array(missionSchema)
       .meta({

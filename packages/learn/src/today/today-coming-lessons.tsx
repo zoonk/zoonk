@@ -6,7 +6,7 @@ import { KindMark } from "../_components/kind-tile";
 import { ChangeSaveError } from "../_components/save-error";
 import { useSentenceSpace } from "../_utils/locale";
 import { useSessionAction } from "../session/use-session-action";
-import { NO_FOLD, type RowFold, getRowClass } from "./today-block-row";
+import { getRowClass } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
 
 function PrepareLessonsLine() {
@@ -37,13 +37,13 @@ function PrepareLessonsLine() {
  * Holds the place of the day's lessons that aren't written yet: Today reads again until they land
  * while they're outlined, and asks the learner for them while nobody is.
  */
-export function ComingLessonsRow({ fold = NO_FOLD }: { fold?: RowFold }) {
+export function ComingLessonsRow() {
   const t = useExtracted();
   const { today, writingStalled } = useTodayScreen();
 
   return (
     <li
-      className={getRowClass({ finished: false, fold, isNext: false })}
+      className={getRowClass({ finished: false, isNext: false })}
       data-slot="today-coming-lessons"
     >
       <span className="flex h-5 w-3 shrink-0 items-center justify-center">

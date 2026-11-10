@@ -124,7 +124,7 @@ export async function getChapterView({
         title: chapter.title,
       },
       counts: area.counts,
-      goal: { id: goal.id, kind: goal.kind, title: goal.title },
+      goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
       lessons: lessonStates,
       mistakes: { open: openMistakes },
       skills: area.skills,

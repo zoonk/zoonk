@@ -204,12 +204,7 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
       const before = await readDay();
       expect(before.plannedMinutes).toBeGreaterThan(12);
 
-      expect(before.missions).toMatchObject({
-        picks: [
-          { kind: "askBuddy", total: 1 },
-          { kind: "somethingNew", total: 1 },
-        ],
-      });
+      expect(before.missions).toMatchObject({ picks: [{ kind: "somethingNew", total: 1 }] });
 
       await expect(
         decidePlanChange({

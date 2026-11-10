@@ -132,7 +132,7 @@ export function MindMapsScreen({
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <PageEyebrow>{mindMaps.goal.title}</PageEyebrow>
+            <PageEyebrow>{mindMaps.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
             {mindMaps.chapters.length > 0 && (
               <DetailFacts>

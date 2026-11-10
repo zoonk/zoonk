@@ -69,6 +69,7 @@ export async function getLanguageProgressView(
     progress: {
       canDo: getCanDo({ doneIds, units }),
       goal: {
+        displayName: goal.displayName,
         id: goal.id,
         targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
         targetLanguage: goal.targetLanguage,

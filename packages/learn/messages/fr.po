@@ -103,6 +103,7 @@ msgstr "Étudié"
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/journey-phase-events.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -198,6 +199,7 @@ msgstr "{percent} % terminé"
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -1012,6 +1014,7 @@ msgstr "Lunettes"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -1025,6 +1028,7 @@ msgstr "Annuler"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -4510,9 +4514,9 @@ msgid "Archive this goal"
 msgstr "Archiver cet objectif"
 
 #: src/journey/goal-actions.tsx
-msgctxt "MP8LVW"
-msgid "Resume {goal}?"
-msgstr "Reprendre {goal} ?"
+msgctxt "rhh0AT"
+msgid "Resume your {goal} goal?"
+msgstr "Reprendre ton objectif {goal} ?"
 
 #: src/journey/goal-actions.tsx
 msgctxt "3y9DGg"
@@ -4520,9 +4524,9 @@ msgid "Resume"
 msgstr "Reprendre"
 
 #: src/journey/goal-actions.tsx
-msgctxt "HO0Shu"
-msgid "Archive {goal}?"
-msgstr "Archiver {goal} ?"
+msgctxt "9DL2qt"
+msgid "Archive your {goal} goal?"
+msgstr "Archiver ton objectif {goal} ?"
 
 #: src/journey/goal-actions.tsx
 msgctxt "jrD9B8"
@@ -4535,9 +4539,9 @@ msgid "Archive"
 msgstr "Archiver"
 
 #: src/journey/goal-actions.tsx
-msgctxt "xxnZz0"
-msgid "{goal} is paused"
-msgstr "Objectif en pause : {goal}"
+msgctxt "T4rFKd"
+msgid "Your {goal} goal is paused"
+msgstr "Ton objectif {goal} est en pause"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/pace-details.tsx
@@ -4689,6 +4693,12 @@ msgctxt "L6rZtN"
 msgid "Share the plan"
 msgstr "Partager le plan"
 
+#: src/journey/journey-menu.tsx
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kvT_KU"
+msgid "Rename goal"
+msgstr "Renommer l’objectif"
+
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
@@ -4728,13 +4738,6 @@ msgstr "Pas dans ton plan"
 msgctxt "J15Qzq"
 msgid "Won"
 msgstr "Remporté"
-
-#: src/journey/journey-phase-events.tsx
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "lqBoRy"
-msgid "After the challenge before it"
-msgstr "Après le défi précédent"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -4911,11 +4914,6 @@ msgctxt "htY1di"
 msgid "Last week's recap"
 msgstr "Récap de la semaine dernière"
 
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "jusqu’au {date}"
-
 #. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
@@ -4927,6 +4925,23 @@ msgstr "jusque vers {date}"
 msgctxt "JzTTux"
 msgid "until about {date}"
 msgstr "jusque vers {date}"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDay"
+msgid "until ~{date}"
+msgstr "jusqu’au ~{date}"
+
+#. {date} is a day, like "Nov 10".
+#: src/journey/path-phase-row.tsx
+msgctxt "phaseUntilAboutDaySpoken"
+msgid "until about {date}"
+msgstr "jusqu’aux environs du {date}"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "oPz0RK"
+msgid "until {date}"
+msgstr "jusqu’au {date}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4956,19 +4971,19 @@ msgid "Challenge left out"
 msgstr "Défi laissé de côté"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "nzBtDK"
-msgid "More lessons on the way · challenge {date}"
-msgstr "D’autres leçons arrivent · défi le {date}"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "FSd2Qh"
 msgid "More lessons on the way"
 msgstr "D’autres leçons arrivent"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "EUjjJB"
-msgid "Lessons done · challenge {date}"
-msgstr "Leçons terminées · défi le {date}"
+msgctxt "Kw3CDV"
+msgid "More lessons on the way · challenge <date></date>"
+msgstr "D’autres leçons arrivent · défi <date></date>"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "QYw146"
+msgid "Lessons done · challenge <date></date>"
+msgstr "Leçons terminées · défi <date></date>"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
@@ -5198,6 +5213,17 @@ msgstr "Passe ton premier examen blanc"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "Participe à ton premier défi hebdomadaire"
+
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "kRla6I"
+msgid "Choose a name you recognize. Your study plan stays the same."
+msgstr "Choisis un nom facile à reconnaître. Ton plan d’étude reste le même."
+
+#. A learning goal's name, not a person's name
+#: src/journey/rename-goal-dialog.tsx
+msgctxt "goalDisplayName"
+msgid "Name"
+msgstr "Nom"
 
 #: src/journey/resume-effect.tsx
 msgctxt "ViPPTn"
@@ -7538,20 +7564,14 @@ msgid ", choose a call"
 msgstr ", choisir un appel"
 
 #: src/missions/mission-copy.tsx
-msgctxt "J8WnXZ"
-msgid ", after today's lessons"
-msgstr ", après les leçons du jour"
+msgctxt "mQmNzY"
+msgid ", after this phase's lessons"
+msgstr ", après les leçons de cette phase"
 
 #: src/missions/mission-copy.tsx
-msgctxt "EK1npa"
-msgid ", after the challenge before it"
-msgstr ", après le défi précédent"
-
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "L_nv1C"
-msgid "After today's lessons"
-msgstr "Après les leçons du jour"
+msgctxt "-d7MNH"
+msgid "After this phase's lessons"
+msgstr "Après les leçons de cette phase"
 
 #: src/missions/mission-copy.tsx
 msgctxt "teh3kP"
@@ -12940,6 +12960,7 @@ msgid "Shared text"
 msgstr "Texte commun"
 
 #: src/questions/item-set-stimulus.tsx
+#: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
 msgid "Show less"
 msgstr "Afficher moins"
@@ -13512,6 +13533,11 @@ msgstr "Séance du jour"
 msgctxt "s53FnF"
 msgid "Net score {net}"
 msgstr "Score net {net}"
+
+#: src/session/study-moment.tsx
+msgctxt "SJ1ksk"
+msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
+msgstr "{count, plural, one {# leçon reportée} other {# leçons reportées}} à un autre jour pour ne pas dépasser {time} d’étude aujourd’hui."
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
@@ -14222,14 +14248,9 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "Nous n’avons pas pu ouvrir tes prochaines leçons. Réessaie."
 
 #: src/today/today-block-row.tsx
-msgctxt "hTNiZs"
-msgid "{phase} · after today's lessons"
-msgstr "{phase} · après les leçons d’aujourd’hui"
-
-#: src/today/today-block-row.tsx
-msgctxt "swGOPE"
-msgid "{phase} · after the challenge before it"
-msgstr "{phase} · après le défi précédent"
+msgctxt "pPB2tF"
+msgid "{phase} · after this phase's lessons"
+msgstr "{phase} · après les leçons de cette phase"
 
 #: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
@@ -14540,9 +14561,9 @@ msgid "Practice anytime"
 msgstr "S’entraîner à tout moment"
 
 #: src/today/today-preparing.tsx
-msgctxt "-XxfNz"
-msgid "Building your plan for {goal}"
-msgstr "Préparation de ton plan pour {goal}"
+msgctxt "xE9m04"
+msgid "Building your {goal} plan"
+msgstr "Préparation de ton plan {goal}"
 
 #: src/today/today-preparing.tsx
 msgctxt "YIDCBU"

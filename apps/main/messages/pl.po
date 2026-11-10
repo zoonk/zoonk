@@ -1014,9 +1014,9 @@ msgid "Start a new goal, or pick another one above."
 msgstr "Zacznij realizować nowy cel lub wybierz inny powyżej."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "WDKpPN"
-msgid "You finished {goal}."
-msgstr "Cel zrealizowany: {goal}."
+msgctxt "PcSnMu"
+msgid "You finished your {goal} goal."
+msgstr "Udało ci się zrealizować cel: {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "EQpfkS"
@@ -1029,9 +1029,9 @@ msgid "Nothing is planned until you resume it."
 msgstr "Dopóki nie wznowisz celu, nic nie planujemy."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "CSgdxh"
-msgid "{goal} is paused."
-msgstr "Cel wstrzymany: {goal}."
+msgctxt "lEE47Z"
+msgid "Your {goal} goal is paused."
+msgstr "Twój cel jest wstrzymany: {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1054,9 +1054,9 @@ msgid "Look it over before you start."
 msgstr "Przejrzyj go, zanim zaczniesz."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "rKFY6-"
-msgid "Your plan for {goal} is ready."
-msgstr "Twój plan jest gotowy. Cel: {goal}."
+msgctxt "_V80Fi"
+msgid "Your {goal} plan is ready."
+msgstr "Twój plan jest gotowy: {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "yKjBeN"
@@ -1074,9 +1074,9 @@ msgid "It's built from what you tell us."
 msgstr "Tworzymy go na podstawie twoich odpowiedzi."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "zvtDTr"
-msgid "Your plan for {goal} needs a few more answers."
-msgstr "Potrzebujemy jeszcze kilku odpowiedzi, by dokończyć twój plan. Cel: {goal}."
+msgctxt "CIgx3N"
+msgid "Your {goal} plan needs a few more answers."
+msgstr "Twój plan czeka na jeszcze kilka odpowiedzi: {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "dMgVfu"

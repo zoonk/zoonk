@@ -10,6 +10,7 @@ import { useLessonSessionSlots } from "@/components/session/use-lesson-session-s
 import { redirect, useRouter } from "@/i18n/navigation";
 import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
+import { sendLessonClock } from "@/lib/lessons/lesson-clock-request";
 import {
   getExampleLine,
   requestAnswerExplanation,
@@ -88,6 +89,7 @@ function createAdapters({
         runId: input?.runId,
         studySessionId: visit.sessionId,
       }),
+    updateLessonClock: (input) => sendLessonClock({ input, lessonId }),
   };
 }
 

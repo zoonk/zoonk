@@ -162,7 +162,10 @@ export async function loadStudyBlock(
       ? loadBlockedTestOutChapters({
           chapterIds: [storedPayload.chapterId],
           goalId: owned.session.goalId,
-          known: { source: readSavedPlan(owned.userId, owned.session.goalId) },
+          known: {
+            goal: owned.session.goal,
+            source: readSavedPlan(owned.userId, owned.session.goalId),
+          },
           now,
           timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
           userId: owned.userId,

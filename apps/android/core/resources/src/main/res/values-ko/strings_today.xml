@@ -8,7 +8,7 @@
   "today_behind_kept": "fabe053257c097893481499571e2c2b995f3b87687890f03a18d689f28d02907",
   "today_building_plan": "91c76e42e75a71fb78346547dddbe7e65f7f5dc8a6bfb9b1c9b75b8bd2b3bd6d",
   "today_building_plan_detail": "51518300c1d7c00b91292cddaf7abbc3c0cd3e23c1dc129722b942f9096c41ba",
-  "today_building_plan_goal": "f421473cb8fabcd8dd0cc8e35db573a063d2863e7bd7ef886eb74252e1a10aa2",
+  "today_building_plan_goal": "c044a03cfae6d4772777b0c19cb83fee4b1911eb2f03f0e9bd3db732f283ec96",
   "today_catch_up_before_exam": "996d6d761aa060faab9578054e5523701084467c67834cb506b416d86cd02fb4",
   "today_catch_up_next_days": "e4df297002cc9dfd5bb8f095c092690f742c7113c285122ed7c33c85ac08a32d",
   "today_catch_up_today": "e975a6661441aa431f77bbd66b29250f720f243897f8ff5ac84d65f9483daf8c",
@@ -42,7 +42,7 @@
   "today_exam_tomorrow": "7d2ee014fbfc5eae809168c3324f967c655863e626d018e0d5ddd2e5bf8eabce",
   "today_finished": "48fa470c08d33203cb4915b7ea061166a1ae6420eedc28b3614869bdab2558d5",
   "today_finished_detail": "5e05c684741cbca4eb7c511589aa5bf147a91ba1e8680a43fcec7a9b986c52e9",
-  "today_finished_goal": "f023a884105dd694c59958c78cc06c5d324371655dbb1ae085b73fc616d320a8",
+  "today_finished_goal": "928616fa2be16f63ca901b38b08809ed7214ea8ebfdcedede92de05bd4aa62ec",
   "today_fresh_start_new_phase": "408002f7c9755fde3343a0d5b4cf37b3cf7d88b7e5a80076cf21fbc7105d5fc0",
   "today_fresh_start_new_week": "6e6990e129b88940f4054c15be54a0c2495f06e0b64d9c53b030689aa7d3082a",
   "today_fresh_start_welcome_back": "2f7bc2d52c56ed3a6cc8d1e7d33e759f1980fde481c91fa43a3b58349dd53540",
@@ -99,7 +99,7 @@
   "today_past_date_exam": "7b6241f6728cbe2bbf58e105c6f0f1f412c52f7ec2fdbd9119290a5812624303",
   "today_paused": "3b3af707be60afd54a6b48a0935a3bcb21361a68076658aa2ea58a384317db3e",
   "today_paused_detail": "c29c8120ee1043ecd9af01b6334e9ab0957874a8a13aa2c79a55c8164899c588",
-  "today_paused_goal": "edfca82c2c35bdc79d7be41fabf08326a3421dd9c267b19ed57c9a07296bf9ec",
+  "today_paused_goal": "977936405b061b4785566b4cbbe22e9578a833f5457f01aa0213ecb4d1040117",
   "today_paused_this_goal": "7ea75576918fb8d3c8c953ea84027d1c48413b3d3ab57af78e76e19b72b0d4d7",
   "today_plan_apply": "66c937b60975223ce4535990b72c3f306a083f5bfed0aaf51968f518f04fb503",
   "today_plan_keep_mine": "35999c8ad35d7ebf2301283f54e1e51fefdfa676244656505d206ef1de249d53",
@@ -133,13 +133,12 @@
   "today_see_your_plan": "aaf7e577a4f9b9e29179b62f635b84c5e10fe85cef60fa7a7a1726c9660cc2da",
   "today_setting_up": "93f3364c3d897c8480fb917f021a57cb8ffd254bdf45f5faeff391cca7be4ef5",
   "today_setting_up_detail": "d7149b1707015b8da63ebe21b4d56672980114c2cca81b7a4c9bdabbad428d81",
-  "today_setting_up_goal": "353ef9c7fd5e4be827c13cc4103e16817a5907736d4340f579a5cb8aee045fdb",
+  "today_setting_up_goal": "11855c6c7f2d584b100ffe30d9e75d0e78ed1082f052075d6493851fb0b56e45",
+  "today_show_less": "693c87326519897256f195075bde81a1f483e1915b6b3f28be0be139e4172239",
   "today_start_new_goal": "7683ec312f44392f14e25b75baf9c39382a10f2e6f9e11ea12f651e13f71617f",
   "today_start_session": "5f0f29e764849e3b612ea04bb45dcb92263a8e77feae929af8f13c3743fcd048",
-  "today_step_after_challenge": "d8f1bb700970b4f9f357c9103d71c2e9625025a0087eb2c2089b20de71a86b32",
-  "today_step_after_challenge_phase": "47e2a0f986283aaae98113eebe18109d131962acb9582835bf592f745954be54",
-  "today_step_after_lessons": "83875251315d95b7fd5463f690358964824e90ab68b0ac1dcc04834d47c14324",
-  "today_step_after_lessons_phase": "f4c62f42c56e113870c122ecb19d95e804473ddc7d4235fde9ed1c1c7b17d6b3",
+  "today_step_after_lessons": "27f151889616502a4da891768c910a656a865a46f350d0d21ee5bd9d08a125d8",
+  "today_step_after_lessons_phase": "9bbf7700a65bc90c1af199d66dd1eb8b047fdf444e4c7adbbf6e88f50bd407c9",
   "today_step_being_written": "bd2a608368e8b37f2605ea1b0420fca213bf95d83673d782dee483c57ffd0376",
   "today_step_catching_up": "dd0e877f5c77af75c5d95ed8c8e17d88a8faf8b40f442e8c7b8e8375ab33454a",
   "today_step_catching_up_subject": "432101ba1f3a54b1de9b0fec199f72b43ca3ac022fc5de9bfeab118a445ae086",
@@ -242,6 +241,8 @@
     <plurals name="today_more_count">
         <item quantity="other">+%d개 더</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">접기</string>
     <string name="today_step_done">완료</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">다음 단계</string>
@@ -254,11 +255,9 @@
     <string name="today_step_catching_up_subject">따라잡기 · %1$s</string>
     <string name="today_step_often_tested">자주 출제됨</string>
     <string name="today_step_often_tested_label">%1$s · 자주 출제</string>
-    <string name="today_step_after_lessons">오늘의 레슨을 마친 후</string>
+    <string name="today_step_after_lessons">이 단계의 레슨을 마친 후</string>
     <!-- %1$s is the phase's name. -->
-    <string name="today_step_after_lessons_phase">%1$s · 오늘 레슨 후</string>
-    <string name="today_step_after_challenge">앞선 챌린지를 마친 후</string>
-    <string name="today_step_after_challenge_phase">%1$s · 이전 챌린지 후</string>
+    <string name="today_step_after_lessons_phase">%1$s · 이 단계의 레슨을 마친 후</string>
     <string name="today_done">오늘의 학습을 마쳤어요.</string>
     <string name="today_done_day_off">쉬는 날에도 공부했어요.</string>
     <string name="today_see_summary">오늘의 요약 보기</string>
@@ -300,12 +299,12 @@
     <string name="today_not_now">나중에</string>
     <string name="today_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <string name="today_finished">완료</string>
-    <!-- %1$s is the goal's title. -->
-    <string name="today_finished_goal">%1$s을(를) 마쳤어요.</string>
+    <!-- %1$s is the goal's short name, like "CGU" or "Italian". -->
+    <string name="today_finished_goal">%1$s 목표를 완료했어요.</string>
     <string name="today_finished_detail">새 목표를 시작하거나 위에서 다른 목표를 선택하세요.</string>
     <string name="today_start_new_goal">새 목표 시작하기</string>
     <string name="today_paused">일시 중지됨</string>
-    <string name="today_paused_goal">%1$s 진행을 잠시 멈췄어요.</string>
+    <string name="today_paused_goal">%1$s 목표가 일시 중지되어 있어요.</string>
     <string name="today_paused_this_goal">이 목표는 일시 중지되었어요.</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="today_paused_detail">목표를 다시 시작할 때까지 예정된 학습이 없어요.</string>
@@ -314,11 +313,11 @@
     <string name="today_resume_effect">오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요.</string>
     <string name="today_resume_goal_limit">무료 요금제에서는 한 번에 목표 하나만 진행할 수 있어요. 다른 목표를 일시 중지해 이 목표를 다시 진행하거나, Plus를 구독해 여러 목표를 함께 진행해 보세요.</string>
     <string name="today_setting_up">준비하고 있어요</string>
-    <string name="today_setting_up_goal">%1$s 계획을 만들려면 답변이 조금 더 필요해요.</string>
+    <string name="today_setting_up_goal">%1$s 계획을 세우려면 몇 가지 답변이 더 필요해요.</string>
     <string name="today_setting_up_detail">알려 주신 내용을 바탕으로 계획을 만들어요.</string>
     <string name="today_continue_setting_up">설정 이어서 하기</string>
     <string name="today_building_plan">계획을 만들고 있어요</string>
-    <string name="today_building_plan_goal">%1$s 목표에 맞춰 계획을 만들고 있어요</string>
+    <string name="today_building_plan_goal">%1$s 계획을 만들고 있어요</string>
     <string name="today_building_plan_detail">보통 1~2분 걸려요. 준비되면 여기서 바로 첫날 학습을 시작할 수 있어요.</string>
     <string name="today_quick_explanation">간단한 설명</string>
     <string name="today_continue_explanation">설명 이어서 보기</string>

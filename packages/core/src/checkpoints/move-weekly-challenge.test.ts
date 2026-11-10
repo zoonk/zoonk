@@ -177,7 +177,7 @@ describe(moveWeeklyChallenge, () => {
     expect(restored.payload).toMatchObject({ planItemId: back.id });
   });
 
-  it("completes a started day whose last open block was the challenge", async () => {
+  it("refills a started day whose last open block was the moved challenge", async () => {
     const { block, plan, session, user } = await setup();
 
     const lesson = await prisma.planItem.findFirstOrThrow({
@@ -207,7 +207,13 @@ describe(moveWeeklyChallenge, () => {
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
-    ).resolves.toMatchObject({ endedAt: CHALLENGE_DAY, status: "completed" });
+    ).resolves.toMatchObject({ endedAt: null, status: "active" });
+
+    await expect(
+      prisma.studySessionBlock.count({
+        where: { kind: "learn", sessionId: session.id, status: "pending" },
+      }),
+    ).resolves.toBeGreaterThan(0);
   });
 
   it.each(["session", "challenge"] as const)(

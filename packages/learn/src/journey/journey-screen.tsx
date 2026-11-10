@@ -253,7 +253,7 @@ function JourneyBody({
         {structure && <PhasesSheet links={links} onOpenChange={setPhasesOpen} open={phasesOpen} />}
         {goalMenu.goal && (
           <ArchiveGoalDialog
-            goalTitle={goal.title}
+            goalTitle={goal.displayName}
             onArchive={goalMenu.archive}
             onOpenChange={goalMenu.setArchiving}
             open={goalMenu.archiving}
@@ -261,7 +261,7 @@ function JourneyBody({
         )}
         {goalMenu.resumePreview && (
           <ResumeGoalDialog
-            goalTitle={goal.title}
+            goalTitle={goal.displayName}
             onOpenChange={goalMenu.setResuming}
             onResume={goalMenu.resume}
             open={goalMenu.resuming}

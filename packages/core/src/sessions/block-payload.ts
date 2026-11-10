@@ -41,6 +41,8 @@ const checkpointSchema = z.object({
 
 /** Freeze question ids at build time so revisits ask the same questions. */
 const blockPayloadSchema = z.object({
+  /** A put-off phase challenge: the day's order keeps it behind the lessons. */
+  afterLessons: z.boolean().default(false),
   /** A chapter's "Practice now": the area it practices, so a second tap finds it. */
   areaId: z.string().nullable().default(null),
   /** The areas most of a practice block asks about, at most two: what its row is named after. */
@@ -55,6 +57,8 @@ const blockPayloadSchema = z.object({
   checkpointAnswers: z
     .array(z.object({ attemptId: uuidSchema(), itemId: uuidSchema() }))
     .default([]),
+  creditedMinutes: z.number().nonnegative().optional(),
+  deferredLessonsCount: z.number().int().nonnegative().default(0),
   drills: z.array(drillSchema).default([]),
   /** The retained locked calls whose freed time this once-only entitlement replacement filled. */
   entitlementReplacementFor: z.array(uuidSchema()).default([]),
@@ -90,6 +94,10 @@ const blockPayloadSchema = z.object({
   timing: z
     .object({
       activeAt: z.iso.datetime().nullable(),
+      clock: z
+        .object({ id: uuidSchema(), runId: uuidSchema(), sequence: z.int().nonnegative() })
+        .nullable()
+        .optional(),
       elapsedMs: z.number().nonnegative(),
       /** Focus already credited by a lesson run before its block's separate settlement. */
       recordedMs: z.number().nonnegative().optional(),
