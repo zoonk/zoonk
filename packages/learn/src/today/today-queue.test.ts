@@ -34,6 +34,22 @@ describe(splitTodayQueue, () => {
   });
 });
 
+describe("a day without a next block", () => {
+  it("folds its finished blocks and leaves the rest after them", () => {
+    const blocks = [
+      { position: 0, status: "completed" },
+      { position: 1, status: "pending" },
+      { position: 2, status: "skipped" },
+    ] as const;
+
+    expect(splitTodayQueue({ blocks, nextPosition: null })).toStrictEqual({
+      after: [blocks[1]],
+      before: [],
+      done: [blocks[0], blocks[2]],
+    });
+  });
+});
+
 describe(isFinished, () => {
   it.each(["completed", "skipped"] as const)("counts %s as finished", (status) => {
     expect(isFinished({ status })).toBe(true);

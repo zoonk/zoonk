@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { type DayStep } from "../session/session-types";
 import { BlockRow, PlusLessonRow } from "./today-block-row";
 import { ComingLessonsRow } from "./today-coming-lessons";
@@ -18,22 +18,69 @@ import { TodayUpNext } from "./today-up-next";
 
 const DONE_ROWS = 1;
 
-function SessionQueue({ next }: { next: DayStep }) {
+/** Opened rows land above "Show less", so focus moves to the first of them. */
+function focusRow(row: Element | null | undefined) {
+  if (!(row instanceof HTMLElement)) {
+    return;
+  }
+
+  const target = row.querySelector<HTMLElement>("a[href], button:not(:disabled)");
+
+  if (target) {
+    target.focus();
+    return;
+  }
+
+  row.tabIndex = -1;
+  row.focus();
+}
+
+function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const { blocks, lessonsComing, lessonsToPrepare, minutes, plusLessons } = today.session;
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next.position });
+  const listRef = useRef<HTMLOListElement>(null);
+  const revealFrom = useRef<number | null>(null);
+  const opens = next !== null;
+  const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next?.position ?? null });
   const foldsDone = done.length > DONE_ROWS;
 
-  const lessonsAhead = lessonsComing || lessonsToPrepare;
+  // Activity keeps state while Today hides, so every visit starts folded.
+  useLayoutEffect(
+    () => () => {
+      setDoneOpen(false);
+      setMoreOpen(false);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const from = revealFrom.current;
+    revealFrom.current = null;
+
+    if (moreOpen && from !== null) {
+      focusRow(listRef.current?.children.item(from));
+    }
+  }, [moreOpen]);
+
+  const lessonsAhead = opens && (lessonsComing || lessonsToPrepare);
   const coming = Number(lessonsAhead);
   const more = after.length + coming + plusLessons.length - UPCOMING_ROWS;
 
   const plusRows = moreOpen
     ? plusLessons.length
     : Math.max(0, UPCOMING_ROWS - after.length - coming);
+
+  const toggleMore = () => {
+    revealFrom.current = moreOpen ? null : (listRef.current?.children.length ?? null);
+    setMoreOpen(!moreOpen);
+  };
+
+  if (blocks.length === 0 && plusLessons.length === 0) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col" data-slot="today-session-list">
@@ -46,7 +93,7 @@ function SessionQueue({ next }: { next: DayStep }) {
         />
       )}
 
-      <ol className="flex flex-col" id={SESSION_LIST_ID}>
+      <ol className="flex flex-col" id={SESSION_LIST_ID} ref={listRef}>
         {(!foldsDone || doneOpen) &&
           done.map((block) => <BlockRow block={block} isNext={false} key={block.position} />)}
 
@@ -54,10 +101,10 @@ function SessionQueue({ next }: { next: DayStep }) {
           <BlockRow block={block} isNext={false} key={block.position} />
         ))}
 
-        <BlockRow block={next} isNext />
+        {next && <BlockRow block={next} isNext />}
 
         {(moreOpen ? after : after.slice(0, UPCOMING_ROWS)).map((block) => (
-          <BlockRow block={block} isNext={false} key={block.position} />
+          <BlockRow block={block} isNext={false} key={block.position} opens={opens} />
         ))}
 
         {lessonsAhead && (moreOpen || after.length < UPCOMING_ROWS) && <ComingLessonsRow />}
@@ -82,36 +129,14 @@ function SessionQueue({ next }: { next: DayStep }) {
               : getFoldMinutes({
                   hasHiddenRows: after.length + coming > UPCOMING_ROWS,
                   left: minutes.left,
-                  shown: [...before, next, ...after.slice(0, UPCOMING_ROWS)],
+                  shown: [...before, ...(next ? [next] : []), ...after.slice(0, UPCOMING_ROWS)],
                 })
           }
-          onToggle={() => setMoreOpen((open) => !open)}
+          onToggle={toggleMore}
           open={moreOpen}
         />
       )}
     </div>
-  );
-}
-
-function DayQueue() {
-  const { today } = useTodayScreen();
-  const { blocks, plusLessons } = today.session;
-
-  if (blocks.length === 0 && plusLessons.length === 0) {
-    return null;
-  }
-
-  return (
-    <ol className="flex flex-col" data-slot="today-session-list">
-      {blocks.map((block) => (
-        <BlockRow block={block} isNext={false} key={block.position} opens={false} />
-      ))}
-
-      {plusLessons.map((lesson, index) => (
-        // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
-        <PlusLessonRow key={index} title={lesson.title} />
-      ))}
-    </ol>
   );
 }
 
@@ -132,7 +157,7 @@ export function TodaySession({ className }: { className?: string }) {
       <DayMeta className="mt-2" />
 
       <div className="mt-3 flex flex-col first:mt-0 empty:hidden">
-        {next ? <SessionQueue next={next} /> : <DayQueue />}
+        <SessionQueue next={next} />
       </div>
 
       <TodayDayStatus className="mt-3 first:mt-0" />
