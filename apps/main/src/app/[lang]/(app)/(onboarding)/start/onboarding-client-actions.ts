@@ -1,6 +1,7 @@
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
+import { getPageLanguage } from "@/i18n/page-language";
 import { rememberLocale } from "@/i18n/remember-locale";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
@@ -58,11 +59,11 @@ async function createAsGuest(
  * account. Material goes through the uploads API from the browser: files go straight to storage.
  */
 export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
-  answer: ({ goalId, input }) => answerOnboardingAction(goalId, input),
+  answer: ({ goalId, input }) => answerOnboardingAction(goalId, input, getPageLanguage()),
   answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
-  changeAim: ({ aim, goalId }) => changeOnboardingAimAction(goalId, aim),
+  changeAim: ({ aim, goalId }) => changeOnboardingAimAction(goalId, aim, getPageLanguage()),
   createGoals: (input) => createAsGuest(() => createOnboardingGoalsAction(input)),
   findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),

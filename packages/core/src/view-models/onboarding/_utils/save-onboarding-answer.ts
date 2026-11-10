@@ -20,6 +20,12 @@ import { findOnboardingGoalIds } from "./onboarding-goals";
 import { getReasonDetails } from "./reason-answer";
 import { saveAnswerGoal } from "./save-answer-goal";
 
+/** Profile answers are saved on the learner before an answer reaches the goal. */
+type GoalAnswerInput = Exclude<
+  OnboardingAnswerInput,
+  { answer: unknown } | { question: "skipProfile" }
+>;
+
 type Details = Record<string, unknown>;
 
 const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
@@ -30,7 +36,7 @@ function withoutReplacedAnswer({
   input,
 }: {
   details: Details;
-  input: OnboardingAnswerInput;
+  input: GoalAnswerInput;
 }): Details {
   if (input.question === "reason") {
     return Object.fromEntries(
@@ -66,7 +72,7 @@ function getDetailChanges({
   input,
 }: {
   details: Details;
-  input: OnboardingAnswerInput;
+  input: GoalAnswerInput;
 }): Details {
   switch (input.question) {
     case "purpose":
@@ -119,7 +125,7 @@ function getAnswerSchedule({
 }: {
   currentId: string;
   goalId: string;
-  input: OnboardingAnswerInput;
+  input: GoalAnswerInput;
   shares: Map<string, number> | null;
   weekends: Map<string, number> | null;
 }) {
@@ -143,12 +149,7 @@ async function saveAnswerSettings(
     plan,
     previous,
     settings,
-  }: {
-    input: OnboardingAnswerInput;
-    plan: Plan | null;
-    previous: PlanSettings;
-    settings: PlanSettings;
-  },
+  }: { input: GoalAnswerInput; plan: Plan | null; previous: PlanSettings; settings: PlanSettings },
 ): Promise<boolean> {
   if (!plan) {
     return false;
@@ -183,7 +184,7 @@ async function getAnswerOperations({
 }: {
   current: Goal;
   goalId: string;
-  input: OnboardingAnswerInput;
+  input: GoalAnswerInput;
   schedule: Parameters<typeof getScheduleOperations>[0]["input"];
   state: PlanState;
   tx: TransactionClient;
@@ -207,7 +208,7 @@ export async function saveAnswerInputs({
   input,
 }: {
   goal: Goal;
-  input: OnboardingAnswerInput;
+  input: GoalAnswerInput;
 }): Promise<
   | { goalIds: string[]; status: "invalid" | "notFound" | "saved" }
   | { goals: number; minutes: number; status: "dayTooShort" }

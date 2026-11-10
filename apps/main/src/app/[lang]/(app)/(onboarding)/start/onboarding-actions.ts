@@ -31,6 +31,7 @@ import {
   type PlanOutcome,
   type WaitlistOutcome,
 } from "@zoonk/learn/onboarding/actions";
+import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 
@@ -77,11 +78,14 @@ export async function createOnboardingGoalsAction(input: unknown): Promise<Creat
   return { generationId: generation?.generationId ?? null, goalId: main.id, status: "created" };
 }
 
+/** `language` is the page's: what's saved about the learner and the answers' labels are in it. */
 export async function answerOnboardingAction(
   goalId: string,
   input: unknown,
+  language: string,
 ): Promise<AnswerOutcome> {
   const parsed = onboardingAnswerInputSchema.safeParse(input);
+  const locale = getSupportedLocaleFromLanguage(language);
 
   if (!parsed.success || !isUuid(goalId)) {
     return { status: "failed" };
@@ -89,6 +93,7 @@ export async function answerOnboardingAction(
 
   const response = await postAsLearner({
     body: parsed.data,
+    locale,
     path: `/v1/goals/${encodeURIComponent(goalId)}/onboarding/answers`,
   });
 
@@ -104,7 +109,7 @@ export async function answerOnboardingAction(
     return { status: "failed" };
   }
 
-  const onboarding = await getOnboarding({ goalId: answered.goal.id });
+  const onboarding = await getOnboarding({ goalId: answered.goal.id, locale });
 
   return onboarding.status === "ready"
     ? { onboarding: onboarding.onboarding, status: "saved" }
