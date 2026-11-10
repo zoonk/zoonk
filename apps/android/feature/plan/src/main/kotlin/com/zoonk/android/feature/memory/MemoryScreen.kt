@@ -178,7 +178,7 @@ private fun Loaded(
                         onDelete = { screen.deleteFact(fact.id) },
                         onEditProfile =
                             fact.source?.takeIf { it.kind == MemorySource.Kind.PROFILE }?.id?.let { id ->
-                                { navigator.open(AppRoute.ProfileQuestionEdit(id)) }
+                                { navigator.open(if (memory.enabled) AppRoute.ProfileQuestionEdit(id) else AppRoute.AboutYou) }
                             },
                     )
                 }

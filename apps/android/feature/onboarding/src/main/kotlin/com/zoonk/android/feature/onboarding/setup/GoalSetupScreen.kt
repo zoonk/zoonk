@@ -173,7 +173,7 @@ fun GoalSetupScreen(
     ) { store.onboardings[vm.goalId].refreshed() }
     val inQuestions = step != null && step != OnboardingStep.PLAN
     val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
-    val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.history.isNotEmpty() }
+    val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.goingBack() != null }
 
     // The time question keeps what the learner set while a screen after it is open, such as the date they went to change.
     val schedule = rememberSaveableStateHolder()

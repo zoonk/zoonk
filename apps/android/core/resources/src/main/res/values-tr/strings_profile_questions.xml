@@ -40,10 +40,10 @@
   "profile_questions_read_favorites": "a42531ce0f1758408e8e0c5b700e9044b819ee47cfc0fa4650f574c3972071d3",
   "profile_questions_read_placeholder": "65402e3ce374eb6debf3b8bd8514641bcd574c14c42993c0b81f8714df9727a7",
   "profile_questions_read_title": "eff5ffa1c87a4c2fb7c825cbeb52b1b5ec1f71d444e8538a5b1154254459350f",
-  "profile_questions_row_activities": "b95f67caf83012dd680c2d180b815f3fb585357697b13b7be214340e4bc09530",
+  "profile_questions_row_activities": "01193cfe585c51ef5d64edd643a21c373d4ee76872a3219397f460e1cd97802f",
   "profile_questions_row_conditions": "97db39ca153eb04964682aec2b63d36db72c2d593c4d9be60f2bf01e3c386d20",
-  "profile_questions_row_listen": "9692a8e6a74a9bca3ae06465053d5267b4d4a03b83a2f5491878911a9d25a8ac",
-  "profile_questions_row_play": "32be45a54376174554e8ad83689cf4733ce538240f98e34c705476e1b6742daa",
+  "profile_questions_row_listen": "293490762cd2a1ef4f7e37ca528883e6cc51bcea8044185af520b3dab0e2186b",
+  "profile_questions_row_play": "1ea96d6cf042a1c5dbc9c23aeb387ec324fb2aaa8774f30ef532d32e402724b6",
   "profile_questions_row_read": "4d21f879f2de867fcf241e08391d9e63ab53715a26a6b98050bec7144af3b1d1",
   "profile_questions_row_studies": "f8e754ca325cc164afd2bfdbd06568560f466f90683cb2da504d1c62faaa426a",
   "profile_questions_row_support": "0360a128b96711307b20eb10802a390e8e617b88b4b8278efef929c7d3960d7a",
@@ -145,11 +145,16 @@
     <string name="profile_questions_row_work">Şu an yaptığın iş</string>
     <string name="profile_questions_row_tools">Uygulamalar ve araçlar</string>
     <string name="profile_questions_row_studies">Eğitim geçmişin</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
     <string name="profile_questions_row_watch">İzlediklerin</string>
-    <string name="profile_questions_row_listen">Dinle</string>
-    <string name="profile_questions_row_play">Oynat</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
+    <string name="profile_questions_row_listen">Dinlediklerin</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">Oynadıkların</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
     <string name="profile_questions_row_read">Okudukların</string>
-    <string name="profile_questions_row_activities">Yaptıkların</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
+    <string name="profile_questions_row_activities">Yapmayı sevdiklerin</string>
     <string name="profile_questions_row_conditions">Sağlık durumun</string>
     <string name="profile_questions_row_support">Öğrenmene yardımcı olan şeyler</string>
     <string name="profile_questions_not_answered">Cevaplanmadı</string>

@@ -40,15 +40,15 @@
   "profile_questions_read_favorites": "e218962e3b7b907c31960f08da615f8ca894503a07e19a055468621c7d0927b2",
   "profile_questions_read_placeholder": "89d80d7df69cb133e0ff32dc433076f282157386a68594aa1d5b6f404daaa44d",
   "profile_questions_read_title": "47be6a7680294a7630817206c31edd9fa4e987fca5f0ab45bedb9f196faf9989",
-  "profile_questions_row_activities": "b280db1620138f402f12619fe852db4b48aef3afd2ee6cd3ada99a7281c3cc76",
+  "profile_questions_row_activities": "75cd2759eef9aa32d3c5416c9773423733042dc4303917f327479bd05d20eee9",
   "profile_questions_row_conditions": "e69c5f9df24e8eeb14259cfb3e4d01c9e7c699438f674143309e45eec02168b7",
   "profile_questions_row_listen": "ca65ce6ad5f3b0d84dfe4239d151ec2f8ae3a860ba1f8d8250360ee74ec77014",
-  "profile_questions_row_play": "a96c2ee5fff25f2b5fdac800fe8c89d7cafd50514702445a50b896414f4b141a",
-  "profile_questions_row_read": "925bb02cf32a8bd2792e209aae41b85b265b0f520c72128e5183906c90bbbae3",
+  "profile_questions_row_play": "5650051a58b64664d6373fd1c1d6cff110c21b9ba94dbced07db73ceac9da9e6",
+  "profile_questions_row_read": "a67018438e10584b6ca9c398edef5d328fd3774d5a80705cf9cb5ff0259623a3",
   "profile_questions_row_studies": "222370a8eea461c111b8a90d55426478085816d720201f01631b223eb2528f8a",
   "profile_questions_row_support": "2582bbb94873af1834b2ab59ca5b527e4bd3b6739191d2e06fae1194f6c57bc5",
   "profile_questions_row_tools": "4a093acb12f3733e47e279f54fa4704d2822db73223fe2e20d9f53971528edd4",
-  "profile_questions_row_watch": "c5577080aec1ee0c992e9d05e2be6c6eb5376e3210eef5da9b5b99e930aa413b",
+  "profile_questions_row_watch": "d509433abc8bf17c836c2b8cba27870a8ee52347f7173c156b6eef17a9e0c833",
   "profile_questions_row_work": "10a9735da4c55383b63bcf2c7078c61113813b70242c63ea157cf682f2b23595",
   "profile_questions_save_start_lesson": "f92240faec2ef19304669dd43ff94317c695ffd4221b42f4e90e01a0a2067e44",
   "profile_questions_skip_all": "ddc3f02ff85b9d6fc311f99a7361e64e230ff4a57937db16e1c3b1c2bfe34084",
@@ -145,11 +145,16 @@
     <string name="profile_questions_row_work">Ce que tu fais actuellement</string>
     <string name="profile_questions_row_tools">Applis et outils</string>
     <string name="profile_questions_row_studies">Ce que tu as étudié</string>
-    <string name="profile_questions_row_watch">Ce que tu regardes</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
+    <string name="profile_questions_row_watch">Regarder</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
     <string name="profile_questions_row_listen">Écouter</string>
-    <string name="profile_questions_row_play">Écouter</string>
-    <string name="profile_questions_row_read">Ce que tu lis</string>
-    <string name="profile_questions_row_activities">Tes activités</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">Jouer</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
+    <string name="profile_questions_row_read">Lire</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
+    <string name="profile_questions_row_activities">Activités</string>
     <string name="profile_questions_row_conditions">Particularités</string>
     <string name="profile_questions_row_support">Ce qui t’aide à apprendre</string>
     <string name="profile_questions_not_answered">Sans réponse</string>

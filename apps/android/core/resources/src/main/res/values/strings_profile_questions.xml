@@ -64,10 +64,15 @@
     <string name="profile_questions_row_work">What you do now</string>
     <string name="profile_questions_row_tools">Apps and tools</string>
     <string name="profile_questions_row_studies">What you\'ve studied</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
     <string name="profile_questions_row_watch">Watch</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
     <string name="profile_questions_row_listen">Listen</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
     <string name="profile_questions_row_play">Play</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
     <string name="profile_questions_row_read">Read</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
     <string name="profile_questions_row_activities">Do</string>
     <string name="profile_questions_row_conditions">Conditions</string>
     <string name="profile_questions_row_support">What helps you learn</string>

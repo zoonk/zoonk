@@ -77,6 +77,11 @@ data class SetupFlow(
     val history: List<OnboardingStep> = emptyList(),
 )
 
+internal fun SetupFlow.goingBack(): SetupFlow? {
+    val index = history.indexOfLast { it.profileQuestion == null }
+    return if (index < 0) null else copy(current = history[index], history = history.take(index))
+}
+
 /** [step] opens from the screen shown, which its Back returns to. */
 internal fun SetupFlow.opening(step: OnboardingStep): SetupFlow = current?.let { copy(current = step, history = history + it) } ?: this
 
@@ -285,9 +290,9 @@ internal class GoalSetupViewModel(
     }
 
     fun back() {
-        val previous = flow.history.lastOrNull() ?: return
+        val previous = flow.goingBack() ?: return
         clearFailure()
-        update(flow.copy(current = previous, history = flow.history.dropLast(1)))
+        update(previous)
     }
 
     fun skipProfiles(forever: Boolean) {

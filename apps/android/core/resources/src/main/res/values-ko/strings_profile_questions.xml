@@ -40,15 +40,15 @@
   "profile_questions_read_favorites": "41aa8a0160059cd8542b3fb7d862924c516d374d4604b72881499390abc313e1",
   "profile_questions_read_placeholder": "b345c2ba10f80164903a883a34159f24a7e8a63f7849249d3d732b691f55ae46",
   "profile_questions_read_title": "f2f11e45600e24225e42b55ba5d018fd4d476b7290725b47202e87df03d65e42",
-  "profile_questions_row_activities": "87ec1e175f95ab27c8c5086a3a47f1fc63c86f25d2fc42a11edbc84fbe6411ec",
+  "profile_questions_row_activities": "a926821d66e4cf8dc9d6e743b4b0e06f613ba07a3d0dd2b0d5971c87c011c220",
   "profile_questions_row_conditions": "292ac61ff33ec3583ba322e01e2619ce64faaeb5653140b0748535ebec204f5b",
-  "profile_questions_row_listen": "7690d6253ec03c5ae83ead04019953123e677a70b65846fbeabd391f88ce1e0a",
-  "profile_questions_row_play": "56ad5d589d6a767f3e7094723adafc00a83e96e0737620636c53c512a715997b",
-  "profile_questions_row_read": "c9958a6e1d6fa23acbad562eafe799a91d381c5377901227a993e9e04face599",
+  "profile_questions_row_listen": "e20880a9b798590b3c6638d90b8af8fa7f7a8f74714d2c8b05adf07193ffff7b",
+  "profile_questions_row_play": "629cfb08d958e74acd00b8258a9a18da04d96e7f8405f098bd3cc7a2f0101ffd",
+  "profile_questions_row_read": "7e1762235d596fc1f2fb8b2b1c5e75487b9a4656a89925e5220311a6f95cca9f",
   "profile_questions_row_studies": "60f1a2c0e49b304ab84045d1a6f56b06b2fc834c4ace4ff3c22620d8fe5da09f",
   "profile_questions_row_support": "0287638d765d8d229f341c3ad2eb54975d2c2d3053c84e2f4063eb4e49bfb893",
   "profile_questions_row_tools": "fd5619af77c30c1c193b7157e053bb6ebebe65b412d5dba229bae9dd7253fbfa",
-  "profile_questions_row_watch": "68e637e4dc8bc0f101fbbb4a55d6f483e6021a8dbe87eff9d6df0b000462966c",
+  "profile_questions_row_watch": "fed525b90d769866cd28f260feecc1e63b4ed38851a19d27041a5086f3eb3a06",
   "profile_questions_row_work": "a83839fcff89255a74280ca87a17d63ab9c7b86703098e59eaf3f6495c8fc2fb",
   "profile_questions_save_start_lesson": "f211eef82c22805b784cbbda4be995c7b1760ddccdc594e9507aad833e347b8f",
   "profile_questions_skip_all": "8af4869f68403606c4ae5f24eec49d4b74e9cd8fed286343594b39b39c4b3af8",
@@ -145,11 +145,16 @@
     <string name="profile_questions_row_work">지금 하는 일</string>
     <string name="profile_questions_row_tools">앱과 도구</string>
     <string name="profile_questions_row_studies">지금까지 공부한 내용</string>
-    <string name="profile_questions_row_watch">보는 것</string>
-    <string name="profile_questions_row_listen">듣기</string>
-    <string name="profile_questions_row_play">재생</string>
-    <string name="profile_questions_row_read">읽는 것</string>
-    <string name="profile_questions_row_activities">하는 활동</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
+    <string name="profile_questions_row_watch">즐겨 보는 것</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
+    <string name="profile_questions_row_listen">즐겨 듣는 것</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">즐기는 스포츠와 게임</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
+    <string name="profile_questions_row_read">즐겨 읽는 것</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
+    <string name="profile_questions_row_activities">즐기는 활동</string>
     <string name="profile_questions_row_conditions">건강 상태</string>
     <string name="profile_questions_row_support">학습에 도움이 되는 것</string>
     <string name="profile_questions_not_answered">답변 없음</string>

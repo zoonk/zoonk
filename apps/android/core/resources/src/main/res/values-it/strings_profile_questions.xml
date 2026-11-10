@@ -40,11 +40,11 @@
   "profile_questions_read_favorites": "a503aa4c8737c20dc7d6c5163f31339fe2543260f2da86892a94a59f713550f6",
   "profile_questions_read_placeholder": "3412b87512a7b6a67739e038ad2b60c9033c9aa44001d4ed27d019a4c784e7c5",
   "profile_questions_read_title": "dc621a26afbdee067cfdf1c0f8dfb3235ff9b3db492b24a603ca0f45ba2e1787",
-  "profile_questions_row_activities": "9205f489acb3a523b5cf0659155a40d333fb17387f1cb643736c0146cf70981e",
+  "profile_questions_row_activities": "abe1e99a96f2210a0f3618d65143cdf48bc1fd9133ca0a7bca11a3b2cc0d9be0",
   "profile_questions_row_conditions": "65d1e21fcf2618caad791521ec7df3f3604cbc25e4b298fa5ee6e9061748d3c3",
-  "profile_questions_row_listen": "27af6e8bda8a110c213f45f70d5fe5fbb11e81bef03e1699a9a6301a5a217870",
-  "profile_questions_row_play": "eee6c55773360f721dd2ed0bc40aafb24c82131acd4ced8ea5407888e4348f67",
-  "profile_questions_row_read": "5e3216c72bc43e02e0984bfcac5449af6a8a659023d6bc1ef558f1fb88043aaa",
+  "profile_questions_row_listen": "d9078de9d0b4ccad3a36f51bbb6e04bd74b534332127ff2dd83e1d81deb82344",
+  "profile_questions_row_play": "adc01a3afa04f15237a9487ead3482e0e774364051e333b81f5eef8ddfb6dc17",
+  "profile_questions_row_read": "6a83612d946e2c48533ebc03b2506b7cc873783586972fb136ef46ea5cc5188b",
   "profile_questions_row_studies": "0962e4226c329b37f9607bc3d41487a75f29fdd800779dfca5f1272627bc216f",
   "profile_questions_row_support": "c06425847e5f90667865d298e2ab7d8285f2b5474e1d763207a6aeaf4edbc85f",
   "profile_questions_row_tools": "09a07563439f3cceb8039c0b9f05afd731c762ab0685de2bcbf6840a713fcd3b",
@@ -145,11 +145,16 @@
     <string name="profile_questions_row_work">Di cosa ti occupi ora</string>
     <string name="profile_questions_row_tools">App e strumenti</string>
     <string name="profile_questions_row_studies">Cosa hai studiato</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
     <string name="profile_questions_row_watch">Cosa guardi</string>
-    <string name="profile_questions_row_listen">Ascolta</string>
-    <string name="profile_questions_row_play">Riproduci</string>
-    <string name="profile_questions_row_read">Cosa leggi</string>
-    <string name="profile_questions_row_activities">Cosa fai</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
+    <string name="profile_questions_row_listen">Ascolto</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">Giochi e sport</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
+    <string name="profile_questions_row_read">Lettura</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
+    <string name="profile_questions_row_activities">Attività</string>
     <string name="profile_questions_row_conditions">Condizioni</string>
     <string name="profile_questions_row_support">Cosa ti aiuta a imparare</string>
     <string name="profile_questions_not_answered">Nessuna risposta</string>

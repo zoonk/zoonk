@@ -42,8 +42,8 @@
   "profile_questions_read_title": "536cf81f3a6c80c483cb4d871d73308282177b1092ee9316efe56c6aff94aee1",
   "profile_questions_row_activities": "5af4597a4ebda0919df5054710dc44d17fe3ccf7b5b66d99ca851e4acf88c0ce",
   "profile_questions_row_conditions": "9ec54749b929446ae9f5cb64ac4ad7767d91da878fbafcae5fa0a14728319819",
-  "profile_questions_row_listen": "37d323fda1e3416cfb96bddb65513338a235851b224a7d28b8409eab06b2be2a",
-  "profile_questions_row_play": "4a7d33477ac095872127137913a76a104ef39d4daca8f9749827877878f80680",
+  "profile_questions_row_listen": "4f91f37f7907b80c0ab134b2db1fae4c2207e0f3214946ce5623c0d366b354ff",
+  "profile_questions_row_play": "f65bbef2aaa0ee997cfd03c29c36085d7a2af38401a8beae730f74551340e34d",
   "profile_questions_row_read": "a713f12071259558f82b77d5e9227334f2f16c7098da9af316203a01f4de991e",
   "profile_questions_row_studies": "588ff09a310fcb496109ae87b3ba315017199ba9843e195c335856be730efecd",
   "profile_questions_row_support": "81408776c4de0eea376a5b65ba679d1be0fefc431649a22426a510f48d56540a",
@@ -145,10 +145,15 @@
     <string name="profile_questions_row_work">Was du derzeit machst</string>
     <string name="profile_questions_row_tools">Apps und Tools</string>
     <string name="profile_questions_row_studies">Was du bisher gelernt hast</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
     <string name="profile_questions_row_watch">Anschauen</string>
-    <string name="profile_questions_row_listen">Anhören</string>
-    <string name="profile_questions_row_play">Abspielen</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
+    <string name="profile_questions_row_listen">Hören</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">Spielen</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
     <string name="profile_questions_row_read">Lesen</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
     <string name="profile_questions_row_activities">Aktivitäten</string>
     <string name="profile_questions_row_conditions">Gesundheitliche Besonderheiten</string>
     <string name="profile_questions_row_support">Was dir beim Lernen hilft</string>

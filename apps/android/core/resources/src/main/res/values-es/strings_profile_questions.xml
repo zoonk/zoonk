@@ -43,7 +43,7 @@
   "profile_questions_row_activities": "75433e439435b5f8a277131272e66632e2ce5feda893d754eb194fba5f14bff1",
   "profile_questions_row_conditions": "41a608583a8dcffa8717b0b989dc11435979031d7c8ae97a324eb925fa2c6f49",
   "profile_questions_row_listen": "470b5692d116dc0348e7a27ce9142255d74929c89a881ba38313222a5c989ab2",
-  "profile_questions_row_play": "ac2de1db70f5eac3ea659e5cd728252566a6be3bf622820254e8877a97dc345d",
+  "profile_questions_row_play": "48f9c85e0f57beed8583d377ce04cbe1e24ae6d5b61dff7b8b6ecfb81cb3454a",
   "profile_questions_row_read": "677e4d3da67e235a99f7acd7081a14b2d7720387478c0a7daf6d2f87c7407e59",
   "profile_questions_row_studies": "348c439c01a29a0bea7085289a797cdffedb029df135f217b8c2a31beaca70ea",
   "profile_questions_row_support": "0a2d9d78c52f15f97a69c548ea1a6084b1689bea45ea73fb022ba0b72a4ed333",
@@ -145,10 +145,15 @@
     <string name="profile_questions_row_work">A qué te dedicas ahora</string>
     <string name="profile_questions_row_tools">Aplicaciones y herramientas</string>
     <string name="profile_questions_row_studies">Lo que estudiaste</string>
+    <!-- About you row: what the learner likes to watch. A category heading, not a playback control. -->
     <string name="profile_questions_row_watch">Ver</string>
+    <!-- About you row: what the learner likes to listen to. A category heading, not a pronunciation playback button. -->
     <string name="profile_questions_row_listen">Escuchar</string>
-    <string name="profile_questions_row_play">Reproducir</string>
+    <!-- About you row: sports and games the learner likes to play, not playing audio or video. -->
+    <string name="profile_questions_row_play">Jugar</string>
+    <!-- About you row: what the learner likes to read. A category heading. -->
     <string name="profile_questions_row_read">Leer</string>
+    <!-- About you row: what the learner likes to do. A category heading for hobbies and activities. -->
     <string name="profile_questions_row_activities">Hacer</string>
     <string name="profile_questions_row_conditions">Condiciones</string>
     <string name="profile_questions_row_support">Lo que te ayuda a aprender</string>
