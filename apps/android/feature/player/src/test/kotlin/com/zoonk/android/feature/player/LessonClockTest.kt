@@ -10,6 +10,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.api.models.LessonClockInput
@@ -223,21 +224,56 @@ class LessonClockTest {
             assertEquals(listOf(update(1, PAUSED), update(2, RUNNING)), api.clockUpdates.map { it.second })
         }
 
-    @Test fun failedSendsAreDroppedAndTheNextTransitionKeepsItsSequence() =
+    @Test fun aFailedTransitionGoesAgainUnderItsSequenceUntilItGetsThrough() =
         runTest(dispatcher) {
             val player = player()
             advanceUntilIdle()
+            player.leave()
+            advanceUntilIdle()
             val before = player.state.value
             api.clockResponse = { throw ApiException(ApiError.Network) }
-            player.leave()
+            player.resume()
+            advanceUntilIdle()
+            player.resume()
             advanceUntilIdle()
             assertEquals(before, player.state.value)
             assertTrue(player.state.value?.run is LessonRun.Started)
             api.clockResponse = { LessonClockResult(LessonClockResult.Status.UPDATED) }
+            player.dispatch(LessonAction.Continue)
+            advanceUntilIdle()
             player.resume()
             advanceUntilIdle()
 
-            assertEquals(listOf(update(1, PAUSED), update(2, RUNNING)), api.clockUpdates.map { it.second })
+            assertEquals(
+                listOf(update(1, PAUSED), update(2, RUNNING), update(2, RUNNING), update(2, RUNNING)),
+                api.clockUpdates.map { it.second },
+            )
+        }
+
+    @Test fun finishingWaitsForTheClockToGetThrough() =
+        runTest(dispatcher) {
+            val player = player()
+            advanceUntilIdle()
+            player.dispatch(LessonAction.Continue)
+            player.leave()
+            advanceUntilIdle()
+            api.clockResponse = { throw ApiException(ApiError.Network) }
+            player.resume()
+            advanceUntilIdle()
+            val reply = CompletableDeferred<Unit>()
+            api.clockResponse = {
+                reply.await()
+                LessonClockResult(LessonClockResult.Status.UPDATED)
+            }
+            player.dispatch(LessonAction.Continue)
+            advanceUntilIdle()
+            assertEquals(3, api.clockUpdates.size)
+            assertTrue(api.completions.isEmpty())
+
+            reply.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf(RUN_ID), api.completions)
         }
 
     @Test fun lateRepliesDoNotChangeTheNextSequence() =
