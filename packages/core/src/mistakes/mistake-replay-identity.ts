@@ -41,12 +41,7 @@ function questionContent(replay: MistakeReplay): unknown {
     return { content: orderedContent(content), kind: step.kind, sentence, word };
   }
 
-  return {
-    content: orderedContent(step.content),
-    image: step.image,
-    kind: step.kind,
-    optionPictures: step.optionPictures ?? null,
-  };
+  return { content: orderedContent(step.content), kind: step.kind };
 }
 
 export function isSameMistakeQuestion({

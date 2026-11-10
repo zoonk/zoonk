@@ -9,7 +9,7 @@ function todaySession(page: Page) {
 
 async function readTodaySteps(page: Page) {
   const rows = todaySession(page).getByRole("listitem");
-  await expect(rows).toHaveCount(4);
+  await expect(rows).toHaveCount(3);
   const texts = await rows.allInnerTexts();
 
   return texts.map((text) => {

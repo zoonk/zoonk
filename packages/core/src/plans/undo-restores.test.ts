@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -72,7 +73,7 @@ async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
 
   await finishChallengesFixture(plan.id);
 
-  await mistakeFixture({
+  const mistake = await mistakeFixture({
     createdAt: new Date(NOW.getTime() - DAY),
     itemId: items[0]?.id,
     skillId,
@@ -82,7 +83,7 @@ async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
   mockSession(user.id);
   await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
 
-  return { goal };
+  return { goal, item: items[0]!, mistake };
 }
 
 describe("undoing a change in the app", () => {
@@ -187,10 +188,19 @@ describe("undoing a change in the app", () => {
     await expect(readDay()).resolves.toStrictEqual(day);
   });
 
-  it("gives back today's exact session, with its mistakes practice", async () => {
-    const { goal } = await setupDayWithMistake();
+  it("gives back today's exact session, including a saved legacy mistake drill", async () => {
+    const { goal, item, mistake } = await setupDayWithMistake();
+    const original = await readDaySession(goal.id);
+
+    await studySessionBlockFixture({
+      kind: "practice",
+      payload: { drills: [{ itemIds: [item.id], kind: "retry", mistakeId: mistake.id }] },
+      position: original.blocks.length,
+      sessionId: original.id,
+    });
+
     const day = await readDaySession(goal.id);
-    const practice = day.blocks.find((block) => block.kind === "practice");
+    const practice = day.blocks.at(-1);
 
     expect(readBlockPayload({ id: "", payload: practice?.payload ?? {} }).drills).toHaveLength(1);
 
