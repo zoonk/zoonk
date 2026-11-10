@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -27,8 +26,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -437,50 +434,6 @@ private fun PlanEditRequest(
         supporting = {
             Text(stringResource(if (hasModules) R.string.plan_tell_buddy_description_modules else R.string.plan_tell_buddy_description))
         },
-    )
-}
-
-/**
- * A choice in the editor, picked as an answer is: a check and an ink line on the picked tint. [role]
- * says what a tap does for TalkBack when it isn't a checkbox's.
- */
-@Composable
-internal fun PlanChip(
-    text: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    role: Role? = null,
-    enabled: Boolean = true,
-) {
-    val colors = MaterialTheme.colorScheme
-
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        enabled = enabled,
-        label = { Text(text) },
-        modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
-        leadingIcon =
-            if (selected) {
-                { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(FilterChipDefaults.IconSize)) }
-            } else {
-                null
-            },
-        colors =
-            FilterChipDefaults.filterChipColors(
-                selectedContainerColor = MaterialTheme.zoonk.selectedTint,
-                selectedLabelColor = colors.onSurface,
-                selectedLeadingIconColor = colors.onSurface,
-            ),
-        border =
-            FilterChipDefaults.filterChipBorder(
-                enabled = enabled,
-                selected = selected,
-                borderColor = colors.outline,
-                selectedBorderColor = colors.primary,
-                selectedBorderWidth = 2.dp,
-            ),
     )
 }
 

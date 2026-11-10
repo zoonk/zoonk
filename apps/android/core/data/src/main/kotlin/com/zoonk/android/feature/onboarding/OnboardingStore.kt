@@ -17,6 +17,7 @@ import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
 import com.zoonk.android.feature.onboarding.setup.LevelChoice
+import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
@@ -112,7 +113,7 @@ data class AttachedSource(
 )
 
 /** Questions are left before the plan (`plan` alone: it's being built), so no plan is coming yet. */
-val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN }
+val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN && it.profileQuestion == null }
 
 /** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
@@ -287,7 +288,7 @@ class OnboardingStore(
         input: OnboardingAnswerInput,
     ): WriteOutcome<Onboarding> =
         write(
-            invalidating = setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel),
+            invalidating = setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel, DataDomain.Memory),
             replacing = { listOf(onboardings[it.goal.id.toString()].replacing(it)) },
         ) { api.answer(it, goalId, input) }
 

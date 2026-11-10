@@ -86,13 +86,29 @@ internal fun ColumnScope.ScheduleStep(
     vm: GoalSetupViewModel,
     pending: Boolean,
     factsBeside: Boolean,
+    startsOnRecommended: Boolean,
 ) {
     var choice by rememberSaveable(stateSaver = jsonSaver(ScheduleChoice.serializer())) {
         mutableStateOf(ScheduleChoice(startingDays(goal.studyDays.map(Long::toInt))))
     }
     // What the learner set is theirs, so a new date keeps it; what it covers starts over for the date.
     ForDate(goal.targetDate) {
-        ScheduleTime(goal, recommendedMinutes, timeChoices, planReadiness, run, store, vm, pending, factsBeside, choice) { choice = it }
+        ScheduleTime(
+            goal,
+            recommendedMinutes,
+            timeChoices,
+            planReadiness,
+            run,
+            store,
+            vm,
+            pending,
+            factsBeside,
+            choice,
+            startsOnRecommended,
+        ) {
+            choice =
+                it
+        }
     }
 }
 
@@ -124,6 +140,7 @@ private fun ColumnScope.ScheduleTime(
     pending: Boolean,
     factsBeside: Boolean,
     choice: ScheduleChoice,
+    startsOnRecommended: Boolean,
     onChoiceChange: (ScheduleChoice) -> Unit,
 ) {
     val exam = goal.kind == Goal.Kind.EXAM
@@ -152,7 +169,15 @@ private fun ColumnScope.ScheduleTime(
     val dated = lastFound?.let { it.targetDate != null } ?: (goal.targetDate != null || exam)
     val findFailed = covering.status == PollStatus.Failed
     val shownFound = found ?: lastFound
-    val minutes = shownMinutes(recommendedMinutes, first, shownFound, picked, settled = !dated || findFailed)
+    val minutes =
+        shownMinutes(
+            recommendedMinutes,
+            first,
+            shownFound,
+            picked,
+            settled = !dated || findFailed,
+            startsOnRecommended = startsOnRecommended,
+        )
     val studiesEverything = exam && fullCourse
     val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend, studiesEverything)
 
@@ -241,10 +266,10 @@ private fun ColumnScope.ScheduleTime(
     val answers = listOf(covering.answer, covering.last, covering.first)
     val choose = { next: Int, followed: PlanTimeToCover? ->
         pickedSplit = daySplit(next, timeChoices, answers) ?: pickedSplit.takeIf { next == picked }
-        onChoiceChange(choice.copy(picked = pickedMinutes(first, followed, next)))
+        onChoiceChange(choice.copy(picked = pickedMinutes(first, followed, next, startsOnRecommended)))
     }
     val pick = { next: Int -> choose(next, shownFound) }
-    val stale = hasDays && waitsForSuggestion(findFailed, first, found, picked)
+    val stale = hasDays && !startsOnRecommended && waitsForSuggestion(findFailed, first, found, picked)
     val marked = markedTimes(found)
 
     com.zoonk.android.data

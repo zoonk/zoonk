@@ -8,6 +8,7 @@ import com.zoonk.api.models.OnboardingStep.PURPOSE
 import com.zoonk.api.models.OnboardingStep.SCHEDULE
 import com.zoonk.api.models.OnboardingStep.TARGET_DATE
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class SetupFlowTest {
@@ -69,6 +70,32 @@ class SetupFlowTest {
     fun aMovedGoalDoesNotKeepTheLanguageQuestionInBack() {
         val language = SetupFlow(GOAL, com.zoonk.api.models.OnboardingStep.REASON)
         assertEquals(SetupFlow("exam", LEVEL), language.arriving("exam", com.zoonk.api.models.OnboardingStep.REASON, LEVEL))
+    }
+
+    @Test
+    fun allProfileQuestionsShareOneProgressDot() {
+        val profile =
+            com.zoonk.api.models.OnboardingStep.entries.filter {
+                it.value in
+                    com.zoonk.api.models.ProfileQuestion.entries
+                        .map { question -> question.value }
+            }
+        val current = SetupFlow(GOAL, com.zoonk.api.models.OnboardingStep.WATCH, listOf(PURPOSE) + profile.take(3))
+        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(current, profile.drop(3) + SCHEDULE + PLAN))
+    }
+
+    @Test
+    fun backSkipsProfileAnswersWhileTheyStillCountAsOneProgressDot() {
+        val work = com.zoonk.api.models.OnboardingStep.WORK
+        val watch = com.zoonk.api.models.OnboardingStep.WATCH
+        val support = com.zoonk.api.models.OnboardingStep.LEARNING_SUPPORT
+        assertEquals(
+            SetupFlow(GOAL, LEVEL, listOf(PURPOSE)),
+            SetupFlow(GOAL, SCHEDULE, listOf(PURPOSE, LEVEL, work, watch, support)).goingBack(),
+        )
+        assertEquals(SetupFlow(GOAL, LEVEL, listOf(PURPOSE)), SetupFlow(GOAL, watch, listOf(PURPOSE, LEVEL, work)).goingBack())
+        assertNull(SetupFlow(GOAL, watch, listOf(work)).goingBack())
+        assertNull(SetupFlow(GOAL, work).goingBack())
     }
 
     private companion object {
