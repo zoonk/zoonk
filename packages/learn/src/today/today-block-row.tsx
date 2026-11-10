@@ -21,10 +21,6 @@ import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
 import { useRowLabel } from "./use-row-label";
 import { useLessonBeingWritten } from "./use-today-copy";
 
-export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
-
-export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
-
 function useWaitLabel() {
   const t = useExtracted();
   const waitLine = useWaitLine();
@@ -35,15 +31,7 @@ function useWaitLabel() {
   };
 }
 
-export function getRowClass({
-  finished,
-  fold,
-  isNext,
-}: {
-  finished: boolean;
-  fold: RowFold;
-  isNext: boolean;
-}): string {
+export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
     "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
@@ -51,8 +39,6 @@ export function getRowClass({
     isNext
       ? "bg-muted -mx-2.5 my-0.5 items-start rounded-[0.625rem] border-b-0 px-2.5 before:inset-x-0"
       : "before:-inset-x-2.5",
-    fold.hidden && fold.phone && "max-sm:hidden",
-    fold.hidden && fold.wide && "hidden",
   );
 }
 
@@ -192,12 +178,10 @@ function RowTarget({
  */
 export function BlockRow({
   block,
-  fold = NO_FOLD,
   isNext,
   opens = true,
 }: {
   block: DayStep;
-  fold?: RowFold;
   isNext: boolean;
   opens?: boolean;
 }) {
@@ -209,7 +193,7 @@ export function BlockRow({
     <li
       aria-current={isNext ? "step" : undefined}
       className={cn(
-        getRowClass({ finished, fold, isNext }),
+        getRowClass({ finished, isNext }),
         lessonAgainId && "has-[a:hover]:before:bg-muted/70",
       )}
       data-slot={isNext ? "today-next" : undefined}
@@ -273,7 +257,7 @@ export function PlanLessonRow({
     <li
       aria-current={isNext ? "step" : undefined}
       className={cn(
-        getRowClass({ finished: false, fold: NO_FOLD, isNext }),
+        getRowClass({ finished: false, isNext }),
         isNext && disabled && !busy && "opacity-50",
       )}
     >
@@ -309,13 +293,13 @@ export function PlanLessonRow({
  * Not part of the session: never the next block, no mission mark, and the day's segments, time and
  * action leave it out.
  */
-export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title: string }) {
+export function PlusLessonRow({ title }: { title: string }) {
   const { actions } = useTodayScreen();
 
   return (
     <li
       className={cn(
-        getRowClass({ finished: false, fold, isNext: false }),
+        getRowClass({ finished: false, isNext: false }),
         "has-[a:hover]:before:bg-muted/70",
       )}
     >
@@ -326,6 +310,7 @@ export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title
       <LearnLink
         className={cn(ROW_OPEN_CLASS, "flex-1 items-center gap-3 after:-inset-x-2.5")}
         href={actions.plusHref}
+        prefetch={false}
       >
         <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
         <PlusMark />

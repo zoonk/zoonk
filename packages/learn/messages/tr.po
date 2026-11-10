@@ -12559,6 +12559,7 @@ msgid "Shared text"
 msgstr "Ortak metin"
 
 #: src/questions/item-set-stimulus.tsx
+#: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
 msgid "Show less"
 msgstr "Daha az göster"
