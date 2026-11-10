@@ -58,6 +58,8 @@
         <item quantity="one">+%d more</item>
         <item quantity="other">+%d more</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Show less</string>
     <string name="today_step_done">Done</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Next step</string>

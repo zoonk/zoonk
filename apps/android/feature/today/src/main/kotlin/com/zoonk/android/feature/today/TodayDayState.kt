@@ -28,6 +28,13 @@ fun DayView.queue(nextPosition: Long): TodayQueue {
     )
 }
 
+/** How many rows follow the next one before "+N more" folds the rest. */
+internal const val UPCOMING_ROWS = 4
+
+/** The blocks "+N more" holds while the queue is folded. */
+internal val DayView.foldedSteps: List<DayStep>
+    get() = nextStep?.let { queue(it.position).after.drop(UPCOMING_ROWS) }.orEmpty()
+
 internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
     (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
 

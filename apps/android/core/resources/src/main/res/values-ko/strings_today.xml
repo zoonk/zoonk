@@ -134,6 +134,7 @@
   "today_setting_up": "93f3364c3d897c8480fb917f021a57cb8ffd254bdf45f5faeff391cca7be4ef5",
   "today_setting_up_detail": "d7149b1707015b8da63ebe21b4d56672980114c2cca81b7a4c9bdabbad428d81",
   "today_setting_up_goal": "353ef9c7fd5e4be827c13cc4103e16817a5907736d4340f579a5cb8aee045fdb",
+  "today_show_less": "693c87326519897256f195075bde81a1f483e1915b6b3f28be0be139e4172239",
   "today_start_new_goal": "7683ec312f44392f14e25b75baf9c39382a10f2e6f9e11ea12f651e13f71617f",
   "today_start_session": "5f0f29e764849e3b612ea04bb45dcb92263a8e77feae929af8f13c3743fcd048",
   "today_step_after_lessons": "27f151889616502a4da891768c910a656a865a46f350d0d21ee5bd9d08a125d8",
@@ -240,6 +241,8 @@
     <plurals name="today_more_count">
         <item quantity="other">+%d개 더</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">접기</string>
     <string name="today_step_done">완료</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">다음 단계</string>

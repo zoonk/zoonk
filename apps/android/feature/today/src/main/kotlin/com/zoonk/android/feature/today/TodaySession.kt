@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -87,20 +87,11 @@ import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
 import kotlinx.datetime.toJavaLocalDate
 
-/** Which of the queue's folds are open, kept with the screen's saved state. */
-@Immutable
-internal data class TodayFolds(
-    val doneOpen: Boolean,
-    val moreOpen: Boolean,
-    val toggleDone: () -> Unit,
-    val toggleMore: () -> Unit,
-)
-
 internal fun LazyListScope.todaySession(
     model: TodayDayModel,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
-    folds: TodayFolds,
+    list: LazyListState,
     wide: Boolean,
     buddyName: String,
 ) {
@@ -125,7 +116,7 @@ internal fun LazyListScope.todaySession(
     }
 
     if (next != null) {
-        sessionQueue(model, next, viewModel, actions, folds, wide)
+        sessionQueue(model, next, viewModel, actions, list)
     } else {
         itemsIndexed(day.steps, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
             val replay = step.lessonToReplay
@@ -196,32 +187,26 @@ private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     }
 }
 
-/**
- * The fold never hides a block a mission opens: where the missions card leaves its rows to the
- * queue, that block is the mission's one place.
- */
 private fun LazyListScope.sessionQueue(
     model: TodayDayModel,
     next: DayStep,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
-    folds: TodayFolds,
-    wide: Boolean,
+    list: LazyListState,
 ) {
     val queue = model.day.queue(next.position)
-    val foldsDone = !wide && queue.done.size > PHONE_DONE_ROWS
-    val marked = queue.after.indexOfLast { model.countsTowardMission(it) } + 1
-    val rows = (if (wide) WIDE_UPCOMING_ROWS else PHONE_UPCOMING_ROWS).coerceAtLeast(marked)
+    val foldsDone = queue.done.size > DONE_ROWS
+    val moreOpen = viewModel.moreOpen
     val coming = if (model.day.lessonsComing || model.day.lessonsToPrepare) 1 else 0
     val upcoming = queue.after.size + coming + model.day.plusLessons.size
-    val more = (upcoming - rows).coerceAtLeast(0)
-    val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
-    val showsComing = coming > 0 && (folds.moreOpen || queue.after.size < rows)
+    val more = (upcoming - UPCOMING_ROWS).coerceAtLeast(0)
+    val shownAfter = if (moreOpen) queue.after else queue.after.take(UPCOMING_ROWS)
+    val showsComing = coming > 0 && (moreOpen || queue.after.size < UPCOMING_ROWS)
     val plusShown =
-        (if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0))
+        (if (moreOpen) model.day.plusLessons.size else (UPCOMING_ROWS - queue.after.size - coming).coerceAtLeast(0))
             .coerceAtMost(model.day.plusLessons.size)
     // The list's last row has no hairline under it, as main's `last:border-b-0`; above "+N more" it keeps one.
-    val endsList = more == 0 || folds.moreOpen
+    val endsList = more == 0 || moreOpen
 
     item(key = "queue-top", contentType = "spacer") { Box(Modifier.padding(top = 12.dp)) }
 
@@ -230,15 +215,15 @@ private fun LazyListScope.sessionQueue(
             FoldRow(
                 label = pluralStringResource(R.plurals.today_done_count, queue.done.size, queue.done.size),
                 done = true,
-                open = folds.doneOpen,
+                open = viewModel.doneOpen,
                 minutes = null,
-                onToggle = folds.toggleDone,
+                onToggle = { viewModel.doneOpen = !viewModel.doneOpen },
                 modifier = Modifier.pageItem(),
             )
         }
     }
 
-    val rowsShown = (if (!foldsDone || folds.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
+    val rowsShown = (if (!foldsDone || viewModel.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
 
     val beforeNext = rowsShown.indexOf(next) - 1
     val stepsEnd = endsList && !showsComing && plusShown == 0
@@ -269,17 +254,41 @@ private fun LazyListScope.sessionQueue(
     plusLessons(model.day.plusLessons, actions, visible = plusShown, endsList = endsList)
 
     if (more > 0) {
-        item(key = "fold-more", contentType = "fold") {
+        item(key = FOLD_MORE, contentType = "fold") {
             FoldRow(
-                label = pluralStringResource(R.plurals.today_more_count, more, more),
+                label =
+                    if (moreOpen) {
+                        stringResource(
+                            R.string.today_show_less,
+                        )
+                    } else {
+                        pluralStringResource(R.plurals.today_more_count, more, more)
+                    },
                 done = false,
-                open = folds.moreOpen,
-                minutes = model.day.minutesAfter(queue.before + next + queue.after.take(rows)).takeIf { queue.after.size + coming > rows },
-                onToggle = folds.toggleMore,
+                open = moreOpen,
+                minutes =
+                    model.day
+                        .minutesAfter(queue.before + next + queue.after.take(UPCOMING_ROWS))
+                        .takeIf { !moreOpen && queue.after.size + coming > UPCOMING_ROWS },
+                onToggle = {
+                    if (moreOpen) list.keepFoldInView(hidden = more)
+                    viewModel.moreOpen = !moreOpen
+                },
                 modifier = Modifier.pageItem(),
             )
         }
     }
+}
+
+/**
+ * The list holds its place by the first row it shows, so folding away the rows on screen would
+ * leave it past the list. The fold row stays where the learner tapped it instead.
+ */
+private fun LazyListState.keepFoldInView(hidden: Int) {
+    val fold = layoutInfo.visibleItemsInfo.firstOrNull { it.key == FOLD_MORE } ?: return
+    val foldedIndex = fold.index - hidden
+
+    if (firstVisibleItemIndex >= foldedIndex) requestScrollToItem(foldedIndex, -fold.offset)
 }
 
 /** Not part of the session: never the next block, no mission mark, and the day's time leaves them out. */
@@ -384,8 +393,6 @@ private fun LazyListScope.upNext(
         }
     }
 }
-
-internal fun TodayDayModel.countsTowardMission(step: DayStep): Boolean = day.countsTowardMission(step)
 
 @Composable
 private fun StepRow(
@@ -694,9 +701,8 @@ private fun TodayDayStatus(
     }
 }
 
-private const val PHONE_DONE_ROWS = 2
+private const val DONE_ROWS = 1
+private const val FOLD_MORE = "fold-more"
 private const val OPEN_BACKLOG_LIMIT = 5
-private const val PHONE_UPCOMING_ROWS = 6
-private const val WIDE_UPCOMING_ROWS = 12
 private const val SKIPPED_ALPHA = 0.25f
 private const val AHEAD_ALPHA = 0.5f

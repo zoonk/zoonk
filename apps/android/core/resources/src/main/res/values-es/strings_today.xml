@@ -134,6 +134,7 @@
   "today_setting_up": "8a5a534148de63328fe02ea932520285fb7b78c239d0565b82d9488ce6d6e704",
   "today_setting_up_detail": "4b21831994efae0a518bec198d3a77ad08e29ed90262a419df58a3f40f96102a",
   "today_setting_up_goal": "7b810154722f2ec3d22b47b471de4a0f98590473969514f368f8faad80417dcc",
+  "today_show_less": "9a9671c34a725fd15d4d9ec18cd4dbe3c6b4fc8377f3fd32ba5d5afc11fe1c32",
   "today_start_new_goal": "b4e8be091f3523ec484261195de6b245416b9915b2cead7c5fe512727a3dc893",
   "today_start_session": "c2984348141df7065c214de4e545179733a99bf4413a0286c534c3370efb271d",
   "today_step_after_lessons": "e67b65fdbf8d1f45491e05cda3952f01bf73a3313d7175eaf71d232765a46cd2",
@@ -256,6 +257,8 @@
         <item quantity="many">+%d más</item>
         <item quantity="other">+%d más</item>
     </plurals>
+    <!-- Folds the session's later steps back under today_more_count. -->
+    <string name="today_show_less">Mostrar menos</string>
     <string name="today_step_done">Listo</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Siguiente paso</string>
