@@ -203,15 +203,13 @@ export async function claimAnswerInTransaction({
 
   const contextSnapshot = parseLessonQuestionContextSnapshot(question.contextSnapshot);
 
-  const learnerNeeds = await getTutorNeeds({
+  const { needs: learnerNeeds, personal } = await getTutorNeeds({
     client: transaction,
     task: contextSnapshot.scope.kind === "plan" ? "goal" : "lesson",
     userId,
   });
 
-  const personalized = learnerNeeds.variants.length > 0 || learnerNeeds.note !== null;
-
-  const sharedKey = personalized
+  const sharedKey = personal
     ? null
     : getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
 

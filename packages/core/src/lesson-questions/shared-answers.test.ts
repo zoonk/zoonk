@@ -127,20 +127,33 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     mockSession(null);
   });
 
-  it.each([false, true])(
-    "keeps a learner with needs private when a shared row exists: %s",
-    async (hasShared) => {
+  it.each([
+    { hasShared: false, profile: "needs" },
+    { hasShared: true, profile: "needs" },
+    { hasShared: false, profile: "a support note" },
+    { hasShared: true, profile: "a support note" },
+  ] as const)(
+    "keeps a learner with $profile private when a shared row exists: $hasShared",
+    async ({ hasShared, profile }) => {
       const [shared, personal, general] = await Promise.all([
         sharedLesson(),
         userFixture(),
         userFixture(),
       ]);
 
-      await learningProfileFixture({
-        learningNeeds: ["stepByStep"],
-        memoryEnabled: false,
-        userId: personal.id,
-      });
+      await (profile === "needs"
+        ? learningProfileFixture({
+            learningNeeds: ["stepByStep"],
+            memoryEnabled: false,
+            userId: personal.id,
+          })
+        : memoryFactFixture({
+            category: "learning",
+            sensitive: true,
+            sourceRef: { id: "learningSupport", kind: "profile" },
+            statement: "Use diagrams for me",
+            userId: personal.id,
+          }));
 
       if (hasShared) {
         const asked = await askOnScreen({
@@ -169,7 +182,7 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       expect(counted.rows).toBe(0);
 
       expect(claim).toMatchObject({
-        learnerNeeds: { note: null, variants: ["stepByStep"] },
+        learnerNeeds: { note: null, variants: profile === "needs" ? ["stepByStep"] : [] },
         shareAnswer: false,
       });
 
