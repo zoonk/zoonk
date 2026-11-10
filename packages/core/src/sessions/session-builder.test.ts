@@ -182,13 +182,16 @@ describe(buildSessionBlocks, () => {
   });
 
   it.each([
-    { reviewPlanItemId: "review-1" },
-    { fullReviewSkillIds: ["s0"] },
-    { fullReviewSkillIds: ["s0", "uncovered"] },
-  ])("offers no phase challenge on a review day: %j", (review) => {
+    ["new", { reviewPlanItemId: "review-1" }],
+    ["new", { fullReviewSkillIds: ["s0"] }],
+    ["new", { fullReviewSkillIds: ["s0", "uncovered"] }],
+    ["put off yesterday", { reviewPlanItemId: "review-1" }],
+    ["put off yesterday", { fullReviewSkillIds: ["s0"] }],
+  ])("offers no %s phase challenge on a review day: %j", (history, review) => {
     const built = buildSessionBlocks({
       ...baseInput,
       checkpoints: [boss],
+      lastSessionChallenges: new Map(history === "new" ? [] : [["plan-boss", false]]),
       planItems: [
         { id: "plan-l0", kind: "lesson", position: 0, status: "done" },
         { id: "plan-boss", kind: "boss", position: 1, status: "todo" },
