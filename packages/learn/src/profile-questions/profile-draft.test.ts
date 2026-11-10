@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   type ProfileDraft,
   canSendProfileDraft,
-  emptyProfileDraft,
   getPrecheckedSupports,
   toProfileAnswer,
   toProfileDraft,
@@ -12,7 +11,7 @@ import {
 } from "./profile-draft";
 
 function draft(overrides: Partial<ProfileDraft> = {}): ProfileDraft {
-  return { ...emptyProfileDraft(), ...overrides };
+  return { consented: false, exclusive: null, picks: [], studies: [], text: "", ...overrides };
 }
 
 function view(overrides: Partial<ProfileQuestionView> & Pick<ProfileQuestionView, "id">) {

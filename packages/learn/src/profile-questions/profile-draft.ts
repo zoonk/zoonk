@@ -8,12 +8,12 @@ export type ProfileQuestion = ProfileQuestionView["id"];
 
 export type ChipQuestion = "tools" | "watch" | "listen" | "play" | "read" | "activities";
 
-export const MAX_PROFILE_PICKS = 3;
+const MAX_PROFILE_PICKS = 3;
 
 /** The exclusive rows, each of which declines the question. */
 export type ProfileExclusive = "none" | "nothing" | "nothingInParticular" | "ratherNot";
 
-export type ProfileStudyDraft = { field: string; subject: string };
+type ProfileStudyDraft = { field: string; subject: string };
 
 export type ProfileDraft = {
   picks: string[];
@@ -34,7 +34,7 @@ const CHIP_QUESTIONS = new Set<ProfileQuestion>([
 
 const JOB_STATUSES = new Set(["work", "workAndStudy"]);
 
-export const NO_SOUND_EFFECTS = "noSoundEffects";
+const NO_SOUND_EFFECTS = "noSoundEffects";
 
 /** Which supports often help with each condition, checked when the supports screen follows. */
 const PRECHECKS: Partial<Record<string, string[]>> = {
@@ -44,7 +44,7 @@ const PRECHECKS: Partial<Record<string, string[]>> = {
   dyslexia: ["shortAnswers"],
 };
 
-export function isChipQuestion(question: ProfileQuestion): boolean {
+function isChipQuestion(question: ProfileQuestion): boolean {
   return CHIP_QUESTIONS.has(question);
 }
 
@@ -69,7 +69,7 @@ export function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive
   }
 }
 
-export function emptyProfileDraft(): ProfileDraft {
+function emptyProfileDraft(): ProfileDraft {
   return { consented: false, exclusive: null, picks: [], studies: [], text: "" };
 }
 
