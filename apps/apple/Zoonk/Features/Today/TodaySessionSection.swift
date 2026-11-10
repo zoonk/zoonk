@@ -71,12 +71,11 @@ struct TodaySessionSection: View {
     let next = session.nextBlock
     let done = session.blocks.filter(\.isFinished)
     let (before, upcoming) = session.queue(next: next)
-    let foldsDone = next != nil && done.count > doneRows
+    let foldsDone = done.count > doneRows
     let coming = next == nil ? nil : session.comingLessons
     let timedRows = upcoming.count + (coming == nil ? 0 : 1)
     let upcomingCount = timedRows + session.plusLessons.count
-    let foldedFrom = next == nil ? upcomingCount : StudyDay.upcomingRows
-    let shownUpcoming = disclosures.showsMore ? upcomingCount : foldedFrom
+    let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
 
     if foldsDone {
       FoldRow(isOpen: $disclosures.showsDone, isDone: true, count: done.count, minutes: nil)
@@ -138,12 +137,12 @@ struct TodaySessionSection: View {
       PlusLessonRow(title: lesson.title)
     }
 
-    if upcomingCount > foldedFrom {
+    if upcomingCount > StudyDay.upcomingRows {
       FoldRow(
-        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedFrom,
-        minutes: timedRows > foldedFrom
+        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - StudyDay.upcomingRows,
+        minutes: timedRows > StudyDay.upcomingRows
           ? session.foldedMinutes(
-            showing: before + [next].compactMap { $0 } + upcoming.prefix(foldedFrom))
+            showing: before + [next].compactMap { $0 } + upcoming.prefix(StudyDay.upcomingRows))
           : nil
       )
       .id(Self.moreFold)
