@@ -76,7 +76,7 @@ A reviewer sees what the change did without running it, from evidence of both si
 | Adds or edits a blog post                                                                                     | A link to the post on the PR's Vercel preview, instead of screenshots                     |
 
 - **Numbers:** each metric with before → after and the difference (`LCP, phone, throttled: 2.4 s → 1.1 s (−54%)`), what was measured (page or command, build, screen, throttling) and how many runs. Measure both sides back to back on the same machine and settings; on a busy machine, compare the numbers noise barely moves (main-thread work, counts, bytes). For pages, `verify:pages --baseline` prints the table ([measuring pages](../verify/references/pages.md)). Report a number that didn't move or got worse too. "Faster" without numbers isn't evidence.
-- **Size doesn't exempt a change:** a one-line style fix that a learner can see gets its screenshots like a redesign does, and a PR is not ready to open without them.
+- **Any visual change gets screenshots:** what decides it is whether a learner would see a difference, not how big the change is. They let a reviewer see what changed from the PR alone, so a PR that changes what a learner sees is not ready to open without them.
 - **A new screen** has only an after side and **a removed one** only a before; say so in its panel.
 - **A blog post** needs no screenshots: its preview is the page readers will get, on any screen. Once the PR is open, start the preview ([how](../zoonk-pull-request/SKILL.md#4-hand-back)) and link the post on it in the body; after a push that changes the post, preview again and update the link.
 
