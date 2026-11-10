@@ -181,7 +181,7 @@ test.describe("Checkpoints API", () => {
     expect(bossMove.status()).toBe(404);
   });
 
-  test("a legacy boss offers Start without a question count, then reads its saved block, only for its learner", async () => {
+  test("a boss offers Start with the questions it will ask, then reads its saved block, only for its learner", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "challenge" }),
       createBearerLearner({ baseURL, prefix: "challenge-other" }),
@@ -206,7 +206,7 @@ test.describe("Checkpoints API", () => {
       goalId: goal.id,
       kind: "boss",
       planItemId: boss.id,
-      questions: null,
+      questions: BOSS_QUESTIONS,
       status: "ready",
       waitReason: null,
     });
@@ -336,7 +336,7 @@ test.describe("Checkpoints API", () => {
       schema: challengeResponseSchema,
     });
 
-    expect(intro).toMatchObject({ passMark: null, questions: null, status: "ready" });
+    expect(intro).toMatchObject({ passMark: 7, questions: 10, status: "ready" });
 
     const refused = await api.post(`${path}/starts`, { data: { timeZone: "UTC" } });
     expect(refused.status()).toBe(409);
