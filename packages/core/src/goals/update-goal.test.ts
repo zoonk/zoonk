@@ -185,16 +185,25 @@ describe(updateGoal, () => {
     ).resolves.toStrictEqual({ error: "pastDate", status: "invalid" });
   });
 
-  it("pauses and resumes from today, counting the free plan's one active goal", async () => {
+  it("pauses and resumes from today, counting the free plan's three active goals", async () => {
     const { goal, plan, user } = await setup();
 
     await expect(
       updateGoal({ goalId: goal.id, input: { status: "paused" } }),
     ).resolves.toMatchObject({ goal: { status: "paused" } });
 
-    const other = await goalFixture({ userId: user.id });
+    const [other] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
     const blocked = await updateGoal({ goalId: goal.id, input: { status: "active" } });
-    expect(blocked).toMatchObject({ limit: { resource: "activeGoals" }, status: "limitReached" });
+
+    expect(blocked).toMatchObject({
+      limit: { limit: 3, resource: "activeGoals" },
+      status: "limitReached",
+    });
 
     await prisma.goal.update({ data: { status: "paused" }, where: { id: other.id } });
     vi.setSystemTime(new Date("2020-10-06T12:00:00Z"));

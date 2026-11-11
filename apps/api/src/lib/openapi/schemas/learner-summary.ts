@@ -183,7 +183,7 @@ const learnerSummarySchema = z
       )
       .meta({
         description:
-          "Goals typed together with the learner's goals that their plan didn't start (Free and guests follow one at a time), kept so they start without typing them again. Listed under the learner's goals until started, or until every goal started with them is archived",
+          "Goals typed together with the learner's goals that their plan didn't start, kept so they start without typing them again. Listed under the learner's goals until started, or until every goal started with them is archived",
       }),
   })
   .meta({ id: "LearnerSummary" }) satisfies z.ZodType<LearnerSummary>;

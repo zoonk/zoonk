@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
@@ -32,6 +33,12 @@ function subscribe(userId: string) {
 type CardGoal = { subject: string; targetDate?: string; title: string };
 
 const STATISTICS: CardGoal = { subject: "Statistics", title: "Learn statistics" };
+
+const CHEMISTRY: CardGoal = { subject: "Chemistry", title: "Learn chemistry" };
+
+function follow(userId: string, count: number) {
+  return Promise.all(Array.from({ length: count }, () => goalFixture({ userId })));
+}
 
 async function readCard(userId: string, others: CardGoal[] = [STATISTICS]) {
   const words = `learn english and more, 30 min a day ${randomUUID()}`;
@@ -74,7 +81,7 @@ function confirm(draft: OnboardingDraftView) {
   }
 
   const goals = understanding.goals
-    .slice(0, draft.activeGoalLimit ?? undefined)
+    .slice(0, draft.activeGoalsLeft ?? undefined)
     .map((goal) => goal.draft);
 
   return createOnboardingGoals({ dailyMinutes: understanding.schedule.dailyMinutes, goals });
@@ -86,58 +93,76 @@ async function readWaitingGoals() {
 }
 
 describe("goals typed together beyond the goals a plan follows at once", () => {
-  it("starts a free learner's first goal with the whole day and the other once they have Plus", async () => {
+  it("starts the goals a free learner has room for, sharing the day, and the rest once a slot frees", async () => {
     const user = await useLearner();
-    const draft = await readCard(user.id);
+    const [followed] = await follow(user.id, 1);
+    const draft = await readCard(user.id, [STATISTICS, CHEMISTRY]);
 
-    expect(draft.activeGoalLimit).toBe(1);
+    expect(draft.activeGoalsLeft).toBe(2);
 
     const created = await confirm(draft);
 
     expect(created).toMatchObject({
-      goals: [{ dailyMinutes: 30, title: "Learn English" }],
+      goals: [
+        { dailyMinutes: 20, title: "Learn English" },
+        { dailyMinutes: 10, title: STATISTICS.title },
+      ],
       refused: [],
       status: "created",
     });
 
     await expect(readWaitingGoals()).resolves.toMatchObject([
-      { input: { goals: [{ title: "Learn statistics" }] }, locked: true },
+      { input: { goals: [{ title: CHEMISTRY.title }] }, locked: true },
     ]);
 
-    await subscribe(user.id);
+    await updateGoal({ goalId: followed?.id ?? "", input: { status: "paused" } });
     const [waiting] = await readWaitingGoals();
 
     expect(waiting?.locked).toBe(false);
 
     const added = await createOnboardingGoals(waiting?.input ?? { dailyMinutes: 0, goals: [] });
-    const [statistics] = added.status === "created" ? added.goals : [];
-    const first = created.status === "created" ? created.goals[0] : undefined;
+    const [chemistry] = added.status === "created" ? added.goals : [];
+    const startedIds = created.status === "created" ? created.goals.map((goal) => goal.id) : [];
 
-    expect(statistics?.details.onboardingId).toBe(draft.id);
+    expect(chemistry?.details.onboardingId).toBe(draft.id);
     await expect(readWaitingGoals()).resolves.toStrictEqual([]);
 
-    const setup = await getOnboarding({ goalId: statistics?.id ?? "" });
+    const setup = await getOnboarding({ goalId: chemistry?.id ?? "" });
 
     expect(setup).toMatchObject({
       onboarding: {
-        goalIds: [first?.id, statistics?.id],
+        goalIds: [...startedIds, chemistry?.id],
         steps: expect.arrayContaining(["schedule"]),
       },
       status: "ready",
     });
   });
 
+  it("starts a goal waiting on Free once the learner has Plus", async () => {
+    const user = await useLearner();
+    await follow(user.id, 2);
+    await confirm(await readCard(user.id));
+
+    await expect(readWaitingGoals()).resolves.toMatchObject([
+      { input: { goals: [{ title: STATISTICS.title }] }, locked: true },
+    ]);
+
+    await subscribe(user.id);
+
+    await expect(readWaitingGoals()).resolves.toMatchObject([{ locked: false }]);
+  });
+
   it("keeps each waiting goal in its place when a later one starts first", async () => {
     const user = await useLearner();
-    const chemistry = { subject: "Chemistry", title: "Learn chemistry" };
-    await confirm(await readCard(user.id, [STATISTICS, chemistry]));
+    await follow(user.id, 2);
+    await confirm(await readCard(user.id, [STATISTICS, CHEMISTRY]));
     await subscribe(user.id);
 
     const waiting = await readWaitingGoals();
 
     expect(waiting.map((goal) => goal.input.goals[0]?.title)).toStrictEqual([
       STATISTICS.title,
-      chemistry.title,
+      CHEMISTRY.title,
     ]);
 
     await createOnboardingGoals(waiting[1]?.input ?? { dailyMinutes: 0, goals: [] });
@@ -168,8 +193,11 @@ describe("goals typed together beyond the goals a plan follows at once", () => {
 
   it("drops a waiting goal once the learner starts over", async () => {
     const user = await useLearner();
+    await follow(user.id, 2);
     const created = await confirm(await readCard(user.id));
     const goalId = created.status === "created" ? (created.goals[0]?.id ?? "") : "";
+
+    await expect(readWaitingGoals()).resolves.toHaveLength(1);
 
     await updateGoal({ goalId, input: { status: "archived" } });
 
@@ -180,14 +208,15 @@ describe("goals typed together beyond the goals a plan follows at once", () => {
     const user = await userFixture();
     mockGuestSession(user.id);
 
-    await expect(readCard(user.id)).resolves.toMatchObject({ activeGoalLimit: 1 });
+    await expect(readCard(user.id)).resolves.toMatchObject({ activeGoalsLeft: 1 });
   });
 
   it("starts every goal for a Plus learner, sharing the day", async () => {
     const user = await useLearner({ plus: true });
+    await follow(user.id, 3);
     const draft = await readCard(user.id);
 
-    expect(draft.activeGoalLimit).toBeNull();
+    expect(draft.activeGoalsLeft).toBeNull();
 
     const created = await confirm(draft);
     const goals = created.status === "created" ? created.goals : [];

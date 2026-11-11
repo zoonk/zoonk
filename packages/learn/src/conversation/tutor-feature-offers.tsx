@@ -74,9 +74,12 @@ export function StartGoalOffer({
     >
       {locked ? (
         <PlusNotice inset>
-          {t(
-            "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus.",
-          )}
+          {t({
+            description:
+              "On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.",
+            message:
+              "Starting another goal right now comes with Plus. Until then, keep going with your current goals.",
+          })}
         </PlusNotice>
       ) : (
         <OfferLink href={hrefs.start}>{t("Start")}</OfferLink>

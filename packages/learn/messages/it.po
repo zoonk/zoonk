@@ -2740,10 +2740,11 @@ msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "Inizia un nuovo obiettivo"
 
+#. On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "Zt_vKl"
-msgid "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus."
-msgstr "Con la formula Free segui un obiettivo alla volta: metti in pausa quello attuale dal suo menu o segui più obiettivi con Plus."
+msgctxt "cTQ_Wv"
+msgid "Starting another goal right now comes with Plus. Until then, keep going with your current goals."
+msgstr "Per iniziare un altro obiettivo adesso serve Plus. Nel frattempo, continua con i tuoi obiettivi attuali."
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -4453,10 +4454,11 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Corso completato"
 
+#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/journey/goal-actions.tsx
-msgctxt "vr-vFm"
-msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
-msgstr "Con la formula Free puoi seguire un obiettivo alla volta. Metti in pausa l’altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più."
+msgctxt "hnzjLt"
+msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgstr "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Metti in pausa un altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più."
 
 #: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
@@ -9100,10 +9102,11 @@ msgctxt "p9LATe"
 msgid "More goals at once with Plus"
 msgstr "Più obiettivi insieme con Plus"
 
+#. Shown on the screen for typing a new goal, before the learner types, when a free learner already follows as many goals as the free plan allows at once. Quick questions are short explanations that don't take one of those goals. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "KJXbLd"
-msgid "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime."
-msgstr "Con la formula Free puoi seguire un obiettivo alla volta. Per iniziarne un altro, metti in pausa quello attuale dal menu del tuo Piano. Puoi fare domande veloci in qualsiasi momento."
+msgctxt "tqq0xx"
+msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
+msgstr "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, mettine uno in pausa dal menu del tuo Piano. Puoi fare domande rapide in qualsiasi momento."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9348,6 +9351,12 @@ msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
 msgstr "{exam, select, abitur {Superare l’Abitur} bac {Superare il bac} enem {Superare l’ENEM} exani {Superare l’EXANI-II} kyotsu {Andare bene al Common Test} matura {Superare la matura} maturita {Superare la Maturità} suneung {Andare bene al CSAT} yks {Andare bene allo YKS} other {Superare il SAT}}"
 
+#. Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.u1Pjvx"
+msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
+msgstr "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, metti in pausa uno dei tuoi obiettivi dal menu del tuo Piano, oppure passa a Plus."
+
 #. Shown when automated bot protection refuses to let this browser continue without an account.
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.qi0x0O"
@@ -9378,11 +9387,6 @@ msgstr "Hai raggiunto il limite di nuove domande previsto per questo mese dalla 
 msgctxt "goalErrors.h018_j"
 msgid "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
 msgstr "Hai raggiunto il limite di nuovi obiettivi che puoi iniziare questo mese con la formula Free. Riprova il mese prossimo o passa a Plus per continuare subito."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.nMzPGK"
-msgid "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus."
-msgstr "Con la formula Free puoi seguire un obiettivo alla volta. Per iniziare questo, metti in pausa l’obiettivo attuale dal menu del tuo Piano o passa a Plus."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.aFV0Wu"
@@ -10409,10 +10413,11 @@ msgctxt "uN-4n4"
 msgid "You can change all of this later."
 msgstr "Puoi cambiare tutto più avanti."
 
+#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "aHZ7X8"
-msgid "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, one {Con Plus puoi seguire più obiettivi alla volta. Nel frattempo, questo obiettivo resta in attesa tra i tuoi obiettivi.} other {Con Plus puoi seguire più obiettivi alla volta. Nel frattempo, questi obiettivi restano in attesa tra i tuoi obiettivi.}}"
+msgctxt "Hs12te"
+msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
+msgstr "{count, plural, one {Per seguire più obiettivi alla volta serve Plus. Nel frattempo, questo obiettivo resta in attesa nel tuo elenco di obiettivi.} other {Per seguire più obiettivi alla volta serve Plus. Nel frattempo, questi obiettivi restano in attesa nel tuo elenco di obiettivi.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "pWjhwg"

@@ -1163,7 +1163,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     appTools: { startGoal: { plusRequired: true } },
     context: CONCURSO_PLAN,
     expectations:
-      "A second exam from a learner on the free plan: offeredTools has startGoal, offered and locked (Plus), with the INSS concurso as the goal. The answer says plainly, in one or two sentences and without a sales pitch, that the free plan follows one goal at a time: she can pause this goal from the Journey's menu to start the new one, or follow both with Plus. Saying she can't study for it in the app, or pushing Plus over several sentences, caps at 6.0. proposedChange is null.",
+      "A second exam from a learner on the free plan: offeredTools has startGoal, offered and locked (Plus), with the INSS concurso as the goal. The answer says plainly, in one or two sentences and without a sales pitch, that starting another goal right now comes with Plus and that she can keep going with her current goals. Saying how many goals she follows, that pausing one makes room, or that she can't study for it in the app, or pushing Plus over several sentences, caps at 6.0. proposedChange is null.",
     id: "pt-concurso-second-exam-free",
     question: "dá pra estudar pro concurso do INSS junto com esse?",
   }),

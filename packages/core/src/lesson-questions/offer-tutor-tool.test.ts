@@ -9,6 +9,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { normalizeString } from "@zoonk/utils/string";
@@ -371,7 +372,7 @@ describe("every feature the buddy can suggest", () => {
     vi.useRealTimers();
   });
 
-  it("starts a new goal with the learner's words and the catalog's course, locked while the free plan follows one goal", async () => {
+  it("starts a new goal with the learner's words and the catalog's course while the free plan has room", async () => {
     const { goal } = await learnSetup();
     const { brand, course, title } = await catalogCourseFixture(goal.language);
     const asked = await askBuddy(goal.id, "I also want to learn the guitar");
@@ -385,7 +386,7 @@ describe("every feature the buddy can suggest", () => {
       }),
     ).resolves.toStrictEqual({
       offer: {
-        access: "plusRequired",
+        access: "open",
         course: {
           brandSlug: brand.slug,
           description: course.description,
@@ -402,7 +403,18 @@ describe("every feature the buddy can suggest", () => {
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: asked.questionId } }),
-    ).resolves.toMatchObject({ toolOffer: { access: "plusRequired", kind: "startGoal" } });
+    ).resolves.toMatchObject({ toolOffer: { access: "open", kind: "startGoal" } });
+  });
+
+  it("locks a new goal while the free plan can't start another today, though the learner follows one goal", async () => {
+    const { goal } = await learnSetup();
+    const userId = goal.userId;
+    await usageRecordsFixture({ count: 3, createdAt: NOW, kind: "goal", userId });
+    const asked = await askBuddy(goal.id, "I also want to learn the guitar");
+
+    await expect(
+      offerTutorTool({ ...asked, goalWords: "Learn the guitar", tool: "startGoal", topic: null }),
+    ).resolves.toMatchObject({ offer: { access: "plusRequired", kind: "startGoal" } });
   });
 
   it("starts a new goal openly with Plus, without a course when none matches, and never without words", async () => {

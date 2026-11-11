@@ -736,13 +736,21 @@ describe(startCourseGoal, () => {
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
-  it("keeps a free learner to one active goal", async () => {
+  it("keeps a free learner to three active goals", async () => {
     const [course, learner] = await Promise.all([publicCourse(), userFixture()]);
-    await goalFixture({ userId: learner.id });
+
+    await Promise.all([
+      goalFixture({ userId: learner.id }),
+      goalFixture({ userId: learner.id }),
+      goalFixture({ userId: learner.id }),
+    ]);
+
     mockSession(learner.id);
 
     await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toMatchObject({
-      refusals: [{ decision: { limit: { resource: "activeGoals" }, status: "limitReached" } }],
+      refusals: [
+        { decision: { limit: { limit: 3, resource: "activeGoals" }, status: "limitReached" } },
+      ],
       status: "refused",
     });
   });
