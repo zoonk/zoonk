@@ -1,7 +1,9 @@
 import { countWords, replaceEmDashes } from "@zoonk/utils/string";
 import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
+import { countListeningVoices } from "../audio/listening-voices";
 import { normalizeTypedAnswer } from "../grading/typed-answer-match";
 import {
+  LISTENING_GENDERS,
   type ListeningQuestion,
   type ListeningQuestionFormat,
   type ListeningSet,
@@ -177,6 +179,18 @@ function findQuestionProblems(script: string, question: ListeningQuestion): stri
   ].filter((problem) => typeof problem === "string");
 }
 
+/** Each speaker gets a voice of their gender; past that many, two would sound the same. */
+function findSharedVoices(speakers: ListeningSet["speakers"]): string[] {
+  return LISTENING_GENDERS.flatMap((gender) => {
+    const count = speakers.filter((speaker) => speaker.gender === gender).length;
+    const voices = countListeningVoices(gender);
+
+    return count > voices
+      ? [`Has ${count} ${gender} speakers; only ${voices} voices tell them apart.`]
+      : [];
+  });
+}
+
 function findScriptProblems(set: ListeningSet): string[] {
   const names = new Set(set.speakers.map((speaker) => speaker.name));
   const words = countScriptWords(set.turns);
@@ -187,6 +201,7 @@ function findScriptProblems(set: ListeningSet): string[] {
 
   return [
     names.size !== set.speakers.length && "Two speakers have the same name.",
+    ...findSharedVoices(set.speakers),
     strangers.size > 0 &&
       `Lines are said by people not in the speakers: ${[...strangers].join(", ")}.`,
     words < MIN_SCRIPT_WORDS && `The script has ${words} words; a recording needs at least 40.`,
