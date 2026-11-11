@@ -115,15 +115,13 @@ private struct ChartInspectionScope: ViewModifier {
       .overlayPreferenceValue(PageChartTooltip.self) { tooltip in
         if let tooltip {
           GeometryReader { page in
-            let chart = page[tooltip.chart]
-            let point = tooltip.point.offsetBy(dx: 0, dy: chart.minY)
-            let sight = CGRect(x: chart.minX, y: 0, width: chart.width, height: page.size.height)
-
-            if point.maxY > sight.minY, point.minY < sight.maxY {
+            if let placed = ChartTooltipPlacement.onPage(
+              tooltip.point, chart: page[tooltip.chart], pageHeight: page.size.height)
+            {
               ChartTooltip(detail: tooltip.detail)
-                .placed(at: point)
-                .frame(width: sight.width, height: sight.height)
-                .offset(x: sight.minX)
+                .placed(at: placed.point)
+                .frame(width: placed.sight.width, height: placed.sight.height)
+                .offset(x: placed.sight.minX)
             }
           }
         }
@@ -183,7 +181,8 @@ private struct ChartPointKeys: ViewModifier {
 }
 
 /// Places a tooltip centered above its point. Where that would leave its bounds it goes below the
-/// point, and beside it if neither fits. It never crosses the bounds' sides.
+/// point, beside it if neither fits, and over it, inside the bounds, if nothing does. It never
+/// crosses the bounds' sides.
 struct ChartTooltipPlacement: Layout {
   static let gap = 8.0
   /// Main's note wraps at 14rem inside the card's padding.
@@ -224,7 +223,8 @@ struct ChartTooltipPlacement: Layout {
       return below
     }
 
-    let centeredY = clamp(anchor.midY - size.height / 2, bounds.minY, bounds.maxY - size.height)
+    let lowest = bounds.maxY - size.height
+    let centeredY = clamp(anchor.midY - size.height / 2, bounds.minY, lowest)
 
     if anchor.maxX + gap + size.width <= bounds.maxX {
       return CGPoint(x: anchor.maxX + gap, y: centeredY)
@@ -234,7 +234,23 @@ struct ChartTooltipPlacement: Layout {
       return CGPoint(x: anchor.minX - gap - size.width, y: centeredY)
     }
 
-    return above
+    return CGPoint(x: centeredX, y: clamp(above.y, bounds.minY, lowest))
+  }
+
+  /// Where a page shows the tooltip for `point`, a frame in `chart`, which is the chart's frame on
+  /// the page: `sight` spans the chart's width and the page's height, and `point` is in its
+  /// coordinates. Nil once the point leaves sight.
+  static func onPage(
+    _ point: CGRect, chart: CGRect, pageHeight: Double
+  ) -> (point: CGRect, sight: CGRect)? {
+    let point = point.offsetBy(dx: 0, dy: chart.minY)
+    let sight = CGRect(x: chart.minX, y: 0, width: chart.width, height: pageHeight)
+
+    guard point.maxY > sight.minY, point.minY < sight.maxY else {
+      return nil
+    }
+
+    return (point, sight)
   }
 
   /// The lower limit wins where the tooltip is larger than the room.
