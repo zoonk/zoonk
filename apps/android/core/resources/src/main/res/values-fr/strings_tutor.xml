@@ -87,7 +87,7 @@
   "tutor_offer_stats_description": "6af8cf56551c7313081f5b93d20bbdb7e3dd4f226e41b4fca1276dceacffe814",
   "tutor_offer_take_test": "c0d6160fc6ba8699cc58cd55182719fdbde99cc0c57db8115808f755b9782288",
   "tutor_offer_variety_applied": "19f2c8229d43d93b9ba1a7fe87029a8a6b8d077415694169dd22d324b2ea51f4",
-  "tutor_offer_variety_description": "be48edc85dfc36863a02104a82148bb35004f3f77a77518971ef576c70930d5c",
+  "tutor_offer_variety_description": "25192e4a25452ae11dc2d8fb2688f8441900858e20af79d5f50996ce61ce4737",
   "tutor_page_sign_up": "e2f8164302daa3532c14e17a33ab0989ad4925027500920c376f4a01ac5fef1f",
   "tutor_placeholder_answer": "5892b89ebce44a8dcf35e80f9dba2f0f22eec0dfe1cfd4578970ec8c9998597d",
   "tutor_placeholder_chapter": "b5f1c43f6cb20f825c759a4ce62de3de9818bcc043dfeb831d8f85b02b09f4e5",
@@ -260,7 +260,7 @@
     <string name="tutor_offer_stats">Statistiques</string>
     <string name="tutor_offer_stats_description">Énergie, niveau, bonnes réponses et moments où tu étudies le mieux.</string>
     <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
-    <string name="tutor_offer_variety_description">Ton compagnon et les appels d’entraînement sont en %1$s.</string>
+    <string name="tutor_offer_variety_description">Ton compagnon et tes appels d’entraînement utilisent %1$s.</string>
     <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
     <string name="tutor_offer_variety_applied">Enregistré. Tu peux modifier ce choix dans ton plan.</string>
     <string name="tutor_offer_plus">Plus</string>

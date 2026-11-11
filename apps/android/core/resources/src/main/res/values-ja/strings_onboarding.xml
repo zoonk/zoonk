@@ -452,9 +452,9 @@
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
   "onboarding_use_this_date": "7d10133f3b9330e094e66f7a2e383305527debe0836854a589a4d5b62e7fa7b3",
-  "onboarding_variety_description": "b1cb59f1840886f3fc1f31b3bc8c6870d5607d3e61c618e271fb19c83dbe7853",
+  "onboarding_variety_description": "15998f4ad1125744517c663a2cf27c0bd1c89012c37ace6bfe5b33357d48e495",
   "onboarding_variety_none": "460bcd8ac80c27821d4e72f3890e144f226dfe8eb2b030a545f37bc4a5e93af5",
-  "onboarding_variety_note": "2d763e862f887b575d70cc669a98cd59a997c01f25d281b1c57218767f5ff8fd",
+  "onboarding_variety_note": "ad1b3ca57cfef3e2ad186dafc4b61c04e0794974ee391b97215b99b094b346c0",
   "onboarding_variety_title": "79742f4c2daa7761299a32044058dccab6e6e69d287374003e10998530820b0c",
   "onboarding_waitlist_joined": "8c3392d0df1700950159472fdce1784e0ae783c030958d1a06e80110a9c89bec",
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
@@ -1096,9 +1096,9 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">国</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">相棒や会話練習での話し方は、選んだ国に合わせます。レッスンとその音声では%1$sを使います。</string>
+    <string name="onboarding_variety_description">相棒とのやり取りや会話練習では、選んだ国の言葉を使います。レッスンとその音声では%1$sを使います。</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">指定なし</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
-    <string name="onboarding_variety_note">相棒と会話練習では%1$sを使います。レッスンと音声では%2$sを使います。</string>
+    <string name="onboarding_variety_note">相棒とのやり取りや会話練習では%1$sを使います。レッスンとその音声では%2$sを使います。</string>
 </resources>

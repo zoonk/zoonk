@@ -86,8 +86,8 @@
   "tutor_offer_stats": "16ebe02b1c4b0b489e247e95b845993cd24728864d10684cbf28f5168e0621f7",
   "tutor_offer_stats_description": "9e548549dd9e57b9a1bcaf7db6ac472a2946ca91151479e5789fd3994211a802",
   "tutor_offer_take_test": "dd47ea5d332d58d1580173d2f5c47702eb291e6b6b16faaac186cc92a0bca404",
-  "tutor_offer_variety_applied": "4ed729391218ec62404f03589e7f1b43fb8df8de362e88165f31614464ef676b",
-  "tutor_offer_variety_description": "c268541d0902aa312a6099d4e9d516c31f3f69fd462c4f5f2f99a49bbd847d50",
+  "tutor_offer_variety_applied": "82ef85639e89c7b5547d66105465346a3b7ccb8e4035abd9e839debc2ab079b4",
+  "tutor_offer_variety_description": "c899cfeda5bd9e4098341a61bd77e70efb726665bbaabf7c15cbae6e1299bc07",
   "tutor_page_sign_up": "83f6d09243d1f18a3ef999f7633db6bc4b9182c247c24b135ae62eaa35691e60",
   "tutor_placeholder_answer": "fa7a53bf561622463c5869693ec32053d9de2fae336780b1059fe1fc7a4e65c4",
   "tutor_placeholder_chapter": "cd14a32797491152e21be4ee3b4ad6504497d0da9f3b19fd7077952f721714d4",
@@ -254,9 +254,9 @@
     <string name="tutor_offer_stats">統計</string>
     <string name="tutor_offer_stats_description">エネルギー、レベル、正解数、学習がはかどる時間帯を確認できます。</string>
     <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
-    <string name="tutor_offer_variety_description">相棒と会話練習では%1$sを使います。</string>
+    <string name="tutor_offer_variety_description">相棒とのやり取りや会話練習では%1$sを使います。</string>
     <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
-    <string name="tutor_offer_variety_applied">保存しました。学習計画で変更できます。</string>
+    <string name="tutor_offer_variety_applied">保存しました。学習計画から変更できます。</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Plusの内容と料金を確認できます。</string>
     <string name="tutor_offer_plus_subscribed">契約中のプランとお支払いを確認できます。</string>

@@ -86,8 +86,8 @@
   "tutor_offer_stats": "196ec76c89a7c9ac42588d661af0b12edeaa58992c8503899196158936de9a2b",
   "tutor_offer_stats_description": "258be1683634af3d68fda91a33cfd642db50a86644293cfec1d6656eea19cb1c",
   "tutor_offer_take_test": "7b9285e3f77ae89e09689df9ffa175ec3ba5cb7a1ab8126f1866829f81304629",
-  "tutor_offer_variety_applied": "621c7178fe1db89b4584b01cf89f45109c95bc409bc98ca40280e5cc3b0e4fd8",
-  "tutor_offer_variety_description": "4c199275f7b7b9fb46098f8084aeca8373ef92d633e752e5c0e14137442666d6",
+  "tutor_offer_variety_applied": "657cdd895ccb92f968411ec8178513090d4ef82d16ed31127b0464eeb8415397",
+  "tutor_offer_variety_description": "dadf09f23111ee9705ad907325d30d59f45e92936d7aa1385b4bbda43dcb24c1",
   "tutor_page_sign_up": "aecec2f412e7bbf73709cf407d361d2a7660158b6df30ed1422beabeea66558d",
   "tutor_placeholder_answer": "bd317c5851d48f23f748461553c0331d6fe0c7173f967eadc8c28787c8794137",
   "tutor_placeholder_chapter": "a50453f8be9da2b99dd4d9cb4e8346e12a454518bb285c55793bed2346093d2c",
@@ -260,9 +260,9 @@
     <string name="tutor_offer_stats">Statistiche</string>
     <string name="tutor_offer_stats_description">Energia, livello, risposte corrette e quando studi meglio.</string>
     <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
-    <string name="tutor_offer_variety_description">Con il tuo compagno e nelle conversazioni di allenamento si parla in %1$s.</string>
+    <string name="tutor_offer_variety_description">Il tuo compagno e le conversazioni di allenamento usano %1$s.</string>
     <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
-    <string name="tutor_offer_variety_applied">Salvata. Puoi cambiarla nel tuo piano.</string>
+    <string name="tutor_offer_variety_applied">Scelta salvata. Puoi cambiarla nel tuo piano.</string>
     <string name="tutor_offer_plus">Plus</string>
     <string name="tutor_offer_plus_description">Cosa include Plus e quanto costa.</string>
     <string name="tutor_offer_plus_subscribed">La tua formula e la fatturazione.</string>

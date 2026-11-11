@@ -452,9 +452,9 @@
   "onboarding_understood_title": "6ed6007ba068d173a4fb9ede80fad5fd58c3807283277cb8c84ff8a9b1a32915",
   "onboarding_upload_file": "e068e3496598ab5c1ce0d8e683092ddd4180c395f8f4ed8f2d54096bda36877d",
   "onboarding_use_this_date": "b7cc38e16304727cf744909838e23f37738be2757500be77b96b379249e72011",
-  "onboarding_variety_description": "b129009081ee4ce578db5c6eba91a5bcef63a393e44a647f4cf3a89848c10ef0",
+  "onboarding_variety_description": "219d4ec4b7d0d23f3960bbf3d53d7cb83c41cfe018d162770d9207588a38ab46",
   "onboarding_variety_none": "b5245a60a09b0dd538d832cdb50020616788fee32649c350b12163bfa11d371f",
-  "onboarding_variety_note": "74237ebd9663278924f662d15900a5a11942a1e4f050e658918342d451d07f1a",
+  "onboarding_variety_note": "c90022bb8f29ac21c488f3979d94e50582acff3d613d6ff0d7eed6d30c5e32ca",
   "onboarding_variety_title": "a885af511d9c6a40845ca91d9ffec9d86496d2dace622f9ca23162410fd22903",
   "onboarding_waitlist_joined": "2d14f696b4000dcfbc3da420daa3ddea100442e6764c5617998dcbbc1d7bf258",
   "onboarding_waitlist_sign_in": "fc50c8130ce1dd1fef4870b7369da2105bd3b5748ac24da4b29831380189bbe6",
@@ -1146,9 +1146,9 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Paese</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">Il tuo compagno e le conversazioni di allenamento usano la variante del paese che scegli. Le lezioni e i relativi audio sono in %1$s.</string>
+    <string name="onboarding_variety_description">Il tuo compagno di studio e le conversazioni di allenamento usano la variante del paese che scegli. Le lezioni e il relativo audio sono in %1$s.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">Nessuna preferenza</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
-    <string name="onboarding_variety_note">Con il tuo compagno e nelle conversazioni di allenamento si parla in %1$s. Le lezioni e i relativi audio sono in %2$s.</string>
+    <string name="onboarding_variety_note">Il tuo compagno e le conversazioni di allenamento usano %1$s. Le lezioni e il loro audio usano %2$s.</string>
 </resources>
