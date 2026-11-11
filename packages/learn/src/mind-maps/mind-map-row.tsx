@@ -23,13 +23,11 @@ import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { toMindMapSrc } from "./_utils/mind-map-urls";
 import { type MindMapActions } from "./mind-map-actions";
 import { type MindMapCopyInput, type MindMapRowPlace, useStateLines } from "./mind-map-copy";
+import { MindMapSlot } from "./mind-map-slot";
 import { MindMapViewer } from "./mind-map-viewer";
 import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
-
-const SLOT_CLASS = "flex size-12 shrink-0 items-center justify-center rounded-lg";
 
 const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
 
@@ -43,32 +41,6 @@ function SlotMark({ shown }: { shown: MindMapShown }) {
   }
 
   return <KindIcon kind="mindMap" />;
-}
-
-function MapSlot({ shown, view }: { shown: MindMapShown; view: ChapterMindMapView }) {
-  if (shown === "ready" && view.image) {
-    return (
-      // oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; thumbnails are stored, optimized webp files.
-      <img
-        alt=""
-        className={cn(SLOT_CLASS, "ring-border bg-card object-cover ring-1")}
-        decoding="async"
-        height={48}
-        src={toMindMapSrc(view.image.thumbnailUrl)}
-        width={48}
-      />
-    );
-  }
-
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(SLOT_CLASS, "border-input border border-dashed")}
-      data-slot="mind-map-slot"
-    >
-      <SlotMark shown={shown} />
-    </span>
-  );
 }
 
 function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string }) {
@@ -142,6 +114,13 @@ function RowAction({
   return null;
 }
 
+/** Without `save`, the row never opens its map: the Mind maps page lists the ready ones itself. */
+export type MindMapRowRequest = Pick<
+  MindMapRequest,
+  "create" | "isPending" | "limit" | "retry" | "shown"
+> &
+  Partial<Pick<MindMapRequest, "save">>;
+
 /** The row for a map whose request someone else follows, like a page that shows it twice. */
 export function MindMapRowView({
   className,
@@ -153,16 +132,16 @@ export function MindMapRowView({
   className?: string;
   place: MindMapRowPlace;
   plus: boolean;
-  request: MindMapRequest;
+  request: MindMapRowRequest;
   view: ChapterMindMapView;
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const titleId = useId();
   const [open, setOpen] = useState(false);
-  const { create, isPending, limit, retry, shown } = request;
+  const { create, isPending, limit, retry, save, shown } = request;
   const input: MindMapCopyInput = { place, plus, shown, view };
-  const ready = shown === "ready" && view.outline !== null;
+  const ready = shown === "ready" && view.outline !== null && save !== undefined;
 
   if (shown === "unavailable") {
     return null;
@@ -173,7 +152,9 @@ export function MindMapRowView({
   const body = (
     <>
       <ListRowLeading className="py-2">
-        <MapSlot shown={shown} view={view} />
+        <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
+          <SlotMark shown={shown} />
+        </MindMapSlot>
       </ListRowLeading>
       <RowText input={input} titleId={titleId} />
     </>
@@ -191,11 +172,9 @@ export function MindMapRowView({
       {locked && (
         <ListRowLink href={routes.upgrade}>
           {body}
-          {place !== "library" && (
-            <ListRowTrailing>
-              <PlusMark className="font-sans" />
-            </ListRowTrailing>
-          )}
+          <ListRowTrailing>
+            <PlusMark className="font-sans" />
+          </ListRowTrailing>
         </ListRowLink>
       )}
 
@@ -221,12 +200,13 @@ export function MindMapRowView({
         )}
       </StatusRegion>
 
-      {ready && (
+      {ready && save && (
         <MindMapViewer
           image={view.image}
           onOpenChange={setOpen}
           open={open}
           outline={view.outline}
+          save={save}
           title={view.title}
         />
       )}

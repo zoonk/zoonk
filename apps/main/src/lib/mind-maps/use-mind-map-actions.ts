@@ -5,12 +5,19 @@ import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import {
   type ChapterMindMapView,
+  type GoalMindMapGenerations,
+  type GoalMindMapsView,
   type MindMapStatus,
+  type SaveMindMapInput,
   chapterMindMapSchema,
   chapterMindMapStatusSchema,
+  goalMindMapGenerationsSchema,
+  goalMindMapsSchema,
+  savedMindMapStateSchema,
 } from "@zoonk/core/mind-maps/contract";
 import {
   type MindMapActions,
+  type MindMapLibraryActions,
   type MindMapLimit,
   type MindMapRequestOutcome,
 } from "@zoonk/learn/mind-maps";
@@ -21,8 +28,12 @@ const HTTP_UNPROCESSABLE = 422;
 
 const LIMIT_RESOURCES = ["aiSpend", "generatedLessons", "lessonStart", "mindMap"] as const;
 
+function goalPath(goalId: string) {
+  return `/v1/goals/${encodeURIComponent(goalId)}` as const;
+}
+
 function chapterPath({ chapterId, goalId }: { chapterId: string; goalId: string }) {
-  return `/v1/goals/${encodeURIComponent(goalId)}/chapters/${encodeURIComponent(chapterId)}/mind-map` as const;
+  return `${goalPath(goalId)}/chapters/${encodeURIComponent(chapterId)}/mind-map` as const;
 }
 
 function getError(body: unknown) {
@@ -98,13 +109,62 @@ async function readMindMapStatus(target: {
   return chapterMindMapStatusSchema.safeParse(json).data?.status ?? null;
 }
 
-/** From the browser: making a map takes a minute, which would hold up the page's Server Actions. */
-export function useMindMapActions(goalId: string): MindMapActions {
+async function listMindMaps(goalId: string): Promise<GoalMindMapsView | null> {
+  const response = await getFromBrowser(`${goalPath(goalId)}/mind-maps`);
+
+  if (!response?.ok) {
+    return null;
+  }
+
+  const json: unknown = await response.json().catch(() => null);
+  return goalMindMapsSchema.safeParse(json).data ?? null;
+}
+
+async function requestAllMindMaps(goalId: string): Promise<GoalMindMapGenerations | null> {
+  const response = await postFromBrowser({ path: `${goalPath(goalId)}/mind-maps/generations` });
+
+  if (!response?.ok) {
+    return null;
+  }
+
+  const json: unknown = await response.json().catch(() => null);
+  return goalMindMapGenerationsSchema.safeParse(json).data ?? null;
+}
+
+async function saveMindMap({
+  goalId,
+  input,
+}: {
+  goalId: string;
+  input: SaveMindMapInput;
+}): Promise<boolean | null> {
+  const response = await postFromBrowser({
+    body: input,
+    path: `${goalPath(goalId)}/mind-maps/saved`,
+  });
+
+  if (!response?.ok) {
+    return null;
+  }
+
+  const json: unknown = await response.json().catch(() => null);
+  return savedMindMapStateSchema.safeParse(json).data?.saved ?? null;
+}
+
+/**
+ * From the browser: making a map takes a minute, which would hold up the page's Server Actions, and
+ * a save's Server Action would expire the learner's tags and render again the screen it's on, a
+ * lesson's end included.
+ */
+export function useMindMapActions(goalId: string): MindMapActions & MindMapLibraryActions {
   return useMemo(
     () => ({
+      list: () => listMindMaps(goalId),
       read: (chapterId) => readMindMap({ chapterId, goalId }),
       readStatus: (chapterId) => readMindMapStatus({ chapterId, goalId }),
       request: (chapterId) => requestMindMap({ chapterId, goalId }),
+      requestAll: () => requestAllMindMaps(goalId),
+      save: (input) => saveMindMap({ goalId, input }),
     }),
     [goalId],
   );

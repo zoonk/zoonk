@@ -377,6 +377,7 @@ msgstr "Daha sonra"
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "iqLF8D"
 msgid "Lessons"
 msgstr "Dersler"
@@ -403,6 +404,7 @@ msgstr "{done, number} / {total, number}"
 #: src/mind-maps/finished-chapter-map.tsx
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/not-made-yet.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -460,7 +462,7 @@ msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar do
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -1036,6 +1038,7 @@ msgstr "Vazgeç"
 #: src/certificates/certificate-name.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-save-button.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
 #: src/plan/plan-date.tsx
@@ -2373,6 +2376,7 @@ msgid "{subject} · Chapter {number, number}"
 msgstr "{subject} · {number, number}. ünite"
 
 #: src/chapter/chapter-header.tsx
+#: src/mind-maps/mind-map-index-rows.tsx
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
@@ -7160,6 +7164,7 @@ msgstr "Geri alınamadı. Tekrar dene."
 
 #: src/mind-maps/finished-chapter-map.tsx
 #: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/not-made-yet.tsx
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7216,12 +7221,6 @@ msgid "{count, plural, one {# lesson gets written first and counts toward your f
 msgstr "{count, plural, other {Önce # ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.}}"
 
 #: src/mind-maps/mind-map-copy.ts
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Metin olarak gör"
-
-#: src/mind-maps/mind-map-copy.ts
 msgctxt "lY6tDJ"
 msgid "Mind map ready"
 msgstr "Zihin haritası hazır"
@@ -7266,6 +7265,50 @@ msgctxt "O36UiH"
 msgid "Mind map: {title}. {idea}"
 msgstr "Zihin haritası: {title}. {idea}"
 
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Metin olarak gör"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Kaydedildi"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "dTo20G"
+msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
+msgstr "{count, plural, other {# ders haritası}}"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "YW1_3j"
+msgid "{count, plural, one {# with Plus} other {# with Plus}}"
+msgstr "{count, plural, other {# tanesi Plus ile}}"
+
+#. A kind of mind map: one for a whole chapter.
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "S2KGHg"
+msgid "Chapter map"
+msgstr "Ünite haritası"
+
+#. A small diagram of one lesson's main ideas. Not the chapter's mind map.
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "Ders haritası"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "Kaldır"
+
+#: src/mind-maps/mind-map-index.tsx
+msgctxt "s0s9cE"
+msgid "Show all {count, number}"
+msgstr "Tümünü göster ({count, number})"
+
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
@@ -7291,6 +7334,47 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Yakınlaştırıp uzaklaştırmak için iki parmağını açıp kapat, kaydır veya + ve - tuşlarını kullan; hareket ettirmek için sürükle veya ok tuşlarını kullan."
 
+#. A button: study the mind maps, one by one. A verb, not the noun.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "mindMapsStudyAction"
+msgid "Study"
+msgstr "Çalış"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "IFE_-l"
+msgid "Chapter maps"
+msgstr "Ünite haritaları"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "sI50Mb"
+msgid "No chapter maps yet. Every chapter you finish gets one."
+msgstr "Henüz ünite haritası yok. Bitirdiğin her ünite için bir harita hazırlanır."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Ow1Kwu"
+msgid "No lesson maps yet. Each lesson gets one when it's written."
+msgstr "Henüz ders haritası yok. Her ders hazırlandığında haritası da oluşur."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "6rPS8s"
+msgid "Lesson maps by chapter"
+msgstr "Ünitelere göre ders haritaları"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "GdItxr"
+msgid "Nothing saved yet. Save a map while you study and it shows up here."
+msgstr "Henüz kaydettiğin bir harita yok. Çalışırken bir harita kaydettiğinde burada görünür."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Agu2je"
+msgid "Saved maps"
+msgstr "Kaydedilen haritalar"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "g41uEF"
+msgid "No longer available"
+msgstr "Artık erişilemiyor"
+
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-aside.tsx
@@ -7299,33 +7383,89 @@ msgctxt "Do1Pfd"
 msgid "Chapters"
 msgstr "Üniteler"
 
+#. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {# ünite}}"
+msgctxt "mindMapsSavedTab"
+msgid "Saved"
+msgstr "Kaydedilenler"
 
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "tv38K5"
-msgid "{count, plural, =0 {# maps} one {# map} other {# maps}}"
-msgstr "{count, plural, =0 {# harita} other {# harita}}"
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "8na5MX"
+msgid "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
+msgstr "{ready, number} / {total, plural, other {# ünite haritası}} hazır"
 
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "V-r52O"
-msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
-msgstr "Bir ünitenin ana kavramları tek bir görselde. Tamamladığın her ünite için bir zihin haritası hazırlanır; planındaki diğer üniteler için de oluşturabilirsin."
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "94Oca6"
+msgid "{count, plural, one {# on the way} other {# on the way}}"
+msgstr "{count, plural, other {# harita hazırlıyoruz}}"
 
-#. "These" are the chapters listed below whose lessons aren't written yet.
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "KAJONh"
-msgid "Making a map for one of these writes its lessons first, so it takes a few minutes."
-msgstr "Bu ünitelerden birinin haritasını oluştururken önce derslerini hazırlıyoruz, bu yüzden birkaç dakika sürüyor."
+#. Under a count of mind maps being made. "They" are those maps.
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "jsJunN"
+msgid "You can leave; they'll be here."
+msgstr "Sayfadan çıkabilirsin; haritalar hazır olunca burada olacak."
 
-#. "These" are the chapters listed below whose lessons aren't written yet.
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Jg8HrT"
-msgid "Making a map for one of these writes its lessons first, which counts toward your free lessons."
-msgstr "Bu ünitelerden birinin haritasını oluştururken önce derslerini hazırlıyoruz ve bu dersler ücretsiz ders hakkından düşülüyor."
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "YzX-xG"
+msgid "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
+msgstr "{count, plural, other {Önce # ünitenin daha dersleri hazırlanmalı.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "wnIf2i"
+msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
+msgstr "{count, plural, other {Önce # ünitenin dersleri hazırlanmalı.}}"
+
+#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Uk-Xu0"
+msgid "Creating one writes them, so it takes a few minutes."
+msgstr "Haritayı oluştururken dersleri de hazırlıyoruz, bu yüzden birkaç dakika sürüyor."
+
+#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "qbnvSy"
+msgid "Creating one writes them, which counts toward your free lessons."
+msgstr "Haritayı oluştururken dersleri de hazırlıyoruz. Bunlar ücretsiz ders hakkından düşülüyor."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "HYc-rI"
+msgid "Create all chapter maps"
+msgstr "Tüm ünite haritalarını oluştur"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "-WvGu6"
+msgid "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
+msgstr "{count, plural, one {# ünite haritası oluştur} other {En fazla # ünite haritası oluştur}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "UXIB2y"
+msgid "Starts with the earliest chapters. You can create more when your limit resets."
+msgstr "İlk ünitelerden başlıyoruz. Hakkın yenilendiğinde daha fazla harita oluşturabilirsin."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "sCyF8_"
+msgid "Hide chapters"
+msgstr "Üniteleri gizle"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "BZ0-yt"
+msgid "Show chapters"
+msgstr "Üniteleri göster"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "w3kQHy"
+msgid "Not made yet"
+msgstr "Henüz oluşturulmadı"
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "Bu harita kaydedilemedi. Tekrar dene."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "w16BF2"
+msgid "Couldn't remove this map. Try again."
+msgstr "Bu harita kaldırılamadı. Tekrar dene."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
@@ -14097,6 +14237,11 @@ msgstr "Planında da var"
 msgctxt "ncweL6"
 msgid "{document, select, notice {Beyond the notice} other {Beyond the official guide}}"
 msgstr "{document, select, notice {İlanın dışında} other {Resmî kılavuzun dışında}}"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {# ünite}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"

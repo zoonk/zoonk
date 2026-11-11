@@ -1,168 +1,304 @@
 "use client";
 
+import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
+import { Button } from "@zoonk/ui/components/button";
 import {
-  type ChapterMindMapView,
-  type GoalMindMapView,
-  type GoalMindMapsView,
-} from "@zoonk/core/mind-maps/contract";
-import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+  DetailActions,
+  DetailHero,
+  DetailHeroText,
+  DetailTitle,
+} from "@zoonk/ui/components/detail";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
-import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
+import { useId } from "react";
+import {
+  DETAIL_PRIMARY_CLASS,
+  DetailAside,
+  DetailContent,
+  DetailLayout,
+} from "../_components/detail-page";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import {
-  PageEyebrow,
-  PageSection,
-  PageSectionDetail,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
-import { useServedState } from "../_utils/use-served-state";
+import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { PageTab, PageTabs } from "../_components/page-tabs";
+import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
-import { type MindMapActions } from "./mind-map-actions";
-import { MindMapRow } from "./mind-map-row";
+import {
+  MIND_MAP_TABS,
+  type MindMapTab,
+  buildMindMapsHref,
+  buildStudyHref,
+} from "./_utils/mind-map-urls";
+import {
+  type MindMapsPage,
+  countTabs,
+  groupBySubject,
+  splitChapters,
+} from "./_utils/mind-maps-page";
+import { type MindMapLibraryActions } from "./mind-map-actions";
+import { MindMapIndex } from "./mind-map-index";
+import {
+  ChapterMapRow,
+  LessonGroupRow,
+  type LessonGroupRowData,
+  SavedMapRow,
+  UnavailableMapRow,
+} from "./mind-map-index-rows";
+import { useMindMapPlace } from "./mind-map-resume";
+import { NotMadeYet } from "./not-made-yet";
+import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
-export type { MindMapActions, MindMapRequestOutcome } from "./mind-map-actions";
+export type {
+  MindMapActions,
+  MindMapLibraryActions,
+  MindMapRequestOutcome,
+} from "./mind-map-actions";
 
-type MapGroup = { key: string; maps: GoalMindMapView[]; name: string | null };
+export type MindMapsHrefs = { back: string; page: string; study: string };
 
-function groupBySubject(chapters: readonly GoalMindMapView[]): MapGroup[] {
-  const groups = Map.groupBy(chapters, (chapter) => chapter.subject?.key ?? "");
+type TabProps = { hrefs: MindMapsHrefs; library: MindMapsLibrary };
 
-  return [...groups.entries()].map(([key, maps]) => ({
-    key,
-    maps,
-    name: maps[0]?.subject?.name ?? null,
-  }));
+function EmptyTab({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="text-muted-foreground max-w-prose text-sm text-pretty"
+      data-slot="mind-maps-empty"
+    >
+      {children}
+    </p>
+  );
 }
 
-function withMap(chapters: readonly GoalMindMapView[], next: ChapterMindMapView) {
-  return chapters.flatMap((chapter): GoalMindMapView[] => {
-    const { status } = next;
+function StudyLabel() {
+  const t = useExtracted();
 
-    if (chapter.chapterId !== next.chapterId) {
-      return [chapter];
-    }
-
-    return status === "unavailable" ? [] : [{ ...chapter, ...next, status }];
+  return t({
+    description: "A button: study the mind maps, one by one. A verb, not the noun.",
+    id: "mindMapsStudyAction",
+    message: "Study",
   });
 }
 
-function MapSection({
-  actions,
-  group,
-  onViewChange,
-  plus,
-}: {
-  actions: MindMapActions;
-  group: MapGroup;
-  onViewChange: (view: ChapterMindMapView) => void;
-  plus: boolean;
-}) {
-  const t = useExtracted();
-  const titleId = `mind-maps-${group.key || "chapters"}`;
+function StudyLink({ goalId, study, view }: { goalId: string; study: string; view: MindMapTab }) {
+  const place = useMindMapPlace({ goalId, view });
+  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <PageSection aria-labelledby={titleId} className="scroll-mt-24" id={group.key || undefined}>
-      <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{group.name ?? t("Chapters")}</PageSectionTitle>
-        <PageSectionDetail>
-          {t("{count, plural, one {# chapter} other {# chapters}}", { count: group.maps.length })}
-        </PageSectionDetail>
-      </PageSectionHeader>
-
-      <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
-        {group.maps.map((mindMap) => (
-          <li key={mindMap.chapterId}>
-            <MindMapRow
-              actions={actions}
-              onViewChange={onViewChange}
-              place="library"
-              plus={plus}
-              view={mindMap}
-            />
-          </li>
-        ))}
-      </ul>
-    </PageSection>
+    <LearnLink
+      className={DETAIL_PRIMARY_CLASS}
+      href={buildStudyHref({ place, study, view })}
+      // Where the learner stopped is only known once the page hydrates, so the deck loads on intent.
+      prefetch="intent"
+      ref={ref}
+    >
+      <StudyLabel />
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+    </LearnLink>
   );
+}
+
+function ChaptersTab({ hrefs, library, tier }: TabProps & { tier: EntitlementTier }) {
+  const t = useExtracted();
+  const { index, notMade } = splitChapters(library.page.chapters);
+
+  const groups = groupBySubject(index).map((group) => ({
+    ...group,
+    rows: group.rows.map((chapter) => ({
+      key: chapter.chapterId,
+      node: <ChapterMapRow chapter={chapter} study={hrefs.study} />,
+    })),
+  }));
+
+  return (
+    <>
+      {index.some((chapter) => chapter.status === "plusRequired") && (
+        <FreeWeekOverNotice className="max-w-prose" />
+      )}
+
+      {index.length > 0 ? (
+        <MindMapIndex groups={groups} label={t("Chapter maps")} />
+      ) : (
+        <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+      )}
+
+      {notMade.length > 0 && <NotMadeYet chapters={notMade} library={library} tier={tier} />}
+    </>
+  );
+}
+
+function LessonsTab({ hrefs, library }: TabProps) {
+  const t = useExtracted();
+  const { chapters, lessonGroups } = library.page;
+
+  const rows = lessonGroups.flatMap((group): LessonGroupRowData[] => {
+    const chapter = chapters.find((candidate) => candidate.chapterId === group.chapterId);
+    return chapter ? [{ ...group, ...chapter }] : [];
+  });
+
+  if (rows.length === 0) {
+    return <EmptyTab>{t("No lesson maps yet. Each lesson gets one when it's written.")}</EmptyTab>;
+  }
+
+  const groups = groupBySubject(rows).map((group) => ({
+    ...group,
+    rows: group.rows.map((row) => ({
+      key: row.chapterId,
+      node: <LessonGroupRow group={row} study={hrefs.study} />,
+    })),
+  }));
+
+  return (
+    <>
+      {rows.some((row) => row.locked > 0) && <FreeWeekOverNotice className="max-w-prose" />}
+      <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} />
+    </>
+  );
+}
+
+function SavedTab({ hrefs, library }: TabProps) {
+  const t = useExtracted();
+  const unavailableId = useId();
+  const { chapters, saved } = library.page;
+
+  const shown = saved.filter((entry) => library.saves.isSaved({ saved: true, target: entry }));
+
+  const open = shown.filter((entry) => entry.available);
+  const gone = shown.filter((entry) => !entry.available);
+
+  const remove = (entry: (typeof saved)[number]) =>
+    library.saves.toggle({ saved: true, target: entry });
+
+  if (shown.length === 0) {
+    return (
+      <EmptyTab>
+        {t("Nothing saved yet. Save a map while you study and it shows up here.")}
+      </EmptyTab>
+    );
+  }
+
+  return (
+    <>
+      {open.length > 0 && (
+        <ul aria-label={t("Saved maps")} className={LIST_GROUP_CLASS}>
+          {open.map((entry) => (
+            <li key={`${entry.kind}:${entry.targetId}`}>
+              <SavedMapRow
+                onRemove={() => remove(entry)}
+                saved={{
+                  ...entry,
+                  chapter:
+                    chapters.find((chapter) => chapter.chapterId === entry.chapterId) ?? null,
+                }}
+                study={hrefs.study}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {gone.length > 0 && (
+        <PageSection aria-labelledby={unavailableId}>
+          <PageSectionHeader>
+            <PageSectionTitle id={unavailableId}>{t("No longer available")}</PageSectionTitle>
+          </PageSectionHeader>
+          <ul className={LIST_GROUP_CLASS}>
+            {gone.map((entry) => (
+              <li key={`${entry.kind}:${entry.targetId}`}>
+                <UnavailableMapRow onRemove={() => remove(entry)} saved={entry} />
+              </li>
+            ))}
+          </ul>
+        </PageSection>
+      )}
+    </>
+  );
+}
+
+function useTabLabels(): Record<MindMapTab, string> {
+  const t = useExtracted();
+
+  return {
+    chapters: t("Chapters"),
+    lessons: t("Lessons"),
+    saved: t({
+      description: "A tab's name: the list of mind maps the learner saved.",
+      id: "mindMapsSavedTab",
+      message: "Saved",
+    }),
+  };
+}
+
+/** How many maps a tab's deck holds: a saved map that can no longer open isn't in it. */
+function countDeck({ page, tab }: { page: MindMapsPage; tab: MindMapTab }): number {
+  return tab === "saved"
+    ? page.saved.filter((entry) => entry.available).length
+    : countTabs(page)[tab];
 }
 
 export function MindMapsScreen({
   actions,
-  backHref,
+  hrefs,
   mindMaps,
-  plus,
+  tab,
+  tier,
 }: {
-  actions: MindMapActions;
-  backHref: string;
-  mindMaps: GoalMindMapsView;
-  plus: boolean;
+  actions: MindMapLibraryActions;
+  hrefs: MindMapsHrefs;
+  mindMaps: MindMapsPage;
+  /** Null opens the tab the server picks: the first one with maps to show. */
+  tab: MindMapTab | null;
+  tier: EntitlementTier;
 }) {
   const t = useExtracted();
-  const [chapters, setChapters] = useServedState(mindMaps.chapters);
-  const groups = groupBySubject(chapters);
-  const ready = chapters.filter((chapter) => chapter.status === "ready").length;
-
-  const locked = chapters.some((chapter) => chapter.status === "plusRequired");
-
-  const writesLessons = chapters.some(
-    (chapter) =>
-      chapter.lessonsToWrite > 0 &&
-      (chapter.status === "available" || chapter.status === "writingLessons"),
-  );
+  const labels = useTabLabels();
+  const library = useMindMapsLibrary({ actions, served: mindMaps });
+  const { page } = library;
+  const current = tab ?? page.firstTab;
+  const counts = countTabs(page);
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: backHref }} root title={t("Mind maps")} />}
+      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
       data-slot="mind-maps"
     >
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <PageEyebrow>{mindMaps.goal.displayName}</PageEyebrow>
+            <PageEyebrow>{page.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
-            <DetailFacts>
-              {t("{count, plural, =0 {# maps} one {# map} other {# maps}}", { count: ready })}
-            </DetailFacts>
           </DetailHeroText>
+
+          <DetailActions>
+            {countDeck({ page, tab: current }) > 0 ? (
+              <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
+            ) : (
+              <Button className={DETAIL_PRIMARY_CLASS} disabled>
+                <StudyLabel />
+              </Button>
+            )}
+          </DetailActions>
         </DetailHero>
 
-        <p className="text-muted-foreground max-w-prose text-sm text-pretty">
-          {t(
-            "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan.",
-          )}
-          {writesLessons && " "}
-          {writesLessons &&
-            (plus
-              ? t({
-                  description:
-                    '"These" are the chapters listed below whose lessons aren\'t written yet.',
-                  message:
-                    "Making a map for one of these writes its lessons first, so it takes a few minutes.",
-                })
-              : t({
-                  description:
-                    '"These" are the chapters listed below whose lessons aren\'t written yet.',
-                  message:
-                    "Making a map for one of these writes its lessons first, which counts toward your free lessons.",
-                }))}
-        </p>
-
-        {locked && <FreeWeekOverNotice className="max-w-prose" />}
+        <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
+          {MIND_MAP_TABS.map((name) => (
+            <PageTab
+              count={counts[name]}
+              current={name === current}
+              href={buildMindMapsHref({ page: hrefs.page, tab: name })}
+              key={name}
+            >
+              {labels[name]}
+            </PageTab>
+          ))}
+        </PageTabs>
       </DetailAside>
 
       <DetailContent>
-        {groups.map((group) => (
-          <MapSection
-            actions={actions}
-            group={group}
-            key={group.key}
-            onViewChange={(next) => setChapters((current) => withMap(current, next))}
-            plus={plus}
-          />
-        ))}
+        {current === "chapters" && <ChaptersTab hrefs={hrefs} library={library} tier={tier} />}
+        {current === "lessons" && <LessonsTab hrefs={hrefs} library={library} />}
+        {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
       </DetailContent>
     </DetailLayout>
   );

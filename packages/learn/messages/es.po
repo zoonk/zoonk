@@ -377,6 +377,7 @@ msgstr "Más adelante"
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "iqLF8D"
 msgid "Lessons"
 msgstr "Lecciones"
@@ -403,6 +404,7 @@ msgstr "{done, number} de {total, number}"
 #: src/mind-maps/finished-chapter-map.tsx
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
+#: src/mind-maps/not-made-yet.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
@@ -460,7 +462,7 @@ msgstr "Está tardando más de lo normal. Se abrirá automáticamente, no hace f
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
@@ -1036,6 +1038,7 @@ msgstr "Cancelar"
 #: src/certificates/certificate-name.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-save-button.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
 #: src/plan/plan-date.tsx
@@ -2373,6 +2376,7 @@ msgid "{subject} · Chapter {number, number}"
 msgstr "{subject} · Capítulo {number, number}"
 
 #: src/chapter/chapter-header.tsx
+#: src/mind-maps/mind-map-index-rows.tsx
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
@@ -7160,6 +7164,7 @@ msgstr "No se pudo deshacer. Inténtalo de nuevo."
 
 #: src/mind-maps/finished-chapter-map.tsx
 #: src/mind-maps/mind-map-copy.ts
+#: src/mind-maps/not-made-yet.tsx
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
@@ -7216,12 +7221,6 @@ msgid "{count, plural, one {# lesson gets written first and counts toward your f
 msgstr "{count, plural, one {Primero se prepara # lección y cuenta para tu límite de lecciones gratis.} other {Primero se preparan # lecciones y cuentan para tu límite de lecciones gratis.}}"
 
 #: src/mind-maps/mind-map-copy.ts
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "1Ed5Dt"
-msgid "As text"
-msgstr "Ver como texto"
-
-#: src/mind-maps/mind-map-copy.ts
 msgctxt "lY6tDJ"
 msgid "Mind map ready"
 msgstr "Mapa mental listo"
@@ -7266,6 +7265,50 @@ msgctxt "O36UiH"
 msgid "Mind map: {title}. {idea}"
 msgstr "Mapa mental: {title}. {idea}"
 
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "1Ed5Dt"
+msgid "As text"
+msgstr "Ver como texto"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Guardado"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "dTo20G"
+msgid "{count, plural, one {# lesson map} other {# lesson maps}}"
+msgstr "{count, plural, one {# mapa de lección} other {# mapas de lecciones}}"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "YW1_3j"
+msgid "{count, plural, one {# with Plus} other {# with Plus}}"
+msgstr "{count, plural, other {# con Plus}}"
+
+#. A kind of mind map: one for a whole chapter.
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "S2KGHg"
+msgid "Chapter map"
+msgstr "Mapa del capítulo"
+
+#. A small diagram of one lesson's main ideas. Not the chapter's mind map.
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "Oku1XG"
+msgid "Lesson map"
+msgstr "Mapa de la lección"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "Quitar"
+
+#: src/mind-maps/mind-map-index.tsx
+msgctxt "s0s9cE"
+msgid "Show all {count, number}"
+msgstr "Mostrar los {count, number}"
+
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
@@ -7291,6 +7334,47 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Junta o separa dos dedos, desplázate o usa + y - para acercar o alejar; arrastra o usa las flechas para mover el mapa."
 
+#. A button: study the mind maps, one by one. A verb, not the noun.
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "mindMapsStudyAction"
+msgid "Study"
+msgstr "Estudiar"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "IFE_-l"
+msgid "Chapter maps"
+msgstr "Mapas de capítulos"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "sI50Mb"
+msgid "No chapter maps yet. Every chapter you finish gets one."
+msgstr "Aún no hay mapas de capítulos. Cada capítulo que completes tendrá uno."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Ow1Kwu"
+msgid "No lesson maps yet. Each lesson gets one when it's written."
+msgstr "Aún no hay mapas de lecciones. Cada lección tendrá uno cuando se prepare."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "6rPS8s"
+msgid "Lesson maps by chapter"
+msgstr "Mapas de lecciones por capítulo"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "GdItxr"
+msgid "Nothing saved yet. Save a map while you study and it shows up here."
+msgstr "Aún no hay nada guardado. Guarda un mapa mientras estudias y aparecerá aquí."
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "Agu2je"
+msgid "Saved maps"
+msgstr "Mapas guardados"
+
+#: src/mind-maps/mind-maps-screen.tsx
+msgctxt "g41uEF"
+msgid "No longer available"
+msgstr "Ya no están disponibles"
+
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-aside.tsx
@@ -7299,33 +7383,89 @@ msgctxt "Do1Pfd"
 msgid "Chapters"
 msgstr "Capítulos"
 
+#. A tab's name: the list of mind maps the learner saved.
 #: src/mind-maps/mind-maps-screen.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
+msgctxt "mindMapsSavedTab"
+msgid "Saved"
+msgstr "Guardados"
 
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "tv38K5"
-msgid "{count, plural, =0 {# maps} one {# map} other {# maps}}"
-msgstr "{count, plural, =0 {# mapas} one {# mapa} other {# mapas}}"
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "8na5MX"
+msgid "{ready, number} of {total, plural, one {# chapter map} other {# chapter maps}} ready"
+msgstr "{ready, number} de {total, plural, one {# mapa de capítulo listo} other {# mapas de capítulos listos}}"
 
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "V-r52O"
-msgid "A chapter's main ideas in one picture. Every chapter you finish gets one; you can make one for any other chapter in your plan."
-msgstr "Las ideas principales de un capítulo en una imagen. Cada capítulo que completes tendrá su mapa; puedes crear uno para cualquier otro capítulo de tu plan."
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "94Oca6"
+msgid "{count, plural, one {# on the way} other {# on the way}}"
+msgstr "{count, plural, other {# en preparación}}"
 
-#. "These" are the chapters listed below whose lessons aren't written yet.
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "KAJONh"
-msgid "Making a map for one of these writes its lessons first, so it takes a few minutes."
-msgstr "Para crear un mapa de uno de estos capítulos, primero preparamos sus lecciones, así que tarda unos minutos."
+#. Under a count of mind maps being made. "They" are those maps.
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "jsJunN"
+msgid "You can leave; they'll be here."
+msgstr "Puedes salir; los mapas estarán aquí."
 
-#. "These" are the chapters listed below whose lessons aren't written yet.
-#: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Jg8HrT"
-msgid "Making a map for one of these writes its lessons first, which counts toward your free lessons."
-msgstr "Para crear un mapa de uno de estos capítulos, primero preparamos sus lecciones, que se descuentan de tus lecciones gratis."
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "YzX-xG"
+msgid "{count, plural, one {# more needs its lessons written first.} other {# more need their lessons written first.}}"
+msgstr "{count, plural, one {Primero hay que preparar las lecciones de # capítulo más.} other {Primero hay que preparar las lecciones de # capítulos más.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "wnIf2i"
+msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
+msgstr "{count, plural, one {Primero hay que preparar las lecciones de # capítulo.} other {Primero hay que preparar las lecciones de # capítulos.}}"
+
+#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "Uk-Xu0"
+msgid "Creating one writes them, so it takes a few minutes."
+msgstr "Al crear uno, también se preparan las lecciones, así que tarda unos minutos."
+
+#. After a line saying some chapters need their lessons written first. "One" is one of those chapters' mind maps; "them" is its lessons.
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "qbnvSy"
+msgid "Creating one writes them, which counts toward your free lessons."
+msgstr "Al crear uno, también se preparan las lecciones, que cuentan para tu límite de lecciones gratis."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "HYc-rI"
+msgid "Create all chapter maps"
+msgstr "Crear todos los mapas de capítulos"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "-WvGu6"
+msgid "{count, plural, one {Create # chapter map} other {Create up to # chapter maps}}"
+msgstr "{count, plural, one {Crear # mapa de capítulo} other {Crear hasta # mapas de capítulos}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "UXIB2y"
+msgid "Starts with the earliest chapters. You can create more when your limit resets."
+msgstr "Se empieza por los primeros capítulos. Puedes crear más cuando se restablezca tu límite."
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "sCyF8_"
+msgid "Hide chapters"
+msgstr "Ocultar capítulos"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "BZ0-yt"
+msgid "Show chapters"
+msgstr "Mostrar capítulos"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "w3kQHy"
+msgid "Not made yet"
+msgstr "Aún sin crear"
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "No pudimos guardar este mapa. Inténtalo de nuevo."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "w16BF2"
+msgid "Couldn't remove this map. Try again."
+msgstr "No pudimos quitar este mapa. Inténtalo de nuevo."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
@@ -14097,6 +14237,11 @@ msgstr "También en tu plan"
 msgctxt "ncweL6"
 msgid "{document, select, notice {Beyond the notice} other {Beyond the official guide}}"
 msgstr "{document, select, notice {Más allá de la convocatoria} other {Más allá de la guía oficial}}"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"

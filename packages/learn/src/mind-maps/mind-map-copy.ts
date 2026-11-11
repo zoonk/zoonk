@@ -6,18 +6,14 @@ import { type MindMapShown } from "./use-mind-map-request";
 
 /**
  * Where the row sits changes only its words: the chapter page names it "Mind map", the moment a
- * chapter ends and the Mind maps page name the chapter.
+ * chapter ends and the Mind maps page name the chapter. The Mind maps page (`library`) uses the
+ * row only for maps not made yet.
  */
 export type MindMapRowPlace = "chapter" | "finish" | "library";
 
-/** A list says once, above its rows, what writing the lessons costs and what Plus opens (`MindMapsScreen`). */
+/** The Mind maps page says once, above its rows, what writing the lessons costs (`NotMadeYet`). */
 function useAvailableLine({ place, plus, shown, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
-
-  if (shown === "plusRequired" && place === "library") {
-    return t("Plus");
-  }
-
   const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
 
   const count = view.lessonsToWrite;
@@ -52,9 +48,7 @@ function useReadyLine({ place, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
 
   if (!view.image) {
-    return place === "library"
-      ? t("As text")
-      : t("Its picture had mistakes, so here's the mind map as text.");
+    return t("Its picture had mistakes, so here's the mind map as text.");
   }
 
   if (place === "finish") {
@@ -72,16 +66,19 @@ export function useStateLines(input: MindMapCopyInput): {
   const available = useAvailableLine(input);
   const ready = useReadyLine(input);
 
+  // The Mind maps page can have many on their way at once, so it says this once (`NotMadeYet`).
+  const isAlone = input.place !== "library";
+
   if (input.shown === "writingLessons") {
     return {
-      hint: t("This takes a few minutes. You can leave; it'll be here."),
+      hint: isAlone ? t("This takes a few minutes. You can leave; it'll be here.") : null,
       line: t("Writing the lessons, then the mind map…"),
     };
   }
 
   if (input.shown === "drawing") {
     return {
-      hint: t("About half a minute. You can leave; it'll be here."),
+      hint: isAlone ? t("About half a minute. You can leave; it'll be here.") : null,
       line: t("Drawing the mind map…"),
     };
   }
