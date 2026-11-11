@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -20,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -315,6 +315,7 @@ private fun CountryRows(
     goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), it.name, null) }
 }
 
+/** A label and its value on one line, the value at the end; when both don't fit (large text, a long country name), the value goes under the label. */
 @Composable
 private fun PropertyRow(
     label: String,
@@ -324,7 +325,7 @@ private fun PropertyRow(
     plus: Boolean = false,
     warning: Boolean = false,
 ) {
-    Row(
+    FlowRow(
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -337,37 +338,27 @@ private fun PropertyRow(
                     },
                 ).heightIn(min = 48.dp)
                 .padding(horizontal = LIST_ITEM_INSET, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+        itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = label,
-            modifier = Modifier.weight(LABEL_SHARE),
+            modifier = Modifier.padding(end = 12.dp),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
-        Row(
-            Modifier.weight(1 - LABEL_SHARE),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             if (plus) PlusMark()
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = if (warning) FontWeight.Medium else null,
                 color = if (warning) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.End,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
-
-private const val LABEL_SHARE = 0.4f
 
 @Composable
 private fun goalDateValue(page: PlanPageState): String {
