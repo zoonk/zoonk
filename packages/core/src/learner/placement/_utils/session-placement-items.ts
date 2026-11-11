@@ -12,7 +12,7 @@ import { type PlacementQuickFormat, compareQuickFormat } from "../placement-quic
 import { type SkillStatuses } from "../placement-status";
 import { type AreaPriority, getUndecidedSkills, rankAreasToAsk } from "../placement-steps";
 import { loadPlacementItems } from "./placement-bank-items";
-import { type TestAnswer, loadEvidence } from "./placement-evidence";
+import { type TestSkillAnswers, loadAnsweredTestItems, loadEvidence } from "./placement-evidence";
 
 type StartSkill = { id: string; phase: number; sectionTitle: string | null };
 
@@ -74,11 +74,11 @@ export type SessionTest = {
 function orderForTest<TSkill extends StartSkill>({
   skills,
   test,
-  testAnswers,
+  testSkills,
 }: {
   skills: readonly TSkill[];
   test: SessionTest | undefined;
-  testAnswers: readonly TestAnswer[];
+  testSkills: readonly TestSkillAnswers[];
 }): TSkill[] {
   if (!test) {
     return [...skills];
@@ -89,7 +89,7 @@ function orderForTest<TSkill extends StartSkill>({
   const unasked = listUnaskedAreas({
     areaOf: (skillId) => test.areaOf.get(skillId) ?? areaOf.get(skillId) ?? null,
     subjects: test.subjects,
-    testAnswers,
+    testSkills,
   });
 
   const isUnasked = (skill: TSkill) =>
@@ -130,7 +130,7 @@ export async function pickSessionPlacementItems({
   const skills = planSkills.filter((skill) => !listening.has(skill.id));
   const skillIds = skills.map((skill) => skill.id);
 
-  const [{ evidence, placementAnswers, seenItemIds, testAnswers }, bankItems, blueprint] =
+  const [{ evidence, placementAnswers, seenItemIds, testSkills }, bankItems, blueprint] =
     await Promise.all([
       loadEvidence({ skillIds, userId }),
       // Sessions grade immediately; typed confirmation stays in placement.
@@ -166,7 +166,7 @@ export async function pickSessionPlacementItems({
         areaOf: (skillId) => test.areaOf.get(skillId) ?? areaOf.get(skillId) ?? null,
         statuses,
         subjects: test.subjects,
-        testAnswers,
+        testSkills,
       })
     : statuses;
 
@@ -175,8 +175,16 @@ export async function pickSessionPlacementItems({
     statuses: questionStatuses,
   });
 
+  const answeredItems = await loadAnsweredTestItems({
+    itemIds: bankItems.map((item) => item.id),
+    userId,
+  });
+
   const askable = bankItems
-    .filter((item) => !seenItemIds.has(item.id) && !excludeItemIds.has(item.id))
+    .filter(
+      (item) =>
+        !seenItemIds.has(item.id) && !answeredItems.has(item.id) && !excludeItemIds.has(item.id),
+    )
     .toSorted((a, b) => compareQuickFormat({ a: a.format, b: b.format, quickFormat }));
 
   const walk = interleaveByStart({
@@ -186,7 +194,7 @@ export async function pickSessionPlacementItems({
     undecided,
   });
 
-  return orderForTest({ skills: walk, test, testAnswers })
+  return orderForTest({ skills: walk, test, testSkills })
     .flatMap((skill) => askable.find((item) => item.skillId === skill.id) ?? [])
     .slice(0, limit)
     .map((item) => item.id);

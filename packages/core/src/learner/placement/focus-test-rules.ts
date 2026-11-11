@@ -15,7 +15,7 @@ const SITTING_MINUTES = 15;
 const MIN_PACE_ANSWERS = 5;
 
 /** A break in the middle of a question isn't the learner's pace. */
-const MAX_PACED_ANSWER_MS = 3 * MS_PER_MINUTE;
+export const MAX_PACED_ANSWER_MS = 3 * MS_PER_MINUTE;
 
 const MIN_FIRST_QUESTIONS = 20;
 const MAX_FIRST_QUESTIONS = 30;
@@ -30,17 +30,18 @@ const SUBJECTS_PER_FOCUS = 3;
 
 const MIN_FOCUS_CHOICES = 2;
 
-const UNKNOWN_STREAK = 5;
+export const UNKNOWN_STREAK = 5;
 
 export type SittingKind = "continuation" | "first";
 
-export function getPaceMs(durationsMs: readonly number[]): number {
-  if (durationsMs.length < MIN_PACE_ANSWERS) {
-    return START_PACE_MS;
-  }
-
-  const counted = durationsMs.map((duration) => Math.min(duration, MAX_PACED_ANSWER_MS));
-  return Math.max(1, counted.reduce((sum, duration) => sum + duration, 0) / counted.length);
+export function getPaceMs({
+  answers,
+  durationMs,
+}: {
+  answers: number;
+  durationMs: number;
+}): number {
+  return answers < MIN_PACE_ANSWERS ? START_PACE_MS : Math.max(1, durationMs / answers);
 }
 
 /** The most questions a sitting promises: what fits about fifteen minutes at the learner's pace. */

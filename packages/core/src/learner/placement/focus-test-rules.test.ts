@@ -62,16 +62,12 @@ describe("a sitting's promised count", () => {
 
 describe("the learner's pace", () => {
   it("starts at a minute a question until five answers say otherwise", () => {
-    expect(getPaceMs([])).toBe(MINUTE);
-    expect(getPaceMs([8000, 8000, 8000, 8000])).toBe(MINUTE);
+    expect(getPaceMs({ answers: 0, durationMs: 0 })).toBe(MINUTE);
+    expect(getPaceMs({ answers: 4, durationMs: 32_000 })).toBe(MINUTE);
   });
 
   it("is the mean of their answers, quick taps included", () => {
-    expect(getPaceMs([70_000, 70_000, 70_000, 8000, 8000])).toBe(45_200);
-  });
-
-  it("counts a break in the middle of a question as three minutes at most", () => {
-    expect(getPaceMs([60_000, 60_000, 60_000, 60_000, 900_000])).toBe(84_000);
+    expect(getPaceMs({ answers: 5, durationMs: 226_000 })).toBe(45_200);
   });
 });
 

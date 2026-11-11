@@ -5,13 +5,11 @@ import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
-import { getTestQuestionStatuses } from "../focus-test-progress";
 import { type FocusTestSummaryRecord } from "../focus-test-state";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementStatus } from "../placement-contract";
 import { type PlacementItemCandidate } from "../placement-item-choice";
-import { listKnownByMeasuredLevel, listKnownSkillIds, readSkillStatuses } from "../placement-known";
-import { type SkillStatuses } from "../placement-status";
+import { listKnownByMeasuredLevel, listKnownSkillIds } from "../placement-known";
 import {
   type AreaStart,
   type OwnLevel,
@@ -21,13 +19,13 @@ import {
   getUndecidedSkills,
   isPlacementSettled,
 } from "../placement-steps";
-import { type TestTurn, countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
+import { countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
 import { loadFocusTest } from "./load-focus-test";
 import { findNextQuestion } from "./next-placement-skill";
 import { countPlacementAnswers } from "./placement-answers";
 import { getAskingBudget } from "./placement-asking-budget";
 import { loadPlacementItems } from "./placement-bank-items";
-import { type TestAnswer, loadEvidence } from "./placement-evidence";
+import { loadAnsweredTestItems, loadEvidence } from "./placement-evidence";
 import { loadGoalExam } from "./placement-goal-exam";
 import {
   type PlacementQuestionView,
@@ -35,6 +33,7 @@ import {
   toPlacementQuestionView,
 } from "./placement-items";
 import { loadPlanBuild } from "./placement-plan-build";
+import { readStatuses } from "./placement-statuses";
 
 export type PlacementState = {
   answered: number;
@@ -111,33 +110,6 @@ function getStatus({
   return hasEvidence || tested ? "done" : "unavailable";
 }
 
-type StatusFacts = Parameters<typeof readSkillStatuses>[0] & {
-  /** Skills a measured level places as known, whatever the answers say. */
-  measuredKnown: ReadonlySet<string>;
-  testAnswers: readonly TestAnswer[];
-  turn: TestTurn | null;
-};
-
-function readStatuses({ measuredKnown, testAnswers, turn, ...facts }: StatusFacts) {
-  const statuses: SkillStatuses = new Map(
-    [...readSkillStatuses(facts)].map(([skillId, status]) => [
-      skillId,
-      measuredKnown.has(skillId) ? "known" : status,
-    ]),
-  );
-
-  const questionStatuses = turn
-    ? getTestQuestionStatuses({
-        areaOf: (skillId) => turn.setup.areaOf.get(skillId) ?? null,
-        statuses,
-        subjects: turn.setup.subjects,
-        testAnswers,
-      })
-    : statuses;
-
-  return { questionStatuses, statuses };
-}
-
 type PlacementLoad = {
   /** What an exam goal's writes need beside the state; null for other goals. */
   focusTest: { dueFocus: string[] | null; summary: FocusTestSummaryRecord } | null;
@@ -174,7 +146,15 @@ async function loadPlacementFacts({
 
   const [answersRead, { bankItems, build }] = await readDatabaseFacts(
     tx,
-    () => loadEvidence({ skillIds, tx, userId }),
+    () =>
+      loadEvidence({
+        sittingStartedAt: exam.test?.record?.sitting
+          ? new Date(exam.test.record.sitting.startedAt)
+          : null,
+        skillIds,
+        tx,
+        userId,
+      }),
     () =>
       loadPlanBuild({
         askedAt: getTestStart(exam.test),
@@ -196,9 +176,15 @@ async function loadPlacementFacts({
       })),
   );
 
+  const answeredItems = await loadAnsweredTestItems({
+    itemIds: bankItems.map((item) => item.id),
+    tx,
+    userId,
+  });
+
   const items: PlacementItemCandidate[] = bankItems.map((item) => ({
     ...item,
-    seen: answersRead.seenItemIds.has(item.id),
+    seen: answersRead.seenItemIds.has(item.id) || answeredItems.has(item.id),
   }));
 
   return { ...answersRead, build, exam, items, ownLevel };
@@ -217,11 +203,23 @@ export async function loadPlacementWithSummary({
   const skills = plan.skills;
   const skillIds = skills.map((skill) => skill.id);
 
-  const { attempts, build, evidence, exam, items, ownLevel, placementAnswers, testAnswers } =
-    await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
+  const {
+    attempts,
+    build,
+    evidence,
+    exam,
+    items,
+    ownLevel,
+    placementAnswers,
+    sittingOutcomes,
+    testSkills,
+  } = await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
 
   const { answeredOnly, focusAreas, focusedSkillIds, knownAreas, quickFormat } = exam;
-  const turn = exam.test ? startTestTurn({ setup: exam.test, skills, testAnswers }) : null;
+
+  const turn = exam.test
+    ? startTestTurn({ setup: exam.test, sittingOutcomes, skills, testSkills })
+    : null;
 
   const budget = getAskingBudget({ attempts, today, turn });
   const answers = sessionAnswer ? [...placementAnswers, sessionAnswer] : placementAnswers;
@@ -239,7 +237,7 @@ export async function loadPlacementWithSummary({
     measuredKnown,
     ownLevel,
     skills,
-    testAnswers,
+    testSkills,
     turn,
   });
 

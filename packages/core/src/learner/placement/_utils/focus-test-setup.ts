@@ -8,7 +8,7 @@ import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
 import { type TestProgress, getAreaOrder, getTestProgress } from "../focus-test-progress";
 import { type FocusTestRecord, readFocusTestRecord } from "../focus-test-state";
 import { type TestSubject, listTestSubjects, mapSkillAreas } from "../focus-test-subjects";
-import { type TestAnswer } from "./placement-evidence";
+import { type TestSkillAnswers } from "./placement-evidence";
 
 type TestGoal = Goal & { examBlueprint: ExamBlueprint | null };
 
@@ -73,11 +73,13 @@ export type TestTurn = {
 export function startTestTurn({
   setup,
   skills,
-  testAnswers,
+  testSkills,
+  sittingOutcomes,
 }: {
   setup: TestSetup;
   skills: readonly GoalSkillNode[];
-  testAnswers: readonly TestAnswer[];
+  testSkills: readonly TestSkillAnswers[];
+  sittingOutcomes: readonly ("correct" | "dontKnow" | "wrong")[];
 }): TestTurn {
   const places = new Map(
     skills.map((skill) => {
@@ -91,8 +93,9 @@ export function startTestTurn({
   const progress = getTestProgress({
     placeOf: (skillId) => places.get(skillId) ?? { area: null, subject: null },
     record: setup.record,
+    sittingOutcomes,
     subjects: setup.subjects,
-    testAnswers,
+    testSkills,
   });
 
   return {

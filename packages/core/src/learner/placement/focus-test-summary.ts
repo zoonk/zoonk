@@ -61,7 +61,7 @@ export function readFocusTestSummary({
   const summary = record?.summary ?? null;
   const sitting = record?.sitting ?? null;
   const left = sitting ? sitting.questions - sitting.answered : 0;
-  const paceMs = summary?.paceMs ?? getPaceMs([]);
+  const paceMs = summary?.paceMs ?? getPaceMs({ answers: 0, durationMs: 0 });
   const answered = summary ? summary.asked > 0 : isFocusTestStarted(goal);
   const rested = answered ? "checked" : "notStarted";
 

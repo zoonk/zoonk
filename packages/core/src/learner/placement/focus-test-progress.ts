@@ -1,4 +1,4 @@
-import { type TestAnswer } from "./_utils/placement-evidence";
+import { type TestSkillAnswers } from "./_utils/placement-evidence";
 import {
   MAX_SUBJECT_QUESTIONS,
   type SittingKind,
@@ -38,75 +38,63 @@ export type TestProgress = {
 
 type AnswerPlace = { area: string | null; subject: string | null };
 
-function getSittingAnswers({
-  record,
-  testAnswers,
-}: {
-  record: FocusTestRecord | null;
-  testAnswers: readonly TestAnswer[];
-}): TestAnswer[] {
-  const startedAt = record?.sitting ? new Date(record.sitting.startedAt) : null;
-
-  return startedAt
-    ? testAnswers.filter((answer) => answer.standalone && answer.answeredAt >= startedAt)
-    : [];
-}
-
 function toSubjectProgress({
-  inSitting,
   placeOf,
   subject,
-  testAnswers,
+  testSkills,
 }: {
-  inSitting: readonly TestAnswer[];
   placeOf: (skillId: string) => AnswerPlace;
   subject: TestSubject;
-  testAnswers: readonly TestAnswer[];
+  testSkills: readonly TestSkillAnswers[];
 }): SubjectProgress {
-  const isOwn = (answer: TestAnswer) => placeOf(answer.skillId).subject === subject.key;
-  const own = testAnswers.filter((answer) => isOwn(answer));
+  const isOwn = (answer: TestSkillAnswers) => placeOf(answer.skillId).subject === subject.key;
+  const own = testSkills.filter((answer) => isOwn(answer));
 
   return {
     ...subject,
-    areaAnswers: subject.areas.map(
-      (area) => own.filter((answer) => placeOf(answer.skillId).area === area).length,
+    areaAnswers: subject.areas.map((area) =>
+      own
+        .filter((answer) => placeOf(answer.skillId).area === area)
+        .reduce((sum, answer) => sum + answer.answered, 0),
     ),
-    asked: own.length,
-    missed: own.some((answer) => answer.outcome !== "correct"),
-    right: own.filter((answer) => answer.outcome === "correct").length,
-    sittingAnswers: inSitting.filter((answer) => isOwn(answer)).length,
+    asked: own.reduce((sum, answer) => sum + answer.answered, 0),
+    missed: own.some((answer) => answer.right < answer.answered),
+    right: own.reduce((sum, answer) => sum + answer.right, 0),
+    sittingAnswers: own.reduce((sum, answer) => sum + answer.sittingAnswers, 0),
   };
 }
 
-/** `testAnswers` oldest first; `placeOf` says which subject and plan area a skill's answers count for. */
+/** `placeOf` says which subject and plan area a skill's answers count for. */
 export function getTestProgress({
+  sittingOutcomes,
   placeOf,
   record,
   subjects,
-  testAnswers,
+  testSkills,
 }: {
   placeOf: (skillId: string) => AnswerPlace;
   record: FocusTestRecord | null;
   subjects: readonly TestSubject[];
-  testAnswers: readonly TestAnswer[];
+  testSkills: readonly TestSkillAnswers[];
+  sittingOutcomes: readonly ("correct" | "dontKnow" | "wrong")[];
 }): TestProgress {
-  const inSitting = getSittingAnswers({ record, testAnswers });
+  const answered = testSkills.reduce((sum, skill) => sum + skill.answered, 0);
+  const durationMs = testSkills.reduce((sum, skill) => sum + skill.durationMs, 0);
+  const sittingAnswers = testSkills.reduce((sum, skill) => sum + skill.sittingAnswers, 0);
   const sitting = record?.sitting ?? null;
 
   return {
-    answers: testAnswers.length,
-    paceMs: getPaceMs(testAnswers.map((answer) => answer.durationMs)),
+    answers: answered,
+    paceMs: getPaceMs({ answers: answered, durationMs }),
     sitting: sitting && {
-      answered: inSitting.length,
+      answered: sittingAnswers,
       id: sitting.id,
       kind: sitting.kind,
-      left: Math.max(0, sitting.questions - inSitting.length),
-      manyUnknown: hasUnknownStreak(inSitting.map((answer) => answer.outcome)),
+      left: Math.max(0, sitting.questions - sittingAnswers),
+      manyUnknown: hasUnknownStreak(sittingOutcomes),
       questions: sitting.questions,
     },
-    subjects: subjects.map((subject) =>
-      toSubjectProgress({ inSitting, placeOf, subject, testAnswers }),
-    ),
+    subjects: subjects.map((subject) => toSubjectProgress({ placeOf, subject, testSkills })),
   };
 }
 
@@ -138,13 +126,13 @@ export function getAreaOrder(subjects: readonly SubjectProgress[]): string[] {
 export function listUnaskedAreas({
   areaOf,
   subjects,
-  testAnswers,
+  testSkills,
 }: {
   areaOf: (skillId: string) => string | null;
   subjects: readonly TestSubject[];
-  testAnswers: readonly TestAnswer[];
+  testSkills: readonly TestSkillAnswers[];
 }): Set<string> {
-  const answered = new Set(testAnswers.map((answer) => areaOf(answer.skillId)));
+  const answered = new Set(testSkills.map((answer) => areaOf(answer.skillId)));
 
   return new Set(
     subjects
@@ -160,14 +148,14 @@ export function getTestQuestionStatuses({
   areaOf,
   statuses,
   subjects,
-  testAnswers,
+  testSkills,
 }: {
   areaOf: (skillId: string) => string | null;
   statuses: SkillStatuses;
   subjects: readonly TestSubject[];
-  testAnswers: readonly TestAnswer[];
+  testSkills: readonly TestSkillAnswers[];
 }): SkillStatuses {
-  const unasked = listUnaskedAreas({ areaOf, subjects, testAnswers });
+  const unasked = listUnaskedAreas({ areaOf, subjects, testSkills });
 
   return new Map(
     [...statuses].map(([skillId, status]) => [

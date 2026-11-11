@@ -1,6 +1,8 @@
 import "server-only";
 import { type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { readDatabaseFacts } from "../../../_utils/read-database-facts";
+import { MAX_PACED_ANSWER_MS, UNKNOWN_STREAK } from "../focus-test-rules";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { isPlacementAnswer } from "./placement-answers";
 
@@ -20,7 +22,9 @@ type AttemptRow = {
   studySessionId: string | null;
 };
 
-function getOutcome(attempt: AttemptRow): PlacementEvidence["outcome"] {
+function getOutcome(
+  attempt: Pick<AttemptRow, "answer" | "isCorrect">,
+): PlacementEvidence["outcome"] {
   if (attempt.isCorrect) {
     return "correct";
   }
@@ -44,62 +48,110 @@ function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
   return attempts.map((attempt) => toEvidence(attempt)).filter((item) => item !== null);
 }
 
-/** An answer to a question placement asked, in a sitting of its own or inside a session. */
-export type TestAnswer = {
-  answeredAt: Date;
+export type TestSkillAnswers = {
+  answered: number;
   durationMs: number;
-  outcome: PlacementEvidence["outcome"];
+  right: number;
+  sittingAnswers: number;
   skillId: string;
-  /** Asked outside a session: a sitting's answer. */
-  standalone: boolean;
 };
 
-function toTestAnswers(attempts: readonly AttemptRow[]): TestAnswer[] {
-  return attempts.flatMap((attempt) => {
-    const standalone = isPlacementAnswer(attempt);
+async function loadTestSkills({
+  sittingStartedAt,
+  skillIds,
+  tx,
+  userId,
+}: {
+  sittingStartedAt: Date | null;
+  skillIds: string[];
+  tx: TransactionClient;
+  userId: string;
+}): Promise<TestSkillAnswers[]> {
+  return tx.$queryRaw<TestSkillAnswers[]>`
+    SELECT skill_id AS "skillId", COUNT(*)::int AS answered,
+      COUNT(*) FILTER (WHERE is_correct)::int AS right,
+      COALESCE(SUM(LEAST(duration_ms, ${MAX_PACED_ANSWER_MS})), 0)::float8 AS "durationMs",
+      COUNT(*) FILTER (WHERE study_session_id IS NULL AND step_id IS NULL
+        AND item_id IS NOT NULL AND answered_at >= ${sittingStartedAt}::timestamp)::int AS "sittingAnswers"
+    FROM attempts
+    WHERE user_id = ${userId}::uuid AND skill_id = ANY(${skillIds}::uuid[])
+      AND (is_placement OR (item_id IS NOT NULL AND step_id IS NULL AND study_session_id IS NULL))
+    GROUP BY skill_id
+  `;
+}
 
-    return attempt.skillId && (standalone || attempt.isPlacement)
-      ? [
-          {
-            answeredAt: attempt.answeredAt,
-            durationMs: attempt.durationMs,
-            outcome: getOutcome(attempt),
-            skillId: attempt.skillId,
-            standalone,
-          },
-        ]
-      : [];
+export async function loadAnsweredTestItems({
+  itemIds,
+  tx = prisma,
+  userId,
+}: {
+  itemIds: string[];
+  tx?: TransactionClient;
+  userId: string;
+}): Promise<Set<string | null>> {
+  const answered = await tx.attempt.groupBy({
+    by: ["itemId"],
+    where: {
+      OR: [{ isPlacement: true }, { stepId: null, studySessionId: null }],
+      itemId: { in: itemIds },
+      userId,
+    },
   });
+
+  return new Set(answered.map((attempt) => attempt.itemId));
 }
 
 /** Returns evidence oldest first. */
 export async function loadEvidence({
   skillIds,
+  sittingStartedAt = null,
   tx = prisma,
   userId,
 }: {
   skillIds: string[];
+  sittingStartedAt?: Date | null;
   tx?: TransactionClient;
   userId: string;
 }) {
-  const attempts = await tx.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: {
-      answer: true,
-      answeredAt: true,
-      durationMs: true,
-      isCorrect: true,
-      isPlacement: true,
-      item: { select: { format: true } },
-      itemId: true,
-      localDate: true,
-      skillId: true,
-      stepId: true,
-      studySessionId: true,
-    },
-    take: MAX_EVIDENCE,
-    where: { skillId: { in: skillIds }, userId },
-  });
+  const [attempts, testSkills, sittingAnswers] = await readDatabaseFacts(
+    tx,
+    () =>
+      tx.attempt.findMany({
+        orderBy: { answeredAt: "desc" },
+        select: {
+          answer: true,
+          answeredAt: true,
+          durationMs: true,
+          isCorrect: true,
+          isPlacement: true,
+          item: { select: { format: true } },
+          itemId: true,
+          localDate: true,
+          skillId: true,
+          stepId: true,
+          studySessionId: true,
+        },
+        take: MAX_EVIDENCE,
+        where: { skillId: { in: skillIds }, userId },
+      }),
+    () => loadTestSkills({ sittingStartedAt, skillIds, tx, userId }),
+    () =>
+      sittingStartedAt
+        ? tx.attempt.findMany({
+            orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
+            select: { answer: true, isCorrect: true },
+            take: UNKNOWN_STREAK,
+            where: {
+              answeredAt: { gte: sittingStartedAt },
+              itemId: { not: null },
+              skillId: { in: skillIds },
+              stepId: null,
+              studySessionId: null,
+              userId,
+            },
+          })
+        : [],
+  );
 
   const chronological = attempts.toReversed();
 
@@ -108,6 +160,7 @@ export async function loadEvidence({
     evidence: toEvidenceList(chronological),
     placementAnswers: toEvidenceList(chronological.filter((attempt) => isPlacementAnswer(attempt))),
     seenItemIds: new Set(chronological.map((attempt) => attempt.itemId)),
-    testAnswers: toTestAnswers(chronological),
+    sittingOutcomes: sittingAnswers.toReversed().map((attempt) => getOutcome(attempt)),
+    testSkills,
   };
 }
