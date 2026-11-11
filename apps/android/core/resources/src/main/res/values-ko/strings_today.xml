@@ -21,6 +21,7 @@
   "today_completed_lessons_detail": "ebea24d9a41fd29cb09c75dc5bcd18f9be5cecfd17bfcf395f77740472df52ea",
   "today_connection_lost": "b60ea619073fb9a5dcb25313ffda3661d4514b650dee315341c66159d1dcfb4a",
   "today_connection_lost_detail": "b5157dbcad13a79d923e8741e31de9c505a1adec869aeb8445858846c89ef87a",
+  "today_continue_draft": "e49fb09086091a732128458ccc6961c8eddc34b8f3ca3090e5c67f3b82c11619",
   "today_continue_explanation": "c9b79aa9ac48b2c31ec3f79229b2671fbd7fbc4b0d0ef77ae4a9b4d83127e566",
   "today_continue_mock": "f7c84985aae748e364b5fd21a50e6647f662a2d800f4ca28ba8abcd5b571e61c",
   "today_continue_mock_detail": "9f3166dafd67d58664c7b5097447df33be430193016cd49ea4c4f8d170ca28c1",
@@ -322,6 +323,7 @@
     <string name="today_building_plan_detail">보통 1~2분 걸려요. 준비되면 여기서 바로 첫날 학습을 시작할 수 있어요.</string>
     <string name="today_quick_explanation">간단한 설명</string>
     <string name="today_continue_explanation">설명 이어서 보기</string>
+    <string name="today_continue_draft">계속하기</string>
     <string name="today_week_title">이번 주</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

@@ -27,6 +27,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingResume
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
@@ -175,6 +176,8 @@ class FakeOnboardingApi : OnboardingApi {
         drafts += id
         return draft
     }
+
+    override suspend fun resume(session: AuthenticatedSession) = OnboardingResume(resume = null)
 
     var readsAgain = 0
     var readAgainGate: CompletableDeferred<Unit>? = null

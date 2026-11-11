@@ -21,6 +21,7 @@
   "today_completed_lessons_detail": "67abd8931cba414286ccde0714f5ec683832bb55f706e3be4777a865a70fa5f8",
   "today_connection_lost": "c8558f034aaca56c92c8ebd15e3ccaaaff4ed0a25b90f8d1e36e209247fa47db",
   "today_connection_lost_detail": "cad8ea09ffa7cc328aaa41aa2a11f8cc9d24a2a6bab53142ff9b6f02af088835",
+  "today_continue_draft": "28f31bd2ff8a596dd62d2018a5a5e160a21d9669b2339e7cf71bb73497ce0f28",
   "today_continue_explanation": "b8b5a4df89f790f512e604f079666025fd2d81771940b2462dc7ff8e98292fdf",
   "today_continue_mock": "4c27bfaaf065c14019aace6ce73250d1084659119cd0a6c24eec0db21f2dfee1",
   "today_continue_mock_detail": "7e8a2b7ba945db45cf8bfe4eddf37f5ca970e9e4a37149d7d20129dd67465bd4",
@@ -332,6 +333,7 @@
     <string name="today_building_plan_detail">Genellikle bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır.</string>
     <string name="today_quick_explanation">Kısa açıklama</string>
     <string name="today_continue_explanation">Açıklamaya devam et</string>
+    <string name="today_continue_draft">Devam et</string>
     <string name="today_week_title">Bu hafta</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

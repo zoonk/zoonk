@@ -21,6 +21,7 @@
   "today_completed_lessons_detail": "1971a380fd6ead728fa1b62ec1bf2f35ae1b507dea382e1a0ff51427fc957e5c",
   "today_connection_lost": "981ea8faf68816c2ae574e0fcb21ab7806fbe154438d00eadebb35433622c2c7",
   "today_connection_lost_detail": "1c4341888c592eb8beedf126e0683724c8b2fea813f7c14a71145bfe0efbcaf9",
+  "today_continue_draft": "3bbe66680b9262d06b2b547bf9e1f2f2c5f26f568ac304e71c4c3cc3ed41cad5",
   "today_continue_explanation": "d57d8cc08f0fb1fc35619d4794e72f8e02b434b83618727665c7f7277466c556",
   "today_continue_mock": "2eb07adacb32d734b149113cc543fcc8c0a53c396fae52c7cfde14b58a08e934",
   "today_continue_mock_detail": "b66f4d254ecc88dd43190bfa89ed7f80da3f4396e34bc5b398247a6680d54757",
@@ -342,6 +343,7 @@
     <string name="today_building_plan_detail">Isso costuma levar um ou dois minutos. Seu primeiro dia aparece aqui assim que estiver pronto.</string>
     <string name="today_quick_explanation">Explicação rápida</string>
     <string name="today_continue_explanation">Continuar explicação</string>
+    <string name="today_continue_draft">Continuar</string>
     <string name="today_week_title">Esta semana</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

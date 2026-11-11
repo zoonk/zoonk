@@ -21,6 +21,7 @@
   "today_completed_lessons_detail": "4e54e848d9409ae4268b8ce43dc9cbcf3f8231e356c686293402f26e5d24a8cd",
   "today_connection_lost": "73abae7a322a5e46cd1087aa956fac226d26b42e8fa098c0f688b1a3b64b672d",
   "today_connection_lost_detail": "444ad06c89cfcbb67e7160b07091e4aae5d4fe808a86a3b92fd7248ff8315dae",
+  "today_continue_draft": "35dd0e42d2c8c8ea15b7c6594d250e55bac6530aea6d6dec0da9a0302501ca13",
   "today_continue_explanation": "0f524b458fb306b661a3c840449f71b1e2f08ed1ee1684cce1ba49f6267ff367",
   "today_continue_mock": "7bb401467570af21befccd878950526697506279042ce5b2e226de52ec1554f5",
   "today_continue_mock_detail": "f93f09b107e635ceb7b70790814d61ed91d3e20110785d6a49471d8050d7f13c",
@@ -322,6 +323,7 @@
     <string name="today_building_plan_detail">通常1〜2分かかります。準備ができ次第、ここに初日の学習が表示されます。</string>
     <string name="today_quick_explanation">クイック解説</string>
     <string name="today_continue_explanation">解説を続ける</string>
+    <string name="today_continue_draft">続ける</string>
     <string name="today_week_title">今週</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

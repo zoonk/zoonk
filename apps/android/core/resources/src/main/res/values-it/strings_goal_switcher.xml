@@ -32,7 +32,7 @@
     <string name="goal_switcher_failed">Non siamo riusciti a cambiare obiettivo. Riprova.</string>
     <!-- Under a goal the learner typed with their goals that their plan didn't start, because the free plan follows only so many goals at the same time (not a cap on new goals per day or month). Plus is the name of Zoonk's paid plan, not the word "more". -->
     <string name="goal_switcher_starts_with_plus">Puoi iniziarlo con Plus</string>
-    <!-- Under a goal a guest typed with their goals that they can't start yet, because without an account they follow one goal at a time. A "free account" is a signed-up account on the free plan, not the paid plan; it follows more goals at once (goals followed at the same time, not new goals started per day or month). The goal comes with them when they create the account. Tapping it opens sign-up. -->
+    <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
     <string name="goal_switcher_starts_with_free_account">Disponibile con un account gratuito</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Puoi iniziarlo subito</string>

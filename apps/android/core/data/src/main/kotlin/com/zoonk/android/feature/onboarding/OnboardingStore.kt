@@ -35,6 +35,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingResumeResume
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswer
@@ -131,6 +132,12 @@ class OnboardingStore(
             session?.let { api.draft(it, id) }
         }
 
+    /** A goal typed after the learner's newest goal and not confirmed yet, which Today offers back. */
+    val unfinishedGoal =
+        cache.resource(Audience.SignedIn, setOf(DataDomain.Goals)) { session ->
+            session?.let { (api.resume(it).resume as? OnboardingResumeResume.OnboardingResumeResumeOneOfValue)?.value }
+        }
+
     /** A goal's setup; each answer replies with the whole new setup. */
     val onboardings =
         cache.keyed<String, Onboarding>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel)) {
@@ -169,7 +176,10 @@ class OnboardingStore(
     ): WriteOutcome<OnboardingDraft> {
         startAsGuest()?.let { return it }
         return write(setOf(DataDomain.Allowance), replacing = ::replacingDraft) { api.understand(it, goal, language) }
-            .also { if (it is WriteOutcome.Done) sent += it.value.id.toString() }
+            .also {
+                if (it is WriteOutcome.Done) sent += it.value.id.toString()
+                unfinishedGoal.invalidate()
+            }
     }
 
     suspend fun markPlanRevealed(goalId: String) =
