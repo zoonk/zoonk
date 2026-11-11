@@ -7,7 +7,6 @@ import com.zoonk.api.models.StudySessionExamAccess
 import com.zoonk.api.models.StudySessionFullMeal
 import com.zoonk.api.models.StudySessionMinutes
 import com.zoonk.api.models.StudySessionWeek
-import com.zoonk.api.models.StudySessionWeekTime
 import kotlinx.datetime.LocalDate
 import java.util.Locale
 import java.util.UUID
@@ -83,11 +82,6 @@ fun day(
         lessonsComing = false,
         lessonsToPrepare = false,
         plusLessons = emptyList(),
-        week =
-            StudySessionWeek(
-                days = emptyList(),
-                nextStudyDate = null,
-                time = StudySessionWeekTime(studiedMinutes = 0, targetMinutes = 100.0),
-            ),
+        week = StudySessionWeek(days = emptyList(), nextStudyDate = null),
         dayEndsAt = 0,
     )

@@ -403,10 +403,6 @@ class TodayFlowTest {
                 ),
             )
             put("nextStudyDate", JsonNull)
-            putJsonObject("time") {
-                put("studiedMinutes", 35)
-                put("targetMinutes", 120)
-            }
         }
 
     private fun weekDay(
@@ -661,7 +657,8 @@ class TodayFlowTest {
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,
             sessionId: UUID,
-        ): StudyBlock {
+            timeZone: String,
+        ): StudyBlock? {
             extraBlockGate.await()
             error("Not used")
         }

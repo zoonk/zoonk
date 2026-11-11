@@ -2,90 +2,29 @@
   "modelId": "openai/gpt-6-luna",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The stated payment flow is broadly correct: a temporary single-use code identifies the relevant bank, and the app requests confirmation. There are no prohibited foreign examples, false claims about the code being a card number, or investment recommendations. However, the required approximate two-minute lifetime and protection of card/account numbers are missing, and movement of money after confirmation is only implied.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 25
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Five short screens build from a familiar online checkout to code routing and app confirmation. However, the final screen introduces both merchant visibility and payment-safety instructions, triggering the maximum score of 7 for multiple new ideas on one screen.",
-          "score": 7,
-          "label": "Clarity & one idea per screen",
-          "weight": 20
-        },
-        {
-          "categoryId": "everydayWords",
-          "reasoning": "The Polish is natural, uses Polish diacritics, and addresses the reader directly. Familiar comparisons and plain descriptions make the mechanism accessible. There are no formulas or unexplained clusters of technical terms.",
-          "score": 10,
-          "label": "Everyday words, no formulas unless asked",
-          "weight": 20
-        },
-        {
-          "categoryId": "practicalExample",
-          "reasoning": "Buying a book online for 40,00 zł is a concrete Polish example with correctly formatted currency. Most screens provide a recognizable action or comparison, including checkout, a temporary ticket, a queue number, and checking the app.",
-          "score": 10,
-          "label": "Practical example",
-          "weight": 15
-        },
-        {
-          "categoryId": "check",
-          "reasoning": "There is one clearly correct answer, similarly sized options, and explanatory feedback for each. The correct answer does not merely restate the question, so the maximum-5 cap does not apply. However, the amount-mismatch scenario closely repeats the preceding instruction and tests caution more than understanding why six digits can connect the shop to the reader's bank.",
-          "score": 8,
-          "label": "The check",
-          "weight": 10
-        },
-        {
-          "categoryId": "ending",
-          "reasoning": "The recap has three short bullets in teaching order. The suggested course is suitably broad, and the three follow-up questions are natural. The title is neutral and recognizable, the description explains the scope, and each alt text describes the pictured content rather than repeating its screen title.",
-          "score": 10,
-          "label": "Recap, go further, title, description and alt text",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3074,
-          "outputTokens": 1005,
-          "reasoningTokens": 272
-        }
-      },
       "steps": [
         {
-          "conclusion": "The explanation omits two explicitly required facts: the code lasts about two minutes, and the shop does not receive your card or account number. Saying the shop need not know your name does not explain that payment-data privacy. It also leaves implicit that money moves only after confirmation.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "Screen 5 combines two distinct teaching points: what the shop learns and how to handle suspicious payment details. The check largely rehearses that screen's instruction rather than testing the central explanation of how the code routes a payment request to your bank.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "Name the intermediary as the BLIK system and explicitly say the shop sends the amount with the code. A stronger check would ask whether entering a valid code is enough to complete a payment when the reader has not confirmed it in the banking app.",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 6
         }
       ],
       "testCase": {
-        "expectations": "Explanation in natural Polish, speaking to the reader as \"ty\", of BLIK: you generate a one-time 6-digit code in your bank's app, valid for about 2 minutes; the shop or ATM sends the code with the amount to the BLIK system, which knows which bank's app issued it, and that app asks you to confirm the payment (often with a PIN). Only after that does the money move, so the shop never sees your card or account number and the code can't be used again. The question was typed without Polish letters, but the answer MUST use them (ą, ć, ę, ł, ń, ó, ś, ź, ż). Examples MUST be Polish: amounts in złoty written the Polish way (49,99 zł, 12 500 zł), paying in an online shop, taking cash from an ATM without a card or a przelew na telefon to split a bill with friends. Penalize dollars, Venmo, Zelle or Brazil's Pix as the example, US-style number formats, or claims that the 6 digits are a card number or a permanent password. Must not give financial advice.",
-        "id": "pl-blik-kod-1",
+        "expectations": "Explanation in Brazilian Portuguese of compound interest (juros sobre juros), so growth speeds up over time. Examples MUST be Brazilian: amounts in reais written the Brazilian way (R$ 1.000,00 or R$ 1.000), everyday Brazilian situations such as a poupança, the cartão de crédito rotativo or parcelamento; penalize dollars, US products (401(k), Venmo) or US-style number formats. No formula; must not recommend a specific investment.",
+        "id": "pt-juros-compostos-contexto-local-1",
         "userInput": {
-          "language": "pl",
-          "question": "jak dziala blik? skad sklep wie ze to ja place jak podaje tylko 6 cyfr"
+          "language": "pt",
+          "question": "como funcionam os juros compostos?"
         }
       }
     },
@@ -113,6 +52,33 @@
         "userInput": {
           "language": "pt",
           "question": "Como funciona o credit score nos Estados Unidos?"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in US English of how taxes come out of a paycheck: federal income tax withheld based on the W-4, Social Security and Medicare (FICA), and state income tax in most states; the refund or bill at tax time settles the difference. Examples in dollars with US situations. Must not give personal tax advice; suggesting a tax professional for a specific case is fine.",
+        "id": "en-paycheck-taxes-local-1",
+        "userInput": {
+          "language": "en",
+          "question": "why is my paycheck smaller than my salary?"
         }
       }
     },
@@ -281,71 +247,17 @@
     {
       "steps": [
         {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image\n✖ Invalid input: expected object, received undefined\n  → at screens[5].image",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image\n✖ Invalid input: expected object, received undefined\n  → at screens[5].image",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in Brazilian Portuguese of compound interest (juros sobre juros), so growth speeds up over time. Examples MUST be Brazilian: amounts in reais written the Brazilian way (R$ 1.000,00 or R$ 1.000), everyday Brazilian situations such as a poupança, the cartão de crédito rotativo or parcelamento; penalize dollars, US products (401(k), Venmo) or US-style number formats. No formula; must not recommend a specific investment.",
-        "id": "pt-juros-compostos-contexto-local-1",
-        "userInput": {
-          "language": "pt",
-          "question": "como funcionam os juros compostos?"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
-          "kind": "potentialImprovements",
-          "score": 6
-        }
-      ],
-      "testCase": {
-        "expectations": "Explanation in US English of how taxes come out of a paycheck: federal income tax withheld based on the W-4, Social Security and Medicare (FICA), and state income tax in most states; the refund or bill at tax time settles the difference. Examples in dollars with US situations. Must not give personal tax advice; suggesting a tax professional for a specific case is fine.",
-        "id": "en-paycheck-taxes-local-1",
-        "userInput": {
-          "language": "en",
-          "question": "why is my paycheck smaller than my salary?"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
-          "kind": "minorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image\n✖ Invalid input: expected object, received undefined\n  → at screens[5].image",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -437,6 +349,33 @@
         "userInput": {
           "language": "tr",
           "question": "kdv tam olarak ne? market fisinde yazan kdvyi aslinda kim oduyor"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. The output doesn't match the task's schema: ✖ Invalid input: expected string, received undefined\n  → at description\n✖ Invalid input: expected object, received undefined\n  → at screens[0].image\n✖ Invalid input: expected object, received undefined\n  → at screens[1].image\n✖ Invalid input: expected object, received undefined\n  → at screens[2].image\n✖ Invalid input: expected object, received undefined\n  → at screens[3].image\n✖ Invalid input: expected object, received undefined\n  → at screens[4].image",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in natural Polish, speaking to the reader as \"ty\", of BLIK: you generate a one-time 6-digit code in your bank's app, valid for about 2 minutes; the shop or ATM sends the code with the amount to the BLIK system, which knows which bank's app issued it, and that app asks you to confirm the payment (often with a PIN). Only after that does the money move, so the shop never sees your card or account number and the code can't be used again. The question was typed without Polish letters, but the answer MUST use them (ą, ć, ę, ł, ń, ó, ś, ź, ż). Examples MUST be Polish: amounts in złoty written the Polish way (49,99 zł, 12 500 zł), paying in an online shop, taking cash from an ATM without a card or a przelew na telefon to split a bill with friends. Penalize dollars, Venmo, Zelle or Brazil's Pix as the example, US-style number formats, or claims that the 6 digits are a card number or a permanent password. Must not give financial advice.",
+        "id": "pl-blik-kod-1",
+        "userInput": {
+          "language": "pl",
+          "question": "jak dziala blik? skad sklep wie ze to ja place jak podaje tylko 6 cyfr"
         }
       }
     }

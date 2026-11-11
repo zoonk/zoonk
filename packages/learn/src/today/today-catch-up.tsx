@@ -65,15 +65,17 @@ export function CatchUpLater() {
             )}
       </p>
 
-      <Button
-        busy={isPending}
-        icon={<ListPlusIcon aria-hidden="true" />}
-        onClick={catchUp}
-        size="sm"
-        variant="outline"
-      >
-        {t("Catch up today · +{time}", { time: formatDuration(later.minutes) })}
-      </Button>
+      <form action={() => catchUp()} className="contents">
+        <Button
+          busy={isPending}
+          icon={<ListPlusIcon aria-hidden="true" />}
+          size="sm"
+          type="submit"
+          variant="outline"
+        >
+          {t("Catch up today · +{time}", { time: formatDuration(later.minutes) })}
+        </Button>
+      </form>
 
       {failed && <ChangeSaveError className="basis-full" />}
     </div>

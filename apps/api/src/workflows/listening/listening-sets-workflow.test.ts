@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
+import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { type ListeningSet } from "@zoonk/ai/tasks/listening/schema";
 import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
 import { listeningContentSchema } from "@zoonk/core/library/listening/content";
@@ -10,6 +11,8 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningExamFixture } from "@zoonk/testing/fixtures/listening";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { taskResult } from "../_test-utils/recorded-outputs";
+import { solveLikeTheKeys } from "../_test-utils/solved-items";
 import { listeningSetsWorkflow } from "./listening-sets-workflow";
 
 function provenance() {
@@ -63,6 +66,8 @@ describe(listeningSetsWorkflow, () => {
     vi.mocked(put).mockImplementation(
       async (pathname) => ({ url: `https://blob.test/${randomUUID()}-${pathname}` }) as never,
     );
+
+    vi.mocked(solveItems).mockReset().mockImplementation(solveLikeTheKeys);
 
     vi.mocked(writeListeningSet)
       .mockReset()
@@ -119,6 +124,35 @@ describe(listeningSetsWorkflow, () => {
 
     expect(writeListeningSet).toHaveBeenCalledTimes(2);
     expect(voiceListeningScript).toHaveBeenCalledTimes(2);
+  });
+
+  it("records no set whose questions' keys the solve, reading its script, doesn't reach", async () => {
+    const exam = await listeningExamFixture();
+    const goal = await examGoal(exam);
+
+    vi.mocked(solveItems).mockImplementation(async () =>
+      taskResult({ solutions: [{ format: "trueFalse", isTrue: false, work: "He said Tuesday." }] }),
+    );
+
+    await expect(listeningSetsWorkflow({ goalId: goal.id, wait: "later" })).resolves.toStrictEqual({
+      status: "prepared",
+      voiced: 0,
+    });
+
+    expect(solveItems).toHaveBeenCalledTimes(2);
+
+    for (const [params] of vi.mocked(solveItems).mock.calls) {
+      expect(params).toMatchObject({
+        serviceTier: "flex",
+        stimulus: expect.stringContaining("Tom: "),
+      });
+    }
+
+    expect(voiceListeningScript).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.itemSet.count({ where: { examBlueprintId: exam.blueprint.id } }),
+    ).resolves.toBe(0);
   });
 
   it("writes a learner who heard every recording of a part a new one, for that part only", async () => {

@@ -13,10 +13,14 @@ function isRendered(element: Element): boolean {
   return element.getClientRects().length > 0;
 }
 
-/** A screen the learner leaves unfinished stays mounted, hidden, with its action bar until React renders it again. */
-function getShown(id: string): HTMLElement | null {
-  const elements = document.querySelectorAll<HTMLElement>(`#${id}`);
+/** Screens the learner left stay mounted, hidden, so a query on the lesson must skip their copies. */
+export function queryShown(selector: string, root: ParentNode = document): HTMLElement | null {
+  const elements = root.querySelectorAll<HTMLElement>(selector);
   return [...elements].find((element) => isRendered(element)) ?? null;
+}
+
+function getShown(id: string): HTMLElement | null {
+  return queryShown(`#${id}`);
 }
 
 export function getReadyLessonPrimary(): HTMLButtonElement | null {

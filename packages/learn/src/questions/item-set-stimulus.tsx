@@ -76,7 +76,7 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
   return (
     <section
       aria-label={set.title ?? t("Shared text")}
-      className="border-border flex flex-col gap-3 border-l-2 pl-4 lg:group-data-aside/task:border-l-0 lg:group-data-aside/task:pl-0"
+      className="border-border with-aside:group-data-aside/task:border-l-0 with-aside:group-data-aside/task:pl-0 flex flex-col gap-3 border-l-2 pl-4"
     >
       <SetPlace set={set} />
       {set.title && <h3 className="font-semibold">{set.title}</h3>}

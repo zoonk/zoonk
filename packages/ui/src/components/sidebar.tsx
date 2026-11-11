@@ -4,14 +4,26 @@ import { TooltipProvider } from "./tooltip";
 export const SIDEBAR_COLLAPSED_ATTRIBUTE = "data-sidebar-collapsed";
 export const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
 
-/** In `<head>`, so a static page paints the sidebar at the width the person left it. */
+/** The task screens' right sidebar (`TaskAside` in `@zoonk/learn`), for the screens that let the person collapse it. */
+export const ASIDE_COLLAPSED_ATTRIBUTE = "data-aside-collapsed";
+export const ASIDE_COLLAPSED_KEY = "aside-collapsed";
+
+const RESTORED = [
+  [SIDEBAR_COLLAPSED_ATTRIBUTE, SIDEBAR_COLLAPSED_KEY],
+  [ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY],
+]
+  .map(
+    ([attribute, key]) =>
+      `document.documentElement.toggleAttribute(${JSON.stringify(attribute)},localStorage.getItem(${JSON.stringify(key)})==="true")`,
+  )
+  .join(";");
+
+/** In `<head>`, so a static page paints each sidebar the way the person left it. */
 export function SidebarStateScript() {
   return (
     <script
       // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
-      dangerouslySetInnerHTML={{
-        __html: `try{document.documentElement.toggleAttribute(${JSON.stringify(SIDEBAR_COLLAPSED_ATTRIBUTE)},localStorage.getItem(${JSON.stringify(SIDEBAR_COLLAPSED_KEY)})==="true")}catch{}`,
-      }}
+      dangerouslySetInnerHTML={{ __html: `try{${RESTORED}}catch{}` }}
     />
   );
 }

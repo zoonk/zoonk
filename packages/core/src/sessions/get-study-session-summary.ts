@@ -27,7 +27,7 @@ import {
   readSessionEnd,
   readSessionSnapshot,
 } from "./_utils/session-snapshot";
-import { toStudySessionView } from "./_utils/session-view";
+import { EMPTY_WEEK, toStudySessionView } from "./_utils/session-view";
 import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-session-access";
 import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
@@ -161,7 +161,7 @@ export async function getStudySessionSummary({
     examAccess: { includesMockExams: true, trialEnded: false },
     missions,
     session,
-    week: { days: [], nextStudyDate: null, time: { studiedMinutes: 0, targetMinutes: 0 } },
+    week: EMPTY_WEEK,
   });
 
   const netScoredItemIds = getNetScoredItemIds(session.blocks);

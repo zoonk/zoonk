@@ -6,6 +6,7 @@ import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
 import { BROAD_LESSONS } from "./broad-lesson-specs";
 import { BUDGET_LESSON_SPECS } from "./budget-lesson-specs";
 import { PRICE_IMPACT_CHAPTER_LESSONS, PRICE_IMPACT_SPEC } from "./chapter-lesson-specs";
+import { DISTRIBUTIVE_LESSON } from "./distributive-lesson-spec";
 import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
 import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
@@ -671,6 +672,16 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-mobilidade-guess-other-measure",
     userInput: toInput(MOBILITY_LESSON),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
+      - A regression to avoid (production, 8 Nov 2026): the hook's program more than doubled its places while low-income students stayed the same, and screen 11 shows it going from 40 to 100 places with all 60 new ones going to high income. Screen 2 then told "um programa" opening 60 new places with 45 going to high income, so the learner met the hook's program with two sets of figures. Any screen that tells the hook's program, its text, chart and summary included, gives it the same figures as screen 11; an example with other figures is plainly another case, never one that reads as the hook's program
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-efeitos-distributivos-one-case-one-set-of-figures",
+    userInput: toInput(DISTRIBUTIVE_LESSON),
   },
   {
     expectations: `

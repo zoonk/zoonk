@@ -227,10 +227,12 @@ export function AlternativeButton({
   const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
-    <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} onClick={other.run}>
-      {reason === "instead"
-        ? t("Instead: {title}", { title: title(alternative) })
-        : t("While you wait: {title}", { title: title(alternative) })}
-    </EnterButton>
+    <form action={() => void other.run()} className="contents">
+      <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} type="submit">
+        {reason === "instead"
+          ? t("Instead: {title}", { title: title(alternative) })
+          : t("While you wait: {title}", { title: title(alternative) })}
+      </EnterButton>
+    </form>
   );
 }

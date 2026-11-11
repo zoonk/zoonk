@@ -89,17 +89,17 @@ function ExplainRecap({
   }
 
   return (
-    <TaskAsideContent className={cn("lg:top-0", className)}>
-      <section aria-labelledby="explain-recap" className="flex flex-col gap-1 lg:gap-0">
+    <TaskAsideContent className={cn("with-aside:top-0", className)}>
+      <section aria-labelledby="explain-recap" className="with-aside:gap-0 flex flex-col gap-1">
         <SectionLabel
-          className="lg:flex lg:h-13 lg:shrink-0 lg:items-center xl:h-15"
+          className="with-aside:flex with-aside:h-13 with-aside:shrink-0 with-aside:items-center with-aside:xl:h-15"
           id="explain-recap"
         >
           {t("In {count, plural, one {# sentence} other {# sentences}}", { count: recap.length })}
         </SectionLabel>
         <ol className="flex flex-col [&>li+li]:border-t">
           {recap.map((sentence, index) => (
-            <li className="flex items-baseline gap-3 py-3 lg:first:pt-0" key={sentence}>
+            <li className="with-aside:first:pt-0 flex items-baseline gap-3 py-3" key={sentence}>
               <span
                 aria-hidden="true"
                 className="text-faint w-4 shrink-0 font-mono text-xs tabular-nums"
@@ -163,7 +163,7 @@ export function ExplainEnding({
           )}
         </div>
 
-        <ExplainRecap className={cn(saving && "max-lg:hidden")} recap={explanation.recap} />
+        <ExplainRecap className={cn(saving && "without-aside:hidden")} recap={explanation.recap} />
 
         {!saving && (
           <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">

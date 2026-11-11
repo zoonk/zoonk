@@ -70,8 +70,13 @@ export type StudySessionView = {
   /** Where the day stands, which decides what Today offers. */
   state: DayState;
   status: StudySessionRow["status"];
-  week: StudyWeek;
+  week: SessionWeek;
 };
+
+export type SessionWeek = Pick<StudyWeek, "days" | "nextStudyDate">;
+
+/** For a session whose goal was deleted, and for summaries, which show no week. */
+export const EMPTY_WEEK: SessionWeek = { days: [], nextStudyDate: null };
 
 export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">[]) {
   return {

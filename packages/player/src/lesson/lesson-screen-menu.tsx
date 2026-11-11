@@ -1,7 +1,6 @@
 "use client";
 
-import { TASK_HEADER_ICON_CLASS } from "@zoonk/learn/task-header";
-import { HIDDEN_WITH_TASK_ASIDE_CLASS } from "@zoonk/learn/task-layout";
+import { TASK_HEADER_ICON_CLASS, useTaskAsideShown } from "@zoonk/learn/task-header";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -57,13 +56,13 @@ export function LessonScreenMenu() {
   const { actions, screen, state } = useLessonPlayer();
   const isDone = state.phase === "completed";
   const mapSheet = useMapSheet(isDone);
+  const asideShown = useTaskAsideShown();
 
   if (!screen.step && !isDone && state.phase !== "map") {
     return null;
   }
 
-  const showsMap = isDone && lesson.summary;
-  const mapClass = cn(!slots.completion && HIDDEN_WITH_TASK_ASIDE_CLASS);
+  const showsMap = isDone && lesson.summary && (slots.completion || !asideShown);
 
   const reportItem =
     screen.step && slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" });
@@ -92,9 +91,7 @@ export function LessonScreenMenu() {
             </DropdownMenuLabel>
           </DropdownMenuGroup>
 
-          <DropdownMenuSeparator
-            className={cn(showsMap && !screen.canKnowThis && !reportItem && mapClass)}
-          />
+          {(screen.canKnowThis || showsMap || reportItem) && <DropdownMenuSeparator />}
 
           {screen.canKnowThis && (
             <DropdownMenuItem onClick={actions.knowThis}>
@@ -104,7 +101,7 @@ export function LessonScreenMenu() {
           )}
 
           {showsMap && (
-            <DropdownMenuItem className={mapClass} onClick={() => mapSheet.change(true)}>
+            <DropdownMenuItem onClick={() => mapSheet.change(true)}>
               <NetworkIcon aria-hidden="true" />
               {t("Lesson map")}
             </DropdownMenuItem>

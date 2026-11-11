@@ -605,47 +605,6 @@ struct TodayWeekSection: View {
     Text("This week", tableName: "Today", comment: "The week's header")
   }
 
-  @ViewBuilder
-  private var numbers: some View {
-    let days =
-      week.studyDayCount > 0
-      ? String(
-        localized: "\(week.daysStudied) of \(week.studyDayCount) days", table: "Today",
-        comment: "Days studied of the week's study days")
-      : nil
-    let studied = studyDuration(minutes: week.time.studiedMinutes)
-    let planned = studyDuration(minutes: Int(week.time.targetMinutes))
-    let hasTime = week.time.targetMinutes > 0
-
-    if let line = Self.numbers(days: days, time: hasTime ? (studied, planned) : nil) {
-      Text(verbatim: line)
-        .monospacedDigit()
-        .accessibilityLabel(
-          [
-            days,
-            hasTime
-              ? String(
-                localized: "\(studied) of \(planned) studied this week", table: "Today",
-                comment: "Spoken time studied of the week's planned time")
-              : nil,
-          ].compactMap(\.self).joined(separator: ", "))
-    }
-  }
-
-  /// Wraps only between its values, so "5 hrs 13 min" never splits across two lines.
-  nonisolated static func numbers(days: String?, time: (studied: String, planned: String)?)
-    -> String?
-  {
-    func whole(_ value: String) -> String {
-      value.replacingOccurrences(of: " ", with: "\u{A0}")
-    }
-
-    let parts = [
-      days.map(whole), time.map { "\(whole($0.studied)) / \(whole($0.planned))" },
-    ].compactMap(\.self)
-    return parts.isEmpty ? nil : parts.joinedFacts()
-  }
-
   var body: some View {
     // Main's `useWeekDate`: the week marks the current day even while a lesson carries the
     // previous day's session.
@@ -670,9 +629,7 @@ struct TodayWeekSection: View {
         WeekChallengeRow(challenge: challenge, date: date)
       }
     } header: {
-      SectionTitle(title) {
-        numbers
-      }
+      SectionTitle(title)
     }
   }
 }

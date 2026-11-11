@@ -61,15 +61,21 @@ function getServedModel(step: GenerationStep): string {
   return readGatewayMetadata(step.providerMetadata).servedModel ?? step.response.modelId;
 }
 
-/** What one call cost, at the model that answered it. */
+/** What one call cost, at the model, tier and speed that answered it. */
 export function describeStep(step: GenerationStep): {
   gatewayCharge?: GatewayCharge;
   model: string;
+  serviceTier?: string;
+  speed?: "fast";
   usage: TaskUsage;
 } {
+  const gateway = readGatewayMetadata(step.providerMetadata);
+
   return {
-    gatewayCharge: readGatewayMetadata(step.providerMetadata).charge,
+    gatewayCharge: gateway.charge,
     model: getServedModel(step),
+    serviceTier: gateway.serviceTier,
+    speed: gateway.speed,
     usage: toTaskUsage(step.usage),
   };
 }
