@@ -42,7 +42,6 @@ val routeSamples: List<AppRoute> =
         AppRoute.StartGoal(),
         AppRoute.GoalSetup("goal-1"),
         AppRoute.CourseStart("course-1"),
-        AppRoute.PlacementMock("goal-1"),
         AppRoute.Session(),
         AppRoute.QuestionBlock("session-1", "block-1"),
         AppRoute.Logbook,

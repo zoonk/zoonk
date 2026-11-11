@@ -386,6 +386,8 @@
     <string name="plan_change_changed">Your plan changed.</string>
     <string name="plan_change_own_level_first">For your new level, these come first: %1$s.</string>
     <string name="plan_change_rebalance">More time for %1$s, where it\'s needed most.</string>
+    <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
+    <string name="plan_change_focus_test">Your Focus test suggests more time for %1$s.</string>
     <string name="plan_change_follows_notice">Your plan follows the exam notice.</string>
     <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
     <string name="plan_change_read_notice_around">We read the exam notice: your plan can follow its subjects, with the exam around %1$s.</string>
@@ -463,6 +465,8 @@
         <item quantity="other">%d prerequisites are skipped.</item>
     </plurals>
     <string name="plan_change_more_time_for">More time for %1$s.</string>
+    <!-- A change that removed the plan's focus: no subject gets more time now. -->
+    <string name="plan_change_no_focus">Your plan has no focus.</string>
     <string name="plan_change_less_time_for">Less time for %1$s.</string>
     <!-- %1$s is one or more of the exam's areas joined as a list, such as "Math" or "Math and History". -->
     <string name="plan_change_areas_left_out">%1$s left out of the plan.</string>
@@ -920,8 +924,6 @@
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Where to focus</string>
     <string name="plan_where_to_focus_description">The subjects you pick come first and get more depth.</string>
-    <string name="plan_take_short_test">Take a short test</string>
-    <string name="plan_test_chooses_for_you">Your answers choose for you</string>
     <string name="plan_choose_focus_yourself">Or choose them yourself</string>
     <string name="plan_focus_includes">Includes %1$s</string>
     <string name="plan_focus_only">Only %1$s</string>
@@ -929,6 +931,8 @@
     <string name="plan_focus_cant_move">Nothing changed: %1$s already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Focus on these</string>
+    <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
+    <string name="plan_remove_focus">Remove focus</string>
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>
     <string name="plan_then_covers_everything">Your plan then covers everything in depth.</string>
     <string name="plan_apply">Apply</string>

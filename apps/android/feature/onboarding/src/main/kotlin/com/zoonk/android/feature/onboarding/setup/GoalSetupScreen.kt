@@ -53,7 +53,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.data.withRead
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
-import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.focustest.FocusTestFlow
+import com.zoonk.android.feature.focustest.FocusTestHost
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
@@ -116,7 +117,6 @@ fun GoalSetupScreen(
             route,
             app.onboarding,
             app.plans,
-            app.mocks,
             isGuest = signedIn?.isGuest == true,
             navigator,
             warmUps = app.warmUps,
@@ -132,7 +132,6 @@ fun GoalSetupScreen(
     route: AppRoute.GoalSetup,
     store: OnboardingStore,
     plans: PlanStore,
-    mocks: MockStore,
     isGuest: Boolean,
     navigator: AppNavigator,
     warmUps: WarmUpStore? = null,
@@ -281,7 +280,6 @@ fun GoalSetupScreen(
                                         vm,
                                         store,
                                         plans,
-                                        mocks,
                                         isGuest,
                                         navigator,
                                         route,
@@ -322,7 +320,6 @@ private fun ColumnScope.SetupStep(
     vm: GoalSetupViewModel,
     store: OnboardingStore,
     plans: PlanStore,
-    mocks: MockStore,
     isGuest: Boolean,
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
@@ -372,7 +369,6 @@ private fun ColumnScope.SetupStep(
             vm,
             store,
             plans,
-            mocks,
             isGuest,
             navigator,
             route,
@@ -394,7 +390,6 @@ private fun ColumnScope.QuestionStep(
     vm: GoalSetupViewModel,
     store: OnboardingStore,
     plans: PlanStore,
-    mocks: MockStore,
     isGuest: Boolean,
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
@@ -521,6 +516,19 @@ private fun ColumnScope.QuestionStep(
                     onDone = placed,
                     onReportSaveFailure = onReportLevelTest,
                 )
+            } else if (view.goal.kind == Goal.Kind.EXAM) {
+                FocusTestFlow(
+                    goalId = view.goal.id.toString(),
+                    host = FocusTestHost.Onboarding,
+                    subject = subject,
+                    store = store,
+                    plans = plans,
+                    run = run,
+                    onRetryRun = onRetryRun,
+                    onProgress = { vm.placementProgress = it },
+                    onDone = placed,
+                    onReportSaveFailure = onReportPlacement,
+                )
             } else {
                 PlacementStep(
                     goalId = view.goal.id.toString(),
@@ -529,8 +537,6 @@ private fun ColumnScope.QuestionStep(
                     run = run,
                     onRetryRun = onRetryRun,
                     store = store,
-                    mocks = mocks,
-                    navigator = navigator,
                     onProgress = { vm.placementProgress = it },
                     onDone = placed,
                     onReportSaveFailure = onReportPlacement,

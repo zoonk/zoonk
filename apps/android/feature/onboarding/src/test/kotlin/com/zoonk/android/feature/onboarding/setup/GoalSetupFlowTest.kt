@@ -32,8 +32,6 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.EXAM_GOAL_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
@@ -104,14 +102,13 @@ class GoalSetupFlowTest {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         val plans = PlanStore(planApi, cache)
-        val mocks = MockStore(FakeMockApi(options = null), cache)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {
                 CompositionLocalProvider(LocalSetupDrafts provides drafts) {
                     key(
                         screen,
-                    ) { GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, plans, mocks, isGuest = false, rememberAppNavigator()) }
+                    ) { GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, plans, isGuest = false, rememberAppNavigator()) }
                 }
             }
         }

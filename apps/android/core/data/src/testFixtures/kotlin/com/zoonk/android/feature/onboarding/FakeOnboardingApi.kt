@@ -30,6 +30,7 @@ import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
+import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -401,21 +402,31 @@ class FakeOnboardingApi : OnboardingApi {
         return PlacementAnswerResult(isCorrect = true, placement = placement)
     }
 
+    var sitting: () -> Placement = { placement }
+    var sittingsStarted = 0
+
+    override suspend fun startPlacementSitting(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Placement {
+        sittingsStarted++
+        writeFailure?.let { throw it }
+        placement = sitting()
+        return placement
+    }
+
     var placementFinishGate: CompletableDeferred<Unit>? = null
+    var completion: PlacementCompletion = completionOf()
 
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-    ) {
+    ): PlacementCompletion {
         placementFinishGate?.await()
         writeFailure?.let { throw it }
+        return completion
     }
-
-    override suspend fun finishMock(
-        session: AuthenticatedSession,
-        mockId: String,
-    ) = Unit
 
     var levelTest: LanguageLevelTest = levelTestOf()
     var levelTestReads = 0

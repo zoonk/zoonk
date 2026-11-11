@@ -53,8 +53,6 @@ import com.zoonk.android.feature.catalog.CHAPTER_ONE
 import com.zoonk.android.feature.catalog.COURSE
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.course.CourseStartScreen
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
@@ -324,7 +322,7 @@ class OnboardingScreenshots {
                     )
                 },
                 "placement-intro" to {
-                    Placement(FakeOnboardingApi(), mocks = FakeMockApi(mockOptionsOf(access = "plusRequired")))
+                    Placement(FakeOnboardingApi())
                 },
                 "placement-question" to {
                     Placement(FakeOnboardingApi().apply { placement = placementOf(answered = 2, started = true, spent = 0.35) })
@@ -619,7 +617,6 @@ class OnboardingScreenshots {
                 AppRoute.GoalSetup(GOAL_ID),
                 store,
                 rememberPlans(plans),
-                rememberMocks(),
                 isGuest = false,
                 rememberAppNavigator(),
             )
@@ -647,7 +644,6 @@ class OnboardingScreenshots {
         private fun Placement(
             api: FakeOnboardingApi,
             run: GenerationRun = GenerationRun(),
-            mocks: FakeMockApi = FakeMockApi(options = null),
         ) {
             val store = rememberStore(api)
             SetupColumn {
@@ -658,8 +654,6 @@ class OnboardingScreenshots {
                     run,
                     onRetryRun = {},
                     store,
-                    rememberMocks(mocks),
-                    rememberAppNavigator(),
                     onProgress = {},
                     onDone = { WriteOutcome.Done(Unit) },
                 )
@@ -703,13 +697,6 @@ class OnboardingScreenshots {
             remember {
                 val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
                 PlanStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
-            }
-
-        @Composable
-        private fun rememberMocks(api: FakeMockApi = FakeMockApi(options = null)) =
-            remember {
-                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                MockStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
             }
 
         @Composable

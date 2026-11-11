@@ -50,6 +50,9 @@ fun planChangeSentence(
     if (change.source == REBALANCE_SOURCE && first is PlanOp.FocusAreas) {
         return stringResource(R.string.plan_change_rebalance, joinList(first.areas))
     }
+    if (change.source == FOCUS_TEST_SOURCE && first is PlanOp.FocusAreas && first.areas.isNotEmpty()) {
+        return stringResource(R.string.plan_change_focus_test, joinList(first.areas))
+    }
 
     systemChangeSentence(change, effect, targetDate)?.let { return it }
     if (ops.isEmpty()) return coverageSentence(effect)
@@ -163,6 +166,9 @@ private const val NOTICE_SOURCE = "notice"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val OWN_LEVEL_SOURCE = "ownLevel"
 private const val REBALANCE_SOURCE = "preparation"
+
+/** A focus the learner's Focus test answers suggest, which they apply as "Update my plan". */
+const val FOCUS_TEST_SOURCE = "focusTest"
 
 @Composable
 internal fun longDate(date: LocalDate): String = formatDate(date, currentLocale(), DateStyle.Long)
@@ -442,7 +448,13 @@ private fun operationSentence(
 
         is PlanOp.FocusAreas -> {
             val names = op.areas.map { area -> op.parts.firstOrNull { it.area == area }?.name ?: area }
-            stringResource(R.string.plan_change_more_time_for, joinList(names))
+            if (names.isEmpty()) {
+                stringResource(
+                    R.string.plan_change_no_focus,
+                )
+            } else {
+                stringResource(R.string.plan_change_more_time_for, joinList(names))
+            }
         }
 
         is PlanOp.ReduceAreas -> {

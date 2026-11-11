@@ -27,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -59,6 +60,7 @@ import com.zoonk.android.ui.components.TimeSelect
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
@@ -352,7 +354,12 @@ private fun ColumnScope.ScheduleTime(
                         ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
                     ).takeIf { hasDays },
                 updating = shown.updating,
-                action = { DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate) },
+                action = {
+                    Column {
+                        FocusLine(lastAdvice, updating = shown.updating)
+                        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
+                    }
+                },
             )
         }
 
@@ -362,6 +369,22 @@ private fun ColumnScope.ScheduleTime(
             FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
     }
+}
+
+/** Where a time that doesn't cover everything should go, for a learner whose Focus test has answers. */
+@Composable
+private fun FocusLine(
+    advice: PlanTimeAdvice?,
+    updating: Boolean,
+) {
+    val subjects = advice?.focusSubjects.orEmpty().map { it.shortName ?: it.name }
+    if (subjects.isEmpty()) return
+    Text(
+        stringResource(R.string.focustest_schedule_focus, formatList(subjects, currentLocale())),
+        modifier = Modifier.alpha(if (updating) UPDATING_ALPHA else 1f),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 /** Under the time's answer, its words lined up with the answer's. */
@@ -498,3 +521,5 @@ private fun SwitchRow(
         Switch(checked = checked, onCheckedChange = null)
     }
 }
+
+private const val UPDATING_ALPHA = 0.5f

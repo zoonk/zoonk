@@ -22,8 +22,6 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -53,14 +51,12 @@ class PlacementStepFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi()
-    private val mockApi = FakeMockApi(options = null)
     private var done = 0
 
     private fun show(inSetup: Boolean = false) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        val mocks = MockStore(mockApi, cache)
         rule.setContent {
             ZoonkTheme {
                 if (inSetup) {
@@ -68,7 +64,6 @@ class PlacementStepFlowTest {
                         AppRoute.GoalSetup(GOAL_ID),
                         store,
                         PlanStore(FakePlanApi(), cache),
-                        mocks,
                         false,
                         rememberAppNavigator(),
                     )
@@ -81,8 +76,6 @@ class PlacementStepFlowTest {
                             GenerationRun(),
                             onRetryRun = null,
                             store,
-                            mocks,
-                            rememberAppNavigator(),
                             onProgress = {},
                             onDone = {
                                 done++

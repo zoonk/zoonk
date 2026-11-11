@@ -333,7 +333,7 @@ class AppContainer private constructor(
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
     val testOuts = TestOutStore(LiveTestOutApi(api), cache, drafts, timeZone)
-    val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, drafts, timeZone)
+    val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, studySessions, learnerSummary.summary, timeZone)
     val essays = EssayStore(LiveEssayApi(api), cache, drafts, timeZone)
 
     val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)

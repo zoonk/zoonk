@@ -1,42 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- A test that sets which subjects of an exam the plan studies in more depth. -->
+    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Focus test</string>
-    <string name="focustest_intro_title">Where should you focus?</string>
-    <string name="focustest_intro_detail">A few questions on each subject. The ones you need most come first and get more depth.</string>
-    <plurals name="focustest_subjects">
+    <string name="focustest_invitation_title_dated">Let\'s find where your study time should go</string>
+    <!-- The test's title for an exam goal without a date. -->
+    <string name="focustest_invitation_title">Find where to start</string>
+    <string name="focustest_invitation_description_focus">Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus.</string>
+    <string name="focustest_invitation_description">Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know.</string>
+    <!-- %1$s is a duration, such as "15 min". -->
+    <string name="focustest_about">About %1$s</string>
+    <!-- The test is optional: the learner can skip it. -->
+    <string name="focustest_optional">Optional</string>
+    <plurals name="focustest_up_to_questions">
+        <item quantity="one">Up to %d question</item>
+        <item quantity="other">Up to %d questions</item>
+    </plurals>
+    <plurals name="focustest_subjects_count">
         <item quantity="one">%d subject</item>
         <item quantity="other">%d subjects</item>
     </plurals>
-    <plurals name="focustest_questions">
-        <item quantity="one">%d question</item>
-        <item quantity="other">%d questions</item>
+    <string name="focustest_no_grade">There\'s no grade. “I don\'t know yet” is a useful answer.</string>
+    <string name="focustest_stop_any_time">Stop whenever you need to. We save each answer.</string>
+    <!-- Said when the exam has more subjects than one sitting can ask about; the next sentence says how many questions the sitting has. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”. -->
+    <plurals name="focustest_past_ceiling_subjects">
+        <item quantity="one">Your plan considers its %d subject.</item>
+        <item quantity="other">Your plan considers all %d subjects.</item>
     </plurals>
-    <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
-    <string name="focustest_about">About %1$s</string>
+    <!-- “This sitting” is one go at the Focus test, not a study session: use another word, or say “this test” or “this time”. -->
+    <plurals name="focustest_past_ceiling_questions">
+        <item quantity="one">This sitting has up to %d question, so some subjects may not be checked.</item>
+        <item quantity="other">This sitting has up to %d questions, so some subjects may not be checked.</item>
+    </plurals>
+    <string name="focustest_view_subjects">View subjects</string>
+    <string name="focustest_view_all_subjects">View all subjects</string>
+    <string name="focustest_subjects">Subjects</string>
     <string name="focustest_start">Start the test</string>
-
-    <string name="focustest_writing">Writing your questions</string>
-    <string name="focustest_writing_questions">Writing questions on each subject</string>
-    <string name="focustest_writing_line">Picking what to ask in each subject…</string>
-    <string name="focustest_writing_title">Getting your test ready</string>
-    <string name="focustest_writing_detail">We\'re writing a few questions on each subject. The test opens here when they\'re ready.</string>
-    <string name="focustest_waiting_title">Your next questions are on the way</string>
-    <string name="focustest_waiting_detail">We\'re writing the rest of the test. It goes on here when they\'re ready.</string>
-    <string name="focustest_ended_title">Some questions couldn\'t be written</string>
-    <string name="focustest_ended_detail">Finish with the answers you gave: they still choose where your plan goes deeper.</string>
-
-    <string name="focustest_how_you_did">How you did</string>
-    <!-- A subject's score, such as "2 of 3 right". %1$d is how many were right, %2$d how many were asked. -->
-    <plurals name="focustest_area_right">
+    <string name="focustest_skip_for_now">Skip for now</string>
+    <string name="focustest_skip_note">You can take the test later, from your plan.</string>
+    <string name="focustest_not_now">Not now</string>
+    <string name="focustest_resume_title">Continue your test</string>
+    <plurals name="focustest_answers_saved">
+        <item quantity="one">%d answer saved</item>
+        <item quantity="other">%d answers saved</item>
+    </plurals>
+    <plurals name="focustest_up_to_questions_left">
+        <item quantity="one">Up to %d question left</item>
+        <item quantity="other">Up to %d questions left</item>
+    </plurals>
+    <string name="focustest_continue">Continue</string>
+    <string name="focustest_use_my_answers">Use my answers</string>
+    <!-- Over a test question: its number and the count promised when the sitting started. -->
+    <string name="focustest_question_number">Question %1$d of %2$d</string>
+    <string name="focustest_stop">Stop and use my answers</string>
+    <!-- Shown after several "I don't know yet" answers in a row. -->
+    <string name="focustest_many_unknown">Haven\'t studied most of this yet? That\'s fine. You can stop here and start learning.</string>
+    <string name="focustest_answers_saved_title">Your answers are saved</string>
+    <string name="focustest_end_settled">Your starting points are set.</string>
+    <string name="focustest_end_no_questions">That\'s all the questions ready for now. Your next sessions ask the rest.</string>
+    <string name="focustest_see_starting_plan">See your starting plan</string>
+    <!-- The test's result: where the plan starts and which subjects it gives more time. -->
+    <string name="focustest_checkpoint_title">Your starting plan</string>
+    <!-- %1$d subjects of the exam's %2$d have a test answer. -->
+    <plurals name="focustest_evidence">
+        <item quantity="one">Questions on %1$d of %2$d subject so far</item>
+        <item quantity="other">Questions on %1$d of %2$d subjects so far</item>
+    </plurals>
+    <string name="focustest_where_you_start">Where you\'ll start</string>
+    <plurals name="focustest_lessons_skipped">
+        <item quantity="one">Your plan skips %d lesson you already know.</item>
+        <item quantity="other">Your plan skips %d lessons you already know.</item>
+    </plurals>
+    <string name="focustest_from_basics">Your subjects start from the basics for now.</string>
+    <string name="focustest_suggested_focus">Suggested focus</string>
+    <string name="focustest_focus_if_short">If your time can\'t cover everything, your plan gives these more time.</string>
+    <string name="focustest_focus_proposed">Your time can\'t cover everything. Your plan can give these more time.</string>
+    <string name="focustest_focus_current">Your plan gives these more time.</string>
+    <string name="focustest_focus_hand_picked">You chose your own focus, and your plan keeps it. This is what the test suggests.</string>
+    <!-- Said when few answers back the suggested focus. -->
+    <string name="focustest_focus_importance">For now, this follows mainly what counts most in your exam.</string>
+    <!-- %1$s is the exam subject, such as "Administrative law". -->
+    <string name="focustest_reason_answers">Your answers suggest reviewing %1$s.</string>
+    <string name="focustest_reason_minimum_score">This part has a minimum score.</string>
+    <!-- Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the test's quick questions can't ask about it. -->
+    <string name="focustest_reason_written">Writing counts heavily; it isn\'t checked here.</string>
+    <string name="focustest_reason_listening">Listening counts heavily; it isn\'t checked here.</string>
+    <string name="focustest_reason_speaking">Speaking counts heavily; it isn\'t checked here.</string>
+    <string name="focustest_reason_practical">This part counts heavily; it isn\'t checked here.</string>
+    <string name="focustest_reason_not_asked">This subject counts heavily. Its starting point hasn\'t been checked yet.</string>
+    <string name="focustest_reason_weight">This subject counts heavily.</string>
+    <string name="focustest_update_plan">Update my plan</string>
+    <string name="focustest_proposal_applied">Done. Your plan now gives these more time.</string>
+    <string name="focustest_proposal_declined">Your plan stays as it was.</string>
+    <string name="focustest_proposal_undone">Undone. Your plan is back as it was.</string>
+    <string name="focustest_undo">Undo</string>
+    <string name="focustest_change_focus">Change focus</string>
+    <string name="focustest_sessions_note">Your next sessions ask a few more questions, starting with subjects not asked yet.</string>
+    <string name="focustest_continue_to_daily_time">Continue to daily time</string>
+    <string name="focustest_done">Done</string>
+    <!-- %1$s is a duration, such as "10 min". -->
+    <string name="focustest_continue_test">Continue the test · About %1$s</string>
+    <!-- %1$d answers right of %2$d asked on one subject. -->
+    <plurals name="focustest_subject_right">
         <item quantity="one">%1$d of %2$d right</item>
         <item quantity="other">%1$d of %2$d right</item>
     </plurals>
-    <!-- Over the subjects the test chose to study in more depth. -->
-    <string name="focustest_new_focus">Your new focus</string>
-    <!-- Under the subjects the test chose. -->
-    <string name="focustest_focus_detail_one">This subject counts a lot, and it\'s where you missed most. Your plan now gives it more depth, and every other topic stays in it.</string>
-    <string name="focustest_focus_detail_several">These subjects count a lot, and they\'re where you missed most. Your plan now gives them more depth, and every other topic stays in it.</string>
-    <string name="focustest_undone">Your plan is back as it was</string>
-    <string name="focustest_see_plan">See your plan</string>
+    <!-- A subject the test hasn't asked a question about yet. -->
+    <string name="focustest_not_asked_yet">Not asked yet</string>
+    <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
+    <string name="focustest_written_not_checked">Writing: not checked here</string>
+    <string name="focustest_listening_not_checked">Listening: not checked here</string>
+    <string name="focustest_speaking_not_checked">Speaking: not checked here</string>
+    <string name="focustest_practical_not_checked">Practical part: not checked here</string>
+    <!-- The test's state on the plan: not started yet. -->
+    <string name="focustest_not_started">Not started</string>
+    <plurals name="focustest_questions_left">
+        <item quantity="one">%d question left</item>
+        <item quantity="other">%d questions left</item>
+    </plurals>
+    <!-- The test's last result on the plan: %1$d subjects of %2$d have an answer. -->
+    <plurals name="focustest_result_subjects">
+        <item quantity="one">Questions on %1$d of %2$d subject</item>
+        <item quantity="other">Questions on %1$d of %2$d subjects</item>
+    </plurals>
+    <string name="focustest_answers_in_plan">Your answers are in your plan</string>
+    <plurals name="focustest_more_questions">
+        <item quantity="one">Up to %d more question</item>
+        <item quantity="other">Up to %d more questions</item>
+    </plurals>
+    <string name="focustest_session_questions_on">Your sessions ask a few test questions until every subject has an answer.</string>
+    <string name="focustest_session_questions_paused">Test questions in your sessions are paused.</string>
+    <string name="focustest_pause_questions">Pause test questions</string>
+    <string name="focustest_ask_again">Ask them again</string>
+    <!-- A link to the test for a learner whose time doesn't cover everything; %1$s is a duration, such as "15 min". -->
+    <string name="focustest_check_where_to_focus">Check where to focus · About %1$s</string>
+    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
+    <string name="focustest_schedule_focus">With this time, we suggest giving %1$s more attention.</string>
+    <!-- On the plan reveal: %1$s is a daily study time, such as "4 hr"; %2$s a date, such as "Dec 10"; %3$s lists up to three exam subjects. -->
+    <string name="focustest_reveal_trade_off">At %1$s a day, some topics won\'t fit before %2$s. This plan gives %3$s more time.</string>
+    <string name="focustest_what_test_changed">What your test changed</string>
+    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
+    <string name="focustest_suggestion_summary">A quick test can suggest where your study time should go.</string>
+    <string name="focustest_suggestion_title">Find where your study time should go</string>
+    <string name="focustest_suggestion_description">Your study time can\'t cover everything before your exam. Quick questions on your subjects suggest where to focus.</string>
+    <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
+    <string name="focustest_suggestion_dismissed">Noted. You can take the test from your plan.</string>
+    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
+    <string name="focustest_not_today">Not today</string>
+    <string name="focustest_not_today_failed">Couldn\'t skip them. Try again.</string>
 </resources>

@@ -53,7 +53,6 @@ class AppLinkTest {
             "/start/goal-1" to AppRoute.GoalSetup("goal-1"),
             "/start/course/course-1" to AppRoute.CourseStart("course-1"),
             "/start/course/course-1?chapter=chapter-2&minutes=30" to AppRoute.CourseStart("course-1", "chapter-2", 30),
-            "/mock/placement/goal-1" to AppRoute.PlacementMock("goal-1"),
             "/session" to AppRoute.Session(),
             "/session?block=block-1" to AppRoute.Session(blockId = "block-1"),
             "/session?goal=goal-1" to AppRoute.Session(goalId = "goal-1"),

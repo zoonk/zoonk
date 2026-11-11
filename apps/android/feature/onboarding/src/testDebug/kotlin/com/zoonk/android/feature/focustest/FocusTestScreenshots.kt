@@ -1,0 +1,245 @@
+package com.zoonk.android.feature.focustest
+
+import android.graphics.Bitmap
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.SignInResult
+import com.zoonk.android.data.WriteOutcome
+import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.completionOf
+import com.zoonk.android.feature.onboarding.focusCheckpointOf
+import com.zoonk.android.feature.onboarding.focusOf
+import com.zoonk.android.feature.onboarding.focusOfferOf
+import com.zoonk.android.feature.onboarding.focusSittingOf
+import com.zoonk.android.feature.onboarding.focusTestOf
+import com.zoonk.android.feature.onboarding.placementOf
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import org.junit.Assume.assumeTrue
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
+
+/**
+ * Review screenshots of an exam's Focus test with many subjects, written only on demand:
+ * `./gradlew :feature:onboarding:testDebugUnitTest --tests '*FocusTestScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ */
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "w411dp-h891dp-xxhdpi")
+class FocusTestScreenshots {
+    @get:Rule
+    val compose = createAndroidComposeRule<ComponentActivity>()
+
+    private val folder = System.getProperty("zoonk.shots").orEmpty()
+
+    @Before
+    fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+
+    @Test
+    fun invitation() = shoot("focus-test-invitation", FakeOnboardingApi().apply { placement = NOT_STARTED })
+
+    @Test
+    fun invitationSubjects() =
+        shoot("focus-test-invitation-subjects", FakeOnboardingApi().apply { placement = NOT_STARTED }) {
+            tap("View subjects")
+        }
+
+    @Test
+    fun question() = shoot("focus-test-question", startable(focusSittingOf(answered = 3))) { tap("Start the test") }
+
+    @Test
+    fun questionManyUnknown() =
+        shoot("focus-test-question-many-unknown", startable(focusSittingOf(answered = 5, hint = "manyUnknown"))) { tap("Start the test") }
+
+    @Test
+    fun resume() = shoot("focus-test-resume", FakeOnboardingApi().apply { placement = RESUMING })
+
+    @Test
+    fun ended() =
+        shoot(
+            "focus-test-ended",
+            FakeOnboardingApi().apply {
+                placement = placementOf(next = null, focusTest = answered(focusSittingOf(answered = 15, subject = null, end = "settled")))
+            },
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpoint() = shoot("focus-test-checkpoint", closing(focusOf())) { tap("Use my answers") }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointFromImportance() =
+        shoot("focus-test-checkpoint-importance", closing(focusOf(basis = "importance"), lessonsSkipped = 0)) { tap("Use my answers") }
+
+    @Test
+    fun checkpointSubjects() =
+        shoot("focus-test-checkpoint-subjects", closing(focusOf())) {
+            tap("Use my answers")
+            tap("View all subjects")
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointOnPlanWithProposal() =
+        shoot("focus-test-checkpoint-plan-proposal", closing(focusOf(state = "proposed", proposal = PROPOSAL)), host = FocusTestHost.Plan) {
+            tap("Use my answers")
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun checkpointOnPlanHandPicked() =
+        shoot("focus-test-checkpoint-plan-hand-picked", closing(focusOf(state = "handPicked")), host = FocusTestHost.Plan) {
+            tap("Use my answers")
+        }
+
+    private fun tap(text: String) {
+        compose.onNodeWithText(text).performScrollTo().performClick()
+        compose.waitForIdle()
+    }
+
+    private fun shoot(
+        name: String,
+        api: FakeOnboardingApi,
+        host: FocusTestHost = FocusTestHost.Onboarding,
+        steps: () -> Unit = {},
+    ) {
+        compose.setContent {
+            ZoonkTheme {
+                Surface {
+                    val cache = remember { AppCache(FakeSession(SESSION), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
+                    val store = remember { OnboardingStore(api, cache, FakeSession(SESSION)) { SignInResult.SignedIn } }
+                    val plans = remember { PlanStore(FakePlanApi(), cache) }
+                    Page {
+                        FocusTestFlow(
+                            GOAL_ID,
+                            host,
+                            subject = "Federal Court Analyst",
+                            store,
+                            plans,
+                            GenerationRun(),
+                            onRetryRun = null,
+                            onProgress = {},
+                            onDone = { WriteOutcome.Done(Unit) },
+                            onChangeFocus = if (host == FocusTestHost.Plan) ({}) else null,
+                        )
+                    }
+                }
+            }
+        }
+        compose.waitForIdle()
+        steps()
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        file.outputStream().use {
+            compose
+                .onRoot()
+                .captureRender()
+                .asAndroidBitmap()
+                .compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+        println("Screenshot ${file.path}")
+    }
+
+    @androidx.compose.runtime.Composable
+    private fun Page(content: @androidx.compose.runtime.Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit) {
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val height = maxHeight
+            Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+                Column(
+                    Modifier
+                        .widthIn(max = 640.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = height)
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    content = content,
+                )
+            }
+        }
+    }
+
+    private companion object {
+        val SESSION = AuthenticatedSession("ana", "token-a", "local-a")
+
+        const val QUESTION =
+            """
+            {"context":null,"image":null,"itemId":"2b3c4d5e-6f70-4a81-9b2c-3d4e5f607182","skillId":"5d6e7f80-9a1b-4c2d-8e3f-4a5b6c7d8e9f",
+             "visual":null,"format":"trueFalse","options":null,"question":"An administrative act is presumed lawful until it is shown otherwise."}
+            """
+
+        val NOT_STARTED = placementOf(next = null, focusTest = focusTestOf())
+
+        fun answered(sitting: String) = focusTestOf(asked = 6, sitting = sitting, offer = null, checkpoint = focusCheckpointOf())
+
+        val RESUMING = placementOf(next = QUESTION.trimIndent(), focusTest = answered(focusSittingOf(answered = 6)))
+
+        /** Start opens [sitting] on its next question. */
+        fun startable(sitting: String) =
+            FakeOnboardingApi().apply {
+                placement = NOT_STARTED
+                this.sitting =
+                    { placementOf(next = QUESTION.trimIndent(), focusTest = focusTestOf(asked = 3, sitting = sitting, offer = null)) }
+            }
+
+        /** "Use my answers" on the resume screen closes the sitting with [focus] as its result. */
+        fun closing(
+            focus: String,
+            lessonsSkipped: Int = 14,
+        ) = FakeOnboardingApi().apply {
+            placement = RESUMING
+            completion =
+                completionOf(
+                    focusTestOf(
+                        asked = 6,
+                        offer = focusOfferOf(kind = "continuation", questions = 10),
+                        checkpoint = focusCheckpointOf(lessonsSkipped, focus),
+                    ),
+                )
+        }
+
+        const val PROPOSAL =
+            """
+            {"behind":null,"canApply":true,"canUndo":false,"createdAt":"2026-11-11T12:00:00.000Z","days":null,"effect":null,
+             "examDocument":"guide","id":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00","kind":"focusAreas","lessonsSkipped":0,"officialDate":null,
+             "operations":[],"reason":null,"seen":false,"source":"focusTest","status":"proposed","todaySession":null}
+            """
+    }
+}

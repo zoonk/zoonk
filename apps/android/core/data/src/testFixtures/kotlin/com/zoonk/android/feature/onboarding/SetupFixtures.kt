@@ -3,15 +3,14 @@ package com.zoonk.android.feature.onboarding
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.LanguageLevelTest
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import java.time.LocalDate
 
 const val ITEM_ID = "2b3c4d5e-6f70-4a81-9b2c-3d4e5f607182"
 const val NEXT_ITEM_ID = "3c4d5e6f-7081-4b92-8c3d-4e5f60718293"
-const val MOCK_ID = "4d5e6f70-8192-4ca3-9d4e-5f6071829304"
 private const val SKILL_ID = "5e6f7081-92a3-4db4-8e5f-607182930415"
 private const val PLAN_ID = "6f708192-a3b4-4ec5-9f60-718293041526"
 
@@ -41,30 +40,106 @@ fun placementOf(
     complete: Boolean = false,
     spent: Double = 0.0,
     dayBudgetUsed: Boolean = false,
+    focusTest: String? = null,
 ): Placement =
     ApiJson.decodeFromString(
         """
         {"answered":$answered,"areas":[],"complete":$complete,"dayBudgetSpent":$spent,"dayBudgetUsed":$dayBudgetUsed,
          "knownSkillIds":[],"needsItems":[],"next":${next ?: "null"},"phases":[],"started":$started,"status":"$status",
-         "trueFalseLabels":"trueFalse"}
+         "trueFalseLabels":"trueFalse","focusTest":${focusTest ?: "null"}}
         """.trimIndent(),
     )
 
-fun mockOptionsOf(
-    mock: String? = null,
-    access: String = "open",
-): MockOptions =
+fun completionOf(focusTest: String? = null): PlacementCompletion =
     ApiJson.decodeFromString(
-        """
-        {"access":"$access","examDocument":"notice","examName":"Bar exam","goalId":"$GOAL_ID","lastMock":null,"options":[],
-         "placement":{"mock":${mock ?: "null"},"recommended":"short","options":[${listOf(20, 60).joinToString(",") {
-            """{"areas":[],"coversAllAreas":true,"estimatedMinutes":$it,"length":"short","minutes":$it,"questions":10}"""
-        }}]},
-         "running":null,"sizeSource":{"material":false,"questions":"notice","time":"notice"}}
-        """.trimIndent(),
+        """{"areas":[],"complete":true,"knownSkillIds":[],"phases":[],"testedOutPlanItemIds":[],"focusTest":${focusTest ?: "null"}}""",
     )
 
-fun runningMock() = """{"id":"$MOCK_ID","status":"running"}"""
+/** The subjects of a fictional public-service exam, in its notice's order, before its written Essay. */
+val EXAM_SUBJECTS =
+    listOf(
+        "Portuguese",
+        "Mathematics",
+        "Logical reasoning",
+        "Information technology",
+        "Constitutional law",
+        "Administrative law",
+        "Public administration",
+        "Public ethics",
+        "Accounting",
+        "Public finance",
+        "Economics",
+        "Statistics",
+        "Data analysis",
+        "Records management",
+        "Procurement",
+        "Project management",
+        "Citizen service",
+        "Data protection",
+    )
+
+private fun subjectRef(name: String) = """{"key":"${name.lowercase().replace(' ', '-')}","name":"$name","shortName":null}"""
+
+/** The first [asked] subjects have answers, one of two right; the Essay is a written part the test can't check. */
+private fun focusSubjects(asked: Int) =
+    EXAM_SUBJECTS.mapIndexed { index, name ->
+        val answered = index < asked
+        """{"key":"${name.lowercase().replace(
+            ' ',
+            '-',
+        )}","name":"$name","shortName":null,"state":"${if (answered) "answered" else "notAsked"}",
+           "part":null,"asked":${if (answered) 2 else 0},"right":${if (answered) index % 3 else 0}}"""
+    } + """{"key":"essay","name":"Essay","shortName":null,"state":"notChecked","part":"written","asked":0,"right":0}"""
+
+fun focusSittingOf(
+    answered: Int = 0,
+    questions: Int = 15,
+    subject: String? = "Administrative law",
+    kind: String = "first",
+    hint: String? = null,
+    end: String? = null,
+) = """
+    {"kind":"$kind","questions":$questions,"answered":$answered,"left":${questions - answered},"minutes":${maxOf(1, questions - answered)},
+     "subject":${subject?.let(
+    ::subjectRef,
+) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"},"end":${end?.let { "\"$it\"" } ?: "null"}}
+    """.trimIndent()
+
+fun focusOfferOf(
+    kind: String = "first",
+    questions: Int = 15,
+    pastCeiling: Int = 3,
+) = """{"kind":"$kind","questions":$questions,"minutes":$questions,"pastCeiling":$pastCeiling}"""
+
+/** Suggested focus rows, one for each reason a subject can rank. */
+fun focusOf(
+    state: String = "ifTimeShort",
+    basis: String = "answers",
+    proposal: String? = null,
+) = """
+    {"basis":"$basis","state":"$state","proposal":${proposal ?: "null"},"rows":[
+     {"subject":${subjectRef("Administrative law")},"areas":["Administrative law"],"reason":"answers","part":null},
+     {"subject":${subjectRef("Portuguese")},"areas":["Portuguese"],"reason":"notAsked","part":null},
+     {"subject":{"key":"essay","name":"Essay","shortName":null},"areas":["Essay"],"reason":"notChecked","part":"written"}]}
+    """.trimIndent()
+
+fun focusCheckpointOf(
+    lessonsSkipped: Int = 14,
+    focus: String? = focusOf(),
+) = """{"lessonsSkipped":$lessonsSkipped,"focus":${focus ?: "null"}}"""
+
+fun focusTestOf(
+    asked: Int = 0,
+    sitting: String? = null,
+    offer: String? = focusOfferOf(),
+    checkpoint: String? = null,
+    sessionQuestions: String = "off",
+    dated: Boolean = true,
+) = """
+    {"dated":$dated,"subjects":[${focusSubjects(asked).joinToString(",")}],
+     "counts":{"asked":$asked,"quick":${EXAM_SUBJECTS.size},"total":${EXAM_SUBJECTS.size + 1}},
+     "sitting":${sitting ?: "null"},"offer":${offer ?: "null"},"checkpoint":${checkpoint ?: "null"},"sessionQuestions":"$sessionQuestions"}
+    """.trimIndent()
 
 fun phaseOf(
     index: Int,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -34,9 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.KindDot
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanAreasInner
 import com.zoonk.api.models.PlanChangeResult
@@ -54,9 +55,9 @@ internal fun focusChoices(areas: List<PlanAreasInner>): List<FocusChoice> {
     return kept.filter { it.partOf == null }.map { area -> FocusChoice(area, kept.filter { it.partOf == area.name }.map { it.name }) }
 }
 
-internal fun canChooseFocus(plan: Plan): Boolean = planCoverage(plan) != null && focusChoices(plan.areas).size > 1
+fun canChooseFocus(plan: Plan): Boolean = planCoverage(plan) != null && focusChoices(plan.areas).size > 1
 
-/** Main's `ChooseFocusHost` sheet: the focus test first, or the subjects picked by hand. */
+/** Main's `ChooseFocusHost` sheet: an exam's Focus test first, or the subjects picked by hand; none picked removes the focus. */
 @Composable
 internal fun ChooseFocusSheet(
     page: PlanPageState,
@@ -103,6 +104,8 @@ internal fun ColumnScope.ChooseFocusBody(
     val answer = save?.let(edits::sheetAnswer)
     val unchanged = answer?.status == PlanChangeResult.Status.UNCHANGED
     val pending = edits.isPending(PlanPart.Focus)
+    val focusTest = page.plan.focusTest
+    val removes = chosen.isEmpty() && current.isNotEmpty()
 
     fun save() {
         val id = UUID.randomUUID()
@@ -115,14 +118,16 @@ internal fun ColumnScope.ChooseFocusBody(
         description = description,
         body = {
             if (unchanged) FocusUnchanged(answer.reason, joinList(chosen))
-            FocusTestLink(onFocusTest)
+            focusTest?.let { FocusTestLink(it, onFocusTest) }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(R.string.plan_choose_focus_yourself),
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                if (focusTest != null) {
+                    Text(
+                        text = stringResource(R.string.plan_choose_focus_yourself),
+                        modifier = Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 areas.forEach { choice ->
                     val name = choice.area.name
                     AreaChoice(
@@ -142,9 +147,9 @@ internal fun ColumnScope.ChooseFocusBody(
                 busy = pending,
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = chosen.isNotEmpty() && chosen.toSet() != current.toSet() && !unchanged,
+                enabled = chosen.toSet() != current.toSet() && !unchanged,
                 leadingIcon = { ButtonIcon(R.drawable.ic_check) },
-            ) { Text(stringResource(R.string.plan_focus_on_these)) }
+            ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_focus_on_these)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },
     )
@@ -170,26 +175,30 @@ private fun FocusUnchanged(
 }
 
 @Composable
-private fun FocusTestLink(onOpen: () -> Unit) {
+private fun FocusTestLink(
+    summary: FocusTestSummary,
+    onOpen: () -> Unit,
+) {
     OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.heightIn(min = 56.dp).padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            KindDot(LearnKind.Challenge)
+            Icon(painterResource(R.drawable.ic_my_location), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Column(Modifier.weight(1f)) {
                 Text(
-                    stringResource(R.string.plan_take_short_test),
+                    stringResource(R.string.focustest_title),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    stringResource(R.string.plan_test_chooses_for_you),
+                    focusTestFacts(summary),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
