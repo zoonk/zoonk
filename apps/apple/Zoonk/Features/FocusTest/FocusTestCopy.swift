@@ -93,8 +93,8 @@ enum FocusTestCopy {
     "Your next sessions ask a few more test questions.", table: "FocusTest",
     comment: "Sessions keep asking a few Focus test questions")
 
-  static func reason(_ row: FocusTest.Row) -> String {
-    switch row.reason {
+  static func reason(_ reason: FocusTest.Row.Reason) -> String {
+    switch reason {
     case .answers:
       String(
         localized: "Your answers suggest reviewing this subject.", table: "FocusTest",
@@ -104,32 +104,11 @@ enum FocusTestCopy {
         localized: "This part has a minimum score.", table: "FocusTest",
         comment: "Why the plan gives a part of the exam more time")
     case .notChecked:
-      switch row.part {
-      case .written:
-        String(
-          localized: "Writing counts heavily; it isn't checked here.", table: "FocusTest",
-          comment:
-            "Why the plan gives the written part more time: it weighs a lot, and the Focus test can't ask about it"
-        )
-      case .listening:
-        String(
-          localized: "Listening counts heavily; it isn't checked here.", table: "FocusTest",
-          comment:
-            "Why the plan gives the listening part more time: it weighs a lot, and the Focus test can't ask about it"
-        )
-      case .speaking:
-        String(
-          localized: "Speaking counts heavily; it isn't checked here.", table: "FocusTest",
-          comment:
-            "Why the plan gives the speaking part more time: it weighs a lot, and the Focus test can't ask about it"
-        )
-      case .practical, nil:
-        String(
-          localized: "This part counts heavily; it isn't checked here.", table: "FocusTest",
-          comment:
-            "Why the plan gives a part of the exam more time: it weighs a lot, and the Focus test can't ask about it"
-        )
-      }
+      String(
+        localized: "This part counts heavily; it isn't checked here.", table: "FocusTest",
+        comment:
+          "Why the plan gives a part of the exam more time: it weighs a lot, and the Focus test can't ask about it"
+      )
     case .notAsked:
       String(
         localized: "This subject counts heavily. Its starting point hasn't been checked yet.",

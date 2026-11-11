@@ -125,7 +125,7 @@ private struct FocusTestSuggestedFocus: View {
   var body: some View {
     Section {
       ForEach(focus.rows) { row in
-        ListRow(Text(row.subject.shown), description: Text(FocusTestCopy.reason(row)))
+        ListRow(Text(row.subject.shown), description: Text(FocusTestCopy.reason(row.reason)))
       }
 
       if decides, focus.state == .proposed, let proposal = focus.proposal {

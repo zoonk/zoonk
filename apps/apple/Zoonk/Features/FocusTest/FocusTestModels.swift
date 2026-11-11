@@ -137,7 +137,6 @@ struct FocusTest: Decodable, Equatable, Sendable {
     let subject: SubjectName
     let areas: [String]
     let reason: Reason
-    let part: Part?
 
     var id: String { subject.key }
   }

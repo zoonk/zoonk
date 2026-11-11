@@ -1535,65 +1535,6 @@
         }
       }
     },
-    "Listening counts heavily; it isn't checked here." : {
-      "comment" : "Why the plan gives the listening part more time: it weighs a lot, and the Focus test can't ask about it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hören zählt besonders viel, wird hier aber nicht geprüft."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La escucha tiene mucho peso; no se evalúa aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’écoute compte beaucoup à l’examen ; elle n’est pas évaluée ici."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’ascolto conta molto; qui non viene valutato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "リスニングは配点が高いですが、ここでは診断の対象外です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "듣기는 시험에서 비중이 크지만, 여기서는 확인하지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Słuchanie mocno wpływa na wynik; nie sprawdzamy go tutaj."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A escuta tem bastante peso; ela não é avaliada aqui."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dinlemenin sınavdaki ağırlığı yüksek; burada ölçülmüyor."
-          }
-        }
-      }
-    },
     "Listening: not checked here" : {
       "comment" : "A listening part of the exam that the Focus test can't check",
       "localizations" : {
@@ -2432,65 +2373,6 @@
         }
       }
     },
-    "Speaking counts heavily; it isn't checked here." : {
-      "comment" : "Why the plan gives the speaking part more time: it weighs a lot, and the Focus test can't ask about it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprechen zählt besonders viel, wird hier aber nicht geprüft."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La expresión oral tiene mucho peso; no se evalúa aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’expression orale compte beaucoup à l’examen ; elle n’est pas évaluée ici."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La prova orale conta molto; qui non viene valutata."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "スピーキングは配点が高いですが、ここでは診断の対象外です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "말하기는 시험에서 비중이 크지만, 여기서는 확인하지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mówienie mocno wpływa na wynik; nie sprawdzamy go tutaj."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A conversação tem bastante peso; ela não é avaliada aqui."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konuşmanın sınavdaki ağırlığı yüksek; burada ölçülmüyor."
-          }
-        }
-      }
-    },
     "Speaking: not checked here" : {
       "comment" : "A speaking part of the exam that the Focus test can't check",
       "localizations" : {
@@ -3087,7 +2969,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Teil zählt besonders viel, wird hier aber nicht geprüft."
+            "value" : "Dieser Teil zählt besonders viel; er wird hier nicht geprüft."
           }
         },
         "es" : {
@@ -3099,43 +2981,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette partie compte beaucoup à l’examen ; elle n’est pas évaluée ici."
+            "value" : "Cette partie compte pour beaucoup ; elle n’est pas évaluée ici."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa parte conta molto; qui non viene valutata."
+            "value" : "Questa parte pesa molto sul punteggio; qui non viene valutata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このパートは配点が高いですが、ここでは診断の対象外です。"
+            "value" : "このパートは配点が高いですが、ここでは診断できません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 부분은 시험에서 비중이 크지만, 여기서는 확인하지 않아요."
+            "value" : "이 파트는 시험에서 비중이 크지만 여기서는 확인하지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta część mocno wpływa na wynik; nie sprawdzamy jej tutaj."
+            "value" : "Ta część ma duży wpływ na wynik; nie sprawdzamy jej w tym teście."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa parte tem bastante peso; ela não é avaliada aqui."
+            "value" : "Essa parte tem bastante peso; não é avaliada aqui."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu kısmın sınavdaki ağırlığı yüksek; burada değerlendirilmiyor."
+            "value" : "Bu bölümün puana etkisi büyük; burada değerlendirilmiyor."
           }
         }
       }
@@ -4428,65 +4310,6 @@
         }
       }
     },
-    "Writing counts heavily; it isn't checked here." : {
-      "comment" : "Why the plan gives the written part more time: it weighs a lot, and the Focus test can't ask about it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der schriftliche Teil hat viel Gewicht; er wird hier nicht geprüft."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La expresión escrita tiene mucho peso; no se evalúa aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’écrit compte beaucoup ; il n’est pas évalué ici."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La parte scritta ha molto peso; qui non viene valutata."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "記述問題は配点の割合が大きく、ここでは診断できません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "서술형은 비중이 크지만 여기서는 확인할 수 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Część pisemna ma duży wpływ na wynik; nie sprawdzamy jej tutaj."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A parte escrita tem bastante peso; não é avaliada aqui."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yazma kısmının ağırlığı yüksek; burada değerlendirilmiyor."
-          }
-        }
-      }
-    },
     "Writing: not checked here" : {
       "comment" : "A written part of the exam, such as the essay, that the Focus test can't check",
       "localizations" : {
@@ -4788,7 +4611,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antworten sprechen dafür, den Stoff in diesem Fach zu wiederholen."
+            "value" : "Deine Antworten sprechen dafür, dieses Fach zu wiederholen."
           }
         },
         "es" : {
@@ -4812,25 +4635,25 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回答内容から、この科目は復習するとよさそうです。"
+            "value" : "回答を見ると、この科目は復習したほうがよさそうです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "답한 내용을 보니 이 과목을 복습하면 좋겠어요."
+            "value" : "답안을 보니 이 과목을 복습하면 좋겠어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje odpowiedzi sugerują powtórkę z tego przedmiotu."
+            "value" : "Twoje odpowiedzi wskazują, że warto powtórzyć ten przedmiot."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas respostas indicam que vale revisar essa matéria."
+            "value" : "Suas respostas indicam que vale revisar esta matéria."
           }
         },
         "tr" : {
