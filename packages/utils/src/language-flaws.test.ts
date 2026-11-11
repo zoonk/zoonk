@@ -47,7 +47,7 @@ describe(findLanguageFlaws, () => {
   it("passes the practiced language's script, symbols and correctly spelled text", () => {
     const value = {
       feedback:
-        "Você disse 「こんにちは」 bem, e acertou ありがとう. A área é π r², com Δx pequeno.",
+        "Você disse 「こんにちは」 bem, e acertou ありがとう. A área é π r², com Δθ e αβ = c/a.",
       tip: "Também diga すみません antes de perguntar.",
     };
 
@@ -78,15 +78,6 @@ describe(findLanguageFlaws, () => {
     expect(
       findLanguageFlaws({ input: "QUESTION: Complete: 食べ___ください", language: "pt", value }),
     ).toStrictEqual([]);
-  });
-
-  it("finds a Greek word, though a Greek letter alone is a symbol", () => {
-    const value = "Você respondeu με φυσικά naturalidade, e ω = Δθ/Δt ficou pequeno.";
-
-    expect(findLanguageFlaws({ input: "", language: "pt", value })).toStrictEqual([
-      expect.stringContaining('"με"'),
-      expect.stringContaining('"φυσικά"'),
-    ]);
   });
 
   it("finds a one-word title and bracketed prose without accents", () => {

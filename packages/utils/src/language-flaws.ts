@@ -138,10 +138,10 @@ const WRITING_SYSTEMS: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
- * Latin carries names, codes and units in every language. Common and Inherited cover digits,
- * punctuation and combining marks.
+ * Latin carries names, codes and units in every language, and Greek letters are math and science
+ * symbols ("αβ", "Δθ"). Common and Inherited cover digits, punctuation and combining marks.
  */
-const SHARED_SCRIPTS = ["Latn", "Zyyy", "Zinh"];
+const SHARED_SCRIPTS = ["Latn", "Grek", "Zyyy", "Zinh"];
 
 const NON_LATIN_SCRIPTS = [
   "Arab",
@@ -151,7 +151,6 @@ const NON_LATIN_SCRIPTS = [
   "Deva",
   "Ethi",
   "Geor",
-  "Grek",
   "Gujr",
   "Guru",
   "Hang",
@@ -178,12 +177,6 @@ function findInputScripts(input: string): string[] {
 }
 
 const WORD = /[\p{L}\p{M}]+/gu;
-
-/**
- * A Greek letter alone, or after a capital one, is a math or science symbol ("π", "Δθ"); other runs
- * are Greek words ("με").
- */
-const GREEK_SYMBOL = /(?<!\p{scx=Grek})[Α-Ω]?\p{scx=Grek}(?!\p{scx=Grek})/gu;
 
 /** A key, slug, enum or URL ("comunicacao", "regra-de-tres"): ids and codes, not prose. */
 const IDENTIFIER = /^(?:https?:\/\/\S+|[a-z\d]+(?:[-_./][a-z\d]+)*)$/u;
@@ -230,7 +223,7 @@ function buildScriptPattern({
   ]);
 
   const classes = [...scripts].filter((script) => isScriptProperty(script));
-  return new RegExp(`^[${classes.map((script) => `\\p{scx=${script}}`).join("")}]*$`, "u");
+  return new RegExp(`^[${classes.map((script) => `\\p{scx=${script}}`).join("")}]+$`, "u");
 }
 
 function isAccentless({
@@ -277,7 +270,7 @@ export function findLanguageFlaws({
 
   const foreign = unquoted
     .flatMap((text) => text.replaceAll(BRACKETED, " ").match(WORD) ?? [])
-    .filter((word) => !given.has(word) && !scriptPattern.test(word.replaceAll(GREEK_SYMBOL, "")))
+    .filter((word) => !given.has(word) && !scriptPattern.test(word))
     .map((word) => `Has "${word}", a word in a script this language doesn't use.`);
 
   const accentless = unquoted
