@@ -203,7 +203,7 @@ describe("a free exam plan past its first week", () => {
       reason: "plusRequired",
     });
 
-    await expect(addExtraStudyBlock({ sessionId: day.id })).resolves.toStrictEqual({
+    await expect(addExtraStudyBlock({ input: {}, sessionId: day.id })).resolves.toStrictEqual({
       reason: "plusRequired",
       status: "unavailable",
     });

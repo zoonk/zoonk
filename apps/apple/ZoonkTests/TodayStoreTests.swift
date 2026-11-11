@@ -1075,7 +1075,8 @@ private actor StudyAPIStub: StudyAPIClient {
     return openings.removeFirst()
   }
 
-  func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock {
+  func addExtraBlock(token: String, sessionID: String, timeZone: String) async throws -> StudyBlock?
+  {
     guard let extraBlock else {
       throw APIError.unavailable
     }
