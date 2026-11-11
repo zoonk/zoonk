@@ -1870,58 +1870,6 @@
             "lexml.gov.br"
           ]
         },
-        "id": "lei-12813-2013:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "country": "BR",
-            "name": "Lei nº 12.813/2013",
-            "officialDomains": [
-              "planalto.gov.br",
-              "camara.leg.br"
-            ],
-            "queries": [
-              "Lei nº 12.813/2013 texto compilado",
-              "Lei 12.813 de 2013 conflito de interesses texto atualizado"
-            ]
-          },
-          "searchTool": "parallel",
-          "topic": "regulation"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "minOfficialSites": 2,
-          "noticeHints": [
-            "12813",
-            "12.813"
-          ],
-          "officialDomains": [
-            "planalto.gov.br",
-            "camara.leg.br",
-            "senado.leg.br",
-            "lexml.gov.br"
-          ]
-        },
         "id": "lei-12813-2013:parallel-2",
         "language": "pt",
         "userInput": {
@@ -1974,58 +1922,6 @@
             "lexml.gov.br"
           ]
         },
-        "id": "lei-9784-1999:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "country": "BR",
-            "name": "Lei nº 9.784/1999",
-            "officialDomains": [
-              "planalto.gov.br",
-              "camara.leg.br"
-            ],
-            "queries": [
-              "Lei nº 9.784/1999 texto compilado",
-              "Lei 9.784 de 1999 processo administrativo federal texto atualizado"
-            ]
-          },
-          "searchTool": "parallel",
-          "topic": "regulation"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "minOfficialSites": 2,
-          "noticeHints": [
-            "9784",
-            "9.784"
-          ],
-          "officialDomains": [
-            "planalto.gov.br",
-            "camara.leg.br",
-            "senado.leg.br",
-            "lexml.gov.br"
-          ]
-        },
         "id": "lei-9784-1999:parallel-2",
         "language": "pt",
         "userInput": {
@@ -2039,59 +1935,6 @@
             "queries": [
               "Lei nº 9.784/1999 texto compilado",
               "Lei 9.784 de 1999 processo administrativo federal texto atualizado"
-            ]
-          },
-          "searchTool": "parallel",
-          "topic": "regulation"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "minOfficialSites": 2,
-          "noticeHints": [
-            "constituicao",
-            "constituição"
-          ],
-          "officialDomains": [
-            "planalto.gov.br",
-            "camara.leg.br",
-            "senado.leg.br",
-            "lexml.gov.br"
-          ]
-        },
-        "id": "constituicao-1988:parallel-1",
-        "language": "pt",
-        "userInput": {
-          "plan": {
-            "country": "BR",
-            "name": "Constituição da República Federativa do Brasil de 1988",
-            "officialDomains": [
-              "planalto.gov.br",
-              "senado.leg.br",
-              "camara.leg.br"
-            ],
-            "queries": [
-              "Constituição Federal de 1988 texto compilado",
-              "Constituição da República Federativa do Brasil texto atualizado emendas"
             ]
           },
           "searchTool": "parallel",
@@ -2311,6 +2154,163 @@
           },
           "searchTool": "parallel",
           "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "12813",
+            "12.813"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "lei-12813-2013:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 12.813/2013",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 12.813/2013 texto compilado",
+              "Lei 12.813 de 2013 conflito de interesses texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "9784",
+            "9.784"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "lei-9784-1999:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Lei nº 9.784/1999",
+            "officialDomains": [
+              "planalto.gov.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Lei nº 9.784/1999 texto compilado",
+              "Lei 9.784 de 1999 processo administrativo federal texto atualizado"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "minOfficialSites": 2,
+          "noticeHints": [
+            "constituicao",
+            "constituição"
+          ],
+          "officialDomains": [
+            "planalto.gov.br",
+            "camara.leg.br",
+            "senado.leg.br",
+            "lexml.gov.br"
+          ]
+        },
+        "id": "constituicao-1988:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "country": "BR",
+            "name": "Constituição da República Federativa do Brasil de 1988",
+            "officialDomains": [
+              "planalto.gov.br",
+              "senado.leg.br",
+              "camara.leg.br"
+            ],
+            "queries": [
+              "Constituição Federal de 1988 texto compilado",
+              "Constituição da República Federativa do Brasil texto atualizado emendas"
+            ]
+          },
+          "searchTool": "parallel",
+          "topic": "regulation"
         }
       }
     }
