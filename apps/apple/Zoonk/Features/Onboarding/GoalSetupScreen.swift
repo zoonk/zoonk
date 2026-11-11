@@ -79,7 +79,8 @@ struct StepLoading: View {
 
 /// The screens Back returns to: placement sits between the questions; the plan isn't one.
 private let stepScreens: Set<Components.Schemas.OnboardingStep> = [
-  .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level, .schedule,
+  .contentCountry, .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level,
+  .schedule,
   .buddy, .placement, .work, .tools, .studies, .watch, .listen, .play, .read, .activities,
   .conditions, .learningSupport,
 ]
