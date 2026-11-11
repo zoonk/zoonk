@@ -5,364 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All five intended answers are supported by the recording, follow its final decisions and require listening. However, the accepted-answer lists also mark invalid responses as correct: the written-out prices violate the word limit, while 'the car park' both violates that limit and incorrectly completes the supplied sentence. These wrong accepted completions trigger the maximum score of 6 for a wrong key.",
-          "score": 6,
-          "label": "Right, fair keys",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "The substantial script exceeds 600 words and provides an appropriate two-person booking conversation with the requested accent assignments. Questions follow recording order, and rejected activities, competing prices and a corrected allergy provide useful listening distractors. Nevertheless, three targets do not meet this task's explicitly restricted answer types, and some accepted responses violate the stated completion limit. The separate question prompts also make the presentation less authentic than a single IELTS booking form.",
-          "score": 7,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "naturalSpeech",
-          "reasoning": "The dialogue sounds conversational, using contractions, brief reactions, clarification, a natural telephone opening and a suitable closing. British/Australian-compatible expressions include 'ringing', 'fully booked', 'car park' and 'half past four'. Turns contain spoken language only, and the English key points accurately explain the relevant decisions and distractors. There is no meaningful natural-language failure.",
-          "score": 9,
-          "label": "Natural speech & language",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3870,
-          "outputTokens": 912,
-          "reasoningTokens": 343
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Accepted answers include invalid completions: both written-out price variants exceed the two-word limit, and 'the car park' exceeds it and produces 'the the car park entrance' in the form. Three of the five targets—activity, allergy and collection location—also fall outside the explicitly requested answer types of names, numbers, dates, prices or addresses.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The surname is listed twice as 'Whitlow' and 'WHITLOW', contrary to the requirement to list answers once. Case handling should not require duplicate answer entries.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Use the existing booking date, phone number or another numerical booking detail as replacement targets, and put an explicit self-correction immediately before one of those answers. Present the five blanks as a unified booking form rather than repeating a separate comprehension question for each field.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "IELTS Listening Part 1 for an English-speaking learner: a phone or face-to-face conversation between two people in an everyday social context (booking, registering, enquiring), at the real length of about 4 to 5 minutes (600 words or more) even though only 5 of the part's 10 questions are asked, with form or note completion answered in no more than two words and/or a number. The answers are names (spelled out letter by letter), numbers, dates, prices or addresses said in the recording; one or two answers come right after a speaker corrects themselves. Accepted answers include the spelled name and numbers as digits, each within the two-word limit and listed once. Speakers mix the British and Australian accents listed.",
-        "id": "en-ielts-part-1-form-completion-1",
-        "userInput": {
-          "accents": [
-            "British English",
-            "Australian English"
-          ],
-          "count": 5,
-          "exam": "IELTS",
-          "formats": [
-            "typed"
-          ],
-          "language": "en",
-          "level": "band 6",
-          "plays": 1,
-          "scriptLanguage": "en",
-          "skills": [
-            {
-              "description": "Catch names, numbers, dates and prices in an everyday conversation, including spelled words and corrections",
-              "name": "Note specific details in everyday conversations"
-            },
-            {
-              "description": "Follow what two people agree on as the conversation changes",
-              "name": "Follow a conversation's decisions"
-            }
-          ],
-          "task": "Part 1: a conversation between two people set in an everyday social context; form completion, write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer. 10 questions in the real test."
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
-          "reasoning": "All four keys are uniquely supported by the script. The purpose is requesting the presentation alternative; the professor implies that the data alone may be insufficient; the corrected deadline is the twelfth; and the recommendation is a poster session. Distractors distinguish rejected suggestions, different requirements, and corrected information. Each question requires information from the recording.",
-          "score": 10,
-          "label": "Right, fair keys",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "The campus office-hours conversation, two speakers, four-option questions, B2-accessible language, and coverage of purpose, inference, and details fit the task well. Questions follow the recording's order, and distractors effectively use a corrected date and a rejected suggestion. However, approximately 520 words likely exceed the requested duration somewhat, and placing every correct answer first makes the set less convincing as an exam-style assessment. The recording is not so excessively long that the explicit 'far too long' cap is triggered.",
-          "score": 8,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "naturalSpeech",
-          "reasoning": "The dialogue uses contractions, brief reactions, polite requests, self-correction, and natural opening and closing exchanges. The American student and British professor are permitted speaker varieties, and expressions such as 'down to the weather' fit the professor's variety. Turns contain only spoken language. Reasons and misconceptions are consistently in Brazilian Portuguese and accurately explain the relevant script evidence.",
-          "score": 10,
-          "label": "Natural speech & language",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3942,
-          "outputTokens": 835,
-          "reasoningTokens": 342
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The script contains roughly 520 spoken words, which would likely run somewhat beyond the requested 2–3 minutes at a natural conversational pace, especially with pauses and speaker changes.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Vary the correct answer's position: all four questions currently put it first. Trim some dialogue while preserving the deadline correction, rejected presentation suggestion, and implied concern about the limited data.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "TOEFL iBT \"Listen to a Conversation\" for a Brazilian learner: a campus conversation between a student and a professor or staff member, about 2 to 3 minutes, with 4-option multiple-choice questions on the main purpose, details and a speaker's attitude or implied meaning, in English. Reasons and misconceptions are in Brazilian Portuguese. Speakers use North American English, with a British or Australian accent allowed.",
-        "id": "pt-toefl-campus-conversation-1",
-        "userInput": {
-          "accents": [
-            "American English",
-            "British English",
-            "Australian English"
-          ],
-          "count": 4,
-          "exam": "TOEFL iBT",
-          "formats": [
-            "multipleChoice"
-          ],
-          "language": "pt",
-          "level": "B2",
-          "optionCount": 4,
-          "plays": 1,
-          "scriptLanguage": "en",
-          "skills": [
-            {
-              "description": "Understand why a student and a professor or staff member are talking",
-              "name": "Identify the purpose of a campus conversation"
-            },
-            {
-              "description": "Understand the details that support the conversation's main points",
-              "name": "Understand key details in academic conversations"
-            },
-            {
-              "description": "Infer what a speaker means or feels from how they say it",
-              "name": "Infer a speaker's attitude and implied meaning"
-            }
-          ],
-          "task": "Listen to a Conversation: a conversation on a university campus between a student and a professor or a staff member; multiple-choice questions with one answer."
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
-          "reasoning": "All five keys are supported by the recording, including the corrected opening date of spring 2018. The father's advice, the speaker's emphasis on changing attitudes, and the difficulty of repairing manufactured products are accurately represented. No distractor is equally supported, and each question requires information from the recording.",
-          "score": 10,
-          "label": "Right, fair keys",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "The single-speaker testimony, approximately three-minute script, five Spanish questions with three options each, and chronological question order fit the supplied task. Distractors effectively exploit a corrected date, a rejected business idea, and an opinion attributed to others. However, every key is in the first position, and some early options closely reproduce the recording rather than testing paraphrase comprehension.",
-          "score": 8,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "naturalSpeech",
-          "reasoning": "The testimony sounds plausibly spoken, with a natural greeting and closing, restrained discourse markers, and a self-correction. 'Os', 'vosotros', 'recambios', and other vocabulary fit the Castilian speaker. There are no stage directions. Explanations and misconceptions are grounded in the script and predominantly natural Brazilian Portuguese, but the repeated masculine article with 'garagem' and the untranslated 'taller' need correction.",
-          "score": 8,
-          "label": "Natural speech & language",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3641,
-          "outputTokens": 704,
-          "reasoningTokens": 201
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All five correct answers occupy the first position, creating a predictable answer pattern. Brazilian Portuguese feedback contains small language errors: 'o garagem' should be 'a garagem', and 'local do taller' should use Portuguese wording such as 'local da oficina'.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Vary the correct-answer positions and paraphrase more of the early questions' options. The return-to-Gijón and opening-date items rely heavily on direct word matching; slightly more interpretive wording would strengthen the B2 listening challenge while preserving clear keys.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "DELE B2 Prueba de comprensión auditiva, Tarea 5, for a Brazilian learner: a monologue in Spanish (a talk, a lecture or a testimony on radio), about 3 minutes, with 3-option multiple-choice questions in Spanish, played twice. Wrong options use what the speaker also says or a near-paraphrase that changes a detail. Reasons and misconceptions are in Brazilian Portuguese. The Spanish is Spain's or Latin America's as the accents list.",
-        "id": "pt-dele-b2-tarea-5-monologue-1",
-        "userInput": {
-          "accents": [
-            "Castilian Spanish",
-            "Mexican Spanish"
-          ],
-          "count": 5,
-          "exam": "DELE B2",
-          "formats": [
-            "multipleChoice"
-          ],
-          "language": "pt",
-          "level": "B2",
-          "optionCount": 3,
-          "plays": 2,
-          "scriptLanguage": "es",
-          "skills": [
-            {
-              "description": "Entender la idea principal y los detalles de una charla o un testimonio",
-              "name": "Comprender monólogos extensos"
-            },
-            {
-              "description": "Distinguir lo que afirma el hablante de lo que solo menciona",
-              "name": "Identificar la postura del hablante"
-            }
-          ],
-          "task": "Tarea 5: un monólogo (conferencia, testimonio o charla de radio) de unos 3 minutos; preguntas de selección múltiple con tres opciones. Se escucha dos veces."
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
-          "reasoning": "The intended answers are identifiable from the recording, and none can reliably be supplied without listening. However, the accepted key 'Thursdays' does not fit Question 4, triggering the maximum score of 6 for a wrong key. Question 6 additionally asserts a majority where the recording establishes only the largest group, and 'the retired' is not a phrase spoken in the recording.",
-          "score": 6,
-          "label": "Right, fair keys",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "There are exactly six ordered sentence-completion questions accompanying a single speaker discussing her work. The roughly 540-word script is compatible with a three-to-four-minute delivery. Most targets have effective nearby distractors, including the rejected premises, corrected weekday and contrasting prices. However, the spelled surname lacks a competing target detail, several stems closely echo the recording, and twice-played delivery is not indicated. These are weaknesses without making the whole set look out of place.",
-          "score": 8,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "naturalSpeech",
-          "reasoning": "The monologue is convincingly conversational, with contractions, restrained hesitations, a natural opening and closing, and British vocabulary and spelling such as 'learnt', 'city centre' and 'spanners'. It contains spoken words rather than stage directions. The English key-point explanations clearly identify the relevant evidence and distractors. There is no concrete language or speech-quality defect requiring correction.",
-          "score": 10,
-          "label": "Natural speech & language",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 7 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3029,
-          "outputTokens": 995,
-          "reasoningTokens": 399
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Some accepted answers are not fair completions. Question 4 accepts 'Thursdays', producing the ungrammatical 'on Thursdays evenings'. Question 6 changes 'the biggest group' into 'most', although the largest group need not constitute a majority, and accepts 'the retired', which the speaker never says.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Question 2 has no competing name or correction near its target answer; spelling out the surname makes it more like a spelling exercise than the requested detail-selection task. Several questions closely repeat the script rather than substantially paraphrasing it. The result also provides no indication that the recording should be played twice.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Change Question 6 to refer to the largest group, remove invalid or unspoken answer variants, and give Question 2 a nearby plausible distractor. More varied paraphrasing and an explicit instruction to listen twice would improve the activity.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Cambridge B2 First Listening Part 2 for an English-speaking learner: one speaker talking for 3 to 4 minutes about their work, a hobby or an experience, with sentence completion: each question is a sentence with a gap, filled with a word or short phrase the speaker says. Gaps target concrete details with distractors nearby (two things mentioned, one corrected). Exactly 6 questions; accepted answers fit a short phrase and are listed once. Played twice. British English.",
-        "id": "en-cambridge-first-part-2-sentence-completion-1",
-        "userInput": {
-          "accents": [
-            "British English"
-          ],
-          "count": 6,
-          "exam": "Cambridge B2 First",
-          "formats": [
-            "typed"
-          ],
-          "language": "en",
-          "level": "B2",
-          "plays": 2,
-          "scriptLanguage": "en",
-          "skills": [
-            {
-              "description": "Catch the specific word or phrase a speaker says about a topic, ignoring nearby distractors",
-              "name": "Pick out specific information in a monologue"
-            }
-          ],
-          "task": "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test."
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
           "reasoning": "All six judgments follow unambiguously from the conversation, including the corrections to three years and Monday and the rejection of the cinema suggestion. Each requires information from the recording. The three false statements alter a specific detail, and the set is evenly split between true and false.",
           "score": 10,
           "label": "Right, fair keys",
@@ -620,6 +262,379 @@
             }
           ],
           "task": "Part 2: there is only one main speaker, for example, a speech about local facilities"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All five intended answers are supported by the recording: Pritchard is spelled explicitly, Thursday is the final choice, the discounted fee is £85, a towel is required, and Mill Lane is the recommended parking location. Each question requires listening, and the rejected alternatives do not create competing correct answers.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The two-person registration call, script exceeding 600 words, five ordered form-completion questions, answer-length limit, and British/Australian speaker assignments suit IELTS Listening Part 1. Rejected alternatives provide realistic distractors. However, none of the tested answers follows an actual self-correction, and the object and weekday answers depart from the specifically requested detail types. These are task-specific weaknesses, although the set would not generally look out of place in IELTS.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The dialogue uses natural contractions, brief reactions, polite requests, and a credible opening and closing. Vocabulary such as 'ringing', 'mobile', 'centre', and 'spelt' fits the listed varieties. Turns contain spoken words rather than stage directions, and the English key points accurately explain the relevant choices and distractors.",
+          "score": 10,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 5,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1136,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4074,
+          "outputTokens": 1109,
+          "reasoningTokens": 625
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The set omits the required one or two answers immediately following a speaker's self-correction. Tuesday becoming unavailable and applying a membership discount are decision changes, not self-corrections. It also broadens the requested answer types: 'old towel' is an object rather than a name, number, date, price or address, and 'Thursday' is a weekday choice.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Listening Part 1 for an English-speaking learner: a phone or face-to-face conversation between two people in an everyday social context (booking, registering, enquiring), at the real length of about 4 to 5 minutes (600 words or more) even though only 5 of the part's 10 questions are asked, with form or note completion answered in no more than two words and/or a number. The answers are names (spelled out letter by letter), numbers, dates, prices or addresses said in the recording; one or two answers come right after a speaker corrects themselves. Accepted answers include the spelled name and numbers as digits, each within the two-word limit and listed once. Speakers mix the British and Australian accents listed.",
+        "id": "en-ielts-part-1-form-completion-1",
+        "userInput": {
+          "accents": [
+            "British English",
+            "Australian English"
+          ],
+          "count": 5,
+          "exam": "IELTS",
+          "formats": [
+            "typed"
+          ],
+          "language": "en",
+          "level": "band 6",
+          "plays": 1,
+          "scriptLanguage": "en",
+          "skills": [
+            {
+              "description": "Catch names, numbers, dates and prices in an everyday conversation, including spelled words and corrections",
+              "name": "Note specific details in everyday conversations"
+            },
+            {
+              "description": "Follow what two people agree on as the conversation changes",
+              "name": "Follow a conversation's decisions"
+            }
+          ],
+          "task": "Part 1: a conversation between two people set in an everyday social context; form completion, write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer. 10 questions in the real test."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All four keys are uniquely supported by the conversation. Maya seeks an alternative to missing the trip; the professor indicates that the grade penalty is substantial; the other section's bus is full; and Maya receives the fourteenth as her deadline despite the correction to the Tuesday section's date. The distractors are contradicted or unsupported, and each question requires information from the recording.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The campus student–professor conversation, four-option questions, purpose/detail/inference coverage, chronological ordering, and paraphrased answers fit the requested task well. Rejected arrangements and the corrected deadline create realistic distractors. The principal weakness is duration: roughly 500 words would likely run slightly beyond three minutes at a comfortable conversational pace, although this is not far enough outside the target to trigger the cap for a clearly out-of-place set.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The dialogue uses natural contractions, brief reactions, a plausible opening and closing, and a believable self-correction. The turns contain only spoken language, and the American/British speaker pairing is permitted. Reasons and misconceptions are in natural Brazilian Portuguese and accurately connect the choices to what the speakers said.",
+          "score": 10,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 4,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1130,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4311,
+          "outputTokens": 970,
+          "reasoningTokens": 484
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The roughly 500-word conversation is slightly long for the requested 2–3 minutes: at 140–150 words per minute, it would take approximately 3.3–3.6 minutes before allowing for conversational pauses.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Trim some logistical exposition so the conversation comfortably fits the requested duration without rushing. Preserve the rejected alternative and corrected deadline, which provide effective listening distractors.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "TOEFL iBT \"Listen to a Conversation\" for a Brazilian learner: a campus conversation between a student and a professor or staff member, about 2 to 3 minutes, with 4-option multiple-choice questions on the main purpose, details and a speaker's attitude or implied meaning, in English. Reasons and misconceptions are in Brazilian Portuguese. Speakers use North American English, with a British or Australian accent allowed.",
+        "id": "pt-toefl-campus-conversation-1",
+        "userInput": {
+          "accents": [
+            "American English",
+            "British English",
+            "Australian English"
+          ],
+          "count": 4,
+          "exam": "TOEFL iBT",
+          "formats": [
+            "multipleChoice"
+          ],
+          "language": "pt",
+          "level": "B2",
+          "optionCount": 4,
+          "plays": 1,
+          "scriptLanguage": "en",
+          "skills": [
+            {
+              "description": "Understand why a student and a professor or staff member are talking",
+              "name": "Identify the purpose of a campus conversation"
+            },
+            {
+              "description": "Understand the details that support the conversation's main points",
+              "name": "Understand key details in academic conversations"
+            },
+            {
+              "description": "Infer what a speaker means or feels from how they say it",
+              "name": "Infer a speaker's attitude and implied meaning"
+            }
+          ],
+          "task": "Listen to a Conversation: a conversation on a university campus between a student and a professor or a staff member; multiple-choice questions with one answer."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All six primary answers are supported by the recording, follow its corrections, and require listening. However, question 1 also accepts “a poster”, which cannot correctly fill a gap already preceded by “a”. This erroneous accepted alternative triggers the maximum score of 6 for a wrong key.",
+          "score": 6,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The single-speaker account of volunteering, approximately 550-word script, six ordered sentence-completion questions, and short answers fit the requested adaptation of B2 First Part 2. Nearby contrasts provide useful distractors, especially for duration, duties, the puffin's name, living conditions, and the course. Some stems echo the script too directly, particularly question 3, and twice-played delivery is not indicated. The set is otherwise recognisable as the requested listening task, so the out-of-place cap does not apply.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The script consistently sounds like an informal spoken presentation, with contractions, rhetorical questions, restrained conversational fillers, and natural opening and closing remarks. British usage includes “fortnight”, “noticeboard”, “metre”, and “local college”. The recording contains only spoken content, and the answer notes are in English. No concrete natural-language defect warrants a deduction.",
+          "score": 10,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 6,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1142,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3536,
+          "outputTokens": 1157,
+          "reasoningTokens": 516
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "set.questions[0]",
+          "keyedAnswer": "poster; a poster",
+          "kind": "wrongKey",
+          "workedAnswer": "The speaker says there was a poster on the library noticeboard. The gap follows the article in “Hannah first saw a ________”, so “poster” correctly completes it; the accepted alternative “a poster” produces “a a poster” and should not be accepted."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "Question 1 incorrectly accepts “a poster”: the completed sentence would read “Hannah first saw a a poster”. Although the primary answer “poster” is correct, this invalid accepted answer makes the marking key partially wrong and triggers the keys category's maximum score of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some sentence stems repeat the recording closely rather than paraphrasing it, particularly question 3. The result also does not indicate that the recording should be played twice.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the feedback explain the nearby distractors, rather than merely restating each answer—for example, distinguish the assumed fortnight and actual seven-week visit from the three-week minimum.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cambridge B2 First Listening Part 2 for an English-speaking learner: one speaker talking for 3 to 4 minutes about their work, a hobby or an experience, with sentence completion: each question is a sentence with a gap, filled with a word or short phrase the speaker says. Gaps target concrete details with distractors nearby (two things mentioned, one corrected). Exactly 6 questions; accepted answers fit a short phrase and are listed once. Played twice. British English.",
+        "id": "en-cambridge-first-part-2-sentence-completion-1",
+        "userInput": {
+          "accents": [
+            "British English"
+          ],
+          "count": 6,
+          "exam": "Cambridge B2 First",
+          "formats": [
+            "typed"
+          ],
+          "language": "en",
+          "level": "B2",
+          "plays": 2,
+          "scriptLanguage": "en",
+          "skills": [
+            {
+              "description": "Catch the specific word or phrase a speaker says about a topic, ignoring nearby distractors",
+              "name": "Pick out specific information in a monologue"
+            }
+          ],
+          "task": "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All five keys are uniquely supported by the recording: lost contact with completed work, satisfaction from manual activity, an unprofitable shop proposal, earnings around half the previous amount, and testing a career change through overlapping activities. No wrong-key or ambiguity cap applies. However, question 5's extreme distractors make the answer substantially guessable from common sense rather than listening. This affects one question, so the cap for several recording-independent questions does not apply.",
+          "score": 8,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The single-speaker testimony, approximately three-minute script, five Spanish questions with three options each, and chronological question order fit the requested task. Distractors generally reuse mentioned details or rejected ideas effectively. The set is somewhat easier than an ideal B2 listening task because question 5 has conspicuously extreme distractors and several correct options closely echo the recording. These weaknesses do not make the set out of place in the exam, so the realism cap is not triggered.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The testimony sounds natural in Castilian Spanish, with appropriate forms such as “os”, conversational transitions, a self-correction, and a credible spoken opening and closing. It contains no stage directions. Reasons and misconceptions are substantively in Brazilian Portuguese and generally explain the relevant evidence accurately. The localized phrase “No taller das afueras” needs translation; this isolated lapse does not amount to explanations being in the wrong language, so the language cap does not apply.",
+          "score": 8,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 5,
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 1136,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4104,
+          "outputTokens": 894,
+          "reasoningTokens": 314
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Question 5 is readily guessable without listening: its distractors advocate two extreme positions, whereas the key offers sensible, qualified advice. Some answers closely repeat the recording, particularly in questions 3 and 4, reducing the paraphrase challenge. One Portuguese explanation contains untranslated Spanish: “No taller das afueras”.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make question 5's alternatives equally plausible by varying details of the transition advice actually mentioned. Use somewhat more indirect paraphrases where answers currently echo the script, and replace “No taller das afueras” with “Na oficina na periferia”.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "DELE B2 Prueba de comprensión auditiva, Tarea 5, for a Brazilian learner: a monologue in Spanish (a talk, a lecture or a testimony on radio), about 3 minutes, with 3-option multiple-choice questions in Spanish, played twice. Wrong options use what the speaker also says or a near-paraphrase that changes a detail. Reasons and misconceptions are in Brazilian Portuguese. The Spanish is Spain's or Latin America's as the accents list.",
+        "id": "pt-dele-b2-tarea-5-monologue-1",
+        "userInput": {
+          "accents": [
+            "Castilian Spanish",
+            "Mexican Spanish"
+          ],
+          "count": 5,
+          "exam": "DELE B2",
+          "formats": [
+            "multipleChoice"
+          ],
+          "language": "pt",
+          "level": "B2",
+          "optionCount": 3,
+          "plays": 2,
+          "scriptLanguage": "es",
+          "skills": [
+            {
+              "description": "Entender la idea principal y los detalles de una charla o un testimonio",
+              "name": "Comprender monólogos extensos"
+            },
+            {
+              "description": "Distinguir lo que afirma el hablante de lo que solo menciona",
+              "name": "Identificar la postura del hablante"
+            }
+          ],
+          "task": "Tarea 5: un monólogo (conferencia, testimonio o charla de radio) de unos 3 minutos; preguntas de selección múltiple con tres opciones. Se escucha dos veces."
         }
       }
     }

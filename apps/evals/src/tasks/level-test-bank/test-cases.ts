@@ -66,4 +66,28 @@ export const TEST_CASES: TestCase<unknown, LevelTestBankInput>[] = [
     id: "de-en",
     userInput: { learnerLanguage: "de", targetLanguage: "en" },
   },
+  {
+    expectations:
+      "An afternoon departure at three fifteen must be rendered as 15:15 in German answer options. Exactly one option must match the passage, and no answer may depend on an ambiguous localized clock.",
+    id: "de-en-afternoon-clock-regression",
+    userInput: { learnerLanguage: "de", targetLanguage: "en" },
+  },
+  {
+    expectations:
+      "Every answer option must be learner-facing Mexican Spanish or a valid price, never JSON instructions, self-corrections or generation commentary. Each question must have exactly one passage-supported answer.",
+    id: "es-en-option-language-regression",
+    userInput: { learnerLanguage: "es", targetLanguage: "en" },
+  },
+  {
+    expectations:
+      "In a restaurant review, enjoying the food and withholding a recommendation can both be true. Never offer them as competing answers when both are supported. Every question must have exactly one defensible answer.",
+    id: "pt-en-review-ambiguity-regression",
+    userInput: { learnerLanguage: "pt", targetLanguage: "en" },
+  },
+  {
+    expectations:
+      "In a restaurant review, enjoying the food and withholding a recommendation can both be true. Never offer them as competing answers when both are supported. Every question must have exactly one defensible answer.",
+    id: "en-pt-review-ambiguity-regression",
+    userInput: { learnerLanguage: "en", targetLanguage: "pt" },
+  },
 ];

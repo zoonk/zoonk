@@ -1,0 +1,59 @@
+$ tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts --task language-sentence-orders --model google/gemini-4-carbon --model google/gemini-4-argon --limit 4 --fresh
+
+Generating outputs for task: Language Sentence Orders, model: [google/gemini-4-carbon]
+Total test cases: 4 (4 runs)
+Found 0 existing outputs
+Generating 4 new outputs
+Generating output for: pt-it-rain-and-bus (run 1)
+Generating output for: en-de-verb-second (run 1)
+Generating output for: en-pt-clause-order (run 1)
+Generating output for: en-ja-phrase-order (run 1)
+Saved 4 total outputs
+
+Starting eval for task: Language Sentence Orders, model: [google/gemini-4-carbon]
+Found 4 outputs to score
+Found 0 existing scored results
+Scoring 4 outputs
+Scoring output: pt-it-rain-and-bus-1
+Scoring output: en-de-verb-second-1
+Scoring output: en-pt-clause-order-1
+Scoring output: en-ja-phrase-order-1
+Score: 10
+Score: 9.461538461538462
+Score: 5.480769230769231
+Score: 8.723076923076922
+Saved 4 total scored results
+
+Generating outputs for task: Language Sentence Orders, model: [google/gemini-4-argon]
+Total test cases: 4 (4 runs)
+Found 0 existing outputs
+Generating 4 new outputs
+Generating output for: pt-it-rain-and-bus (run 1)
+Generating output for: en-de-verb-second (run 1)
+Generating output for: en-pt-clause-order (run 1)
+Generating output for: en-ja-phrase-order (run 1)
+Saved 4 total outputs
+
+Starting eval for task: Language Sentence Orders, model: [google/gemini-4-argon]
+Found 4 outputs to score
+Found 0 existing scored results
+Scoring 4 outputs
+Scoring output: pt-it-rain-and-bus-1
+Scoring output: en-de-verb-second-1
+Scoring output: en-pt-clause-order-1
+Scoring output: en-ja-phrase-order-1
+Score: 10
+Score: 6.25
+Score: 9.261538461538462
+Score: 8.923076923076923
+Saved 4 total scored results
+
+### Language Sentence Orders (language-sentence-orders)
+
+Recorded attempts are a lower bound for historical runs: older failures may not have been saved.
+| Model | Kind | Scored / sampled | Attempted (recorded) | Generated | Generation failures | Judge-flagged key flaws | Avg score (scored outputs) | Accuracy | Per label (correct/total) | EN | PT | p50 | p95 | Spent | Cost / 1k runs | Case links |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| gemini-4-carbon | generation | 4/4 | 4 | 4 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 8.42 | — | — | 8.31 (3) | 8.72 (1) | 16.40s | 29.73s | $0.2332 | $11.16 | [pt-it-rain-and-bus-1](/tasks/language-sentence-orders/google%2Fgemini-4-carbon#case-pt-it-rain-and-bus-1), [en-de-verb-second-1](/tasks/language-sentence-orders/google%2Fgemini-4-carbon#case-en-de-verb-second-1), [en-pt-clause-order-1](/tasks/language-sentence-orders/google%2Fgemini-4-carbon#case-en-pt-clause-order-1), [en-ja-phrase-order-1](/tasks/language-sentence-orders/google%2Fgemini-4-carbon#case-en-ja-phrase-order-1) |
+| gemini-4-argon | generation | 4/4 | 4 | 4 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 8.61 | — | — | 8.39 (3) | 9.26 (1) | 12.04s | 18.20s | $0.2185 | $5.16 | [pt-it-rain-and-bus-1](/tasks/language-sentence-orders/google%2Fgemini-4-argon#case-pt-it-rain-and-bus-1), [en-de-verb-second-1](/tasks/language-sentence-orders/google%2Fgemini-4-argon#case-en-de-verb-second-1), [en-pt-clause-order-1](/tasks/language-sentence-orders/google%2Fgemini-4-argon#case-en-pt-clause-order-1), [en-ja-phrase-order-1](/tasks/language-sentence-orders/google%2Fgemini-4-argon#case-en-ja-phrase-order-1) |
+
+Prices from the gateway list saved at 2026-11-11T02:17:45.697Z. Total spent: $0.4518.

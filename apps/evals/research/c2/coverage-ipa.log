@@ -1,0 +1,139 @@
+$ tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts --task coverage-check --task word-ipa --model google/gemini-4-carbon --model anthropic/claude-sonnet-5.5 --limit 6 --fresh
+
+Generating outputs for task: Coverage Check, model: [google/gemini-4-carbon]
+Total test cases: 6 (6 runs)
+Found 0 existing outputs
+Generating 6 new outputs
+Generating output for: pt-enem-matematica-planted-gaps (run 1)
+Generating output for: en-intro-stats-syllabus (run 1)
+Generating output for: en-quantum-mechanics-two-syllabi (run 1)
+Generating output for: es-python-no-gaps (run 1)
+Generating output for: en-sat-blueprint-weights (run 1)
+Generating output for: pt-camara-notice-topics (run 1)
+Saved 6 total outputs
+
+Starting eval for task: Coverage Check, model: [google/gemini-4-carbon]
+Found 6 outputs to score
+Found 0 existing scored results
+Scoring 6 outputs
+Scoring output: pt-enem-matematica-planted-gaps-1
+Scoring output: en-intro-stats-syllabus-1
+Scoring output: en-quantum-mechanics-two-syllabi-1
+Scoring output: es-python-no-gaps-1
+Scoring output: en-sat-blueprint-weights-1
+Scoring output: pt-camara-notice-topics-1
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Saved 6 total scored results
+
+Generating outputs for task: Coverage Check, model: [anthropic/claude-sonnet-5.5]
+Total test cases: 6 (6 runs)
+Found 4 existing outputs
+Generating 6 new outputs
+Generating output for: pt-enem-matematica-planted-gaps (run 1)
+Generating output for: en-intro-stats-syllabus (run 1)
+Generating output for: en-quantum-mechanics-two-syllabi (run 1)
+Generating output for: es-python-no-gaps (run 1)
+Generating output for: en-sat-blueprint-weights (run 1)
+Generating output for: pt-camara-notice-topics (run 1)
+Saved 10 total outputs
+
+Starting eval for task: Coverage Check, model: [anthropic/claude-sonnet-5.5]
+Found 10 outputs to score
+Found 4 existing scored results
+Scoring 6 outputs
+Scoring output: pt-enem-matematica-planted-gaps-1
+Scoring output: en-intro-stats-syllabus-1
+Scoring output: en-quantum-mechanics-two-syllabi-1
+Scoring output: es-python-no-gaps-1
+Scoring output: en-sat-blueprint-weights-1
+Scoring output: pt-camara-notice-topics-1
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Saved 10 total scored results
+
+Generating outputs for task: Word IPA, model: [google/gemini-4-carbon]
+Total test cases: 6 (6 runs)
+Found 0 existing outputs
+Generating 6 new outputs
+Generating output for: de-name (run 1)
+Generating output for: de-kind (run 1)
+Generating output for: de-hand (run 1)
+Generating output for: de-bank (run 1)
+Generating output for: de-wind (run 1)
+Generating output for: nl-fruit (run 1)
+Saved 6 total outputs
+
+Starting eval for task: Word IPA, model: [google/gemini-4-carbon]
+Found 6 outputs to score
+Found 0 existing scored results
+Scoring 6 outputs
+Scoring output: de-name-1
+Scoring output: de-kind-1
+Scoring output: de-hand-1
+Scoring output: de-bank-1
+Scoring output: de-wind-1
+Scoring output: nl-fruit-1
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Saved 6 total scored results
+
+Generating outputs for task: Word IPA, model: [anthropic/claude-sonnet-5.5]
+Total test cases: 6 (6 runs)
+Found 77 existing outputs
+Generating 6 new outputs
+Generating output for: de-name (run 1)
+Generating output for: de-kind (run 1)
+Generating output for: de-hand (run 1)
+Generating output for: de-bank (run 1)
+Generating output for: de-wind (run 1)
+Generating output for: nl-fruit (run 1)
+Saved 83 total outputs
+
+Starting eval for task: Word IPA, model: [anthropic/claude-sonnet-5.5]
+Found 83 outputs to score
+Found 77 existing scored results
+Scoring 6 outputs
+Scoring output: de-name-1
+Scoring output: de-kind-1
+Scoring output: de-hand-1
+Scoring output: de-bank-1
+Scoring output: de-wind-1
+Scoring output: nl-fruit-1
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Score: 10
+Saved 83 total scored results
+
+### Coverage Check (coverage-check)
+
+Recorded attempts are a lower bound for historical runs: older failures may not have been saved.
+| Model | Kind | Scored / sampled | Attempted (recorded) | Generated | Generation failures | Judge-flagged key flaws | Avg score (scored outputs) | Accuracy | Per label (correct/total) | EN | PT | p50 | p95 | Spent | Cost / 1k runs | Case links |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| gemini-4-carbon | generation | 6/6 | 6 | 6 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 10.00 | — | — | 10.00 (3) | 10.00 (2) | 19.54s | 69.52s | $0.1228 | $20.47 | [pt-enem-matematica-planted-gaps-1](/tasks/coverage-check/google%2Fgemini-4-carbon#case-pt-enem-matematica-planted-gaps-1), [en-intro-stats-syllabus-1](/tasks/coverage-check/google%2Fgemini-4-carbon#case-en-intro-stats-syllabus-1), [en-quantum-mechanics-two-syllabi-1](/tasks/coverage-check/google%2Fgemini-4-carbon#case-en-quantum-mechanics-two-syllabi-1), [es-python-no-gaps-1](/tasks/coverage-check/google%2Fgemini-4-carbon#case-es-python-no-gaps-1), [en-sat-blueprint-weights-1](/tasks/coverage-check/google%2Fgemini-4-carbon#case-en-sat-blueprint-weights-1), [pt-camara-notice-topics-1](/tasks/coverage-check/google%2Fgemini-4-carbon#case-pt-camara-notice-topics-1) |
+| claude-sonnet-5.5 | generation | 6/6 | 6 | 6 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 10.00 | — | — | 10.00 (3) | 10.00 (2) | 4.14s | 7.19s | $0.0586 | $9.76 | [pt-enem-matematica-planted-gaps-1](/tasks/coverage-check/anthropic%2Fclaude-sonnet-5.5#case-pt-enem-matematica-planted-gaps-1), [en-intro-stats-syllabus-1](/tasks/coverage-check/anthropic%2Fclaude-sonnet-5.5#case-en-intro-stats-syllabus-1), [en-quantum-mechanics-two-syllabi-1](/tasks/coverage-check/anthropic%2Fclaude-sonnet-5.5#case-en-quantum-mechanics-two-syllabi-1), [es-python-no-gaps-1](/tasks/coverage-check/anthropic%2Fclaude-sonnet-5.5#case-es-python-no-gaps-1), [en-sat-blueprint-weights-1](/tasks/coverage-check/anthropic%2Fclaude-sonnet-5.5#case-en-sat-blueprint-weights-1), [pt-camara-notice-topics-1](/tasks/coverage-check/anthropic%2Fclaude-sonnet-5.5#case-pt-camara-notice-topics-1) |
+
+### Word IPA (word-ipa)
+
+Recorded attempts are a lower bound for historical runs: older failures may not have been saved.
+| Model | Kind | Scored / sampled | Attempted (recorded) | Generated | Generation failures | Judge-flagged key flaws | Avg score (scored outputs) | Accuracy | Per label (correct/total) | EN | PT | p50 | p95 | Spent | Cost / 1k runs | Case links |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| gemini-4-carbon | generation | 6/6 | 6 | 6 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 10.00 | 100.0% | look-alike 6/6 | — | — | 8.27s | 11.43s | $0.0231 | $3.85 | [de-name-1](/tasks/word-ipa/google%2Fgemini-4-carbon#case-de-name-1), [de-kind-1](/tasks/word-ipa/google%2Fgemini-4-carbon#case-de-kind-1), [de-hand-1](/tasks/word-ipa/google%2Fgemini-4-carbon#case-de-hand-1), [de-bank-1](/tasks/word-ipa/google%2Fgemini-4-carbon#case-de-bank-1), [de-wind-1](/tasks/word-ipa/google%2Fgemini-4-carbon#case-de-wind-1), [nl-fruit-1](/tasks/word-ipa/google%2Fgemini-4-carbon#case-nl-fruit-1) |
+| claude-sonnet-5.5 | generation | 6/6 | 6 | 6 | schema: 0, provider: 0, other: 0, unknown: 0 | not recorded | 10.00 | 100.0% | look-alike 6/6 | — | — | 2.27s | 2.55s | $0.0099 | $1.64 | [de-name-1](/tasks/word-ipa/anthropic%2Fclaude-sonnet-5.5#case-de-name-1), [de-kind-1](/tasks/word-ipa/anthropic%2Fclaude-sonnet-5.5#case-de-kind-1), [de-hand-1](/tasks/word-ipa/anthropic%2Fclaude-sonnet-5.5#case-de-hand-1), [de-bank-1](/tasks/word-ipa/anthropic%2Fclaude-sonnet-5.5#case-de-bank-1), [de-wind-1](/tasks/word-ipa/anthropic%2Fclaude-sonnet-5.5#case-de-wind-1), [nl-fruit-1](/tasks/word-ipa/anthropic%2Fclaude-sonnet-5.5#case-nl-fruit-1) |
+
+Prices from the gateway list saved at 2026-11-11T02:17:45.697Z. Total spent: $0.2143.
