@@ -1,5 +1,7 @@
 import { prisma } from "@zoonk/db";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
+import { createLanguageLearner } from "./language-learner";
 import { asPersona } from "./learn-personas";
 import { answerLiveCalls } from "./live-peer";
 
@@ -38,5 +40,23 @@ test.describe("Language unit page", () => {
 
       expect(conversation).toMatchObject({ minutes: 2, status: "completed" });
     });
+  });
+
+  test("Practice a conversation pressed before the page hydrates opens its sheet once it does", async ({
+    browser,
+  }) => {
+    const learner = await createLanguageLearner();
+    const context = await browser.newContext({ storageState: learner.user.storageState });
+    const page = await context.newPage();
+
+    const release = await holdScripts(page);
+    await page.goto(`/content/units/${learner.renting.id}`, { waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { name: "Practice a conversation" }).click();
+    await release();
+
+    const call = page.getByRole("dialog", { name: "Practice a conversation" });
+    await expect(call.getByRole("button", { name: "Continue" })).toBeVisible();
+
+    await context.close();
   });
 });
