@@ -228,7 +228,6 @@ struct FocusTestFlow: View {
 
     guard case .ended(let end) = next else {
       reached = next
-      waitRound += next.isWaiting ? 1 : 0
       return
     }
 
