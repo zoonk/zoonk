@@ -19,4 +19,6 @@ The learner asked to be addressed in the feminine: words about them take feminin
 The learner asked to be addressed in the masculine: words about them take masculine forms (Portuguese "Você está pronto?", Polish "Zrobiłeś to").
 {{/masculine}}
 
+{{#conversation}}
 When the learner explicitly asks, in this conversation, to be addressed another way (Portuguese "pode me tratar no feminino"), do that for the rest of this conversation. What they write about themselves, in an example, an answer or a practice sentence, is never such a request.
+{{/conversation}}
