@@ -1508,61 +1508,61 @@
         }
       }
     },
-    "An accent never blocks you. Words that still sound different come back tomorrow." : {
+    "An accent never blocks you." : {
       "comment" : "What a pronunciation round's grade means",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Akzent steht dir nie im Weg. Wörter, die noch anders klingen, kommen morgen wieder dran."
+            "value" : "Ein Akzent steht dir nie im Weg."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu acento nunca te impide avanzar. Las palabras que aún suenan diferentes vuelven mañana."
+            "value" : "Tu acento nunca te impide avanzar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton accent ne te bloque jamais. Les mots qui sonnent encore différemment reviendront demain."
+            "value" : "Ton accent n’est jamais un obstacle."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’accento non ti blocca mai. Le parole che suonano ancora diverse tornano domani."
+            "value" : "L’accento non ti ferma mai."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "なまりがあっても先に進めます。発音がまだ違う単語は、明日また出てきます。"
+            "value" : "なまりがあっても、先に進めます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "억양이 달라도 다음으로 넘어갈 수 있어요. 아직 다르게 들리는 단어는 내일 다시 나와요."
+            "value" : "억양은 걸림돌이 되지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Akcent nigdy nie jest przeszkodą. Słowa, które nadal brzmią inaczej, wrócą jutro."
+            "value" : "Akcent nigdy nie jest przeszkodą."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu sotaque nunca te impede de avançar. As palavras que ainda soarem diferentes voltam amanhã."
+            "value" : "Seu sotaque nunca é uma barreira."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aksanın ilerlemene asla engel olmaz. Hâlâ farklı telaffuz ettiğin kelimeler yarın tekrar karşına çıkar."
+            "value" : "Aksanın sana asla engel olmaz."
           }
         }
       }

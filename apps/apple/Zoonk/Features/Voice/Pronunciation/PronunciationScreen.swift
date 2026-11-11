@@ -478,8 +478,8 @@ private struct PronunciationResultView: View {
         .typeStyle(.section)
 
         Text(
-          "An accent never blocks you. Words that still sound different come back tomorrow.",
-          tableName: "Voice", comment: "What a pronunciation round's grade means"
+          "An accent never blocks you.", tableName: "Voice",
+          comment: "What a pronunciation round's grade means"
         )
         .foregroundStyle(.mutedForeground)
       }
