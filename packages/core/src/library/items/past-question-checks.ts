@@ -8,16 +8,18 @@ const SINGLE_QUOTES = /[‘’‚‛′]/gu;
 const DOUBLE_QUOTES = /[“”„‟″]/gu;
 const WHITESPACE = /\s+/gu;
 const TABLE_DELIMITER_ROW = /^[|:]+$/u;
-const LETTER = /\p{L}/u;
+const WORD = /\p{L}{2,}/gu;
 const LETTER_RUN = /[\p{L}\p{M}]+/gu;
 const LOWERCASE = /\p{Ll}/u;
 const PAGE_LINE = /[\n\f]/u;
 
 /**
- * A page's own notes ("Use this space for computations.", a running header) repeat on page after
- * page (8 to 16 times in real papers); an instruction a few questions share repeats less.
+ * A page's own notes are phrases ("Use this space for computations.", a running header) repeated
+ * page after page (8 to 16 times in real papers); an instruction a few questions share repeats
+ * less, and a figure's lone labels and symbols ("α", "Tempo") aren't phrases.
  */
 const PAGE_NOTE_REPEATS = 5;
+const PAGE_NOTE_WORDS = 3;
 
 /**
  * Longer than the words the papers print (Portuguese ones stop near 18 letters), so in text that
@@ -41,17 +43,19 @@ function toComparableText(text: string): string {
     .replaceAll(WHITESPACE, "");
 }
 
-function findPageNotes(lines: string[]): Set<string> {
-  const repeats = Map.groupBy(lines, (line) => line);
+function isPhrase(line: string): boolean {
+  return (line.match(WORD)?.length ?? 0) >= PAGE_NOTE_WORDS && !line.includes("|");
+}
 
-  return new Set(
-    lines.filter(
-      (line) =>
-        (repeats.get(line)?.length ?? 0) >= PAGE_NOTE_REPEATS &&
-        LETTER.test(line) &&
-        !line.includes("|"),
-    ),
-  );
+function findPageNotes(paperText: string): Set<string> {
+  const phrases = paperText
+    .split(PAGE_LINE)
+    .filter((line) => isPhrase(line))
+    .map((line) => toComparableText(line));
+
+  const repeats = Map.groupBy(phrases, (line) => line);
+
+  return new Set(phrases.filter((line) => (repeats.get(line)?.length ?? 0) >= PAGE_NOTE_REPEATS));
 }
 
 function toComparableLines(text: string, separator: RegExp): string[] {
@@ -117,7 +121,7 @@ function findQuoteProblems({
   question: PastQuestion;
 }): string[] {
   const paperLines = toComparableLines(paperText, PAGE_LINE);
-  const notes = findPageNotes(paperLines);
+  const notes = findPageNotes(paperText);
   const paper = paperLines.filter((line) => !notes.has(line)).join("");
   const lostSpaces = hasLostSpaces(paperText);
 

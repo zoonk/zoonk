@@ -256,6 +256,25 @@ E 札幌。`;
     ).toStrictEqual(["The support text isn't in the paper as printed."]);
   });
 
+  it("refuses a symbol slipped into an option, though a figure's labels repeat it", () => {
+    const figure = [1, 2, 3, 4, 5].map((figureNumber) => `Figura ${figureNumber}\nα`).join("\n");
+
+    const item = {
+      ...PRINTED_ITEM,
+      options: PRINTED_ITEM.options.map((option, index) =>
+        index === 0 ? { ...option, text: "28%.\nα" } : option,
+      ),
+    };
+
+    expect(
+      checkPastQuestion({
+        paperText: `${figure}\n${PAPER}`,
+        question: question({ item }),
+        target: TARGET,
+      }).problems,
+    ).toStrictEqual(["Option 1 isn't in the paper as printed."]);
+  });
+
   describe("a table the paper's text gives as rows of pipes", () => {
     const TABLE_PAPER = `1 Which expression is equivalent to 2(x + 3)?
 Use this space for computations.
