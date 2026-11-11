@@ -2,24 +2,23 @@
 
 import { assertAdmin } from "@/lib/admin-guard";
 import { type AdminActionState } from "@/lib/use-admin-action-state";
-import { revokeCliLoginForAdmin } from "@zoonk/core/auth/revoke-cli-login";
+import { revokeCliLoginsForAdmin } from "@zoonk/core/auth/revoke-cli-logins";
 import { parseFormField } from "@zoonk/utils/form";
 import { revalidatePath } from "next/cache";
 
-export async function revokeCliLoginAction(
+export async function revokeCliLoginsAction(
   previousState: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
   await assertAdmin();
   const submissionId = previousState.submissionId + 1;
-  const result = await revokeCliLoginForAdmin(parseFormField(formData, "loginId") ?? "");
+  const result = await revokeCliLoginsForAdmin(parseFormField(formData, "userId") ?? "");
 
   if (result.status === "notFound") {
     revalidatePath("/cli-logins");
 
     return {
-      error:
-        "This login renewed itself or ended since the page loaded. The list now shows it as it is.",
+      error: "This person has no CLI logins left. The list now shows it as it is.",
       submissionId,
     };
   }
