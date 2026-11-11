@@ -1,0 +1,72 @@
+import { resolveApiOrigin } from "./api-origin.ts";
+import { type ApiRequest, WHOAMI_REQUEST, parseInvocation } from "./args.ts";
+import { credentialsPath } from "./credentials.ts";
+import { CliError, EXIT_CODES } from "./errors.ts";
+import { HELP } from "./help.ts";
+import { type HttpResult, UNAUTHORIZED, isRecord } from "./http.ts";
+import { logIn, logOut } from "./login.ts";
+import { notLoggedIn, sendAuthorized } from "./session.ts";
+
+function apiError({ origin, result }: { origin: string; result: HttpResult }): CliError {
+  if (result.status === UNAUTHORIZED) {
+    return notLoggedIn(origin);
+  }
+
+  const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
+  const message = typeof error?.message === "string" ? error.message : "The request failed.";
+  const details = error?.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
+
+  return new CliError(`${message} (HTTP ${result.status})${details}`);
+}
+
+async function runRequest({
+  file,
+  origin,
+  request,
+}: {
+  file: string;
+  origin: string;
+  request: ApiRequest;
+}) {
+  const result = await sendAuthorized({ file, origin, request });
+
+  if (!result.ok) {
+    throw apiError({ origin, result });
+  }
+
+  process.stdout.write(`${JSON.stringify(result.body, null, 2)}\n`);
+}
+
+async function run(argv: string[]) {
+  const { apiUrl, command } = parseInvocation(argv);
+
+  if (command.name === "help") {
+    process.stdout.write(HELP);
+    return;
+  }
+
+  const origin = resolveApiOrigin(apiUrl ?? process.env.ZOONK_API_URL);
+  const file = credentialsPath(process.env);
+
+  if (command.name === "logout") {
+    await logOut({ file, origin });
+    return;
+  }
+
+  if (command.name === "login") {
+    await logIn({ file, origin });
+  }
+
+  await runRequest({
+    file,
+    origin,
+    request: command.name === "login" ? WHOAMI_REQUEST : command.request,
+  });
+}
+
+try {
+  await run(process.argv.slice(2));
+} catch (error) {
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+  process.exitCode = error instanceof CliError ? error.exitCode : EXIT_CODES.failed;
+}
