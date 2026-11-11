@@ -3991,12 +3991,6 @@ msgctxt "ITVIDG"
 msgid "Your plan gives these more time."
 msgstr "Seu plano dedica mais tempo a essas matérias."
 
-#. Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "npOrov"
-msgid "Your plan already has time for these, so it doesn't need a focus."
-msgstr "Seu plano já reserva tempo para essas matérias, então não precisa dar mais foco a elas."
-
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "YiaEQx"
 msgid "You chose your own focus, and your plan keeps it. This is what the test suggests."
@@ -4009,14 +4003,14 @@ msgid "You kept your plan as it is."
 msgstr "Você manteve seu plano como está."
 
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "N09SQx"
-msgid "Suggested focus"
-msgstr "Foco sugerido"
-
-#: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "nvNCUr"
 msgid "For now, this follows mainly what counts most in your exam."
 msgstr "Por enquanto, a sugestão leva em conta principalmente o que tem mais peso na sua prova."
+
+#: src/focus-test/focus-test-checkpoint.tsx
+msgctxt "N09SQx"
+msgid "Suggested focus"
+msgstr "Foco sugerido"
 
 #: src/focus-test/focus-test-checkpoint.tsx
 #: src/onboarding/steps/reveal-coverage.tsx

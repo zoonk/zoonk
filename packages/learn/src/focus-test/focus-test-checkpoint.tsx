@@ -116,7 +116,7 @@ function FocusRows({ rows }: { rows: readonly FocusRow[] }) {
 function useFocusIntro() {
   const t = useExtracted();
 
-  return (state: FocusTestFocus["state"]): string => {
+  return function focusIntro(state: FocusTestFocus["state"]): string | null {
     switch (state) {
       case "ifTimeShort":
         return t("If your time can't cover everything, your plan gives these more time.");
@@ -124,12 +124,6 @@ function useFocusIntro() {
         return t("Your time can't cover everything. Your plan can give these more time.");
       case "current":
         return t("Your plan gives these more time.");
-      case "alreadyFits":
-        return t({
-          description:
-            "Shown above a short list of exam subjects the Focus test suggests. The learner's study time already covers them, so the plan doesn't need to give them extra time (“a focus”).",
-          message: "Your plan already has time for these, so it doesn't need a focus.",
-        });
       case "handPicked":
         return t(
           "You chose your own focus, and your plan keeps it. This is what the test suggests.",
@@ -140,6 +134,8 @@ function useFocusIntro() {
             "Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged.",
           message: "You kept your plan as it is.",
         });
+      case "suggested":
+        return null;
       default:
         return state satisfies never;
     }
@@ -155,18 +151,21 @@ function SuggestedFocus({
   focus: FocusTestFocus;
   onProposalAnswered: () => void;
   plan: FocusTestPlanActions | null;
-  /** The answer's own line says where the plan stands, so the intro written for the offer goes. */
+  /** The answer's own line says where the plan stands, so the note written for the offer goes. */
   proposalAnswered: boolean;
 }) {
   const t = useExtracted();
   const intro = useFocusIntro();
   const space = useSentenceSpace();
 
-  const changesFocus =
-    plan &&
-    (focus.state === "current" || focus.state === "handPicked" || focus.state === "declined");
+  const changesFocus = plan && focus.state !== "ifTimeShort" && focus.state !== "proposed";
 
-  const followsImportance = focus.basis === "importance";
+  const basis =
+    focus.basis === "importance"
+      ? t("For now, this follows mainly what counts most in your exam.")
+      : null;
+
+  const note = [proposalAnswered ? null : intro(focus.state), basis].filter(Boolean);
 
   if (focus.rows.length === 0) {
     return null;
@@ -176,13 +175,7 @@ function SuggestedFocus({
     <PageSection>
       <PageSectionTitle>{t("Suggested focus")}</PageSectionTitle>
 
-      {(!proposalAnswered || followsImportance) && (
-        <p className={SECTION_NOTE_CLASS}>
-          {!proposalAnswered && intro(focus.state)}
-          {!proposalAnswered && followsImportance && space}
-          {followsImportance && t("For now, this follows mainly what counts most in your exam.")}
-        </p>
-      )}
+      {note.length > 0 && <p className={SECTION_NOTE_CLASS}>{note.join(space)}</p>}
 
       <FocusRows rows={focus.rows} />
 
