@@ -4818,65 +4818,6 @@
         }
       }
     },
-    "It comes back %@." : {
-      "comment" : "When the word comes back to say again",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es kommt %@ wieder."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volverá a aparecer %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras le redire %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tornerà %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次に出てくるのは%@です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 단어는 %@ 다시 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróci %@ do powtórki."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ela volta %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tekrar karşına çıkacak."
-          }
-        }
-      }
-    },
     "It ended when you started another call." : {
       "comment" : "Another call took this one over",
       "localizations" : {
@@ -13470,65 +13411,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zaten bir sohbettesin"
-          }
-        }
-      }
-    },
-    "You've got this one. It won't come back." : {
-      "comment" : "A word that's learned",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses Wort sitzt. Es kommt nicht wieder."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya aprendiste esta palabra. No volverá a aparecer."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu connais ce mot. Il ne reviendra plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai imparato questa parola. Non ti verrà più proposta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この単語は身につきました。今後は出題されません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 단어는 익혔어요. 다시 나오지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To słowo masz już opanowane. Nie pojawi się ponownie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você aprendeu esta palavra. Ela não vai aparecer de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu kelimeyi öğrendin. Bir daha karşına çıkmayacak."
           }
         }
       }

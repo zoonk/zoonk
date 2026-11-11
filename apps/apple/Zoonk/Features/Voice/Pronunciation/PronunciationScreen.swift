@@ -239,7 +239,7 @@ private struct PronunciationRoundView: View {
   private func announcement(_ state: PronunciationRound.WordState) -> String? {
     switch state {
     case .graded(let grade):
-      return [grade.verdict, grade.comesBack].joinedSentences()
+      return grade.verdict
     case .ready(let notice):
       if recorder.isDenied {
         return microphoneOff
@@ -397,25 +397,18 @@ private struct GradeNote: View {
   let grade: PronunciationRound.Grade
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      if grade.isCorrect {
-        Label {
-          Text(grade.verdict)
-        } icon: {
-          Image(systemName: "checkmark.circle.fill")
-        }
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(.successText)
-      } else {
+    if grade.isCorrect {
+      Label {
         Text(grade.verdict)
-          .typeStyle(.body.weight(.semibold))
+      } icon: {
+        Image(systemName: "checkmark.circle.fill")
       }
-
-      Text(grade.comesBack)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+      .typeStyle(.body.weight(.semibold))
+      .foregroundStyle(.successText)
+    } else {
+      Text(grade.verdict)
+        .typeStyle(.body.weight(.semibold))
     }
-    .accessibilityElement(children: .combine)
   }
 }
 
@@ -426,18 +419,6 @@ extension PronunciationRound.Grade {
       : String(
         localized: "We heard “\(transcript)”", table: "Voice",
         comment: "What the grader heard when a word didn't sound right")
-  }
-
-  fileprivate var comesBack: String {
-    guard let nextReviewAt else {
-      return String(
-        localized: "You've got this one. It won't come back.", table: "Voice",
-        comment: "A word that's learned")
-    }
-
-    return String(
-      localized: "It comes back \(nextReviewAt.formatted(.dateTime.day().month(.wide))).",
-      table: "Voice", comment: "When the word comes back to say again")
   }
 }
 
