@@ -80,6 +80,23 @@ final class LearnerSummaryStoreTests: XCTestCase {
     XCTAssertEqual(store.summary.value?.goals.first?.variety?.region, "ES")
   }
 
+  func testANewContentCountryShowsItsRebuildEvenWhenTheSummaryCantBeReadAgain() async {
+    let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture], contentCountry: "BR")
+    let store = LearnerSummaryStore(
+      api: api,
+      cache: AppCache(session: .preview(account: .summaryTestAccount)))
+
+    await store.summary.load()
+    await api.failReads()
+    let saved = await store.setContentCountry("PT", goalID: "finance")
+    await store.summary.refresh()
+
+    let row = store.summary.value?.goals.first?.contentCountry
+    XCTAssertTrue(saved)
+    XCTAssertEqual(row?.code, "PT")
+    XCTAssertEqual(row?.rebuild, .preparing)
+  }
+
   func testSignedOutLearnerHasNoSummaryRequest() async {
     let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture])
     let store = LearnerSummaryStore(api: api, cache: AppCache(session: .preview()))
@@ -98,17 +115,35 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
   /// The country the server has for the one language goal; no goal without it.
   private var region: String??
   private let landsThenTimesOut: Bool
+  /// The country the server has for the one finance goal; no goal without it.
+  private var contentCountry: String?
   private var readsFail = false
   private(set) var requestCount = 0
 
   init(
     nextChanges: [Date], switchError: APIError? = nil, region: String?? = .none,
-    landsThenTimesOut: Bool = false
+    contentCountry: String? = nil, landsThenTimesOut: Bool = false
   ) {
     self.nextChanges = nextChanges
     self.switchError = switchError
     self.region = region
+    self.contentCountry = contentCountry
     self.landsThenTimesOut = landsThenTimesOut
+  }
+
+  func setContentCountry(token: String, goalID: String, country: String?) async throws
+    -> ContentCountryChange
+  {
+    contentCountry = country
+    return .saved(Self.row(country ?? "BR", rebuild: .preparing))
+  }
+
+  func retryRebuild(token: String, goalID: String) async throws {}
+
+  private static func row(_ code: String, rebuild: ContentCountry.Rebuild) -> ContentCountry {
+    ContentCountry(
+      code: code, name: code, kind: .content, editable: true, source: .picked,
+      lessonVariety: nil, rebuild: rebuild)
   }
 
   func failReads() {
@@ -150,7 +185,15 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
                 Components.Schemas.RegionChoice(code: $0, name: $0, taught: $0 == "MX")
               }))
         ]
-      } ?? [],
+      }
+        ?? contentCountry.map { country in
+          [
+            LearnerGoal(
+              dailyMinutes: 15, id: "finance", kind: .learn, status: .active, targetDate: nil,
+              displayName: "Personal finance", title: "Personal finance",
+              contentCountry: Self.row(country, rebuild: .none))
+          ]
+        } ?? [],
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
       level: nil,
       nextChangeAt: nextChanges.removeFirst(),

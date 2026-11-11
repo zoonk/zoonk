@@ -6,6 +6,8 @@ struct LearnerSummary: Equatable, Sendable {
   let buddy: BuddyLook
   let buddyName: String?
   var goals: [LearnerGoal]
+  /// Where the learner says they live; nil when they haven't said.
+  var homeCountry: String? = nil
   let identity: LearnerIdentity
   let level: LearnerLevel?
   /// When the summary changes without a write: the next midnight, the subscription's next change or
@@ -43,6 +45,14 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   let title: String
   /// Nil for a goal that isn't a language goal with countries to choose from.
   var variety: LanguageVariety? = nil
+  /// The row its plan shows: the country a learn goal's content is about, or a foreign exam's;
+  /// nil for a goal whose content doesn't change by country.
+  var contentCountry: ContentCountry? = nil
+  /// The country a general goal's lessons take their examples from, shown when the learner lives
+  /// elsewhere.
+  var examplesCountry: CountryChoice? = nil
+  /// The countries a picker for this goal offers first.
+  var suggestedCountries: [CountryChoice] = []
 
   enum Kind: String, Sendable {
     case exam
@@ -110,6 +120,17 @@ protocol LearnerSummaryAPIClient {
   func switchGoal(token: String, goalID: String) async throws
   /// False when the goal's language doesn't offer the country.
   func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool
+  /// The goal's new row; nil when the goal's content doesn't change by country.
+  func setContentCountry(token: String, goalID: String, country: String?) async throws
+    -> ContentCountryChange
+  /// Only from the learner's tap: runs a failed rebuild again.
+  func retryRebuild(token: String, goalID: String) async throws
+}
+
+enum ContentCountryChange: Equatable, Sendable {
+  case saved(ContentCountry?)
+  /// Exam and language goals keep theirs.
+  case notOffered
 }
 
 struct LearnerSummaryAPI: LearnerSummaryAPIClient {
@@ -158,6 +179,34 @@ struct LearnerSummaryAPI: LearnerSummaryAPIClient {
       }
     }
   }
+
+  func setContentCountry(token: String, goalID: String, country: String?) async throws
+    -> ContentCountryChange
+  {
+    try await clients.perform(token: token, sendingNull: ["contentCountry"]) { client in
+      switch try await client.updateGoal(
+        path: .init(goalId: goalID), body: .json(.init(contentCountry: country)))
+      {
+      case .ok(let response):
+        return .saved(ContentCountry(try response.body.json.goal.contentCountry))
+      case .unprocessableContent: return .notOffered
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func retryRebuild(token: String, goalID: String) async throws {
+    try await clients.perform(token: token) { client in
+      switch try await client.createGoalGeneration(path: .init(goalId: goalID)) {
+      case .accepted: return
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
 }
 
 func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> LearnerSummary {
@@ -190,8 +239,12 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         targetDate: goal.targetDate,
         displayName: goal.displayName, title: goal.title,
         variety: LanguageVariety(
-          language: goal.targetLanguage, region: goal.targetRegion, choices: goal.regionChoices))
+          language: goal.targetLanguage, region: goal.targetRegion, choices: goal.regionChoices),
+        contentCountry: ContentCountry(goal.contentCountry),
+        examplesCountry: CountryChoice(goal.examplesCountry),
+        suggestedCountries: .init(suggested: goal.suggested))
     },
+    homeCountry: summary.homeCountry,
     identity: LearnerIdentity(
       isAnonymous: summary.identity.isAnonymous,
       signedInAt: dateFromEpochMilliseconds(summary.identity.signedInAt),
