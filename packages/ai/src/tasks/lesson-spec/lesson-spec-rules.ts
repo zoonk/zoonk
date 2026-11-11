@@ -19,7 +19,6 @@ export type LessonScreenKind = (typeof LESSON_SCREEN_KINDS)[number];
 
 export type LessonSpecSkill = {
   name: string;
-  /** The lesson's title when a split gives this skill its own lesson. */
   topic: string;
   description: string;
   example: string;
@@ -48,20 +47,15 @@ export type LessonSpec = {
   screens: LessonScreen[];
   /** Computed from the screen plan, never written by a model. */
   estimatedMinutes: number;
-  /** Set on each lesson after the first that the code split off one plan: the plan's guess stays in the first. */
-  laterPart?: boolean;
 };
 
 /** Screens are a tweet long, so a lesson goes deep in more of them rather than longer ones. */
 export const LESSON_SIZE = {
   maxMinutes: 5,
-  maxScreens: 16,
   maxScreensWithoutCheck: 4,
-  maxSkills: 3,
   /** An advanced idea that can't be split, such as a derivation. */
   maxUnsplittableMinutes: 6,
   minMinutes: 2,
-  minScreens: 5,
   noviceTeachingBeforeFirstCheck: 2,
   teachingBeforeFirstCheck: 1,
 } as const;
@@ -96,10 +90,7 @@ type LessonSpecIssueCode =
   | "earlyCheck"
   | "guess"
   | "hook"
-  | "screenCount"
-  | "skillCount"
   | "skillReference"
-  | "tooLong"
   | "unpracticedSkill"
   | "untaughtSkill"
   | "workedExample";
@@ -132,14 +123,6 @@ export function getMaxLessonMinutes({
     : LESSON_SIZE.maxMinutes;
 }
 
-export function fitsLesson({ level, spec }: { level: CourseLevel; spec: LessonSpec }): boolean {
-  return (
-    spec.skills.length <= LESSON_SIZE.maxSkills &&
-    spec.screens.length <= LESSON_SIZE.maxScreens &&
-    spec.estimatedMinutes <= getMaxLessonMinutes({ level, skillCount: spec.skills.length })
-  );
-}
-
 /** The guess isn't practice, so teaching around it counts as one run. */
 function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
   return screens.reduce(
@@ -153,27 +136,6 @@ function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
     },
     { current: 0, longest: 0 },
   ).longest;
-}
-
-function getSizeIssues({ level, spec }: { level: CourseLevel; spec: LessonSpec }) {
-  const maxMinutes = getMaxLessonMinutes({ level, skillCount: spec.skills.length });
-  const skillCount = spec.skills.length;
-  const screenCount = spec.screens.length;
-
-  return [
-    (skillCount === 0 || skillCount > LESSON_SIZE.maxSkills) && {
-      code: "skillCount" as const,
-      detail: `Teaches ${skillCount} skills; a lesson teaches 1 to ${LESSON_SIZE.maxSkills}.`,
-    },
-    (screenCount < LESSON_SIZE.minScreens || screenCount > LESSON_SIZE.maxScreens) && {
-      code: "screenCount" as const,
-      detail: `Plans ${screenCount} screens; a lesson has ${LESSON_SIZE.minScreens} to ${LESSON_SIZE.maxScreens}.`,
-    },
-    spec.estimatedMinutes > maxMinutes && {
-      code: "tooLong" as const,
-      detail: `Takes about ${spec.estimatedMinutes} minutes; the limit is ${maxMinutes}.`,
-    },
-  ].filter((issue) => issue !== false);
 }
 
 function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
@@ -204,15 +166,11 @@ function getEarlyCheckIssue({
   );
 }
 
-function getGuessIssue({ laterPart, screens }: LessonSpec) {
+function getGuessIssue(screens: readonly LessonScreen[]) {
   const guesses = screens.filter((screen) => screen.kind === "guess").length;
   const firstTeaching = screens.findIndex((screen) => isTeachingScreen(screen.kind));
   const at = screens.findIndex((screen) => screen.kind === "guess");
   const next = screens[at + 1];
-
-  if (laterPart && guesses === 0) {
-    return false;
-  }
 
   return (
     (guesses !== 1 || at !== firstTeaching + 1 || !next || !isTeachingScreen(next.kind)) && {
@@ -247,7 +205,7 @@ function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec })
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",
     },
-    getGuessIssue(spec),
+    getGuessIssue(screens),
   ].filter((issue) => issue !== false);
 }
 
@@ -303,19 +261,16 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/** `novice` is `readsNoviceRules` for the lesson. */
+/**
+ * Size is a target the planner aims for, not a rule: a lesson a little past it is better than a
+ * second plan. `novice` is `readsNoviceRules` for the lesson.
+ */
 export function getLessonSpecIssues({
-  level,
   novice = false,
   spec,
 }: {
-  level: CourseLevel;
   novice?: boolean;
   spec: LessonSpec;
 }): LessonSpecIssue[] {
-  return [
-    ...getSizeIssues({ level, spec }),
-    ...getShapeIssues({ novice, spec }),
-    ...getSkillIssues(spec),
-  ];
+  return [...getShapeIssues({ novice, spec }), ...getSkillIssues(spec)];
 }

@@ -71,34 +71,34 @@ function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
   };
 }
 
+function twoSkillLesson(topics: [string, string]) {
+  return {
+    canDo: `Find the ${topics[0].toLowerCase()} and the ${topics[1].toLowerCase()}`,
+    description: `${topics[0]} and ${topics[1]}.`,
+    screens: [
+      { ...rawScreen("hook", []), brief: `Ana's bakery scene for ${topics[0]}` },
+      rawScreen("explanation", [1]),
+      rawScreen("guess", [1]),
+      rawScreen("explanation", [1]),
+      rawScreen("check", [1]),
+      rawScreen("explanation", [2]),
+      rawScreen("activity", [2], "madeUpChart"),
+      { ...rawScreen("application", [1, 2]), brief: `Ana decides with ${topics[1]}` },
+    ],
+    skills: topics.map((topic) => rawSkill(topic)),
+    title: `${topics[0]} and ${topics[1]}`,
+  };
+}
+
 describe(generateLessonSpec, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("returns specs with skill indexes, catalog-only activities and oversized lessons split", async () => {
+  it("keeps the planner's own lessons as written, hooks and applications included, with catalog-only activities", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
-        lessons: [
-          {
-            canDo: "Summarize a data set",
-            description: "Center and spread.",
-            screens: [
-              rawScreen("hook", []),
-              rawScreen("explanation", [1]),
-              rawScreen("activity", [1], "madeUpChart"),
-              rawScreen("explanation", [2]),
-              rawScreen("activity", [2], "numberLine"),
-              rawScreen("explanation", [3]),
-              rawScreen("check", [3]),
-              rawScreen("explanation", [4]),
-              rawScreen("check", [4]),
-              rawScreen("application", [1, 2, 3, 4]),
-            ],
-            skills: ["Mean", "Median", "Mode", "Range"].map((topic) => rawSkill(topic)),
-            title: "Summarizing a data set",
-          },
-        ],
+        lessons: [twoSkillLesson(["Mean", "Median"]), twoSkillLesson(["Mode", "Range"])],
       }),
     );
 
@@ -114,9 +114,17 @@ describe(generateLessonSpec, () => {
       level: "beginner",
     });
 
-    expect(data.lessons.map((lesson) => lesson.title)).toStrictEqual([
-      "Mean and Median",
-      "Mode and Range",
+    expect(generateText).toHaveBeenCalledOnce();
+
+    expect(
+      data.lessons.map((lesson) => [
+        lesson.title,
+        lesson.screens[0]?.brief,
+        lesson.screens.at(-1)?.brief,
+      ]),
+    ).toStrictEqual([
+      ["Mean and Median", "Ana's bakery scene for Mean", "Ana decides with Median"],
+      ["Mode and Range", "Ana's bakery scene for Mode", "Ana decides with Range"],
     ]);
 
     expect(
@@ -126,12 +134,56 @@ describe(generateLessonSpec, () => {
         screen.activityTemplate,
       ]),
     ).toStrictEqual([
-      ["hook", [0], null],
+      ["hook", [], null],
+      ["explanation", [0], null],
+      ["guess", [0], null],
       ["explanation", [0], null],
       ["check", [0], null],
       ["explanation", [1], null],
-      ["activity", [1], "numberLine"],
+      ["check", [1], null],
       ["application", [0, 1], null],
+    ]);
+  });
+
+  it("keeps a lesson past the size targets whole, without planning it again", async () => {
+    const long = oneSkillLesson({
+      kinds: [
+        "hook",
+        "explanation",
+        "guess",
+        "workedExample",
+        "check",
+        "workedExample",
+        "check",
+        "workedExample",
+        "check",
+        "workedExample",
+        "check",
+        "explanation",
+        "check",
+        "workedExample",
+        "check",
+        "application",
+      ],
+      title: "Long",
+    });
+
+    vi.mocked(generateText).mockResolvedValueOnce(createGenerateTextResult({ lessons: [long] }));
+
+    const { data } = await generateLessonSpec({
+      activityTemplates: [],
+      chapterTitle: "Temperature",
+      courseTitle: "Weather",
+      language: "en",
+      lessonDescription: "Temperatures below zero.",
+      lessonTitle: "Below zero",
+      level: "beginner",
+    });
+
+    expect(generateText).toHaveBeenCalledOnce();
+
+    expect(data.lessons.map((spec) => [spec.title, spec.estimatedMinutes])).toStrictEqual([
+      ["Long", 8],
     ]);
   });
 

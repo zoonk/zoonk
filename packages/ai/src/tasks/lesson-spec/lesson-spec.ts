@@ -16,17 +16,11 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
-import {
-  LESSON_SCREEN_KINDS,
-  type LessonSpec,
-  type LessonSpecIssue,
-  getLessonSpecIssues,
-} from "./lesson-spec-rules";
+import { LESSON_SCREEN_KINDS, type LessonSpec, getLessonSpecIssues } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
 import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
-import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
  * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
@@ -102,7 +96,7 @@ export type LessonSpecParams = {
   analytics?: AiGenerationContext;
 };
 
-/** Several when the planned lesson didn't fit and was split; a quick one never is. */
+/** Several when the planner split a lesson that didn't fit; a quick one never is. */
 type LessonSpecResult = { lessons: LessonSpec[] };
 
 function formatList(items: readonly string[]): string {
@@ -194,11 +188,7 @@ async function planLesson(params: LessonSpecParams) {
   );
 
   // A quick lesson is the one short lesson a learner chose instead of the skill's lessons.
-  const lessons = params.quick
-    ? specs.slice(0, 1)
-    : specs.flatMap((spec) =>
-        splitLessonSpec({ language: params.language, level: params.level, spec }),
-      );
+  const lessons = params.quick ? specs.slice(0, 1) : specs;
 
   const data: LessonSpecResult = { lessons };
 
@@ -206,42 +196,17 @@ async function planLesson(params: LessonSpecParams) {
 }
 
 /**
- * Sizes are left to the split rule, which keeps a skill too big for one lesson whole on purpose.
- */
-const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
-  "application",
-  "checkGap",
-  "earlyCheck",
-  "guess",
-  "hook",
-  "skillReference",
-  "unpracticedSkill",
-  "untaughtSkill",
-  "workedExample",
-]);
-
-function countShapeIssues({
-  data,
-  level,
-  novice,
-}: {
-  data: LessonSpecResult;
-  level: CourseLevel;
-  novice: boolean;
-}): number {
-  return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
-    .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
-}
-
-/**
- * A lesson that doesn't fit comes back as several. A plan that breaks a shape rule is planned once
- * more, and the one with fewer broken rules is kept.
+ * A plan that breaks a shape rule is planned once more, and the one with fewer broken rules is
+ * kept. Size is a target the prompt asks for, never checked here: a lesson a little long beats a
+ * second plan, and code can't split one, since it can't write the new lessons' hooks and
+ * applications.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
+  const novice = readsNoviceRules(params);
+
   return draftAgainWhenFlawed({
     countProblems: ({ data }) =>
-      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
+      data.lessons.flatMap((spec) => getLessonSpecIssues({ novice, spec })).length,
     draft: () => planLesson(params),
   });
 }

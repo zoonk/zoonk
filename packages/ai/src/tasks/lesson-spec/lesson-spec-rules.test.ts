@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   type LessonScreen,
   type LessonScreenKind,
   type LessonSpec,
   type LessonSpecSkill,
   estimateLessonMinutes,
-  fitsLesson,
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 
@@ -52,8 +50,8 @@ const validScreens = [
   screen("application"),
 ];
 
-function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner", novice = false) {
-  return getLessonSpecIssues({ level, novice, spec: lesson }).map((issue) => issue.code);
+function getCodes(lesson: LessonSpec, novice = false) {
+  return getLessonSpecIssues({ novice, spec: lesson }).map((issue) => issue.code);
 }
 
 describe(estimateLessonMinutes, () => {
@@ -82,7 +80,7 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(validScreens))).toStrictEqual([]);
   });
 
-  it("flags too many skills, too many screens and a lesson that runs too long", () => {
+  it("leaves size to the planner's targets, so a long lesson with many skills breaks no rule", () => {
     const skills = ["A", "B", "C", "D"].map((name) => skill(name));
 
     const screens = [
@@ -97,29 +95,11 @@ describe(getLessonSpecIssues, () => {
       screen("application", [0, 1, 2, 3]),
     ];
 
-    expect(getCodes(spec(screens, skills))).toStrictEqual(["skillCount", "screenCount", "tooLong"]);
-  });
+    const lesson = spec(screens, skills);
 
-  it("allows one unsplittable advanced idea to run to six minutes", () => {
-    const screens = [
-      screen("hook", []),
-      screen("explanation"),
-      screen("guess"),
-      screen("workedExample"),
-      screen("check"),
-      screen("workedExample"),
-      screen("workedExample"),
-      screen("check"),
-      screen("workedExample"),
-      screen("check"),
-      screen("application"),
-    ];
-
-    const lesson = spec(screens, [skill("Derive the energy levels of a particle in a box", true)]);
-
-    expect(lesson.estimatedMinutes).toBe(6);
-    expect(getCodes(lesson, "advanced")).toStrictEqual([]);
-    expect(getCodes(lesson, "beginner")).toStrictEqual(["tooLong"]);
+    expect(lesson.screens).toHaveLength(19);
+    expect(lesson.estimatedMinutes).toBe(8);
+    expect(getCodes(lesson)).toStrictEqual([]);
   });
 
   it("requires the hook first and exactly one application at the end", () => {
@@ -176,21 +156,19 @@ describe(getLessonSpecIssues, () => {
     ]);
 
     expect(getCodes(early)).toStrictEqual([]);
-    expect(getCodes(questionFirst, "advanced")).toContain("earlyCheck");
+    expect(getCodes(questionFirst)).toContain("earlyCheck");
 
     expect(
-      getLessonSpecIssues({ level: "beginner", novice: true, spec: oneScreenFirst }).map(
-        (issue) => issue.code,
-      ),
+      getLessonSpecIssues({ novice: true, spec: oneScreenFirst }).map((issue) => issue.code),
     ).toContain("earlyCheck");
 
-    expect(getCodes(oneScreenFirst, "advanced")).not.toContain("earlyCheck");
-    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
+    expect(getCodes(oneScreenFirst)).not.toContain("earlyCheck");
+    expect(getCodes(spec(validScreens), true)).toStrictEqual([]);
   });
 
   it("asks no lesson for a visual on its screens", () => {
-    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
-    expect(getCodes(spec(validScreens), "advanced")).toStrictEqual([]);
+    expect(getCodes(spec(validScreens), true)).toStrictEqual([]);
+    expect(getCodes(spec(validScreens))).toStrictEqual([]);
   });
 
   it("places exactly one guess right after the first explanation, followed by another", () => {
@@ -269,20 +247,5 @@ describe(getLessonSpecIssues, () => {
     );
 
     expect(getCodes(spec(screens))).toStrictEqual(["skillReference"]);
-  });
-});
-
-describe(fitsLesson, () => {
-  it("fits up to three skills, sixteen screens and five minutes", () => {
-    expect(fitsLesson({ level: "beginner", spec: spec(validScreens) })).toBe(true);
-
-    const long = spec([
-      ...validScreens.slice(0, -1),
-      ...validScreens.slice(1, -1),
-      ...validScreens.slice(4),
-    ]);
-
-    expect(long.screens).toHaveLength(17);
-    expect(fitsLesson({ level: "beginner", spec: long })).toBe(false);
   });
 });

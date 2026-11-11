@@ -10,7 +10,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
 import { type LessonSpecExpected } from "./visual-test-cases";
 
-type LessonLevel = Parameters<typeof getLessonSpecIssues>[0]["level"];
+type LessonLevel = Parameters<typeof readsNoviceRules>[0]["level"];
 
 function isLessonSpec(value: unknown): value is LessonSpec {
   return (
@@ -122,12 +122,10 @@ function checkExpected({
 
 function checkLessonSpecs({
   expected,
-  level,
   novice,
   output,
 }: {
   expected: LessonSpecExpected | undefined;
-  level: LessonLevel;
   novice: boolean;
   output: string;
 }): CodeCheckResult {
@@ -135,7 +133,7 @@ function checkLessonSpecs({
 
   const results = lessons.map((lesson, index) => ({
     lesson,
-    problems: getLessonSpecIssues({ level, novice, spec: lesson }).map(
+    problems: getLessonSpecIssues({ novice, spec: lesson }).map(
       (issue) => `Lesson ${index + 1} ("${lesson.title}"): ${issue.detail}`,
     ),
   }));
@@ -168,7 +166,7 @@ export const checkLessonSpecOutput: TaskCodeChecks<LessonSpecExpected> = ({ outp
     material: materialText,
   });
 
-  return checkLessonSpecs({ expected: testCase.expected, level, novice, output });
+  return checkLessonSpecs({ expected: testCase.expected, novice, output });
 };
 
 export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) =>
