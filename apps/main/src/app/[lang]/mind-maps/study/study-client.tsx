@@ -4,6 +4,7 @@ import { useMindMapActions } from "@/lib/mind-maps/use-mind-map-actions";
 import { type MindMapTab, buildMindMapsHref } from "@zoonk/learn/mind-maps/urls";
 import { type DeckSlide, type LessonMindMap } from "@zoonk/player/mind-maps/deck";
 import { MindMapReader } from "@zoonk/player/mind-maps/reader";
+import { useRouter } from "next/navigation";
 
 export function MindMapStudyClient({
   deck,
@@ -19,6 +20,7 @@ export function MindMapStudyClient({
   view: MindMapTab;
 }) {
   const actions = useMindMapActions(goalId);
+  const { bfcacheId } = useRouter();
 
   return (
     <MindMapReader
@@ -30,6 +32,9 @@ export function MindMapStudyClient({
         exit: buildMindMapsHref({ page: "/mind-maps", tab: view }),
         lesson: "/learn",
       }}
+      // The router keeps a left page alive: each tap on Study opens a fresh deck, while Back
+      // returns to the map the learner was on.
+      key={bfcacheId}
       lessons={lessons}
       start={start}
       view={view}

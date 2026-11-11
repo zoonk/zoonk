@@ -157,6 +157,15 @@ test.describe("Mind maps", () => {
 
       await page.getByRole("link", { name: "Leave" }).click();
 
+      // The router keeps the Study page it left alive; opening a map again starts on that map.
+      await page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }).click();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: second.chapter.title }),
+      ).toBeVisible();
+
+      await page.getByRole("link", { name: "Leave" }).click();
+
       await page
         .getByRole("navigation", { name: "Mind maps" })
         .getByRole("link", { name: /^Saved/u })
