@@ -1,0 +1,14 @@
+{
+  "totalUsdCliRounded": 23.72,
+  "runs": {
+    "c1-writer.log": 4.73,
+    "c1-writer-incumbents.log": 1.73,
+    "c1-writer-final.log": 1.56,
+    "c1-review-real.log": 1.55,
+    "c1-review-planted.log": 2.29,
+    "c1-fix.log": 1.85,
+    "c1-spec.log": 5.16,
+    "c1-challenge.log": 4.85
+  },
+  "readerBilling": "Claude subscription readers, no AI Gateway charges"
+}

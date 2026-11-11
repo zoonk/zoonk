@@ -11,7 +11,7 @@ vi.mock("ai", async (importOriginal) => ({
   generateText: vi.fn(),
 }));
 
-const MODEL = "anthropic/claude-opus-5.5";
+const MODEL = "anthropic/claude-fable-5.2";
 
 const usage: LanguageModelUsage = {
   inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 0, noCacheTokens: 1000 },
@@ -83,6 +83,18 @@ describe(generateLevelTestBank, () => {
     }
 
     const { data, provenance, usage: total } = await pending;
+
+    for (const [options] of vi.mocked(generateText).mock.calls) {
+      expect(options.model).toBe(MODEL);
+
+      expect(options.providerOptions?.gateway).toMatchObject({
+        models: [
+          "anthropic/claude-opus-5.5",
+          "anthropic/claude-sonnet-5.5",
+          "openai/gpt-6.1-terra",
+        ],
+      });
+    }
 
     expect(data.questions).toHaveLength(20);
 

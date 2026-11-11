@@ -14,12 +14,18 @@ import promptTemplate from "./write-warm-up-cards.prompt.md";
 /**
  * Luna scored 8.59 on the warm-up-cards eval at 13 s p50 (3 Nov 2026), reading about 1,700 tokens
  * and writing 1,300 for $0.0008 a deck. On four cases with an earlier prompt it scored 7.75, ahead
- * of Gemini 3.8 Flash (7.03), Flash Lite (6.82, 5 s) and Haiku (6.76, 72 s), so the fast Flash
- * Lite falls back first.
+ * of Gemini 3.8 Flash (7.03), Flash Lite (6.82, 5 s) and Haiku (6.76, 72 s). On 8 cases (11 Nov
+ * 2026), Luna scored 8.40 at $0.75/1k, and Muse Ember 7.46 at 6 s p50 for $1.71/1k; Ember won a
+ * blind read 6 to 1 against Flash Lite (7.10, $3.63/1k), so it falls back first.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
 const defaultReasoning: Reasoning = "low";
+
+const fallbackModels = [
+  "meta/muse-ember",
+  "google/gemini-3.5-flash-lite",
+  "anthropic/claude-haiku-5.5",
+] as const;
 
 const schema = z.object({ cards: z.array(rawWarmUpCardSchema) });
 

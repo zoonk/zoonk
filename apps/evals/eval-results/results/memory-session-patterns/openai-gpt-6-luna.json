@@ -3,17 +3,47 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "forbidden": ["tired", "24 minutes", "minutes a day", "5 of"],
+          "forbidden": [
+            "tired",
+            "24 minutes",
+            "minutes a day",
+            "5 of"
+          ],
           "maxPatterns": 3,
           "patterns": [
-            { "keywords": ["fraction", "percent"] },
-            { "keywords": ["night", "evening", "9 pm", "21", "pm"] }
+            {
+              "keywords": [
+                "fraction",
+                "percent"
+              ]
+            },
+            {
+              "keywords": [
+                "night",
+                "evening",
+                "9 pm",
+                "21",
+                "pm"
+              ]
+            }
           ]
         },
         "id": "en-session-patterns-1",
@@ -25,12 +55,27 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "maxPatterns": 0, "patterns": [] },
+        "expected": {
+          "maxPatterns": 0,
+          "patterns": []
+        },
         "id": "en-session-too-little-1",
         "userInput": {
           "activity": "Answers in the last 7 days: 5 on 1 day, 60% right.",
@@ -40,13 +85,30 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "forbidden": ["minute", "day", "studies", "studied"],
+          "forbidden": [
+            "minute",
+            "day",
+            "studies",
+            "studied"
+          ],
           "maxPatterns": 0,
           "patterns": []
         },
@@ -59,15 +121,43 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expected": {
-          "forbidden": ["35 minutos", "minutos por dia", "4 de"],
+          "forbidden": [
+            "35 minutos",
+            "minutos por dia",
+            "4 de"
+          ],
           "maxPatterns": 3,
-          "patterns": [{ "keywords": ["concordancia"] }, { "keywords": ["manha", "cedo"] }]
+          "patterns": [
+            {
+              "keywords": [
+                "concordancia"
+              ]
+            },
+            {
+              "keywords": [
+                "manha",
+                "cedo"
+              ]
+            }
+          ]
         },
         "id": "pt-session-patterns-1",
         "userInput": {
@@ -78,12 +168,30 @@
     },
     {
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
-        "expected": { "forbidden": ["crase"], "maxPatterns": 0, "patterns": [] },
+        "expected": {
+          "forbidden": [
+            "crase"
+          ],
+          "maxPatterns": 0,
+          "patterns": []
+        },
         "id": "pt-session-one-slip-1",
         "userInput": {
           "activity": "Answers in the last 7 days: 41 on 4 days, 93% right.\nSkills with the most trouble:\n- Crase: 5 of 6 right, 1 mistake (1 content gap)\nRecent mistakes on Crase:\n- \"Vou à / a escola\": answered \"a\", right answer \"à\"\nStudied on 4 of the last 7 days, 20 minutes a day on average; the plan asks for 20.",

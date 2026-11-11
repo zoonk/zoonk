@@ -5,22 +5,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The spreadsheet adaptation is concrete: =AVERAGE(A1:A5) works in both Google Sheets and Excel and returns 85 for the listed scores. There are no tool-specific menus or incompatible functions. However, the requested check about what the tool shows is absent.",
-          "score": 8,
+          "reasoning": "The spreadsheet adaptation uses a real range and correct syntax: =AVERAGE(A1:A5) returns 85 for the listed scores in both Google Sheets and Excel. There are no tool-specific incompatibilities.",
+          "score": 10,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The five scores, formula, and result are correct, and the content stays on the mean. However, it drops the original explanation of adding the values and dividing by how many there are, despite an explicit requirement to retain it. This is a substantive omission rather than a false numerical claim.",
-          "score": 7,
+          "reasoning": "The five scores and spreadsheet result are correct, and the explanation screen retains its title and text with image null. However, it drops the explicitly required add-and-divide explanation, a central part of the original idea. This substantive omission triggers the at-most-6 cap for an error.",
+          "score": 6,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The title and explanation are short, plain, and in US English. The direct instruction to type the formula addresses the learner naturally. The screen remains close to the original's length, without filler, a prefatory introduction, or promises.",
-          "score": 10,
+          "reasoning": "The result is a short screen in US English, with straightforward sentences and no filler introduction or promises. Its small weakness is not using the requested learner address “you.”",
+          "score": 8,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -30,21 +30,21 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2048,
-          "outputTokens": 827,
-          "reasoningTokens": 413
+          "inputTokens": 2081,
+          "outputTokens": 621,
+          "reasoningTokens": 238
         }
       },
       "steps": [
         {
-          "conclusion": "The result omits the required explanation that the mean adds all five scores and divides by their count. It should retain the arithmetic: the scores total 425, and 425 ÷ 5 = 85. Giving the spreadsheet formula alone does not preserve this core teaching point.",
+          "conclusion": "The explanation omits the required meaning of the mean: add the five scores and divide by how many there are. Keep the spreadsheet formula, but also state that the scores total 425 and 425 ÷ 5 = 85.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "There is no check asking what the spreadsheet formula returns, as specified in the tool-version expectations.",
+          "conclusion": "The writing is concise and direct, but it does not explicitly address the learner as “you,” as requested.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
           "conclusion": "None",
@@ -53,7 +53,7 @@
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-tool-spreadsheet-mean-1",
         "userInput": {
           "key": "Spreadsheet (Google Sheets or Excel)",
@@ -74,21 +74,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Python is central to the example, and the syntax is valid. However, the asserted printed output does not match the code: there is no print call, and interactive evaluation would show 25.0 without a percent sign. The wrong-output cap of 6 applies. There is also no check asking what the tool shows.",
+          "reasoning": "Python is central, and the assignments and arithmetic are valid Python. However, no print call is provided, and the claimed printed output includes a percent sign that the expression cannot produce. This triggers the maximum score of 6 for incorrect tool output.",
           "score": 6,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The example preserves the ticket price change from R$ 80 to R$ 100 and correctly divides the increase by the starting price. However, claiming that the code prints 25.0% is a factual error, triggering the cap of 6.",
+          "reasoning": "The example retains the R$ 80 to R$ 100 change, uses the starting price as the denominator, and calculates the correct numerical percentage. It preserves the original populated fields and keeps image null. Nevertheless, the assertion that the code prints 25.0% is factually incorrect, triggering the maximum score of 6 for any error.",
           "score": 6,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen is concise and written in natural Brazilian Portuguese, with direct instructions and familiar vocabulary. It remains close to the original length and contains no introduction, filler, or promises.",
+          "reasoning": "The screen is concise and written in natural Brazilian Portuguese, with direct instructions and no introduction, filler, or promises. Its length remains comparable to the original.",
           "score": 9,
           "label": "Short, plain writing",
           "weight": 25
@@ -99,30 +99,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2201,
-          "outputTokens": 641,
-          "reasoningTokens": 185
+          "inputTokens": 2234,
+          "outputTokens": 664,
+          "reasoningTokens": 181
         }
       },
       "steps": [
         {
-          "conclusion": "The claimed printed output is incorrect: the code contains no print call, so a Python script prints nothing. In an interactive session, the final expression displays 25.0, not 25.0%. This fails the requirement to show what Python actually prints, although the percentage calculation itself is correct.",
+          "conclusion": "The claimed printed output is incorrect. The final expression does not print anything when run as a script; in an interactive Python session it displays 25.0, not 25.0%. Use print((variacao / preco_inicial) * 100), show the output as 25.0, and state separately that the price increased by 25%.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "There are three short steps, but they do not consistently contain one move each: the first combines two assignments, and the third combines division and multiplication. Separating these operations would better meet the step requirement.",
+          "conclusion": "The three steps meet the required count, but they do not consistently contain one move each: the first assigns two variables, and the third combines division and multiplication. Split these into short individual steps, keeping the total within eight.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Add a brief check asking what Python prints, keeping the numeric output separate from its interpretation as a 25% price increase.",
+          "conclusion": "Retain the concrete price change in the title, for example, 'De R$ 80 para R$ 100 em Python', to make the worked example easier to identify.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (a price going from R$ 80 to R$ 100) done in Python: the change divided by the starting value, such as `(100 - 80) / 80 * 100`, with what Python prints (25.0)\n      - Keeps 2 to 8 short steps, each one move, and the result is still a 25% increase\n      - Real Python syntax that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The same worked example (a price going from R$ 80 to R$ 100) done in Python: the change divided by the starting value, such as `(100 - 80) / 80 * 100`, with what Python prints (25.0)\n      - Keeps 2 to 8 short steps, each one move, and the result is still a 25% increase\n      - Real Python syntax that runs as written\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-tool-python-percent-change-1",
         "userInput": {
           "key": "Python",
@@ -158,22 +158,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Includes the correct command and an exact example response, without explicitly asking the learner to open, install, download, or run anything or suggesting they miss out. However, the claim about \"your system\" blurs the distinction between a read-only example and an actual check of the learner's device.",
+          "reasoning": "Includes the correct command and a valid exact example output, without explicitly asking the learner to open, install, download, or run anything. It never suggests the learner is missing out. However, \"When you run\" and \"on your system\" leave the read-only framing unclear rather than cleanly presenting an example on another computer.",
           "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "Preserves the title and version-checking topic, but removes the installation condition and overstates what the example establishes by declaring Python correctly installed and ready on the learner's system. This accuracy error triggers the category's maximum score of 6.",
+          "reasoning": "Preserves the explanation screen, title, version-checking topic, and required fields, with image null. However, it removes the original's installed-Python condition and treats example output as confirmation that the learner's own system is correctly configured and ready. This unsupported claim triggers the accuracy cap of 6.",
           "score": 6,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "A short, direct explanation in US English that addresses the learner as \"you.\" It remains close to the original's length and has no introduction, filler, or unrelated material.",
-          "score": 10,
+          "reasoning": "Uses US English, addresses the reader as \"you,\" and stays close to the original's length. It is a compact screen without an introduction, filler, or unrelated material.",
+          "score": 9,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -183,14 +183,14 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1940,
-          "outputTokens": 740,
-          "reasoningTokens": 306
+          "inputTokens": 1973,
+          "outputTokens": 739,
+          "reasoningTokens": 291
         }
       },
       "steps": [
         {
-          "conclusion": "The text drops the original's condition, \"If Python is installed,\" and says the command confirms Python is correctly installed and ready to use on your system. A sample response does not verify the learner's system, and a version response alone does not establish that the installation is fully ready to use.",
+          "conclusion": "The text overstates what the example establishes: it says Python is correctly installed and ready to use \"on your system,\" although the learner has only read an example. It also drops the original's condition, \"If Python is installed,\" making the successful response sound guaranteed.",
           "kind": "majorErrors",
           "score": 6
         },
@@ -200,13 +200,13 @@
           "score": 10
         },
         {
-          "conclusion": "Make the example explicitly read-only: \"If Python is installed, typing `python3 --version` would print a version such as `Python 3.13.1`. This means Python is available and its version is 3.13.1.\"",
+          "conclusion": "Frame this explicitly as an example you can read: show `python3 --version`, then `Python 3.13.1`, and explain that this output means Python is available on the example computer and its version is 3.13.1.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "en-no-install-terminal-version-1",
         "userInput": {
           "key": "no-install",
@@ -227,22 +227,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The check presents the cell values and formula as a read-only example and asks what A4 displays. It never asks the learner to open Excel, type, or run anything. The syntax and expected output are correct.",
-          "score": 10,
+          "reasoning": "The check successfully becomes a read-only example: it supplies the cells and formula, asks what A4 shows, and never asks the learner to open or use software. The image remains null. However, it does not preserve the original option IDs, so the explicit field-preservation requirement is not fully met.",
+          "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "It preserves the original summation concept and all relevant values. Exactly one option is correct: 60. Every option has an accurate explanation, and the distractors represent adding only two cells or expecting the formula to appear as text.",
+          "reasoning": "The original idea is preserved accurately. SOMA(A1:A3) adds 10, 20, and 30 to produce 60, the only marked correct option. Every option has a reason, and both distractors represent genuine beginner slips: adding only two cells or expecting the formula itself to appear. No unrelated lesson content is introduced.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen is compact, uses Brazilian Portuguese and addresses the learner as “você.” However, the context packs all the setup into one relatively long sentence; shorter sentences would better meet the plain-writing expectation.",
-          "score": 8,
+          "reasoning": "The text is natural Brazilian Portuguese, addresses the learner as você, and remains a short screen with understandable explanations. There is no promotional introduction, promise, or substantial filler. A more compact cell display would make the context slightly easier to scan.",
+          "score": 9,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -252,9 +252,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2190,
-          "outputTokens": 642,
-          "reasoningTokens": 267
+          "inputTokens": 2223,
+          "outputTokens": 749,
+          "reasoningTokens": 304
         }
       },
       "steps": [
@@ -264,18 +264,18 @@
           "score": 10
         },
         {
-          "conclusion": "The context uses one relatively long sentence where shorter sentences would be easier for a beginner to read.",
+          "conclusion": "The options omit the original populated id fields: sixty, thirty, and formula. This fails the requirement to retain every field the original fills, although the learner-facing check remains usable.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Shorten the context to: “Na planilha, A1 contém 10, A2 contém 20 e A3 contém 30. A fórmula em A4 é =SOMA(A1:A3).”",
+          "conclusion": "Make the context more direct by replacing the introductory framing with a compact display such as “A1: 10; A2: 20; A3: 30; A4: =SOMA(A1:A3)” before the question.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field the original fills\n  - `image` stays null, and `exampleLineIdea`, `visual` and `explore` may stay null when the original has none\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "pt-no-install-excel-check-1",
         "userInput": {
           "key": "no-install",

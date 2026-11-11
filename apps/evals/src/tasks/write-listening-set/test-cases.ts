@@ -191,4 +191,50 @@ export const TEST_CASES: TestCase<unknown, WriteListeningSetInput>[] = [
       task: "Part 2: there is only one main speaker, for example, a speech about local facilities",
     },
   },
+  {
+    expectations:
+      'Cambridge B2 First sentence completion. Every accepted answer must produce a grammatical sentence when inserted into its gap. If the question already says "a ________", accept "poster" but never "a poster". Check every accepted alternative, not just the first. The answer must be in the transcript. Reasons use the learner language.',
+    id: "en-cambridge-accepted-article-regression",
+    userInput: {
+      accents: ["British English"],
+      count: 6,
+      exam: "Cambridge B2 First",
+      formats: ["typed"],
+      language: "en",
+      level: "B2",
+      plays: 2,
+      scriptLanguage: "en",
+      skills: [
+        {
+          description:
+            "Catch the specific word or phrase a speaker says about a topic, ignoring nearby distractors",
+          name: "Pick out specific information in a monologue",
+        },
+      ],
+      task: "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test.",
+    },
+  },
+  {
+    expectations:
+      'Cambridge B2 First sentence completion. Every accepted answer must produce a grammatical sentence when inserted into its gap. If the question already says "a ________", accept "poster" but never "a poster". Check every accepted alternative, not just the first. The answer must be in the transcript. Reasons use the learner language.',
+    id: "pt-cambridge-accepted-article-regression",
+    userInput: {
+      accents: ["British English"],
+      count: 6,
+      exam: "Cambridge B2 First",
+      formats: ["typed"],
+      language: "pt",
+      level: "B2",
+      plays: 2,
+      scriptLanguage: "en",
+      skills: [
+        {
+          description:
+            "Catch the specific word or phrase a speaker says about a topic, ignoring nearby distractors",
+          name: "Pick out specific information in a monologue",
+        },
+      ],
+      task: "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test.",
+    },
+  },
 ];
