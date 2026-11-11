@@ -1,7 +1,10 @@
+import { EssayScreen } from "@zoonk/learn/essay";
+import { LearnProvider } from "@zoonk/learn/provider";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { render } from "../_test-utils/render";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
@@ -26,7 +29,48 @@ function playQuestion() {
   renderLessonPlayer({ lesson, tutor: buildTutor() });
 }
 
-describe("collapsing the lesson's sidebar", () => {
+const SUPPORTING_TEXT = "Cities that charge cars to enter their center see less traffic. ".repeat(
+  8,
+);
+
+function renderEssay() {
+  return render(
+    <LearnProvider
+      adapters={{
+        analytics: { track: vi.fn() },
+        linkComponent: ({ children, className, href }) => (
+          <a className={className} href={href}>
+            {children}
+          </a>
+        ),
+        routes: {
+          buddy: "/buddy",
+          journey: "/plan",
+          signUp: "/login",
+          today: "/",
+          upgrade: "/plus",
+        },
+      }}
+    >
+      <EssayScreen
+        actions={{ finish: vi.fn(async () => true), submit: vi.fn() }}
+        essay={{
+          blockId: "essay-block",
+          context: SUPPORTING_TEXT,
+          drafts: [],
+          gradesLeft: 3,
+          question: "Should cities charge cars to enter the center?",
+          rubric: "custom",
+          sessionId: "session",
+          status: "pending",
+        }}
+        hrefs={{ exit: "/today" }}
+      />
+    </LearnProvider>,
+  );
+}
+
+describe("collapsing a task's sidebar", () => {
   afterEach(() => {
     document.documentElement.removeAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
     localStorage.removeItem(ASIDE_COLLAPSED_KEY);
@@ -81,5 +125,24 @@ describe("collapsing the lesson's sidebar", () => {
 
     const map = page.getByRole("dialog", { name: "Lesson map" });
     await expect.element(map.getByText("Electrons live in clouds.")).toBeVisible();
+  });
+
+  it("keeps the choice on every task, each showing what its sidebar held in the column", async () => {
+    const essay = renderEssay();
+    const essayAside = page.getByRole("complementary", { name: "Supporting texts" });
+    await expect.element(essayAside).toBeVisible();
+
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
+
+    await expect.poll(() => essayAside.query()).toBeNull();
+    await expect.element(page.getByRole("heading", { name: "Supporting texts" })).toBeVisible();
+    essay.unmount();
+
+    playQuestion();
+    await page.getByRole("button", { name: /^Next/u }).click();
+
+    await expect.element(page.getByRole("button", { name: "Expand sidebar" })).toBeVisible();
+    expect(aside().query()).toBeNull();
+    await expect.poll(showsRecapRow).toBe(true);
   });
 });

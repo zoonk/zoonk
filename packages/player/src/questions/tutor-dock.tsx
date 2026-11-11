@@ -134,7 +134,7 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
     <section
       aria-label={t("Questions to {name}", { name: buddy.identity.name })}
       className={cn(
-        "bg-background hidden lg:top-0 lg:bottom-(--task-aside-bottom) lg:z-40 lg:flex lg:flex-col",
+        "bg-background with-aside:top-0 with-aside:bottom-(--task-aside-bottom) with-aside:z-40 with-aside:flex with-aside:flex-col hidden",
         TASK_ASIDE_PLACE_CLASS,
       )}
       data-slot="tutor-docked-conversation"

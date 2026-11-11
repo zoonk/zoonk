@@ -9,7 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { PanelRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { createContext, use, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import { deviceStorage } from "../_utils/device-storage";
 import { useAppLocale } from "../_utils/locale";
 import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
@@ -34,7 +34,7 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
-/** The end side offers the aside's toggle on a task that lets the learner collapse it. */
+/** The end side offers the aside's toggle on a task that has one. */
 export function TaskHeaderSide({
   align,
   children,
@@ -169,23 +169,14 @@ function isAsideCollapsed(): boolean {
   return document.documentElement.hasAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
 }
 
-const CollapsibleAsideContext = createContext(false);
-
-/** Wraps a task whose root is `getTaskAsideRootProps({ collapsible: true })`, menus and sheets included. */
-export function CollapsibleTaskAside({ children }: { children: React.ReactNode }) {
-  return <CollapsibleAsideContext value>{children}</CollapsibleAsideContext>;
-}
-
 /**
  * Follows the `with-aside` variant in `@zoonk/ui`'s `globals.css`. False on the server and while
  * hydrating, so layout stays in CSS; use it only for behavior.
  */
 export function useTaskAsideShown(): boolean {
-  const collapsible = use(CollapsibleAsideContext);
-
   return useSyncExternalStore(
     subscribeToAside,
-    () => globalThis.matchMedia(ASIDE_QUERY).matches && !(collapsible && isAsideCollapsed()),
+    () => globalThis.matchMedia(ASIDE_QUERY).matches && !isAsideCollapsed(),
     () => false,
   );
 }
@@ -211,7 +202,7 @@ function TaskAsideToggle() {
         onClick={toggleAside}
         render={
           <Button
-            className="hidden shrink-0 lg:group-data-aside-collapsible/task:inline-flex"
+            className="hidden shrink-0 lg:group-data-aside/task:inline-flex"
             data-slot="task-aside-toggle"
             size="icon"
             variant="ghost"

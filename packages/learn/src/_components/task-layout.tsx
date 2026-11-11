@@ -83,13 +83,10 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 /**
  * `--task-bar` is the header row's height (36px buttons in `py-2`, `py-3` from `xl`) and
  * `--task-aside-bottom` the action bar's row (73px), or the buddy's dock when it's taller.
- * `collapsible` lets the learner collapse the aside from the header (`TaskHeaderSide`), which the
- * `with-aside` and `without-aside` variants follow; its screens then lay out as below `lg`.
+ * Lay out what depends on the aside with the `with-aside` and `without-aside` variants, not `lg`:
+ * once the learner collapses it from the header (`TaskHeaderSide`), the task lays out as below `lg`.
  */
-export function getTaskAsideRootProps({
-  collapsible = false,
-  width = "default",
-}: { collapsible?: boolean; width?: TaskAsideWidth } = {}) {
+export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAsideWidth } = {}) {
   return {
     className: cn(
       "group/task with-aside:pr-(--task-aside)",
@@ -97,7 +94,6 @@ export function getTaskAsideRootProps({
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
-    "data-aside-collapsible": collapsible ? "" : undefined,
   };
 }
 
@@ -233,7 +229,6 @@ export function TaskSkeleton({
   actions,
   aside,
   children,
-  collapsible = false,
   menu = false,
   progress = false,
   title,
@@ -242,18 +237,16 @@ export function TaskSkeleton({
   /** `true` keeps an empty aside until the screen arrives. */
   aside?: React.ReactNode;
   children: React.ReactNode;
-  collapsible?: boolean;
   menu?: boolean;
   progress?: boolean;
   title?: React.ReactNode;
 }) {
-  const root = aside ? getTaskAsideRootProps({ collapsible }) : null;
+  const root = aside ? getTaskAsideRootProps() : null;
 
   return (
     <main
       className={cn("flex min-h-dvh flex-col", root?.className)}
       data-aside={root?.["data-aside"]}
-      data-aside-collapsible={root?.["data-aside-collapsible"]}
     >
       <div className="border-b border-transparent">
         <div className={TASK_HEADER_BAR_CLASS}>
@@ -262,7 +255,7 @@ export function TaskSkeleton({
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            {aside && collapsible && <Skeleton className="hidden size-9 rounded-lg lg:block" />}
+            {aside && <Skeleton className="hidden size-9 rounded-lg lg:block" />}
             {menu && <Skeleton className="-mr-2.5 size-9 rounded-lg" />}
           </div>
         </div>

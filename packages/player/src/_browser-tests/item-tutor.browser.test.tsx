@@ -1,8 +1,7 @@
 import { type TutorItem } from "@zoonk/learn/question-tutor";
 import { TaskAside, TaskAsideContent, getTaskAsideRootProps } from "@zoonk/learn/task-layout";
-import { ASIDE_COLLAPSED_ATTRIBUTE } from "@zoonk/ui/components/sidebar";
 import { useState } from "react";
-import { describe, expect, it, onTestFinished } from "vitest";
+import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
 import { render } from "../_test-utils/render";
@@ -228,27 +227,6 @@ describe("the buddy beside a run of questions", () => {
     await expect.element(conversationLink).toBeVisible();
     await conversationLink.click();
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
-  });
-
-  it("keeps its aside's behavior while a lesson the learner collapsed stays mounted behind it", async () => {
-    const lesson = Object.assign(document.createElement("div"), { hidden: true });
-    lesson.dataset.asideCollapsible = "";
-    document.body.append(lesson);
-    document.documentElement.setAttribute(ASIDE_COLLAPSED_ATTRIBUTE, "");
-
-    onTestFinished(() => {
-      lesson.remove();
-      document.documentElement.removeAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
-    });
-
-    stubTutorApi({});
-    render(<QuestionRun questions={[EVEN]} />);
-    await missAndAskWhy();
-    await dockedConversation().getByRole("button", { name: "Back" }).click();
-
-    await runAside().getByRole("button", { name: "1 question" }).click();
-    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
-    await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("docks the conversation over the question's shared text, which comes back after", async () => {

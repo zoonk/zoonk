@@ -91,12 +91,12 @@ function SummaryButtons({
       {stopped && <KeepGoingButton className={sharedRow} keepGoing={keepGoing} />}
 
       {continuesToRewards && (
-        <TaskMainButton className={cn("lg:hidden", ownRow)} onClick={rewards.show}>
+        <TaskMainButton className={cn("with-aside:hidden", ownRow)} onClick={rewards.show}>
           {t("Continue")}
         </TaskMainButton>
       )}
 
-      <FinishLink className={cn(continuesToRewards && "max-lg:hidden", ownRow)} />
+      <FinishLink className={cn(continuesToRewards && "without-aside:hidden", ownRow)} />
     </TaskActions>
   );
 }
@@ -161,7 +161,7 @@ export function SummarySteps() {
         }
         headerTitle={
           rewards.exists ? (
-            <StepDots className="lg:hidden" current={rewards.open ? 1 : 0} total={2} />
+            <StepDots className="with-aside:hidden" current={rewards.open ? 1 : 0} total={2} />
           ) : null
         }
       >
