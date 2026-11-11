@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planChangeFixture,
+  planFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
@@ -11,8 +16,16 @@ const SUBJECTS = ["Portuguese", "Administrative law", "Statistics"];
 const QUESTIONS_PER_SUBJECT = 2;
 const DAYS_TO_EXAM = 60;
 const MS_PER_DAY = 86_400_000;
+const SHORT_DAILY_MINUTES = 5;
+const LESSONS_PAST_THE_TIME = 60;
 
-async function createExamGoalAtFocusTest(userId: string) {
+const AT_THE_TEST = [...PROFILE_QUESTIONS, "target", "targetDate", "level", "buddy"];
+
+/**
+ * `seen`: past its setup, on a plan the learner has seen whose time doesn't cover everything, so
+ * the test proposes its focus instead of setting it.
+ */
+async function createExamGoalAtFocusTest(userId: string, { seen = false } = {}) {
   const suffix = randomUUID().slice(0, 6);
 
   const blueprint = await examBlueprintFixture({
@@ -36,13 +49,15 @@ async function createExamGoalAtFocusTest(userId: string) {
   const [goal, skills] = await Promise.all([
     goalFixture({
       details: {
-        answered: [...PROFILE_QUESTIONS, "target", "targetDate", "level", "buddy"],
+        answered: seen ? [...AT_THE_TEST, "placement", "schedule"] : AT_THE_TEST,
         examName: blueprint.name,
       },
       examBlueprintId: blueprint.id,
       kind: "exam",
-      planRevealedAt: null,
+      planRevealedAt: seen ? new Date() : null,
       targetDate: new Date(Date.now() + DAYS_TO_EXAM * MS_PER_DAY),
+      timezone: "UTC",
+      ...(seen && { dailyMinutes: SHORT_DAILY_MINUTES }),
       title: blueprint.name,
       userId,
     }),
@@ -50,12 +65,13 @@ async function createExamGoalAtFocusTest(userId: string) {
   ]);
 
   const plan = await planFixture({
+    coveredShare: seen ? 0.5 : null,
     goalId: goal.id,
     graph: {
       phases: [{ milestone: null, name: "Foundations" }],
       skills: skills.map((skill, index) => ({
         area: SUBJECTS[index] ?? "",
-        lessons: 2,
+        lessons: seen ? LESSONS_PAST_THE_TIME : 2,
         name: skill.name,
         phase: 0,
         skillId: skill.id,
@@ -81,6 +97,29 @@ async function createExamGoalAtFocusTest(userId: string) {
   ]);
 
   return goal;
+}
+
+/** The focus the test proposes on a plan already seen, as core stores it for the learner to answer. */
+async function proposeFocus(goalId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+  const today = new Date().toISOString().slice(0, 10);
+
+  return planChangeFixture({
+    kind: "edited",
+    payload: {
+      effect: { endDateAfter: today, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 0 },
+      operations: [{ areas: [SUBJECTS[0]], kind: "focusAreas" }],
+      previewBasis: { planVersion: plan.version, studyDay: today, timeZone: "UTC" },
+      source: "focusTest",
+    },
+    planId: plan.id,
+    status: "proposed",
+  });
+}
+
+async function readChangeStatus(id: string) {
+  const change = await prisma.planChange.findUniqueOrThrow({ where: { id } });
+  return change.status;
 }
 
 async function dropFirstAnswerResponse(page: Page) {
@@ -177,4 +216,37 @@ test.describe("An exam's Focus test in onboarding", () => {
     expect(saved.attempts).toHaveLength(0);
     expect(saved.details).toMatchObject({ answered: expect.arrayContaining(["placement"]) });
   });
+});
+
+test("a focus proposed on a plan already seen applies on the learner's tap, and Undo takes it back", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createExamGoalAtFocusTest(noProgressUser.id, { seen: true });
+
+  await page.goto(`/focus-test?goal=${goal.id}`);
+  await page.getByRole("button", { name: "Start the test" }).click();
+  await expect(question(page, 1)).toBeVisible();
+  await page.getByRole("button", { name: "I don't know yet" }).click();
+  await expect(question(page, 2)).toBeVisible();
+  await page.getByRole("button", { name: "Stop and use my answers" }).click();
+  await expect(page.getByRole("heading", { name: "Your starting plan" })).toBeVisible();
+
+  const change = await proposeFocus(goal.id);
+  await page.reload();
+
+  const update = page.getByRole("button", { name: "Update my plan" });
+  const done = page.getByRole("button", { exact: true, name: "Done" });
+
+  await expect(update).toBeVisible();
+  await expect(done).not.toHaveAttribute("aria-keyshortcuts", "Enter");
+
+  await update.click();
+  await expect(page.getByText("Done. Your plan now gives these more time.")).toBeVisible();
+  await expect(done).toHaveAttribute("aria-keyshortcuts", "Enter");
+  expect(await readChangeStatus(change.id)).toBe("applied");
+
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
+  expect(await readChangeStatus(change.id)).toBe("proposed");
 });
