@@ -406,28 +406,28 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "Question 3 correctly selects Dylan's constant 5% monthly growth. Question 14 does not preserve the source answer identified by the expectations, triggering the maximum score of 5 for a wrong key. Its displayed version also admits a nonterminating representation of 8, undermining the rejection of another option. Question 16's radical calculation is correct only for an expression not actually displayed.",
+          "reasoning": "Questions 3, 4, and 7 have correct keys: constant 5% growth is exponential; Andrea's mean is 85.75 versus Joe's 82.5, while Joe has greater standard deviation; and (60−12)/(12−4)=6. However, question 14's key differs from the original radical question's answer, triggering the maximum score of 5. Question 16's displayed notation also fails to support its intended radical answer.",
           "score": 4,
           "label": "Right answers",
           "weight": 30
         },
         {
           "categoryId": "selection",
-          "reasoning": "Both explicitly excluded questions, 14 and 16, are included, triggering the cap of 6. Required questions 4 and 7 are missing without justification, also triggering the omission cap of 8. Their supplied tables are sufficient: Andrea's mean is 85.75 versus Joe's 82.5, Joe has greater standard deviation, and the average rate of change is (60−12)/(12−4)=6. Only question 3 is correctly selected.",
-          "score": 3,
+          "reasoning": "All three eligible questions are included, and the unusable box-plot question and other garbled questions are excluded. However, questions 14 and 16 are explicitly prohibited by the expectations and were nevertheless included. This triggers the maximum score of 6. Question 16 additionally tests radical simplification rather than classification as rational or irrational.",
+          "score": 6,
           "label": "Which questions",
           "weight": 25
         },
         {
           "categoryId": "feedback",
-          "reasoning": "Question 3 provides useful distinctions between fixed amounts and fixed percentages. However, question 14 incorrectly says an integer cannot be expressed as a nonterminating decimal and confusingly calls the displayed 8.0 both terminating and repeating. Question 16 includes a vague, internally mismatched distractor explanation, and most reasons lack the required learner-directed wording. These weaknesses prevent reliable instructional feedback.",
-          "score": 6,
+          "reasoning": "Every option has feedback, but question 4's first explanation makes a false claim about the means and contradicts the correct-option explanation. Question 14 incorrectly denies that 8 can have a nonterminating decimal representation. Several misconception labels are vague, triggering the maximum score of 7, and many explanations omit the required learner-directed \"you.\"",
+          "score": 5,
           "label": "Feedback on every option",
           "weight": 25
         },
         {
           "categoryId": "citation",
-          "reasoning": "Every citation names the Regents Examination in Algebra I, June 2025, and the correct question number. The quoted stems and options reproduce the supplied extracted text with normal word spacing and without option numbers. No support-text credit line is omitted. The decision to use damaged mathematical text is assessed under selection and correctness.",
+          "reasoning": "Every citation identifies the Regents Examination in Algebra I, June 2025, and the original question number. Quoted wording follows the supplied transcription, options omit their printed numbers, and questions 4 and 7 preserve their data in properly structured tables without the computations note. No glued words or missing source credit lines appear.",
           "score": 10,
           "label": "Citation, credit and copy",
           "weight": 20
@@ -435,55 +435,61 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "3 of 7 parts passed. Question 4: The support text isn't in the paper as printed. Question 7: The support text isn't in the paper as printed. Question 12: The support text isn't in the paper as printed. Question 12: The question depends on a figure, which can't be copied. Question 23: The command isn't in the paper as printed. Question 23: Option 1 isn't in the paper as printed. Question 23: Option 2 isn't in the paper as printed. Question 23: Option 3 isn't in the paper as printed. Question 23: Option 4 isn't in the paper as printed.",
-          "score": 4.857142857142857,
+          "reasoning": "5 of 7 parts passed. Question 12: The support text isn't in the paper as printed. Question 12: The question depends on a figure, which can't be copied. Question 23: The command isn't in the paper as printed. Question 23: Option 1 isn't in the paper as printed. Question 23: Option 2 isn't in the paper as printed. Question 23: Option 3 isn't in the paper as printed. Question 23: Option 4 isn't in the paper as printed.",
+          "score": 7.428571428571429,
           "weight": 30
         }
       ],
-      "itemsScored": 3,
+      "itemsScored": 5,
       "judge": {
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1139,
-          "inputTokens": 8224,
-          "outputTokens": 1424,
-          "reasoningTokens": 516
+          "cacheWriteTokens": 1161,
+          "inputTokens": 9333,
+          "outputTokens": 1957,
+          "reasoningTokens": 918
         }
       },
       "keyFlaws": [
         {
+          "itemLocator": "questions[1].item (question 4)",
+          "keyedAnswer": "The mean of Andrea’s test scores is higher than Joe’s, but Joe’s standard deviation is higher than Andrea’s.",
+          "kind": "factualError",
+          "workedAnswer": "Andrea's mean is (82+87+90+84)/4=85.75; Joe's is (91+78+94+67)/4=82.5. Their population variances are 9.1875 and 116.25, respectively, so the key is correct. However, the first distractor's explanation falsely states that Andrea's mean is lower."
+        },
+        {
           "itemLocator": "questions[4].item (question 14)",
           "keyedAnswer": "rational, since the sum can be expressed as an integer",
-          "kind": "twoDefensible",
-          "workedAnswer": "As displayed, 3+5=8, so the keyed integer explanation is true. But 8 can also be expressed as the nonterminating repeating decimal 7.999…, making the second option defensible as worded. The feedback's categorical denial of a nonterminating representation is false."
+          "kind": "factualError",
+          "workedAnswer": "For the displayed stem, 3+5=8, so the keyed integer classification is correct. However, the second option's feedback incorrectly says that 8 cannot be expressed as a nonterminating decimal: 8=7.999… . Terminating integers also have nonterminating repeating representations."
         },
         {
           "itemLocator": "questions[5].item (question 16)",
           "keyedAnswer": "14 3",
           "kind": "factualError",
-          "workedAnswer": "The explanation correctly computes 2√27+4√12=6√3+8√3=14√3, but the displayed stem says \"2 27\" and \"4 12,\" and the keyed option says \"14 3.\" Those strings omit the radical operations necessary to establish the answer; the explanation solves a different, reconstructed expression."
+          "workedAnswer": "The explanation correctly computes 2√27+4√12=6√3+8√3=14√3, but the displayed stem and options omit every radical sign. Thus the explanation solves a different, reconstructed expression, and the displayed notation does not establish the keyed answer."
         }
       ],
       "steps": [
         {
-          "conclusion": "The result includes questions 14 and 16 despite the explicit requirement to exclude their damaged mathematical text, and omits required questions 4 and 7. Question 14 changes the source key and introduces a false claim about decimal representations. Question 16 explains an expression containing radicals that are absent from both its stem and options.",
+          "conclusion": "Questions 14 and 16 were included despite explicit instructions to exclude their corrupted expressions. Question 14 was rekeyed for the damaged text rather than preserving the paper's answer, and question 16's feedback assumes radical signs missing from its stem and options. Question 4 also falsely tells learners that Andrea's mean is lower than Joe's in the first distractor explanation.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Most explanations do not address the learner as \"you,\" as required. Question 16's explanation for \"34 3\" vaguely attributes an error to combining numbers under a radical, while its misconception label instead describes adding simplified coefficients.",
+          "conclusion": "Many explanations do not address the learner as \"you.\" Some distractor diagnoses are vague or inconsistent: question 7's explanation for 8 discusses an incorrect interval, while its misconception label describes dividing height values; the explanation for 58 merely alleges incorrect arithmetic.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make each distractor explanation identify a specific, supported mistake and show the corrective reasoning. For the required table questions, use the actual means and the change-in-height divided by elapsed-weeks calculation.",
+          "conclusion": "Keep only questions 3, 4, and 7. Improve feedback by identifying the particular calculation behind each distractor and explicitly comparing the standard deviations in question 4 rather than relying only on ranges.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
+        "expectations": "Questions in US English from Part I (the multiple-choice questions 1 to 24) only. The questions that read correctly and test a listed skill are 3 (skill 1, key: Dylan's 5% monthly growth), 4 (skill 2, key: Andrea's mean is higher but Joe's standard deviation is higher) and 7 (skill 3, key: 6), and each is copied with that key. Question 12 needs its box plots and is left out. Questions 14 and 16 lost their square roots in the text (\"The sum of 3 and 5 is\"), so copying them would make the key false: they are left out, and skill 4 gets no question. Questions whose expressions came out garbled (such as \"2x2 1 3x 1 1\") are left out. Question 4 copies its scores as a table that shows as one (the header row, a --- line, then one row per line), without the page's \"Use this space for computations.\" note. Options are copied without their numbers, matched to the right option even though the paper prints them in the order (1), (3), (2), (4). Citations name the Algebra I Regents, June 2025 and the number.",
         "id": "en-algebra-one-regents-june-2025-full-1",
         "userInput": {
           "count": 10,
