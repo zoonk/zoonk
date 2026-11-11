@@ -13,21 +13,32 @@ type ReadFailure =
 export type StaffResult<T> = ({ status: "ready" } & T) | ReadFailure;
 type Call = { verb: string; model?: string; id?: unknown; where?: { field: string; op: string }[] };
 
-function queryTimedOut(error: unknown): boolean {
+function queryErrorCode(error: unknown): string | undefined {
   if (!error || typeof error !== "object") {
-    return false;
+    return;
   }
 
-  if ("code" in error && error.code === "57014") {
-    return true;
+  const meta = "meta" in error ? error.meta : undefined;
+
+  if (meta && typeof meta === "object") {
+    const adapter = "driverAdapterError" in meta ? meta.driverAdapterError : undefined;
+    const cause = adapter instanceof Error ? adapter.cause : undefined;
+
+    if (
+      cause &&
+      typeof cause === "object" &&
+      "originalCode" in cause &&
+      typeof cause.originalCode === "string"
+    ) {
+      return cause.originalCode;
+    }
+
+    if ("code" in meta && typeof meta.code === "string") {
+      return meta.code;
+    }
   }
 
-  return (
-    ("message" in error &&
-      typeof error.message === "string" &&
-      error.message.includes("statement timeout")) ||
-    ["cause", "meta", "driverAdapterError"].some((key) => queryTimedOut(Reflect.get(error, key)))
-  );
+  return "code" in error && typeof error.code === "string" ? error.code : undefined;
 }
 
 function failedRead(error: unknown): ReadFailure {
@@ -35,11 +46,17 @@ function failedRead(error: unknown): ReadFailure {
     return { message: error.message, status: "invalid" };
   }
 
-  if (queryTimedOut(error)) {
+  const code = queryErrorCode(error);
+
+  if (code === "57014") {
     return {
       message: "The query exceeded 5 seconds. Use narrower filters and try again.",
       status: "timeout",
     };
+  }
+
+  if (code?.startsWith("22") || code === "P2029") {
+    return { message: "A filter value doesn't fit its column.", status: "invalid" };
   }
 
   return { status: "error" };

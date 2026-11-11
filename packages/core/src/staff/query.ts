@@ -6,6 +6,7 @@ import { type StaffFilter, StaffInputError, staffIntegerMax } from "./input";
 import { readableFields, readableModels } from "./registry";
 
 const numericText = /^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/iu;
+const MAX_MEMBERSHIP_VALUES = 1000;
 
 const integer = z.preprocess(
   numberFromText,
@@ -182,6 +183,10 @@ function filterWhere({ model, filter }: { model: DatabaseModel; filter: StaffFil
   }
 
   if (filter.op === "in" || filter.op === "notIn") {
+    if (Array.isArray(filter.value) && filter.value.length > MAX_MEMBERSHIP_VALUES) {
+      throw new StaffInputError(`${filter.op} accepts at most ${MAX_MEMBERSHIP_VALUES} values.`);
+    }
+
     const values = parseFieldValue({
       field,
       isList: true,
