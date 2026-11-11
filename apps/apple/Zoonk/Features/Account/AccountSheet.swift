@@ -397,7 +397,14 @@ private struct SettingsHubView: View {
             // Words, not data: main's summary is in the sans face.
             Group {
               if let buddy = settings.preferences.value?.buddy {
-                Text(verbatim: "\(buddy.displayName)\u{00A0}· \(appLanguageName)")
+                // Short of room, the buddy's name gives way to the language.
+                HStack(spacing: 0) {
+                  Text(verbatim: "\(buddy.displayName)\u{00A0}· ")
+                    .lineLimit(1)
+                  Text(appLanguageName)
+                    .layoutPriority(1)
+                }
+                .accessibilityElement(children: .combine)
               } else {
                 Text(appLanguageName)
               }

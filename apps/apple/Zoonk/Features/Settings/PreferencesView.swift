@@ -6,6 +6,7 @@ struct PreferencesView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
   @State private var isEditingBuddy = false
+  @State private var isPickingHome = false
 
   var body: some View {
     ZoonkList {
@@ -95,15 +96,47 @@ struct PreferencesView: View {
           }
         }
         .foregroundStyle(.primary)
+
+        // Beside the language's own name, which says whose words it is ("Português (Brasil)").
+        if let preferences = settings.preferences.value {
+          Button {
+            isPickingHome = true
+          } label: {
+            ListRow(
+              Text(
+                "Where you live", tableName: "Settings",
+                comment: "Row with the country the learner lives in, which they tell us")
+            ) {
+              EmptyView()
+            } trailing: {
+              homeCountryName(preferences)
+                .typeStyle(.meta)
+                .multilineTextAlignment(.trailing)
+            }
+            .disclosureChevron()
+          }
+          .foregroundStyle(.primary)
+        }
       } header: {
         SectionTitle(
-          Text("Language", tableName: "Settings", comment: "Preferences section about language"))
+          Text(
+            "Language and region", tableName: "Settings",
+            comment: "Preferences section about the app's language and where the learner lives"))
       } footer: {
         SectionFooter {
-          Text(
-            "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
-            tableName: "Settings",
-            comment: "Explains where the app's language is changed on iPhone and iPad")
+          VStack(alignment: .leading, spacing: 8) {
+            if settings.preferences.value != nil {
+              Text(
+                "For new goals and your examples. It doesn't change the plans you already have.",
+                tableName: "Settings",
+                comment: "What the country the learner lives in changes")
+            }
+
+            Text(
+              "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
+              tableName: "Settings",
+              comment: "Explains where the app's language is changed on iPhone and iPad")
+          }
         }
       }
 
@@ -125,6 +158,27 @@ struct PreferencesView: View {
       }
     }
     .loads(settings.preferences)
+    .sheet(isPresented: $isPickingHome) {
+      if let preferences = settings.preferences.value {
+        CountryPickerSheet(
+          title: Text(
+            "Where you live", tableName: "Settings",
+            comment: "Row with the country the learner lives in, which they tell us"),
+          language: OnboardingAPI.language,
+          suggested: preferences.suggestedCountries,
+          selected: preferences.homeCountry?.code,
+          offersNotSet: true
+        ) { choice in
+          // Nothing rebuilds, so it closes at once; a failed save shows on the page.
+          Task {
+            await settings.updatePreferences(.homeCountry(choice))
+          }
+
+          return true
+        }
+        .zoonkStyles()
+      }
+    }
     .sheet(isPresented: $isEditingBuddy) {
       if let preferences = settings.preferences.value {
         BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {
@@ -136,6 +190,13 @@ struct PreferencesView: View {
         .zoonkStyles()
       }
     }
+  }
+
+  private func homeCountryName(_ preferences: LearningPreferences) -> Text {
+    preferences.homeCountry.map { Text($0.name) }
+      ?? Text(
+        "Not set", tableName: "Settings",
+        comment: "Where the learner lives, when they haven't said")
   }
 
   private func soundsBinding(_ preferences: LearningPreferences) -> Binding<Bool> {
@@ -209,7 +270,18 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
 
 /// The language the app shows, which the device chooses.
 var appLanguageName: String {
-  nativeLanguageName(Bundle.main.preferredLocalizations.first ?? "en")
+  appLanguageLabel(Bundle.main.preferredLocalizations.first ?? "en")
+}
+
+/// Main's `LOCALE_LABELS`: a language whose words are one country's names it. Fixed, since the
+/// system calls `en-US` "English (United States)".
+func appLanguageLabel(_ identifier: String) -> String {
+  switch String(identifier.prefix(2)) {
+  case "en": "English (US)"
+  case "es": "Español (México)"
+  case "pt": "Português (Brasil)"
+  default: nativeLanguageName(identifier)
+  }
 }
 
 func nativeLanguageName(_ identifier: String) -> String {

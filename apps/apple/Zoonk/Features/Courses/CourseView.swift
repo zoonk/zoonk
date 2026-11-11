@@ -169,6 +169,15 @@ private struct CourseHeroSection: View {
             .foregroundStyle(.mutedForeground)
         }
 
+        if let country = detail.course.contentCountry {
+          Text(
+            ([contentCountryLine(country.name)]
+              + [country.lessonVariety.map(lessonLanguageLine)].compactMap(\.self)).joinedFacts()
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+        }
+
         PlanLine(startsHere: false)
 
         CatalogStartActions(
