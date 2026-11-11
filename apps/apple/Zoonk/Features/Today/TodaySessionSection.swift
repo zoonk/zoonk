@@ -78,7 +78,9 @@ struct TodaySessionSection: View {
     let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
 
     if foldsDone {
-      FoldRow(isOpen: $disclosures.showsDone, isDone: true, count: done.count, minutes: nil)
+      FoldRow(
+        isOpen: $disclosures.showsDone, isDone: true, count: done.count,
+        skipped: done.filter { $0.status == .skipped }.count, minutes: nil)
     }
 
     if !foldsDone || disclosures.showsDone {
@@ -738,20 +740,28 @@ private struct FoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
   let count: Int
+  var skipped = 0
   let minutes: Double?
+
+  private var onlySkipped: Bool { skipped > 0 && skipped == count }
 
   var body: some View {
     Button {
       isOpen.toggle()
     } label: {
       HStack(spacing: 12) {
-        Image(systemName: isDone ? "checkmark" : "ellipsis")
-          .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
+        Image(systemName: onlySkipped ? "forward.fill" : isDone ? "checkmark" : "ellipsis")
+          .imageScale(onlySkipped ? .small : .medium)
+          .foregroundStyle(
+            isDone && !onlySkipped ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground)
+          )
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
         Group {
-          if isDone {
+          if isDone, skipped > 0 {
+            Text(doneAndSkipped)
+          } else if isDone {
             Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
           } else if isOpen {
             Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
@@ -776,6 +786,19 @@ private struct FoldRow: View {
       .foregroundStyle(.mutedForeground)
     }
     .tint(.primary)
+  }
+
+  /// Skipped blocks fold with the done ones, but never count as done.
+  private var doneAndSkipped: String {
+    let skippedFact = String(
+      localized: "\(skipped) skipped", table: "Today", comment: "Folded skipped blocks")
+
+    guard !onlySkipped else { return skippedFact }
+
+    return [
+      String(localized: "\(count - skipped) done", table: "Today", comment: "Folded done blocks"),
+      skippedFact,
+    ].joinedFacts()
   }
 }
 
