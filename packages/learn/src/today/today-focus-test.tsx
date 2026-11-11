@@ -22,7 +22,13 @@ import {
 import { useCheckFocusLabel } from "../plan/plan-focus-test";
 import { useTodayScreen } from "./today-context";
 
-function FocusTestNotice({ offer }: { offer: FocusTestOffer }) {
+function FocusTestNotice({
+  offer,
+  onDismiss,
+}: {
+  offer: FocusTestOffer;
+  onDismiss: (kept: FocusTestOffer | null) => void;
+}) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const checkFocusLabel = useCheckFocusLabel();
@@ -31,9 +37,15 @@ function FocusTestNotice({ offer }: { offer: FocusTestOffer }) {
   const result = state === "dismissed" ? t("Noted. You can take the test from your plan.") : null;
 
   const dismiss = () => {
+    onDismiss(offer);
+
     startTransition(async () => {
       const { data: saved } = await safeAsync(() => actions.dismissFocusTest());
       setState(saved ? "dismissed" : "failed");
+
+      if (!saved) {
+        onDismiss(null);
+      }
     });
   };
 
@@ -84,22 +96,13 @@ function FocusTestNotice({ offer }: { offer: FocusTestOffer }) {
 }
 
 /**
- * Dismissing refreshes Today, which no longer carries the offer; the card stays until the learner
- * leaves, to show what the answer did.
+ * "Not now" refreshes Today, which then no longer carries the offer; the card stays to show what
+ * the answer did. An offer gone for any other reason, such as a test taken since, is gone here too.
  */
-function useShownOffer(offer: FocusTestOffer | null): FocusTestOffer | null {
-  const [shown, setShown] = useState(offer);
-
-  if (offer && offer !== shown) {
-    setShown(offer);
-  }
-
-  return offer ?? shown;
-}
-
 export function TodayFocusTest() {
   const { today } = useTodayScreen();
-  const offer = useShownOffer(today.focusTest);
+  const [dismissed, setDismissed] = useState<FocusTestOffer | null>(null);
+  const offer = today.focusTest ?? dismissed;
 
-  return offer && <FocusTestNotice offer={offer} />;
+  return offer && <FocusTestNotice offer={offer} onDismiss={setDismissed} />;
 }
