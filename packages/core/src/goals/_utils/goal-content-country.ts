@@ -87,25 +87,19 @@ export async function resolveNewGoalCountry({
       ? understood.countryDependent
       : null;
 
-  if (draft.contentCountry !== undefined) {
-    return {
-      contentCountry: draft.contentCountry,
-      countryDependent,
-      source: requestedCountrySource({ country: draft.contentCountry, understood }),
-    };
-  }
-
   const saved =
     isJsonObject(understood) && isJsonObject(understood.draft)
       ? understood.draft.contentCountry
       : undefined;
 
-  if (saved === null) {
-    return { contentCountry: null, countryDependent, source: "picked" };
-  }
+  const chosen = draft.contentCountry === undefined ? saved : draft.contentCountry;
 
-  if (typeof saved === "string" && isCountryCode(saved)) {
-    return { contentCountry: saved, countryDependent, source: "said" };
+  if (chosen === null || (typeof chosen === "string" && isCountryCode(chosen))) {
+    return {
+      contentCountry: chosen,
+      countryDependent,
+      source: requestedCountrySource({ country: chosen, understood }),
+    };
   }
 
   return {

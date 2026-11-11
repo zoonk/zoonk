@@ -82,6 +82,41 @@ describe("content country question", () => {
     ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 0 }]);
   });
 
+  it.each(["home", "picked"])(
+    "preserves the reviewed %s source when the request omits its country code",
+    async (source) => {
+      const user = await userFixture();
+      await learningProfileFixture({ homeCountry: "PT", userId: user.id });
+      const title = "Personal finance";
+
+      const card = await onboardingDraftFixture({
+        understanding: {
+          goals: [
+            {
+              contentCountry: { code: "PT", source },
+              countryDependent: true,
+              draft: { contentCountry: "PT", kind: "learn", title },
+            },
+          ],
+          status: "goals",
+        },
+        userId: user.id,
+      });
+
+      const draft: GoalDraft = {
+        details: { onboardingId: card.id },
+        kind: "learn",
+        language: "pt",
+        prompt: title,
+        title,
+      };
+
+      await expect(
+        prisma.$transaction((tx) => resolveNewGoalCountry({ draft, tx, userId: user.id })),
+      ).resolves.toMatchObject({ contentCountry: "PT", countryDependent: true, source });
+    },
+  );
+
   it("resolves the reading before home country and keeps the decision server-owned", async () => {
     const user = await userFixture();
     await learningProfileFixture({ homeCountry: "PT", userId: user.id });
