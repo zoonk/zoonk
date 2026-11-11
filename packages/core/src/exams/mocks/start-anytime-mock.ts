@@ -53,18 +53,18 @@ export async function startAnytimeMock({
     return { status: access };
   }
 
-  const pick = resolveAnytimeOption({ choice: input, setup });
+  const option = resolveAnytimeOption({ choice: input, setup });
 
-  const asksNothing = pick?.option.questions === 0 && pick.option.written.length === 0;
+  const asksNothing = option?.questions === 0 && option.written.length === 0;
 
-  if (!pick || asksNothing) {
+  if (!option || asksNothing) {
     return { status: "invalidOption" };
   }
 
   const result = await createAnytimeMock({
     acceptFewer: input.acceptFewer ?? false,
     goal,
-    pick,
+    option,
     setup,
     userId,
     writesCap,

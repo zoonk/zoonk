@@ -130,26 +130,20 @@ export async function loadAnytimeMockSetup(
 }
 
 export function listMissingRecordings({
-  pick,
+  option,
   setup,
 }: {
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
 }): string[] {
-  if (pick.option.kind === "area" || setup.unvoiced.size === 0) {
+  if (option.kind === "area" || setup.unvoiced.size === 0) {
     return [];
   }
 
-  return getDaySections({
-    day: pick.option.day,
-    listening: setup.unvoiced,
-    structure: setup.structure,
-  })
+  return getDaySections({ day: option.day, listening: setup.unvoiced, structure: setup.structure })
     .filter((section) => section.kind === "listening")
     .flatMap((section) => section.name ?? []);
 }
-
-export type AnytimeMockPick = { option: MockOption; purpose: "practice" };
 
 export function resolveAnytimeOption({
   choice,
@@ -157,12 +151,8 @@ export function resolveAnytimeOption({
 }: {
   choice: AnytimeMockChoice;
   setup: AnytimeMockSetup;
-}): AnytimeMockPick | null {
-  const option = choice.shape
-    ? findMockOption({ options: setup.options, shape: choice.shape })
-    : null;
-
-  return option ? { option, purpose: "practice" } : null;
+}): MockOption | null {
+  return findMockOption({ options: setup.options, shape: choice.shape });
 }
 
 const ANYTIME_MOCK_FILTER = {

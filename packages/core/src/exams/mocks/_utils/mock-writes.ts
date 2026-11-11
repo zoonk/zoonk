@@ -6,13 +6,13 @@ import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { loadListeningExam } from "../../listening/listening-exam";
 import { getListeningSkillIds } from "../../listening/listening-skills";
 import { getMockFormatMix } from "../mock-format-mix";
-import { isOptionArea } from "../mock-options";
+import { type MockOption, isOptionArea } from "../mock-options";
 import {
   type MockFormatShortfall,
   type MockWritingSkill,
   getMockQuestionsShortfall,
 } from "../mock-shortfall";
-import { type AnytimeMockPick, type AnytimeMockSetup } from "./anytime-mock-setup";
+import { type AnytimeMockSetup } from "./anytime-mock-setup";
 import { planFromBank } from "./create-anytime-mock";
 
 async function loadOptionSkills({
@@ -58,20 +58,20 @@ async function loadOptionSkills({
 function listWrites({
   mix,
   optionSkills,
-  pick,
+  option,
   planned,
   structure,
 }: {
   mix: ReturnType<typeof getMockFormatMix>;
   structure: ExamStructure | null;
   optionSkills: readonly MockWritingSkill[];
-  pick: AnytimeMockPick;
+  option: MockOption;
   planned: Awaited<ReturnType<typeof planFromBank>>;
 }): MockFormatShortfall[] {
   return getMockQuestionsShortfall({
     candidates: planned.candidates,
     mix,
-    option: pick.option,
+    option,
     plan: planned.plan,
     skills: optionSkills,
     structure,
@@ -80,18 +80,18 @@ function listWrites({
 
 export async function planMockWrites({
   goal,
-  pick,
+  option,
   setup,
   userId,
 }: {
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
 }): Promise<MockFormatShortfall[] | null> {
   const [planned, optionSkills] = await Promise.all([
-    planFromBank({ goal, pick, setup, userId }),
-    loadOptionSkills({ goalId: goal.id, option: pick.option, structure: setup.structure }),
+    planFromBank({ goal, option, setup, userId }),
+    loadOptionSkills({ goalId: goal.id, option, structure: setup.structure }),
   ]);
 
   if (!optionSkills) {
@@ -100,8 +100,8 @@ export async function planMockWrites({
 
   return listWrites({
     mix: getMockFormatMix(setup.structure),
+    option,
     optionSkills,
-    pick,
     planned,
     structure: setup.structure,
   });

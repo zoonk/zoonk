@@ -10,10 +10,10 @@ import { type MockConditions } from "../mock-contract";
 import { getMockFormatMix } from "../mock-format-mix";
 import { markPlannedItems } from "../mock-marking";
 import { planOptionMock } from "../mock-option-plan";
+import { type MockOption } from "../mock-options";
 import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { isMockShort, listShortFormats } from "../mock-shortfall";
 import {
-  type AnytimeMockPick,
   type AnytimeMockSetup,
   findRunningAnytimeMock,
   listMissingRecordings,
@@ -36,31 +36,31 @@ export type CreateAnytimeMockResult =
 
 function isShortOfNew({
   candidates,
-  pick,
+  option,
   plan,
   setup,
 }: {
   candidates: readonly MockCandidate[];
-  pick: AnytimeMockPick;
+  option: MockOption;
   plan: MockPlan;
   setup: AnytimeMockSetup;
 }) {
   const mix = getMockFormatMix(setup.structure);
 
   return (
-    listMissingRecordings({ pick, setup }).length > 0 ||
-    listShortFormats({ candidates, mix, option: pick.option, plan }).length > 0
+    listMissingRecordings({ option, setup }).length > 0 ||
+    listShortFormats({ candidates, mix, option, plan }).length > 0
   );
 }
 
 export async function planFromBank({
   goal,
-  pick,
+  option,
   setup,
   userId,
 }: {
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
 }): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
@@ -78,7 +78,7 @@ export async function planFromBank({
       candidates,
       essays: setup.essays,
       listening: setup.listening,
-      option: pick.option,
+      option,
       speaking: setup.speaking,
       structure: setup.structure,
     }),
@@ -88,18 +88,17 @@ export async function planFromBank({
 function toConditions({
   candidates,
   goal,
-  pick,
+  option,
   plan,
   setup,
 }: {
   candidates: readonly MockCandidate[];
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   plan: MockPlan;
   setup: AnytimeMockSetup;
 }): MockConditions {
   const edition = setup.blueprint ? readBlueprintContent(setup.blueprint).edition : null;
-  const { option, purpose } = pick;
   const asked = countPlannedQuestions(plan);
 
   return {
@@ -112,7 +111,7 @@ function toConditions({
       structure: setup.structure,
     }),
     partialCredit: getPartialCredit(setup.structure),
-    purpose,
+    purpose: "practice",
     reused: plan.reused,
     scoring: getMockScoring({ blueprint: setup.blueprint, goal, structure: setup.structure }),
     sections: plan.sections,
@@ -131,29 +130,29 @@ function toConditions({
 export async function createAnytimeMock({
   acceptFewer,
   goal,
-  pick,
+  option,
   setup,
   userId,
   writesCap,
 }: {
   acceptFewer: boolean;
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
   writesCap: UsagePeriod | null;
 }): Promise<CreateAnytimeMockResult> {
-  const { candidates, plan } = await planFromBank({ goal, pick, setup, userId });
+  const { candidates, plan } = await planFromBank({ goal, option, setup, userId });
   const planned = countPlannedQuestions(plan);
   const asksEssays = plan.sections.some((section) => section.essays.length > 0);
-  const shortOfNew = !acceptFewer && isShortOfNew({ candidates, pick, plan, setup });
+  const shortOfNew = !acceptFewer && isShortOfNew({ candidates, option, plan, setup });
   const asksForNew = writesCap === null && shortOfNew;
 
   const short =
     !acceptFewer &&
     !asksForNew &&
     planned >= MIN_CHECKPOINT_QUESTIONS &&
-    isMockShort({ option: pick.option, planned });
+    isMockShort({ option, planned });
 
   return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
     const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
@@ -168,7 +167,7 @@ export async function createAnytimeMock({
 
     if (short) {
       return unchanged({
-        examQuestions: pick.option.questions,
+        examQuestions: option.questions,
         limit: shortOfNew ? writesCap : null,
         minutes: plan.minutes,
         questions: planned,
@@ -182,7 +181,7 @@ export async function createAnytimeMock({
 
     const now = new Date();
 
-    const conditions = toConditions({ candidates, goal, pick, plan, setup });
+    const conditions = toConditions({ candidates, goal, option, plan, setup });
 
     const created = await tx.mockExam.create({
       data: {

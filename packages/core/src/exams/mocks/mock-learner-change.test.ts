@@ -113,16 +113,16 @@ describe("mock writes under the learner's lock", () => {
     const { goal, user } = await scheduledMockSetup();
     const setup = await loadAnytimeMockSetup(goal);
 
-    const pick = resolveAnytimeOption({
+    const option = resolveAnytimeOption({
       choice: { shape: { area: null, day: null, kind: "full" } },
       setup,
     });
 
-    if (!pick) {
+    if (!option) {
       throw new Error("Expected a full mock option");
     }
 
-    const input = { acceptFewer: true, goal, pick, setup, userId: user.id, writesCap: null };
+    const input = { acceptFewer: true, goal, option, setup, userId: user.id, writesCap: null };
 
     const held = holdLearnerLock({ userId: user.id });
 
@@ -167,14 +167,7 @@ describe("mock writes under the learner's lock", () => {
       };
 
       await expect(
-        createAnytimeMock({
-          acceptFewer,
-          goal,
-          pick: { option, purpose: "practice" },
-          setup,
-          userId: user.id,
-          writesCap: null,
-        }),
+        createAnytimeMock({ acceptFewer, goal, option, setup, userId: user.id, writesCap: null }),
       ).resolves.toStrictEqual({ status });
 
       await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
@@ -186,12 +179,12 @@ describe("mock writes under the learner's lock", () => {
     const { goal, user } = await scheduledMockSetup();
     const setup = await loadAnytimeMockSetup(goal);
 
-    const pick = resolveAnytimeOption({
+    const option = resolveAnytimeOption({
       choice: { shape: { area: null, day: null, kind: "full" } },
       setup,
     });
 
-    if (!pick) {
+    if (!option) {
       throw new Error("Expected a full mock option");
     }
 
@@ -199,7 +192,7 @@ describe("mock writes under the learner's lock", () => {
       createAnytimeMock({
         acceptFewer: false,
         goal,
-        pick,
+        option,
         setup,
         userId: user.id,
         writesCap: "day",

@@ -61,19 +61,19 @@ export async function requestMockQuestions({
     return { status: access };
   }
 
-  const pick = resolveAnytimeOption({ choice: input, setup });
+  const option = resolveAnytimeOption({ choice: input, setup });
 
-  if (!pick) {
+  if (!option) {
     return { status: "invalidOption" };
   }
 
-  const writes = await planMockWrites({ goal, pick, setup, userId });
+  const writes = await planMockWrites({ goal, option, setup, userId });
 
   if (!writes) {
     return { status: "preparing" };
   }
 
-  const listening = listMissingRecordings({ pick, setup }).length > 0;
+  const listening = listMissingRecordings({ option, setup }).length > 0;
 
   if (writes.length === 0 && !listening) {
     return { status: "ready" };
